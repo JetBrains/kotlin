@@ -45,15 +45,15 @@ public class ConstantDescriptorLoader extends BaseDescriptorLoader implements Co
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     ) {
-        MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
+        MemberSignature signature = BaseDescriptorLoader.getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return null;
 
         KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: " + container, null);
+            getErrorReporter().reportLoadingError("Kotlin class for loading property constant is not found: " + container, null);
             return null;
         }
 
-        return storage.getStorageForClass(kotlinClass).getPropertyConstants().get(signature);
+        return getStorage().getStorageForClass(kotlinClass).getPropertyConstants().get(signature);
     }
 }

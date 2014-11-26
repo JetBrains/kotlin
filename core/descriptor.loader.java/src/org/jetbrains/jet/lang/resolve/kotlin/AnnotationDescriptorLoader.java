@@ -65,7 +65,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
-            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: " + descriptor, null);
+            getErrorReporter().reportLoadingError("Kotlin class for loading class annotations is not found: " + descriptor, null);
             return Collections.emptyList();
         }
 
@@ -204,11 +204,11 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
     ) {
         KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
+            getErrorReporter().reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
             return Collections.emptyList();
         }
 
-        List<AnnotationDescriptor> descriptors = storage.getStorageForClass(kotlinClass).getMemberAnnotations().get(signature);
+        List<AnnotationDescriptor> descriptors = getStorage().getStorageForClass(kotlinClass).getMemberAnnotations().get(signature);
         return descriptors == null ? Collections.<AnnotationDescriptor>emptyList() : descriptors;
     }
 

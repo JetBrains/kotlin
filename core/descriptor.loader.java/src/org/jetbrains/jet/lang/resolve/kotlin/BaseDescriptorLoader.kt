@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin;
+package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -31,137 +29,100 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassId;
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.getClassId;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject
+import org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassId
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.getClassId
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId
+import kotlin.platform.platformStatic
 
-public abstract class BaseDescriptorLoader {
-    private final KotlinClassFinder kotlinClassFinder;
-    protected final ErrorReporter errorReporter;
-    protected final DescriptorLoadersStorage storage;
+public abstract class BaseDescriptorLoader protected(private val kotlinClassFinder: KotlinClassFinder, protected val errorReporter: ErrorReporter, protected val storage: DescriptorLoadersStorage) {
 
-    protected BaseDescriptorLoader(
-            @NotNull KotlinClassFinder kotlinClassFinder,
-            @NotNull ErrorReporter errorReporter,
-            @NotNull DescriptorLoadersStorage storage
-    ) {
-        this.kotlinClassFinder = kotlinClassFinder;
-        this.errorReporter = errorReporter;
-        this.storage = storage;
-    }
-
-    @Nullable
-    protected static MemberSignature getCallableSignature(
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind
-    ) {
-        SignatureDeserializer deserializer = new SignatureDeserializer(nameResolver);
-        switch (kind) {
-            case FUNCTION:
-                if (proto.hasExtension(JavaProtoBuf.methodSignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature));
-                }
-                break;
-            case PROPERTY_GETTER:
-                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter());
-                }
-                break;
-            case PROPERTY_SETTER:
-                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter());
-                }
-                break;
-            case PROPERTY:
-                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-
-                    if (propertySignature.hasField()) {
-                        JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
-                        String type = deserializer.typeDescriptor(field.getType());
-                        Name name = nameResolver.getName(field.getName());
-                        return MemberSignature.fromFieldNameAndDesc(name, type);
-                    }
-                    else if (propertySignature.hasSyntheticMethod()) {
-                        return deserializer.methodSignature(propertySignature.getSyntheticMethod());
-                    }
-                }
-                break;
-        }
-        return null;
-    }
-
-    @Nullable
-    protected KotlinJvmBinaryClass findClassWithAnnotationsAndInitializers(
-            @NotNull ClassOrPackageFragmentDescriptor container,
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind
-    ) {
-        if (container instanceof PackageFragmentDescriptor) {
-            return findPackagePartClass((PackageFragmentDescriptor) container, proto, nameResolver);
+    protected fun findClassWithAnnotationsAndInitializers(container: ClassOrPackageFragmentDescriptor, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): KotlinJvmBinaryClass? {
+        if (container is PackageFragmentDescriptor) {
+            return findPackagePartClass(container as PackageFragmentDescriptor, proto, nameResolver)
         }
         else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
-            return findKotlinClassByDescriptor((ClassOrPackageFragmentDescriptor) container.getContainingDeclaration());
+            return findKotlinClassByDescriptor(container.getContainingDeclaration() as ClassOrPackageFragmentDescriptor)
         }
         else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
-            PackageFragmentDescriptor containingPackage = DescriptorUtils.getParentOfType(container, PackageFragmentDescriptor.class);
-            assert containingPackage != null : "Trait must have a package fragment among his parents: " + container;
+            val containingPackage = DescriptorUtils.getParentOfType<PackageFragmentDescriptor>(container, javaClass<PackageFragmentDescriptor>())
+            assert(containingPackage != null) { "Trait must have a package fragment among his parents: " + container }
 
-            if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-                Name tImplName = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
+            if (proto.hasExtension<Int>(JavaProtoBuf.implClassName)) {
+                val tImplName = nameResolver.getName(proto.getExtension<Int>(JavaProtoBuf.implClassName))
                 // TODO: store accurate name for nested traits
-                return kotlinClassFinder.findKotlinClass(new ClassId(containingPackage.getFqName(), tImplName));
+                return kotlinClassFinder.findKotlinClass(ClassId(containingPackage!!.fqName, tImplName))
             }
-            return null;
+            return null
         }
 
-        return findKotlinClassByDescriptor(container);
+        return findKotlinClassByDescriptor(container)
     }
 
-    @Nullable
-    private KotlinJvmBinaryClass findPackagePartClass(
-            @NotNull PackageFragmentDescriptor container,
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver
-    ) {
-        if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-            return kotlinClassFinder.findKotlinClass(new ClassId(container.getFqName(), getPackagePartClassName(proto, nameResolver)));
+    private fun findPackagePartClass(container: PackageFragmentDescriptor, proto: ProtoBuf.Callable, nameResolver: NameResolver): KotlinJvmBinaryClass? {
+        if (proto.hasExtension<Int>(JavaProtoBuf.implClassName)) {
+            return kotlinClassFinder.findKotlinClass(ClassId(container.fqName, getPackagePartClassName(proto, nameResolver)))
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    public static Name getPackagePartClassName(@NotNull DeserializedCallableMemberDescriptor deserializedCallableMember) {
-        return getPackagePartClassName(deserializedCallableMember.getProto(), deserializedCallableMember.getNameResolver());
-    }
-
-    @NotNull
-    private static Name getPackagePartClassName(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
-        return nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
-    }
-
-    private static boolean isStaticFieldInOuter(@NotNull ProtoBuf.Callable proto) {
-        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return false;
-        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-        return propertySignature.hasField() && propertySignature.getField().getIsStaticInOuter();
-    }
-
-    @Nullable
-    protected KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            return kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId((ClassDescriptor) descriptor)));
+    protected fun findKotlinClassByDescriptor(descriptor: ClassOrPackageFragmentDescriptor): KotlinJvmBinaryClass? {
+        if (descriptor is ClassDescriptor) {
+            return kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId(descriptor as ClassDescriptor)))
         }
-        else if (descriptor instanceof PackageFragmentDescriptor) {
-            return kotlinClassFinder.findKotlinClass(getPackageClassId(((PackageFragmentDescriptor) descriptor).getFqName()));
+        else if (descriptor is PackageFragmentDescriptor) {
+            return kotlinClassFinder.findKotlinClass(getPackageClassId((descriptor as PackageFragmentDescriptor).fqName))
         }
         else {
-            throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
+            throw IllegalStateException("Unrecognized descriptor: " + descriptor)
+        }
+    }
+
+    class object {
+        platformStatic fun getCallableSignature(proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
+            val deserializer = SignatureDeserializer(nameResolver)
+            when (kind) {
+                AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension<JavaProtoBuf.JavaMethodSignature>(JavaProtoBuf.methodSignature)) {
+                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaMethodSignature>(JavaProtoBuf.methodSignature))
+                }
+                AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
+                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature).getGetter())
+                }
+                AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
+                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature).getSetter())
+                }
+                AnnotatedCallableKind.PROPERTY -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
+                    val propertySignature = proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)
+
+                    if (propertySignature.hasField()) {
+                        val field = propertySignature.getField()
+                        val type = deserializer.typeDescriptor(field.getType())
+                        val name = nameResolver.getName(field.getName())
+                        return MemberSignature.fromFieldNameAndDesc(name, type)
+                    }
+                    else if (propertySignature.hasSyntheticMethod()) {
+                        return deserializer.methodSignature(propertySignature.getSyntheticMethod())
+                    }
+                }
+            }
+            return null
+        }
+
+        platformStatic public fun getPackagePartClassName(deserializedCallableMember: DeserializedCallableMemberDescriptor): Name {
+            return getPackagePartClassName(deserializedCallableMember.proto, deserializedCallableMember.nameResolver)
+        }
+
+        private fun getPackagePartClassName(proto: ProtoBuf.Callable, nameResolver: NameResolver): Name {
+            return nameResolver.getName(proto.getExtension<Int>(JavaProtoBuf.implClassName))
+        }
+
+        private fun isStaticFieldInOuter(proto: ProtoBuf.Callable): Boolean {
+            if (!proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) return false
+            val propertySignature = proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)
+            return propertySignature.hasField() && propertySignature.getField().getIsStaticInOuter()
         }
     }
 }
