@@ -55,9 +55,10 @@ import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
+import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.jet.lang.types.Variance
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
@@ -142,11 +143,14 @@ class TypeInstantiationItems(
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
 
-        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        // drop "in" and "out" from type arguments - they cannot be used in constructor call
+        val typeArgsToUse = typeArgs.map { if (it != null) TypeProjectionImpl(Variance.INVARIANT, it.getType()) else null }
+
+        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
         var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
+        val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
         if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis

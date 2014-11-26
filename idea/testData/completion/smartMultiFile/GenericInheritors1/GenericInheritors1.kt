@@ -10,6 +10,6 @@ fun foo(): KotlinTrait<I1, I2> {
 // ABSENT: KotlinInheritor3
 // EXIST: { lookupString: "object", itemText: "object: KotlinInheritor4<I1, I2>(){...}" }
 // ABSENT: KotlinInheritor5
-// EXIST: { lookupString: "KotlinInheritor6", itemText: "KotlinInheritor6<I1, out Any?, out I3>", tailText: "() (p)" }
+// EXIST: { lookupString: "KotlinInheritor6", itemText: "KotlinInheritor6<I1, Any?, I3>", tailText: "() (p)" }
 // EXIST: { lookupString: "JavaInheritor1", itemText: "JavaInheritor1", tailText: "() (<root>)" }
 // ABSENT: JavaInheritor2

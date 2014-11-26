@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -237,6 +236,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("ConstructorForGenericType.kt")
     public void testConstructorForGenericType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/ConstructorForGenericType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConstructorForGenericType2.kt")
+    public void testConstructorForGenericType2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/ConstructorForGenericType2.kt");
         doTest(fileName);
     }
 
