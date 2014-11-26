@@ -120,25 +120,19 @@ public class DescriptorSerializer {
             }
         }
 
-        Collection<DeclarationDescriptor> nestedClasses = classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors();
-        for (DeclarationDescriptor descriptor : sort(nestedClasses)) {
-            if (!isEnumEntry(descriptor)) {
-                builder.addNestedClassName(nameTable.getSimpleNameIndex(descriptor.getName()));
+        for (DeclarationDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors())) {
+            int name = nameTable.getSimpleNameIndex(descriptor.getName());
+            if (isEnumEntry(descriptor)) {
+                builder.addEnumEntry(name);
+            }
+            else {
+                builder.addNestedClassName(name);
             }
         }
 
         ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
         if (classObject != null) {
             builder.setClassObject(classObjectProto(classObject));
-        }
-
-        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            // Not calling sort() here, because the order of enum entries matters
-            for (DeclarationDescriptor descriptor : nestedClasses) {
-                if (isEnumEntry(descriptor)) {
-                    builder.addEnumEntry(nameTable.getSimpleNameIndex(descriptor.getName()));
-                }
-            }
         }
 
         return builder;
