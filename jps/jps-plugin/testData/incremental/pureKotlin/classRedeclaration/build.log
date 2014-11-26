@@ -9,5 +9,5 @@ src/class1.kt
 src/class2.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Redeclaration: Klass
-Kotlin:ERROR:Redeclaration: Klass
+Redeclaration: Klass
+Redeclaration: Klass

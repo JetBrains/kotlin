@@ -6,7 +6,7 @@ Compiling files:
 src/usage.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Expecting an expression
+Expecting an expression
 
 
 Cleaning output files:

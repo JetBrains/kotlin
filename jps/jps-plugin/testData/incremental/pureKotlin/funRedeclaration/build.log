@@ -6,6 +6,6 @@ Compiling files:
 src/fun2.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Platform declaration clash: The following declarations have the same JVM signature (function()V):
+Platform declaration clash: The following declarations have the same JVM signature (function()V):
     fun function(): kotlin.Unit
     fun function(): kotlin.Unit

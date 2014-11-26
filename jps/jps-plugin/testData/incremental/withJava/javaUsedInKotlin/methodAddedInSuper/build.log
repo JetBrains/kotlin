@@ -11,5 +11,5 @@ Compiling files:
 src/Sub.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Cannot weaken access privilege 'public' for 'y' in 'Super'
-Kotlin:ERROR:'y' hides member of supertype 'Super' and needs 'override' modifier
+Cannot weaken access privilege 'public' for 'y' in 'Super'
+'y' hides member of supertype 'Super' and needs 'override' modifier

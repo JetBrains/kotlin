@@ -15,4 +15,4 @@ src/willBeResolvedToOther.kt
 src/willBeUnresolved.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Unresolved reference: f
+Unresolved reference: f
