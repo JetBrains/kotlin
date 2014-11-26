@@ -72,6 +72,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("InheritorsAndMultipleExpectedTypes")
+    public void testInheritorsAndMultipleExpectedTypes() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/InheritorsAndMultipleExpectedTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaStaticMethodArgument")
     public void testJavaStaticMethodArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/JavaStaticMethodArgument/");

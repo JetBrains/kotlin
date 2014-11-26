@@ -204,7 +204,8 @@ class TypeInstantiationItems(
             lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }
 
-        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
+        //TODO: cannot use lookupElement from context due to KT-6344
+        class InstantiationLookupElement(lookupElement: LookupElement) : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
             override fun getAllLookupStrings() = allLookupStrings
@@ -223,9 +224,20 @@ class TypeInstantiationItems(
             override fun handleInsert(context: InsertionContext) {
                 insertHandler.handleInsert(context, getDelegate())
             }
+
+            override fun equals(other: Any?): Boolean {
+                if (other === this) return true
+                if (other !is InstantiationLookupElement) return false
+                if (getLookupString() != other.getLookupString()) return false
+                val presentation1 = LookupElementPresentation()
+                val presentation2 = LookupElementPresentation()
+                renderElement(presentation1)
+                other.renderElement(presentation2)
+                return presentation1.getItemText() == presentation2.getItemText() && presentation1.getTailText() == presentation2.getTailText()
+            }
         }
 
-        return lookupElement.addTail(tail)
+        return InstantiationLookupElement(lookupElement).addTail(tail)
     }
 
     private fun addSamConstructorItem(collection: MutableCollection<LookupElement>, `class`: ClassDescriptor, tail: Tail?) {
