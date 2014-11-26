@@ -39,23 +39,95 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.searches.ClassInheritorsSearch
+import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.jet.lang.types.TypeProjection
+import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.resolve.PossiblyBareType
+import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 
-class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
+class TypeInstantiationItems(
+        val resolutionFacade: ResolutionFacade,
+        val moduleDescriptor: ModuleDescriptor,
+        val bindingContext: BindingContext,
+        val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        val searchScope: GlobalSearchScope
+) {
+    public fun add(
+            items: MutableCollection<LookupElement>,
+            inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
+            expectedInfos: Collection<ExpectedInfo>
+    ) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
-        for ((jetType, infos) in expectedInfosGrouped) {
+        for ((type, infos) in expectedInfosGrouped) {
             val tail = mergeTails(infos.map { it.tail })
-            addToCollection(collection, jetType, tail)
+            addToCollection(items, inheritanceSearchers, type, tail)
         }
     }
 
-    private fun addToCollection(collection: MutableCollection<LookupElement>, jetType: JetType, tail: Tail?) {
-        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(jetType)) return // do not show "object: ..." for function types
+    private fun addToCollection(
+            items: MutableCollection<LookupElement>,
+            inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
+            type: JetType,
+            tail: Tail?
+    ) {
+        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) return // do not show "object: ..." for function types
 
-        val classifier = jetType.getConstructor().getDeclarationDescriptor()
+        val classifier = type.getConstructor().getDeclarationDescriptor()
         if (classifier !is ClassDescriptor) return
 
-        addSamConstructorItem(collection, classifier, tail)
+        addSamConstructorItem(items, classifier, tail)
+
+        val typeArgs = type.getArguments()
+        items.addIfNotNull(createTypeInstantiationItem(classifier, typeArgs, tail))
+
+        inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
+
+        val javaAnalogFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(DescriptorUtils.getFqNameSafe(classifier))
+        if (javaAnalogFqName != null) {
+            val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaAnalogFqName)
+            if (javaAnalog != null) {
+                inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
+            }
+        }
+    }
+
+    private fun MutableCollection<InheritanceItemsSearcher>.addInheritorSearcher(
+            descriptor: ClassDescriptor, kotlinClassDescriptor: ClassDescriptor, typeArgs: List<TypeProjection>, tail: Tail?
+    ) {
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+        val psiClass: PsiClass = when (declaration) {
+            is PsiClass -> declaration
+            is JetClassOrObject -> LightClassUtil.getPsiClass(declaration) ?: return
+            else -> return
+        }
+        if (declaration.getContainingFile().getVirtualFile() == null) return //TODO!
+        add(InheritanceSearcher(psiClass, kotlinClassDescriptor, typeArgs, tail))
+    }
+
+    private fun createTypeInstantiationItem(
+            classifier: ClassDescriptor,
+            typeArgs: List<TypeProjection?>,
+            tail: Tail?
+    ): LookupElement? {
+        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
+
+        if (classifier.getKind() == ClassKind.OBJECT) {
+            return lookupElement.addTail(tail)
+        }
 
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
         val allConstructors = classifier.getConstructors()
@@ -65,14 +137,11 @@ class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val binding
             else
                 visibilityFilter(it)
         }
-        if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
-
-        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
+        if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return null
 
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
 
-        val typeArgs = jetType.getArguments()
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
         var signatureText: String? = null
 
@@ -140,9 +209,11 @@ class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val binding
                 getDelegate().renderElement(presentation)
                 presentation.setItemText(itemText)
 
+                presentation.clearTail()
                 if (signatureText != null) {
-                    presentation.prependTailText(signatureText!!, false)
+                    presentation.appendTailText(signatureText!!, false)
                 }
+                presentation.appendTailText(" (" + DescriptorUtils.getFqName(classifier.getContainingDeclaration()) + ")", true)
             }
 
             override fun handleInsert(context: InsertionContext) {
@@ -150,7 +221,7 @@ class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val binding
             }
         }
 
-        collection.add(lookupElement.addTail(tail))
+        return lookupElement.addTail(tail)
     }
 
     private fun addSamConstructorItem(collection: MutableCollection<LookupElement>, `class`: ClassDescriptor, tail: Tail?) {
@@ -168,6 +239,46 @@ class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val binding
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)
+        }
+    }
+
+    private inner class InheritanceSearcher(
+            val psiClass: PsiClass,
+            val classDescriptor: ClassDescriptor,
+            val typeArgs: List<TypeProjection?>,
+            val tail: Tail?) : InheritanceItemsSearcher {
+
+        private val typeConstructor = classDescriptor.getTypeConstructor()
+        private val baseHasTypeArgs = typeConstructor.getParameters().isNotEmpty()
+        private val expectedType = JetTypeImpl(Annotations.EMPTY, typeConstructor, false, typeArgs, classDescriptor.getMemberScope(typeArgs))
+
+        override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
+            val parameters = ClassInheritorsSearch.SearchParameters(psiClass, searchScope, true, true, false, nameFilter)
+            for (inheritor in ClassInheritorsSearch.search(parameters)) {
+                val descriptor = if (inheritor is KotlinLightClass) {
+                    val origin = inheritor.origin ?: continue
+                    resolutionFacade.resolveToDescriptor(origin)
+                }
+                else {
+                    resolutionFacade.get(JavaResolveExtension)(inheritor).first.resolveClass(JavaClassImpl(inheritor))
+                }  as? ClassDescriptor ?: continue
+                if (!visibilityFilter(descriptor)) continue
+
+                val hasTypeArgs = descriptor.getTypeConstructor().getParameters().isNotEmpty()
+                val resultingType = if (hasTypeArgs) {
+                    val reconstructionResult = PossiblyBareType.bare(descriptor.getTypeConstructor(), false).reconstruct(expectedType)
+                    reconstructionResult.getResultingType() ?: continue
+                }
+                else {
+                    val type = descriptor.getDefaultType()
+                    // check if derived type matches type arguments for base
+                    if (baseHasTypeArgs && !type.isSubtypeOf(expectedType)) continue
+                    type
+                }
+
+                val lookupElement = createTypeInstantiationItem(descriptor, resultingType.getArguments(), tail) ?: continue
+                consumer(lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INHERITOR_INSTANTIATION))
+            }
         }
     }
 }

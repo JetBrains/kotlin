@@ -1,5 +1,0 @@
-import java.util.ArrayList
-
-var a : ArrayList<String> = <caret>
-
-// EXIST: ArrayList@ArrayList<String>()

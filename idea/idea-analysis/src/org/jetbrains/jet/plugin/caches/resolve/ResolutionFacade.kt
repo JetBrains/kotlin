@@ -34,4 +34,6 @@ public trait ResolutionFacade {
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
+
+    public fun <T> get(extension: CacheExtension<T>): T
 }

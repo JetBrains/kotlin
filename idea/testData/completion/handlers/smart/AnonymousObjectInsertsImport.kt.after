@@ -6,4 +6,4 @@ val c: java.io.Closeable = object: Closeable {
     }
 }
 
-//ELEMENT: object
+//ELEMENT_TEXT: "object: Closeable{...}"

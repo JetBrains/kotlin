@@ -1,3 +1,4 @@
 var a : Runnable = <caret>
 
-// ELEMENT: Runnable
+// ELEMENT_TEXT: Runnable
+// TAIL_TEXT: "()"

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import org.jetbrains.jet.JetTestCaseBuilder;
 
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {

@@ -225,6 +225,7 @@ enum class SmartCompletionItemPriority {
     LAMBDA
     FUNCTION_REFERENCE
     NULL
+    INHERITOR_INSTANTIATION
 }
 
 val SMART_COMPLETION_ITEM_PRIORITY_KEY = Key<SmartCompletionItemPriority>("SMART_COMPLETION_ITEM_PRIORITY_KEY")

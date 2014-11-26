@@ -43,7 +43,7 @@ public class SubstitutionUtils {
         return typeSubstitutor;
     }
 
-    /*
+    /**
       For each supertype of a given type, we map type parameters to type arguments.
 
       For instance, we have the following class hierarchy:

@@ -229,7 +229,9 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolutionFacade, bindingContext!!, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+            val completion = SmartCompletion(jetReference.expression, resolutionFacade, moduleDescriptor, 
+                                             bindingContext!!, { isVisibleDescriptor(it) }, searchScope,
+                                             parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)
@@ -237,10 +239,15 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 val filter = result.declarationFilter
                 if (filter != null) {
                     getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach { collector.addElements(filter(it)) }
-
                     flushToResultSet()
 
                     processNonImported { collector.addElements(filter(it)) }
+                    flushToResultSet()
+                }
+
+                result.inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+                    collector.addElement(it)
+                    flushToResultSet()
                 }
             }
         }
@@ -249,7 +256,6 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
         if (shouldRunTopLevelCompletion()) {
             getKotlinTopLevelCallables().forEach(processor)
-            getKotlinTopLevelObjects().forEach(processor) //TODO: shouldn't it work via inheritors search?
         }
 
         if (shouldRunExtensionsCompletion()) {
