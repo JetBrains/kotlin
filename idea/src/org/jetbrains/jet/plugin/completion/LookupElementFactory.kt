@@ -81,6 +81,11 @@ public open class LookupElementFactory protected() {
             }
 
             is ClassDescriptor -> {
+                val typeParams = descriptor.getTypeConstructor().getParameters()
+                if (typeParams.isNotEmpty()) {
+                    element = element.appendTailText("<" + typeParams.map { it.getName().asString() }.joinToString(", ") + ">", true)
+                }
+
                 element = element.appendTailText(" (" + DescriptorUtils.getFqName(descriptor.getContainingDeclaration()) + ")", true)
             }
 

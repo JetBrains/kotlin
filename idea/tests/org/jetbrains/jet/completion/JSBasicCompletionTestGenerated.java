@@ -292,6 +292,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("GenericKotlinClass.kt")
+        public void testGenericKotlinClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericKotlinClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("HigherOrderFunction1.kt")
         public void testHigherOrderFunction1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/HigherOrderFunction1.kt");
