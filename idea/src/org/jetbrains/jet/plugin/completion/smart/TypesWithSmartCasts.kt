@@ -62,7 +62,7 @@ class TypesWithSmartCasts(val bindingContext: BindingContext) {
                 }
                 return returnType.toList()
             }
-            else if (descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            else if (descriptor is ClassDescriptor && descriptor.getKind().isSingleton()) {
                 return listOf(descriptor.getDefaultType())
             }
             else {

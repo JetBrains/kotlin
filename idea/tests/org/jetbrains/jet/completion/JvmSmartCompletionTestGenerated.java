@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -621,6 +620,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("NullableThis.kt")
     public void testNullableThis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/NullableThis.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Object.kt")
+    public void testObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Object.kt");
         doTest(fileName);
     }
 

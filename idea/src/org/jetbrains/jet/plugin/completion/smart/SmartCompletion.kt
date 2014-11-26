@@ -79,11 +79,18 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val result = executeInternal() ?: return null
         // TODO: code could be more simple, see KT-5726
         val additionalItems = result.additionalItems.map(::postProcess)
+        val inheritanceSearcher = result.inheritanceSearcher?.let {
+            object : InheritanceItemsSearcher {
+                override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
+                    it.search(nameFilter, { consumer(postProcess(it)) })
+                }
+            }
+        }
         val filter = result.declarationFilter
         return if (filter != null)
-            Result({ filter(it).map(::postProcess) }, additionalItems, result.inheritanceSearcher)
+            Result({ filter(it).map(::postProcess) }, additionalItems, inheritanceSearcher)
         else
-            Result(null, additionalItems, result.inheritanceSearcher)
+            Result(null, additionalItems, inheritanceSearcher)
     }
 
     private fun executeInternal(): Result? {
