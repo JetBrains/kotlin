@@ -30,9 +30,11 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
             new KotlinNotSurrounder(),
             new KotlinStringTemplateSurrounder(),
             new KotlinParenthesesSurrounder(),
-            new KotlinWhenSurrounder()
+            new KotlinWhenSurrounder() ,
+            new KotlinRuntimeTypeCastSurrounder()
     };
 
+    @Override
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
         JetExpression expression = CodeInsightUtils.findExpression(file, startOffset, endOffset);
@@ -42,6 +44,7 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
         return new PsiElement[] {expression};
     }
 
+    @Override
     @NotNull
     public Surrounder[] getSurrounders() {
         return SURROUNDERS;
