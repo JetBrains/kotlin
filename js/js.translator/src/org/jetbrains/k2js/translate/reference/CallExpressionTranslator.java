@@ -128,9 +128,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         JetExpression argumentExpression = arguments.get(0).getArgumentExpression();
         assert argumentExpression != null;
 
-        Object jsCode = BindingUtils.getCompileTimeValue(bindingContext(), argumentExpression);
-        assert jsCode instanceof String: "jsCode must be compile time string";
-        List<JsStatement> statements = parseJsCode((String) jsCode);
+        List<JsStatement> statements = parseJsCode(argumentExpression);
         int size = statements.size();
 
         if (size == 0) {
@@ -148,14 +146,18 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     @NotNull
-    private List<JsStatement> parseJsCode(@NotNull String jsCode) {
+    private List<JsStatement> parseJsCode(@NotNull JetExpression jsCodeExpression) {
+        Object jsCode = getCompileTimeValue(bindingContext(), jsCodeExpression);
+        assert jsCode instanceof String: "jsCode must be compile time string";
+
         List<JsStatement> statements = new ArrayList<JsStatement>();
+        ErrorReporter errorReporter = new JsCodeErrorReporter(jsCodeExpression);
 
         try {
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
             JsScope scope = context().scope();
-            StringReader reader = new StringReader(jsCode);
-            statements.addAll(JsParser.parse(info, scope, reader, /* insideFunction= */ true));
+            StringReader reader = new StringReader((String) jsCode);
+            statements.addAll(JsParser.parse(info, scope, reader, errorReporter, /* insideFunction= */ true));
         } catch (JsParserException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -163,5 +165,34 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
 
         return statements;
+    }
+
+    private class JsCodeErrorReporter implements ErrorReporter {
+        @NotNull
+        private final JetExpression jsCodeExpression;
+        private JsCodeErrorReporter(@NotNull JetExpression expression) {
+            jsCodeExpression = expression;
+        }
+
+        @Override
+        public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        }
+
+        /**
+         * TODO: seems not called anywhere, so remove
+         */
+        @Override
+        public EvaluatorException runtimeError(
+                String message, String sourceName, int line, String lineSource, int lineOffset
+        ) {
+            throw new RuntimeException(message);
+        }
+
+        /**
+         * Do not report warnings
+         */
+        @Override
+        public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        }
     }
 }

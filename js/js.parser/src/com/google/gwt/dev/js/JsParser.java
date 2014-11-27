@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -39,9 +40,11 @@ public class JsParser {
 
     public static List<JsStatement> parse(
             SourceInfo rootSourceInfo,
-            JsScope scope, Reader r, boolean insideFunction
+            JsScope scope, Reader r,
+            ErrorReporter errorReporter,
+            boolean insideFunction
     ) throws IOException, JsParserException {
-        return new JsParser(scope.getProgram()).parseImpl(rootSourceInfo, scope, r, insideFunction);
+        return new JsParser(scope.getProgram()).parseImpl(rootSourceInfo, scope, r, errorReporter, insideFunction);
     }
 
     private final Stack<JsScope> scopeStack = new Stack<JsScope>();
@@ -57,31 +60,12 @@ public class JsParser {
 
     List<JsStatement> parseImpl(
             final SourceInfo rootSourceInfo, JsScope scope,
-            Reader r, boolean insideFunction
+            Reader r,
+            ErrorReporter errorReporter,
+            boolean insideFunction
     ) throws JsParserException, IOException {
         // Create a custom error handler so that we can throw our own exceptions.
-        Context.enter().setErrorReporter(new ErrorReporter() {
-            @Override
-            public void error(String msg, String loc, int ln, String src, int col) {
-                throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, SOURCE_NAME_STUB));
-            }
-
-            @Override
-            public EvaluatorException runtimeError(
-                    String msg, String loc, int ln,
-                    String src, int col
-            ) {
-                // Never called, but just in case.
-                throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, SOURCE_NAME_STUB));
-            }
-
-            @Override
-            public void warning(String msg, String loc, int ln, String src, int col) {
-                // Ignore warnings.
-            }
-        });
+        Context.enter().setErrorReporter(errorReporter);
         try {
             // Parse using the Rhino parser.
             //
