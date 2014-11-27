@@ -90,7 +90,7 @@ public abstract class JetCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.makeString(IMPORT_SEPARATOR)
+        return myImports.joinToString(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
@@ -100,7 +100,7 @@ public abstract class JetCodeFragment(
     }
 
     public fun importsAsImportList(): JetImportList? {
-        return JetPsiFactory(this).createFile(myImports.makeString("\n")).getImportList()
+        return JetPsiFactory(this).createFile(myImports.joinToString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
@@ -126,7 +126,7 @@ public abstract class JetCodeFragment(
 
             return containingFile.getImportList()?.getImports()
                         ?.map { it.getText() }
-                        ?.makeString(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
+                        ?.joinToString(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
         }
     }
 }
