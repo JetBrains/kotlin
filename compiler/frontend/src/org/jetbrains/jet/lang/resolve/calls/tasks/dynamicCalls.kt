@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.tasks
 
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
@@ -43,14 +42,13 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorC
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors
-import org.jetbrains.jet.lexer.JetToken
-import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
-import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
 
 object DynamicCallableDescriptors {
 
@@ -62,7 +60,25 @@ object DynamicCallableDescriptors {
         }
 
         override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+            if (isAugmentedAssignmentConvention(name)) return listOf()
             return listOf(createDynamicFunction(owner, name, call))
+        }
+
+        /*
+         * Detects the case when name "plusAssign" is requested for "+=" call,
+         * since both "plus" and "plusAssign" are resolvable on dynamic receivers,
+         * we have to prefer ne of them, and prefer "plusAssign" for generality:
+         * it may be called even on a val
+         */
+        private fun isAugmentedAssignmentConvention(name: Name): Boolean {
+            val callee = call.getCalleeExpression()
+            if (callee is JetOperationReferenceExpression) {
+                val token = callee.getReferencedNameElementType()
+                if (token in JetTokens.AUGMENTED_ASSIGNMENTS && OperatorConventions.ASSIGNMENT_OPERATIONS[token] != name) {
+                    return true
+                }
+            }
+            return false
         }
 
         override fun getProperties(name: Name): Collection<VariableDescriptor> {

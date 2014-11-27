@@ -72,17 +72,23 @@ fun test(d: dynamic) {
     dVar<!DEBUG_INFO_DYNAMIC!>--<!>
     <!DEBUG_INFO_DYNAMIC!>--<!>dVar
 
-//    dVar += 1
-//    dVar -= 1
-//    dVar *= 1
-//    dVar /= 1
-//    dVar %= 1
+    dVar <!DEBUG_INFO_DYNAMIC!>+=<!> 1
+    dVar <!DEBUG_INFO_DYNAMIC!>-=<!> 1
+    dVar <!DEBUG_INFO_DYNAMIC!>*=<!> 1
+    dVar <!DEBUG_INFO_DYNAMIC!>/=<!> 1
+    dVar <!DEBUG_INFO_DYNAMIC!>%=<!> 1
 
-//    d[1] += 1
-//    d[1] -= 1
-//    d[1] *= 1
-//    d[1] /= 1
-//    d[1] %= 1
+    d <!DEBUG_INFO_DYNAMIC!>+=<!> 1
+    d <!DEBUG_INFO_DYNAMIC!>-=<!> 1
+    d <!DEBUG_INFO_DYNAMIC!>*=<!> 1
+    d <!DEBUG_INFO_DYNAMIC!>/=<!> 1
+    d <!DEBUG_INFO_DYNAMIC!>%=<!> 1
+
+    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>+=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>-=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>*=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>/=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>%=<!> 1
 }
 
 val dyn: dynamic = null

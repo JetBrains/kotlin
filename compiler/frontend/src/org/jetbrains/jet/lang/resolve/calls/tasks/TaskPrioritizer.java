@@ -147,9 +147,12 @@ public class TaskPrioritizer {
     ) {
         addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
 
-        addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit);
-
-        addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit);
+        if (TypesPackage.isDynamic(explicitReceiver.getType())) {
+            addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit);
+        }
+        else {
+            addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit);
+        }
     }
 
     private static <D extends CallableDescriptor, F extends D> void addExtensionCandidates(
@@ -208,8 +211,6 @@ public class TaskPrioritizer {
             @NotNull final TaskPrioritizerContext<D, F> c,
             boolean isExplicit
     ) {
-        if (!TypesPackage.isDynamic(explicitReceiver.getType())) return;
-
         TaskPrioritizerContext<D, F> onlyDynamicReceivers = c.replaceCollectors(TasksPackage.onlyDynamicReceivers(c.callableDescriptorCollectors));
         addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit);
 

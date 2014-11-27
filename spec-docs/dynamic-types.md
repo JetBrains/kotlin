@@ -70,6 +70,8 @@ Internally, `dynamic` is represented as a flexible type `Nothing..Any?`, with th
     the code may change its semantics just because somebody added some extension in another file.
   - This means that an extension to a normal, non-dynamic type **can not** be called on a `dynamic` receiver.
     If needed, one can force a call to an extension by casting the receiver to a static type: `(d as Foo).bar()`
+- Augmented assignments on dynamic receivers (e.g. `dyn += foo`) are resolved to `plusAssign()` function, not `plus`, for generality:
+  this permits calling them on vals (e.g. those holding collection-like objects)
 
 ## Type Argument Inference
 
