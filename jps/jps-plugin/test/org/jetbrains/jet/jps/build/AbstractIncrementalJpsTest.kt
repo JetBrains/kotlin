@@ -70,7 +70,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                         buildResult
                                 .getMessages(BuildMessage.Kind.ERROR)
                                 .map { it.getMessageText() }
-                                .map { it.replaceAll("^[^:]+:\\d+:\\s+", "") }
+                                .map { it.replaceAll("^.+:\\d+:\\s+", "").trim() }
                                 .joinToString("\n")
                 return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
             }
