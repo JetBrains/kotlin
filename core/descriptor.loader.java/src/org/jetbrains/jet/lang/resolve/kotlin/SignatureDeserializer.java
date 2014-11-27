@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class SignatureDeserializer {
     // These types are ordered according to their sorts, this is significant for deserialization
-    private static final char[] PRIMITIVE_TYPES = new char[] { 'V', 'Z', 'C', 'B', 'S', 'I', 'F', 'J', 'D' };
+    private static final char[] PRIMITIVE_TYPES = new char[] {'V', 'Z', 'C', 'B', 'S', 'I', 'F', 'J', 'D'};
 
     private final NameResolver nameResolver;
 
@@ -48,8 +48,8 @@ public class SignatureDeserializer {
     }
 
     @NotNull
-    public DescriptorLoadersStorage.MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
-        return DescriptorLoadersStorage.MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
+    public MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+        return MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
     }
 
     @NotNull

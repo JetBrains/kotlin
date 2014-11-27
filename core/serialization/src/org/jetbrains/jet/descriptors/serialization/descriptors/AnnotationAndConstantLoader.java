@@ -17,21 +17,23 @@
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
-public interface AnnotationLoader {
-    AnnotationLoader UNSUPPORTED = new AnnotationLoader() {
+public interface AnnotationAndConstantLoader {
+    AnnotationAndConstantLoader UNSUPPORTED = new AnnotationAndConstantLoader() {
         @NotNull
         @Override
         public List<AnnotationDescriptor> loadClassAnnotations(
                 @NotNull ProtoBuf.Class classProto,
                 @NotNull NameResolver nameResolver
         ) {
-            return notSupported();
+            return annotationsNotSupported();
         }
 
         @NotNull
@@ -42,7 +44,7 @@ public interface AnnotationLoader {
                 @NotNull NameResolver nameResolver,
                 @NotNull AnnotatedCallableKind kind
         ) {
-            return notSupported();
+            return annotationsNotSupported();
         }
 
         @NotNull
@@ -54,11 +56,22 @@ public interface AnnotationLoader {
                 @NotNull AnnotatedCallableKind kind,
                 @NotNull ProtoBuf.Callable.ValueParameter proto
         ) {
-            return notSupported();
+            return annotationsNotSupported();
+        }
+
+        @Nullable
+        @Override
+        public CompileTimeConstant<?> loadPropertyConstant(
+                @NotNull ProtoContainer container,
+                @NotNull ProtoBuf.Callable proto,
+                @NotNull NameResolver nameResolver,
+                @NotNull AnnotatedCallableKind kind
+        ) {
+            throw new UnsupportedOperationException("Constants are not supported");
         }
 
         @NotNull
-        private List<AnnotationDescriptor> notSupported() {
+        private List<AnnotationDescriptor> annotationsNotSupported() {
             throw new UnsupportedOperationException("Annotations are not supported");
         }
     };
@@ -84,5 +97,13 @@ public interface AnnotationLoader {
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
             @NotNull ProtoBuf.Callable.ValueParameter proto
+    );
+
+    @Nullable
+    CompileTimeConstant<?> loadPropertyConstant(
+            @NotNull ProtoContainer container,
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
     );
 }

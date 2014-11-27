@@ -70,7 +70,7 @@ public class DeserializedClassDescriptor(
                 Annotations.EMPTY
             }
             else DeserializedAnnotations(c.storageManager) {
-                c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver)
+                c.components.annotationAndConstantLoader.loadClassAnnotations(classProto, c.nameResolver)
             }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration

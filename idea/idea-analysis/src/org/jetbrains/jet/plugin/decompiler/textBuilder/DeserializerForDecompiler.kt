@@ -92,11 +92,8 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
-    private val loadersStorage = DescriptorLoadersStorage(storageManager, moduleDescriptor)
-
-    private val annotationLoader = AnnotationDescriptorLoader(moduleDescriptor, loadersStorage, localClassFinder, LOGGING_REPORTER)
-
-    private val constantLoader = ConstantDescriptorLoader(loadersStorage, localClassFinder, LOGGING_REPORTER)
+    private val annotationAndConstantLoader =
+            BinaryClassAnnotationAndConstantLoader(moduleDescriptor, storageManager, localClassFinder, LOGGING_REPORTER)
 
     private val classDataFinder = object : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
@@ -135,7 +132,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private val deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
+            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             JavaFlexibleTypeCapabilitiesDeserializer
     )
 

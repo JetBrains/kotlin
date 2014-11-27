@@ -19,16 +19,14 @@ package org.jetbrains.jet.descriptors.serialization.context
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
-import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
 import org.jetbrains.jet.lang.resolve.name.ClassId
 
 public class DeserializationComponents(
         public val storageManager: StorageManager,
         public val moduleDescriptor: ModuleDescriptor,
         public val classDataFinder: ClassDataFinder,
-        public val annotationLoader: AnnotationLoader,
-        public val constantLoader: ConstantLoader,
+        public val annotationAndConstantLoader: AnnotationAndConstantLoader,
         public val packageFragmentProvider: PackageFragmentProvider,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
 ) {

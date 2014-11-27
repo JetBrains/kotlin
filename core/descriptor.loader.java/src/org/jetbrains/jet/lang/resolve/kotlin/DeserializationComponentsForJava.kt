@@ -27,12 +27,11 @@ public class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         classDataFinder: JavaClassDataFinder,
-        annotationLoader: AnnotationDescriptorLoader,
-        constantLoader: ConstantDescriptorLoader,
+        annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoader,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
 ) {
-        val components = DeserializationComponents(
-                storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
-                JavaFlexibleTypeCapabilitiesDeserializer
-        )
+    val components = DeserializationComponents(
+            storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
+            JavaFlexibleTypeCapabilitiesDeserializer
+    )
 }

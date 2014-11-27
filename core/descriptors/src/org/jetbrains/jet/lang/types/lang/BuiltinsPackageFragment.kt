@@ -17,8 +17,7 @@
 package org.jetbrains.jet.lang.types.lang
 
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
-import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
@@ -47,8 +46,8 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
                 loadPackage(),
                 nameResolver,
                 DeserializationComponents(
-                        storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
-                        ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
+                        storageManager, module, BuiltInsClassDataFinder(), AnnotationAndConstantLoader.UNSUPPORTED, // TODO: support annotations
+                        provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
                 ),
                 { readClassNames() }
         )
