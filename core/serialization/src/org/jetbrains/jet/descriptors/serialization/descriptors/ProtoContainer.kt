@@ -18,9 +18,18 @@ package org.jetbrains.jet.descriptors.serialization.descriptors
 
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.jet.descriptors.serialization.NameResolver
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 
 public data class ProtoContainer(val classProto: ProtoBuf.Class?, val packageFqName: FqName?) {
     {
         assert(classProto != null || packageFqName != null)
+        assert(classProto == null || packageFqName == null)
+    }
+
+    fun getFqName(nameResolver: NameResolver): FqNameUnsafe {
+        if (packageFqName != null) return packageFqName.toUnsafe()
+
+        return nameResolver.getClassId(classProto!!.getFqName()).asSingleFqName()
     }
 }

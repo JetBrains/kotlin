@@ -92,7 +92,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     ): List<A> {
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: $container", null)
+            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.getFqName(nameResolver)}", null)
             return listOf()
         }
 
@@ -127,7 +127,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: $container", null)
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.getFqName(nameResolver)}", null)
             return null
         }
 
