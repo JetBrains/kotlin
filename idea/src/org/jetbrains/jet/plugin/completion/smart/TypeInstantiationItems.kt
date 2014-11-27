@@ -298,11 +298,10 @@ class TypeInstantiationItems(
                     reconstructionResult.getResultingType() ?: continue
                 }
                 else {
-                    val type = descriptor.getDefaultType()
-                    // check if derived type matches type arguments for base
-                    if (baseHasTypeArgs && !type.isSubtypeOf(expectedType)) continue
-                    type
+                    descriptor.getDefaultType()
                 }
+                // check if derived type matches type arguments for base
+                if (baseHasTypeArgs && !resultingType.isSubtypeOf(expectedType)) continue
 
                 val lookupElement = createTypeInstantiationItem(descriptor, resultingType.getArguments(), tail) ?: continue
                 consumer(lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INHERITOR_INSTANTIATION))
