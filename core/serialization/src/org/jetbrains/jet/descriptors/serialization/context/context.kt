@@ -21,12 +21,14 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
 import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 
 public class DeserializationComponents(
         public val storageManager: StorageManager,
         public val moduleDescriptor: ModuleDescriptor,
         public val classDataFinder: ClassDataFinder,
-        public val annotationAndConstantLoader: AnnotationAndConstantLoader,
+        public val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>>,
         public val packageFragmentProvider: PackageFragmentProvider,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
 ) {

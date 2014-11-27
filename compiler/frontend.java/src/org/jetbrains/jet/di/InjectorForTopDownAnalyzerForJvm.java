@@ -78,7 +78,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoader;
+import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -148,7 +148,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final JavaClassDataFinder javaClassDataFinder;
-    private final BinaryClassAnnotationAndConstantLoader binaryClassAnnotationAndConstantLoader;
+    private final BinaryClassAnnotationAndConstantLoaderImpl binaryClassAnnotationAndConstantLoader;
 
     public InjectorForTopDownAnalyzerForJvm(
         @NotNull Project project,
@@ -181,7 +181,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModuleDescriptor());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModuleDescriptor());
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoader(getModuleDescriptor(), storageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModuleDescriptor(), storageManager, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, getModuleDescriptor(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);

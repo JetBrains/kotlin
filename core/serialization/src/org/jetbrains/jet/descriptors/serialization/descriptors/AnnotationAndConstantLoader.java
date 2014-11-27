@@ -25,8 +25,9 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
-public interface AnnotationAndConstantLoader {
-    AnnotationAndConstantLoader UNSUPPORTED = new AnnotationAndConstantLoader() {
+public interface AnnotationAndConstantLoader<A, C> {
+    AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<?>> UNSUPPORTED =
+            new AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<?>>() {
         @NotNull
         @Override
         public List<AnnotationDescriptor> loadClassAnnotations(
@@ -77,13 +78,13 @@ public interface AnnotationAndConstantLoader {
     };
 
     @NotNull
-    List<AnnotationDescriptor> loadClassAnnotations(
+    List<A> loadClassAnnotations(
             @NotNull ProtoBuf.Class classProto,
             @NotNull NameResolver nameResolver
     );
 
     @NotNull
-    List<AnnotationDescriptor> loadCallableAnnotations(
+    List<A> loadCallableAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
@@ -91,7 +92,7 @@ public interface AnnotationAndConstantLoader {
     );
 
     @NotNull
-    List<AnnotationDescriptor> loadValueParameterAnnotations(
+    List<A> loadValueParameterAnnotations(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,
@@ -100,7 +101,7 @@ public interface AnnotationAndConstantLoader {
     );
 
     @Nullable
-    CompileTimeConstant<?> loadPropertyConstant(
+    C loadPropertyConstant(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,

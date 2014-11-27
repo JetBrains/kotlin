@@ -27,7 +27,7 @@ public class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         classDataFinder: JavaClassDataFinder,
-        annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoader,
+        annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
 ) {
     val components = DeserializationComponents(

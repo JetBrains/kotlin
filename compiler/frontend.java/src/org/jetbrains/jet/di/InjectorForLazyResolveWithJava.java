@@ -67,7 +67,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoader;
+import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -126,7 +126,7 @@ public class InjectorForLazyResolveWithJava {
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final JavaClassDataFinder javaClassDataFinder;
-    private final BinaryClassAnnotationAndConstantLoader binaryClassAnnotationAndConstantLoader;
+    private final BinaryClassAnnotationAndConstantLoaderImpl binaryClassAnnotationAndConstantLoader;
 
     public InjectorForLazyResolveWithJava(
         @NotNull Project project,
@@ -187,7 +187,7 @@ public class InjectorForLazyResolveWithJava {
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoader(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);

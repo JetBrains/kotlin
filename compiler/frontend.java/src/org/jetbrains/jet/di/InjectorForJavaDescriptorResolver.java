@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoader;
+import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -70,7 +70,7 @@ public class InjectorForJavaDescriptorResolver {
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final JavaClassDataFinder javaClassDataFinder;
-    private final BinaryClassAnnotationAndConstantLoader binaryClassAnnotationAndConstantLoader;
+    private final BinaryClassAnnotationAndConstantLoaderImpl binaryClassAnnotationAndConstantLoader;
 
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
@@ -98,7 +98,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoader(getModule(), lockBasedStorageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModule(), lockBasedStorageManager, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(lockBasedStorageManager, getModule(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
         this.javaClassFinder.setProject(project);

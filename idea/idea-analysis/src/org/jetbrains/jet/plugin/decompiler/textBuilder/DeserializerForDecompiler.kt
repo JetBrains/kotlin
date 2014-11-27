@@ -93,7 +93,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
     private val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoader(moduleDescriptor, storageManager, localClassFinder, LOGGING_REPORTER)
+            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, localClassFinder, LOGGING_REPORTER)
 
     private val classDataFinder = object : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
