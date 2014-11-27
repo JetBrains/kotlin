@@ -45,6 +45,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 
@@ -52,30 +53,43 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
 
     private static final String DEFAULT_LIB_DIR_NAME = "lib";
 
-    @NotNull
-    public abstract LibraryKind getLibraryKind();
+    private final String libraryName;
+    private final String dialogTitle;
+    private final String modulesSeparatorCaption;
+    private final LibraryKind libraryKind;
+    private final Set<? extends LibraryKind> suitableLibraryKinds;
+    private final boolean useRelativePaths;
 
-    @Nullable
-    public abstract DeferredCopyFileRequests getCopyFileRequests();
-
-    protected final boolean useRelativePaths;
-
-    protected DeferredCopyFileRequests deferredCopyFileRequests;
-
-    @NotNull
-    protected abstract String getLibraryName();
-
-    @NotNull
-    protected abstract String getDialogTitle();
-
-    @NotNull
-    protected abstract String getDialogCaption();
+    private DeferredCopyFileRequests deferredCopyFileRequests;
 
     /**
      * @param project null when project doesn't exist yet (called from project wizard)
      */
-    public CustomLibraryDescriptorWithDefferConfig(@Nullable Project project) {
+    public CustomLibraryDescriptorWithDefferConfig(
+            @Nullable Project project,
+            @NotNull String libraryName,
+            @NotNull String dialogTitle,
+            @NotNull String modulesSeparatorCaption,
+            @NotNull LibraryKind libraryKind,
+            @NotNull Set<? extends LibraryKind> suitableLibraryKinds
+    ) {
         useRelativePaths = project == null;
+        this.libraryName = libraryName;
+        this.dialogTitle = dialogTitle;
+        this.modulesSeparatorCaption = modulesSeparatorCaption;
+        this.libraryKind = libraryKind;
+        this.suitableLibraryKinds = suitableLibraryKinds;
+    }
+
+    @Nullable
+    public DeferredCopyFileRequests getCopyFileRequests() {
+        return deferredCopyFileRequests;
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends LibraryKind> getSuitableLibraryKinds() {
+        return suitableLibraryKinds;
     }
 
     public void finishLibConfiguration(@NotNull Module module, @NotNull ModifiableRootModel rootModel) {
@@ -88,7 +102,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
                 LibraryPresentationManager libraryPresentationManager = LibraryPresentationManager.getInstance();
                 List<VirtualFile> classFiles = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
 
-                return libraryPresentationManager.isLibraryOfKind(classFiles, getLibraryKind());
+                return libraryPresentationManager.isLibraryOfKind(classFiles, libraryKind);
             }
         });
 
@@ -125,10 +139,6 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
                     ProjectStructurePackage.replaceFileRoot(model, request.file, resultFile);
                 }
             }
-        }
-
-        public void addCopyRequest(@NotNull File file, @NotNull String copyIntoPath) {
-            copyFilesRequests.add(new CopyFileRequest(copyIntoPath, file, false));
         }
 
         public void addCopyWithReplaceRequest(@NotNull File file, @NotNull String copyIntoPath) {
@@ -180,7 +190,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
             }
         }
         else {
-            CreateLibraryDialog dialog =new CreateLibraryDialog(defaultPathToJarFile, getDialogTitle(), getDialogCaption());
+            CreateLibraryDialog dialog =new CreateLibraryDialog(defaultPathToJarFile, dialogTitle, modulesSeparatorCaption);
             dialog.show();
 
             if (!dialog.isOK()) return null;
@@ -202,7 +212,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
         final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
         final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
 
-        return new NewLibraryConfiguration(getLibraryName(), null, new LibraryVersionProperties()) {
+        return new NewLibraryConfiguration(libraryName, null, new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);

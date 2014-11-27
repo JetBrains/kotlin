@@ -103,7 +103,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
             CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
                     project, nonConfiguredModules, defaultPathToJar, showPathToJarPanel,
                     JSLibraryStdDescription.DIALOG_TITLE,
-                    JSLibraryStdDescription.DIALOG_CAPTION);
+                    JSLibraryStdDescription.LIBRARY_CAPTION);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 dialog.show();

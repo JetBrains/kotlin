@@ -98,7 +98,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
             CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
                     project, nonConfiguredModules, defaultPath, showPathPanelForJava,
                     JavaRuntimeLibraryDescription.DIALOG_TITLE,
-                    JavaRuntimeLibraryDescription.DIALOG_CAPTION);
+                    JavaRuntimeLibraryDescription.LIBRARY_CAPTION);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 dialog.show();

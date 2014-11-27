@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
@@ -36,50 +35,14 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
 
     public static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
     public static final String DIALOG_TITLE = "Create Kotlin JavaScript Library";
-    public static final String DIALOG_CAPTION = "Kotlin JavaScript Library";
+    public static final String LIBRARY_CAPTION = "Kotlin JavaScript Library";
     public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
 
     /**
      * @param project null when project doesn't exist yet (called from project wizard)
      */
     public JSLibraryStdDescription(@Nullable Project project) {
-        super(project);
-    }
-
-    @NotNull
-    @Override
-    protected String getLibraryName() {
-        return LIBRARY_NAME;
-    }
-
-    @NotNull
-    @Override
-    protected String getDialogTitle() {
-        return DIALOG_TITLE;
-    }
-
-    @NotNull
-    @Override
-    protected String getDialogCaption() {
-        return DIALOG_CAPTION;
-    }
-
-    @NotNull
-    @Override
-    public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return SUITABLE_LIBRARY_KINDS;
-    }
-
-    @NotNull
-    @Override
-    public LibraryKind getLibraryKind() {
-        return KOTLIN_JAVASCRIPT_KIND;
-    }
-
-    @Nullable
-    @Override
-    public DeferredCopyFileRequests getCopyFileRequests() {
-        return deferredCopyFileRequests;
+        super(project, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVASCRIPT_KIND, SUITABLE_LIBRARY_KINDS);
     }
 
     @TestOnly

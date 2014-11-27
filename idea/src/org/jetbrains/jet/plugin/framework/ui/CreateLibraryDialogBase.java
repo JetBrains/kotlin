@@ -41,7 +41,7 @@ public abstract class CreateLibraryDialogBase extends DialogWrapper {
             @Nullable Project project,
             @NotNull String defaultPath,
             @NotNull String title,
-            @NotNull String caption
+            @NotNull String libraryCaption
     ) {
         super(project);
 
@@ -66,7 +66,7 @@ public abstract class CreateLibraryDialogBase extends DialogWrapper {
         });
         chooseLibraryPathPlace.add(pathPanel.getContentPane(), BorderLayout.CENTER);
 
-        modulesSeparator.setCaption(caption);
+        modulesSeparator.setCaption(libraryCaption);
     }
 
     protected void updateComponents() {
