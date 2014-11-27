@@ -21,18 +21,6 @@ fun jsFun(p: dynamic): dynamic
   - [ ] All members are implicitly `dynamic`
   - [ ] All types whose type constructors are marked `dynamic` are themselves dynamic types
 
-## Typing rules
-
-- `dynamic` is assignable to anything
-- everything is assignable to `dynamic`
-- `dynamic` variable may hold `null`
-- `dynamic?` is the same as `dynamic`, a warning should be issued
-- `lub(T, dynamic) = dynamic`
-- ??? `glb(T, dynamic) = T`
-- `dynamic` can't be substituted for reified parameters of function/constructor calls (this means that it's not possible to create an array of `dynamic`)
-- `dynamic` can't be used as a supertype or upper bound for a type parameter
-- `dynamic` is less specific than any other type
-
 ## Syntax
 
 ```
@@ -47,33 +35,60 @@ type
 - in a type context, when followed by a dot (except for a dot that separates a receiver type from a function/property name) or an angle bracket `<`, it's an identifier
 - on the left-hand-side of `::` in a callable reference: `dynamic::foo` implies that `dynamic` there is a normal identifier
 
-## Representation
+## Typing rules
 
 Internally, `dynamic` is represented as a flexible type `Nothing..Any?`, with the following capabilities:
 - makeNullable has no effect
-- (???) makeNotNull changes it to a non-null version: `Nothing..Any`
-- if a receiver of a call is dynamic (or a dynamic implicit receiver is available), and the call can not be resolved statically
-  (no fitting candidates are found, NOTE: this does not include ambiguity), a dynamic candidate descriptor is created for the arity of the call,
-  and the call is resolved to it.
-- (???) All methods of JetType are delegated to the upper bounds, instead of lower bound
+- All methods of JetType are delegated to the upper bounds, instead of lower bound
 
-## Implications
+Rules:
+- `dynamic` is assignable to anything
+- everything is assignable to `dynamic`
+- `dynamic` variable may hold `null`
+- `dynamic?` is the same as `dynamic`, a warning is issued on usages of this syntactic form
+- safe calls and `!!` issue no warnings when called on `dynamic` expressions
+- `lub(T, dynamic) = dynamic`
+- `glb(T, dynamic) = T`
+- `dynamic` can't be substituted for reified parameters of function/constructor calls (this means that it's not possible to create an array of `dynamic`)
+- dynamic types are forbidden on the right-hand side of `is`, `!is`, `as` and `as?` (but not as generic arguments, e.g. `x is List<dynamic>` is allowed)
+- `dynamic` can't be used as a supertype or upper bound for a type parameter
+- When it comes to overload resolution, `dynamic` is less specific than any other type
 
-`Nothing` being mentioned, there's a risk of taking `dynamic` for a bottom type in some contexts, this is not intended and should be tested carefully.
+> When there are two function available
+  ``` kotlin
+  fun foo(s: String)
+  fun foo(d: dynamic)
+ ```
+  the first one is resolved whenever a matching argument is passed (because `dynamic` is less specific than `String`), i.e. both calls:
+  - foo("")
+  - foo(dyn) // dyn: dynamic
+
+  are resolved to the same function `foo(String)`. This may seem counter-intuitive in the latter case, but there's no sane way around it.
+
+  Calls like `foo(1)` are resolved to `foo(dynamic)`, because `foo(String)` does not fit the arguments.
+
+  To force the call of `foo(dynamic)` on any expression, one can up-cast the argument to a static type, e.g. `foo(dyn as Any)`
 
 ## Resolution rules
 
-- If a receiver is `dynamic` a call is resolved as dynamic if no members (these are members of `Any`, unless we implement bounded `dynamic`)
-  and no extensions with dynamic receivers match the signature.
-  - Motivation: otherwise, **any** extension to **any** type that simply happens to be in scope and match the name and arguments
-    will be bound for a call with a `dynamic` receiver, i.e. there's no way to force a call to be dynamic, and in the case of a `*`-import
-    the code may change its semantics just because somebody added some extension in another file.
-  - This means that an extension to a normal, non-dynamic type **can not** be called on a `dynamic` receiver.
-    If needed, one can force a call to an extension by casting the receiver to a static type: `(d as Foo).bar()`
-- Augmented assignments on dynamic receivers (e.g. `dyn += foo`) are resolved to `plusAssign()` function, not `plus`, for generality:
-  this permits calling them on vals (e.g. those holding collection-like objects)
-- The invoke convention is limited so that for calls like `dyn.foo()` we do not look for property `foo` that has `invoke` defined on it
-  (same for other cases like `+dyn` etc)
+If a receiver of a call is dynamic, the following resolution rules apply:
+- first, we are looking for matching members of the upper bound of the representing dynamic type (`Any` unless we implement bounded dynamics,
+  see Appendix below).
+- next, we are looking for extensions declared for dynamic types (no extensions for static types are considered at this point)
+- lastly, we create a synthetic candidate that is bound to match the call (i.e. has the appropriate name, numbers of type- and value parameters,
+  value parameters have appropriate names, if named arguments are used, etc.). Notes:
+  - Augmented assignments on dynamic receivers (e.g. `dyn += foo`) are resolved to `plusAssign()` function, not `plus`, for generality:
+    this permits calling them on vals (e.g. those holding collection-like objects)
+  - The invoke convention is limited so that for calls like `dyn.foo()` we do not look for property `foo` that has `invoke` defined on it
+    (same for other cases like `+dyn` etc)
+
+NOTE: we do not even try to resolve extensions declared for static types if the receiver is dynamic. As a workaround, one may use an upcast
+to a static type: `(dyn as Foo).extensionForFoo()`.
+
+> Motivation: otherwise, **any** extension to **any** type that simply happens to be in scope and match the name and arguments
+  will be bound for a call with a `dynamic` receiver, i.e. there's no way to force a call to be dynamic, and in the case of a `*`-import
+  the code may change its semantics just because somebody added some extension in another file.
+  - This means that an extension to a normal, non-dynamic type **can not** be called on a `dynamic` receiver without an upcast.
 
 ## Type Argument Inference
 
@@ -89,13 +104,13 @@ foo(listOf()) // can't determine T for listOf<T>()
 Discussion:
 - we could tweak inference so that it takes `dynamic` as a bound for all type variables whose containing type has a dynamic bound,
 but it's hard to be sure it's worth the while
+- one relevant case is passing lambdas to dynamic calls: we could make their arguments have dynamic types without declaration
 
 ## Notes
 
 - dynamic types are not supported on the JVM back-end
-- dynamic types are forbidden on the right-hand side of `is`, `!is`, `as` and `as?` (but not as generic arguments, e.g. `x is List<dynamic>` is allowed)
 
-## Prospect on bounded dynamic types
+## Appendix. Prospect on bounded dynamic types
 
 *(not to be implemented now)*
 
