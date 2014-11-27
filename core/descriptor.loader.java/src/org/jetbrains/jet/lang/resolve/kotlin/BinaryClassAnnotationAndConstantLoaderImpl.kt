@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
@@ -76,8 +75,6 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             annotationClassId: ClassId,
             result: MutableList<AnnotationDescriptor>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        if (JvmAnnotationNames.isSpecialAnnotation(annotationClassId, true)) return null
-
         val annotationClass = resolveClass(annotationClassId)
 
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {

@@ -31,6 +31,7 @@ import java.util.HashMap
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.descriptors.serialization.Flags
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         storageManager: StorageManager,
@@ -49,6 +50,15 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
+    private fun loadAnnotationIfNotSpecial(
+            annotationClassId: ClassId,
+            result: MutableList<A>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        if (JvmAnnotationNames.isSpecialAnnotation(annotationClassId, true)) return null
+
+        return loadAnnotation(annotationClassId, result)
+    }
+
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<A> {
         val classId = nameResolver.getClassId(classProto.getFqName())
         val kotlinClass = findKotlinClassById(classId)
@@ -63,7 +73,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
         kotlinClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
             override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                return loadAnnotation(classId, result)
+                return loadAnnotationIfNotSpecial(classId, result)
             }
 
             override fun visitEnd() {
@@ -215,7 +225,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                         result = ArrayList<A>()
                         memberAnnotations[paramSignature] = result
                     }
-                    return loadAnnotation(classId, result)
+                    return loadAnnotationIfNotSpecial(classId, result)
                 }
             }
 
@@ -223,7 +233,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 private val result = ArrayList<A>()
 
                 override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    return loadAnnotation(classId, result)
+                    return loadAnnotationIfNotSpecial(classId, result)
                 }
 
                 override fun visitEnd() {
