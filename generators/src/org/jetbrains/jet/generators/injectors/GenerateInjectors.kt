@@ -77,6 +77,16 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForLazyBodyResolve()
         )
 
+private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
+    parameter(javaClass<Project>())
+    parameter(javaClass<GlobalContext>(), useAsContext = true)
+    parameter(javaClass<BindingTrace>())
+    parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+    parameter(javaClass<DeclarationProviderFactory>())
+
+    publicField(javaClass<ResolveSession>())
+}
+
 private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             parameter(javaClass<Project>())
@@ -95,14 +105,9 @@ private fun generatorForTopDownAnalyzerBasic() =
 
 private fun generatorForLazyTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyTopDownAnalyzerBasic") {
-            parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContext>(), useAsContext = true)
-            parameter(javaClass<BindingTrace>())
-            parameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
-            parameter(javaClass<DeclarationProviderFactory>())
+            commonForResolveSessionBased()
 
             publicFields(
-                    javaClass<ResolveSession>(),
                     javaClass<LazyTopDownAnalyzer>()
             )
 
@@ -127,17 +132,12 @@ private fun generatorForLazyBodyResolve() =
 
 private fun generatorForTopDownAnalyzerForJs() =
         generator("js/js.frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
-            parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContext>(), useAsContext = true)
-            parameter(javaClass<BindingTrace>())
-            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
-            parameter(javaClass<DeclarationProviderFactory>())
+            commonForResolveSessionBased()
 
             publicFields(
                     javaClass<LazyTopDownAnalyzer>()
             )
 
-            field(javaClass<ResolveSession>())
             field(javaClass<MutablePackageFragmentProvider>())
             field(javaClass<AdditionalCheckerProvider>(),
                   init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
@@ -145,16 +145,12 @@ private fun generatorForTopDownAnalyzerForJs() =
 
 private fun generatorForTopDownAnalyzerForJvm() =
         generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm") {
-            parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContext>(), useAsContext = true)
-            parameter(javaClass<BindingTrace>())
-            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+            commonForResolveSessionBased()
+
             parameter(javaClass<GlobalSearchScope>(), name = "moduleContentScope")
-            parameter(javaClass<DeclarationProviderFactory>())
 
             publicFields(
                     javaClass<LazyTopDownAnalyzer>(),
-                    javaClass<ResolveSession>(),
                     javaClass<JavaDescriptorResolver>(),
                     javaClass<DeserializationComponentsForJava>()
             )
@@ -220,18 +216,15 @@ private fun generatorForJavaDescriptorResolver() =
 
 private fun generatorForLazyResolveWithJava() =
         generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForLazyResolveWithJava") {
-            parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContext>(), useAsContext = true)
-            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+            commonForResolveSessionBased()
+
             parameter(javaClass<GlobalSearchScope>(), name = "moduleContentScope")
+
             parameters(
-                    javaClass<BindingTrace>(),
-                    javaClass<DeclarationProviderFactory>(),
                     javaClass<ModuleClassResolver>()
             )
 
             publicFields(
-                    javaClass<ResolveSession>(),
                     javaClass<JavaDescriptorResolver>()
             )
 

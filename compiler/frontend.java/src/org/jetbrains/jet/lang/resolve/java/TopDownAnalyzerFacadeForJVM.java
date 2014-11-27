@@ -130,8 +130,8 @@ public enum TopDownAnalyzerFacadeForJVM {
                 topDownAnalysisParameters,
                 trace,
                 module,
-                GlobalSearchScope.allScope(project),
-                providerFactory
+                providerFactory,
+                GlobalSearchScope.allScope(project)
         );
 
         try {

@@ -123,9 +123,9 @@ public class ReplInterpreter {
                 context,
                 trace,
                 module,
-                ProjectScope.getAllScope(project),
-                scriptDeclarationFactory
-                );
+                scriptDeclarationFactory,
+                ProjectScope.getAllScope(project)
+        );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzer();

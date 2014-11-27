@@ -19,13 +19,13 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
@@ -79,13 +79,13 @@ public class InjectorForLazyResolveWithJava {
     private final Project project;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
+    private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl module;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
-    private final GlobalSearchScope moduleContentScope;
-    private final BindingTrace bindingTrace;
     private final DeclarationProviderFactory declarationProviderFactory;
-    private final ModuleClassResolver moduleClassResolver;
     private final ResolveSession resolveSession;
+    private final GlobalSearchScope moduleContentScope;
+    private final ModuleClassResolver moduleClassResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final VirtualFileFinder virtualFileFinder;
     private final JavaClassFinderImpl javaClassFinder;
@@ -133,22 +133,22 @@ public class InjectorForLazyResolveWithJava {
     public InjectorForLazyResolveWithJava(
         @NotNull Project project,
         @NotNull GlobalContext globalContext,
-        @NotNull ModuleDescriptorImpl module,
-        @NotNull GlobalSearchScope moduleContentScope,
         @NotNull BindingTrace bindingTrace,
+        @NotNull ModuleDescriptorImpl module,
         @NotNull DeclarationProviderFactory declarationProviderFactory,
+        @NotNull GlobalSearchScope moduleContentScope,
         @NotNull ModuleClassResolver moduleClassResolver
     ) {
         this.project = project;
         this.globalContext = globalContext;
         this.storageManager = globalContext.getStorageManager();
+        this.bindingTrace = bindingTrace;
         this.module = module;
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
-        this.moduleContentScope = moduleContentScope;
-        this.bindingTrace = bindingTrace;
         this.declarationProviderFactory = declarationProviderFactory;
-        this.moduleClassResolver = moduleClassResolver;
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
+        this.moduleContentScope = moduleContentScope;
+        this.moduleClassResolver = moduleClassResolver;
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();

@@ -64,9 +64,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
             resolverForProject.resolverForModule(moduleInfo as M).javaDescriptorResolver
         }
         val injector = InjectorForLazyResolveWithJava(
-                project, globalContext, moduleDescriptor, moduleContentScope,
+                project, globalContext,
                 CodeAnalyzerInitializer.getInstance(project).createTrace(),
-                declarationProviderFactory, moduleClassResolver
+                moduleDescriptor, declarationProviderFactory,
+                moduleContentScope, moduleClassResolver
         )
 
         val resolveSession = injector.getResolveSession()!!

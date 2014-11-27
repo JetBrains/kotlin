@@ -74,7 +74,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
-    private final ModuleDescriptorImpl moduleDescriptor;
+    private final ModuleDescriptorImpl module;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
@@ -122,17 +122,17 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         @NotNull Project project,
         @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptorImpl moduleDescriptor,
+        @NotNull ModuleDescriptorImpl module,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
         this.project = project;
         this.globalContext = globalContext;
         this.storageManager = globalContext.getStorageManager();
         this.bindingTrace = bindingTrace;
-        this.moduleDescriptor = moduleDescriptor;
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.module = module;
+        this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
-        this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider.Empty.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
@@ -143,14 +143,14 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
+        this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
@@ -169,7 +169,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(moduleDescriptor);
+        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
 
@@ -184,7 +184,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
         this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
         this.lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
-        this.lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
+        this.lazyTopDownAnalyzer.setModuleDescriptor(module);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
@@ -268,7 +268,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         declarationResolver.setTrace(bindingTrace);
 
         importsResolver.setImportsFactory(jetImportsFactory);
-        importsResolver.setModuleDescriptor(moduleDescriptor);
+        importsResolver.setModuleDescriptor(module);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         importsResolver.setTrace(bindingTrace);
 
@@ -278,7 +278,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
 
         topDownAnalyzer.setBodyResolver(bodyResolver);
         topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
+        topDownAnalyzer.setModuleDescriptor(module);
         topDownAnalyzer.setOverloadResolver(overloadResolver);
         topDownAnalyzer.setOverrideResolver(overrideResolver);
         topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
