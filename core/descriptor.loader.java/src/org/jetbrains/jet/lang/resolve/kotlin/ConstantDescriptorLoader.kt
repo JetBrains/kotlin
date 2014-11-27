@@ -14,46 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin;
+package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader;
-import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.descriptors.serialization.NameResolver
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind
+import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
+import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature
 
-public class ConstantDescriptorLoader extends BaseDescriptorLoader implements ConstantLoader {
-    public ConstantDescriptorLoader(
-            @NotNull DescriptorLoadersStorage storage,
-            @NotNull KotlinClassFinder kotlinClassFinder,
-            @NotNull ErrorReporter errorReporter
-    ) {
-        super(kotlinClassFinder, errorReporter, storage);
-    }
+public class ConstantDescriptorLoader(storage: DescriptorLoadersStorage, kotlinClassFinder: KotlinClassFinder, errorReporter: ErrorReporter) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), ConstantLoader {
 
-    @Nullable
-    @Override
-    public CompileTimeConstant<?> loadPropertyConstant(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind
-    ) {
-        MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
-        if (signature == null) return null;
+    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): CompileTimeConstant<*>? {
+        val signature = getCallableSignature(proto, nameResolver, kind)
+        if (signature == null) return null
 
-        KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
         if (kotlinClass == null) {
-            getErrorReporter().reportLoadingError("Kotlin class for loading property constant is not found: " + container, null);
-            return null;
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: " + container, null)
+            return null
         }
 
-        return getStorage().getStorageForClass(kotlinClass).getPropertyConstants().get(signature);
+        return storage.getStorageForClass(kotlinClass).propertyConstants.get(signature)
     }
 }

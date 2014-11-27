@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,223 +14,163 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin;
+package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.SerializationPackage;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader;
-import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor;
-import org.jetbrains.jet.lang.resolve.name.ClassId;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
+import org.jetbrains.jet.descriptors.serialization.NameResolver
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.jet.descriptors.serialization.*
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
+import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.jet.lang.resolve.constants.*
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
+import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.types.ErrorUtils
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId;
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId
 
-public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
-    private final ModuleDescriptor module;
+public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, storage: DescriptorLoadersStorage, kotlinClassFinder: KotlinClassFinder, errorReporter: ErrorReporter) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), AnnotationLoader {
 
-    public AnnotationDescriptorLoader(
-            @NotNull ModuleDescriptor module,
-            @NotNull DescriptorLoadersStorage storage,
-            @NotNull KotlinClassFinder kotlinClassFinder,
-            @NotNull ErrorReporter errorReporter
-    ) {
-        super(kotlinClassFinder, errorReporter, storage);
-        this.module = module;
-    }
-
-    @NotNull
-    @Override
-    public List<AnnotationDescriptor> loadClassAnnotations(
-            @NotNull ProtoBuf.Class classProto,
-            @NotNull NameResolver nameResolver
-    ) {
-        ClassId classId = nameResolver.getClassId(classProto.getFqName());
-        KotlinJvmBinaryClass kotlinClass = findKotlinClassById(classId);
+    override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<AnnotationDescriptor> {
+        val classId = nameResolver.getClassId(classProto.getFqName())
+        val kotlinClass = findKotlinClassById(classId)
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
-            getErrorReporter().reportLoadingError("Kotlin class for loading class annotations is not found: " + classId.asSingleFqName(), null);
-            return Collections.emptyList();
+            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: " + classId.asSingleFqName(), null)
+            return listOf()
         }
 
-        final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(1);
+        val result = ArrayList<AnnotationDescriptor>(1)
 
-        kotlinClass.loadClassAnnotations(new KotlinJvmBinaryClass.AnnotationVisitor() {
-            @Nullable
-            @Override
-            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
-                return resolveAnnotation(classId, result, module);
+        kotlinClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                return resolveAnnotation(classId, result, module)
             }
 
-            @Override
-            public void visitEnd() {
+            override fun visitEnd() {
             }
-        });
+        })
 
-        return result;
+        return result
     }
 
-    @Nullable
-    public static KotlinJvmBinaryClass.AnnotationArgumentVisitor resolveAnnotation(
-            @NotNull ClassId classId,
-            @NotNull final List<AnnotationDescriptor> result,
-            @NotNull final ModuleDescriptor moduleDescriptor
-    ) {
-        if (JvmAnnotationNames.isSpecialAnnotation(classId, true)) return null;
+    override fun loadCallableAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): List<AnnotationDescriptor> {
+        val signature = getCallableSignature(proto, nameResolver, kind)
+        if (signature == null) return listOf()
 
-        final ClassDescriptor annotationClass = resolveClass(classId, moduleDescriptor);
+        return findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature)
+    }
 
-        return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
-            private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = new HashMap<ValueParameterDescriptor, CompileTimeConstant<?>>();
+    private fun findClassAndLoadMemberAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind, signature: MemberSignature): List<AnnotationDescriptor> {
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
+        if (kotlinClass == null) {
+            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null)
+            return listOf()
+        }
 
-            @Override
-            public void visit(@Nullable Name name, @Nullable Object value) {
-                if (name != null) {
-                    setArgumentValueByName(name, createConstant(name, value));
+        val descriptors = storage.getStorageForClass(kotlinClass).memberAnnotations.get(signature)
+        return if (descriptors == null) listOf<AnnotationDescriptor>() else descriptors
+    }
+
+    override fun loadValueParameterAnnotations(container: ProtoContainer, callable: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind, proto: ProtoBuf.Callable.ValueParameter): List<AnnotationDescriptor> {
+        val methodSignature = getCallableSignature(callable, nameResolver, kind)
+        if (methodSignature != null) {
+            if (proto.hasExtension<Int>(JavaProtoBuf.index)) {
+                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension<Int>(JavaProtoBuf.index))
+                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
+            }
+        }
+
+        return listOf()
+    }
+
+    class object {
+
+        public fun resolveAnnotation(classId: ClassId, result: MutableList<AnnotationDescriptor>, moduleDescriptor: ModuleDescriptor): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+            if (JvmAnnotationNames.isSpecialAnnotation(classId, true)) return null
+
+            val annotationClass = resolveClass(classId, moduleDescriptor)
+
+            return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                private val arguments = HashMap<ValueParameterDescriptor, CompileTimeConstant<*>>()
+
+                override fun visit(name: Name?, value: Any?) {
+                    if (name != null) {
+                        setArgumentValueByName(name, createConstant(name, value))
+                    }
                 }
-            }
 
-            @Override
-            public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-                setArgumentValueByName(name, enumEntryValue(enumClassId, enumEntryName));
-            }
+                override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
+                    setArgumentValueByName(name, enumEntryValue(enumClassId, enumEntryName))
+                }
 
-            @Nullable
-            @Override
-            public AnnotationArrayArgumentVisitor visitArray(@NotNull final Name name) {
-                return new KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor() {
-                    private final ArrayList<CompileTimeConstant<?>> elements = new ArrayList<CompileTimeConstant<?>>();
+                override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
+                    return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                        private val elements = ArrayList<CompileTimeConstant<*>>()
 
-                    @Override
-                    public void visit(@Nullable Object value) {
-                        elements.add(createConstant(name, value));
-                    }
+                        override fun visit(value: Any?) {
+                            elements.add(createConstant(name, value))
+                        }
 
-                    @Override
-                    public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-                        elements.add(enumEntryValue(enumClassId, enumEntryName));
-                    }
+                        override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                            elements.add(enumEntryValue(enumClassId, enumEntryName))
+                        }
 
-                    @Override
-                    public void visitEnd() {
-                        ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
-                        if (parameter != null) {
-                            elements.trimToSize();
-                            arguments.put(parameter, new ArrayValue(elements, parameter.getType(), true, false));
+                        override fun visitEnd() {
+                            val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
+                            if (parameter != null) {
+                                elements.trimToSize()
+                                arguments.put(parameter, ArrayValue(elements, parameter.getType(), true, false))
+                            }
                         }
                     }
-                };
-            }
+                }
 
-            @NotNull
-            private CompileTimeConstant<?> enumEntryValue(@NotNull ClassId enumClassId, @NotNull Name name) {
-                ClassDescriptor enumClass = resolveClass(enumClassId, moduleDescriptor);
-                if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    ClassifierDescriptor classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name);
-                    if (classifier instanceof ClassDescriptor) {
-                        return new EnumValue((ClassDescriptor) classifier, false);
+                private fun enumEntryValue(enumClassId: ClassId, name: Name): CompileTimeConstant<*> {
+                    val enumClass = resolveClass(enumClassId, moduleDescriptor)
+                    if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
+                        val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name)
+                        if (classifier is ClassDescriptor) {
+                            return EnumValue(classifier as ClassDescriptor, false)
+                        }
+                    }
+                    return ErrorValue.create("Unresolved enum entry: " + enumClassId + "." + name)
+                }
+
+                override fun visitEnd() {
+                    result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments))
+                }
+
+                private fun createConstant(name: Name?, value: Any?): CompileTimeConstant<*> {
+                    val argument = createCompileTimeConstant(value, true, false, false, null)
+                    return if (argument != null) argument else ErrorValue.create("Unsupported annotation argument: " + name)
+                }
+
+                private fun setArgumentValueByName(name: Name, argumentValue: CompileTimeConstant<*>) {
+                    val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
+                    if (parameter != null) {
+                        arguments.put(parameter, argumentValue)
                     }
                 }
-                return ErrorValue.create("Unresolved enum entry: " + enumClassId + "." + name);
-            }
-
-            @Override
-            public void visitEnd() {
-                result.add(new AnnotationDescriptorImpl(
-                        annotationClass.getDefaultType(),
-                        arguments
-                ));
-            }
-
-            @NotNull
-            private CompileTimeConstant<?> createConstant(@Nullable Name name, @Nullable Object value) {
-                CompileTimeConstant<?> argument = ConstantsPackage.createCompileTimeConstant(value, true, false, false, null);
-                return argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name);
-            }
-
-            private void setArgumentValueByName(@NotNull Name name, @NotNull CompileTimeConstant<?> argumentValue) {
-                ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
-                if (parameter != null) {
-                    arguments.put(parameter, argumentValue);
-                }
-            }
-        };
-    }
-
-    @NotNull
-    private static ClassDescriptor resolveClass(@NotNull ClassId javaClassId, @NotNull ModuleDescriptor moduleDescriptor) {
-        ClassId classId = javaClassIdToKotlinClassId(javaClassId);
-        ClassDescriptor classDescriptor = SerializationPackage.findClassAcrossModuleDependencies(moduleDescriptor, classId);
-        return classDescriptor != null ? classDescriptor : ErrorUtils.createErrorClass(classId.asSingleFqName().asString());
-    }
-
-    @NotNull
-    @Override
-    public List<AnnotationDescriptor> loadCallableAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind
-    ) {
-        MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
-        if (signature == null) return Collections.emptyList();
-
-        return findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature);
-    }
-
-    @NotNull
-    private List<AnnotationDescriptor> findClassAndLoadMemberAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind,
-            @NotNull MemberSignature signature
-    ) {
-        KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
-        if (kotlinClass == null) {
-            getErrorReporter().reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
-            return Collections.emptyList();
-        }
-
-        List<AnnotationDescriptor> descriptors = getStorage().getStorageForClass(kotlinClass).getMemberAnnotations().get(signature);
-        return descriptors == null ? Collections.<AnnotationDescriptor>emptyList() : descriptors;
-    }
-
-    @NotNull
-    @Override
-    public List<AnnotationDescriptor> loadValueParameterAnnotations(
-            @NotNull ProtoContainer container,
-            @NotNull ProtoBuf.Callable callable,
-            @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind,
-            @NotNull ProtoBuf.Callable.ValueParameter proto
-    ) {
-        MemberSignature methodSignature = getCallableSignature(callable, nameResolver, kind);
-        if (methodSignature != null) {
-            if (proto.hasExtension(JavaProtoBuf.index)) {
-                MemberSignature paramSignature =
-                        MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(JavaProtoBuf.index));
-                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature);
             }
         }
 
-        return Collections.emptyList();
+        private fun resolveClass(javaClassId: ClassId, moduleDescriptor: ModuleDescriptor): ClassDescriptor {
+            val classId = javaClassIdToKotlinClassId(javaClassId)
+            val classDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId)
+            return if (classDescriptor != null) classDescriptor else ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
+        }
     }
 }
