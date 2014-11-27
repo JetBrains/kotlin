@@ -21,26 +21,18 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.constants.*
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
 import org.jetbrains.jet.storage.StorageManager
 
 import java.util.*
 import kotlin.platform.platformStatic
 
 public class DescriptorLoadersStorage(storageManager: StorageManager, private val module: ModuleDescriptor) {
-    private val storage: MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage>
-
-    {
-        this.storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage>(object : Function1<KotlinJvmBinaryClass, Storage> {
-            override fun invoke(kotlinClass: KotlinJvmBinaryClass): Storage {
-                return loadAnnotationsAndInitializers(kotlinClass)
-            }
-        })
+    private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage>{
+        kotlinClass ->
+        loadAnnotationsAndInitializers(kotlinClass)
     }
 
-    public fun getStorageForClass(kotlinClass: KotlinJvmBinaryClass): Storage {
-        return storage.invoke(kotlinClass)
-    }
+    public fun getStorageForClass(kotlinClass: KotlinJvmBinaryClass): Storage = storage(kotlinClass)
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage {
         val memberAnnotations = HashMap<MemberSignature, MutableList<AnnotationDescriptor>>()
@@ -56,7 +48,7 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
 
                 if (initializer != null) {
                     val normalizedValue: Any
-                    if ("ZBCS".contains(desc)) {
+                    if (desc in "ZBCS") {
                         val intValue = initializer as Int
                         if ("Z" == desc) {
                             normalizedValue = intValue != 0
@@ -78,7 +70,10 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
                         normalizedValue = initializer
                     }
 
-                    propertyConstants.put(signature, createCompileTimeConstant(normalizedValue, /* canBeUsedInAnnotation */ true, /* isPureIntConstant */ true, /* usesVariableAsConstant */ true, /* expectedType */ null))
+                    propertyConstants[signature] = createCompileTimeConstant(
+                            normalizedValue, canBeUsedInAnnotation = true, isPureIntConstant = true,
+                            usesVariableAsConstant = true, expectedType = null
+                    )
                 }
                 return MemberAnnotationVisitor(signature)
             }
@@ -87,10 +82,10 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
 
                 override fun visitParameterAnnotation(index: Int, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
-                    var result = memberAnnotations.get(paramSignature)
+                    var result = memberAnnotations[paramSignature]
                     if (result == null) {
                         result = ArrayList<AnnotationDescriptor>()
-                        memberAnnotations.put(paramSignature, result)
+                        memberAnnotations[paramSignature] = result
                     }
                     return AnnotationDescriptorLoader.resolveAnnotation(classId, result, module)
                 }
@@ -104,8 +99,8 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
                 }
 
                 override fun visitEnd() {
-                    if (!result.isEmpty()) {
-                        memberAnnotations.put(signature, result)
+                    if (result.isNotEmpty()) {
+                        memberAnnotations[signature] = result
                     }
                 }
             }
@@ -116,22 +111,13 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
 
     // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
     // into a map indexed by these signatures
-    public class MemberSignature private(private val signature: String) {
-
-        override fun hashCode(): Int {
-            return signature.hashCode()
-        }
-
-        override fun equals(o: Any?): Boolean {
-            return o is MemberSignature && signature == (o as MemberSignature).signature
-        }
+    public data class MemberSignature private(private val signature: String) {
 
         override fun toString(): String {
             return signature
         }
 
         class object {
-
             platformStatic public fun fromMethodNameAndDesc(nameAndDesc: String): MemberSignature {
                 return MemberSignature(nameAndDesc)
             }
@@ -148,10 +134,10 @@ public class DescriptorLoadersStorage(storageManager: StorageManager, private va
 
     class Storage(
             public val memberAnnotations: Map<MemberSignature, List<AnnotationDescriptor>>,
-            public val propertyConstants: Map<MemberSignature, CompileTimeConstant<*>>) {
+            public val propertyConstants: Map<MemberSignature, CompileTimeConstant<*>>
+    ) {
         class object {
-
-            public val EMPTY: Storage = Storage(mapOf<MemberSignature, List<AnnotationDescriptor>>(), mapOf<MemberSignature, CompileTimeConstant<*>>())
+            public val EMPTY: Storage = Storage(mapOf(), mapOf())
         }
     }
 }

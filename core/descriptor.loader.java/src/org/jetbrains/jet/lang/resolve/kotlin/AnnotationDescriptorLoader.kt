@@ -40,7 +40,12 @@ import java.util.*
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId
 
-public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, storage: DescriptorLoadersStorage, kotlinClassFinder: KotlinClassFinder, errorReporter: ErrorReporter) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), AnnotationLoader {
+public class AnnotationDescriptorLoader(
+        private val module: ModuleDescriptor,
+        storage: DescriptorLoadersStorage,
+        kotlinClassFinder: KotlinClassFinder,
+        errorReporter: ErrorReporter
+) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), AnnotationLoader {
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<AnnotationDescriptor> {
         val classId = nameResolver.getClassId(classProto.getFqName())
@@ -48,7 +53,7 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
-            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: " + classId.asSingleFqName(), null)
+            errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: ${classId.asSingleFqName()}", null)
             return listOf()
         }
 
@@ -66,29 +71,43 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
         return result
     }
 
-    override fun loadCallableAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): List<AnnotationDescriptor> {
-        val signature = getCallableSignature(proto, nameResolver, kind)
-        if (signature == null) return listOf()
-
+    override fun loadCallableAnnotations(
+            container: ProtoContainer,
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): List<AnnotationDescriptor> {
+        val signature = getCallableSignature(proto, nameResolver, kind) ?: return listOf()
         return findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature)
     }
 
-    private fun findClassAndLoadMemberAnnotations(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind, signature: MemberSignature): List<AnnotationDescriptor> {
+    private fun findClassAndLoadMemberAnnotations(
+            container: ProtoContainer,
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind,
+            signature: MemberSignature
+    ): List<AnnotationDescriptor> {
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null)
+            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: $container", null)
             return listOf()
         }
 
-        val descriptors = storage.getStorageForClass(kotlinClass).memberAnnotations.get(signature)
-        return if (descriptors == null) listOf<AnnotationDescriptor>() else descriptors
+        return storage.getStorageForClass(kotlinClass).memberAnnotations[signature] ?: listOf()
     }
 
-    override fun loadValueParameterAnnotations(container: ProtoContainer, callable: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind, proto: ProtoBuf.Callable.ValueParameter): List<AnnotationDescriptor> {
+    override fun loadValueParameterAnnotations(
+            container: ProtoContainer,
+            callable: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind,
+            proto: ProtoBuf.Callable.ValueParameter
+    ): List<AnnotationDescriptor> {
         val methodSignature = getCallableSignature(callable, nameResolver, kind)
         if (methodSignature != null) {
-            if (proto.hasExtension<Int>(JavaProtoBuf.index)) {
-                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension<Int>(JavaProtoBuf.index))
+            if (proto.hasExtension(JavaProtoBuf.index)) {
+                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(JavaProtoBuf.index))
                 return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
             }
         }
@@ -98,7 +117,11 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
 
     class object {
 
-        public fun resolveAnnotation(classId: ClassId, result: MutableList<AnnotationDescriptor>, moduleDescriptor: ModuleDescriptor): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        public fun resolveAnnotation(
+                classId: ClassId,
+                result: MutableList<AnnotationDescriptor>,
+                moduleDescriptor: ModuleDescriptor
+        ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
             if (JvmAnnotationNames.isSpecialAnnotation(classId, true)) return null
 
             val annotationClass = resolveClass(classId, moduleDescriptor)
@@ -132,7 +155,7 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
                             val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                             if (parameter != null) {
                                 elements.trimToSize()
-                                arguments.put(parameter, ArrayValue(elements, parameter.getType(), true, false))
+                                arguments[parameter] = ArrayValue(elements, parameter.getType(), true, false)
                             }
                         }
                     }
@@ -143,10 +166,10 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
                     if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                         val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name)
                         if (classifier is ClassDescriptor) {
-                            return EnumValue(classifier as ClassDescriptor, false)
+                            return EnumValue(classifier, false)
                         }
                     }
-                    return ErrorValue.create("Unresolved enum entry: " + enumClassId + "." + name)
+                    return ErrorValue.create("Unresolved enum entry: $enumClassId.$name")
                 }
 
                 override fun visitEnd() {
@@ -154,14 +177,14 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
                 }
 
                 private fun createConstant(name: Name?, value: Any?): CompileTimeConstant<*> {
-                    val argument = createCompileTimeConstant(value, true, false, false, null)
-                    return if (argument != null) argument else ErrorValue.create("Unsupported annotation argument: " + name)
+                    return createCompileTimeConstant(value, true, false, false, null)
+                           ?: ErrorValue.create("Unsupported annotation argument: $name")
                 }
 
                 private fun setArgumentValueByName(name: Name, argumentValue: CompileTimeConstant<*>) {
                     val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                     if (parameter != null) {
-                        arguments.put(parameter, argumentValue)
+                        arguments[parameter] = argumentValue
                     }
                 }
             }
@@ -169,8 +192,8 @@ public class AnnotationDescriptorLoader(private val module: ModuleDescriptor, st
 
         private fun resolveClass(javaClassId: ClassId, moduleDescriptor: ModuleDescriptor): ClassDescriptor {
             val classId = javaClassIdToKotlinClassId(javaClassId)
-            val classDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId)
-            return if (classDescriptor != null) classDescriptor else ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
+            return moduleDescriptor.findClassAcrossModuleDependencies(classId)
+                   ?: ErrorUtils.createErrorClass(classId.asSingleFqName().asString())
         }
     }
 }

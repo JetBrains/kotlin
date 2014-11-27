@@ -26,18 +26,26 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature
 
-public class ConstantDescriptorLoader(storage: DescriptorLoadersStorage, kotlinClassFinder: KotlinClassFinder, errorReporter: ErrorReporter) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), ConstantLoader {
+public class ConstantDescriptorLoader(
+        storage: DescriptorLoadersStorage,
+        kotlinClassFinder: KotlinClassFinder,
+        errorReporter: ErrorReporter
+) : BaseDescriptorLoader(kotlinClassFinder, errorReporter, storage), ConstantLoader {
 
-    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): CompileTimeConstant<*>? {
-        val signature = getCallableSignature(proto, nameResolver, kind)
-        if (signature == null) return null
+    override fun loadPropertyConstant(
+            container: ProtoContainer,
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): CompileTimeConstant<*>? {
+        val signature = getCallableSignature(proto, nameResolver, kind) ?: return null
 
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: " + container, null)
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: $container", null)
             return null
         }
 
-        return storage.getStorageForClass(kotlinClass).propertyConstants.get(signature)
+        return storage.getStorageForClass(kotlinClass).propertyConstants[signature]
     }
 }
