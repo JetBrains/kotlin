@@ -17,20 +17,16 @@
 package org.jetbrains.jet.utils.builtinsSerializer
 
 import java.io.File
-import java.io.PrintStream
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
-import org.jetbrains.jet.descriptors.serialization.SerializerExtension
+import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
-import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys
@@ -48,24 +44,26 @@ import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
-public class BuiltInsSerializer(val out: PrintStream?) {
+public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
     private var totalFiles = 0
 
-    public fun serialize(destDir: File, srcDirs: Collection<File>) {
+    public fun serialize(destDir: File, srcDirs: Collection<File>, onComplete: (totalSize: Int, totalFiles: Int) -> Unit) {
         val rootDisposable = Disposer.newDisposable()
         try {
             serialize(rootDisposable, destDir, srcDirs)
+            onComplete(totalSize, totalFiles)
         }
         finally {
             Disposer.dispose(rootDisposable)
         }
     }
 
-    private class BuiltinsSourcesModule : ModuleInfo {
-        override val name: Name = Name.special("<module for resolving builtin source files>")
+    private inner class BuiltinsSourcesModule : ModuleInfo {
+        override val name = Name.special("<module for resolving builtin source files>")
         override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltins(): ModuleInfo.DependencyOnBuiltins = ModuleInfo.DependenciesOnBuiltins.NONE
+        override fun dependencyOnBuiltins(): ModuleInfo.DependencyOnBuiltins =
+                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
     }
 
     fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>) {
@@ -100,8 +98,6 @@ public class BuiltInsSerializer(val out: PrintStream?) {
             fqName ->
             serializePackage(moduleDescriptor, fqName, destDir)
         }
-
-        out?.println("Total bytes written: $totalSize to $totalFiles files")
     }
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {

@@ -23,16 +23,19 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.jet.storage.StorageManager
 import java.io.DataInputStream
 import java.io.InputStream
 import java.util.ArrayList
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 
-class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDescriptor)
-  : PackageFragmentDescriptorImpl(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
+public class BuiltinsPackageFragment(
+        fqName: FqName,
+        storageManager: StorageManager,
+        module: ModuleDescriptor,
+        private val loadResource: (path: String) -> InputStream?
+) : PackageFragmentDescriptorImpl(module, fqName) {
 
     private val nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(fqName)))
 
@@ -69,14 +72,13 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
 
     override fun getMemberScope() = members
 
-    private fun getStream(path: String) = getStreamNullable(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
-
-    private fun getStreamNullable(path: String): InputStream? = javaClass<KotlinBuiltIns>().getClassLoader().getResourceAsStream(path)
+    private fun getStream(path: String): InputStream =
+            loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
 
     private inner class BuiltInsClassDataFinder : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
             val metadataPath = BuiltInsSerializationUtil.getClassMetadataPath(classId) ?: return null
-            val stream = getStreamNullable(metadataPath) ?: return null
+            val stream = loadResource(metadataPath) ?: return null
 
             val classProto = ProtoBuf.Class.parseFrom(stream)
 

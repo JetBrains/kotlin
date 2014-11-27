@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
+import java.io.InputStream;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -104,10 +106,18 @@ public class KotlinBuiltIns {
     private final FqNames fqNames = new FqNames();
 
     private KotlinBuiltIns() {
-        builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                  Collections.<ImportPath>emptyList(),
-                                                  PlatformToKotlinClassMap.EMPTY);
-        builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
+        builtInsModule = new ModuleDescriptorImpl(
+                Name.special("<built-ins lazy module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
+        );
+        builtinsPackageFragment = new BuiltinsPackageFragment(
+                BUILT_INS_PACKAGE_FQ_NAME, new LockBasedStorageManager(), builtInsModule,
+                new Function1<String, InputStream>() {
+                    @Override
+                    public InputStream invoke(String path) {
+                        return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+                    }
+                }
+        );
         builtInsModule.initialize(builtinsPackageFragment.getProvider());
         builtInsModule.addDependencyOnModule(builtInsModule);
         builtInsModule.seal();
