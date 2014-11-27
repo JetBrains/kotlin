@@ -87,8 +87,11 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val project: Project = position.getProject()
 
+
+    protected val originalSearchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
+
     // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
-    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(parameters.getOriginalFile().getResolveScope()) {
+    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(originalSearchScope) {
         override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
     }
 
@@ -226,9 +229,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
+            val converter = ToFromOriginalFileConverter(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
             val completion = SmartCompletion(jetReference.expression, resolutionFacade, moduleDescriptor, 
-                                             bindingContext!!, { isVisibleDescriptor(it) }, searchScope,
-                                             parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+                                             bindingContext!!, { isVisibleDescriptor(it) }, originalSearchScope,
+                                             converter, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

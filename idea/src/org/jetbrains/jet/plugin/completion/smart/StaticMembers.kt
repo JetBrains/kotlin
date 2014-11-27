@@ -77,11 +77,6 @@ class StaticMembers(val bindingContext: BindingContext, val resolutionFacade: Re
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
                 classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
-            else if (descriptor is ClassDescriptor && DescriptorUtils.isObject(descriptor)) {
-                classifier = { expectedInfo ->
-                    if (descriptor.getDefaultType().isSubtypeOf(expectedInfo.type)) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
-                }
-            }
             else {
                 return
             }

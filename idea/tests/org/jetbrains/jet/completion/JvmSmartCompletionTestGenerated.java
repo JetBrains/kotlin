@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -399,6 +398,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("Inheritors2.kt")
     public void testInheritors2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Inheritors2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Inheritors3.kt")
+    public void testInheritors3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Inheritors3.kt");
         doTest(fileName);
     }
 

@@ -10,5 +10,8 @@ fun foo(): T {
     return <caret>
 }
 
-// EXIST: { lookupString:"Null", itemText:"T.Null", tailText:" (p)", typeText:"T" }
+// EXIST: { lookupString:"Null", itemText:"Null", tailText:" (p.T)" }
+// EXIST: foo
+// EXIST: object
 // ABSENT: Other
+// NUMBER: 3

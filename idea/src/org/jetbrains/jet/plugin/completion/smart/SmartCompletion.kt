@@ -45,8 +45,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val moduleDescriptor: ModuleDescriptor,
                       val bindingContext: BindingContext,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-                      val searchScope: GlobalSearchScope,
-                      val originalFile: JetFile,
+                      val inheritorSearchScope: GlobalSearchScope,
+                      val toFromOriginalFileConverter: ToFromOriginalFileConverter,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {
     private val project = expression.getProject()
 
@@ -145,7 +145,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val additionalItems = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
         if (receiver == null) {
-            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, searchScope)
+            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileConverter, inheritorSearchScope)
                     .add(additionalItems, inheritanceSearchers, expectedInfos)
 
             StaticMembers(bindingContext, resolutionFacade).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
@@ -174,8 +174,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
         if (declaration != null) {
-            val offset = declaration.getTextRange()!!.getStartOffset()
-            val originalDeclaration = PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetDeclaration>(), true)
+            val originalDeclaration = toFromOriginalFileConverter.toOriginalFile(declaration)
             if (originalDeclaration != null) {
                 val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
                 val returnType = originalDescriptor?.getReturnType()

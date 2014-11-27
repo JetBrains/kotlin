@@ -66,6 +66,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("InheritorInTheSameFile")
+    public void testInheritorInTheSameFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/InheritorInTheSameFile/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Inheritors")
     public void testInheritors() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/Inheritors/");

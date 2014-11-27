@@ -59,13 +59,15 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-        val searchScope: GlobalSearchScope
+        val toFromOriginalFileConverter: ToFromOriginalFileConverter,
+        val inheritorSearchScope: GlobalSearchScope
 ) {
     public fun add(
             items: MutableCollection<LookupElement>,
@@ -109,13 +111,17 @@ class TypeInstantiationItems(
     private fun MutableCollection<InheritanceItemsSearcher>.addInheritorSearcher(
             descriptor: ClassDescriptor, kotlinClassDescriptor: ClassDescriptor, typeArgs: List<TypeProjection>, tail: Tail?
     ) {
-        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+        val _declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) ?: return
+        val declaration = if (_declaration.getContainingFile() == toFromOriginalFileConverter.syntheticFile)
+            toFromOriginalFileConverter.toOriginalFile(_declaration as JetDeclaration) ?: return
+        else
+            _declaration
+
         val psiClass: PsiClass = when (declaration) {
             is PsiClass -> declaration
             is JetClassOrObject -> LightClassUtil.getPsiClass(declaration) ?: return
             else -> return
         }
-        if (declaration.getContainingFile().getVirtualFile() == null) return //TODO!
         add(InheritanceSearcher(psiClass, kotlinClassDescriptor, typeArgs, tail))
     }
 
@@ -269,11 +275,15 @@ class TypeInstantiationItems(
         private val expectedType = JetTypeImpl(Annotations.EMPTY, typeConstructor, false, typeArgs, classDescriptor.getMemberScope(typeArgs))
 
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
-            val parameters = ClassInheritorsSearch.SearchParameters(psiClass, searchScope, true, true, false, nameFilter)
+            val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = if (inheritor is KotlinLightClass) {
                     val origin = inheritor.origin ?: continue
-                    resolutionFacade.resolveToDescriptor(origin)
+                    val declaration = if (origin.getContainingFile() == toFromOriginalFileConverter.originalFile)
+                        toFromOriginalFileConverter.toSyntheticFile(origin) ?: continue
+                    else
+                        origin
+                    resolutionFacade.resolveToDescriptor(declaration)
                 }
                 else {
                     resolutionFacade.get(JavaResolveExtension)(inheritor).first.resolveClass(JavaClassImpl(inheritor))
