@@ -39,7 +39,10 @@ import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
@@ -52,9 +55,6 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.jet.utils.UtilsPackage;
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
 import java.util.*;
@@ -110,7 +110,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     ),
                     tracker
             );
-            analyzeModuleContents(context, jetFiles, module, moduleTrace, testModule);
+            analyzeModuleContents(context, jetFiles, module, moduleTrace);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
@@ -187,43 +187,20 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             GlobalContext context,
             List<JetFile> jetFiles,
             ModuleDescriptorImpl module,
-            BindingTrace moduleTrace,
-            TestModule testModule
+            BindingTrace moduleTrace
     ) {
-
-        String platform = getPlatform(testModule);
-        if ("jvm".equals(platform)) {
-            // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
-            // albeit with same class names
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    getProject(),
-                    context,
-                    jetFiles,
-                    moduleTrace,
-                    Predicates.<PsiFile>alwaysTrue(),
-                    module,
-                    null,
-                    null
-            );
-        }
-        else if ("js".equals(platform)) {
-            TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-                    jetFiles,
-                    moduleTrace,
-                    module,
-                    Predicates.<PsiFile>alwaysTrue(),
-                    new Config(getProject(), "module", EcmaVersion.v5, false, true) {
-                        @NotNull
-                        @Override
-                        protected List<JetFile> generateLibFiles() {
-                            return Collections.emptyList();
-                        }
-                    }
-            );
-        }
-        else {
-            throw new IllegalStateException("Unknown platform in module " + testModule.getName() + ": " + platform);
-        }
+        // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
+        // albeit with same class names
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                getProject(),
+                context,
+                jetFiles,
+                moduleTrace,
+                Predicates.<PsiFile>alwaysTrue(),
+                module,
+                null,
+                null
+        );
     }
 
     private void validateAndCompareDescriptorWithFile(
@@ -308,24 +285,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     protected ModuleDescriptorImpl createModule(TestModule testModule) {
         String name = "<" + testModule.getName() + ">";
-        String platform = getPlatform(testModule);
-        if ("jvm".equals(platform)) {
-            return TopDownAnalyzerFacadeForJVM.createJavaModule(name);
-        }
-        else if ("js".equals(platform)) {
-            return TopDownAnalyzerFacadeForJS.createJsModule(name);
-        }
-
-        throw new IllegalStateException("Unknown platform in module " + testModule.getName() + ": " + platform);
-    }
-
-    @NotNull
-    private static String getPlatform(@Nullable TestModule testModule) {
-        if (testModule == null) return "jvm";
-
-        String platform = testModule.getPlatform();
-        if (platform == null) return "jvm";
-        return platform;
+        return TopDownAnalyzerFacadeForJVM.createJavaModule(name);
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
