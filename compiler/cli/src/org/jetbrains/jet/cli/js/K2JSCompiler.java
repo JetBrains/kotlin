@@ -50,6 +50,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
@@ -148,8 +149,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
-
+        BindingTraceContext trace = new BindingTraceContext();
+        config.setTrace(trace);
         OutputFileCollection outputFiles = translate(mainCallParameters, config, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile);
+
+        Diagnostics diagnostics = trace.getBindingContext().getDiagnostics();
+        if (AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector)) {
+            return ExitCode.COMPILATION_ERROR;
+        }
 
         if (outputFile.isDirectory()) {
             messageCollector.report(CompilerMessageSeverity.ERROR,
