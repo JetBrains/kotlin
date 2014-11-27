@@ -25,13 +25,17 @@ import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import com.intellij.psi.JavaCodeFragmentFactory
 import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetBlockCodeFragment
 import org.jetbrains.jet.asJava.KotlinLightClass
+import com.intellij.debugger.DebuggerManagerEx
+import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.types.JetType
+import com.intellij.util.concurrency.Semaphore
+import java.util.concurrent.atomic.AtomicReference
+import com.intellij.openapi.progress.ProgressManager
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
@@ -42,6 +46,37 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             JetBlockCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
         }
         codeFragment.addImportsFromString(item.getImports())
+
+        codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
+            (expression: JetExpression): JetType? ->
+
+            val debuggerContext = DebuggerManagerEx.getInstanceEx(project).getContext()
+            val debuggerSession = debuggerContext.getDebuggerSession()
+            if (debuggerSession == null) {
+                null
+            }
+            else {
+                val semaphore = Semaphore()
+                semaphore.down()
+                val nameRef = AtomicReference<JetType>()
+                val worker = object : KotlinRuntimeTypeEvaluator(null, expression, debuggerContext, ProgressManager.getInstance().getProgressIndicator()) {
+                    override fun typeCalculationFinished(type: JetType?) {
+                        nameRef.set(type)
+                        semaphore.up()
+                    }
+                }
+
+                debuggerContext.getDebugProcess()?.getManagerThread()?.invoke(worker)
+
+                for (i in 0..50) {
+                    ProgressManager.checkCanceled()
+                    if (semaphore.waitFor(20)) break
+                }
+
+                nameRef.get()
+            }
+        })
+
         return codeFragment
     }
 

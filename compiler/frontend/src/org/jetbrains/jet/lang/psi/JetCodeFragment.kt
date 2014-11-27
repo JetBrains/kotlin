@@ -25,6 +25,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetFileType
 import java.util.HashSet
+import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.types.JetType
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -119,6 +121,7 @@ public abstract class JetCodeFragment(
 
     class object {
         public val IMPORT_SEPARATOR: String = ","
+        public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
 
         public fun getImportsForElement(elementAtCaret: PsiElement): String {
             val containingFile = elementAtCaret.getContainingFile()
