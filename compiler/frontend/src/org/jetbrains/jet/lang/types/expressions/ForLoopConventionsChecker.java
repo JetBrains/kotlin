@@ -87,7 +87,6 @@ public class ForLoopConventionsChecker {
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
                 expressionTypingUtils.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator);
-        Call iteratorCall = calls.getFirst();
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {
@@ -108,11 +107,6 @@ public class ForLoopConventionsChecker {
         }
         else {
             if (iteratorResolutionResults.isAmbiguity()) {
-//                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResultingCalls()) {
-//                        stringBuffer.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(functionDescriptor)).append(" ");
-//                    }
-//                    errorMessage = stringBuffer.toString();
                 context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));
             }
             else {
