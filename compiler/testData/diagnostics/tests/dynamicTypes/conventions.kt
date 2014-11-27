@@ -40,10 +40,17 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d[1]<!><!DEBUG_INFO_DYNAMIC!>--<!>
     <!DEBUG_INFO_DYNAMIC!>--<!><!DEBUG_INFO_DYNAMIC!>d[1]<!>
 
-//    d()
-//    d(1)
-//    d(name = 1)
-//    d {}
+    <!DEBUG_INFO_DYNAMIC!>d()<!>
+    <!DEBUG_INFO_DYNAMIC!>d(1)<!>
+    <!DEBUG_INFO_DYNAMIC!>d(name = 1)<!>
+    <!DEBUG_INFO_DYNAMIC!>d {}<!>
+
+    class C {
+        val plus: dynamic = null
+    }
+
+    C() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> 5
+    C().<!DEBUG_INFO_DYNAMIC!>plus(5)<!>
 
     d == d
     d != d

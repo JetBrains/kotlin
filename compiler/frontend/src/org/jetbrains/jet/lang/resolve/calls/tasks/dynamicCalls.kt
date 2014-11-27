@@ -61,6 +61,12 @@ object DynamicCallableDescriptors {
 
         override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
+            if (call.getCallType() == Call.CallType.INVOKE
+                && call.getValueArgumentList() == null && call.getFunctionLiteralArguments().isEmpty()) {
+                // this means that we are looking for "imaginary" invokes,
+                // e.g. in `+d` we are looking for property "plus" with member "invoke"
+                return listOf()
+            }
             return listOf(createDynamicFunction(owner, name, call))
         }
 

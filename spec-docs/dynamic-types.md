@@ -72,6 +72,8 @@ Internally, `dynamic` is represented as a flexible type `Nothing..Any?`, with th
     If needed, one can force a call to an extension by casting the receiver to a static type: `(d as Foo).bar()`
 - Augmented assignments on dynamic receivers (e.g. `dyn += foo`) are resolved to `plusAssign()` function, not `plus`, for generality:
   this permits calling them on vals (e.g. those holding collection-like objects)
+- The invoke convention is limited so that for calls like `dyn.foo()` we do not look for property `foo` that has `invoke` defined on it
+  (same for other cases like `+dyn` etc)
 
 ## Type Argument Inference
 

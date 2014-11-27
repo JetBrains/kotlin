@@ -124,8 +124,7 @@ public class TaskPrioritizer {
     ) {
         ProgressIndicatorProvider.checkCanceled();
 
-        ReceiverValue dispatchReceiver = c.context.call.getDispatchReceiver();
-        boolean resolveInvoke = dispatchReceiver.exists() && !TypesPackage.isDynamic(dispatchReceiver.getType());
+        boolean resolveInvoke = c.context.call.getDispatchReceiver().exists();
         if (resolveInvoke) {
             addCandidatesForInvoke(receiver, c);
             return;
