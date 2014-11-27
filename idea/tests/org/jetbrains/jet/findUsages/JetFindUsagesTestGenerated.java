@@ -702,6 +702,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinPrivatePropertyInClassObjectUsages.0.kt")
+            public void testKotlinPrivatePropertyInClassObjectUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPrivatePropertyInClassObjectUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinPrivatePropertyUsages.0.kt")
             public void testKotlinPrivatePropertyUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPrivatePropertyUsages.0.kt");
