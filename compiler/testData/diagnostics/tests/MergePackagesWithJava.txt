@@ -4508,7 +4508,7 @@ package java {
             public open fun reverse(): java.lang.AbstractStringBuilder!
             public open fun setCharAt(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Char): kotlin.Unit
             public open fun setLength(/*0*/ p0: kotlin.Int): kotlin.Unit
-            public open fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence!
+            public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence!
             public open fun substring(/*0*/ p0: kotlin.Int): kotlin.String!
             public open fun substring(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.String!
             public abstract override /*2*/ fun toString(): kotlin.String!
@@ -8017,7 +8017,7 @@ package java {
             public open fun split(/*0*/ regex: kotlin.String!, /*1*/ limit: kotlin.Int): kotlin.Array<(out) kotlin.String!>!
             public open fun startsWith(/*0*/ p0: kotlin.String!): kotlin.Boolean
             public open fun startsWith(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Boolean
-            public open fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence!
+            public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence!
             public open fun substring(/*0*/ p0: kotlin.Int): kotlin.String!
             public open fun substring(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.String!
             public open fun toCharArray(): kotlin.CharArray!
@@ -8120,7 +8120,7 @@ package java {
             public open override /*1*/ fun reverse(): java.lang.StringBuffer!
             public open override /*1*/ fun setCharAt(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Char): kotlin.Unit
             public open override /*1*/ fun setLength(/*0*/ p0: kotlin.Int): kotlin.Unit
-            public open override /*1*/ fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence!
+            public open override /*2*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence!
             public open override /*1*/ fun substring(/*0*/ p0: kotlin.Int): kotlin.String!
             public open override /*1*/ fun substring(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.String!
             public open override /*3*/ fun toString(): kotlin.String!
@@ -8191,7 +8191,7 @@ package java {
             public open override /*1*/ fun reverse(): java.lang.StringBuilder!
             public open override /*1*/ /*fake_override*/ fun setCharAt(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Char): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun setLength(/*0*/ p0: kotlin.Int): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence!
+            public open override /*2*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
             public open override /*1*/ /*fake_override*/ fun substring(/*0*/ p0: kotlin.Int): kotlin.String!
             public open override /*1*/ /*fake_override*/ fun substring(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.String!
             public open override /*3*/ fun toString(): kotlin.String!

@@ -20,4 +20,6 @@ public trait CharSequence {
     public fun length(): Int
 
     public fun charAt(index: Int): Char
+
+    public fun subSequence(start: Int, end: Int): CharSequence
 }

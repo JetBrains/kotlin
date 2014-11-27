@@ -115,13 +115,9 @@ public fun String.regionMatches(toffset: Int, other: String, ooffset: Int, len: 
 
 public fun String.replace(target: CharSequence, replacement: CharSequence): String = (this as java.lang.String).replace(target, replacement)
 
-public fun String.subSequence(beginIndex: Int, endIndex: Int): CharSequence = (this as java.lang.String).subSequence(beginIndex, endIndex)
-
 public fun String.toLowerCase(locale: java.util.Locale): String = (this as java.lang.String).toLowerCase(locale)
 
 public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
-
-public fun CharSequence.subSequence(start: Int, end: Int): CharSequence? = (this as java.lang.CharSequence).subSequence(start, end)
 
 public val CharSequence.size: Int
     get() = this.length
@@ -138,7 +134,7 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
-public fun CharSequence.get(start: Int, end: Int): CharSequence? = subSequence(start, end)
+public fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
@@ -156,7 +152,7 @@ public fun String.getBytes(charset: String): ByteArray = (this as java.lang.Stri
  * Returns a subsequence specified by given range.
  */
 public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1)!! // inclusive
+    return subSequence(range.start, range.end + 1) // inclusive
 }
 
 /**

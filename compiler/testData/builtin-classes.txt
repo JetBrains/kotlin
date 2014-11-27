@@ -296,6 +296,7 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
 public trait CharSequence {
     public abstract fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public abstract fun length(): kotlin.Int
+    public abstract fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
 }
 
 public trait Cloneable {
@@ -1433,6 +1434,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun length(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
+    public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
 }
 
 public open class Throwable {
