@@ -71,7 +71,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
-        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(sortedFiles.get(0));
+        JetFile file = sortedFiles.get(0);
+        ResolveSessionForBodies session = KotlinCacheService.OBJECT$.getInstance(file.getProject()).getLazyResolveSession(file);
         forceResolvePackageDeclarations(files, session);
         return new LightClassConstructionContext(session.getBindingContext(), session.getModuleDescriptor());
     }
@@ -79,7 +80,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(classOrObject);
+        ResolveSessionForBodies session =
+                KotlinCacheService.OBJECT$.getInstance(classOrObject.getProject()).getLazyResolveSession(classOrObject);
 
         if (classOrObject.isLocal()) {
             BindingContext bindingContext = session.resolveToElement(classOrObject);

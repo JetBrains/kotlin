@@ -31,8 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
@@ -64,9 +63,8 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
     }
 
     private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
-        ResolveSessionForBodies resolveSession =
-                KotlinCacheService.OBJECT$.getInstance(getFile().getProject()).getLazyResolveSession((JetFile) getFile());
-        ModuleDescriptor module = resolveSession.getModuleDescriptor();
+        JetFile file = (JetFile) getFile();
+        ModuleDescriptor module = ResolvePackage.findModuleDescriptor(file);
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertNotNull(packageViewDescriptor);
 

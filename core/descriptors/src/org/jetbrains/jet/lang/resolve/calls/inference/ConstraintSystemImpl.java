@@ -343,7 +343,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private boolean isErrorOrSpecialType(@Nullable JetType type) {
-        if (type == DONT_CARE || ErrorUtils.isUninferredParameter(type)) {
+        if (TypeUtils.isDontCarePlaceholder(type) || ErrorUtils.isUninferredParameter(type)) {
             return true;
         }
 

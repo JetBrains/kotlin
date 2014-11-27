@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.*
 import org.junit.Assert
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
@@ -41,6 +40,7 @@ import org.jetbrains.jet.analyzer.ModuleInfo
 import java.util.HashMap
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 
 public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
@@ -157,7 +157,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
         val descriptorName = referencedDescriptor.getName().asString()
         val expectedModuleName = "<${descriptorName.toLowerCase().first().toString()}>"
-        val moduleName = DescriptorUtils.getContainingModule(referencedDescriptor).getName().asString()
+        val moduleName = referencedDescriptor.module.getName().asString()
         Assert.assertEquals(
                 "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
                 expectedModuleName, moduleName

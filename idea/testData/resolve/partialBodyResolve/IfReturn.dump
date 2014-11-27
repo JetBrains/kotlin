@@ -1,0 +1,6 @@
+Resolve target: val kotlin.String.size: kotlin.Int
+----------------------------------------------
+fun foo(p: String) {
+    /* STATEMENT DELETED: if (x()) return */
+    println(p.<caret>size)
+}

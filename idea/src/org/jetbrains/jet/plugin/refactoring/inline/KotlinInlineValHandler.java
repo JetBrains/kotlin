@@ -59,10 +59,9 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.List;
@@ -231,7 +230,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -261,12 +260,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
 
-            if (needToAddParameterTypes(functionLiteralExpression, resolveSessionForBodies)) {
+            if (needToAddParameterTypes(functionLiteralExpression, resolutionFacade)) {
                 functionsToAddParameters.add(functionLiteralExpression);
             }
         }
@@ -301,10 +300,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean needToAddParameterTypes(
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
-            @NotNull ResolveSessionForBodies resolveSessionForBodies
+            @NotNull ResolutionFacade resolutionFacade
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = resolveSessionForBodies.resolveToElement(functionLiteralExpression);
+        BindingContext context = resolutionFacade.analyze(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -322,9 +321,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
-            BindingContext context = resolveSessionForBodies.resolveToElement(inlinedExpression);
+            BindingContext context = resolutionFacade.analyze(inlinedExpression);
             Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();
@@ -343,7 +342,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
-        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer);
         ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
         if (call == null) return null;
 

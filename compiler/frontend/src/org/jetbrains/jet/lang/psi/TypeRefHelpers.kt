@@ -24,12 +24,12 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 fun getTypeReference(declaration: JetCallableDeclaration): JetTypeReference? {
     return declaration.getFirstChild()!!.siblings(forward = true)
             .dropWhile { it.getNode()!!.getElementType() != JetTokens.COLON }
-            .filterIsInstance(javaClass<JetTypeReference>())
-            .firstOrNull()
+            .firstIsInstanceOrNull<JetTypeReference>()
 }
 
 fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {

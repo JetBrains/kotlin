@@ -27,7 +27,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         final Map<PsiReference, PsiElement> referencesToCalleeElements = new HashMap<PsiReference, PsiElement>();
         for (JetElement element : elementsToAnalyze) {
             element.accept(
-                    new CalleeReferenceVisitorBase(AnalyzerFacadeWithCache.getContextForElement(element), false) {
+                    new CalleeReferenceVisitorBase(ResolvePackage.analyze(element), false) {
                         @Override
                         protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
                             referencesToCalleeElements.put(reference.getReference(), declaration);

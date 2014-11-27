@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin.android
 
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.ApkVariant
+import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
@@ -44,5 +45,19 @@ class AndroidGradleWrapper {
   @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
+  }
+
+  @NotNull
+  static def List<File> getRClassFolder(BaseVariant variant) {
+    def list = new ArrayList<File>()
+    if (variant.getMetaClass().getMetaMethod("getProcessResources")) {
+      list.add(variant.getProcessResources().getSourceOutputDir())
+    }
+    else {
+      for (Object variantOutput : variant.getOutputs()) {
+        list.add(variantOutput.processResources.sourceOutputDir)
+      }
+    }
+    return list
   }
 }

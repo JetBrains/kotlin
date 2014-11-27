@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.descriptors.SourceElement
 
 class LazyJavaTypeParameterDescriptor(
-        private val c: LazyJavaResolverContextWithTypes,
+        private val c: LazyJavaResolverContext,
         public val javaTypeParameter: JavaTypeParameter,
         containingDeclaration: DeclarationDescriptor
 ) : AbstractLazyTypeParameterDescriptor(

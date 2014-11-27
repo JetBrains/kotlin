@@ -21,11 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.types.typeUtil.TypeUtilPackage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TypeSubstitutor {
 
@@ -202,18 +200,41 @@ public class TypeSubstitutor {
                     throw new IllegalStateException();
             }
         }
-        else {
-            // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
-            List<TypeProjection> substitutedArguments = substituteTypeArguments(
-                    type.getConstructor().getParameters(), type.getArguments(), recursionDepth);
+        // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
+        return substituteCompoundType(type, originalProjectionKind, recursionDepth);
+    }
 
-            JetType substitutedType = new JetTypeImpl(type.getAnnotations(),   // Old annotations. This is questionable
-                                               type.getConstructor(),   // The same constructor
-                                               type.isNullable(),       // Same nullability
-                                               substitutedArguments,
-                                               new SubstitutingScope(type.getMemberScope(), this));
-            return new TypeProjectionImpl(originalProjectionKind, substitutedType);
-        }
+    private TypeProjection substituteCompoundType(
+            final JetType type,
+            Variance projectionKind,
+            int recursionDepth
+    ) throws SubstitutionException {
+        List<TypeProjection> substitutedArguments = substituteTypeArguments(
+                type.getConstructor().getParameters(), type.getArguments(), recursionDepth);
+
+        // Only type parameters of the corresponding class (or captured type parameters of outer declaration) are substituted
+        // e.g. for return type Foo of 'add(..)' in 'class Foo { fun <R> add(bar: Bar<R>): Foo }' R shouldn't be substituted in the scope
+        TypeSubstitution substitutionFilteringTypeParameters = new TypeSubstitution() {
+            private final Collection<TypeConstructor> containedOrCapturedTypeParameters =
+                    TypeUtilPackage.getContainedAndCapturedTypeParameterConstructors(type);
+
+            @Nullable
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                return containedOrCapturedTypeParameters.contains(key) ? substitution.get(key) : null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return substitution.isEmpty();
+            }
+        };
+        JetType substitutedType = new JetTypeImpl(type.getAnnotations(),   // Old annotations. This is questionable
+                                           type.getConstructor(),   // The same constructor
+                                           type.isNullable(),       // Same nullability
+                                           substitutedArguments,
+                                           new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)));
+        return new TypeProjectionImpl(projectionKind, substitutedType);
     }
 
     private List<TypeProjection> substituteTypeArguments(

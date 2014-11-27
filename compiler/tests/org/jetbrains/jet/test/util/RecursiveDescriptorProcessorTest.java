@@ -19,7 +19,7 @@ package org.jetbrains.jet.test.util;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -43,8 +43,8 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         File txtFile = new File("compiler/testData/recursiveProcessor/declarations.txt");
         String text = FileUtil.loadFile(ktFile, true);
         JetFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
-        AnalyzeExhaust exhaust = JetTestUtils.analyzeFile(jetFile);
-        PackageViewDescriptor testPackage = exhaust.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
+        AnalysisResult result = JetTestUtils.analyzeFile(jetFile);
+        PackageViewDescriptor testPackage = result.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
         assert testPackage != null;
 
         List<String> descriptors = recursivelyCollectDescriptors(testPackage);

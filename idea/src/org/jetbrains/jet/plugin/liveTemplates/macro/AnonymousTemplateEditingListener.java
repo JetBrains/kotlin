@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +60,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         PsiElement name = psiFile.findElementAt(variableRange.getStartOffset());
         if (name != null && name.getParent() instanceof JetReferenceExpression) {
             JetReferenceExpression ref = (JetReferenceExpression) name.getParent();
-            DeclarationDescriptor descriptor = AnalyzerFacadeWithCache.getContextForElement(ref).get(BindingContext.REFERENCE_TARGET, ref);
+            DeclarationDescriptor descriptor = ResolvePackage.analyze(ref).get(BindingContext.REFERENCE_TARGET, ref);
             if (descriptor instanceof ClassDescriptor) {
                 classRef = ref;
                 classDescriptor = (ClassDescriptor) descriptor;

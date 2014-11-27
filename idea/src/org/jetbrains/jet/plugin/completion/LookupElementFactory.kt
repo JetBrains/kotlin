@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.plugin.completion.handlers.*
@@ -36,14 +35,15 @@ import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 public open class LookupElementFactory protected() {
-    public open fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
+    public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        return createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
@@ -51,7 +51,7 @@ public open class LookupElementFactory protected() {
     }
 
     private fun createLookupElement(
-            analyzer: KotlinCodeAnalyzer,
+            analyzer: ResolutionFacade,
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?
     ): LookupElement {
@@ -149,8 +149,8 @@ public open class LookupElementFactory protected() {
 }
 
 public class BoldImmediateLookupElementFactory(private val receiverTypes: Collection<JetType>) : LookupElementFactory() {
-    override fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
-        val element = super.createLookupElement(analyzer, descriptor)
+    override fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
+        val element = super.createLookupElement(resolutionFacade, descriptor)
 
         if (descriptor !is CallableMemberDescriptor) return element
         val receiverParameter = descriptor.getExtensionReceiverParameter()

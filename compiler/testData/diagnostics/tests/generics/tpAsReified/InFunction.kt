@@ -13,6 +13,5 @@ fun <A> main() {
     val <!UNUSED_VARIABLE!>b<!>: Int = f()
     f<Int>()
 
-    // TODO svtk, uncomment when extensions are called for nested calls!
-    //val < !UNUSED_VARIABLE!>с< !>: A = id(< !TYPE_PARAMETER_AS_REIFIED!>f< !>())
+    val <!UNUSED_VARIABLE!>с<!>: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }

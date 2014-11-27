@@ -28,7 +28,6 @@ import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKi
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -50,9 +50,11 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
     protected val position: PsiElement = parameters.getPosition()
-    protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
-    protected val resolveSession: ResolveSessionForBodies = (position.getContainingFile() as JetFile).getLazyResolveSession()
-    protected val bindingContext: BindingContext? = jetReference?.let { resolveSession.resolveToElement(it.expression) }
+    protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
+    private val file = position.getContainingFile() as JetFile
+    protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
+    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
+    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyzeWithPartialBodyResolve(it.expression) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 
     // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
@@ -81,7 +83,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         }
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolveSession, boldImmediateLookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, boldImmediateLookupElementFactory)
 
     protected val project: Project = position.getProject()
 
@@ -90,7 +92,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
     }
 
-    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope) { isVisibleDescriptor(it) }
+    protected val indicesHelper: KotlinIndicesHelper
+        get() = KotlinIndicesHelper(project, resolutionFacade, bindingContext!!, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
@@ -138,7 +141,10 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, resolveSession, searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
+        AllClassesCompletion(
+                parameters, resolutionFacade, bindingContext!!, moduleDescriptor,
+                searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
+        ).collect(collector)
     }
 }
 
@@ -223,7 +229,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+            val completion = SmartCompletion(jetReference.expression, resolutionFacade, bindingContext!!, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -91,7 +91,7 @@ public class JetAnonymousSuperMacro extends Macro {
         JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
         if (expression == null) return null;
 
-        BindingContext bc = AnalyzerFacadeWithCache.getContextForElement(expression);
+        BindingContext bc = ResolvePackage.analyze(expression);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope == null) return null;
 

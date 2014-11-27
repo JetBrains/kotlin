@@ -46,7 +46,7 @@ public class DirectiveBasedActionUtils {
             return;
         }
 
-        Collection<Diagnostic> diagnostics = ResolvePackage.getBindingContext(file).getDiagnostics().all();
+        Collection<Diagnostic> diagnostics = ResolvePackage.analyzeFully(file).getDiagnostics().all();
         Collection<Diagnostic> errorDiagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
             public boolean apply(@Nullable Diagnostic diagnostic) {

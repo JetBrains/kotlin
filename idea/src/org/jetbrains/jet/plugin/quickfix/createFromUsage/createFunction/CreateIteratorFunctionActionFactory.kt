@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.psi.JetForExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import java.util.Collections
 import org.jetbrains.jet.lang.types.JetTypeImpl
@@ -24,7 +24,7 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
         val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
 
-        val context = file.getBindingContext()
+        val context = file.analyzeFully()
         val returnJetTypeParameterTypes = variableExpr.guessTypes(context, null)
         if (returnJetTypeParameterTypes.size != 1) return null
 

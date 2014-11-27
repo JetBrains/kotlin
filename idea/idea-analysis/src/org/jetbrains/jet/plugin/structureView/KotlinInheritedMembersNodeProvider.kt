@@ -16,21 +16,16 @@
 
 package org.jetbrains.jet.plugin.structureView
 
-import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.ide.util.InheritedMembersNodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.ArrayList
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
@@ -42,7 +37,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         [suppress("USELESS_CAST")] // KT-3996 Workaround
         val project = (element as NavigatablePsiElement).getProject()
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(element)
+        val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
 
         if (descriptor !is ClassifierDescriptor) return listOf()

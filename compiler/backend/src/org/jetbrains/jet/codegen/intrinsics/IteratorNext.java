@@ -37,8 +37,8 @@ public class IteratorNext extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         String name;
         if (returnType == Type.CHAR_TYPE) {

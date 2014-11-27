@@ -65,11 +65,9 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescri
 import org.jetbrains.jet.plugin.completion.smart.toList
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
-import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 enum class Tail {
     COMMA
@@ -89,7 +87,7 @@ class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, 
             = function.hashCode()
 }
 
-class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
+class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: ResolutionFacade) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
@@ -174,7 +172,10 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
                 CheckValueArgumentsMode.ENABLED,
                 CompositeExtension(listOf()),
                 false).replaceCollectAllCandidates(true)
-        val callResolver = InjectorForMacros(callElement.getProject(), resolveSession.getModuleDescriptor()).getCallResolver()!!
+        val callResolver = InjectorForMacros(
+                callElement.getProject(),
+                resolutionFacade.findModuleDescriptor(callElement)
+        ).getCallResolver()
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()
@@ -211,7 +212,8 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
         val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
         if (binaryExpression != null) {
             val operationToken = binaryExpression.getOperationToken()
-            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
+            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ
+                || operationToken == JetTokens.EQEQEQ || operationToken == JetTokens.EXCLEQEQEQ) {
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
@@ -294,14 +296,14 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
     private fun calculateForInitializer(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val property = expressionWithType.getParent() as? JetProperty ?: return null
         if (expressionWithType != property.getInitializer()) return null
-        val propertyDescriptor = resolveSession.resolveToDescriptor(property) as? VariableDescriptor ?: return null
+        val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
         return listOf(ExpectedInfo(propertyDescriptor.getType(), propertyDescriptor.getName().asString(), null))
     }
 
     private fun calculateForExpressionBody(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
         if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
-        val descriptor = resolveSession.resolveToDescriptor(declaration) as? FunctionDescriptor ?: return null
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
         return functionReturnValueExpectedInfo(descriptor).toList()
     }
 

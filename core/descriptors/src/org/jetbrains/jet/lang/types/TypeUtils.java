@@ -105,6 +105,10 @@ public class TypeUtils {
         return type == NO_EXPECTED_TYPE || type == UNIT_EXPECTED_TYPE;
     }
 
+    public static boolean isDontCarePlaceholder(@Nullable JetType type) {
+        return type != null && type.getConstructor() == DONT_CARE.getConstructor();
+    }
+
     @NotNull
     public static JetType makeNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, true);

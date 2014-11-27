@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 
 public fun JetExpression.computeTypeInfoInContext(
         scope: JetScope,
@@ -68,4 +68,4 @@ public fun JetType?.safeType(expression: JetExpression): JetType {
     return ErrorUtils.createErrorType("Type for " + expression.getText())
 }
 
-private fun JetScope.getModule(): ModuleDescriptor = DescriptorUtils.getContainingModule(this.getContainingDeclaration())
+private fun JetScope.getModule(): ModuleDescriptor = this.getContainingDeclaration().module

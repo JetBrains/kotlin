@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.psi.JetForExpression
 import org.jetbrains.jet.lang.psi.JetMultiDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 import org.jetbrains.jet.lang.psi.JetCallableReferenceExpression
@@ -61,8 +60,8 @@ import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum.*
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public object UsageTypeUtils {
     public fun getUsageType(element: PsiElement?): UsageTypeEnum? {
@@ -74,7 +73,7 @@ public object UsageTypeUtils {
         val refExpr = element?.getParentByType(javaClass<JetReferenceExpression>())
         if (refExpr == null) return null
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(refExpr)
+        val context = refExpr.analyze()
 
         fun getCommonUsageType(): UsageTypeEnum? {
             return when {

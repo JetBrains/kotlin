@@ -79,7 +79,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        BindingContext context = ResolvePackage.getBindingContext(file);
+        BindingContext context = ResolvePackage.analyzeFully(file);
         Iterable<Diagnostic> diagnostics = context.getDiagnostics();
         List<JetImportDirective> imports = new ArrayList<JetImportDirective>();
         List<JetUserType> usages = new ArrayList<JetUserType>();
@@ -196,7 +196,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 PsiFile psiFile = diagnostic.getPsiFile();
                 if (!(psiFile instanceof JetFile)) return null;
 
-                BindingContext context = ResolvePackage.getBindingContext((JetFile) psiFile);
+                BindingContext context = ResolvePackage.analyzeFully((JetFile) psiFile);
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 

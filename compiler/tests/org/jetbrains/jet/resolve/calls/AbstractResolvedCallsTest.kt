@@ -48,7 +48,7 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
         val text = JetTestUtils.doLoadFile(File(filePath))!!
 
         val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
-        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).getBindingContext()
+        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).bindingContext
 
         val element = jetFile.findElementAt(text.indexOf("<caret>"))
         val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())

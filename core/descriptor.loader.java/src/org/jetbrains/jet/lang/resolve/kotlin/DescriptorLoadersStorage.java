@@ -23,56 +23,37 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.StorageManager;
 
-import javax.inject.Inject;
-import java.io.IOException;
 import java.util.*;
 
 public class DescriptorLoadersStorage {
-    private ErrorReporter errorReporter;
-    private ModuleDescriptor module;
-
     private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> storage;
+    private final ModuleDescriptor module;
 
-    public DescriptorLoadersStorage(@NotNull StorageManager storageManager) {
+    public DescriptorLoadersStorage(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         this.storage = storageManager.createMemoizedFunction(
                 new Function1<KotlinJvmBinaryClass, Storage>() {
                     @NotNull
                     @Override
                     public Storage invoke(@NotNull KotlinJvmBinaryClass kotlinClass) {
-                        try {
-                            return loadAnnotationsAndInitializers(kotlinClass);
-                        }
-                        catch (IOException e) {
-                            errorReporter.reportLoadingError("Error loading member information from Kotlin class: " + kotlinClass, e);
-                            return Storage.EMPTY;
-                        }
+                        return loadAnnotationsAndInitializers(kotlinClass);
                     }
-                });
-    }
-
-    @Inject
-    public void setModule(ModuleDescriptor module) {
+                }
+        );
         this.module = module;
     }
 
-    @Inject
-    public void setErrorReporter(ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
+    @NotNull
+    protected Storage getStorageForClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
+        return storage.invoke(kotlinClass);
     }
 
     @NotNull
-    protected MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> getStorage() {
-        return storage;
-    }
-
-    @NotNull
-    private Storage loadAnnotationsAndInitializers(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
+    private Storage loadAnnotationsAndInitializers(@NotNull KotlinJvmBinaryClass kotlinClass) {
         final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = new HashMap<MemberSignature, List<AnnotationDescriptor>>();
         final Map<MemberSignature, CompileTimeConstant<?>> propertyConstants = new HashMap<MemberSignature, CompileTimeConstant<?>>();
 

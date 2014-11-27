@@ -32,3 +32,6 @@ public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescripto
 
 public val DeclarationDescriptor.isExtension: Boolean
     get() = this is CallableDescriptor && getExtensionReceiverParameter() != null
+
+public val DeclarationDescriptor.module: ModuleDescriptor
+    get() = DescriptorUtils.getContainingModule(this)

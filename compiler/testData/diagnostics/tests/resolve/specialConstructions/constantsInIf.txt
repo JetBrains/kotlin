@@ -1,0 +1,4 @@
+package
+
+internal fun bar(/*0*/ s: kotlin.String): kotlin.String
+internal fun test(): kotlin.Unit

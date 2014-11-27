@@ -109,6 +109,16 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+    <action id="CheckPartialBodyResolve" class="org.jetbrains.jet.plugin.actions.internal.CheckPartialBodyResolveAction"
+          text="Check Partial Body Resolve">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
+    <action id="FindImplicitNothingAction" class="org.jetbrains.jet.plugin.actions.internal.FindImplicitNothingAction"
+          text="Find Implicit Nothing Calls">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
     <action id="KotlinInternalMode" class="org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
@@ -395,6 +405,8 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.decompiler.JetClassFileDecompiler"/>
     

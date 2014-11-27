@@ -19,13 +19,17 @@ package org.jetbrains.jet.plugin.completion
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationDescriptorLookupObject(public val descriptor: DeclarationDescriptor, private val analyzer: KotlinCodeAnalyzer, public val psiElement: PsiElement?) {
+public class DeclarationDescriptorLookupObject(
+        public val descriptor: DeclarationDescriptor,
+        private val resolutionFacade: ResolutionFacade,
+        public val psiElement: PsiElement?
+) {
     override fun toString(): String {
         return super.toString() + " " + descriptor
     }
@@ -40,7 +44,7 @@ public class DeclarationDescriptorLookupObject(public val descriptor: Declaratio
 
         val lookupObject = other as DeclarationDescriptorLookupObject
 
-        if (analyzer != lookupObject.analyzer) {
+        if (resolutionFacade != lookupObject.resolutionFacade) {
             LOG.warn("Descriptors from different resolve sessions")
             return false
         }

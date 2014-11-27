@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
@@ -17,11 +16,12 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableInfo
 import com.intellij.util.SmartList
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 object CreatePropertyDelegateAccessorsActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val expression = diagnostic.getPsiElement() as? JetExpression ?: return null
-        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
+        val context = expression.analyze()
         [suppress("UNCHECKED_CAST")]
 
         fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =

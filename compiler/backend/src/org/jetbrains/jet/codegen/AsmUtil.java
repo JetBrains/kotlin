@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.Approximation;
@@ -60,7 +61,6 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_T
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 import static org.jetbrains.jet.lang.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -400,7 +400,7 @@ public class AsmUtil {
         //noinspection PointlessBitwiseExpression
         int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         for (Pair<String, Type> field : allFields) {
-            builder.newField(NO_ORIGIN, access, field.first, field.second.getDescriptor(), null, null);
+            builder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, field.first, field.second.getDescriptor(), null, null);
         }
     }
 
@@ -433,10 +433,10 @@ public class AsmUtil {
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
-    public static StackValue genToString(final InstructionAdapter v, final StackValue receiver, final Type receiverType) {
+    public static StackValue genToString(final StackValue receiver, final Type receiverType) {
         return StackValue.operation(JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 Type type = stringValueOfType(receiverType);
                 receiver.put(type, v);
                 v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
@@ -542,14 +542,6 @@ public class AsmUtil {
             return;
         }
         v.add(expectedType);
-    }
-
-    public static Type genNegate(Type expectedType, InstructionAdapter v) {
-        if (expectedType == Type.BYTE_TYPE || expectedType == Type.SHORT_TYPE || expectedType == Type.CHAR_TYPE) {
-            expectedType = Type.INT_TYPE;
-        }
-        v.neg(expectedType);
-        return expectedType;
     }
 
     public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {
@@ -706,12 +698,16 @@ public class AsmUtil {
     }
 
     public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        return isObject(containingDeclaration) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return false;
+        }
+
+        return isObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
@@ -768,7 +764,7 @@ public class AsmUtil {
 
     @NotNull
     public static Type numberFunctionOperandType(@NotNull Type expectedType) {
-        if (expectedType == Type.SHORT_TYPE || expectedType == Type.BYTE_TYPE) {
+        if (expectedType == Type.SHORT_TYPE || expectedType == Type.BYTE_TYPE || expectedType == Type.CHAR_TYPE) {
             return Type.INT_TYPE;
         }
         return expectedType;

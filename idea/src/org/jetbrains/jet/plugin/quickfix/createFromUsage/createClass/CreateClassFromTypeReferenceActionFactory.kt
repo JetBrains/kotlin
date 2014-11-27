@@ -12,8 +12,8 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInf
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
@@ -28,7 +28,7 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
 
         val traitExpected = typeRefParent is JetDelegatorToSuperClass
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(userType)
+        val context = userType.analyze()
 
         val file = userType.getContainingFile() as? JetFile ?: return Collections.emptyList()
 

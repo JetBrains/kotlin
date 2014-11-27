@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors
 
-import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.context.*
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
@@ -26,28 +25,23 @@ import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-
-
-public fun DeserializedPackageMemberScope(packageDescriptor: PackageFragmentDescriptor,
-                                          packageData: PackageData,
-                                          context: DeserializationGlobalContext,
-                                          classNames: () -> Collection<Name>): DeserializedPackageMemberScope
-        = DeserializedPackageMemberScope(packageDescriptor, packageData.getPackageProto(), context.withNameResolver(packageData.getNameResolver()), classNames)
+import org.jetbrains.jet.descriptors.serialization.NameResolver
 
 public open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
-        private val context: DeserializationContext,
-        classNames: () -> Collection<Name>)
-: DeserializedMemberScope(context.withTypes(packageDescriptor), proto.getMemberList()) {
+        nameResolver: NameResolver,
+        components: DeserializationComponents,
+        classNames: () -> Collection<Name>
+) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
-    private val classNames = context.storageManager.createLazyValue(classNames)
+    private val classNames = c.storageManager.createLazyValue(classNames)
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)
 
-    override fun getClassDescriptor(name: Name) = context.deserializeClass(ClassId(packageFqName, name))
+    override fun getClassDescriptor(name: Name) = c.components.deserializeClass(ClassId(packageFqName, name))
 
     override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         for (className in classNames()) {

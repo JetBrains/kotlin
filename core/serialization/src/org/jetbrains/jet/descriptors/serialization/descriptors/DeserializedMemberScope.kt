@@ -18,21 +18,20 @@ package org.jetbrains.jet.descriptors.serialization.descriptors
 
 import org.jetbrains.jet.descriptors.serialization.Flags
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.Printer
-
-import java.util.*
 import org.jetbrains.jet.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
+import java.util.*
 
 public abstract class DeserializedMemberScope protected(
-        private val context: DeserializationContextWithTypes,
-        membersList: Collection<ProtoBuf.Callable>)
-: JetScope {
+        protected val c: DeserializationContext,
+        membersList: Collection<ProtoBuf.Callable>
+) : JetScope {
 
     private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
     private enum class Kind { FUNCTION PROPERTY }
@@ -45,9 +44,12 @@ public abstract class DeserializedMemberScope protected(
         }
     }
 
-    private val membersProtos = context.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
-    private val functions = context.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
-    private val properties = context.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
+    private val membersProtos =
+            c.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
+    private val functions =
+            c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
+    private val properties =
+            c.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
 
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 
@@ -55,7 +57,7 @@ public abstract class DeserializedMemberScope protected(
         val map = LinkedHashMap<ProtoKey, MutableList<ProtoBuf.Callable>>()
         for (memberProto in membersList) {
             val key = ProtoKey(
-                    context.nameResolver.getName(memberProto.getName()),
+                    c.nameResolver.getName(memberProto.getName()),
                     Flags.CALLABLE_KIND[memberProto.getFlags()].toKind(),
                     memberProto.hasReceiverType()
             )
@@ -75,7 +77,7 @@ public abstract class DeserializedMemberScope protected(
 
         [suppress("UNCHECKED_CAST")]
         return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
-            context.deserializer.loadCallable(memberProto) as D
+            c.memberDeserializer.loadCallable(memberProto) as D
         }
     }
 
@@ -111,7 +113,7 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 
-    override fun getContainingDeclaration() = context.containingDeclaration
+    override fun getContainingDeclaration() = c.containingDeclaration
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 

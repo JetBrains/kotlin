@@ -38,7 +38,6 @@ import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
@@ -111,10 +110,7 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val serializer = DescriptorSerializer(object : SerializerExtension() {
-            override fun hasSupertypes(descriptor: ClassDescriptor): Boolean =
-                    !KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(descriptor)
-        })
+        val serializer = DescriptorSerializer.createTopLevel(SerializerExtension.DEFAULT)
 
         val classNames = ArrayList<Name>()
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))

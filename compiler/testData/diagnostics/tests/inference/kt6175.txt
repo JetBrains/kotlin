@@ -1,0 +1,11 @@
+package
+
+internal fun </*0*/ T, /*1*/ R> bar(/*0*/ body: (R) -> T): T
+internal fun </*0*/ T, /*1*/ R> baz(/*0*/ body: (kotlin.List<R>) -> T): T
+internal fun </*0*/ T, /*1*/ R : kotlin.Any> brr(/*0*/ body: (kotlin.List<R?>) -> T): T
+internal fun fail(): kotlin.Nothing
+internal fun </*0*/ T, /*1*/ R : kotlin.Any> foo(/*0*/ body: (R?) -> T): T
+internal fun test1(): kotlin.Unit
+internal fun test2(): kotlin.Unit
+internal fun test3(): kotlin.Unit
+internal fun test4(): kotlin.Unit

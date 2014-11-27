@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.debugger;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.intellij.debugger.NoDataException;
 import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
@@ -40,12 +38,15 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -58,9 +59,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.caches.resolve.IdeaModuleInfo;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -302,11 +303,11 @@ public class JetPositionManager implements PositionManager {
 
     private static JetTypeMapper createTypeMapperForLibraryFile(@Nullable PsiElement notPositionedElement, @NotNull JetFile file) {
         JetElement element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement);
-        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(element);
+        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(element);
 
         GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
-                                                    resolveSession.getModuleDescriptor(),
-                                                    resolveSession.resolveToElement(element),
+                                                    analysisResult.getModuleDescriptor(),
+                                                    analysisResult.getBindingContext(),
                                                     Collections.singletonList(file)
         );
         state.beforeCompile();
@@ -325,11 +326,11 @@ public class JetPositionManager implements PositionManager {
                     GlobalSearchScope packageFacadeScope = key.second.contentScope();
                     Collection<JetFile> packageFiles = findFilesWithExactPackage(key.first, packageFacadeScope, project);
 
-                    AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
-                    analyzeExhaust.throwIfError();
+                    AnalysisResult analysisResult = KotlinCacheService.OBJECT$.getInstance(project).getAnalysisResults(packageFiles);
+                    analysisResult.throwIfError();
 
                     GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION,
-                                                                analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
+                                                                analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                                                                 new ArrayList<JetFile>(packageFiles)
                     );
                     state.beforeCompile();

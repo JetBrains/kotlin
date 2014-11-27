@@ -24,18 +24,26 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
+import com.intellij.refactoring.changeSignature.ChangeSignatureUtil;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.util.Collection;
@@ -74,7 +82,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
             if (jetElement == null) return null;
 
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetElement);
+            BindingContext bindingContext = ResolvePackage.analyze(jetElement);
             DeclarationDescriptor descriptor =
                     bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
 
@@ -92,11 +100,20 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             @NotNull Project project,
             @Nullable Editor editor
     ) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
+        BindingContext bindingContext = ResolvePackage.analyze(element);
+        
         FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
         if (functionDescriptor == null) {
             return;
         }
+
+        if (functionDescriptor instanceof JavaCallableMemberDescriptor) {
+            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, functionDescriptor);
+            assert declaration instanceof PsiMethod : "PsiMethod expected: " + functionDescriptor;
+            ChangeSignatureUtil.invokeChangeSignatureOn((PsiMethod) declaration, project);
+            return;
+        }
+
         runChangeSignature(project, functionDescriptor, emptyConfiguration(), bindingContext, context, null);
     }
 
@@ -154,7 +171,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (elements.length != 1) return;
         Editor editor = dataContext != null ? PlatformDataKeys.EDITOR.getData(dataContext) : null;
 
-        PsiElement element = elements[0];
+        PsiElement element = AsJavaPackage.getUnwrapped(elements[0]);
         assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
 
         invokeChangeSignature((JetElement) element, element, project, editor);

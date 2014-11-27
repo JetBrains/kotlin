@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -44,7 +44,7 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
             Arrays.asList("@" + STDLIB_JS_MODULE_NAME, PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getAbsolutePath());
 
     private static List<JetFile> jsLibFiles;
-    private static AnalyzeExhaust exhaust;
+    private static AnalysisResult result;
 
     private BindingContext libraryContext;
     private ModuleDescriptor libraryModule;
@@ -79,7 +79,7 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     @Override
     public ModuleDescriptor getLibraryModule() {
         if (libraryModule == null) {
-            libraryModule = getExhaust().getModuleDescriptor();
+            libraryModule = getResult().getModuleDescriptor();
         }
 
         return libraryModule;
@@ -90,8 +90,8 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     public BindingContext getLibraryContext() {
         if (libraryContext == null) {
             //TODO check errors?
-            // TopDownAnalyzerFacadeForJS.checkForErrors(allLibFiles, exhaust.getBindingContext());
-            libraryContext = getExhaust().getBindingContext();
+            // TopDownAnalyzerFacadeForJS.checkForErrors(allLibFiles, result.getBindingContext());
+            libraryContext = getResult().getBindingContext();
         }
 
         return libraryContext;
@@ -118,17 +118,17 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
         return jetFile;
     }
 
-    private AnalyzeExhaust getExhaust() {
-        if (exhaust == null) {
+    private AnalysisResult getResult() {
+        if (result == null) {
             //noinspection AssignmentToStaticFieldFromInstanceMethod
-            exhaust = TopDownAnalyzerFacadeForJS.analyzeFiles(
+            result = TopDownAnalyzerFacadeForJS.analyzeFiles(
                     generateLibFiles(),
                     Predicates.<PsiFile>alwaysFalse(),
                     createConfigWithoutLibFiles(getProject(), getModuleId(), getTarget())
             );
         }
 
-        return exhaust;
+        return result;
     }
 
     @NotNull

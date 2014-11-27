@@ -69,7 +69,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             else if (target instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) target;
                 String functionName = function.getName();
-                FunctionDescriptor functionDescriptor = ResolvePackage.getBindingContext(function)
+                FunctionDescriptor functionDescriptor = ResolvePackage.analyzeFully(function)
                         .get(BindingContext.FUNCTION, target);
                 if (functionDescriptor != null) {
                     JetType type = functionDescriptor.getReturnType();

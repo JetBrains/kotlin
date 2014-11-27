@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 30;
+    public static final int STUB_VERSION = 31;
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);

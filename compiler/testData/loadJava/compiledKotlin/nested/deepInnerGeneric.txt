@@ -1,0 +1,19 @@
+package test
+
+internal final class A</*0*/ TA> {
+    /*primary*/ public constructor A</*0*/ TA>()
+
+    internal final inner class B</*0*/ TB> {
+        /*primary*/ public constructor B</*0*/ TB>()
+
+        internal final inner class C</*0*/ TC> {
+            /*primary*/ public constructor C</*0*/ TC>()
+
+            internal final inner class D</*0*/ TD> {
+                /*primary*/ public constructor D</*0*/ TD>()
+                internal final fun bar(/*0*/ ta: TA, /*1*/ tb: TB, /*2*/ tc: TC, /*3*/ td: TD): test.A.B.C.D<TD>
+                internal final fun </*0*/ P1, /*1*/ P2, /*2*/ P3, /*3*/ P4> foo(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): kotlin.Nothing
+            }
+        }
+    }
+}

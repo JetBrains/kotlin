@@ -126,8 +126,8 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
                     }
 
                     @Override
-                    public M createModule(@NotNull String name, @NotNull List<String> dependencies) {
-                        M module = createTestModule(name);
+                    public M createModule(@NotNull String name, @Nullable String platform, @NotNull List<String> dependencies) {
+                        M module = createTestModule(name, platform);
                         ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
                         assert oldValue == null : "Module " + name + " declared more than once";
 
@@ -138,7 +138,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         doMultiFileTest(file, modules, testFiles);
     }
 
-    protected abstract M createTestModule(String name);
+    protected abstract M createTestModule(@NotNull String name, @Nullable String platform);
 
     protected abstract F createTestFile(M module, String fileName, String text, Map<String, String> directives);
 

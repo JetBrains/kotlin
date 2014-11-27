@@ -24,7 +24,6 @@ import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
@@ -40,6 +39,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -66,7 +66,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         if (doc == null) return Collections.emptyList()
 
         val lines = Range<Int>(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+        val bindingContext = element.analyze()
         val result = OrderedSet<SmartStepTarget>()
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties

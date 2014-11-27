@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -72,7 +72,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
     private boolean checkElement(String name, PsiElement sibling, final Set<JetScope> visitedScopes) {
         if (!(sibling instanceof JetElement)) return true;
 
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) sibling);
+        final BindingContext bindingContext = ResolvePackage.analyze((JetElement) sibling);
         final Name identifier = Name.identifier(name);
 
         final Ref<Boolean> result = new Ref<Boolean>(true);

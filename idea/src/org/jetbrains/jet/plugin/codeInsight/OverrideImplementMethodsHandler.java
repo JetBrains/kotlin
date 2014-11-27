@@ -260,7 +260,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     @NotNull
     public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
-        DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(classOrObject).resolveToDescriptor(classOrObject);
+        DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(classOrObject);
         if (descriptor instanceof ClassDescriptor) {
             return collectMethodsToGenerate((ClassDescriptor) descriptor);
         }

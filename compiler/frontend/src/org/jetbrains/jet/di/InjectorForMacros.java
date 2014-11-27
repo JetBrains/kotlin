@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
@@ -67,6 +68,7 @@ public class InjectorForMacros {
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
@@ -98,6 +100,7 @@ public class InjectorForMacros {
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver());
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
@@ -112,6 +115,7 @@ public class InjectorForMacros {
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
+        this.expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 

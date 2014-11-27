@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.SimpleOutputFile;
 import org.jetbrains.jet.SimpleOutputFileCollection;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -154,10 +154,10 @@ public final class K2JSTranslator {
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
             @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
-        AnalyzeExhaust analyzeExhaust = TopDownAnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        AnalysisResult analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
+        BindingContext bindingContext = analysisResult.getBindingContext();
         TopDownAnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(filesToTranslate, config), bindingContext);
-        ModuleDescriptor moduleDescriptor = analyzeExhaust.getModuleDescriptor();
+        ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
         return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, moduleDescriptor, config);
     }
 

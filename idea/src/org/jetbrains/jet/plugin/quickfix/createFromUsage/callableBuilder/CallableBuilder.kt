@@ -44,7 +44,7 @@ import java.util.Collections
 import java.util.HashMap
 import java.util.ArrayList
 import java.util.Properties
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
@@ -144,9 +144,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>();
 
     {
-        val exhaust = config.currentFile.getAnalysisResults()
-        currentFileContext = exhaust.getBindingContext()
-        currentFileModule = exhaust.getModuleDescriptor()
+        val result = config.currentFile.analyzeFullyAndGetResult()
+        currentFileContext = result.bindingContext
+        currentFileModule = result.moduleDescriptor
     }
 
     public var placement: CallablePlacement by Delegates.notNull()

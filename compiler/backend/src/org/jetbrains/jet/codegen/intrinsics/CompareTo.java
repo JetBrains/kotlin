@@ -37,11 +37,10 @@ public class CompareTo extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         JetExpression argument;
-        assert arguments != null;
         if (arguments.size() == 1) {
             argument = arguments.get(0);
         }

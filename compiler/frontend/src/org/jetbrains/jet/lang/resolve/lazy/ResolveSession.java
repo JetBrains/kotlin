@@ -117,8 +117,9 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
     ) {
-        LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager = new LockBasedLazyResolveStorageManager(
-                (LockBasedStorageManager) globalContext.getStorageManager());
+        LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager =
+                new LockBasedLazyResolveStorageManager(globalContext.getStorageManager());
+
         this.storageManager = lockBasedLazyResolveStorageManager;
         this.exceptionTracker = globalContext.getExceptionTracker();
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);

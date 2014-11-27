@@ -38,10 +38,9 @@ public class CopyToArray extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
-            @Nullable StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
-        assert receiver != null;
         receiver.put(receiver.type, v);
         v.dup();
         v.invokeinterface("java/util/Collection", "size", "()I");

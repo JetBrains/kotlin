@@ -33,7 +33,6 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.openapi.ui.Messages
@@ -42,6 +41,7 @@ import org.jetbrains.jet.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
@@ -170,7 +170,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
 
     private fun findDeepestOverriddenProperty(jetProperty: JetProperty): JetProperty? {
         if (jetProperty.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
-            val bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetProperty)
+            val bindingContext = jetProperty.analyze()
             val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, jetProperty]
 
             if (descriptor != null) {

@@ -37,8 +37,8 @@ public class Inv extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         assert isPrimitive(returnType) : "Return type of Inv intrinsic should be of primitive type : " + returnType;
 

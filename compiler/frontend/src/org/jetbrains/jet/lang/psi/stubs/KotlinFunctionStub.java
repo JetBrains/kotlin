@@ -28,4 +28,6 @@ public interface KotlinFunctionStub extends KotlinStubWithFqName<JetNamedFunctio
     boolean hasBody();
 
     boolean hasTypeParameterListBeforeFunctionName();
+
+    boolean isProbablyNothingType();
 }

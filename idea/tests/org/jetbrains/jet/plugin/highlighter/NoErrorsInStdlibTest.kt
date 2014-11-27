@@ -26,7 +26,7 @@ import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.jet.JetTestUtils
@@ -46,7 +46,7 @@ public class NoErrorsInStdlibTest : LightCodeInsightFixtureTestCase() {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is JetFile) {
                     hasAtLeastOneFile = true
-                    val bindingContext = psiFile.getBindingContext()
+                    val bindingContext = psiFile.analyzeFully()
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
                     if (errors.isNotEmpty()) {

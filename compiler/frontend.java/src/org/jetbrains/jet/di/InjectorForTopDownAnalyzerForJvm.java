@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
@@ -97,7 +98,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final GlobalSearchScope globalSearchScope;
     private final JavaClassFinderImpl javaClassFinder;
@@ -129,6 +130,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final LazinessToken lazinessToken;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
@@ -169,10 +171,10 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
-        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver(traceBasedErrorReporter);
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
-        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
@@ -183,9 +185,10 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModuleDescriptor());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModuleDescriptor());
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
-        this.constantDescriptorLoader = new ConstantDescriptorLoader();
-        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, getModuleDescriptor(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
+        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager, getModuleDescriptor());
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(getModuleDescriptor(), descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, getModuleDescriptor(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
@@ -206,6 +209,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.lazinessToken = new LazinessToken();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), javaFlexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
@@ -221,7 +225,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
-        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
 
         this.topDownAnalyzer.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -287,6 +290,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
         expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
+        expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
@@ -352,20 +356,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
         scriptHeaderResolver.setTrace(bindingTrace);
 
-        deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
-        deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
-
-        annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
-        annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        annotationDescriptorLoader.setModule(moduleDescriptor);
-        annotationDescriptorLoader.setStorage(descriptorLoadersStorage);
-
-        descriptorLoadersStorage.setErrorReporter(traceBasedErrorReporter);
-        descriptorLoadersStorage.setModule(moduleDescriptor);
-
-        constantDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
-        constantDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        constantDescriptorLoader.setStorage(descriptorLoadersStorage);
+        deserializedDescriptorResolver.setComponents(deserializationComponentsForJava);
 
         javaClassFinder.initialize();
 
@@ -391,8 +382,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         return this.javaDescriptorResolver;
     }
 
-    public DeserializationGlobalContextForJava getDeserializationGlobalContextForJava() {
-        return this.deserializationGlobalContextForJava;
+    public DeserializationComponentsForJava getDeserializationComponentsForJava() {
+        return this.deserializationComponentsForJava;
     }
 
 }

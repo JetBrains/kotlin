@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.io.File;
 import java.util.List;
@@ -98,7 +97,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
     }
 
     private static void checkNoUnresolvedReferences(@NotNull final JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
+        BindingContext bindingContext = ResolvePackage.analyzeFully(file);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 List<TextRange> textRanges = diagnostic.getTextRanges();
@@ -112,7 +111,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
         DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
             public void preProcessReference(@NotNull JetReferenceExpression expression) {
-                AnalyzerFacadeWithCache.getContextForElement(expression);
+                ResolvePackage.analyze(expression);
             }
 
             @Override

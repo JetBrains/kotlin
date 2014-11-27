@@ -25,7 +25,7 @@ import com.intellij.psi.util.PsiFormatUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -66,7 +66,7 @@ public final class AnalyzerWithCompilerReport {
     @NotNull
     private final MessageCollector messageCollectorWrapper;
     @Nullable
-    private AnalyzeExhaust analyzeExhaust = null;
+    private AnalysisResult analysisResult = null;
 
     public AnalyzerWithCompilerReport(@NotNull final MessageCollector collector) {
         messageCollectorWrapper = new MessageCollector() {
@@ -99,8 +99,8 @@ public final class AnalyzerWithCompilerReport {
     }
 
     private void reportIncompleteHierarchies() {
-        assert analyzeExhaust != null;
-        Collection<ClassDescriptor> incompletes = analyzeExhaust.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
+        assert analysisResult != null;
+        Collection<ClassDescriptor> incompletes = analysisResult.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
         if (!incompletes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
             for (ClassDescriptor incomplete : incompletes) {
@@ -112,8 +112,8 @@ public final class AnalyzerWithCompilerReport {
     }
 
     private void reportAlternativeSignatureErrors() {
-        assert analyzeExhaust != null;
-        BindingContext bc = analyzeExhaust.getBindingContext();
+        assert analysisResult != null;
+        BindingContext bc = analysisResult.getBindingContext();
         Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         if (!descriptorsWithErrors.isEmpty()) {
             StringBuilder message = new StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n");
@@ -137,8 +137,8 @@ public final class AnalyzerWithCompilerReport {
     }
 
     private void reportAbiVersionErrors() {
-        assert analyzeExhaust != null;
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        assert analysisResult != null;
+        BindingContext bindingContext = analysisResult.getBindingContext();
 
         Collection<VirtualFileKotlinClass> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
         for (VirtualFileKotlinClass kotlinClass : errorClasses) {
@@ -212,20 +212,20 @@ public final class AnalyzerWithCompilerReport {
     }
 
     @Nullable
-    public AnalyzeExhaust getAnalyzeExhaust() {
-        return analyzeExhaust;
+    public AnalysisResult getAnalysisResult() {
+        return analysisResult;
     }
 
     public boolean hasErrors() {
         return hasErrors;
     }
 
-    public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalyzeExhaust> analyzer) {
-        analyzeExhaust = analyzer.invoke();
+    public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalysisResult> analyzer) {
+        analysisResult = analyzer.invoke();
         reportAbiVersionErrors();
         reportSyntaxErrors(files);
         //noinspection ConstantConditions
-        reportDiagnostics(analyzeExhaust.getBindingContext().getDiagnostics(), messageCollectorWrapper);
+        reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollectorWrapper);
         reportIncompleteHierarchies();
         reportAlternativeSignatureErrors();
     }

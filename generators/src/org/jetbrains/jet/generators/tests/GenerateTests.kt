@@ -130,6 +130,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
+import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -139,8 +140,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetDiagnosticsTest>()) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "kts")
-            model("codegen/box/functions/tailRecursion")
-            model("codegen/box/functions/invoke/onObjects")
+            model("codegen/box/diagnostics")
         }
 
         testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {
@@ -304,6 +304,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
             model("resolve/additionalLazyResolve")
+        }
+
+        testClass(javaClass<AbstractPartialBodyResolveTest>()) {
+            model("resolve/partialBodyResolve")
         }
 
         testClass(javaClass<AbstractJetPsiCheckerTest>()) {
@@ -650,7 +654,7 @@ fun main(args: Array<String>) {
 
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
-            model("incremental/circularDependency", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
         }

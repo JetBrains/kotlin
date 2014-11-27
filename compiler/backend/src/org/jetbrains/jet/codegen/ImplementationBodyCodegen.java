@@ -232,7 +232,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getSerializationBindings()));
+        DescriptorSerializer serializer =
+                DescriptorSerializer.create(descriptor, new JavaSerializerExtension(v.getSerializationBindings()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

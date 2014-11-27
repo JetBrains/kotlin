@@ -34,6 +34,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
@@ -51,7 +52,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -62,7 +62,6 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.PatternMatchingPackage;
 import org.jetbrains.jet.plugin.util.psiModificationUtil.PsiModificationUtilPackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,9 +122,9 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 return;
             }
         }
-        ResolveSessionForBodies resolveSession =
-                ResolvePackage.getLazyResolveSession(expression);
-        final BindingContext bindingContext = resolveSession.resolveToElement(expression);
+
+        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(expression);
+        final BindingContext bindingContext = analysisResult.getBindingContext();
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
@@ -133,7 +132,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
             JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
-                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor()
+                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, analysisResult.getModuleDescriptor()
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {

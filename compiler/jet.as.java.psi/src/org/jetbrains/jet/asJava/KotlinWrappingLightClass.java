@@ -32,6 +32,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;
 
@@ -157,6 +158,12 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     public String getText() {
         JetClassOrObject origin = getOrigin();
         return origin == null ? null : origin.getText();
+    }
+
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 
     private boolean isTraitFakeOverride(@NotNull JetDeclaration originMethodDeclaration) {

@@ -1,12 +1,12 @@
 // "Create parameter 'foo'" "true"
-// ERROR: Missing delegation specifier 'E'
-// ERROR: Missing delegation specifier 'E'
-// ERROR: Missing delegation specifier 'E'
+// ERROR: No value passed for parameter foo
+// ERROR: No value passed for parameter foo
+// ERROR: No value passed for parameter foo
 
 enum class E(val foo: Int) {
-    A
-    B {
+    A : E()
+    B : E() {
         val t: Int = foo
     }
-    C
+    C : E()
 }

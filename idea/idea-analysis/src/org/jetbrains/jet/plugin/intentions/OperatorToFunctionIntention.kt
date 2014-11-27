@@ -27,10 +27,10 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>("operator.to.function", javaClass()) {
     class object {
@@ -57,7 +57,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         }
 
         private fun isApplicableCall(element: JetCallExpression): Boolean {
-            val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+            val bindingContext = element.analyze()
             val resolvedCall = element.getResolvedCall(bindingContext)
             val descriptor = resolvedCall?.getResultingDescriptor()
             if (descriptor is FunctionDescriptor && descriptor.getName().asString() == "invoke") {
@@ -115,7 +115,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
                 return element
             }
 
-            val context = AnalyzerFacadeWithCache.getContextForElement(element)
+            val context = element.analyze()
             val functionCandidate = element.getResolvedCall(context)
             val functionName = functionCandidate?.getCandidateDescriptor()?.getName().toString()
             val elemType = context[BindingContext.EXPRESSION_TYPE, left]

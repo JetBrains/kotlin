@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.codegen.PropertyCodegen
@@ -31,12 +30,13 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.references.*
 import org.jetbrains.jet.plugin.findUsages.UsageTypeUtils
 import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 val JetDeclaration.descriptor: DeclarationDescriptor?
-    get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+    get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 
 val JetParameter.propertyDescriptor: PropertyDescriptor?
-    get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
         target: JetDeclaration,
@@ -82,7 +82,7 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
     fun checkKotlinUsage(): Boolean {
         if (this !is JetElement) return false
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(this)
+        val bindingContext = this.analyze()
 
         val descriptor = getCallDescriptor(bindingContext)
         if (descriptor !is ConstructorDescriptor) return false

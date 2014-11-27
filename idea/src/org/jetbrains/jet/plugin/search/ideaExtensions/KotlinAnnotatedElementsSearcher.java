@@ -72,7 +72,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
 
                     JetAnnotationEntry annotationEntry = (JetAnnotationEntry) elt;
 
-                    BindingContext context = ResolvePackage.getBindingContext(annotationEntry);
+                    BindingContext context = ResolvePackage.analyzeFully(annotationEntry);
                     AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                     if (annotationDescriptor == null) return;
 

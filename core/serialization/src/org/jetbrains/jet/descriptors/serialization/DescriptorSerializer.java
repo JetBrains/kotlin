@@ -24,7 +24,10 @@ import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
@@ -34,18 +37,33 @@ public class DescriptorSerializer {
     private final Interner<TypeParameterDescriptor> typeParameters;
     private final SerializerExtension extension;
 
-    public DescriptorSerializer() {
-        this(SerializerExtension.DEFAULT);
-    }
-
-    public DescriptorSerializer(@NotNull SerializerExtension extension) {
-        this(new NameTable(), new Interner<TypeParameterDescriptor>(), extension);
-    }
-
     private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters, SerializerExtension extension) {
         this.nameTable = nameTable;
         this.typeParameters = typeParameters;
         this.extension = extension;
+    }
+
+    @NotNull
+    public static DescriptorSerializer createTopLevel(@NotNull SerializerExtension extension) {
+        return new DescriptorSerializer(new NameTable(), new Interner<TypeParameterDescriptor>(), extension);
+    }
+
+    @NotNull
+    public static DescriptorSerializer create(@NotNull ClassDescriptor descriptor, @NotNull SerializerExtension extension) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        DescriptorSerializer parentSerializer =
+                container instanceof ClassDescriptor
+                ? create((ClassDescriptor) container, extension)
+                : createTopLevel(extension);
+
+        // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
+        // serializing outer classes before nested classes.
+        // Otherwise our interner can get wrong ids because we may serialize classes in any order.
+        DescriptorSerializer serializer = parentSerializer.createChildSerializer();
+        for (TypeParameterDescriptor typeParameter : descriptor.getTypeConstructor().getParameters()) {
+            serializer.typeParameters.intern(typeParameter);
+        }
+        return serializer;
     }
 
     private DescriptorSerializer createChildSerializer() {
@@ -69,16 +87,14 @@ public class DescriptorSerializer {
 
         builder.setFqName(getClassId(classDescriptor));
 
-        DescriptorSerializer local = createChildSerializer();
-
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
+            builder.addTypeParameter(typeParameter(typeParameterDescriptor));
         }
 
-        if (extension.hasSupertypes(classDescriptor)) {
+        if (!KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                builder.addSupertype(local.type(supertype));
+                builder.addSupertype(type(supertype));
             }
         }
 
@@ -89,7 +105,7 @@ public class DescriptorSerializer {
             }
             else {
                 ProtoBuf.Class.PrimaryConstructor.Builder constructorBuilder = ProtoBuf.Class.PrimaryConstructor.newBuilder();
-                constructorBuilder.setData(local.callableProto(primaryConstructor));
+                constructorBuilder.setData(callableProto(primaryConstructor));
                 builder.setPrimaryConstructor(constructorBuilder);
             }
         }
@@ -100,7 +116,7 @@ public class DescriptorSerializer {
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-                builder.addMember(local.callableProto(member));
+                builder.addMember(callableProto(member));
             }
         }
 

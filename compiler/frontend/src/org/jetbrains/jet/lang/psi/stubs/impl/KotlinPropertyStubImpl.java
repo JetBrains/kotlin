@@ -33,6 +33,7 @@ public class KotlinPropertyStubImpl extends KotlinStubBaseImpl<JetProperty> impl
     private final boolean hasInitializer;
     private final boolean hasReceiverTypeRef;
     private final boolean hasReturnTypeRef;
+    private final boolean probablyNothingType;
     private final FqName fqName;
 
     public KotlinPropertyStubImpl(
@@ -45,6 +46,7 @@ public class KotlinPropertyStubImpl extends KotlinStubBaseImpl<JetProperty> impl
             boolean hasInitializer,
             boolean hasReceiverTypeRef,
             boolean hasReturnTypeRef,
+            boolean probablyNothingType,
             @Nullable FqName fqName
     ) {
         super(parent, JetStubElementTypes.PROPERTY);
@@ -64,6 +66,7 @@ public class KotlinPropertyStubImpl extends KotlinStubBaseImpl<JetProperty> impl
         this.hasInitializer = hasInitializer;
         this.hasReceiverTypeRef = hasReceiverTypeRef;
         this.hasReturnTypeRef = hasReturnTypeRef;
+        this.probablyNothingType = probablyNothingType;
         this.fqName = fqName;
     }
 
@@ -100,6 +103,11 @@ public class KotlinPropertyStubImpl extends KotlinStubBaseImpl<JetProperty> impl
     @Override
     public boolean hasReturnTypeRef() {
         return hasReturnTypeRef;
+    }
+
+    @Override
+    public boolean isProbablyNothingType() {
+        return probablyNothingType;
     }
 
     @Nullable

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyResolveRecursiveComparingTest {
     @TestMetadata("compiler/testData/loadJava/compiledKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.MemberOrder.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
+    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.MemberOrder.class, CompiledKotlin.Nested.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompiledKotlin extends AbstractLazyResolveRecursiveComparingTest {
         public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -2404,6 +2404,33 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("topLevelCallables.kt")
             public void testTopLevelCallables() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/nested")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Nested extends AbstractLazyResolveRecursiveComparingTest {
+            public void testAllFilesPresentInNested() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("deepInnerGeneric.kt")
+            public void testDeepInnerGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/deepInnerGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassReferencesOuterTP.kt")
+            public void testInnerClassReferencesOuterTP() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/innerClassReferencesOuterTP.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("membersReferenceOuterTP.kt")
+            public void testMembersReferenceOuterTP() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/membersReferenceOuterTP.kt");
                 doTest(fileName);
             }
         }

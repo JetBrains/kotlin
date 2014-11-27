@@ -16,15 +16,22 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.refactoring.BaseRefactoringProcessor;
+import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
+import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
+import com.intellij.refactoring.changeSignature.ThrownExceptionInfo;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.VisibilityUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -33,7 +40,7 @@ import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
@@ -235,7 +242,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     return true;
                 }
             };
-            BindingContext context = AnalyzerFacadeWithCache.getContextForElement(method);
+            BindingContext context = ResolvePackage.analyze(method);
 
             ChangeSignaturePackage
                     .runChangeSignature(getProject(), changeInfo.getOldDescriptor(), empty, context, method, "test");
@@ -275,10 +282,86 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTestConflict(changeInfo);
     }
 
+    public void testNoDefaultValuesInOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(0, newParameters[1]);
+        changeInfo.setNewParameter(1, newParameters[0]);
+        doTest(changeInfo);
+    }
+
     public void testOverridesInEnumEntries() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
         changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testEnumEntriesWithoutSuperCalls() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("n", KotlinBuiltIns.getInstance().getIntType());
+        newParameter.setDefaultValueText("1");
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testParameterChangeInOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = changeInfo.getNewParameters()[0];
+        parameterInfo.setName("n");
+        parameterInfo.setTypeText("Int");
+        doTest(changeInfo);
+    }
+
+    public void testConstructorJavaUsages() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        newParameter.setDefaultValueText("\"abc\"");
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testFunctionJavaUsagesAndOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        newParameter.setDefaultValueText("\"abc\"");
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testJavaMethodKotlinUsages() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    String getNewName(@NotNull PsiMethod method) {
+                        return "bar";
+                    }
+
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    }
+                }
+        );
+    }
+
+    public void testJavaConstructorKotlinUsages() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    }
+                }
+        );
+    }
+
+    public void testFunctionRenameJavaUsages() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("bar");
         doTest(changeInfo);
     }
 
@@ -288,8 +371,32 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
     }
 
+    private final List<Editor> editors = new ArrayList<Editor>();
+
+    private static final String[] EXTENSIONS = {".kt", ".java"};
+
+    private void configureFiles() throws Exception {
+        editors.clear();
+
+        indexLoop:
+        for (int i = 0; ; i++) {
+            for (String extension : EXTENSIONS) {
+                String extraFileName = getTestName(false) + "Before" + (i > 0 ? "." + i : "") + extension;
+                File extraFile = new File(getTestDataPath() + extraFileName);
+                if (extraFile.exists()) {
+                    configureByFile(extraFileName);
+                    editors.add(getEditor());
+                    continue indexLoop;
+                }
+            }
+            break;
+        }
+
+        setActiveEditor(editors.get(0));
+    }
+
     private JetChangeInfo getChangeInfo() throws Exception {
-        configureByFile(getTestName(false) + "Before.kt");
+        configureFiles();
 
         Editor editor = getEditor();
         PsiFile file = getFile();
@@ -298,7 +405,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetElement element = (JetElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
+        BindingContext bindingContext = ResolvePackage.analyze(element);
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 
@@ -314,9 +421,63 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         return dialog.evaluateChangeInfo();
     }
 
+    private class JavaRefactoringProvider {
+        @NotNull
+        String getNewName(@NotNull PsiMethod method) {
+            return method.getName();
+        }
+
+        @Nullable
+        PsiType getNewReturnType(@NotNull PsiMethod method) {
+            return method.getReturnType();
+        }
+
+        @NotNull
+        ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+            PsiParameter[] parameters = method.getParameterList().getParameters();
+            ParameterInfoImpl[] parameterInfos = new ParameterInfoImpl[parameters.length];
+            for (int i = 0; i < parameters.length; i++) {
+                PsiParameter parameter = parameters[i];
+                parameterInfos[i] = new ParameterInfoImpl(i, parameter.getName(), parameter.getType());
+            }
+            return parameterInfos;
+        }
+
+        @NotNull
+        final ChangeSignatureProcessor getProcessor(@NotNull PsiMethod method) {
+            return new ChangeSignatureProcessor(
+                    getProject(),
+                    method,
+                    false,
+                    VisibilityUtil.getVisibilityModifier(method.getModifierList()),
+                    getNewName(method),
+                    getNewReturnType(method),
+                    getNewParameters(method),
+                    new ThrownExceptionInfo[0]);
+        }
+    }
+
+    private void doJavaTest(JavaRefactoringProvider provider) throws Exception {
+        configureFiles();
+
+        PsiElement targetElement = TargetElementUtilBase.findTargetElement(getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED);
+        assertTrue("<caret> is not on method name", targetElement instanceof PsiMethod);
+
+        provider.getProcessor((PsiMethod)targetElement).run();
+
+        compareEditorsWithExpectedData();
+    }
+
     private void doTest(JetChangeInfo changeInfo) throws Exception {
         new JetChangeSignatureProcessor(getProject(), changeInfo, "Change signature").run();
-        checkResultByFile(getTestName(false) + "After.kt");
+        compareEditorsWithExpectedData();
+    }
+
+    private void compareEditorsWithExpectedData() throws Exception {
+        for (Editor editor : editors) {
+            setActiveEditor(editor);
+            checkResultByFile(getFile().getName().replace("Before.", "After."));
+        }
     }
 
     private void doTestConflict(JetChangeInfo changeInfo) throws Exception {
@@ -332,5 +493,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         }
 
         fail("No conflicts found");
+    }
+
+    @Override
+    protected Sdk getTestProjectJdk() {
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 }

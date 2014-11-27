@@ -1,0 +1,4 @@
+package
+
+internal fun baz(): kotlin.Unit
+kotlin.inline() internal fun </*0*/ T> foo(/*0*/ block: () -> T): T

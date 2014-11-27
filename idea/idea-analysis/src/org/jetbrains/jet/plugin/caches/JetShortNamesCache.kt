@@ -21,14 +21,14 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstance
 
 // used in Upsource, what's why in idea-analysis module
 public class JetShortNamesCache(private val project: com.intellij.openapi.project.Project) : com.intellij.psi.search.PsiShortNamesCache() {
     class object {
         public fun getKotlinInstance(project: com.intellij.openapi.project.Project): org.jetbrains.jet.plugin.caches.JetShortNamesCache
                 = com.intellij.openapi.extensions.Extensions.getArea(project).getExtensionPoint<com.intellij.psi.search.PsiShortNamesCache>(com.intellij.psi.search.PsiShortNamesCache.EP_NAME).getExtensions()
-                .filterIsInstance(javaClass<org.jetbrains.jet.plugin.caches.JetShortNamesCache>())
-                .first()
+                .firstIsInstance<JetShortNamesCache>()
     }
 
     /**

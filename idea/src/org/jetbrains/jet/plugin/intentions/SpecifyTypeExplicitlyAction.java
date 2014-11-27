@@ -122,7 +122,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
 
     private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = ResolvePackage.getBindingContext(declaration.getContainingJetFile());
+        BindingContext bindingContext = ResolvePackage.analyzeFully(declaration.getContainingJetFile());
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             //noinspection ConstantConditions
             if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
@@ -134,7 +134,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @NotNull
     public static JetType getTypeForDeclaration(@NotNull JetCallableDeclaration declaration) {
-        BindingContext bindingContext = ResolvePackage.getBindingContext(declaration.getContainingJetFile());
+        BindingContext bindingContext = ResolvePackage.analyzeFully(declaration.getContainingJetFile());
         CallableDescriptor descriptor = (CallableDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         JetType type = descriptor != null ? descriptor.getReturnType() : null;

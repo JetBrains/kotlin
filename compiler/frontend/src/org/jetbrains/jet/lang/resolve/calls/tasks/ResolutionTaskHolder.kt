@@ -29,23 +29,12 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         private val priorityProvider: ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>,
         private val tracing: TracingStrategy
 ) {
-    private val isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call)
-
     private val candidatesList = ArrayList<() -> Collection<ResolutionCandidate<D>>>()
     private var internalTasks: List<ResolutionTask<D, F>>? = null
 
-    public fun setIsSafeCall(candidates: Collection<ResolutionCandidate<D>>): Collection<ResolutionCandidate<D>> {
-        for (candidate in candidates) {
-            candidate.setSafeCall(isSafeCall)
-        }
-        return candidates
-    }
-
     public fun addCandidates(lazyCandidates: () -> Collection<ResolutionCandidate<D>>) {
         assertNotFinished()
-        candidatesList.add(storageManager.createLazyValue {
-                    setIsSafeCall(lazyCandidates()).toReadOnlyList()
-                })
+        candidatesList.add(storageManager.createLazyValue { lazyCandidates().toReadOnlyList() })
     }
 
     public fun addCandidates(candidatesList: List<Collection<ResolutionCandidate<D>>>) {
@@ -64,7 +53,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
             val tasks = ArrayList<ResolutionTask<D, F>>()
             for (priority in (0..priorityProvider.getMaxPriority()).reversed()) {
                 for (candidateIndex in 0..candidatesList.size - 1) {
-                    val lazyCandidates = storageManager.createLazyValue {
+                    val lazyCandidates = {
                         candidatesList[candidateIndex]().filter { priorityProvider.getPriority(it) == priority }.toReadOnlyList()
                     }
                     tasks.add(ResolutionTask(basicCallResolutionContext, tracing, lazyCandidates))

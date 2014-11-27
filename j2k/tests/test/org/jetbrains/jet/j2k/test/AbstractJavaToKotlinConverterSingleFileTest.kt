@@ -33,7 +33,7 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.jet.j2k.IdeaReferenceSearcher
 import org.jetbrains.jet.j2k.JavaToKotlinConverter
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -111,14 +111,14 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJa
 
     private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val fileWithText = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(fileWithText)), IdeaReferenceSearcher, { it.getLazyResolveSession() })
+        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(fileWithText)), IdeaReferenceSearcher, IdeaResolverForConverter)
         val element = fileWithText.getFirstChild()!!
         return converter.elementsToKotlin(listOf(element to J2kPostProcessor(fileWithText)))[0]
     }
 
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(file)), IdeaReferenceSearcher, { it.getLazyResolveSession() })
+        val converter = JavaToKotlinConverter(project, settings, FilesConversionScope(listOf(file)), IdeaReferenceSearcher, IdeaResolverForConverter)
         return converter.elementsToKotlin(listOf(file to J2kPostProcessor(file)))[0]
     }
 

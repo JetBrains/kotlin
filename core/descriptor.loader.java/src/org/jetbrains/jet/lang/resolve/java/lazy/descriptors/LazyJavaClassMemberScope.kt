@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.java.structure.*
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaClassMemberScope(
-        c: LazyJavaResolverContextWithTypes,
+        c: LazyJavaResolverContext,
         containingDeclaration: ClassDescriptor,
         private val jClass: JavaClass
 ) : LazyJavaMemberScope(c, containingDeclaration) {

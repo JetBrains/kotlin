@@ -33,12 +33,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         return NotUnderContentRootModuleInfo
     }
 
-    if (this is KotlinLightElement<*, *>)
-        return this.getModuleInfoForLightElement()
-
-    if (this is JetCodeFragment)
-        return this.getContext()?.getModuleInfo()
-                ?: logAndReturnDefault("Analyzing code fragment of type $javaClass with no context element\nText:\n${getText()}")
+    if (this is KotlinLightElement<*, *>) return this.getModuleInfoForLightElement()
 
     val containingJetFile = (this as? JetElement)?.getContainingFile() as? JetFile
     val context = containingJetFile?.analysisContext
@@ -49,6 +44,11 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         return logAndReturnDefault(
                 "Should not analyze element: ${getText()} in file ${containingJetFile?.getName() ?: " <no file>"}\n$doNotAnalyze"
         )
+    }
+
+    if (containingJetFile is JetCodeFragment) {
+        return containingJetFile.getContext()?.getModuleInfo()
+               ?: logAndReturnDefault("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
     }
 
     val project = getProject()

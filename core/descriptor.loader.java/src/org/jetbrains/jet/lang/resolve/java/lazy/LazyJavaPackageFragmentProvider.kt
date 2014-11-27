@@ -22,32 +22,16 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
         val module: ModuleDescriptor
 ) : PackageFragmentProvider {
 
-    private val c = LazyJavaResolverContext(
-            this,
-            FragmentClassResolver(),
-            outerContext.storageManager,
-            outerContext.finder,
-            outerContext.kotlinClassFinder,
-            outerContext.deserializedDescriptorResolver,
-            outerContext.externalAnnotationResolver,
-            outerContext.externalSignatureResolver,
-            outerContext.errorReporter,
-            outerContext.methodSignatureChecker,
-            outerContext.javaResolverCache,
-            outerContext.javaPropertyInitializerEvaluator,
-            outerContext.samConversionResolver,
-            outerContext.sourceElementFactory,
-            outerContext.moduleClassResolver
-    )
+    private val c = LazyJavaResolverContext(outerContext, this, FragmentClassResolver(), TypeParameterResolver.EMPTY)
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
@@ -67,21 +51,15 @@ public class LazyJavaPackageFragmentProvider(
         val packageFragment = getPackageFragment(fqName.parent())
         if (packageFragment == null) return@lambda null
 
-        LazyJavaClassDescriptor(
-                c.withTypes(TypeParameterResolver.EMPTY),
-                packageFragment,
-                fqName,
-                jClass
-        )
+        LazyJavaClassDescriptor(c, packageFragment, fqName, jClass)
     }
 
-    fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
+    private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
-    override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
+    override fun getPackageFragments(fqName: FqName) = emptyOrSingletonList(getPackageFragment(fqName))
 
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
-
-    fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass) = c.deserializedDescriptorResolver.resolveClass(kotlinClass)
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
+            getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
 
     fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
 

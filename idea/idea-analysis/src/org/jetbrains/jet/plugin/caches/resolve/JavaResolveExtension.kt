@@ -22,6 +22,13 @@ import org.jetbrains.jet.lang.resolve.java.JvmResolverForModule
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.BindingContext
+import com.intellij.psi.PsiMethod
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.asJava.KotlinLightMethod
+import org.jetbrains.jet.lang.resolve.java.resolveMethod
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl
+import org.jetbrains.jet.lang.resolve.java.resolveConstructor
 
 public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDescriptorResolver, BindingContext>> {
     override val platform: TargetPlatform = TargetPlatform.JVM
@@ -38,4 +45,17 @@ public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDes
 
     public fun getContext(project: Project, element: PsiElement): BindingContext =
             KotlinCacheService.getInstance(project)[this](element).second
+}
+
+fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor {
+    if (this is KotlinLightMethod) throw AssertionError("Light methods are not allowed here: ${origin?.getText()}")
+
+    val resolver = JavaResolveExtension.getResolver(getProject(), this)
+    val methodDescriptor = when {
+        this.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(this))
+        else -> resolver.resolveMethod(JavaMethodImpl(this))
+    }
+    assert(methodDescriptor != null) { "No descriptor found for " + getText() }
+
+    return methodDescriptor!!
 }

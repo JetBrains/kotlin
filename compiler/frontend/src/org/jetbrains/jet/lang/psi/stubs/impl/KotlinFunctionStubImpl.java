@@ -34,6 +34,7 @@ public class KotlinFunctionStubImpl extends KotlinStubBaseImpl<JetNamedFunction>
     private final boolean hasBlockBody;
     private final boolean hasBody;
     private final boolean hasTypeParameterListBeforeFunctionName;
+    private final boolean probablyNothingType;
 
     public KotlinFunctionStubImpl(
             @NotNull StubElement parent,
@@ -43,7 +44,8 @@ public class KotlinFunctionStubImpl extends KotlinStubBaseImpl<JetNamedFunction>
             boolean isExtension,
             boolean hasBlockBody,
             boolean hasBody,
-            boolean hasTypeParameterListBeforeFunctionName
+            boolean hasTypeParameterListBeforeFunctionName,
+            boolean probablyNothingType
     ) {
         super(parent, JetStubElementTypes.FUNCTION);
 
@@ -58,6 +60,7 @@ public class KotlinFunctionStubImpl extends KotlinStubBaseImpl<JetNamedFunction>
         this.hasBlockBody = hasBlockBody;
         this.hasBody = hasBody;
         this.hasTypeParameterListBeforeFunctionName = hasTypeParameterListBeforeFunctionName;
+        this.probablyNothingType = probablyNothingType;
     }
 
     @Override
@@ -94,5 +97,10 @@ public class KotlinFunctionStubImpl extends KotlinStubBaseImpl<JetNamedFunction>
     @Override
     public FqName getFqName() {
         return fqName;
+    }
+
+    @Override
+    public boolean isProbablyNothingType() {
+        return probablyNothingType;
     }
 }

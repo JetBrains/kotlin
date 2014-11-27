@@ -5,5 +5,5 @@ PsiJetFileStubImpl[package=]
       CLASS_OBJECT:
         OBJECT_DECLARATION:[fqName=null, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY:
-            FUN:[fqName=C.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=foo]
+            FUN:[fqName=C.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=foo]
               VALUE_PARAMETER_LIST:

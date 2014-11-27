@@ -26,7 +26,7 @@ import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -142,9 +142,9 @@ public abstract class ExpectedResolveData {
         }
 
         Project project = files.iterator().next().getProject();
-        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(
                 project, files, Predicates.<PsiFile>alwaysTrue());
-        return analyzeExhaust.getBindingContext();
+        return analysisResult.getBindingContext();
     }
 
     public final void checkResult(BindingContext bindingContext) {

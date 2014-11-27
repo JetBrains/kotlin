@@ -74,8 +74,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val fileName = "declarations/declarations.kt"
 
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
-        val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile)
-        val bindingContext = analyzeExhaust.getBindingContext()
+        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
         return MyDeclarations(bindingContext, getProject(), typeResolver)
     }
 

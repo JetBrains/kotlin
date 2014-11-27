@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.parents
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import java.io.File
 import org.jetbrains.jet.JetTestUtils

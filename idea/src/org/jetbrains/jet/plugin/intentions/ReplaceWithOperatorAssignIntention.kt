@@ -21,13 +21,11 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
-import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult
 import org.jetbrains.jet.plugin.util.psi.patternMatching.matches
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.operator.assign.intention", javaClass()) {
 
@@ -44,7 +42,7 @@ public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetB
         }
 
         fun checkExpressionRepeat(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression): Boolean {
-            val context = AnalyzerFacadeWithCache.getContextForElement(expression)
+            val context = expression.analyze()
             val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
             val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getDefaultType())
 

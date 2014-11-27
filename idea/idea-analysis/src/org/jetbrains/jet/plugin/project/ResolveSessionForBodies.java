@@ -54,7 +54,11 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
 
     @NotNull
     public BindingContext resolveToElement(JetElement element) {
-        return resolveElementCache.resolveToElement(element);
+        return resolveElementCache.resolveToElement(element, false);
+    }
+
+    public BindingContext resolveToElementWithPartialBodyResolve(JetElement element) {
+        return resolveElementCache.resolveToElement(element, true);
     }
 
     @NotNull

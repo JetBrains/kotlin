@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
@@ -33,13 +32,14 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 
 public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.PLUS) return false
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(element)
+        val context = element.analyze()
         val elementType = BindingContextUtils.getRecordedTypeInfo(element, context)?.getType()
         if (!(KotlinBuiltIns.getInstance().isString(elementType))) return false
 
@@ -80,7 +80,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
         val expressionText = expression?.getText() ?: ""
         return when (expression) {
             is JetConstantExpression -> {
-                val context = AnalyzerFacadeWithCache.getContextForElement(expression)
+                val context = expression.analyze()
                 val trace = DelegatingBindingTrace(context, "Trace for evaluating constant")
                 val constant = ConstantExpressionEvaluator.evaluate(expression, trace, null)
                 if (constant is IntegerValueTypeConstant) {

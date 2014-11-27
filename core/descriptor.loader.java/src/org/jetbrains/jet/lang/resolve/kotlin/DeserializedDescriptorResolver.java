@@ -20,7 +20,9 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DescriptorsPackage;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
@@ -36,25 +38,25 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
-    private DeserializationGlobalContextForJava context;
+    private final ErrorReporter errorReporter;
+    private DeserializationComponents components;
 
-    private ErrorReporter errorReporter;
-
-    @Inject
-    public void setContext(DeserializationGlobalContextForJava context) {
-        this.context = context;
+    public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
     }
 
     @Inject
-    public void setErrorReporter(ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
+    public void setComponents(@NotNull DeserializationComponentsForJava context) {
+        this.components = context.getComponents();
     }
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            return context.getClassDeserializer().deserializeClass(JavaProtoBufUtil.readClassDataFrom(data));
+            return components.getClassDeserializer().deserializeClass(
+                    kotlinClass.getClassId(), JavaProtoBufUtil.readClassDataFrom(data)
+            );
         }
         return null;
     }
@@ -64,13 +66,16 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
             //all classes are included in java scope
-            return DescriptorsPackage.DeserializedPackageMemberScope(descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context,
-                                                      new Function0<Collection<Name>>() {
-                @Override
-                public Collection<Name> invoke() {
-                    return Collections.emptyList();
-                }
-            });
+            PackageData packageData = JavaProtoBufUtil.readPackageDataFrom(data);
+            return new DeserializedPackageMemberScope(
+                    descriptor, packageData.getPackageProto(), packageData.getNameResolver(), components,
+                    new Function0<Collection<Name>>() {
+                        @Override
+                        public Collection<Name> invoke() {
+                            return Collections.emptyList();
+                        }
+                    }
+            );
         }
         return null;
     }

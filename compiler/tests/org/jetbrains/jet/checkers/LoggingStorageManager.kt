@@ -23,6 +23,7 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable
 import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.storage.NullableLazyValue
+import java.util.concurrent.ConcurrentMap
 
 public class LoggingStorageManager(
         private val delegate: StorageManager,
@@ -58,12 +59,12 @@ public class LoggingStorageManager(
         }
 
     private fun computeCallerData(lambda: Any, wrapper: Any, arguments: List<Any?>, result: Any?): CallData {
-        val jClass = lambda.javaClass
+        val lambdaClass = lambda.javaClass
 
-        val outerClass: Class<out Any?>? = jClass.getEnclosingClass()
+        val outerClass: Class<out Any?>? = lambdaClass.getEnclosingClass()
 
         // fields named "this" or "this$0"
-        val referenceToOuter = jClass.getAllDeclaredFields().firstOrNull {
+        val referenceToOuter = lambdaClass.getAllDeclaredFields().firstOrNull {
             field ->
             field.getType() == outerClass && field.getName()!!.contains("this")
         }
@@ -71,6 +72,11 @@ public class LoggingStorageManager(
 
         val outerInstance = referenceToOuter?.get(lambda)
 
+        fun Class<*>.findFunctionField(): Field? {
+            return this.getAllDeclaredFields().firstOrNull {
+                it.getType()?.getName()?.startsWith("kotlin.Function") ?: false
+            }
+        }
         val containingField = if (outerInstance == null) null
                               else outerClass?.getAllDeclaredFields()?.firstOrNull {
                                   (field): Boolean ->
@@ -79,10 +85,7 @@ public class LoggingStorageManager(
                                   if (value == null) return@firstOrNull false
 
                                   val valueClass = value.javaClass
-
-                                  val functionField = valueClass.getAllDeclaredFields().firstOrNull {
-                                      it.getType()?.getName()?.startsWith("kotlin.Function") ?: false
-                                  }
+                                  val functionField = valueClass.findFunctionField()
                                   if (functionField == null) return@firstOrNull false
 
                                   functionField.setAccessible(true)
@@ -90,11 +93,26 @@ public class LoggingStorageManager(
                                   functionValue == wrapper
                               }
 
-        val enclosingEntity = jClass.getEnclosingConstructor()
-                            ?: jClass.getEnclosingMethod()
-                            ?: jClass.getEnclosingClass()
+        if (containingField == null) {
+            val wrappedLambdaField = lambdaClass.findFunctionField()
+            if (wrappedLambdaField != null) {
+                wrappedLambdaField.setAccessible(true)
+                val wrappedLambda = wrappedLambdaField.get(lambda)
+                return CallData(outerInstance, null, enclosingEntity(wrappedLambda.javaClass), arguments, result)
+            }
+        }
 
-        return CallData(outerInstance, containingField, enclosingEntity as GenericDeclaration?, arguments, result)
+        val enclosingEntity = enclosingEntity(lambdaClass)
+
+        return CallData(outerInstance, containingField, enclosingEntity, arguments, result)
+    }
+
+    private fun enclosingEntity(_class: Class<Any>): GenericDeclaration? {
+        val result = _class.getEnclosingConstructor()
+            ?: _class.getEnclosingMethod()
+            ?: _class.getEnclosingClass()
+
+        return result as GenericDeclaration?
     }
 
     private fun Class<*>.getAllDeclaredFields(): List<Field> {
@@ -119,6 +137,14 @@ public class LoggingStorageManager(
 
     override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V> {
         return delegate.createMemoizedFunctionWithNullableValues(compute.logged)
+    }
+
+    override fun createMemoizedFunction<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V> {
+        return delegate.createMemoizedFunction(compute.logged, map)
+    }
+
+    override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V> {
+        return delegate.createMemoizedFunctionWithNullableValues(compute.logged, map)
     }
 
     override fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T> {

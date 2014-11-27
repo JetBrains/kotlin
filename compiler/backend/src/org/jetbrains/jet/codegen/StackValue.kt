@@ -69,7 +69,7 @@ public class StackValueWithLeaveTask(
     }
 }
 
-open class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : StackValue(resultType) {
+open class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter) -> Unit) : StackValue(resultType) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         lambda(v)
@@ -77,5 +77,5 @@ open class OperationStackValue(val resultType: Type, val lambda: (v: Instruction
     }
 }
 
-class FunctionCallStackValue(resultType: Type, lambda: (v: InstructionAdapter)-> Unit) : OperationStackValue(resultType, lambda)
+class FunctionCallStackValue(resultType: Type, lambda: (v: InstructionAdapter) -> Unit) : OperationStackValue(resultType, lambda)
 

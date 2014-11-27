@@ -51,8 +51,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     }
 
     private static List<FunctionDescriptor> generateFunctionsToAdd(JetNamedFunction functionElement) {
-        FunctionDescriptor functionDescriptor =
-                (FunctionDescriptor) ResolvePackage.getLazyResolveSession(functionElement).resolveToDescriptor(functionElement);
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(functionElement);
 
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return Collections.emptyList();

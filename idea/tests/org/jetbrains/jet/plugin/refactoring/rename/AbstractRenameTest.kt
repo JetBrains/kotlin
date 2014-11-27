@@ -46,7 +46,7 @@ import org.jetbrains.jet.lang.resolve.name.isSubpackageOf
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
@@ -192,7 +192,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
 
-            val bindingContext = jetFile.getBindingContext()
+            val bindingContext = jetFile.analyzeFully()
             val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
 
             val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(classDescriptor))!!

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameterListOwner
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
 trait LazyJavaClassResolver {
@@ -42,21 +43,18 @@ trait TypeParameterResolver {
 }
 
 class LazyJavaTypeParameterResolver(
-        val c: LazyJavaResolverContextWithTypes,
+        private val c: LazyJavaResolverContext,
         private val containingDeclaration: DeclarationDescriptor,
-        private val typeParameters: Set<JavaTypeParameter>
+        typeParameterOwner: JavaTypeParameterListOwner
 ) : TypeParameterResolver {
+    private val typeParameters = typeParameterOwner.getTypeParameters().toSet()
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
-                (javaTypeParameter: JavaTypeParameter) ->
-                if (javaTypeParameter in typeParameters)
-                    LazyJavaTypeParameterDescriptor(
-                            c.withTypes(this),
-                            javaTypeParameter,
-                            containingDeclaration
-                    )
-                else null
-            }
+        (javaTypeParameter: JavaTypeParameter) ->
+        if (javaTypeParameter in typeParameters)
+            LazyJavaTypeParameterDescriptor(c.child(this), javaTypeParameter, containingDeclaration)
+        else null
+    }
 
     override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
         return resolve(javaTypeParameter) ?: c.typeParameterResolver.resolveTypeParameter(javaTypeParameter)
@@ -93,7 +91,7 @@ private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBin
         errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.version)
     }
     else if (header.kind == KotlinClassHeader.Kind.CLASS) {
-        val descriptor = packageFragmentProvider.resolveKotlinBinaryClass(kotlinClass)
+        val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
         if (descriptor != null) {
             return JavaClassLookupResult(kClass = descriptor)
         }

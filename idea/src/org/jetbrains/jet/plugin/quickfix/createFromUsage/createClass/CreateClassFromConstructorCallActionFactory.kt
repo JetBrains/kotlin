@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry
 import java.util.Collections
@@ -39,8 +39,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
 
         val file = fullCallExpr.getContainingFile() as? JetFile ?: return null
 
-        val exhaust = callExpr.getAnalysisResults()
-        val context = exhaust.getBindingContext()
+        val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 
         val call = callExpr.getCall(context) ?: return null
         val targetParent = getTargetParentByCall(call, file) ?: return null
@@ -58,7 +57,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
 
-        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, exhaust.getModuleDescriptor(), targetParent)
+        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent)
         if (!filter(classKind)) return null
 
         val typeArgumentInfos = if (inAnnotationEntry) {

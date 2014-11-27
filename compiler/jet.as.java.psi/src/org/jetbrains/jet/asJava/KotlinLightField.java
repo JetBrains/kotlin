@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 // Copied from com.intellij.psi.impl.light.LightField
 public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiField> extends LightElement
@@ -165,5 +167,11 @@ public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiFi
     @Override
     public PsiElement getNavigationElement() {
         return getOrigin();
+    }
+
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 }

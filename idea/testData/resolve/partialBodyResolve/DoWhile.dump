@@ -1,0 +1,9 @@
+Resolve target: value-parameter val p: kotlin.Any?
+----------------------------------------------
+fun foo(p: Any?) {
+    do {
+        print(p!!)
+    } while (x())
+
+    <caret>p.hashCode()
+}

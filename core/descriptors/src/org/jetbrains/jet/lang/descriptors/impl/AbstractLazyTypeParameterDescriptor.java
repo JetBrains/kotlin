@@ -88,4 +88,15 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             }
         };
     }
+
+    @Override
+    public String toString() {
+        // Not using descriptor renderer to preserve laziness
+        return String.format(
+                "%s%s%s",
+                isReified() ? "reified " : "",
+                getVariance() == Variance.INVARIANT ? "" : getVariance() + " ",
+                getName()
+        );
+    }
 }

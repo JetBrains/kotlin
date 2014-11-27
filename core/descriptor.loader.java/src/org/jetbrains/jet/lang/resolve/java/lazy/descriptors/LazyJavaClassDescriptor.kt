@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
@@ -36,14 +36,14 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 
 class LazyJavaClassDescriptor(
-        private val outerC: LazyJavaResolverContextWithTypes,
+        private val outerC: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
                         outerC.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
-    private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
+    private val c: LazyJavaResolverContext = outerC.child(this, jClass);
 
     {
         c.javaResolverCache.recordClass(jClass, this)

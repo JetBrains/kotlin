@@ -17,13 +17,16 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.refactoring.changeSignature.MethodDescriptor;
+import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightMethod;
@@ -33,13 +36,10 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class JetChangeSignatureData implements JetMethodDescriptor {
     @NotNull
@@ -50,7 +50,7 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     private final List<JetParameterInfo> parameters;
     @NotNull
     private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
-    private Collection<PsiElement> affectedFunctions = null;
+    private Collection<UsageInfo> affectedFunctions = null;
 
     public JetChangeSignatureData(
             @NotNull FunctionDescriptor baseDescriptor,
@@ -62,14 +62,21 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
         this.descriptorsForSignatureChange = descriptorsForSignatureChange;
         final List<JetParameter> valueParameters = this.baseDeclaration instanceof JetFunction
                                                    ? ((JetFunction) this.baseDeclaration).getValueParameters()
-                                                   : ((JetClass) this.baseDeclaration).getPrimaryConstructorParameters();
+                                                   : this.baseDeclaration instanceof JetClass
+                                                     ? ((JetClass) this.baseDeclaration).getPrimaryConstructorParameters()
+                                                     : null;
         this.parameters = new ArrayList<JetParameterInfo>(
                 ContainerUtil.map(this.baseDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetParameterInfo>() {
                     @Override
                     public JetParameterInfo fun(ValueParameterDescriptor param) {
-                        JetParameter parameter = valueParameters.get(param.getIndex());
-                        return new JetParameterInfo(param.getIndex(), param.getName().asString(), param.getType(),
-                                                    parameter.getDefaultValue(), parameter.getValOrVarNode());
+                        JetParameter parameter = valueParameters != null ? valueParameters.get(param.getIndex()) : null;
+                        return new JetParameterInfo(
+                                param.getIndex(),
+                                param.getName().asString(),
+                                param.getType(),
+                                parameter != null ? parameter.getDefaultValue() : null,
+                                parameter != null ? parameter.getValOrVarNode() : null
+                        );
                     }
                 }));
     }
@@ -94,46 +101,50 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
 
     @Override
     @NotNull
-    public Collection<PsiElement> getAffectedFunctions() {
+    public Collection<UsageInfo> getAffectedFunctions() {
         if (affectedFunctions == null) {
-            affectedFunctions = Sets.newHashSet();
-            for (FunctionDescriptor descriptor : descriptorsForSignatureChange) {
-                affectedFunctions.addAll(computeHierarchyFrom(descriptor));
-            }
+            affectedFunctions = KotlinPackage.flatMapTo(
+                    descriptorsForSignatureChange,
+                    new HashSet<UsageInfo>(),
+                    new Function1<FunctionDescriptor, Iterable<? extends UsageInfo>>() {
+                        @Override
+                        public Iterable<? extends UsageInfo> invoke(FunctionDescriptor descriptor) {
+                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
+                                                                                                          descriptor);
+                            assert declaration != null : "No declaration found for " + descriptor;
+
+                            Set<UsageInfo> result = Sets.newHashSet();
+                            result.add(new JetFunctionDefinitionUsage(declaration, false));
+
+                            if (!(declaration instanceof JetNamedFunction)) return result;
+
+                            final PsiMethod baseLightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) declaration);
+                            // there are valid situations when light method is null: local functions and literals
+                            if (baseLightMethod == null) return result;
+
+                            return KotlinPackage.filterNotNullTo(
+                                    KotlinPackage.map(
+                                            OverridingMethodsSearch.search(baseLightMethod).findAll(),
+                                            new Function1<PsiMethod, UsageInfo>() {
+                                                @Override
+                                                public UsageInfo invoke(PsiMethod method) {
+                                                    if (method instanceof KotlinLightMethod) {
+                                                        JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                                                        return declaration != null ? new JetFunctionDefinitionUsage(declaration, true) : null;
+                                                    }
+
+                                                    return new OverriderUsageInfo(method, baseLightMethod, true, true, true);
+                                                }
+                                            }
+                                    ),
+                                    result
+                            );
+                        }
+                    }
+            );
         }
         return affectedFunctions;
     }
-
-    @NotNull
-    private Collection<PsiElement> computeHierarchyFrom(@NotNull FunctionDescriptor baseDescriptor) {
-        PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(), baseDescriptor);
-        Set<PsiElement> result = Sets.newHashSet();
-        result.add(declaration);
-        if (!(declaration instanceof JetNamedFunction)) {
-            return result;
-        }
-        PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) declaration);
-        // there are valid situations when light method is null: local functions and literals
-        if (lightMethod == null) {
-            return result;
-        }
-        Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(lightMethod).findAll();
-        List<PsiMethod> jetLightMethods = ContainerUtil.filter(overridingMethods, new Condition<PsiMethod>() {
-            @Override
-            public boolean value(PsiMethod method) {
-                return method instanceof KotlinLightMethod;
-            }
-        });
-        List<JetDeclaration> jetFunctions = ContainerUtil.map(jetLightMethods, new Function<PsiMethod, JetDeclaration>() {
-            @Override
-            public JetDeclaration fun(PsiMethod method) {
-                return ((KotlinLightMethod) method).getOrigin();
-            }
-        });
-        result.addAll(jetFunctions);
-        return result;
-    }
-
 
     @Override
     public String getName() {

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -115,7 +114,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) callElement.getContainingFile());
+        BindingContext bindingContext = ResolvePackage.analyzeFully((JetFile) callElement.getContainingFile());
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
         QuickFixUtil.shortenReferencesOfTypes(typesToShorten, file);
     }

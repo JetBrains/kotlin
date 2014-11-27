@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
@@ -52,6 +53,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
+import static org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver.deparenthesizeArgument;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
@@ -245,7 +247,7 @@ public class CandidateResolver {
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
-        if (expectedType == null || expectedType == DONT_CARE) {
+        if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, false);
         }
         if (expectedType == null || !KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)
@@ -396,10 +398,10 @@ public class CandidateResolver {
             @NotNull DataFlowInfo dataFlowInfoForArgument,
             @NotNull BindingTrace trace
     ) {
-        if (argumentExpression == null || type == null) return type;
+        JetExpression deparenthesizedArgument = deparenthesizeArgument(argumentExpression);
+        if (deparenthesizedArgument == null || type == null) return type;
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                argumentExpression, type, trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, trace.getBindingContext());
         if (!dataFlowValue.isStableIdentifier()) return type;
 
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
@@ -582,7 +584,7 @@ public class CandidateResolver {
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS;
 
-        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
+        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && PsiUtilPackage.isExplicitSafeCall(candidateCall.getCall());
         boolean isSubtypeBySmartCast = SmartCastUtils.isSubTypeBySmartCastIgnoringNullability(
                 receiverArgument, receiverParameter.getType(), context);
         if (!isSubtypeBySmartCast) {

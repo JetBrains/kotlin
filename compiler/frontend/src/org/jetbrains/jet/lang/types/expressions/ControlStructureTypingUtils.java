@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +72,7 @@ public class ControlStructureTypingUtils {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 constructionName.toUpperCase(), argumentNames, isArgumentNullable);
         TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName);
-        ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(call, function, null);
+        ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(call, function);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
@@ -260,64 +261,73 @@ public class ControlStructureTypingUtils {
             }
         }
 
-        final JetVisitor<Void, CheckTypeContext> checkTypeVisitor = new JetVisitor<Void, CheckTypeContext>() {
-            private void checkExpressionType(@Nullable JetExpression expression, CheckTypeContext c) {
-                if (expression == null) return;
-                expression.accept(this, c);
+        final JetVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new JetVisitor<Boolean, CheckTypeContext>() {
+
+            private boolean checkExpressionType(@NotNull JetExpression expression, CheckTypeContext c) {
+                JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
+                if (typeInfo == null) return false;
+
+                Ref<Boolean> hasError = Ref.create();
+                DataFlowUtils.checkType(typeInfo.getType(), expression, c.expectedType, typeInfo.getDataFlowInfo(), c.trace, hasError);
+                return hasError.get();
+            }
+
+            private boolean checkExpressionTypeRecursively(@Nullable JetExpression expression, CheckTypeContext c) {
+                if (expression == null) return false;
+                return expression.accept(this, c);
+            }
+
+            private boolean checkSubExpressions(
+                    JetExpression firstSub, JetExpression secondSub, JetExpression expression,
+                    CheckTypeContext firstContext, CheckTypeContext secondContext, CheckTypeContext context
+            ) {
+                boolean errorWasReported = checkExpressionTypeRecursively(firstSub, firstContext);
+                errorWasReported |= checkExpressionTypeRecursively(secondSub, secondContext);
+                return errorWasReported || checkExpressionType(expression, context);
             }
 
             @Override
-            public Void visitIfExpression(@NotNull JetIfExpression ifExpression, CheckTypeContext c) {
+            public Boolean visitIfExpression(@NotNull JetIfExpression ifExpression, CheckTypeContext c) {
                 JetExpression thenBranch = ifExpression.getThen();
                 JetExpression elseBranch = ifExpression.getElse();
                 if (thenBranch == null || elseBranch == null) {
-                    visitExpression(ifExpression, c);
-                    return null;
+                    return checkExpressionType(ifExpression, c);
                 }
-                checkExpressionType(thenBranch, c);
-                checkExpressionType(elseBranch, c);
-                return null;
+                return checkSubExpressions(thenBranch, elseBranch, ifExpression, c, c, c);
             }
 
             @Override
-            public Void visitBlockExpression(@NotNull JetBlockExpression expression, CheckTypeContext c) {
+            public Boolean visitBlockExpression(@NotNull JetBlockExpression expression, CheckTypeContext c) {
                 if (expression.getStatements().isEmpty()) {
-                    visitExpression(expression, c);
-                    return null;
+                    return checkExpressionType(expression, c);
                 }
                 JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
                 if (lastStatement instanceof JetExpression) {
-                    checkExpressionType((JetExpression) lastStatement, c);
+                    return checkExpressionTypeRecursively((JetExpression) lastStatement, c);
                 }
-                return null;
+                return false;
             }
 
             @Override
-            public Void visitPostfixExpression(@NotNull JetPostfixExpression expression, CheckTypeContext c) {
+            public Boolean visitPostfixExpression(@NotNull JetPostfixExpression expression, CheckTypeContext c) {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
-                    checkExpressionType(expression.getBaseExpression(), c.makeTypeNullable());
-                    return null;
+                    return checkExpressionTypeRecursively(expression.getBaseExpression(), c.makeTypeNullable());
                 }
                 return super.visitPostfixExpression(expression, c);
             }
 
             @Override
-            public Void visitBinaryExpression(@NotNull JetBinaryExpression expression, CheckTypeContext c) {
+            public Boolean visitBinaryExpression(@NotNull JetBinaryExpression expression, CheckTypeContext c) {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.ELVIS) {
-                    checkExpressionType(expression.getLeft(), c.makeTypeNullable());
-                    checkExpressionType(expression.getRight(), c);
-                    return null;
+
+                    return checkSubExpressions(expression.getLeft(), expression.getRight(), expression, c.makeTypeNullable(), c, c);
                 }
                 return super.visitBinaryExpression(expression, c);
             }
 
             @Override
-            public Void visitExpression(@NotNull JetExpression expression, CheckTypeContext c) {
-                JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
-                if (typeInfo != null) {
-                    DataFlowUtils.checkType(typeInfo.getType(), expression, c.expectedType, typeInfo.getDataFlowInfo(), c.trace);
-                }
-                return null;
+            public Boolean visitExpression(@NotNull JetExpression expression, CheckTypeContext c) {
+                return checkExpressionType(expression, c);
             }
         };
 

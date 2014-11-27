@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.storage
 
+import java.util.concurrent.ConcurrentMap
 
 public trait StorageManager {
     /**
@@ -29,6 +30,10 @@ public trait StorageManager {
     public fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
 
     public fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
+
+    public fun createMemoizedFunction<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V>
+
+    public fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V>
 
     public fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T>
 

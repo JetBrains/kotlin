@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
@@ -53,7 +53,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.classDeserializer.deserializeClass(classId)
+    override fun resolveTopLevelClass(classId: ClassId) = deserializationComponents.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
@@ -63,10 +63,12 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
             return Collections.emptyList()
         }
+        val packageData = JavaProtoBufUtil.readPackageDataFrom(annotationData)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName),
-                JavaProtoBufUtil.readPackageDataFrom(annotationData),
-                deserializationContext
+                packageData.getPackageProto(),
+                packageData.getNameResolver(),
+                deserializationComponents
         ) { listOf() }
         return membersScope.getDescriptors()
     }
@@ -87,28 +89,14 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             return null
         }
     }
+
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
-    private val loadersStorage = DescriptorLoadersStorage(storageManager);
-    {
-        loadersStorage.setModule(moduleDescriptor)
-        loadersStorage.setErrorReporter(LOGGING_REPORTER)
-    }
+    private val loadersStorage = DescriptorLoadersStorage(storageManager, moduleDescriptor)
 
-    private val annotationLoader = AnnotationDescriptorLoader();
-    {
-        annotationLoader.setModule(moduleDescriptor)
-        annotationLoader.setKotlinClassFinder(localClassFinder)
-        annotationLoader.setErrorReporter(LOGGING_REPORTER)
-        annotationLoader.setStorage(loadersStorage)
-    }
+    private val annotationLoader = AnnotationDescriptorLoader(moduleDescriptor, loadersStorage, localClassFinder, LOGGING_REPORTER)
 
-    private val constantLoader = ConstantDescriptorLoader();
-    {
-        constantLoader.setKotlinClassFinder(localClassFinder)
-        constantLoader.setErrorReporter(LOGGING_REPORTER)
-        constantLoader.setStorage(loadersStorage)
-    }
+    private val constantLoader = ConstantDescriptorLoader(loadersStorage, localClassFinder, LOGGING_REPORTER)
 
     private val classDataFinder = object : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
@@ -145,8 +133,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         moduleDescriptor.seal()
         moduleContainingMissingDependencies.seal()
     }
-    val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                                              constantLoader, packageFragmentProvider, JavaFlexibleTypeCapabilitiesDeserializer)
+
+    private val deserializationComponents = DeserializationComponents(
+            storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
+            JavaFlexibleTypeCapabilitiesDeserializer
+    )
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)

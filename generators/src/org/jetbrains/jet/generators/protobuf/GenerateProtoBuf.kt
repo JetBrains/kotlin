@@ -17,8 +17,6 @@
 package org.jetbrains.jet.generators.protobuf
 
 import com.intellij.execution.util.ExecUtil
-import com.intellij.execution.process.BaseOSProcessHandler
-import java.util.concurrent.ExecutorService
 import java.io.File
 
 // This file generates protobuf classes from formal description.
@@ -44,6 +42,10 @@ fun main(args: Array<String>) {
 
         modifyAndExecProtoc(commonProto, "compiler/tests")
         modifyAndExecProtoc(javaProto, "compiler/tests")
+    }
+    catch (e: Throwable) {
+        e.printStackTrace()
+        throw e
     }
     finally {
         // Workaround for JVM hanging: IDEA's process handler creates thread pool

@@ -32,9 +32,9 @@ import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvi
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.context.LazinessToken
-import javax.inject.Inject
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -276,7 +276,7 @@ public class TypeResolver(
 
     public fun resolveClass(scope: JetScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
         val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace)
-                                        .filterIsInstance(javaClass<ClassifierDescriptor>()).firstOrNull()
+                                        .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {
             ImportsResolver.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)
         }

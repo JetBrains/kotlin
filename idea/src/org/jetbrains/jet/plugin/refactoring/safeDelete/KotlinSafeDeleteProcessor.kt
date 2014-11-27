@@ -39,12 +39,12 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.*
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.deleteElementAndCleanParent
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
@@ -208,7 +208,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             val modifierList = jetClass.getModifierList()
             if (modifierList != null && modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return null
 
-            val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element as JetElement)
+            val bindingContext = (element as JetElement).analyze()
 
             val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
             if (declarationDescriptor !is CallableMemberDescriptor) return null

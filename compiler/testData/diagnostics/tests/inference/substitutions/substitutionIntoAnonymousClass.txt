@@ -1,0 +1,20 @@
+package
+
+internal final class Foo</*0*/ R> {
+    public constructor Foo</*0*/ R>()
+    private final fun </*0*/ T> bar(): Foo.bar.<no name provided>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun getR(/*0*/ r: R): R
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Test {
+    public constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    private final fun </*0*/ T : kotlin.Any> T.self(): Test.self.<no name provided>
+}

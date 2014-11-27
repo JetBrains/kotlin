@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
@@ -64,7 +65,7 @@ import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage;
@@ -115,6 +116,7 @@ public class InjectorForLazyResolveWithJava {
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
@@ -124,7 +126,7 @@ public class InjectorForLazyResolveWithJava {
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final JavaClassDataFinder javaClassDataFinder;
     private final AnnotationDescriptorLoader annotationDescriptorLoader;
     private final DescriptorLoadersStorage descriptorLoadersStorage;
@@ -151,10 +153,10 @@ public class InjectorForLazyResolveWithJava {
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
-        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver(traceBasedErrorReporter);
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
-        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.lazyResolveBasedCache = new LazyResolveBasedCache();
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
@@ -181,6 +183,7 @@ public class InjectorForLazyResolveWithJava {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
@@ -188,10 +191,10 @@ public class InjectorForLazyResolveWithJava {
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
-        this.constantDescriptorLoader = new ConstantDescriptorLoader();
-        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
-        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
+        this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager, module);
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(module, descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -234,6 +237,7 @@ public class InjectorForLazyResolveWithJava {
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
         expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
+        expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
@@ -268,20 +272,7 @@ public class InjectorForLazyResolveWithJava {
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
-        deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
-        deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
-
-        annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
-        annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        annotationDescriptorLoader.setModule(module);
-        annotationDescriptorLoader.setStorage(descriptorLoadersStorage);
-
-        descriptorLoadersStorage.setErrorReporter(traceBasedErrorReporter);
-        descriptorLoadersStorage.setModule(module);
-
-        constantDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
-        constantDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        constantDescriptorLoader.setStorage(descriptorLoadersStorage);
+        deserializedDescriptorResolver.setComponents(deserializationComponentsForJava);
 
         javaClassFinder.initialize();
 

@@ -21,7 +21,7 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -35,24 +35,24 @@ import java.util.Collections;
 
 public class JvmResolveUtil {
     @NotNull
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
-        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file);
+        AnalysisResult analysisResult = analyzeOneFileWithJavaIntegration(file);
 
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
-        return analyzeExhaust;
+        return analysisResult;
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
                                                Predicates.<PsiFile>alwaysTrue());
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
+    public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
@@ -61,15 +61,15 @@ public class JvmResolveUtil {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
 
-        AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely);
+        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely);
 
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
-        return analyzeExhaust;
+        return analysisResult;
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
+    public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely

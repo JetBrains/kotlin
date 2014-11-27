@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.MethodDescriptor;
+import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -27,7 +28,7 @@ import java.util.Collection;
 
 public interface JetMethodDescriptor extends MethodDescriptor<JetParameterInfo, Visibility> {
     @NotNull
-    Collection<PsiElement> getAffectedFunctions();
+    Collection<UsageInfo> getAffectedFunctions();
 
     boolean isConstructor();
 

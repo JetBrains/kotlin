@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.resolve.annotation
 
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.analyzer.AnalysisResult
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.JetTestUtils
 
@@ -26,5 +26,5 @@ class AnnotationDescriptorResolveWithoutAnalyzeBodyTest : AnnotationDescriptorRe
         checkAnnotationOnAllExceptLocalDeclarations(content, expectedAnnotation)
     }
 
-    override fun analyzeFile(ktFile: JetFile): AnalyzeExhaust = JetTestUtils.analyzeFileWithoutBody(ktFile)
+    override fun analyzeFile(ktFile: JetFile): AnalysisResult = JetTestUtils.analyzeFileWithoutBody(ktFile)
 }

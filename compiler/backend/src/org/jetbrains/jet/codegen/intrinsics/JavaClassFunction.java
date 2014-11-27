@@ -43,8 +43,8 @@ public class JavaClassFunction extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type expectedType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(
                 (JetElement) element, codegen.getBindingContext());

@@ -38,12 +38,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
             substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor>()
         }
 
-        var substituted: DeclarationDescriptor? = substitutedDescriptors!!.get(descriptor)
-        if (substituted == null && !substitutedDescriptors!!.containsKey(descriptor)) {
-            substituted = descriptor.substitute(substitutor)
-
-            substitutedDescriptors!!.put(descriptor, substituted)
-        }
+        val substituted = substitutedDescriptors!!.getOrPut(descriptor, { descriptor.substitute(substitutor) })
 
         [suppress("UNCHECKED_CAST")]
         return substituted as D?

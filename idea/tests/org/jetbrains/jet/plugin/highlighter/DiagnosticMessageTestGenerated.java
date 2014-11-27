@@ -162,6 +162,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("typeParameterAsReified.kt")
+    public void testTypeParameterAsReified() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeParameterAsReified.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("unusedParameter.kt")
     public void testUnusedParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unusedParameter.kt");

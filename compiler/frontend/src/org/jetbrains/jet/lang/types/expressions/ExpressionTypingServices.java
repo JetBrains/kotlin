@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.base.Function;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
@@ -73,6 +75,8 @@ public class ExpressionTypingServices {
     private AnnotationResolver annotationResolver;
     @NotNull
     private CallResolverExtensionProvider extensionProvider;
+    @NotNull
+    private PartialBodyResolveProvider partialBodyResolveProvider;
 
     @NotNull
     public Project getProject() {
@@ -137,6 +141,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setExtensionProvider(@NotNull CallResolverExtensionProvider extensionProvider) {
         this.extensionProvider = extensionProvider;
+    }
+
+    @NotNull
+    private PartialBodyResolveProvider getPartialBodyResolveProvider() {
+        return partialBodyResolveProvider;
+    }
+
+    @Inject
+    public void setPartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
+        this.partialBodyResolveProvider = partialBodyResolveProvider;
     }
 
     public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
@@ -205,6 +219,11 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingContext context
     ) {
         List<JetElement> block = expression.getStatements();
+
+        Function1<JetElement, Boolean> filter = getPartialBodyResolveProvider().getFilter();
+        if (filter != null && !(expression instanceof JetPsiUtil.JetExpressionWrapper)) {
+            block = KotlinPackage.filter(block, filter);
+        }
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();

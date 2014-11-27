@@ -2,7 +2,6 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.Variance
@@ -14,12 +13,11 @@ import org.jetbrains.jet.lang.psi.JetAnnotationEntry
 import org.jetbrains.jet.lang.psi.JetUserType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall
-import org.jetbrains.jet.lang.psi.JetDelegatorToThisCall
 import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.Collections
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -42,7 +40,7 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
         val typeRef = callee.getTypeReference() ?: return null
         val userType = typeRef.getTypeElement() as? JetUserType ?: return null
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(userType)
+        val context = userType.analyze()
 
         val qualifier = userType.getQualifier()?.getReferenceExpression()
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }

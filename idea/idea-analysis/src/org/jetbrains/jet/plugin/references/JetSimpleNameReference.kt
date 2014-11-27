@@ -31,12 +31,12 @@ import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -78,13 +78,13 @@ public class JetSimpleNameReference(
         val opExpression =
                 PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
         if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null && opExpression != null) {
-            val oldDescriptor = AnalyzerFacadeWithCache.getContextForElement(expression)[BindingContext.REFERENCE_TARGET, expression]
+            val oldDescriptor = expression.analyze()[BindingContext.REFERENCE_TARGET, expression]
             val newExpression = OperatorToFunctionIntention.convert(opExpression)
             newExpression.accept(
                     object: JetTreeVisitorVoid() {
                         override fun visitCallExpression(expression: JetCallExpression) {
                             val callee = expression.getCalleeExpression() as? JetSimpleNameExpression
-                            if (callee != null && AnalyzerFacadeWithCache.getContextForElement(callee)[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
+                            if (callee != null && callee.analyze()[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
                                 nameElement = callee.getReferencedNameElement()
                             }
                             else {

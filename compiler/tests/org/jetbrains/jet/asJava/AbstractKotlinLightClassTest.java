@@ -21,6 +21,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -76,7 +77,7 @@ public abstract class AbstractKotlinLightClassTest extends KotlinMultiFileTestWi
     }
 
     @Override
-    protected Void createTestModule(String name) {
+    protected Void createTestModule(@NotNull String name, @Nullable String platform) {
         return null;
     }
 

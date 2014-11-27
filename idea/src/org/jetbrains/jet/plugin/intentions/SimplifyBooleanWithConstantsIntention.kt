@@ -24,11 +24,11 @@ import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.psiUtil.copied
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<JetBinaryExpression>(
         "simplify.boolean.with.constants", javaClass()) {
@@ -128,7 +128,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
     }
 
     private fun JetExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(this)
+        val bindingContext = this.analyze()
         val trace = DelegatingBindingTrace(bindingContext, "trace for constant check")
         return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, trace, constant)
     }

@@ -1625,6 +1625,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("thisInObject.kt")
+                public void testThisInObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/thisInObject.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("typeRef.kt")
                 public void testTypeRef() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/typeRef.kt");

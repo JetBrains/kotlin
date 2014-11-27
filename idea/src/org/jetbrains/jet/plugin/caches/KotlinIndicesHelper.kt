@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.caches
 
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.plugin.stubindex.*
@@ -35,14 +34,17 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 
-public class KotlinIndicesHelper(private val project: Project,
-                                 private val resolveSession: ResolveSessionForBodies,
-                                 private val scope: GlobalSearchScope,
-                                 private val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-    private val moduleDescriptor = resolveSession.getModuleDescriptor()
-
+public class KotlinIndicesHelper(
+        private val project: Project,
+        private val resolutionFacade: ResolutionFacade,
+        private val bindingContext: BindingContext,
+        private val scope: GlobalSearchScope,
+        private val moduleDescriptor: ModuleDescriptor,
+        private val visibilityFilter: (DeclarationDescriptor) -> Boolean
+) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean): Collection<ClassDescriptor> {
         val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
                 JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, scope).stream()
@@ -72,7 +74,7 @@ public class KotlinIndicesHelper(private val project: Project,
     }
 
     public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
-        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 
         val result = HashSet<CallableDescriptor>()
 
@@ -126,7 +128,7 @@ public class KotlinIndicesHelper(private val project: Project,
         val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
         val allFqNames = sourceNames.map { FqName(it) } + JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, false).stream()
 
-        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
@@ -134,7 +136,6 @@ public class KotlinIndicesHelper(private val project: Project,
     }
 
     public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
-        val bindingContext = resolveSession.resolveToElement(expression)
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
         val functionsIndex = JetTopLevelFunctionsFqnNameIndex.getInstance()

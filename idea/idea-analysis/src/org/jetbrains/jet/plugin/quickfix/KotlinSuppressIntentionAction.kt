@@ -22,11 +22,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinSuppressIntentionAction(
         private val suppressAt: JetExpression,
@@ -132,7 +132,7 @@ public class KotlinSuppressIntentionAction(
     private fun suppressAnnotationText(id: String) = "[suppress($id)]"
 
     private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
-        val context = AnalyzerFacadeWithCache.getContextForElement(annotated)
+        val context = annotated.analyze()
         for (entry in annotated.getAnnotationEntries()) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
             if (annotationDescriptor != null && KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) {

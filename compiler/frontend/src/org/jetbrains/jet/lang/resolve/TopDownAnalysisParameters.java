@@ -67,12 +67,9 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
         return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, false, true, false);
     }
 
-    @NotNull
-    private final StorageManager storageManager;
-    @NotNull
-    private final ExceptionTracker exceptionTracker;
-    @NotNull
-    private final Predicate<PsiFile> analyzeCompletely;
+    @NotNull private final StorageManager storageManager;
+    @NotNull private final ExceptionTracker exceptionTracker;
+    @NotNull private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
     private final boolean lazyTopDownAnalysis;

@@ -34,6 +34,14 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import java.util.regex.Pattern
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.jet.lang.psi.debugText.getDebugText
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate
+import java.lang.reflect.GenericDeclaration
+import java.lang.reflect.Method
+import java.lang.reflect.Constructor
 
 class LazyOperationsLog(
         val stringSanitizer: (String) -> String
@@ -104,7 +112,7 @@ class LazyOperationsLog(
         val data = record.data
         val sb = StringBuilder()
 
-        sb.append(data.field?.getName() ?: "<name not found>")
+        sb.append(data.field?.getName() ?: "in ${data.lambdaCreatedIn.getDeclarationName()}")
 
         if (!data.arguments.isEmpty()) {
             sb.append(data.arguments.map { render(it) }.join(", ", "(", ")"))
@@ -131,19 +139,24 @@ class LazyOperationsLog(
 
         val aClass = o.javaClass
         sb.append(if (aClass.isAnonymousClass()) aClass.getName().substringAfterLast('.') else aClass.getSimpleName()).append("@$id")
+
+        fun Any.appendQuoted() {
+            sb.append("['").append(this).append("']")
+        }
+
         when {
-            o is Named -> sb.append("['${o.getName()}']")
+            o is Named -> o.getName().appendQuoted()
             o.javaClass.getSimpleName() == "LazyJavaClassifierType" -> {
                 val javaType = o.field<JavaTypeImpl<*>>("javaType")
-                sb.append("['${javaType.getPsi().getPresentableText()}']")
+                javaType.getPsi().getPresentableText().appendQuoted()
             }
             o.javaClass.getSimpleName() == "LazyJavaClassTypeConstructor" -> {
                 val javaClass = o.field<Any>("this\$0").field<JavaClassImpl>("jClass")
-                sb.append("['${javaClass.getPsi().getName()}']")
+                javaClass.getPsi().getName().appendQuoted()
             }
             o.javaClass.getSimpleName() == "DeserializedType" -> {
-                val typeDeserializer = o.field<TypeDeserializer>("this\$0")
-                val context = typeDeserializer.field<DeserializationContext>("context")
+                val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
+                val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
                 val text = when (typeProto.getConstructor().getKind()) {
                     ProtoBuf.Type.Constructor.Kind.CLASS -> context.nameResolver.getFqName(typeProto.getConstructor().getId()).asString()
@@ -153,13 +166,13 @@ class LazyOperationsLog(
                     }
                     else -> "???"
                 }
-                sb.append("['$text']")
+                text.appendQuoted()
             }
             o is JavaNamedElement -> {
-                sb.append("['${o.getName()}']")
+                o.getName().appendQuoted()
             }
             o is JavaTypeImpl<*> -> {
-                sb.append("['${o.getPsi().getPresentableText()}']")
+                o.getPsi().getPresentableText().appendQuoted()
             }
             o is Collection<*> -> {
                 if (o.isEmpty()) {
@@ -173,12 +186,15 @@ class LazyOperationsLog(
                 }
             }
             o is JetTypeImpl -> {
-                sb.append("['").append(o.getConstructor())
-                if (!o.getArguments().isEmpty()) {
-                    sb.append("<${o.getArguments().size()}>")
-                }
-                sb.append("']")
+                StringBuilder {
+                    append(o.getConstructor())
+                    if (!o.getArguments().isEmpty()) {
+                        append("<${o.getArguments().size()}>")
+                    }
+                }.appendQuoted()
             }
+            o is ResolutionCandidate<*> -> DescriptorRenderer.COMPACT.render(o.getDescriptor()).appendQuoted()
+            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.getCallElement().getDebugText()?.appendQuoted()
         }
         return sb.toString()
     }
@@ -196,4 +212,13 @@ private fun Printer.indent(body: Printer.() -> Unit): Printer {
     body()
     popIndent()
     return this
+}
+
+private fun GenericDeclaration?.getDeclarationName(): String? {
+    return when (this) {
+        is Class<*> -> getName().substringAfterLast(".")
+        is Method -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
+        is Constructor<*> -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
+        else -> "<no name>"
+    }
 }

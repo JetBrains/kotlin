@@ -20,14 +20,13 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.Collections
 import org.jetbrains.jet.analyzer.analyzeInContext
@@ -35,8 +34,8 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -154,13 +153,13 @@ public object ShortenReferences {
             val elementFilter: (PsiElement) -> FilterResult,
             val resolveMap: Map<JetReferenceExpression, BindingContext>,
             val importInserter: ImportInserter) : JetVisitorVoid() {
-        protected val resolveSession: ResolveSessionForBodies
-            get() = file.getLazyResolveSession()
+        protected val resolutionFacade: ResolutionFacade
+            get() = file.getResolutionFacade()
 
         protected val elementsToShorten: MutableSet<T> = LinkedHashSet()
 
         protected fun bindingContext(element: JetElement): BindingContext
-                = resolveMap[element] ?: resolveSession.resolveToElement(element)
+                = resolveMap[element] ?: resolutionFacade.analyze(element)
 
         protected abstract fun getShortenedElement(element: T): JetElement?
 
@@ -194,7 +193,7 @@ public object ShortenReferences {
             if (target == null) return false
 
             val typeReference = PsiTreeUtil.getParentOfType(userType, javaClass<JetTypeReference>())!!
-            val scope = resolveSession.resolveToElement(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
+            val scope = resolutionFacade.analyze(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
             val name = target.getName()
             val targetByName = scope.getClassifier(name)
             if (targetByName == null) {

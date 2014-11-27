@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 
 public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     @Override
@@ -64,7 +64,7 @@ public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsight
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolveSessionForBodies>)item, parameterInfoUIContext);
+            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolutionFacade>)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

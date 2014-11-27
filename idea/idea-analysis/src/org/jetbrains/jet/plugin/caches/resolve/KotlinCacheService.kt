@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.analyzer.AnalysisResult
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.SLRUCache
 import com.intellij.psi.util.PsiModificationTracker
@@ -35,30 +35,40 @@ import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
-
-public fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
-    return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
-}
-
-public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
-}
-
-public fun JetElement.getBindingContext(): BindingContext {
-    return getAnalysisResults().getBindingContext()
-}
-
-public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
-    if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
-    val element = elements.first()
-    return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
-}
 
 public class KotlinCacheService(val project: Project) {
     class object {
         public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+    }
+
+    public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
+        val cache = getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
+        return object : ResolutionFacade {
+            override fun analyze(element: JetElement): BindingContext {
+                return cache.getLazyResolveSession(element).resolveToElement(element)
+            }
+
+            override fun analyzeWithPartialBodyResolve(element: JetElement): BindingContext {
+                return cache.getLazyResolveSession(element).resolveToElementWithPartialBodyResolve(element)
+            }
+
+            override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
+                return cache.getLazyResolveSession(element).getModuleDescriptor()
+            }
+
+            override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
+                return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
+            }
+
+            override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
+                return cache.getAnalysisResultsForElements(elements)
+            }
+        }
     }
 
     fun globalResolveSessionProvider(
@@ -170,7 +180,9 @@ public class KotlinCacheService(val project: Project) {
         return getCacheToAnalyzeFiles(listOf(file)).getLazyResolveSession(file)
     }
 
-    public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
+    public fun getAnalysisResults(elements: Collection<JetElement>): AnalysisResult {
+        if (elements.isEmpty()) return AnalysisResult.EMPTY
+
         val files = elements.map { it.getContainingJetFile() }.toSet()
         assertAreInSameModule(files)
 

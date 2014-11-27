@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 public class KotlinSurrounderUtils {
     public static String SURROUND_WITH = JetBundle.message("surround.with");
@@ -46,7 +46,7 @@ public class KotlinSurrounderUtils {
 
     @Nullable
     public static JetType getExpressionType(JetExpression expression) {
-        BindingContext expressionBindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
+        BindingContext expressionBindingContext = ResolvePackage.analyze(expression);
         return expressionBindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
     }
 

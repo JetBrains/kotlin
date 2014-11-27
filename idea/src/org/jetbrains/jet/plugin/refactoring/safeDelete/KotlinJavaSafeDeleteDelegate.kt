@@ -16,25 +16,21 @@
 
 package org.jetbrains.jet.plugin.refactoring.safeDelete
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiReference
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteDelegate
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.jet.asJava.unwrapped
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.parameterIndex
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     override fun createUsageInfoForParameter(
@@ -50,7 +46,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         val calleeExpression = callExpression.getCalleeExpression()
         if (!(calleeExpression is JetReferenceExpression && calleeExpression.isAncestor(element))) return
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+        val bindingContext = element.analyze()
 
         val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, calleeExpression)
         if (descriptor == null) return

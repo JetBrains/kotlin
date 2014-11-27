@@ -120,6 +120,11 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
 class FqNameReplacement(val fqName: FqName): Replacement {
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
+        val thisExpr = e.getParent() as? JetThisExpression
+        if (thisExpr != null) {
+            return thisExpr.replaced(JetPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
+        }
+
         val newExpr = (e.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
         return if (newExpr is JetQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
     }

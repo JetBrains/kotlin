@@ -30,7 +30,7 @@ import kotlin.modules.AllModules;
 import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.asJava.FilteredJvmDiagnostics;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
@@ -41,7 +41,6 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
@@ -117,12 +116,12 @@ public class KotlinToJVMBytecodeCompiler {
         try {
             environment = JetCoreEnvironment.createForProduction(parentDisposable, compilerConfiguration);
 
-            AnalyzeExhaust exhaust = analyze(environment);
-            if (exhaust == null) {
+            AnalysisResult result = analyze(environment);
+            if (result == null) {
                 return false;
             }
 
-            exhaust.throwIfError();
+            result.throwIfError();
 
             for (Module module : chunk) {
                 List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
@@ -134,7 +133,7 @@ public class KotlinToJVMBytecodeCompiler {
                         }
                 );
                 GenerationState generationState =
-                        generate(environment, exhaust, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
+                        generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
                 outputFiles.put(module, generationState.getFactory());
             }
         }
@@ -270,26 +269,26 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(@NotNull JetCoreEnvironment environment) {
-        AnalyzeExhaust exhaust = analyze(environment);
+        AnalysisResult result = analyze(environment);
 
-        if (exhaust == null) {
+        if (result == null) {
             return null;
         }
 
-        exhaust.throwIfError();
+        result.throwIfError();
 
-        return generate(environment, exhaust, environment.getSourceFiles(), null, null);
+        return generate(environment, result, environment.getSourceFiles(), null, null);
     }
 
     @Nullable
-    private static AnalyzeExhaust analyze(@NotNull final JetCoreEnvironment environment) {
+    private static AnalysisResult analyze(@NotNull final JetCoreEnvironment environment) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         analyzerWithCompilerReport.analyzeAndReport(
-                environment.getSourceFiles(), new Function0<AnalyzeExhaust>() {
+                environment.getSourceFiles(), new Function0<AnalysisResult>() {
                     @NotNull
                     @Override
-                    public AnalyzeExhaust invoke() {
+                    public AnalysisResult invoke() {
                         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
                         BindingTrace sharedTrace = support.getTrace();
                         ModuleDescriptorImpl sharedModule = support.newModule();
@@ -307,22 +306,22 @@ public class KotlinToJVMBytecodeCompiler {
                 }
         );
 
-        AnalyzeExhaust exhaust = analyzerWithCompilerReport.getAnalyzeExhaust();
-        assert exhaust != null : "AnalyzeExhaust should be non-null, compiling: " + environment.getSourceFiles();
+        AnalysisResult result = analyzerWithCompilerReport.getAnalysisResult();
+        assert result != null : "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles();
 
-        CompilerPluginContext context = new CompilerPluginContext(environment.getProject(), exhaust.getBindingContext(),
+        CompilerPluginContext context = new CompilerPluginContext(environment.getProject(), result.getBindingContext(),
                                                                   environment.getSourceFiles());
         for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
             plugin.processFiles(context);
         }
 
-        return analyzerWithCompilerReport.hasErrors() ? null : exhaust;
+        return analyzerWithCompilerReport.hasErrors() ? null : result;
     }
 
     @NotNull
     private static GenerationState generate(
             @NotNull JetCoreEnvironment environment,
-            @NotNull AnalyzeExhaust exhaust,
+            @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
             @Nullable String moduleId,
             File outputDirectory
@@ -343,8 +342,8 @@ public class KotlinToJVMBytecodeCompiler {
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
                 Progress.DEAF,
-                exhaust.getModuleDescriptor(),
-                exhaust.getBindingContext(),
+                result.getModuleDescriptor(),
+                result.getBindingContext(),
                 sourceFiles,
                 configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
@@ -360,7 +359,7 @@ public class KotlinToJVMBytecodeCompiler {
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
                         diagnosticHolder.getBindingContext().getDiagnostics(),
-                        exhaust.getBindingContext().getDiagnostics()
+                        result.getBindingContext().getDiagnostics()
                 ),
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         );

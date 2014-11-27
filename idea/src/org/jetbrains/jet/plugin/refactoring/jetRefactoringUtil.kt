@@ -16,17 +16,10 @@
 
 package org.jetbrains.jet.plugin.refactoring
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDirectory
 import com.intellij.openapi.roots.JavaProjectRootsUtil
-import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMember
-import org.jetbrains.jet.asJava.namedUnwrappedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
@@ -65,14 +58,13 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -280,7 +272,7 @@ public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? 
         }
         else -> null
     }
-    return bodyElement?.let { getContainingJetFile().getLazyResolveSession().resolveToElement(it) }
+    return bodyElement?.let { it.analyze() }
 }
 
 public fun chooseContainerElement<T>(
@@ -306,7 +298,7 @@ public fun chooseContainerElement<T>(
 
                 private fun JetElement.renderDeclaration(): String? {
                     val name = renderName()
-                    val descriptor = AnalyzerFacadeWithCache.getContextForElement(this)[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                    val descriptor = this.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
                     val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
                         descriptor.getValueParameters()
                                 .map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }

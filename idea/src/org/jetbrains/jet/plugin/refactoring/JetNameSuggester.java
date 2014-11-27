@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -67,7 +67,7 @@ public class JetNameSuggester {
     public static @NotNull String[] suggestNames(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
+        BindingContext bindingContext = ResolvePackage.analyze(expression);
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

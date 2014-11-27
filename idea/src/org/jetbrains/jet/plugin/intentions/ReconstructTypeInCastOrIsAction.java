@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -81,6 +81,6 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
     }
 
     private static JetType getReconstructedType(JetTypeReference typeRef) {
-        return AnalyzerFacadeWithCache.getContextForElement(typeRef).get(BindingContext.TYPE, typeRef);
+        return ResolvePackage.analyze(typeRef).get(BindingContext.TYPE, typeRef);
     }
 }

@@ -26,27 +26,15 @@ import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 
-import javax.inject.Inject;
-
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 
 public class ConstantDescriptorLoader extends BaseDescriptorLoader implements ConstantLoader {
-    @Inject
-    @Override
-    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
-        this.storage = storage;
-    }
-
-    @Inject
-    @Override
-    public void setKotlinClassFinder(@NotNull KotlinClassFinder kotlinClassFinder) {
-        this.kotlinClassFinder = kotlinClassFinder;
-    }
-
-    @Inject
-    @Override
-    public void setErrorReporter(@NotNull ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
+    public ConstantDescriptorLoader(
+            @NotNull DescriptorLoadersStorage storage,
+            @NotNull KotlinClassFinder kotlinClassFinder,
+            @NotNull ErrorReporter errorReporter
+    ) {
+        super(kotlinClassFinder, errorReporter, storage);
     }
 
     @Nullable
@@ -66,6 +54,6 @@ public class ConstantDescriptorLoader extends BaseDescriptorLoader implements Co
             return null;
         }
 
-        return storage.getStorage().invoke(kotlinClass).getPropertyConstants().get(signature);
+        return storage.getStorageForClass(kotlinClass).getPropertyConstants().get(signature);
     }
 }

@@ -17,106 +17,49 @@
 package org.jetbrains.jet.descriptors.serialization.context
 
 import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
-import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
-import org.jetbrains.jet.descriptors.serialization.NameResolver
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.descriptors.serialization.TypeDeserializer
-import org.jetbrains.jet.descriptors.serialization.MemberDeserializer
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.descriptors.serialization.ClassDeserializer
-import org.jetbrains.jet.descriptors.serialization.FlexibleTypeCapabilitiesDeserializer
 
-public open class DeserializationGlobalContext(
+public class DeserializationComponents(
         public val storageManager: StorageManager,
         public val moduleDescriptor: ModuleDescriptor,
         public val classDataFinder: ClassDataFinder,
         public val annotationLoader: AnnotationLoader,
         public val constantLoader: ConstantLoader,
         public val packageFragmentProvider: PackageFragmentProvider,
-        public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        public val classDeserializer: ClassDeserializer = ClassDeserializer(storageManager, classDataFinder)
+        public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
 ) {
-    {
-        classDeserializer.context = this
-    }
+    public val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
-    public fun withNameResolver(nameResolver: NameResolver): DeserializationContext {
-        return DeserializationContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                      constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer, nameResolver)
-    }
+    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
+
+    public fun createContext(descriptor: PackageFragmentDescriptor, nameResolver: NameResolver): DeserializationContext =
+            DeserializationContext(this, nameResolver, descriptor, parentTypeDeserializer = null, typeParameters = listOf())
 }
 
 
-public open class DeserializationContext(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        classDataFinder: ClassDataFinder,
-        annotationLoader: AnnotationLoader,
-        constantLoader: ConstantLoader,
-        packageFragmentProvider: PackageFragmentProvider,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        classDeserializer: ClassDeserializer,
-        public val nameResolver: NameResolver
-) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                 constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer) {
-    fun withTypes(containingDeclaration: DeclarationDescriptor): DeserializationContextWithTypes {
-        val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}",
-                                                TypeDeserializer.TypeParameterResolver.NONE)
-        return withTypes(containingDeclaration, typeDeserializer)
-    }
+public class DeserializationContext(
+        public val components: DeserializationComponents,
+        public val nameResolver: NameResolver,
+        public val containingDeclaration: DeclarationDescriptor,
+        parentTypeDeserializer: TypeDeserializer?,
+        typeParameters: List<ProtoBuf.TypeParameter>
+) {
+    val typeDeserializer = TypeDeserializer(this, parentTypeDeserializer, typeParameters,
+                                            "Deserializer for ${containingDeclaration.getName()}")
 
-    fun withTypes(containingDeclaration: DeclarationDescriptor, typeDeserializer: TypeDeserializer): DeserializationContextWithTypes {
-        return DeserializationContextWithTypes(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                               constantLoader, packageFragmentProvider, classDeserializer,
-                                               nameResolver, flexibleTypeCapabilitiesDeserializer, containingDeclaration, typeDeserializer)
-    }
+    val memberDeserializer = MemberDeserializer(this)
 
-}
+    val storageManager: StorageManager get() = components.storageManager
 
-
-class DeserializationContextWithTypes(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        classDataFinder: ClassDataFinder,
-        annotationLoader: AnnotationLoader,
-        constantLoader: ConstantLoader,
-        packageFragmentProvider: PackageFragmentProvider,
-        classDeserializer: ClassDeserializer,
-        nameResolver: NameResolver,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        val containingDeclaration: DeclarationDescriptor,
-        val typeDeserializer: TypeDeserializer
-) : DeserializationContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                           constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer, nameResolver) {
-    val deserializer: MemberDeserializer = MemberDeserializer(this)
-
-    public fun childContext(
+    fun childContext(
             descriptor: DeclarationDescriptor,
-            typeParameterProtos: List<TypeParameter>,
-            typeParameters: MutableList<TypeParameterDescriptor>
-    ): DeserializationContextWithTypes {
-        val childTypeParameterResolver = object : TypeDeserializer.TypeParameterResolver {
-            override fun getTypeParameters(typeDeserializer: TypeDeserializer): List<DeserializedTypeParameterDescriptor> {
-                val descriptors = deserializer.typeParameters(typeParameterProtos, typeDeserializer)
-                typeParameters.addAll(descriptors)
-                return descriptors
-            }
-        }
-        val childTypeDeserializer = TypeDeserializer(this, typeDeserializer, "Child deserializer for " + descriptor.getName(),
-                                                     childTypeParameterResolver)
-        return withTypes(descriptor, childTypeDeserializer)
-    }
-
-}
-
-fun DeserializationGlobalContext.deserializeClass(classId: ClassId): ClassDescriptor? {
-    return classDeserializer.deserializeClass(classId)
+            typeParameterProtos: List<ProtoBuf.TypeParameter>,
+            nameResolver: NameResolver = this.nameResolver
+    ) = DeserializationContext(
+            components, nameResolver, descriptor, parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
+    )
 }

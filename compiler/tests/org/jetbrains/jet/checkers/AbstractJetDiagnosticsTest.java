@@ -54,6 +54,9 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
 import java.util.*;
@@ -114,8 +117,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 module.seal();
             }
 
-            // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
-            // albeit with same class names
             ExceptionTracker tracker = new ExceptionTracker();
             GlobalContext context = new SimpleGlobalContext(
                     new LoggingStorageManager(
@@ -124,24 +125,26 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     ),
                     tracker
             );
-
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    getProject(),
-                    context,
-                    jetFiles,
-                    moduleTrace,
-                    Predicates.<PsiFile>alwaysTrue(),
-                    module,
-                    null,
-                    null
-            );
+            analyzeModuleContents(context, jetFiles, module, moduleTrace, testModule);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
 
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
-        Throwable exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
+        Throwable exceptionFromLazyResolveLogValidation = null;
+        if (KotlinPackage.any(testFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return file.checkLazyLog;
+            }
+        })) {
+            exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
+        }
+        else {
+            File lazyLogFile = getLazyLogFile(testDataFile);
+            assertFalse("No lazy log expected, but found: " + lazyLogFile.getAbsolutePath(), lazyLogFile.exists());
+        }
 
         Throwable exceptionFromDescriptorValidation = null;
         try {
@@ -179,7 +182,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
     private static Throwable checkLazyResolveLog(LazyOperationsLog lazyOperationsLog, File testDataFile) {
         Throwable exceptionFromLazyResolveLogValidation = null;
         try {
-            File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
+            File expectedFile = getLazyLogFile(testDataFile);
 
             JetTestUtils.assertEqualsToFile(
                     expectedFile,
@@ -191,6 +194,53 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             exceptionFromLazyResolveLogValidation = e;
         }
         return exceptionFromLazyResolveLogValidation;
+    }
+
+    private static File getLazyLogFile(File testDataFile) {
+        return new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
+    }
+
+    protected void analyzeModuleContents(
+            GlobalContext context,
+            List<JetFile> jetFiles,
+            ModuleDescriptorImpl module,
+            BindingTrace moduleTrace,
+            TestModule testModule
+    ) {
+
+        String platform = getPlatform(testModule);
+        if ("jvm".equals(platform)) {
+            // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
+            // albeit with same class names
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                    getProject(),
+                    context,
+                    jetFiles,
+                    moduleTrace,
+                    Predicates.<PsiFile>alwaysTrue(),
+                    module,
+                    null,
+                    null
+            );
+        }
+        else if ("js".equals(platform)) {
+            TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
+                    jetFiles,
+                    moduleTrace,
+                    module,
+                    Predicates.<PsiFile>alwaysTrue(),
+                    new Config(getProject(), "module", EcmaVersion.v5, false, true) {
+                        @NotNull
+                        @Override
+                        protected List<JetFile> generateLibFiles() {
+                            return Collections.emptyList();
+                        }
+                    }
+            );
+        }
+        else {
+            throw new IllegalStateException("Unknown platform in module " + testModule.getName() + ": " + platform);
+        }
     }
 
     private void validateAndCompareDescriptorWithFile(
@@ -265,12 +315,12 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed());
     }
 
-    public static Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
+    private Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
         Map<TestModule, ModuleDescriptorImpl> modules = new HashMap<TestModule, ModuleDescriptorImpl>();
 
         for (TestModule testModule : groupedByModule.keySet()) {
             if (testModule == null) continue;
-            ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule("<" + testModule.getName() + ">");
+            ModuleDescriptorImpl module = createModule(testModule);
             modules.put(testModule, module);
         }
 
@@ -284,6 +334,28 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             }
         }
         return modules;
+    }
+
+    protected ModuleDescriptorImpl createModule(TestModule testModule) {
+        String name = "<" + testModule.getName() + ">";
+        String platform = getPlatform(testModule);
+        if ("jvm".equals(platform)) {
+            return TopDownAnalyzerFacadeForJVM.createJavaModule(name);
+        }
+        else if ("js".equals(platform)) {
+            return TopDownAnalyzerFacadeForJS.createJsModule(name);
+        }
+
+        throw new IllegalStateException("Unknown platform in module " + testModule.getName() + ": " + platform);
+    }
+
+    @NotNull
+    private static String getPlatform(@Nullable TestModule testModule) {
+        if (testModule == null) return "jvm";
+
+        String platform = testModule.getPlatform();
+        if (platform == null) return "jvm";
+        return platform;
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {

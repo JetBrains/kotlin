@@ -72,7 +72,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
         if (property != null) return property;
         JetSimpleNameExpression simpleNameExpression = PsiTreeUtil.getParentOfType(elementAtCaret, JetSimpleNameExpression.class);
         if (simpleNameExpression != null) {
-            BindingContext bindingContext = ResolvePackage.getBindingContext(file);
+            BindingContext bindingContext = ResolvePackage.analyzeFully(file);
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
                 PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
