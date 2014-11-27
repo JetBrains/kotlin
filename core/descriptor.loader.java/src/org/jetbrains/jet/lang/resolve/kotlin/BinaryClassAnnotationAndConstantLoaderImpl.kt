@@ -49,28 +49,19 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         storageManager, kotlinClassFinder, errorReporter
 ) {
 
-    override fun loadConstant(desc: String, initializer: Any): CompileTimeConstant<out Any?>? {
-        val normalizedValue: Any
-        if (desc in "ZBCS") {
+    override fun loadConstant(desc: String, initializer: Any): CompileTimeConstant<*>? {
+        val normalizedValue: Any = if (desc in "ZBCS") {
             val intValue = initializer as Int
-            if ("Z" == desc) {
-                normalizedValue = intValue != 0
-            }
-            else if ("B" == desc) {
-                normalizedValue = (intValue.toByte())
-            }
-            else if ("C" == desc) {
-                normalizedValue = (intValue.toChar())
-            }
-            else if ("S" == desc) {
-                normalizedValue = (intValue.toShort())
-            }
-            else {
-                throw AssertionError(desc)
+            when (desc) {
+                "Z" -> intValue != 0
+                "B" -> intValue.toByte()
+                "C" -> intValue.toChar()
+                "S" -> intValue.toShort()
+                else -> throw AssertionError(desc)
             }
         }
         else {
-            normalizedValue = initializer
+            initializer
         }
 
         val compileTimeConstant = createCompileTimeConstant(
@@ -140,7 +131,8 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             private fun createConstant(name: Name?, value: Any?): CompileTimeConstant<*> {
-                return createCompileTimeConstant(value, true, false, false, null)
+                return createCompileTimeConstant(value, canBeUsedInAnnotation = true, isPureIntConstant = false,
+                                                 usesVariableAsConstant = false, expectedType = null)
                        ?: ErrorValue.create("Unsupported annotation argument: $name")
             }
 
