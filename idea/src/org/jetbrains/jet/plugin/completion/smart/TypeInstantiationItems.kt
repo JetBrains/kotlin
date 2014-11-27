@@ -97,13 +97,15 @@ class TypeInstantiationItems(
         val typeArgs = type.getArguments()
         items.addIfNotNull(createTypeInstantiationItem(classifier, typeArgs, tail))
 
-        inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
+        if (!KotlinBuiltIns.getInstance().isAny(classifier)) { // do not search inheritors of Any
+            inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
 
-        val javaAnalogFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(DescriptorUtils.getFqNameSafe(classifier))
-        if (javaAnalogFqName != null) {
-            val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaAnalogFqName)
-            if (javaAnalog != null) {
-                inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
+            val javaAnalogFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(DescriptorUtils.getFqNameSafe(classifier))
+            if (javaAnalogFqName != null) {
+                val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaAnalogFqName)
+                if (javaAnalog != null) {
+                    inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
+                }
             }
         }
     }
