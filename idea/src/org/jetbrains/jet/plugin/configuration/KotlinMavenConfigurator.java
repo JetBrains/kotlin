@@ -58,14 +58,42 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     private static final String KOTLIN_VERSION_PROPERTY = "kotlin.version";
     private static final String SNAPSHOT_REPOSITORY_ID = "sonatype.oss.snapshots";
 
-    protected abstract String getLibraryId();
+    private static final String PROCESS_TEST_SOURCES_PHASE = "process-test-sources";
+    private static final String PROCESS_SOURCES_PHASE = "process-sources";
+    private static final String TEST_COMPILE_PHASE = "test-compile";
+    private static final String COMPILE_PHASE = "compile";
+    private static final String TEST_COMPILE_GOAL = "test-compile";
+    private static final String COMPILE_GOAL = "compile";
+    private static final String TEST_COMPILE_EXECUTION_ID = "test-compile";
+    private static final String COMPILE_EXECUTION_ID = "compile";
+
+    private final String libraryId;
+    private final String name;
+    private final String presentableText;
+
+    protected KotlinMavenConfigurator(@NotNull String libraryId, @NotNull String name, @NotNull String presentableText) {
+        this.libraryId = libraryId;
+        this.name = name;
+        this.presentableText = presentableText;
+    }
+
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
         return JetPluginUtil.isMavenModule(module);
     }
 
-    protected abstract boolean isKotlinModule(@NotNull Module module);
+    @NotNull
+    @Override
+    public String getPresentableText() {
+        return presentableText;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return name;
+    }
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
@@ -75,39 +103,6 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
 
         MavenDomProjectModel domProjectModel = getMavenDomProjectModel(module);
         return hasKotlinMavenPlugin(domProjectModel) && hasDependencyOnLibrary(domProjectModel);
-    }
-
-    @NotNull
-    private static MavenDomProjectModel getMavenDomProjectModel(@NotNull Module module) {
-        PsiFile pomFile = findModulePomFile(module);
-        assert pomFile != null : "pom file should not be null";
-
-        VirtualFile virtualFile = pomFile.getVirtualFile();
-        assert virtualFile != null : "Virtual file should exists for psi file " + pomFile.getName();
-
-        MavenDomProjectModel domModel = MavenDomUtil.getMavenDomProjectModel(pomFile.getProject(), virtualFile);
-        assert domModel != null : "maven dom model should not be null";
-        return domModel;
-    }
-
-    private static boolean hasGivenCoordinates(@NotNull MavenDomShortArtifactCoordinates mavenDomElement, @NotNull String groupId, @NotNull String artifactId) {
-        return groupId.equals(mavenDomElement.getGroupId().getRawText()) && artifactId.equals(mavenDomElement.getArtifactId().getRawText());
-    }
-
-    private static boolean hasKotlinMavenPlugin(@NotNull MavenDomProjectModel domModel) {
-        for(MavenDomPlugin mavenDomPlugin : domModel.getBuild().getPlugins().getPlugins()) {
-            if (hasGivenCoordinates(mavenDomPlugin, GROUP_ID, MAVEN_PLUGIN_ID)) return true;
-        }
-
-        return false;
-    }
-
-    private boolean hasDependencyOnLibrary(@NotNull MavenDomProjectModel domModel) {
-        for(MavenDomDependency mavenDomDependency : domModel.getDependencies().getDependencies()) {
-            if (hasGivenCoordinates(mavenDomDependency, GROUP_ID, getLibraryId())) return true;
-        }
-
-        return false;
     }
 
     @Override
@@ -130,6 +125,20 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
                 showErrorMessage(project, "Cannot find pom.xml for module " + module.getName());
             }
         }
+    }
+
+    protected abstract boolean isKotlinModule(@NotNull Module module);
+
+    protected abstract void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module);
+
+    @NotNull
+    protected String getGoal(boolean isTest) {
+        return isTest ? TEST_COMPILE_GOAL : COMPILE_GOAL;
+    }
+
+    @NotNull
+    protected String getExecutionId(boolean isTest) {
+        return isTest ? TEST_COMPILE_EXECUTION_ID : COMPILE_EXECUTION_ID;
     }
 
     protected void changePomFile(@NotNull final Module module, final @NotNull PsiFile file, @NotNull final String version) {
@@ -160,88 +169,6 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         ConfigureKotlinInProjectUtils.showInfoNotification(virtualFile.getPath() + " was modified");
     }
 
-    private static void addKotlinVersionPropertyIfNeeded(MavenDomProjectModel domModel, String version) {
-        createTagIfNeeded(domModel.getProperties(), KOTLIN_VERSION_PROPERTY, version);
-    }
-
-    private static void addLibraryRepositoryIfNeeded(MavenDomProjectModel domModel) {
-        MavenDomRepositories repositories = domModel.getRepositories();
-        if (!isRepositoryConfigured(repositories.getRepositories())) {
-            MavenDomRepository newPluginRepository = repositories.addRepository();
-            configureRepository(newPluginRepository);
-        }
-    }
-
-    private static void addPluginRepositoryIfNeeded(MavenDomProjectModel domModel) {
-        MavenDomPluginRepositories pluginRepositories = domModel.getPluginRepositories();
-        if (!isRepositoryConfigured(pluginRepositories.getPluginRepositories())) {
-            MavenDomRepository newPluginRepository = pluginRepositories.addPluginRepository();
-            configureRepository(newPluginRepository);
-        }
-    }
-
-    private void addLibraryDependencyIfNeeded(MavenDomProjectModel domModel) {
-        for (MavenDomDependency dependency : domModel.getDependencies().getDependencies()) {
-            if (getLibraryId().equals(dependency.getArtifactId().getStringValue())) {
-                return;
-            }
-        }
-
-        MavenDomDependency dependency = MavenDomUtil.createDomDependency(domModel, null);
-        dependency.getGroupId().setStringValue("org.jetbrains.kotlin");
-        dependency.getArtifactId().setStringValue(getLibraryId());
-        dependency.getVersion().setStringValue("${" + KOTLIN_VERSION_PROPERTY + "}");
-    }
-
-    private void addPluginIfNeeded(MavenDomProjectModel domModel, Module module, VirtualFile virtualFile) {
-        MavenDomPlugins plugins = domModel.getBuild().getPlugins();
-        for (MavenDomPlugin plugin : plugins.getPlugins()) {
-            if (MAVEN_PLUGIN_ID.equals(plugin.getArtifactId().getStringValue())) {
-                return;
-            }
-        }
-        MavenDomPlugin kotlinPlugin = plugins.addPlugin();
-        kotlinPlugin.getArtifactId().setStringValue("kotlin-maven-plugin");
-        kotlinPlugin.getGroupId().setStringValue("org.jetbrains.kotlin");
-        kotlinPlugin.getVersion().setStringValue("${" + KOTLIN_VERSION_PROPERTY + "}");
-        createExecutions(virtualFile, kotlinPlugin, module);
-    }
-
-    protected abstract void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module);
-
-    private static boolean isRepositoryConfigured(List<MavenDomRepository> pluginRepositories) {
-        for (MavenDomRepository repository : pluginRepositories) {
-            if (SNAPSHOT_REPOSITORY_ID.equals(repository.getId().getStringValue())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void configureRepository(@NotNull MavenDomRepository repository) {
-        repository.getId().setStringValue(SNAPSHOT_REPOSITORY_ID);
-        repository.getName().setStringValue("Sonatype OSS Snapshot Repository");
-        repository.getUrl().setStringValue("http://oss.sonatype.org/content/repositories/snapshots");
-        createTagIfNeeded(repository.getReleases(), "enabled", "false");
-        createTagIfNeeded(repository.getSnapshots(), "enabled", "true");
-    }
-
-    @NotNull
-    protected static String getExecutionId(boolean isTest) {
-        return isTest ? "test-compile" : "compile";
-    }
-
-    @NotNull
-    protected static String getPhase(@NotNull Module module, boolean isTest) {
-        if (hasJavaFiles(module)) {
-            return isTest ? "process-test-sources" : "process-sources";
-        }
-        return isTest ? "test-compile" : "compile";
-    }
-
-    @NotNull
-    protected abstract String getGoal(boolean isTest);
-
     protected void createExecution(
             @NotNull VirtualFile virtualFile,
             @NotNull MavenDomPlugin kotlinPlugin,
@@ -271,12 +198,121 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         }
     }
 
+    @NotNull
+    private static MavenDomProjectModel getMavenDomProjectModel(@NotNull Module module) {
+        PsiFile pomFile = findModulePomFile(module);
+        assert pomFile != null : "pom file should not be null";
+
+        VirtualFile virtualFile = pomFile.getVirtualFile();
+        assert virtualFile != null : "Virtual file should exists for psi file " + pomFile.getName();
+
+        MavenDomProjectModel domModel = MavenDomUtil.getMavenDomProjectModel(pomFile.getProject(), virtualFile);
+        assert domModel != null : "maven dom model should not be null";
+        return domModel;
+    }
+
+    private static boolean checkCoordinates(
+            @NotNull MavenDomShortArtifactCoordinates mavenDomElement,
+            @NotNull String groupId,
+            @NotNull String artifactId
+    ) {
+        return groupId.equals(mavenDomElement.getGroupId().getRawText()) && artifactId.equals(mavenDomElement.getArtifactId().getRawText());
+    }
+
+    private static boolean hasKotlinMavenPlugin(@NotNull MavenDomProjectModel domModel) {
+        for(MavenDomPlugin mavenDomPlugin : domModel.getBuild().getPlugins().getPlugins()) {
+            if (checkCoordinates(mavenDomPlugin, GROUP_ID, MAVEN_PLUGIN_ID)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasDependencyOnLibrary(@NotNull MavenDomProjectModel domModel) {
+        for(MavenDomDependency mavenDomDependency : domModel.getDependencies().getDependencies()) {
+            if (checkCoordinates(mavenDomDependency, GROUP_ID, libraryId)) return true;
+        }
+
+        return false;
+    }
+
+    private static void addKotlinVersionPropertyIfNeeded(MavenDomProjectModel domModel, String version) {
+        createTagIfNeeded(domModel.getProperties(), KOTLIN_VERSION_PROPERTY, version);
+    }
+
+    private static void addLibraryRepositoryIfNeeded(MavenDomProjectModel domModel) {
+        MavenDomRepositories repositories = domModel.getRepositories();
+        if (!isRepositoryConfigured(repositories.getRepositories())) {
+            MavenDomRepository newPluginRepository = repositories.addRepository();
+            configureRepository(newPluginRepository);
+        }
+    }
+
+    private static void addPluginRepositoryIfNeeded(MavenDomProjectModel domModel) {
+        MavenDomPluginRepositories pluginRepositories = domModel.getPluginRepositories();
+        if (!isRepositoryConfigured(pluginRepositories.getPluginRepositories())) {
+            MavenDomRepository newPluginRepository = pluginRepositories.addPluginRepository();
+            configureRepository(newPluginRepository);
+        }
+    }
+
+    private void addLibraryDependencyIfNeeded(MavenDomProjectModel domModel) {
+        for (MavenDomDependency dependency : domModel.getDependencies().getDependencies()) {
+            if (libraryId.equals(dependency.getArtifactId().getStringValue())) {
+                return;
+            }
+        }
+
+        MavenDomDependency dependency = MavenDomUtil.createDomDependency(domModel, null);
+        dependency.getGroupId().setStringValue("org.jetbrains.kotlin");
+        dependency.getArtifactId().setStringValue(libraryId);
+        dependency.getVersion().setStringValue("${" + KOTLIN_VERSION_PROPERTY + "}");
+    }
+
+    private void addPluginIfNeeded(MavenDomProjectModel domModel, Module module, VirtualFile virtualFile) {
+        MavenDomPlugins plugins = domModel.getBuild().getPlugins();
+        for (MavenDomPlugin plugin : plugins.getPlugins()) {
+            if (MAVEN_PLUGIN_ID.equals(plugin.getArtifactId().getStringValue())) {
+                return;
+            }
+        }
+        MavenDomPlugin kotlinPlugin = plugins.addPlugin();
+        kotlinPlugin.getArtifactId().setStringValue("kotlin-maven-plugin");
+        kotlinPlugin.getGroupId().setStringValue("org.jetbrains.kotlin");
+        kotlinPlugin.getVersion().setStringValue("${" + KOTLIN_VERSION_PROPERTY + "}");
+        createExecutions(virtualFile, kotlinPlugin, module);
+    }
+
+    private static boolean isRepositoryConfigured(List<MavenDomRepository> pluginRepositories) {
+        for (MavenDomRepository repository : pluginRepositories) {
+            if (SNAPSHOT_REPOSITORY_ID.equals(repository.getId().getStringValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void configureRepository(@NotNull MavenDomRepository repository) {
+        repository.getId().setStringValue(SNAPSHOT_REPOSITORY_ID);
+        repository.getName().setStringValue("Sonatype OSS Snapshot Repository");
+        repository.getUrl().setStringValue("http://oss.sonatype.org/content/repositories/snapshots");
+        createTagIfNeeded(repository.getReleases(), "enabled", "false");
+        createTagIfNeeded(repository.getSnapshots(), "enabled", "true");
+    }
+
+    @NotNull
+    private static String getPhase(@NotNull Module module, boolean isTest) {
+        if (hasJavaFiles(module)) {
+            return isTest ? PROCESS_TEST_SOURCES_PHASE : PROCESS_SOURCES_PHASE;
+        }
+        return isTest ? TEST_COMPILE_PHASE : COMPILE_PHASE;
+    }
+
     private static boolean hasJavaFiles(@NotNull Module module) {
         return !FileTypeIndex.getFiles(JavaFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty();
     }
 
     @Nullable
-    protected static PsiFile findModulePomFile(@NotNull Module module) {
+    private static PsiFile findModulePomFile(@NotNull Module module) {
         List<VirtualFile> files = MavenProjectsManager.getInstance(module.getProject()).getProjectsFiles();
         for (VirtualFile file : files) {
             Module fileModule = ModuleUtilCore.findModuleForFile(file, module.getProject());
@@ -304,19 +340,11 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         return parentTag.addSubTag(newTag, true);
     }
 
-    @NotNull
-    @Override
-    public abstract String getPresentableText();
-
-    @NotNull
-    @Override
-    public abstract String getName();
-
-    protected static boolean canConfigureFile(@NotNull PsiFile file) {
+    private static boolean canConfigureFile(@NotNull PsiFile file) {
         return WritingAccessProvider.isPotentiallyWritable(file.getVirtualFile(), null);
     }
 
-    protected static void showErrorMessage(@NotNull Project project, @Nullable String message) {
+    private static void showErrorMessage(@NotNull Project project, @Nullable String message) {
         Messages.showErrorDialog(project,
                                  "<html>Couldn't configure kotlin-maven plugin automatically.<br/>" +
                                  (message != null ? message : "") +

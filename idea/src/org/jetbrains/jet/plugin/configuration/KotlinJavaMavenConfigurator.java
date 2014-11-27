@@ -23,12 +23,12 @@ import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
-    public static final String NAME = "maven";
+    private static final String NAME = "maven";
     private static final String STD_LIB_ID = "kotlin-stdlib";
+    private static final String PRESENTABLE_TEXT = "Maven";
 
-    @Override
-    protected String getLibraryId() {
-        return STD_LIB_ID;
+    public KotlinJavaMavenConfigurator() {
+        super(STD_LIB_ID, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
@@ -40,23 +40,5 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     protected void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module) {
         createExecution(virtualFile, kotlinPlugin, module, false);
         createExecution(virtualFile, kotlinPlugin, module, true);
-    }
-
-    @NotNull
-    @Override
-    protected String getGoal(boolean isTest) {
-        return isTest ? "test-compile" : "compile";
-    }
-
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return "Maven";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

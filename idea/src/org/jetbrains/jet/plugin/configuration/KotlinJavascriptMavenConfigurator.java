@@ -23,12 +23,14 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
-    public static final String NAME = "js maven";
+    private static final String NAME = "js maven";
     private static final String STD_LIB_ID = "kotlin-js-library";
+    private static final String JS_GOAL = "js";
+    private static final String JS_EXECUTION_ID = "js";
+    private static final String PRESENTABLE_TEXT = "JavaScript Maven";
 
-    @Override
-    protected String getLibraryId() {
-        return STD_LIB_ID;
+    public KotlinJavascriptMavenConfigurator() {
+        super(STD_LIB_ID, NAME, PRESENTABLE_TEXT);
     }
 
     @Override
@@ -43,19 +45,13 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
 
     @NotNull
     @Override
+    protected String getExecutionId(boolean isTest) {
+        return JS_EXECUTION_ID;
+    }
+
+    @NotNull
+    @Override
     protected String getGoal(boolean isTest) {
-        return "js";
-    }
-
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return "JavaScript Maven";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
+        return JS_GOAL;
     }
 }
