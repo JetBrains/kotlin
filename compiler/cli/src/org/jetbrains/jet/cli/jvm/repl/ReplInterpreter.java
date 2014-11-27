@@ -108,7 +108,7 @@ public class ReplInterpreter {
 
         GlobalContextImpl context = ContextPackage.GlobalContext();
 
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.createForLazy(
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 context.getStorageManager(),
                 context.getExceptionTracker(),
                 Predicates.<PsiFile>alwaysTrue(),
