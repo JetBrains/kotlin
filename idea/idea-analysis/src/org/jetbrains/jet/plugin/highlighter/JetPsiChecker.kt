@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,267 +14,229 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.highlighter;
+package org.jetbrains.jet.plugin.highlighter
 
-import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension;
-import com.intellij.codeInsight.intention.EmptyIntentionAction;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.xml.util.XmlStringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.psi.JetCodeFragment;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.Diagnostics;
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
-import org.jetbrains.jet.plugin.quickfix.QuickFixes;
+import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension
+import com.intellij.codeInsight.intention.EmptyIntentionAction
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.lang.annotation.Annotation
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.Annotator
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.MultiRangeReference
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiReference
+import com.intellij.xml.util.XmlStringUtil
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jet.analyzer.AnalysisResult
+import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
+import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
+import org.jetbrains.jet.plugin.quickfix.QuickFixes
+import kotlin.platform.platformStatic
 
-import java.util.Collection;
-import java.util.List;
+public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
-public class JetPsiChecker implements Annotator, HighlightRangeExtension {
-    private static boolean isNamesHighlightingEnabled = true;
+    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+        if (!(ProjectRootsUtil.isInProjectOrLibSource(element) || element.getContainingFile() is JetCodeFragment)) return
 
-    @TestOnly
-    public static void setNamesHighlightingEnabled(boolean namesHighlightingEnabled) {
-        isNamesHighlightingEnabled = namesHighlightingEnabled;
-    }
+        getBeforeAnalysisVisitors(holder).forEach { visitor -> element.accept(visitor) }
 
-    public static boolean isNamesHighlightingEnabled() {
-        return isNamesHighlightingEnabled;
-    }
+        val file = element.getContainingFile() as JetFile
 
-    static void highlightName(@NotNull AnnotationHolder holder,
-                              @NotNull PsiElement psiElement,
-                              @NotNull TextAttributesKey attributesKey) {
-        if (isNamesHighlightingEnabled()) {
-            holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey);
-        }
-    }
-
-    private static HighlightingVisitor[] getBeforeAnalysisVisitors(AnnotationHolder holder) {
-        return new HighlightingVisitor[]{
-            new SoftKeywordsHighlightingVisitor(holder),
-            new LabelsHighlightingVisitor(holder),
-        };
-    }
-
-    private static HighlightingVisitor[] getAfterAnalysisVisitor(AnnotationHolder holder, BindingContext bindingContext) {
-        return new AfterAnalysisHighlightingVisitor[]{
-            new PropertiesHighlightingVisitor(holder, bindingContext),
-            new FunctionsHighlightingVisitor(holder, bindingContext),
-            new VariablesHighlightingVisitor(holder, bindingContext),
-            new TypeKindHighlightingVisitor(holder, bindingContext),
-            new DeprecatedAnnotationVisitor(holder, bindingContext),
-        };
-    }
-
-    @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(ProjectRootsUtil.isInProjectOrLibSource(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
-
-        for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
-            element.accept(visitor);
-        }
-
-        JetFile file = (JetFile) element.getContainingFile();
-
-        AnalysisResult analysisResult = ResolvePackage.analyzeFullyAndGetResult(file);
+        val analysisResult = file.analyzeFullyAndGetResult()
         if (analysisResult.isError()) {
-            throw new ProcessCanceledException(analysisResult.getError());
+            throw ProcessCanceledException(analysisResult.error)
         }
 
-        BindingContext bindingContext = analysisResult.getBindingContext();
+        val bindingContext = analysisResult.bindingContext
 
-        for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
-            element.accept(visitor);
-        }
+        getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
 
-        annotateElement(element, holder, bindingContext.getDiagnostics());
+        annotateElement(element, holder, bindingContext.getDiagnostics())
     }
 
-    public static void annotateElement(PsiElement element, AnnotationHolder holder, Diagnostics diagnostics) {
-        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() instanceof JetCodeFragment) {
-            ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
-            for (Diagnostic diagnostic : diagnostics.forElement(element)) {
-                elementAnnotator.registerDiagnosticAnnotations(diagnostic);
-            }
-        }
+    override fun isForceHighlightParents(file: PsiFile): Boolean {
+        return file is JetFile
     }
 
-    @Override
-    public boolean isForceHighlightParents(@NotNull PsiFile file) {
-        return file instanceof JetFile;
-    }
+    private class ElementAnnotator(private val element: PsiElement, private val holder: AnnotationHolder) {
+        private var isMarkedWithRedeclaration = false
 
-    private static class ElementAnnotator {
-        private final PsiElement element;
-        private final AnnotationHolder holder;
+        fun registerDiagnosticAnnotations(diagnostic: Diagnostic) {
+            if (!diagnostic.isValid()) return
 
-        private boolean isMarkedWithRedeclaration;
+            assert(diagnostic.getPsiElement() == element)
 
-        ElementAnnotator(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-            this.element = element;
-            this.holder = holder;
-        }
+            val textRanges = diagnostic.getTextRanges()
+            val factory = diagnostic.getFactory()
+            when (diagnostic.getSeverity()) {
+                Severity.ERROR -> {
 
-        void registerDiagnosticAnnotations(@NotNull Diagnostic diagnostic) {
-            if (!diagnostic.isValid()) return;
+                    when (factory) {
+                        in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
+                            val referenceExpression = diagnostic.getPsiElement() as JetReferenceExpression
+                            val reference = referenceExpression.getReference()
+                            if (reference is MultiRangeReference) {
+                                for (range in reference.getRanges()) {
+                                    val annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic))
+                                    setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+                                }
+                            }
+                            else {
+                                for (textRange in textRanges) {
+                                    val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
+                                    setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+                                }
+                            }
+                        }
 
-            assert diagnostic.getPsiElement() == element;
+                        Errors.ILLEGAL_ESCAPE -> {
+                            for (textRange in textRanges) {
+                                val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
+                                annotation.setTooltip(getMessage(diagnostic))
+                                annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE)
+                            }
+                        }
 
-            List<TextRange> textRanges = diagnostic.getTextRanges();
-            if (diagnostic.getSeverity() == Severity.ERROR) {
-                if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                    JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
-                    PsiReference reference = referenceExpression.getReference();
-                    if (reference instanceof MultiRangeReference) {
-                        MultiRangeReference mrr = (MultiRangeReference)reference;
-                        for (TextRange range : mrr.getRanges()) {
-                            Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
-                            setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        Errors.REDECLARATION -> {
+                            if (!isMarkedWithRedeclaration) {
+                                isMarkedWithRedeclaration = true
+                                val annotation = holder.createErrorAnnotation(diagnostic.getTextRanges()[0], "")
+                                setUpAnnotation(diagnostic, annotation, null)
+                            }
+                        }
+
+                        else -> {
+                            for (textRange in textRanges) {
+                                val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
+                                setUpAnnotation(diagnostic, annotation, if (factory == Errors.INVISIBLE_REFERENCE)
+                                    ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
+                                else
+                                    null)
+                            }
                         }
                     }
-                    else {
-                        for (TextRange textRange : textRanges) {
-                            Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                            setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
-                        }
+                }
+                Severity.WARNING -> {
+                    for (textRange in textRanges) {
+                        val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
+                        setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
+                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                        else
+                            null)
                     }
-
-                    return;
-                }
-
-                if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE) {
-                    for (TextRange textRange : diagnostic.getTextRanges()) {
-                        Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                        annotation.setTooltip(getMessage(diagnostic));
-                        annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE);
-                    }
-                    return;
-                }
-
-                if (diagnostic.getFactory() == Errors.REDECLARATION) {
-                    if (!isMarkedWithRedeclaration) {
-                        isMarkedWithRedeclaration = true;
-                        Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
-                        setUpAnnotation(diagnostic, annotation, null);
-                    }
-                    return;
-                }
-
-                // Generic annotation
-                for (TextRange textRange : textRanges) {
-                    Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                    setUpAnnotation(diagnostic, errorAnnotation,
-                                    diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE
-                                    ? ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
-                                    : null);
-                }
-            }
-            else if (diagnostic.getSeverity() == Severity.WARNING) {
-                for (TextRange textRange : textRanges) {
-                    Annotation annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic));
-                    setUpAnnotation(diagnostic, annotation,
-                                    Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())
-                                    ? ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                                    : null);
                 }
             }
         }
 
-        private static void setUpAnnotation(Diagnostic diagnostic, Annotation annotation, @Nullable ProblemHighlightType highlightType) {
-            annotation.setTooltip(getMessage(diagnostic));
-            registerQuickFix(annotation, diagnostic);
+        private fun setUpAnnotation(diagnostic: Diagnostic, annotation: Annotation, highlightType: ProblemHighlightType?) {
+            annotation.setTooltip(getMessage(diagnostic))
+            registerQuickFix(annotation, diagnostic)
 
             if (highlightType != null) {
-                annotation.setHighlightType(highlightType);
+                annotation.setHighlightType(highlightType)
             }
         }
 
-        /*
-         * Add a quick fix if and return modified annotation.
-         */
-        @Nullable
-        private static Annotation registerQuickFix(@Nullable Annotation annotation, @NotNull Diagnostic diagnostic) {
-            if (annotation == null) {
-                return null;
-            }
-
-            Collection<JetIntentionActionsFactory> intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory());
-            for (JetIntentionActionsFactory intentionActionsFactory : intentionActionsFactories) {
+        private fun registerQuickFix(annotation: Annotation, diagnostic: Diagnostic) {
+            val intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory())
+            for (intentionActionsFactory in intentionActionsFactories) {
                 if (intentionActionsFactory != null) {
-                    for (IntentionAction action: intentionActionsFactory.createActions(diagnostic)) {
-                        annotation.registerFix(action);
+                    for (action in intentionActionsFactory.createActions(diagnostic)) {
+                        annotation.registerFix(action)
                     }
                 }
             }
 
-            Collection<IntentionAction> actions = QuickFixes.getActions(diagnostic.getFactory());
-            for (IntentionAction action : actions) {
-                annotation.registerFix(action);
+            val actions = QuickFixes.getActions(diagnostic.getFactory())
+            for (action in actions) {
+                annotation.registerFix(action)
             }
 
             // Making warnings suppressable
             if (diagnostic.getSeverity() == Severity.WARNING) {
-                annotation.setProblemGroup(new KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()));
+                annotation.setProblemGroup(KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()))
 
-                List<Annotation.QuickFixInfo> fixes = annotation.getQuickFixes();
+                val fixes = annotation.getQuickFixes()
                 if (fixes == null || fixes.isEmpty()) {
                     // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                    annotation.registerFix(new EmptyIntentionAction(diagnostic.getFactory().getName()));
+                    annotation.registerFix(EmptyIntentionAction(diagnostic.getFactory().getName()))
                 }
             }
-
-            return annotation;
         }
 
-        @NotNull
-        private static String getMessage(@NotNull Diagnostic diagnostic) {
-            String message = IdeErrorMessages.RENDERER.render(diagnostic);
-            if (KotlinInternalMode.OBJECT$.getEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
-                String factoryName = diagnostic.getFactory().getName();
+        private fun getMessage(diagnostic: Diagnostic): String {
+            var message = IdeErrorMessages.RENDERER.render(diagnostic)
+            if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode()) {
+                val factoryName = diagnostic.getFactory().getName()
                 if (message.startsWith("<html>")) {
-                    message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
-                } else {
-                    message = String.format("[%s] %s", factoryName, message);
+                    message = "<html>[$factoryName] ${message.substring("<html>".length())}"
+                }
+                else {
+                    message = "[$factoryName] $message"
                 }
             }
             if (!message.startsWith("<html>")) {
-                message = "<html><body>" + XmlStringUtil.escapeString(message) + "</body></html>";
+                message = "<html><body>${XmlStringUtil.escapeString(message)}</body></html>"
             }
-            return message;
+            return message
         }
 
-        @NotNull
-        private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
-            String message = DefaultErrorMessages.RENDERER.render(diagnostic);
-            if (KotlinInternalMode.OBJECT$.getEnabled() || ApplicationManager.getApplication().isUnitTestMode()) {
-                return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
+        private fun getDefaultMessage(diagnostic: Diagnostic): String {
+            val message = DefaultErrorMessages.RENDERER.render(diagnostic)
+            if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode()) {
+                return "[${diagnostic.getFactory().getName()}] $message"
             }
-            return message;
+            return message
+        }
+    }
+
+    class object {
+        var namesHighlightingEnabled = true
+            [TestOnly] set
+
+        platformStatic fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
+            if (namesHighlightingEnabled) {
+                holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
+            }
+        }
+
+        private fun getBeforeAnalysisVisitors(holder: AnnotationHolder) = array(
+                SoftKeywordsHighlightingVisitor(holder),
+                LabelsHighlightingVisitor(holder)
+        )
+
+        private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = array(
+                PropertiesHighlightingVisitor(holder, bindingContext),
+                FunctionsHighlightingVisitor(holder, bindingContext),
+                VariablesHighlightingVisitor(holder, bindingContext),
+                TypeKindHighlightingVisitor(holder, bindingContext),
+                DeprecatedAnnotationVisitor(holder, bindingContext)
+        )
+
+        platformStatic fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
+            if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is JetCodeFragment) {
+                val elementAnnotator = ElementAnnotator(element, holder)
+                for (diagnostic in diagnostics.forElement(element)) {
+                    elementAnnotator.registerDiagnosticAnnotations(diagnostic)
+                }
+            }
         }
     }
 
