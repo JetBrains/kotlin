@@ -31,6 +31,10 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import com.intellij.codeInsight.completion.PrefixMatcher
 import org.jetbrains.jet.lang.resolve.name.Name
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.codeInsight.completion.InsertionContext
+import org.jetbrains.jet.plugin.completion.handlers.CastReceiverInsertHandler
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -46,6 +50,15 @@ fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
 }
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
+
+fun LookupElement.shouldCastReceiver(): LookupElement {
+    return object: LookupElementDecorator<LookupElement>(this) {
+        override fun handleInsert(context: InsertionContext) {
+            super.handleInsert(context)
+            CastReceiverInsertHandler.handleInsert(context, getDelegate())
+        }
+    }
+}
 
 val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
 
@@ -65,7 +78,7 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     return exception
 }
 
-fun qualifiedNameForSourceCode(descriptor: ClassDescriptor): String? {
+fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String? {
     val name = descriptor.getName()
     if (name.isSpecial()) return null
     val nameString = IdeDescriptorRenderers.SOURCE_CODE.renderName(name)

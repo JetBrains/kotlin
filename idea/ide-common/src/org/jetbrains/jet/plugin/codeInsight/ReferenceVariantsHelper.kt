@@ -33,6 +33,9 @@ import org.jetbrains.jet.lang.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
@@ -42,14 +45,16 @@ public class ReferenceVariantsHelper(
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
+            shouldCastToRuntimeType: Boolean,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, nameFilter).filter(visibilityFilter)
+        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, shouldCastToRuntimeType, nameFilter).filter(visibilityFilter)
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
+            shouldCastToRuntimeType: Boolean,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
@@ -75,7 +80,10 @@ public class ReferenceVariantsHelper(
                 qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
             }
 
-            val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            val expressionType = if (shouldCastToRuntimeType)
+                                        getQualifierRuntimeType(receiverExpression)
+                                    else
+                                        context[BindingContext.EXPRESSION_TYPE, receiverExpression]
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                 val dataFlowInfo = context.getDataFlowInfo(expression)
@@ -122,6 +130,15 @@ public class ReferenceVariantsHelper(
             val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
             return resolutionScope.getImplicitReceiversHierarchy().map { it.getValue() }
         }
+    }
+
+    private fun getQualifierRuntimeType(receiver: JetExpression): JetType? {
+        val type = context[BindingContext.EXPRESSION_TYPE, receiver]
+        if (TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
+            val evaluator = receiver.getContainingFile().getCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR)
+            return evaluator?.invoke(receiver)
+        }
+        return type
     }
 
     private fun getReferenceVariantsReceiver(expression: JetSimpleNameExpression): JetExpression? {

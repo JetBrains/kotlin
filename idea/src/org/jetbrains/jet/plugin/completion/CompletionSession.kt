@@ -121,8 +121,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor>
-            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, prefixMatcher.asNameFilter())
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor>
+            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
 
     protected fun shouldRunTopLevelCompletion(): Boolean
             = configuration.completeNonImportedDeclarations && isNoQualifierContext()
@@ -161,11 +161,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             val completeReference = jetReference != null && !isOnlyKeywordCompletion()
             val onlyTypes = completeReference && shouldRunOnlyTypeCompletion()
 
+            val kindMask = if (onlyTypes)
+                DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
+            else
+                DescriptorKindFilter.ALL_KINDS_MASK
+
             if (completeReference) {
-                val kindMask = if (onlyTypes)
-                    DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
-                else
-                    DescriptorKindFilter.ALL_KINDS_MASK
                 addReferenceVariants(DescriptorKindFilter(kindMask))
 
                 if (onlyTypes) {
@@ -182,6 +183,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 flushToResultSet()
                 addNonImported(onlyTypes)
+            }
+
+            if (completeReference && position.getContainingFile() is JetCodeFragment) {
+                flushToResultSet()
+                addReferenceVariants(DescriptorKindFilter(kindMask), true)
             }
         }
 
@@ -217,8 +223,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter) {
-        collector.addDescriptorElements(getReferenceVariants(kindFilter), suppressAutoInsertion = false)
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean = false) {
+        collector.addDescriptorElements(
+                getReferenceVariants(kindFilter, shouldCastToRuntimeType),
+                suppressAutoInsertion = false,
+                shouldCastToRuntimeType = shouldCastToRuntimeType)
     }
 }
 
@@ -240,11 +249,16 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach { collector.addElements(filter(it)) }
+                    getReferenceVariants(DESCRIPTOR_KIND_MASK, false).forEach { collector.addElements(filter(it)) }
                     flushToResultSet()
 
                     processNonImported { collector.addElements(filter(it)) }
                     flushToResultSet()
+
+                    if (position.getContainingFile() is JetCodeFragment) {
+                        getReferenceVariants(DESCRIPTOR_KIND_MASK, true).forEach { collector.addElementsWithReceiverCast(filter(it)) }
+                        flushToResultSet()
+                    }
                 }
 
                 result.inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
