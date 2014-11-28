@@ -22,6 +22,7 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstance
+import org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex
 
 // used in Upsource, what's why in idea-analysis module
 public class JetShortNamesCache(private val project: com.intellij.openapi.project.Project) : com.intellij.psi.search.PsiShortNamesCache() {
@@ -100,10 +101,10 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
             = com.intellij.util.containers.ContainerUtil.process(getMethodsByName(name, scope), processor)
 
     override fun getAllMethodNames(): Array<String>
-            = array()
+            = JetFunctionShortNameIndex.getInstance().getAllKeys(project).copyToArray()
 
     override fun getAllMethodNames(set: HashSet<String>) {
-        set.addAll(org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getAllKeys(project))
+        set.addAll(JetFunctionShortNameIndex.getInstance().getAllKeys(project))
     }
 
     override fun getFieldsByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiField>
