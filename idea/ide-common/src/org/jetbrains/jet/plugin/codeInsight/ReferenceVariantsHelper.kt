@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
@@ -78,6 +79,11 @@ public class ReferenceVariantsHelper(
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
             val restrictedFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.PACKAGES_MASK) ?: return listOf()
+            return resolutionScope.getDescriptorsFiltered(restrictedFilter, nameFilter)
+        }
+
+        if (parent is JetUserType) {
+            val restrictedFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) ?: return listOf()
             return resolutionScope.getDescriptorsFiltered(restrictedFilter, nameFilter)
         }
 
@@ -159,12 +165,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getReferenceVariantsReceiver(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
-        val parent = expression.getParent()
-        val inPositionForCompletionWithReceiver = parent is JetCallExpression
-                                                  || parent is JetQualifiedExpression
-                                                  || parent is JetBinaryExpression
-        if (!inPositionForCompletionWithReceiver) return null
         val receiverExpression = expression.getReceiverExpression() ?: return null
+        val parent = expression.getParent()
         val callType = when (parent) {
             is JetBinaryExpression -> CallType.INFIX
 
@@ -182,7 +184,7 @@ public class ReferenceVariantsHelper(
                     CallType.NORMAL
             }
 
-            else -> error("Unknown parent")
+            else -> return null
         }
         return receiverExpression to callType
     }
