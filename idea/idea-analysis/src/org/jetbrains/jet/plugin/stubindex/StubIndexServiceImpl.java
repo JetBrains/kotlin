@@ -97,12 +97,8 @@ public class StubIndexServiceImpl implements StubIndexService {
         String name = stub.getName();
         if (name != null) {
             if (stub.isTopLevel()) {
-                // Collection only top level functions as only they are expected in completion without explicit import
                 if (!stub.isExtension()) {
                     sink.occurrence(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getKey(), name);
-                }
-                else {
-                    sink.occurrence(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getKey(), name);
                 }
             }
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
@@ -130,9 +126,6 @@ public class StubIndexServiceImpl implements StubIndexService {
                 // Collection only top level functions as only they are expected in completion without explicit import
                 if (!stub.hasReceiverTypeRef()) {
                     sink.occurrence(JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().getKey(), name);
-                }
-                else {
-                    sink.occurrence(JetTopLevelExtensionPropertyShortNameIndex.getInstance().getKey(), name);
                 }
             }
 
