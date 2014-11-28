@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.lang
 
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
@@ -59,7 +58,8 @@ public class BuiltinsPackageFragment(
                 proto,
                 nameResolver,
                 DeserializationComponents(
-                        storageManager, module, BuiltInsClassDataFinder(), AnnotationAndConstantLoader.UNSUPPORTED, // TODO: support annotations
+                        storageManager, module, BuiltInsClassDataFinder(),
+                        BuiltInsAnnotationAndConstantLoader(getContainingDeclaration()),
                         provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
                 ),
                 { readClassNames(proto) }
@@ -99,7 +99,7 @@ public class BuiltinsPackageFragment(
             val metadataPath = BuiltInsSerializationUtil.getClassMetadataPath(classId) ?: return null
             val stream = loadResource(metadataPath) ?: return null
 
-            val classProto = ProtoBuf.Class.parseFrom(stream)
+            val classProto = ProtoBuf.Class.parseFrom(stream, extensionRegistry)
 
             val expectedShortName = classId.getRelativeClassName().shortName()
             val actualShortName = nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()

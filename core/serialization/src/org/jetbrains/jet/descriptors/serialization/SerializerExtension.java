@@ -18,12 +18,20 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 
 import java.util.Collection;
 
 public abstract class SerializerExtension {
+    public void serializeClass(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull ProtoBuf.Class.Builder proto,
+            @NotNull StringTable stringTable
+    ) {
+    }
+
     public void serializePackage(
             @NotNull Collection<PackageFragmentDescriptor> packageFragments,
             @NotNull ProtoBuf.Package.Builder proto,

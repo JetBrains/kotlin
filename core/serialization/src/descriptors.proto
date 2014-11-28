@@ -41,6 +41,62 @@ message QualifiedNameTable {
   repeated QualifiedName qualified_name = 1;
 }
 
+message Annotation {
+  message Argument {
+    message Value {
+      enum Type {
+        BYTE = 0;
+        CHAR = 1;
+        SHORT = 2;
+        INT = 3;
+        LONG = 4;
+        FLOAT = 5;
+        DOUBLE = 6;
+        BOOLEAN = 7;
+
+        STRING = 8;
+        CLASS = 9;
+        ENUM = 10;
+        ANNOTATION = 11;
+        ARRAY = 12;
+      }
+
+      // Note: a *Value* has a Type, not an Argument! This is done for future language features which may involve using arrays
+      // of elements of different types. Such entries are allowed in the constant pool of JVM class files.
+      // However, to save space, this field is optional: in case of homogeneous arrays, only the type of the first element is required
+      optional Type type = 1;
+
+      // Only one of the following values should be present. Consider using `oneof` instead when we upgrade to protobuf 2.6.0+
+
+      optional sint64 int_value = 2;
+      optional float float_value = 3;
+      optional double double_value = 4;
+
+      // id in StringTable
+      optional int32 string_value = 5;
+
+      // If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
+      optional int32 class_id = 6;
+
+      // id in StringTable
+      optional int32 enum_value_id = 7;
+
+      optional Annotation annotation = 8;
+
+      repeated Value array_element = 9;
+    }
+
+    // id in StringTable
+    required int32 name_id = 1;
+    required Value value = 2;
+  }
+
+  // Class FQ name id
+  required int32 id = 1;
+
+  repeated Argument argument = 2;
+}
+
 message Type {
   message Constructor {
     enum Kind {
@@ -151,6 +207,8 @@ message Class {
   // This field is present if and only if the class has a primary constructor
   optional PrimaryConstructor primary_constructor = 13;
   // todo: other constructors?
+
+  extensions 100 to 199;
 }
 
 message Package {
@@ -189,7 +247,7 @@ message Callable {
   optional int32 flags = 1;
   optional string extra_visibility = 2; // for things like java-specific visibilities
 
-    /*
+  /*
      isNotDefault
      Visibility
      Modality

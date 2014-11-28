@@ -1,0 +1,27 @@
+package test
+
+test.anno(x = "top level property": kotlin.String) internal val p1: kotlin.Nothing?
+test.anno(x = "extension property": kotlin.String) internal val kotlin.Double.p2: kotlin.Double
+test.anno(x = "top level function": kotlin.String) internal fun f1(/*0*/ test.anno(x = "top level function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
+test.anno(x = "extension function": kotlin.String) internal fun kotlin.Long.f2(/*0*/ test.anno(x = "extension function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
+
+test.anno(x = "top level class": kotlin.String) internal final class C1 {
+    test.anno(x = "constructor": kotlin.String) public constructor C1()
+    test.anno(x = "member property": kotlin.String) internal final val p3: kotlin.Nothing?
+    test.anno(x = "member extension property": kotlin.String) internal final val kotlin.Int.v4: kotlin.Int
+    test.anno(x = "member function": kotlin.String) internal final fun f3(/*0*/ test.anno(x = "member function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
+    test.anno(x = "member extension function": kotlin.String) internal final fun kotlin.String.f4(): kotlin.Unit
+
+    test.anno(x = "class object": kotlin.String) internal class object <class-object-for-C1> {
+        private constructor <class-object-for-C1>()
+    }
+
+    test.anno(x = "nested class": kotlin.String) internal final class C2 {
+        public constructor C2()
+    }
+}
+
+internal final annotation class anno : kotlin.Annotation {
+    public constructor anno(/*0*/ x: kotlin.String)
+    internal final val x: kotlin.String
+}

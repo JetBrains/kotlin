@@ -135,6 +135,8 @@ public class DescriptorSerializer {
             builder.setClassObject(classObjectProto(classObject));
         }
 
+        extension.serializeClass(classDescriptor, builder, stringTable);
+
         return builder;
     }
 

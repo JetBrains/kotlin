@@ -32,6 +32,8 @@ public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>
                       boolean canBeUsedInAnnotations,
                       boolean usesVariableAsConstant) {
         super(value, canBeUsedInAnnotations, false, usesVariableAsConstant);
+        assert KotlinBuiltIns.getInstance().isArray(type) ||
+               KotlinBuiltIns.getInstance().isPrimitiveArray(type) : "Type should be an array, but was " + type + ": " + value;
         this.type = type;
     }
 

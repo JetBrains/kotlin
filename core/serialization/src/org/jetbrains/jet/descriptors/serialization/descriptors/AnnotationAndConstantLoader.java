@@ -20,63 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
 public interface AnnotationAndConstantLoader<A, C> {
-    AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<?>> UNSUPPORTED =
-            new AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<?>>() {
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(
-                @NotNull ProtoBuf.Class classProto,
-                @NotNull NameResolver nameResolver
-        ) {
-            return annotationsNotSupported();
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadCallableAnnotations(
-                @NotNull ProtoContainer container,
-                @NotNull ProtoBuf.Callable proto,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind
-        ) {
-            return annotationsNotSupported();
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadValueParameterAnnotations(
-                @NotNull ProtoContainer container,
-                @NotNull ProtoBuf.Callable callable,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind,
-                @NotNull ProtoBuf.Callable.ValueParameter proto
-        ) {
-            return annotationsNotSupported();
-        }
-
-        @Nullable
-        @Override
-        public CompileTimeConstant<?> loadPropertyConstant(
-                @NotNull ProtoContainer container,
-                @NotNull ProtoBuf.Callable proto,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind
-        ) {
-            throw new UnsupportedOperationException("Constants are not supported");
-        }
-
-        @NotNull
-        private List<AnnotationDescriptor> annotationsNotSupported() {
-            throw new UnsupportedOperationException("Annotations are not supported");
-        }
-    };
-
     @NotNull
     List<A> loadClassAnnotations(
             @NotNull ProtoBuf.Class classProto,

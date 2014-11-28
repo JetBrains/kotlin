@@ -1,0 +1,17 @@
+package test
+
+test.Primitives(boolean = true: kotlin.Boolean, byte = 7.toByte(): kotlin.Byte, char = \u0025 ('%'): kotlin.Char, double = -3.14.toDouble(): kotlin.Double, float = 2.72.toFloat(): kotlin.Float, int = 239017: kotlin.Int, long = 123456789123456789.toLong(): kotlin.Long, short = 239.toShort(): kotlin.Short) internal final class C {
+    public constructor C()
+}
+
+internal final annotation class Primitives : kotlin.Annotation {
+    public constructor Primitives(/*0*/ byte: kotlin.Byte, /*1*/ char: kotlin.Char, /*2*/ short: kotlin.Short, /*3*/ int: kotlin.Int, /*4*/ long: kotlin.Long, /*5*/ float: kotlin.Float, /*6*/ double: kotlin.Double, /*7*/ boolean: kotlin.Boolean)
+    internal final val boolean: kotlin.Boolean
+    internal final val byte: kotlin.Byte
+    internal final val char: kotlin.Char
+    internal final val double: kotlin.Double
+    internal final val float: kotlin.Float
+    internal final val int: kotlin.Int
+    internal final val long: kotlin.Long
+    internal final val short: kotlin.Short
+}

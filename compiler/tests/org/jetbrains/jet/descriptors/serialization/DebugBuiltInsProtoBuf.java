@@ -8,6 +8,9 @@ public final class DebugBuiltInsProtoBuf {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
     registry.add(org.jetbrains.jet.descriptors.serialization.DebugBuiltInsProtoBuf.className);
+    registry.add(org.jetbrains.jet.descriptors.serialization.DebugBuiltInsProtoBuf.classAnnotation);
+    registry.add(org.jetbrains.jet.descriptors.serialization.DebugBuiltInsProtoBuf.callableAnnotation);
+    registry.add(org.jetbrains.jet.descriptors.serialization.DebugBuiltInsProtoBuf.parameterAnnotation);
   }
   public static final int CLASS_NAME_FIELD_NUMBER = 150;
   /**
@@ -20,6 +23,39 @@ public final class DebugBuiltInsProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int CLASS_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.jet.descriptors.serialization.Class { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Class,
+      java.util.List<org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int CALLABLE_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable,
+      java.util.List<org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation>> callableAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable.ValueParameter,
+      java.util.List<org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation>> parameterAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -34,8 +70,19 @@ public final class DebugBuiltInsProtoBuf {
       "ialization\032.core/serialization/src/descr" +
       "iptors.debug.proto:M\n\nclass_name\0224.org.j" +
       "etbrains.jet.descriptors.serialization.P" +
-      "ackage\030\226\001 \003(\005B\002\020\001B\027B\025DebugBuiltInsProtoB" +
-      "uf"
+      "ackage\030\226\001 \003(\005B\002\020\001:\206\001\n\020class_annotation\0222" +
+      ".org.jetbrains.jet.descriptors.serializa" +
+      "tion.Class\030\226\001 \003(\01327.org.jetbrains.jet.de" +
+      "scriptors.serialization.Annotation:\214\001\n\023c" +
+      "allable_annotation\0225.org.jetbrains.jet.d",
+      "escriptors.serialization.Callable\030\226\001 \003(\013" +
+      "27.org.jetbrains.jet.descriptors.seriali" +
+      "zation.Annotation:\234\001\n\024parameter_annotati" +
+      "on\022D.org.jetbrains.jet.descriptors.seria" +
+      "lization.Callable.ValueParameter\030\226\001 \003(\0132" +
+      "7.org.jetbrains.jet.descriptors.serializ" +
+      "ation.AnnotationB\027B\025DebugBuiltInsProtoBu" +
+      "f"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -43,6 +90,9 @@ public final class DebugBuiltInsProtoBuf {
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
           className.internalInit(descriptor.getExtensions().get(0));
+          classAnnotation.internalInit(descriptor.getExtensions().get(1));
+          callableAnnotation.internalInit(descriptor.getExtensions().get(2));
+          parameterAnnotation.internalInit(descriptor.getExtensions().get(3));
           return null;
         }
       };

@@ -25,3 +25,15 @@ extend Package {
   // id in StringTable
   repeated int32 class_name = 150 [packed = true];
 }
+
+extend Class {
+  repeated Annotation class_annotation = 150;
+}
+
+extend Callable {
+  repeated Annotation callable_annotation = 150;
+}
+
+extend Callable.ValueParameter {
+  repeated Annotation parameter_annotation = 150;
+}

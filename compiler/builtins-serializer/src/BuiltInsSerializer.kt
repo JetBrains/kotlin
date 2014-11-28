@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import java.io.ByteArrayOutputStream
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
@@ -29,7 +29,6 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
@@ -41,9 +40,15 @@ import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 
 private object BuiltInsSerializerExtension : SerializerExtension() {
+    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
+        for (annotation in descriptor.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.classAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+
     override fun serializePackage(
             packageFragments: Collection<PackageFragmentDescriptor>,
             proto: ProtoBuf.Package.Builder,
@@ -57,16 +62,41 @@ private object BuiltInsSerializerExtension : SerializerExtension() {
             proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.getName()))
         }
     }
+
+    override fun serializeCallable(
+            callable: CallableMemberDescriptor,
+            proto: ProtoBuf.Callable.Builder,
+            stringTable: StringTable
+    ) {
+        for (annotation in callable.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+
+    override fun serializeValueParameter(
+            descriptor: ValueParameterDescriptor,
+            proto: ProtoBuf.Callable.ValueParameter.Builder,
+            stringTable: StringTable
+    ) {
+        for (annotation in descriptor.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
 }
 
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
     private var totalFiles = 0
 
-    public fun serialize(destDir: File, srcDirs: Collection<File>, onComplete: (totalSize: Int, totalFiles: Int) -> Unit) {
+    public fun serialize(
+            destDir: File,
+            srcDirs: Collection<File>,
+            extraClassPath: Collection<File>,
+            onComplete: (totalSize: Int, totalFiles: Int) -> Unit
+    ) {
         val rootDisposable = Disposer.newDisposable()
         try {
-            serialize(rootDisposable, destDir, srcDirs)
+            serialize(rootDisposable, destDir, srcDirs, extraClassPath)
             onComplete(totalSize, totalFiles)
         }
         finally {
@@ -81,12 +111,16 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
     }
 
-    fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>) {
+    fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>, extraClassPath: Collection<File>) {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
         val sourceRoots = srcDirs map { it.path }
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourceRoots)
+
+        for (path in extraClassPath) {
+            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, path)
+        }
 
         val environment = JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

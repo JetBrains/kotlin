@@ -22,16 +22,12 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArra
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId
 import org.jetbrains.jet.storage.StorageManager
-
 import java.util.*
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.constants.EnumValue
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue
@@ -112,6 +108,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
+            // NOTE: see analogous code in AnnotationDeserializer
             private fun enumEntryValue(enumClassId: ClassId, name: Name): CompileTimeConstant<*> {
                 val enumClass = resolveClass(enumClassId)
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
