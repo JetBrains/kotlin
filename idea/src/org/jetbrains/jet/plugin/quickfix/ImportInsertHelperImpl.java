@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
@@ -111,9 +112,14 @@ public class ImportInsertHelperImpl extends ImportInsertHelper {
 
     @Override
     public boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile) {
+
         List<ImportPath> defaultImports = ProjectStructureUtil.isJsKotlinModule(contextFile)
                                    ? TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
                                    : TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS;
+        if (importPath.fqnPart().asString().startsWith("java.lang.")
+            && !JavaToKotlinClassMap.getInstance().mapPlatformClass(importPath.fqnPart()).isEmpty()) {
+            return false;
+        }
         return NamePackage.isImported(importPath, defaultImports);
     }
 

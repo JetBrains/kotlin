@@ -37,6 +37,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
+import com.intellij.psi.PsiClass
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -112,7 +113,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         kotlinDefaultImport
         thisFile
         imported
-        normal
+        default
         notImported
     }
 
@@ -123,19 +124,27 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
                 return Weight.thisFile
             }
+        }
 
-            val fqName = DescriptorUtils.getFqName(o.descriptor).toString()
-            // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-            if (isValidJavaFqName(fqName)) {
-                val importPath = ImportPath(fqName)
-                return when {
-                    ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
-                    ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
-                    else -> Weight.imported
-                }
+        val fqName = fqName(o)
+        // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
+        if (fqName != null && isValidJavaFqName(fqName)) {
+            val importPath = ImportPath(fqName)
+            return when {
+                ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
+                ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                else -> Weight.imported
             }
         }
 
-        return Weight.normal
+        return Weight.default
+    }
+
+    private fun fqName(lookupObject: Any): String? {
+        return when (lookupObject) {
+            is DeclarationDescriptorLookupObject -> DescriptorUtils.getFqName(lookupObject.descriptor).toString()
+            is PsiClass -> lookupObject.getQualifiedName()
+            else -> null
+        }
     }
 }
