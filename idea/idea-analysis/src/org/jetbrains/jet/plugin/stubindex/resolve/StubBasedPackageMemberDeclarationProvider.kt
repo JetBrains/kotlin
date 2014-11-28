@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -33,6 +32,9 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
+import com.intellij.psi.stubs.StringStubIndexExtension
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -43,31 +45,23 @@ public class StubBasedPackageMemberDeclarationProvider(
     override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
         val result = ArrayList<JetDeclaration>()
 
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            JetClassByPackageIndex.getInstance().get(fqName.asString(), project, searchScope)
-                    .filterTo(result) { nameFilter(it.getNameAsSafeName()) }
+        fun addFromIndex(index: StringStubIndexExtension<out JetNamedDeclaration>) {
+            index.get(fqName.asString(), project, searchScope).filterTo(result) { nameFilter(it.getNameAsSafeName()) }
         }
 
-        //TODO: add by package indices for functions and properties too?
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+            addFromIndex(JetClassByPackageIndex.getInstance())
+        }
+
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
+            addFromIndex(JetTopLevelFunctionByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            result.addDeclarations(JetTopLevelPropertiesFqnNameIndex.getInstance(), nameFilter)
+            addFromIndex(JetTopLevelPropertyByPackageIndex.getInstance())
         }
 
         return result
-    }
-
-    private fun MutableCollection<JetDeclaration>.addDeclarations(index: StringStubIndexExtension<out JetNamedDeclaration>,
-                                                                  nameFilter: (Name) -> Boolean) {
-        index.getAllKeys(project)
-                .stream()
-                .map { FqName(it) }
-                .filter { !it.isRoot() && it.parent() == fqName && nameFilter(it.shortName()) }
-                .toSet()
-                .flatMapTo(this) { index[it.asString(), project, searchScope] }
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
