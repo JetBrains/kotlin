@@ -37,6 +37,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import java.awt.Color
+import org.jetbrains.jet.lang.types.TypeUtils
 
 public open class LookupElementFactory protected() {
     public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
@@ -171,7 +172,7 @@ public class BoldImmediateLookupElementFactory(private val receiverTypes: Collec
             val receiverParamType = receiverParameter.getType()
             if (isReceiverNullable && !receiverParamType.isNullable())
                 Style.GRAYED
-            else if (receiverTypes.any { it == receiverParamType })
+            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
                 Style.BOLD
             else
                 Style.NORMAL

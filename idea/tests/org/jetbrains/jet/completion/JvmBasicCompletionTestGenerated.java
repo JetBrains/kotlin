@@ -1033,6 +1033,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ImmediateMembersForPlatformType.kt")
+        public void testImmediateMembersForPlatformType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/java/ImmediateMembersForPlatformType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InPackage.kt")
         public void testInPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/java/InPackage.kt");
