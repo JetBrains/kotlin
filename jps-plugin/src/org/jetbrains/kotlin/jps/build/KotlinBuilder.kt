@@ -54,9 +54,12 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.model.JpsProject
+import java.io.FileFilter
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.jps.incremental.fs.CompilationRound
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -133,7 +136,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val recompilationDecision: IncrementalCacheImpl.RecompilationDecision
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+            recompilationDecision = DO_NOTHING
         }
         else {
             recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
@@ -149,15 +152,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (IncrementalCompilation.ENABLED) {
-            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
-                allCompiledFiles.clear()
-                val targetsCompletelyMarkedDirty = FSOperations.getTargetsCompletelyMarkedDirty(context)
-                FSOperations.markDirtyRecursively(context, chunk)
+            val fileFilter = FileFilter { file ->
+                KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
             }
-            if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHERS) {
-                FSOperations.markDirtyRecursively(context, chunk, { file ->
-                    KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
-                })
+
+            when (recompilationDecision) {
+                RECOMPILE_ALL_CHUNK_AND_DEPENDANTS -> {
+                    allCompiledFiles.clear()
+                    FSOperations.markDirtyRecursively(context, chunk)
+                }
+                RECOMPILE_OTHERS_WITH_DEPENDANTS -> {
+                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, fileFilter)
+                }
+                RECOMPILE_OTHERS_IN_CHUNK -> {
+                    FSOperations.markDirty(context, chunk, fileFilter)
+                }
             }
             return ADDITIONAL_PASS_REQUIRED
         }
@@ -254,7 +263,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
     ): IncrementalCacheImpl.RecompilationDecision {
         if (!IncrementalCompilation.ENABLED) {
-            return IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+            return DO_NOTHING
         }
 
         for ((target, cache) in incrementalCaches) {
@@ -265,7 +274,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             )
         }
 
-        var recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+        var recompilationDecision = DO_NOTHING
         for ((outputItem, target) in outputsItemsAndTargets) {
             val newDecision = incrementalCaches[target]!!.saveFileToCache(outputItem.getSourceFiles(), outputItem.getOutputFile())
             recompilationDecision = recompilationDecision.merge(newDecision)
