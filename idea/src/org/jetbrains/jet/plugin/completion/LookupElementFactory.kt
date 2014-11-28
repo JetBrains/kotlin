@@ -36,6 +36,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import java.awt.Color
 
 public open class LookupElementFactory protected() {
     public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
@@ -162,24 +163,55 @@ public class BoldImmediateLookupElementFactory(private val receiverTypes: Collec
         val element = super.createLookupElement(resolutionFacade, descriptor)
 
         if (descriptor !is CallableMemberDescriptor) return element
+
+        val isReceiverNullable = receiverTypes.all { it.isNullable() }
         val receiverParameter = descriptor.getExtensionReceiverParameter()
-        val bold = if (receiverParameter != null) {
-            receiverTypes.any { it == receiverParameter.getType() }
+
+        val style: Style = if (receiverParameter != null) {
+            val receiverParamType = receiverParameter.getType()
+            if (isReceiverNullable && !receiverParamType.isNullable())
+                Style.GRAYED
+            else if (receiverTypes.any { it == receiverParamType })
+                Style.BOLD
+            else
+                Style.NORMAL
         }
         else {
-            descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+            if (isReceiverNullable)
+                Style.GRAYED
+            else if (descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                Style.BOLD
+            else
+                Style.NORMAL
         }
 
-        return if (bold) {
+        return if (style != Style.NORMAL) {
             object : LookupElementDecorator<LookupElement>(element) {
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
-                    presentation.setItemTextBold(true)
+                    if (style == Style.BOLD) {
+                        presentation.setItemTextBold(true)
+                    }
+                    else {
+                        presentation.setItemTextForeground(Color.GRAY)
+                        // gray all tail fragments too:
+                        val fragments = presentation.getTailFragments()
+                        presentation.clearTail()
+                        for (fragment in fragments) {
+                            presentation.appendTailText(fragment.text, true)
+                        }
+                    }
                 }
             }
         }
         else {
             element
         }
+    }
+
+    private enum class Style {
+        NORMAL
+        BOLD
+        GRAYED
     }
 }

@@ -40,6 +40,7 @@ import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -74,10 +75,13 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
         if (jetReference != null) {
             val expression = jetReference.expression
-            val receivers = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
+            val (receivers, callType) = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
             val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
-            val receiverTypes = receivers.flatMap {
+            var receiverTypes = receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
+            }
+            if (callType == ReferenceVariantsHelper.CallType.SAFE) {
+                receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
             BoldImmediateLookupElementFactory(receiverTypes)
         }

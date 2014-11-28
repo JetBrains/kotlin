@@ -26,6 +26,7 @@ import com.google.gson.JsonParser;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,9 @@ import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.stubs.AstAccessControl;
 import org.junit.Assert;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Extract a number of statements about completion from the given text. Those statements
@@ -320,6 +323,12 @@ public class ExpectedCompletionUtils {
         if (presentation.isItemTextUnderlined()) {
             if (builder.length() > 0) builder.append(" ");
             builder.append("underlined");
+        }
+        Color foreground = presentation.getItemTextForeground();
+        if (!foreground.equals(JBColor.foreground())) {
+            assert foreground.equals(Color.GRAY);
+            if (builder.length() > 0) builder.append(" ");
+            builder.append("grayed");
         }
         if (presentation.isStrikeout()) {
             if (builder.length() > 0) builder.append(" ");

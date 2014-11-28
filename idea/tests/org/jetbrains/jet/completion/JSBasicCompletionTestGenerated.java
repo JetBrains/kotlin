@@ -48,6 +48,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("AfterNullable.kt")
+        public void testAfterNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterNullableAutoCast.kt")
+        public void testAfterNullableAutoCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullableAutoCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterNullableAutoCast2.kt")
+        public void testAfterNullableAutoCast2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullableAutoCast2.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInCommon() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -727,6 +745,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("OverloadFunctions.kt")
         public void testOverloadFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/OverloadFunctions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SafeCallAfterNullable.kt")
+        public void testSafeCallAfterNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SafeCallAfterNullable.kt");
             doTest(fileName);
         }
 
