@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -43,9 +44,11 @@ public class StubBasedPackageMemberDeclarationProvider(
         val result = ArrayList<JetDeclaration>()
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            result.addDeclarations(JetFullClassNameIndex.getInstance(), nameFilter)
+            JetClassByPackageIndex.getInstance().get(fqName.asString(), project, searchScope)
+                    .filterTo(result) { nameFilter(it.getNameAsSafeName()) }
         }
 
+        //TODO: add by package indices for functions and properties too?
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
             result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
         }
