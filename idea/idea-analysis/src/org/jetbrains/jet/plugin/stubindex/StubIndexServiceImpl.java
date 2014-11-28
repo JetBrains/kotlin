@@ -73,10 +73,6 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         if (name != null) {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
-
-            if (stub.isTopLevel()) {
-                sink.occurrence(JetTopLevelObjectShortNameIndex.getInstance().getKey(), name);
-            }
         }
 
         if (fqName != null) {

@@ -409,7 +409,6 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
