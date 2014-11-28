@@ -129,7 +129,7 @@ class TypeInstantiationItems(
 
     private fun createTypeInstantiationItem(
             classifier: ClassDescriptor,
-            typeArgs: List<TypeProjection?>,
+            typeArgs: List<TypeProjection>,
             tail: Tail?
     ): LookupElement? {
         var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
@@ -152,7 +152,7 @@ class TypeInstantiationItems(
         var allLookupStrings = setOf(lookupString)
 
         // drop "in" and "out" from type arguments - they cannot be used in constructor call
-        val typeArgsToUse = typeArgs.map { if (it != null) TypeProjectionImpl(Variance.INVARIANT, it.getType()) else null }
+        val typeArgsToUse = typeArgs.map { TypeProjectionImpl(Variance.INVARIANT, it.getType()) }
 
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
         var signatureText: String? = null
@@ -269,7 +269,7 @@ class TypeInstantiationItems(
     private inner class InheritanceSearcher(
             val psiClass: PsiClass,
             val classDescriptor: ClassDescriptor,
-            val typeArgs: List<TypeProjection?>,
+            val typeArgs: List<TypeProjection>,
             val tail: Tail?) : InheritanceItemsSearcher {
 
         private val typeConstructor = classDescriptor.getTypeConstructor()
