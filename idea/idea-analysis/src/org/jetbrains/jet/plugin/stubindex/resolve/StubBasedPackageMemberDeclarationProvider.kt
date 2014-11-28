@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclaration
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
@@ -34,6 +32,9 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -49,7 +50,7 @@ public class StubBasedPackageMemberDeclarationProvider(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addFromIndex(org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex.getInstance())
+            addFromIndex(JetTopLevelClassByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
@@ -69,11 +70,11 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction> {
-        return JetTopLevelFunctionsFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return JetTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getPropertyDeclarations(name: Name): Collection<JetProperty> {
-        return JetTopLevelPropertiesFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return JetTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getAllDeclaredSubPackages(): Collection<FqName> {

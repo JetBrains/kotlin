@@ -21,31 +21,34 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 import java.util.Collection;
 
-public class JetTopLevelPropertiesFqnNameIndex extends StringStubIndexExtension<JetProperty> {
-    private static final StubIndexKey<String, JetProperty> KEY = KotlinIndexUtil.createIndexKey(JetTopLevelPropertiesFqnNameIndex.class);
+/**
+ * Stores package top level function (both extension and non-extension) full qualified names.
+ */
+public class JetTopLevelFunctionFqnNameIndex extends StringStubIndexExtension<JetNamedFunction> {
+    private static final StubIndexKey<String, JetNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetTopLevelFunctionFqnNameIndex.class);
 
-    private static final JetTopLevelPropertiesFqnNameIndex INSTANCE = new JetTopLevelPropertiesFqnNameIndex();
+    private static final JetTopLevelFunctionFqnNameIndex INSTANCE = new JetTopLevelFunctionFqnNameIndex();
 
     @NotNull
-    public static JetTopLevelPropertiesFqnNameIndex getInstance() {
+    public static JetTopLevelFunctionFqnNameIndex getInstance() {
         return INSTANCE;
     }
 
-    private JetTopLevelPropertiesFqnNameIndex() {}
+    private JetTopLevelFunctionFqnNameIndex() {}
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetProperty> getKey() {
+    public StubIndexKey<String, JetNamedFunction> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<JetProperty> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetNamedFunction> get(String s, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

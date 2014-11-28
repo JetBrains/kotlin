@@ -120,7 +120,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             // can have special fq name in case of syntactically incorrect function with no name
             FqName fqName = stub.getFqName();
             if (fqName != null) {
-                sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), fqName.asString());
+                sink.occurrence(JetTopLevelFunctionFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelFunctionByPackageIndex.getInstance().getKey(), fqName.parent().asString());
             }
         }
@@ -151,7 +151,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             FqName fqName = stub.getFqName();
             // can have special fq name in case of syntactically incorrect property with no name
             if (fqName != null) {
-                sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), fqName.asString());
+                sink.occurrence(JetTopLevelPropertyFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelPropertyByPackageIndex.getInstance().getKey(), fqName.parent().asString());
             }
         }
