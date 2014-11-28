@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 
 public class KotlinIndicesHelper(
         private val project: Project,
@@ -59,42 +58,13 @@ public class KotlinIndicesHelper(
             }
         }
 
-        result.addSourceTopLevelFunctions(name)
-        result.addSourceTopLevelProperties(name)
+        JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .mapTo(result) { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
+
+        JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().get(name, project, scope)
+                .mapTo(result) { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
 
         return result.filter(visibilityFilter)
-    }
-
-    private fun MutableCollection<in FunctionDescriptor>.addSourceTopLevelFunctions(name: String) {
-        val identifier = Name.identifier(name)
-        val affectedPackages = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
-                .stream()
-                .map { it.getContainingFile() }
-                .filterIsInstance(javaClass<JetFile>())
-                .map { it.getPackageFqName() }
-                .toSet()
-
-        for (affectedPackage in affectedPackages) {
-            val packageDescriptor = moduleDescriptor.getPackage(affectedPackage)
-                    ?: error("There's a function in stub index with invalid package: $affectedPackage")
-            addAll(packageDescriptor.getMemberScope().getFunctions(identifier))
-        }
-    }
-
-    private fun MutableCollection<in PropertyDescriptor>.addSourceTopLevelProperties(name: String) {
-        val identifier = Name.identifier(name)
-        val affectedPackages = JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().get(name, project, scope)
-                .stream()
-                .map { it.getContainingFile() }
-                .filterIsInstance(javaClass<JetFile>())
-                .map { it.getPackageFqName() }
-                .toSet()
-
-        for (affectedPackage in affectedPackages) {
-            val packageDescriptor = moduleDescriptor.getPackage(affectedPackage)
-                    ?: error("There's a property in stub index with invalid package: $affectedPackage")
-            addAll(packageDescriptor.getMemberScope().getProperties(identifier))
-        }
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
