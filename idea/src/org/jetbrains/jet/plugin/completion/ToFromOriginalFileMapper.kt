@@ -59,11 +59,13 @@ class ToFromOriginalFileMapper(
     }
 
     public fun toOriginalFile(declaration: JetDeclaration): JetDeclaration? {
+        if (declaration.getContainingFile() != syntheticFile) return declaration
         val offset = toOriginalFile(declaration.getTextRange().getStartOffset()) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetDeclaration>(), true)
     }
 
     public fun toSyntheticFile(declaration: JetDeclaration): JetDeclaration? {
+        if (declaration.getContainingFile() != originalFile) return declaration
         val offset = toSyntheticFile(declaration.getTextRange().getStartOffset()) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, javaClass<JetDeclaration>(), true)
     }

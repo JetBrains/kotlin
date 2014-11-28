@@ -114,8 +114,8 @@ class TypeInstantiationItems(
             descriptor: ClassDescriptor, kotlinClassDescriptor: ClassDescriptor, typeArgs: List<TypeProjection>, tail: Tail?
     ) {
         val _declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) ?: return
-        val declaration = if (_declaration.getContainingFile() == toFromOriginalFileMapper.syntheticFile)
-            toFromOriginalFileMapper.toOriginalFile(_declaration as JetDeclaration) ?: return
+        val declaration = if (_declaration is JetDeclaration)
+            toFromOriginalFileMapper.toOriginalFile(_declaration) ?: return
         else
             _declaration
 
@@ -281,10 +281,7 @@ class TypeInstantiationItems(
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = if (inheritor is KotlinLightClass) {
                     val origin = inheritor.origin ?: continue
-                    val declaration = if (origin.getContainingFile() == toFromOriginalFileMapper.originalFile)
-                        toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
-                    else
-                        origin
+                    val declaration = toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
                     resolutionFacade.resolveToDescriptor(declaration)
                 }
                 else {
