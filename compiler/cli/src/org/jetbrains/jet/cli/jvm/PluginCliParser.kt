@@ -35,6 +35,9 @@ import java.net.URL
 import java.io.File
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import java.util.ServiceLoader
+import java.io.IOException
+import java.util.Enumeration
+
 
 public object PluginCliParser {
 
@@ -42,7 +45,7 @@ public object PluginCliParser {
 
     [platformStatic]
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
-        val classLoader = URLClassLoader(
+        val classLoader = PluginURLClassLoader(
                 arguments.pluginClasspaths
                         ?.map { File(it).toURI().toURL() }
                         ?.copyToArray()
@@ -114,5 +117,32 @@ public object PluginCliParser {
         }
 
         return null
+    }
+}
+
+private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().getContextClassLoader()) {
+    private val childClassLoader: SelfThenParentURLClassLoader = SelfThenParentURLClassLoader(urls, parent)
+
+    override synchronized fun loadClass(name: String, resolve: Boolean): Class<*> {
+        return try {
+            childClassLoader.findClass(name)
+        }
+        catch (e: ClassNotFoundException) {
+            super.loadClass(name, resolve)
+        }
+    }
+
+    override fun getResources(name: String) = childClassLoader.getResources(name)
+
+    private class SelfThenParentURLClassLoader(urls: Array<URL>, val onFail: ClassLoader) : URLClassLoader(urls, null) {
+
+        public override fun findClass(name: String): Class<*> {
+            return try {
+                super.findClass(name)
+            } catch (e: ClassNotFoundException) {
+                onFail.loadClass(name)
+            }
+
+        }
     }
 }
