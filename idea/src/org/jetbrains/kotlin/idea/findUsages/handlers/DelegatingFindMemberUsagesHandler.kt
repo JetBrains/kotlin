@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.toJavaMethodOptions
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
 import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 import java.util.ArrayList
