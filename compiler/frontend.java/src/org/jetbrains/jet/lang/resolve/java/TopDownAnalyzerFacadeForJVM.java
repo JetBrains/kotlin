@@ -62,7 +62,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegration(
+    public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
@@ -70,22 +70,6 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleDescriptorImpl module
     ) {
         return analyzeFilesWithJavaIntegration(project, files, trace, topDownAnalysisParameters, module, null, null);
-    }
-
-    @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegration(
-            @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull BindingTrace trace,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull ModuleDescriptorImpl module,
-            @Nullable List<String> moduleIds,
-            @Nullable IncrementalCacheProvider incrementalCacheProvider
-    ) {
-        return analyzeFilesWithJavaIntegrationWithCustomContext(
-                project, ContextPackage.GlobalContext(), files, trace,
-                filesToAnalyzeCompletely, module, moduleIds,
-                incrementalCacheProvider);
     }
 
     @NotNull

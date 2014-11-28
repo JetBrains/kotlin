@@ -156,7 +156,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 false
         );
 
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 environment.getProject(),
                 environment.getSourceFiles(),
                 trace,

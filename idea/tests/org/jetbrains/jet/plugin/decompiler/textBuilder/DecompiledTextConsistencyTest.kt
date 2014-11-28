@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import org.jetbrains.jet.lang.resolve.descriptorUtil.module
+import org.jetbrains.jet.context.GlobalContext
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -63,8 +64,8 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
         module.addDependencyOnModule(module)
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
         module.seal()
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, listOf(), BindingTraceContext(), { false },
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                project, GlobalContext(), listOf(), BindingTraceContext(), { false },
                 module, null, null
         ).moduleDescriptor
     }

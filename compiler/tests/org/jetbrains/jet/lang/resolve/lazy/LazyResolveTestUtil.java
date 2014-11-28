@@ -56,7 +56,7 @@ public class LazyResolveTestUtil {
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptorImpl sharedModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 environment.getProject(),
                 files,
                 trace,
