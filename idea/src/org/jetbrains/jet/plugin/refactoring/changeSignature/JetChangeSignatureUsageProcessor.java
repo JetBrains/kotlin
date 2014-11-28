@@ -16,12 +16,11 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
+import com.intellij.codeInsight.NullableNotNullManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.changeSignature.*;
@@ -317,6 +316,75 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         return callElement != null ? new JavaMethodKotlinCallUsage(callElement, javaMethodChangeInfo) : null;
     }
 
+    private static class NullabilityPropagator {
+        private final NullableNotNullManager nullManager;
+        private final JavaPsiFacade javaPsiFacade;
+        private final JavaCodeStyleManager javaCodeStyleManager;
+        private final PsiAnnotation methodAnnotation;
+        private final PsiAnnotation[] parameterAnnotations;
+
+        public NullabilityPropagator(@NotNull PsiMethod baseMethod) {
+            Project project = baseMethod.getProject();
+            this.nullManager = NullableNotNullManager.getInstance(project);
+            this.javaPsiFacade = JavaPsiFacade.getInstance(project);
+            this.javaCodeStyleManager = JavaCodeStyleManager.getInstance(project);
+
+            this.methodAnnotation = getNullabilityAnnotation(baseMethod);
+            this.parameterAnnotations = ContainerUtil.map2Array(
+                    baseMethod.getParameterList().getParameters(),
+                    PsiAnnotation.class,
+                    new Function<PsiParameter, PsiAnnotation>() {
+                        @Override
+                        public PsiAnnotation fun(PsiParameter parameter) {
+                            return getNullabilityAnnotation(parameter);
+                        }
+                    }
+            );
+        }
+
+        @Nullable
+        private PsiAnnotation getNullabilityAnnotation(@NotNull PsiModifierListOwner element) {
+            PsiAnnotation nullAnnotation = nullManager.getNullableAnnotation(element, false);
+            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
+            if ((nullAnnotation == null) == (notNullAnnotation == null)) return null;
+            return nullAnnotation != null ? nullAnnotation : notNullAnnotation;
+        }
+
+        private void addNullabilityAnnotationIfApplicable(@NotNull PsiModifierListOwner element, @Nullable PsiAnnotation annotation) {
+            PsiAnnotation nullableAnnotation = nullManager.getNullableAnnotation(element, false);
+            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
+
+            if (notNullAnnotation != null && nullableAnnotation == null && element instanceof PsiMethod) return;
+
+            String annotationQualifiedName = annotation != null ? annotation.getQualifiedName() : null;
+            if (annotationQualifiedName != null
+                && javaPsiFacade.findClass(annotationQualifiedName, element.getResolveScope()) == null) return;
+
+            if (notNullAnnotation != null) {
+                notNullAnnotation.delete();
+            }
+            if (nullableAnnotation != null) {
+                nullableAnnotation.delete();
+            }
+
+            if (annotationQualifiedName == null) return;
+
+            PsiModifierList modifierList = element.getModifierList();
+            if (modifierList != null) {
+                modifierList.addAnnotation(annotationQualifiedName);
+                javaCodeStyleManager.shortenClassReferences(element);
+            }
+        }
+
+        public void processMethod(@NotNull PsiMethod currentMethod) {
+            PsiParameter[] currentParameters = currentMethod.getParameterList().getParameters();
+            addNullabilityAnnotationIfApplicable(currentMethod, methodAnnotation);
+            for (int i = 0; i < parameterAnnotations.length; i++) {
+                addNullabilityAnnotationIfApplicable(currentParameters[i], parameterAnnotations[i]);
+            }
+        }
+    }
+
     @Override
     public boolean processUsage(ChangeInfo changeInfo, UsageInfo usageInfo, boolean beforeMethodChange, UsageInfo[] usages) {
         PsiElement method = changeInfo.getMethod();
@@ -328,6 +396,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             UsageInfo[] javaUsageInfos = ((KotlinWrapperForJavaUsageInfos) usageInfo).getJavaUsageInfos();
             ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
 
+            NullabilityPropagator nullabilityPropagator = new NullabilityPropagator(javaChangeInfo.getMethod());
+
             for (UsageInfo usage : javaUsageInfos) {
                 if (usage instanceof OverriderUsageInfo && beforeMethodChange) continue;
                 for (ChangeSignatureUsageProcessor processor : processors) {
@@ -336,6 +406,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                         processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
                     }
                     if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
+                }
+                if (usage instanceof OverriderUsageInfo) {
+                    PsiMethod overridingMethod = ((OverriderUsageInfo)usage).getElement();
+                    if (overridingMethod != null) {
+                        nullabilityPropagator.processMethod(overridingMethod);
+                    }
                 }
             }
         }

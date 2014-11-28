@@ -319,11 +319,42 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
-    public void testFunctionJavaUsagesAndOverrides() throws Exception {
+    public void testFunctionJavaUsagesAndOverridesAddParam() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
-        newParameter.setDefaultValueText("\"abc\"");
-        changeInfo.addParameter(newParameter);
+
+        JetParameterInfo param1 = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        param1.setDefaultValueText("\"abc\"");
+        changeInfo.addParameter(param1);
+
+        JetParameterInfo param2 = new JetParameterInfo("o", KotlinBuiltIns.getInstance().getNullableAnyType());
+        param2.setDefaultValueText("\"def\"");
+        changeInfo.addParameter(param2);
+
+        doTest(changeInfo);
+    }
+
+    public void testFunctionJavaUsagesAndOverridesChangeNullability() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        newParameters[1].setTypeText("String?");
+        newParameters[2].setTypeText("Any");
+
+        changeInfo.setNewReturnTypeText("String?");
+
+        doTest(changeInfo);
+    }
+
+    public void testFunctionJavaUsagesAndOverridesChangeTypes() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        newParameters[0].setTypeText("String?");
+        newParameters[1].setTypeText("Int");
+        newParameters[2].setTypeText("Long?");
+
+        changeInfo.setNewReturnTypeText("Any?");
+
         doTest(changeInfo);
     }
 
