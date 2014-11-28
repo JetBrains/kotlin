@@ -22,6 +22,6 @@ fun f4(a: Any) {
 }
 
 fun f5(a: String) {
-    a <!USELESS_CAST_STATIC_ASSERT_IS_FINE!>as<!> Any?
+    a <!USELESS_CAST_STATIC_ASSERT_IS_FINE!>as Any?<!>
     a: String
 }

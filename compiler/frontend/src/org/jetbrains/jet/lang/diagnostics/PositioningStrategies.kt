@@ -365,4 +365,10 @@ public object PositioningStrategies {
             return Errors.UNREACHABLE_CODE.cast(diagnostic).getA()
         }
     }
+
+    public val AS_TYPE: PositioningStrategy<JetBinaryExpressionWithTypeRHS> = object : PositioningStrategy<JetBinaryExpressionWithTypeRHS>() {
+        override fun mark(element: JetBinaryExpressionWithTypeRHS): List<TextRange> {
+            return markRange(element.getOperationReference(), element)
+        }
+    }
 }

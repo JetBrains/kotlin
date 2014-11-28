@@ -49,6 +49,7 @@ import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
 import org.jetbrains.jet.plugin.quickfix.QuickFixes
 import kotlin.platform.platformStatic
+import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
