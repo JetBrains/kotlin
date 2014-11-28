@@ -86,7 +86,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                 if (resolvedCall != null) {
                     JetFunction declaration = getFunctionDeclaration(resolvedCall);
                     if (declaration != null) {
-                        JetParameter binaryOperatorParameter = declaration.getValueParameterList().getParameters().get(0);
+                        JetParameter binaryOperatorParameter = declaration.getValueParameters().get(0);
                         actions.add(new ChangeParameterTypeFix(binaryOperatorParameter, expressionType));
                     }
                 }

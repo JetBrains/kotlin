@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
@@ -84,6 +85,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
     @Override
     public JetParameterList getValueParameterList() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public List<JetParameter> getValueParameters() {
+        return Collections.emptyList();
     }
 
     @Override
