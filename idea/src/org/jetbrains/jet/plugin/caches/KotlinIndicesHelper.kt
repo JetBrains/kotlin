@@ -58,13 +58,19 @@ public class KotlinIndicesHelper(
             }
         }
 
-        JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
-                .mapTo(result) { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
-
-        JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().get(name, project, scope)
-                .mapTo(result) { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
+        result.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
+        result.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
 
         return result.filter(visibilityFilter)
+    }
+
+    private fun MutableSet<CallableDescriptor>.addTopLevelNonExtensionCallablesByName(
+            index: StringStubIndexExtension<out JetCallableDeclaration>,
+            name: String
+    ) {
+        index.get(name, project, scope)
+                .filter { it.getParent() is JetFile && it.getReceiverTypeReference() == null }
+                .mapTo(this) { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {

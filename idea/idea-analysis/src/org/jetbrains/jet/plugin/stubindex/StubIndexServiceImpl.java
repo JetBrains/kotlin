@@ -96,11 +96,6 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexFunction(KotlinFunctionStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            if (stub.isTopLevel()) {
-                if (!stub.isExtension()) {
-                    sink.occurrence(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getKey(), name);
-                }
-            }
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
 
             if (stub.isProbablyNothingType()) {
@@ -122,13 +117,6 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexProperty(KotlinPropertyStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            if (stub.isTopLevel()) {
-                // Collection only top level functions as only they are expected in completion without explicit import
-                if (!stub.hasReceiverTypeRef()) {
-                    sink.occurrence(JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().getKey(), name);
-                }
-            }
-
             sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), name);
 
             if (stub.isProbablyNothingType()) {

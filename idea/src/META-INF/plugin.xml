@@ -399,8 +399,6 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionPropertyShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPropertyShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex"/>
