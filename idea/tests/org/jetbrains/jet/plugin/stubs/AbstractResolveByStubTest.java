@@ -40,7 +40,7 @@ import java.io.File;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
-public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTestCase {
+public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCase {
     protected void doTest(String testFileName) throws Exception {
         doTest(testFileName, true, true);
     }

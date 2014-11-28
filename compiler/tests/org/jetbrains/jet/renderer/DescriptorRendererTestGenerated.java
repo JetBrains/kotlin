@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.renderer;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/renderer")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class LazyResolveDescriptorRendererTestGenerated extends AbstractLazyResolveDescriptorRendererTest {
+public class DescriptorRendererTestGenerated extends AbstractDescriptorRendererTest {
     public void testAllFilesPresentInRenderer() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
     }

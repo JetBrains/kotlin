@@ -16,20 +16,23 @@
 
 package org.jetbrains.jet.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassInitializer;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.project.ResolveElementCache;
+import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest;
 
-public abstract class AbstractAdditionalLazyResolveDescriptorRendererTest extends AbstractLazyResolveDescriptorRendererTest {
+public abstract class AbstractAdditionalResolveDescriptorRendererTest extends AbstractDescriptorRendererTest {
+    @NotNull
     @Override
-    protected DeclarationDescriptor getDescriptor(JetDeclaration declaration, ResolveSession resolveSession) {
+    protected DeclarationDescriptor getDescriptor(@NotNull JetDeclaration declaration, @NotNull ResolveSession resolveSession) {
         if (declaration instanceof JetClassInitializer || JetPsiUtil.isLocal(declaration)) {
             ResolveElementCache resolveElementCache = new ResolveElementCache(resolveSession, getProject());
+            //noinspection ConstantConditions
             return resolveElementCache.resolveToElement(declaration).get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         }
         return resolveSession.resolveToDescriptor(declaration);

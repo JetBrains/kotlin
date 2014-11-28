@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/resolve/additionalLazyResolve")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class AdditionalLazyResolveDescriptorRendererTestGenerated extends AbstractAdditionalLazyResolveDescriptorRendererTest {
+public class AdditionalResolveDescriptorRendererTestGenerated extends AbstractAdditionalResolveDescriptorRendererTest {
     public void testAllFilesPresentInAdditionalLazyResolve() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), true);
     }
