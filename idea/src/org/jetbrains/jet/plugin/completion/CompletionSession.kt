@@ -229,10 +229,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val converter = ToFromOriginalFileConverter(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
+            val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
             val completion = SmartCompletion(jetReference.expression, resolutionFacade, moduleDescriptor, 
                                              bindingContext!!, { isVisibleDescriptor(it) }, originalSearchScope,
-                                             converter, boldImmediateLookupElementFactory)
+                                             mapper, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

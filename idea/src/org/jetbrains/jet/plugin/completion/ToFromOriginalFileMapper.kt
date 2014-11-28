@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 
-class ToFromOriginalFileConverter(
+class ToFromOriginalFileMapper(
         val originalFile: JetFile,
         val syntheticFile: JetFile,
         val completionOffset: Int

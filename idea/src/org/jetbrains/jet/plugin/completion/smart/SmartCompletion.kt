@@ -46,7 +46,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val bindingContext: BindingContext,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val inheritorSearchScope: GlobalSearchScope,
-                      val toFromOriginalFileConverter: ToFromOriginalFileConverter,
+                      val toFromOriginalFileMapper: ToFromOriginalFileMapper,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {
     private val project = expression.getProject()
 
@@ -145,8 +145,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val additionalItems = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
         if (receiver == null) {
-            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileConverter, inheritorSearchScope)
-                    .add(additionalItems, inheritanceSearchers, expectedInfos)
+            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope)
+                    .addTo(additionalItems, inheritanceSearchers, expectedInfos)
 
             StaticMembers(bindingContext, resolutionFacade).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
 
@@ -174,7 +174,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
         if (declaration != null) {
-            val originalDeclaration = toFromOriginalFileConverter.toOriginalFile(declaration)
+            val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
                 val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
                 val returnType = originalDescriptor?.getReturnType()

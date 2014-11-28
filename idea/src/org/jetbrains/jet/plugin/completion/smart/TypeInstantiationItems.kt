@@ -66,10 +66,10 @@ class TypeInstantiationItems(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-        val toFromOriginalFileConverter: ToFromOriginalFileConverter,
+        val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         val inheritorSearchScope: GlobalSearchScope
 ) {
-    public fun add(
+    public fun addTo(
             items: MutableCollection<LookupElement>,
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
@@ -77,11 +77,11 @@ class TypeInstantiationItems(
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((type, infos) in expectedInfosGrouped) {
             val tail = mergeTails(infos.map { it.tail })
-            addToCollection(items, inheritanceSearchers, type, tail)
+            addTo(items, inheritanceSearchers, type, tail)
         }
     }
 
-    private fun addToCollection(
+    private fun addTo(
             items: MutableCollection<LookupElement>,
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             type: JetType,
@@ -114,8 +114,8 @@ class TypeInstantiationItems(
             descriptor: ClassDescriptor, kotlinClassDescriptor: ClassDescriptor, typeArgs: List<TypeProjection>, tail: Tail?
     ) {
         val _declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) ?: return
-        val declaration = if (_declaration.getContainingFile() == toFromOriginalFileConverter.syntheticFile)
-            toFromOriginalFileConverter.toOriginalFile(_declaration as JetDeclaration) ?: return
+        val declaration = if (_declaration.getContainingFile() == toFromOriginalFileMapper.syntheticFile)
+            toFromOriginalFileMapper.toOriginalFile(_declaration as JetDeclaration) ?: return
         else
             _declaration
 
@@ -281,8 +281,8 @@ class TypeInstantiationItems(
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = if (inheritor is KotlinLightClass) {
                     val origin = inheritor.origin ?: continue
-                    val declaration = if (origin.getContainingFile() == toFromOriginalFileConverter.originalFile)
-                        toFromOriginalFileConverter.toSyntheticFile(origin) ?: continue
+                    val declaration = if (origin.getContainingFile() == toFromOriginalFileMapper.originalFile)
+                        toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
                     else
                         origin
                     resolutionFacade.resolveToDescriptor(declaration)
