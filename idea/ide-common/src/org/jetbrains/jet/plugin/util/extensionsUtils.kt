@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.addIfNotNull
 import java.util.HashSet
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 
 public fun CallableDescriptor.isExtensionCallable(receivers: Collection<ReceiverValue>,
                                                   context: BindingContext,
@@ -49,36 +50,30 @@ public fun CallableDescriptor.isExtensionCallable(
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Boolean {
-    assert(getExtensionReceiverParameter() != null)
+    val receiverParameter = getExtensionReceiverParameter()!!
+    if (!receiver.exists()) return false
 
     if (isInfixCall && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
         return false
     }
 
     return SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
-            .any { checkReceiverResolution(receiver, it, this) }
+            .any { checkReceiverResolution(it, receiverParameter, getTypeParameters()) }
 }
 
-private fun checkReceiverResolution(receiverArgument: ReceiverValue, receiverType: JetType, callableDescriptor: CallableDescriptor): Boolean {
-    val receiverParameter = callableDescriptor.getExtensionReceiverParameter()
-
-    if (!receiverArgument.exists() && receiverParameter == null) {
-        // Both receivers do not exist
-        return true
-    }
-
-    if (!(receiverArgument.exists() && receiverParameter != null)) {
-        return false
-    }
-
+private fun checkReceiverResolution(
+        receiverType: JetType,
+        receiverParameter: ReceiverParameterDescriptor,
+        typeParameters: List<TypeParameterDescriptor>
+): Boolean {
     val typeNamesInReceiver = HashSet<Name>()
     typeNamesInReceiver.addUsedTypeNames(receiverParameter.getType())
 
     val constraintSystem = ConstraintSystemImpl()
     val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
-    for (typeParameterDescriptor in callableDescriptor.getTypeParameters()) {
-        if (typeNamesInReceiver.contains(typeParameterDescriptor.getName())) {
-            typeVariables.put(typeParameterDescriptor, Variance.INVARIANT)
+    for (typeParameter in typeParameters) {
+        if (typeNamesInReceiver.contains(typeParameter.getName())) {
+            typeVariables.put(typeParameter, Variance.INVARIANT)
         }
     }
     constraintSystem.registerTypeVariables(typeVariables)
