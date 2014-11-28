@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion.weighers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -45,6 +44,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestMetadata("ExactMatchForKeyword.kt")
     public void testExactMatchForKeyword() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ExactMatchForKeyword.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportedFirst.kt")
+    public void testImportedFirst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ImportedFirst.kt");
         doTest(fileName);
     }
 
