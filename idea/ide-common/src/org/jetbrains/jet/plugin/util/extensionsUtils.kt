@@ -49,6 +49,8 @@ public fun CallableDescriptor.isExtensionCallable(
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Boolean {
+    assert(getExtensionReceiverParameter() != null)
+
     if (isInfixCall && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
         return false
     }

@@ -144,10 +144,8 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ) {
         if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
-            resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)
-                    .stream()
-                    .filterIsInstance(javaClass<CallableDescriptor>())
-                    .filterTo(this) { it.isExtensionCallable(receiver, isInfixCall, context, dataFlowInfo) }
+            resolutionScope.getDescriptorsFiltered(kindFilter.exclude(DescriptorKindExclude.NonExtensions), nameFilter)
+                    .filterTo(this) { (it as CallableDescriptor).isExtensionCallable(receiver, isInfixCall, context, dataFlowInfo) }
         }
     }
 
