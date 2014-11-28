@@ -41,13 +41,16 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
         }
 
-        FqName fqn = stub.getFqName();
-        if (fqn != null) {
-            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.asString());
+        FqName fqName = stub.getFqName();
+        if (fqName != null) {
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
+
+            if (stub.isTopLevel()) {
+                sink.occurrence(JetTopLevelClassByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
         }
 
         indexSuperNames(stub, sink);
-        recordClassOrObjectByPackage(stub, sink);
     }
 
     @Override
@@ -78,24 +81,18 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
+
+            if (stub.isTopLevel()) {
+                sink.occurrence(JetTopLevelClassByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
         }
 
         indexSuperNames(stub, sink);
-        recordClassOrObjectByPackage(stub, sink);
     }
 
     private static void indexSuperNames(KotlinClassOrObjectStub<? extends JetClassOrObject> stub, IndexSink sink) {
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
-        }
-    }
-
-    private static void recordClassOrObjectByPackage(StubElement<? extends JetClassOrObject> stub, IndexSink sink) {
-        StubElement parentStub = stub.getParentStub();
-        if (parentStub instanceof KotlinFileStub) {
-            KotlinFileStub jetFileStub = (KotlinFileStub) parentStub;
-            FqName packageFqName = jetFileStub.getPackageFqName();
-            sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageFqName.asString());
         }
     }
 

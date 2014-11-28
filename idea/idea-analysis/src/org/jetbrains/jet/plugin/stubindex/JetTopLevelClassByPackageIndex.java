@@ -25,16 +25,16 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 
 import java.util.Collection;
 
-public class JetClassByPackageIndex extends StringStubIndexExtension<JetClassOrObject> {
-    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetClassByPackageIndex.class);
+public class JetTopLevelClassByPackageIndex extends StringStubIndexExtension<JetClassOrObject> {
+    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetTopLevelClassByPackageIndex.class);
 
-    private static final JetClassByPackageIndex ourInstance = new JetClassByPackageIndex();
+    private static final JetTopLevelClassByPackageIndex ourInstance = new JetTopLevelClassByPackageIndex();
 
-    public static JetClassByPackageIndex getInstance() {
+    public static JetTopLevelClassByPackageIndex getInstance() {
         return ourInstance;
     }
 
-    private JetClassByPackageIndex() {}
+    private JetTopLevelClassByPackageIndex() {}
 
     @NotNull
     @Override

@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex
@@ -50,7 +49,7 @@ public class StubBasedPackageMemberDeclarationProvider(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addFromIndex(JetClassByPackageIndex.getInstance())
+            addFromIndex(org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
