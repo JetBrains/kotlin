@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
-import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.addIfNotNull
 import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
@@ -66,14 +65,14 @@ private fun checkReceiverResolution(
         receiverParameter: ReceiverParameterDescriptor,
         typeParameters: List<TypeParameterDescriptor>
 ): Boolean {
-    val typeNamesInReceiver = HashSet<Name>()
-    typeNamesInReceiver.addUsedTypeNames(receiverParameter.getType())
+    val typeNamesInReceiver = HashSet<TypeParameterDescriptor>()
+    typeNamesInReceiver.addUsedTypeParameters(receiverParameter.getType())
 
     val constraintSystem = ConstraintSystemImpl()
     val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
     for (typeParameter in typeParameters) {
-        if (typeNamesInReceiver.contains(typeParameter.getName())) {
-            typeVariables.put(typeParameter, Variance.INVARIANT)
+        if (typeNamesInReceiver.contains(typeParameter)) {
+            typeVariables[typeParameter] = Variance.INVARIANT
         }
     }
     constraintSystem.registerTypeVariables(typeVariables)
@@ -82,12 +81,11 @@ private fun checkReceiverResolution(
     return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)
 }
 
-private fun MutableSet<Name>.addUsedTypeNames(jetType: JetType) {
-    val descriptor = jetType.getConstructor().getDeclarationDescriptor()
-    addIfNotNull(descriptor?.getName())
+private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(jetType: JetType) {
+    addIfNotNull(jetType.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor)
 
     for (argument in jetType.getArguments()) {
-        addUsedTypeNames(argument.getType())
+        addUsedTypeParameters(argument.getType())
     }
 }
 
