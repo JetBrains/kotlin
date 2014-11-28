@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="android_tests">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/android_tests.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -11,7 +11,6 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="android-compiler-plugin" exported="" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="android" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="android_tests" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="idea-full" level="project" />
     <orderEntry type="module" module-name="idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
