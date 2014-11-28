@@ -91,7 +91,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                                      context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                                      context.scope.getContainingDeclaration(),
                                                      expression.getObjectDeclaration(),
-                                                     components.additionalCheckerProvider);
+                                                     components.additionalCheckerProvider,
+                                                     components.dynamicTypesSettings);
 
         DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
                 new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);

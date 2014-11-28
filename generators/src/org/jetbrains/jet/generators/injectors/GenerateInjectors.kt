@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolverPostConstruct
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider
 import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed
+import org.jetbrains.jet.lang.types.DynamicTypesSettings
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -95,6 +96,7 @@ private fun generatorForTopDownAnalyzerBasic() =
             field(javaClass<MutablePackageFragmentProvider>())
 
             parameter(javaClass<AdditionalCheckerProvider>())
+            parameter(javaClass<DynamicTypesSettings>())
         }
 
 private fun generatorForLazyTopDownAnalyzerBasic() =

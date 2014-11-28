@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ public class ExpressionTypingComponents {
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
     /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
+    /*package*/ DynamicTypesSettings dynamicTypesSettings;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -79,6 +81,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
         this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
+    @Inject
+    public void setDynamicTypesSettings(@NotNull DynamicTypesSettings dynamicTypesSettings) {
+        this.dynamicTypesSettings = dynamicTypesSettings;
     }
 
     @NotNull

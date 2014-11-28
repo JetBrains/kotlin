@@ -88,7 +88,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         LocalClassifierAnalyzer.processClassOrObject(
                 components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration,
-                components.additionalCheckerProvider);
+                components.additionalCheckerProvider,
+                components.dynamicTypesSettings);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
 
@@ -185,7 +186,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         LocalClassifierAnalyzer.processClassOrObject(
                 components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass,
-                components.additionalCheckerProvider);
+                components.additionalCheckerProvider,
+                components.dynamicTypesSettings);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
 

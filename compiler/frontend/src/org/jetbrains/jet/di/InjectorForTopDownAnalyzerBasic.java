@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -42,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.context.LazinessToken;
-import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
@@ -76,6 +76,7 @@ public class InjectorForTopDownAnalyzerBasic {
     private final TopDownAnalyzer topDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final DynamicTypesSettings dynamicTypesSettings;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -93,7 +94,6 @@ public class InjectorForTopDownAnalyzerBasic {
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final LazinessToken lazinessToken;
-    private final DynamicTypesSettings dynamicTypesSettings;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final CallCompleter callCompleter;
@@ -117,7 +117,8 @@ public class InjectorForTopDownAnalyzerBasic {
         @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull AdditionalCheckerProvider additionalCheckerProvider
+        @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+        @NotNull DynamicTypesSettings dynamicTypesSettings
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -128,6 +129,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.additionalCheckerProvider = additionalCheckerProvider;
+        this.dynamicTypesSettings = dynamicTypesSettings;
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -144,7 +146,6 @@ public class InjectorForTopDownAnalyzerBasic {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
-        this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
@@ -208,6 +209,7 @@ public class InjectorForTopDownAnalyzerBasic {
         expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);

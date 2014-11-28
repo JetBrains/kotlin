@@ -1,3 +1,14 @@
+// -- Module: <m1> --
 package
 
 internal val foo: dynamic = 1
+internal fun foo(): kotlin.Unit
+
+
+// -- Module: <m2> --
+package
+
+internal val foo: dynamic = 1
+internal fun foo(): kotlin.Unit
+
+

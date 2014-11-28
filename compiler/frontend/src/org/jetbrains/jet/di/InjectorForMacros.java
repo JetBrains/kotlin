@@ -125,6 +125,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.expressionTypingComponents.setCallResolver(callResolver);
         this.expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        this.expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
         this.expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         this.expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         this.expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
