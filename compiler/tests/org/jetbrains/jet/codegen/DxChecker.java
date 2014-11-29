@@ -16,8 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.android.dx.cf.direct.DirectClassFile;
+import com.android.dx.cf.direct.StdAttributeFactory;
 import com.android.dx.command.dexer.Main;
 import com.android.dx.dex.cf.CfTranslator;
+import com.android.dx.dex.file.DexFile;
 import org.jetbrains.jet.OutputFile;
 import org.junit.Assert;
 
@@ -42,7 +45,16 @@ public class DxChecker {
 
         for (OutputFile file : outputFiles.asList()) {
             try {
-                CfTranslator.translate(file.getRelativePath(), file.asByteArray(), arguments.cfOptions, arguments.dexOptions);
+                byte[] bytes = file.asByteArray();
+                DirectClassFile cf = new DirectClassFile(bytes, file.getRelativePath(), true);
+                cf.setAttributeFactory(StdAttributeFactory.THE_ONE);
+                CfTranslator.translate(
+                        cf,
+                        bytes,
+                        arguments.cfOptions,
+                        arguments.dexOptions,
+                        new DexFile(arguments.dexOptions)
+                );
             }
             catch (Throwable e) {
                 Assert.fail(generateExceptionMessage(e));

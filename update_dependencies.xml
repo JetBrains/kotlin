@@ -123,7 +123,20 @@
         <get-ant-library version="1.8.0" folderName="ant-1.8"/>
 
         <!-- dx.jar -->
-        <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
+        <property name="android-build-tools.zip" value="build-tools_r21.1.1-linux.zip"/>
+        <get
+            src="https://dl-ssl.google.com/android/repository/${android-build-tools.zip}"
+            dest="dependencies/download/${android-build-tools.zip}"
+            usetimestamp="true"/>
+        <unzip src="dependencies/download/${android-build-tools.zip}" dest="dependencies"/>
+
+        <property name="android-sources.tgz" value="dx.tar.gz"/>
+        <get
+            src="https://android.googlesource.com/platform/dalvik/+archive/android-5.0.0_r2/${android-sources.tgz}"
+            dest="dependencies/download/${android-sources.tgz}"
+            usetimestamp="true"/>
+        <delete dir="dependencies/dx-src" failonerror="false"/>
+        <untar src="dependencies/download/${android-sources.tgz}" dest="dependencies/dx-src" compression="gzip"/>
 
         <!-- jflex 1.4 -->
         <mkdir dir="dependencies/jflex"/>
