@@ -16,17 +16,16 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 public class EnvironmentConfigFiles {
 
-    private static final String EXTENSIONS_DIR = "extensions";
+    private static final String EXTENSIONS_DIR = "extensions/";
 
-    private static final String COMMON_CONFIG_FILE = EXTENSIONS_DIR + File.separator + "common.xml";
-    private static final String JVM_CONFIG_FILE = EXTENSIONS_DIR + File.separator + "kotlin2jvm.xml";
-    private static final String JS_CONFIG_FILE = EXTENSIONS_DIR + File.separator + "kotlin2js.xml";
+    private static final String COMMON_CONFIG_FILE = EXTENSIONS_DIR + "common.xml";
+    private static final String JVM_CONFIG_FILE = EXTENSIONS_DIR + "kotlin2jvm.xml";
+    private static final String JS_CONFIG_FILE = EXTENSIONS_DIR + "kotlin2js.xml";
 
     public static final List<String> JVM_CONFIG_FILES = Arrays.asList(COMMON_CONFIG_FILE, JVM_CONFIG_FILE);
     public static final List<String> JS_CONFIG_FILES = Arrays.asList(COMMON_CONFIG_FILE, JS_CONFIG_FILE);
