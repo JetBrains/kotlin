@@ -29,44 +29,34 @@ public fun generator(
     return generator
 }
 
-public fun DependencyInjectorGenerator.field(
-        fieldType: Class<*>,
-        name: String = defaultName(fieldType),
+inline public fun <reified T> DependencyInjectorGenerator.field(
+        name: String = defaultName(javaClass<T>()),
         init: Expression? = null,
         useAsContext: Boolean = false
 ) {
-    addField(false, DiType(fieldType), name, init, useAsContext)
+    addField(false, DiType(javaClass<T>()), name, init, useAsContext)
 }
 
-public fun DependencyInjectorGenerator.publicField(
-        fieldType: Class<*>,
-        name: String = defaultName(fieldType),
+inline public fun <reified T> DependencyInjectorGenerator.publicField(
+        name: String = defaultName(javaClass<T>()),
         init: Expression? = null,
         useAsContext: Boolean = false
 ) {
-    addField(true, DiType(fieldType), name, init, useAsContext)
+    addField(true, DiType(javaClass<T>()), name, init, useAsContext)
 }
 
-public fun DependencyInjectorGenerator.fields(vararg types: Class<*>): Unit = types.forEach { field(it) }
-public fun DependencyInjectorGenerator.publicFields(vararg types: Class<*>): Unit = types.forEach { publicField(it) }
-
-public fun DependencyInjectorGenerator.parameter(
-        parameterType: Class<*>,
-        name: String = defaultName(parameterType),
+inline public fun <reified T> DependencyInjectorGenerator.parameter(
+        name: String = defaultName(javaClass<T>()),
         useAsContext: Boolean = false
 ) {
-    addParameter(false, DiType(parameterType), name, true, useAsContext)
+    addParameter(false, DiType(javaClass<T>()), name, true, useAsContext)
 }
 
-public fun DependencyInjectorGenerator.publicParameter(
-        parameterType: Class<*>,
-        name: String = defaultName(parameterType),
+inline public fun <reified T> DependencyInjectorGenerator.publicParameter(
+        name: String = defaultName(javaClass<T>()),
         useAsContext: Boolean = false
 ) {
-    addParameter(true, DiType(parameterType), name, true, useAsContext)
+    addParameter(true, DiType(javaClass<T>()), name, true, useAsContext)
 }
 
-public fun DependencyInjectorGenerator.parameters(vararg types: Class<*>): Unit = types.forEach { parameter(it) }
-public fun DependencyInjectorGenerator.publicParameters(vararg types: Class<*>): Unit = types.forEach { publicParameter(it) }
-
-private fun defaultName(entityType: Class<*>) = InjectorGeneratorUtil.`var`(DiType(entityType))
+public fun defaultName(entityType: Class<*>): String = InjectorGeneratorUtil.`var`(DiType(entityType))
