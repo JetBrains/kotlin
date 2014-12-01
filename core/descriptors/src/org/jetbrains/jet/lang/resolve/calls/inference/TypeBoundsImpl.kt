@@ -30,6 +30,7 @@ import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.lang.types.singleBestRepresentative
 
 public class TypeBoundsImpl(
         override val typeVariable: TypeParameterDescriptor,
@@ -106,10 +107,10 @@ public class TypeBoundsImpl(
         }
 
         val exactBounds = filterBounds(bounds, EXACT_BOUND, values)
-        if (exactBounds.size() == 1) {
-            val exactBound = exactBounds.iterator().next()
-            if (tryPossibleAnswer(exactBound)) {
-                return setOf(exactBound)
+        val bestFit = exactBounds.singleBestRepresentative()
+        if (bestFit != null) {
+            if (tryPossibleAnswer(bestFit)) {
+                return listOf(bestFit)
             }
         }
         values.addAll(exactBounds)

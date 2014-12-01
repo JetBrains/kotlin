@@ -42,6 +42,10 @@ import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.Constra
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.getCompoundConstraintPosition
+import org.jetbrains.jet.lang.types.CustomTypeVariable
+import org.jetbrains.jet.lang.types.getCustomTypeVariable
+import org.jetbrains.jet.lang.types.isFlexible
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -283,7 +287,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         fun simplifyConstraint(subType: JetType, superType: JetType) {
             // can be equal for the recursive invocations:
             // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
-            if (subType == superType) return
+            if (isMyTypeVariable(subType) && isMyTypeVariable(superType) && JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return
 
             assert(!isMyTypeVariable(subType) || !isMyTypeVariable(superType)) {
                 "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType
@@ -312,22 +316,39 @@ public class ConstraintSystemImpl : ConstraintSystem {
             boundKind: TypeBounds.BoundKind,
             constraintPosition: ConstraintPosition
     ) {
+        var newConstrainingType = constrainingType
+
+        // Here we are handling the case when T! gets a bound Foo (or Foo?)
+        // In this case, type parameter T is supposed to get the bound Foo!
+        // Example:
+        // val c: Collection<Foo> = Collections.singleton(null : Foo?)
+        // Constraints for T are:
+        //   Foo? <: T!
+        //   Foo >: T!
+        // both Foo and Foo? transform to Foo! here
+        if (parameterType.isFlexible()) {
+            val typeVariable = parameterType.getCustomTypeVariable()
+            if (typeVariable != null) {
+                newConstrainingType = typeVariable.substitutionResult(constrainingType)
+            }
+        }
+
         val typeBounds = getTypeBounds(parameterType)
 
-        if (!parameterType.isMarkedNullable() || !constrainingType.isMarkedNullable()) {
-            typeBounds.addBound(boundKind, constrainingType, constraintPosition)
+        if (!parameterType.isMarkedNullable() || !newConstrainingType.isMarkedNullable()) {
+            typeBounds.addBound(boundKind, newConstrainingType, constraintPosition)
             return
         }
         // For parameter type T:
         // constraint T? =  Int? should transform to T >: Int and T <: Int?
         // constraint T? >: Int? should transform to T >: Int
-        val notNullConstrainingType = TypeUtils.makeNotNullable(constrainingType)
+        val notNullConstrainingType = TypeUtils.makeNotNullable(newConstrainingType)
         if (boundKind == EXACT_BOUND || boundKind == LOWER_BOUND) {
             typeBounds.addBound(LOWER_BOUND, notNullConstrainingType, constraintPosition)
         }
         // constraint T? <: Int? should transform to T <: Int?
         if (boundKind == EXACT_BOUND || boundKind == UPPER_BOUND) {
-            typeBounds.addBound(UPPER_BOUND, constrainingType, constraintPosition)
+            typeBounds.addBound(UPPER_BOUND, newConstrainingType, constraintPosition)
         }
     }
 
