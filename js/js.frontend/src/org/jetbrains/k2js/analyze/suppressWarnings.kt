@@ -29,7 +29,7 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig
 class SuppressUnusedParameterForJsNative : DiagnosticsWithSuppression.SuppressStringProvider {
     override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
         val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.getType())
-        if (PredefinedAnnotation.NATIVE.fqName == DescriptorUtils.getFqNameSafe(descriptor)) {
+        if (PredefinedAnnotation.NATIVE.fqName.asString() == DescriptorUtils.getFqName(descriptor).asString()) {
             return listOf(Errors.UNUSED_PARAMETER.getName().toLowerCase())
         }
 
