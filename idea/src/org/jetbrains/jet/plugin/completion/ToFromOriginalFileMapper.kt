@@ -38,7 +38,10 @@ class ToFromOriginalFileMapper(
 
         syntheticLength = syntheticText.length
         originalLength = originalText.length
-        tailLength = originalText.indices.first { syntheticText[syntheticLength - it - 1] != originalText[originalLength - it - 1] }
+        val minLength = Math.min(originalLength, syntheticLength)
+        tailLength = (0..minLength-1).firstOrNull {
+            syntheticText[syntheticLength - it - 1] != originalText[originalLength - it - 1]
+        } ?: minLength
         shift = syntheticLength - originalLength
     }
 
