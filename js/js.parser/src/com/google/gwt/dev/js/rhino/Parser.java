@@ -127,7 +127,7 @@ public class Parser {
     }
 
     Object pn = nf.createScript(tempBlock, ts.getSourceName(), baseLineno, ts
-      .getLineno(), sourceToString(0));
+      .getLineno(), null);
     ((Node) pn).setIsSyntheticBlock(true);
     return pn;
   }
@@ -178,7 +178,6 @@ public class Parser {
           Context.FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME)) {
           // Extension to ECMA: if 'function <name>' does not follow
           // by '(', assume <name> starts memberExpr
-          sourceAddString(ts.NAME, name);
           Object memberExprHead = nf.createName(name);
           name = null;
           memberExprNode = memberExprTail(ts, false, memberExprHead);
@@ -200,16 +199,6 @@ public class Parser {
       mustMatchToken(ts, ts.LP, "msg.no.paren.parms");
     }
 
-    if (memberExprNode != null) {
-      // transform 'function' <memberExpr> to <memberExpr> = function
-      // even in the decompilated source
-      sourceAdd((char) ts.ASSIGN);
-      sourceAdd((char) ts.NOP);
-    }
-
-    // save a reference to the function in the enclosing source.
-    sourceAdd((char) ts.FUNCTION);
-    sourceAdd((char) functionNumber);
     ++functionNumber;
 
     // Save current source top to restore it on exit not to include
@@ -218,53 +207,32 @@ public class Parser {
     int savedFunctionNumber = functionNumber;
     Object args;
     Object body;
-    String source;
     try {
       functionNumber = 0;
-
-      // FUNCTION as the first token in a Source means it's a function
-      // definition, and not a reference.
-      sourceAdd((char) ts.FUNCTION);
-      if (name != null) {
-        sourceAddString(ts.NAME, name);
-      }
-      sourceAdd((char) ts.LP);
       args = nf.createLeaf(ts.LP);
 
       if (!ts.matchToken(ts.GWT)) {
-        boolean first = true;
         do {
-          if (!first)
-            sourceAdd((char) ts.COMMA);
-          first = false;
           mustMatchToken(ts, ts.NAME, "msg.no.parm");
           String s = ts.getString();
           nf.addChildToBack(args, nf.createName(s));
 
-          sourceAddString(ts.NAME, s);
         } while (ts.matchToken(ts.COMMA));
 
         mustMatchToken(ts, ts.GWT, "msg.no.paren.after.parms");
       }
-      sourceAdd((char) ts.GWT);
 
       mustMatchToken(ts, ts.LC, "msg.no.brace.body");
-      sourceAdd((char) ts.LC);
-      sourceAdd((char) ts.EOL);
       body = parseFunctionBody(ts);
       mustMatchToken(ts, ts.RC, "msg.no.brace.after.body");
-      sourceAdd((char) ts.RC);
       // skip the last EOL so nested functions work...
-
-      // name might be null;
-      source = sourceToString(savedSourceTop);
     } finally {
       sourceTop = savedSourceTop;
       functionNumber = savedFunctionNumber;
     }
 
     Object pn = nf.createFunction(name, args, body, ts.getSourceName(),
-      baseLineno, ts.getLineno(), source, isExpr || memberExprNode != null);
+      baseLineno, ts.getLineno(), null, isExpr || memberExprNode != null);
     if (memberExprNode != null) {
       pn = nf.createBinary(ts.ASSIGN, ts.NOP, memberExprNode, pn);
     }
@@ -272,12 +240,6 @@ public class Parser {
     // Add EOL but only if function is not part of expression, in which
     // case it gets SEMI + EOL from Statement.
     if (!isExpr) {
-      if (memberExprNode != null) {
-        // Add ';' to make 'function x.f(){}' and 'x.f = function(){}'
-        // to print the same strings when decompiling
-        sourceAdd((char) ts.SEMI);
-      }
-      sourceAdd((char) ts.EOL);
       wellTerminated(ts, ts.FUNCTION);
     }
 
@@ -299,10 +261,8 @@ public class Parser {
       JavaScriptException {
     Object pn;
     mustMatchToken(ts, ts.LP, "msg.no.paren.cond");
-    sourceAdd((char) ts.LP);
     pn = expr(ts, false);
     mustMatchToken(ts, ts.GWT, "msg.no.paren.after.cond");
-    sourceAdd((char) ts.GWT);
 
     // there's a check here in jsparse.c that corrects = to ==
 
@@ -390,22 +350,13 @@ public class Parser {
       case TokenStream.IF: {
         skipsemi = true;
 
-        sourceAdd((char) ts.IF);
         int lineno = ts.getLineno();
         Object cond = condition(ts);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
         Object ifTrue = statement(ts);
         Object ifFalse = null;
         if (ts.matchToken(ts.ELSE)) {
-          sourceAdd((char) ts.RC);
-          sourceAdd((char) ts.ELSE);
-          sourceAdd((char) ts.LC);
-          sourceAdd((char) ts.EOL);
           ifFalse = statement(ts);
         }
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
         pn = nf.createIf(cond, ifTrue, ifFalse, lineno);
         break;
       }
@@ -413,35 +364,24 @@ public class Parser {
       case TokenStream.SWITCH: {
         skipsemi = true;
 
-        sourceAdd((char) ts.SWITCH);
         pn = nf.createSwitch(ts.getLineno());
 
         Object cur_case = null; // to kill warning
         Object case_statements;
 
         mustMatchToken(ts, ts.LP, "msg.no.paren.switch");
-        sourceAdd((char) ts.LP);
         nf.addChildToBack(pn, expr(ts, false));
         mustMatchToken(ts, ts.GWT, "msg.no.paren.after.switch");
-        sourceAdd((char) ts.GWT);
         mustMatchToken(ts, ts.LC, "msg.no.brace.switch");
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
 
         while ((tt = ts.getToken()) != ts.RC && tt != ts.EOF) {
           switch (tt) {
             case TokenStream.CASE:
-              sourceAdd((char) ts.CASE);
               cur_case = nf.createUnary(ts.CASE, expr(ts, false));
-              sourceAdd((char) ts.COLON);
-              sourceAdd((char) ts.EOL);
               break;
 
             case TokenStream.DEFAULT:
               cur_case = nf.createLeaf(ts.DEFAULT);
-              sourceAdd((char) ts.DEFAULT);
-              sourceAdd((char) ts.COLON);
-              sourceAdd((char) ts.EOL);
               // XXX check that there isn't more than one default
               break;
 
@@ -463,22 +403,15 @@ public class Parser {
 
           nf.addChildToBack(pn, cur_case);
         }
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
         break;
       }
 
       case TokenStream.WHILE: {
         skipsemi = true;
 
-        sourceAdd((char) ts.WHILE);
         int lineno = ts.getLineno();
         Object cond = condition(ts);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
         Object body = statement(ts);
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
 
         pn = nf.createWhile(cond, body, lineno);
         break;
@@ -486,17 +419,11 @@ public class Parser {
       }
 
       case TokenStream.DO: {
-        sourceAdd((char) ts.DO);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
-
         int lineno = ts.getLineno();
 
         Object body = statement(ts);
 
-        sourceAdd((char) ts.RC);
         mustMatchToken(ts, ts.WHILE, "msg.no.while.do");
-        sourceAdd((char) ts.WHILE);
         Object cond = condition(ts);
 
         pn = nf.createDoWhile(body, cond, lineno);
@@ -506,7 +433,6 @@ public class Parser {
       case TokenStream.FOR: {
         skipsemi = true;
 
-        sourceAdd((char) ts.FOR);
         int lineno = ts.getLineno();
 
         Object init; // Node init is also foo in 'foo in Object'
@@ -515,7 +441,6 @@ public class Parser {
         Object body;
 
         mustMatchToken(ts, ts.LP, "msg.no.paren.for");
-        sourceAdd((char) ts.LP);
         tt = ts.peekToken();
         if (tt == ts.SEMI) {
           init = nf.createLeaf(ts.VOID);
@@ -532,12 +457,10 @@ public class Parser {
         tt = ts.peekToken();
         if (tt == ts.RELOP && ts.getOp() == ts.IN) {
           ts.matchToken(ts.RELOP);
-          sourceAdd((char) ts.IN);
           // 'cond' is the object over which we're iterating
           cond = expr(ts, false);
         } else { // ordinary for loop
           mustMatchToken(ts, ts.SEMI, "msg.no.semi.for");
-          sourceAdd((char) ts.SEMI);
           if (ts.peekToken() == ts.SEMI) {
             // no loop condition
             cond = nf.createLeaf(ts.VOID);
@@ -546,7 +469,6 @@ public class Parser {
           }
 
           mustMatchToken(ts, ts.SEMI, "msg.no.semi.for.cond");
-          sourceAdd((char) ts.SEMI);
           if (ts.peekToken() == ts.GWT) {
             incr = nf.createLeaf(ts.VOID);
           } else {
@@ -555,12 +477,7 @@ public class Parser {
         }
 
         mustMatchToken(ts, ts.GWT, "msg.no.paren.for.ctrl");
-        sourceAdd((char) ts.GWT);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
         body = statement(ts);
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
 
         if (incr == null) {
           // cond could be null if 'in obj' got eaten by the init node.
@@ -579,12 +496,7 @@ public class Parser {
         Object finallyblock = null;
 
         skipsemi = true;
-        sourceAdd((char) ts.TRY);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
         tryblock = statement(ts);
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
 
         catchblocks = nf.createLeaf(TokenStream.BLOCK);
 
@@ -595,47 +507,32 @@ public class Parser {
             if (sawDefaultCatch) {
               reportError(ts, "msg.catch.unreachable");
             }
-            sourceAdd((char) ts.CATCH);
             mustMatchToken(ts, ts.LP, "msg.no.paren.catch");
-            sourceAdd((char) ts.LP);
 
             mustMatchToken(ts, ts.NAME, "msg.bad.catchcond");
             String varName = ts.getString();
-            sourceAddString(ts.NAME, varName);
 
             Object catchCond = null;
             if (ts.matchToken(ts.IF)) {
-              sourceAdd((char) ts.IF);
               catchCond = expr(ts, false);
             } else {
               sawDefaultCatch = true;
             }
 
             mustMatchToken(ts, ts.GWT, "msg.bad.catchcond");
-            sourceAdd((char) ts.GWT);
             mustMatchToken(ts, ts.LC, "msg.no.brace.catchblock");
-            sourceAdd((char) ts.LC);
-            sourceAdd((char) ts.EOL);
 
             nf.addChildToBack(catchblocks, nf.createCatch(varName, catchCond,
               statements(ts), ts.getLineno()));
 
             mustMatchToken(ts, ts.RC, "msg.no.brace.after.body");
-            sourceAdd((char) ts.RC);
-            sourceAdd((char) ts.EOL);
           }
         } else if (peek != ts.FINALLY) {
           mustMatchToken(ts, ts.FINALLY, "msg.try.no.catchfinally");
         }
 
         if (ts.matchToken(ts.FINALLY)) {
-          sourceAdd((char) ts.FINALLY);
-
-          sourceAdd((char) ts.LC);
-          sourceAdd((char) ts.EOL);
           finallyblock = statement(ts);
-          sourceAdd((char) ts.RC);
-          sourceAdd((char) ts.EOL);
         }
 
         pn = nf.createTryCatchFinally(tryblock, catchblocks, finallyblock,
@@ -645,7 +542,6 @@ public class Parser {
       }
       case TokenStream.THROW: {
         int lineno = ts.getLineno();
-        sourceAdd((char) ts.THROW);
         pn = nf.createThrow(expr(ts, false), lineno);
         if (lineno == ts.getLineno())
           wellTerminated(ts, ts.ERROR);
@@ -654,34 +550,21 @@ public class Parser {
       case TokenStream.BREAK: {
         int lineno = ts.getLineno();
 
-        sourceAdd((char) ts.BREAK);
-
         // matchLabel only matches if there is one
         String label = matchLabel(ts);
-        if (label != null) {
-          sourceAddString(ts.NAME, label);
-        }
         pn = nf.createBreak(label, lineno);
         break;
       }
       case TokenStream.CONTINUE: {
         int lineno = ts.getLineno();
 
-        sourceAdd((char) ts.CONTINUE);
-
         // matchLabel only matches if there is one
         String label = matchLabel(ts);
-        if (label != null) {
-          sourceAddString(ts.NAME, label);
-        }
         pn = nf.createContinue(label, lineno);
         break;
       }
       case TokenStream.DEBUGGER: {
         int lineno = ts.getLineno();
-
-        sourceAdd((char) ts.DEBUGGER);
-
         pn = nf.createDebugger(lineno);
         break;
       }
@@ -694,21 +577,11 @@ public class Parser {
 
         skipsemi = true;
 
-        sourceAdd((char) ts.WITH);
         int lineno = ts.getLineno();
         mustMatchToken(ts, ts.LP, "msg.no.paren.with");
-        sourceAdd((char) ts.LP);
         Object obj = expr(ts, false);
         mustMatchToken(ts, ts.GWT, "msg.no.paren.after.with");
-        sourceAdd((char) ts.GWT);
-        sourceAdd((char) ts.LC);
-        sourceAdd((char) ts.EOL);
-
         Object body = statement(ts);
-
-        sourceAdd((char) ts.RC);
-        sourceAdd((char) ts.EOL);
-
         pn = nf.createWith(obj, body, lineno);
         break;
       }
@@ -722,9 +595,6 @@ public class Parser {
       case TokenStream.RETURN: {
         Object retExpr = null;
         int lineno = 0;
-
-        sourceAdd((char) ts.RETURN);
-
         // bail if we're not in a (toplevel) function
         if ((!insideFunction) && ((ts.flags & ts.TSF_FUNCTION) == 0)) {
             reportError(ts, "msg.bad.return");
@@ -796,8 +666,6 @@ public class Parser {
 
           // depend on decompiling lookahead to guess that that
           // last name was a label.
-          sourceAdd((char) ts.COLON);
-          sourceAdd((char) ts.EOL);
           return pn;
         }
 
@@ -826,10 +694,6 @@ public class Parser {
       }
     }
     ts.matchToken(ts.SEMI);
-    if (!skipsemi) {
-      sourceAdd((char) ts.SEMI);
-      sourceAdd((char) ts.EOL);
-    }
 
     return pn;
   }
@@ -837,21 +701,12 @@ public class Parser {
   private Object variables(TokenStream ts, boolean inForInit)
       throws IOException, JavaScriptException {
     Object pn = nf.createVariables(ts.getLineno());
-    boolean first = true;
-
-    sourceAdd((char) ts.VAR);
 
     for (;;) {
       Object name;
       Object init;
       mustMatchToken(ts, ts.NAME, "msg.bad.var");
       String s = ts.getString();
-
-      if (!first)
-        sourceAdd((char) ts.COMMA);
-      first = false;
-
-      sourceAddString(ts.NAME, s);
       name = nf.createName(s);
 
       // omitted check for argument hiding
@@ -859,9 +714,6 @@ public class Parser {
       if (ts.matchToken(ts.ASSIGN)) {
         if (ts.getOp() != ts.NOP)
           reportError(ts, "msg.bad.var.init");
-
-        sourceAdd((char) ts.ASSIGN);
-        sourceAdd((char) ts.NOP);
 
         init = assignExpr(ts, inForInit);
         nf.addChildToBack(name, init);
@@ -877,7 +729,6 @@ public class Parser {
       JavaScriptException {
     Object pn = assignExpr(ts, inForInit);
     while (ts.matchToken(ts.COMMA)) {
-      sourceAdd((char) ts.COMMA);
       pn = nf.createBinary(ts.COMMA, pn, assignExpr(ts, inForInit));
     }
     return pn;
@@ -889,8 +740,6 @@ public class Parser {
 
     if (ts.matchToken(ts.ASSIGN)) {
       // omitted: "invalid assignment left-hand side" check.
-      sourceAdd((char) ts.ASSIGN);
-      sourceAdd((char) ts.getOp());
       pn = nf
         .createBinary(ts.ASSIGN, ts.getOp(), pn, assignExpr(ts, inForInit));
     }
@@ -906,10 +755,8 @@ public class Parser {
     Object pn = orExpr(ts, inForInit);
 
     if (ts.matchToken(ts.HOOK)) {
-      sourceAdd((char) ts.HOOK);
       ifTrue = assignExpr(ts, false);
       mustMatchToken(ts, ts.COLON, "msg.no.colon.cond");
-      sourceAdd((char) ts.COLON);
       ifFalse = assignExpr(ts, inForInit);
       return nf.createTernary(pn, ifTrue, ifFalse);
     }
@@ -921,7 +768,6 @@ public class Parser {
       JavaScriptException {
     Object pn = andExpr(ts, inForInit);
     if (ts.matchToken(ts.OR)) {
-      sourceAdd((char) ts.OR);
       pn = nf.createBinary(ts.OR, pn, orExpr(ts, inForInit));
     }
 
@@ -932,7 +778,6 @@ public class Parser {
       JavaScriptException {
     Object pn = bitOrExpr(ts, inForInit);
     if (ts.matchToken(ts.AND)) {
-      sourceAdd((char) ts.AND);
       pn = nf.createBinary(ts.AND, pn, andExpr(ts, inForInit));
     }
 
@@ -943,7 +788,6 @@ public class Parser {
       throws IOException, JavaScriptException {
     Object pn = bitXorExpr(ts, inForInit);
     while (ts.matchToken(ts.BITOR)) {
-      sourceAdd((char) ts.BITOR);
       pn = nf.createBinary(ts.BITOR, pn, bitXorExpr(ts, inForInit));
     }
     return pn;
@@ -953,7 +797,6 @@ public class Parser {
       throws IOException, JavaScriptException {
     Object pn = bitAndExpr(ts, inForInit);
     while (ts.matchToken(ts.BITXOR)) {
-      sourceAdd((char) ts.BITXOR);
       pn = nf.createBinary(ts.BITXOR, pn, bitAndExpr(ts, inForInit));
     }
     return pn;
@@ -963,7 +806,6 @@ public class Parser {
       throws IOException, JavaScriptException {
     Object pn = eqExpr(ts, inForInit);
     while (ts.matchToken(ts.BITAND)) {
-      sourceAdd((char) ts.BITAND);
       pn = nf.createBinary(ts.BITAND, pn, eqExpr(ts, inForInit));
     }
     return pn;
@@ -973,8 +815,6 @@ public class Parser {
       JavaScriptException {
     Object pn = relExpr(ts, inForInit);
     while (ts.matchToken(ts.EQOP)) {
-      sourceAdd((char) ts.EQOP);
-      sourceAdd((char) ts.getOp());
       pn = nf.createBinary(ts.EQOP, ts.getOp(), pn, relExpr(ts, inForInit));
     }
     return pn;
@@ -989,8 +829,7 @@ public class Parser {
         ts.ungetToken(ts.RELOP);
         break;
       }
-      sourceAdd((char) ts.RELOP);
-      sourceAdd((char) op);
+
       pn = nf.createBinary(ts.RELOP, op, pn, shiftExpr(ts));
     }
     return pn;
@@ -1000,8 +839,6 @@ public class Parser {
       JavaScriptException {
     Object pn = addExpr(ts);
     while (ts.matchToken(ts.SHOP)) {
-      sourceAdd((char) ts.SHOP);
-      sourceAdd((char) ts.getOp());
       pn = nf.createBinary(ts.SHOP, ts.getOp(), pn, addExpr(ts));
     }
     return pn;
@@ -1013,7 +850,6 @@ public class Parser {
     Object pn = mulExpr(ts);
 
     while ((tt = ts.getToken()) == ts.ADD || tt == ts.SUB) {
-      sourceAdd((char) tt);
       // flushNewLines
       pn = nf.createBinary(tt, pn, mulExpr(ts));
     }
@@ -1030,7 +866,6 @@ public class Parser {
 
     while ((tt = ts.peekToken()) == ts.MUL || tt == ts.DIV || tt == ts.MOD) {
       tt = ts.getToken();
-      sourceAdd((char) tt);
       pn = nf.createBinary(tt, pn, unaryExpr(ts));
     }
 
@@ -1047,23 +882,17 @@ public class Parser {
 
     switch (tt) {
       case TokenStream.UNARYOP:
-        sourceAdd((char) ts.UNARYOP);
-        sourceAdd((char) ts.getOp());
         return nf.createUnary(ts.UNARYOP, ts.getOp(), unaryExpr(ts));
 
       case TokenStream.ADD:
       case TokenStream.SUB:
-        sourceAdd((char) ts.UNARYOP);
-        sourceAdd((char) tt);
         return nf.createUnary(ts.UNARYOP, tt, unaryExpr(ts));
 
       case TokenStream.INC:
       case TokenStream.DEC:
-        sourceAdd((char) tt);
         return nf.createUnary(tt, ts.PRE, memberExpr(ts, true));
 
       case TokenStream.DELPROP:
-        sourceAdd((char) ts.DELPROP);
         return nf.createUnary(ts.DELPROP, unaryExpr(ts));
 
       case TokenStream.ERROR:
@@ -1087,7 +916,6 @@ public class Parser {
         if (((peeked = ts.peekToken()) == ts.INC || peeked == ts.DEC)
           && ts.getLineno() == lineno) {
           int pf = ts.getToken();
-          sourceAdd((char) pf);
           return nf.createUnary(pf, ts.POST, pn);
         }
         return pn;
@@ -1103,17 +931,12 @@ public class Parser {
     matched = ts.matchToken(ts.GWT);
     ts.flags &= ~ts.TSF_REGEXP;
     if (!matched) {
-      boolean first = true;
       do {
-        if (!first)
-          sourceAdd((char) ts.COMMA);
-        first = false;
         nf.addChildToBack(listNode, assignExpr(ts, false));
       } while (ts.matchToken(ts.COMMA));
 
       mustMatchToken(ts, ts.GWT, "msg.no.paren.arg");
     }
-    sourceAdd((char) ts.GWT);
     return listNode;
   }
 
@@ -1130,14 +953,12 @@ public class Parser {
     if (tt == ts.NEW) {
       /* Eat the NEW token. */
       ts.getToken();
-      sourceAdd((char) ts.NEW);
 
       /* Make a NEW node to append to. */
       pn = nf.createLeaf(ts.NEW);
       nf.addChildToBack(pn, memberExpr(ts, false));
 
       if (ts.matchToken(ts.LP)) {
-        sourceAdd((char) ts.LP);
         /* Add the arguments to pn, if any are supplied. */
         pn = argumentList(ts, pn);
       }
@@ -1170,10 +991,8 @@ public class Parser {
     int tt;
     while ((tt = ts.getToken()) > ts.EOF) {
       if (tt == ts.DOT) {
-        sourceAdd((char) ts.DOT);
         mustMatchToken(ts, ts.NAME, "msg.no.name.after.dot");
         String s = ts.getString();
-        sourceAddString(ts.NAME, s);
         pn = nf.createBinary(ts.DOT, pn, nf.createName(ts.getString()));
         /*
          * pn = nf.createBinary(ts.DOT, pn, memberExpr(ts)) is the version in
@@ -1182,17 +1001,13 @@ public class Parser {
          */
         lastExprEndLine = ts.getLineno();
       } else if (tt == ts.LB) {
-        sourceAdd((char) ts.LB);
         pn = nf.createBinary(ts.LB, pn, expr(ts, false));
 
         mustMatchToken(ts, ts.RB, "msg.no.bracket.index");
-        sourceAdd((char) ts.RB);
         lastExprEndLine = ts.getLineno();
       } else if (allowCallSyntax && tt == ts.LP) {
         /* make a call node */
-
         pn = nf.createUnary(ts.CALL, pn);
-        sourceAdd((char) ts.LP);
 
         /* Add the arguments to pn, if any are supplied. */
         pn = argumentList(ts, pn);
@@ -1222,7 +1037,6 @@ public class Parser {
         return function(ts, true);
 
       case TokenStream.LB: {
-        sourceAdd((char) ts.LB);
         pn = nf.createLeaf(ts.ARRAYLIT);
 
         ts.flags |= ts.TSF_REGEXP;
@@ -1230,16 +1044,10 @@ public class Parser {
         ts.flags &= ~ts.TSF_REGEXP;
 
         if (!matched) {
-          boolean first = true;
           do {
             ts.flags |= ts.TSF_REGEXP;
             tt = ts.peekToken();
             ts.flags &= ~ts.TSF_REGEXP;
-
-            if (!first)
-              sourceAdd((char) ts.COMMA);
-            else
-              first = false;
 
             if (tt == ts.RB) { // to fix [,,,].length behavior...
               break;
@@ -1254,42 +1062,31 @@ public class Parser {
           } while (ts.matchToken(ts.COMMA));
           mustMatchToken(ts, ts.RB, "msg.no.bracket.arg");
         }
-        sourceAdd((char) ts.RB);
+
         return nf.createArrayLiteral(pn);
       }
 
       case TokenStream.LC: {
         pn = nf.createLeaf(ts.OBJLIT);
 
-        sourceAdd((char) ts.LC);
         if (!ts.matchToken(ts.RC)) {
 
-          boolean first = true;
           commaloop : do {
             Object property;
-
-            if (!first)
-              sourceAdd((char) ts.COMMA);
-            else
-              first = false;
 
             tt = ts.getToken();
             switch (tt) {
               // map NAMEs to STRINGs in object literal context.
               case TokenStream.NAME:
               case TokenStream.STRING:
-                String s = ts.getString();
-                sourceAddString(ts.NAME, s);
                 property = nf.createString(ts.getString());
                 break;
               case TokenStream.NUMBER_INT:
                 int n = (int) ts.getNumber();
-                sourceAddNumber(n);
                 property = nf.createNumber(n);
                 break;
               case TokenStream.NUMBER:
                 double d = ts.getNumber();
-                sourceAddNumber(d);
                 property = nf.createNumber(d);
                 break;
               case TokenStream.RC:
@@ -1304,7 +1101,6 @@ public class Parser {
 
             // OBJLIT is used as ':' in object literal for
             // decompilation to solve spacing ambiguity.
-            sourceAdd((char) ts.OBJLIT);
             nf.addChildToBack(pn, property);
             nf.addChildToBack(pn, assignExpr(ts, false));
 
@@ -1312,7 +1108,6 @@ public class Parser {
 
           mustMatchToken(ts, ts.RC, "msg.no.brace.prop");
         }
-        sourceAdd((char) ts.RC);
         return nf.createObjectLiteral(pn);
       }
 
@@ -1324,43 +1119,34 @@ public class Parser {
          * the structure of the parse tree? also TOK_LP is already overloaded (I
          * think) in the C IR as 'function call.'
          */
-        sourceAdd((char) ts.LP);
         pn = expr(ts, false);
-        sourceAdd((char) ts.GWT);
         mustMatchToken(ts, ts.GWT, "msg.no.paren");
         return pn;
 
       case TokenStream.NAME:
         String name = ts.getString();
-        sourceAddString(ts.NAME, name);
         return nf.createName(name);
 
       case TokenStream.NUMBER_INT:
         int n = (int)ts.getNumber();
-        sourceAddNumber(n);
         return nf.createNumber(n);
 
     case TokenStream.NUMBER:
         double d = ts.getNumber();
-        sourceAddNumber(d);
         return nf.createNumber(d);
 
       case TokenStream.STRING:
         String s = ts.getString();
-        sourceAddString(ts.STRING, s);
         return nf.createString(s);
 
       case TokenStream.REGEXP: {
         String flags = ts.regExpFlags;
         ts.regExpFlags = null;
         String re = ts.getString();
-        sourceAddString(ts.REGEXP, '/' + re + '/' + flags);
         return nf.createRegExp(re, flags);
       }
 
       case TokenStream.PRIMARY:
-        sourceAdd((char) ts.PRIMARY);
-        sourceAdd((char) ts.getOp());
         return nf.createLeaf(ts.PRIMARY, ts.getOp());
 
       case TokenStream.RESERVED:
@@ -1379,139 +1165,11 @@ public class Parser {
     return null; // should never reach here
   }
 
-  /**
-   * The following methods save decompilation information about the source.
-   * Source information is returned from the parser as a String associated with
-   * function nodes and with the toplevel script. When saved in the constant
-   * pool of a class, this string will be UTF-8 encoded, and token values will
-   * occupy a single byte.
-   * 
-   * Source is saved (mostly) as token numbers. The tokens saved pretty much
-   * correspond to the token stream of a 'canonical' representation of the input
-   * program, as directed by the parser. (There were a few cases where tokens
-   * could have been left out where decompiler could easily reconstruct them,
-   * but I left them in for clarity). (I also looked adding source collection to
-   * TokenStream instead, where I could have limited the changes to a few lines
-   * in getToken... but this wouldn't have saved any space in the resulting
-   * source representation, and would have meant that I'd have to duplicate
-   * parser logic in the decompiler to disambiguate situations where newlines
-   * are important.) NativeFunction.decompile expands the tokens back into their
-   * string representations, using simple lookahead to correct spacing and
-   * indentation.
-   * 
-   * Token types with associated ops (ASSIGN, SHOP, PRIMARY, etc.) are saved as
-   * two-token pairs. Number tokens are stored inline, as a NUMBER token, a
-   * character representing the type, and either 1 or 4 characters representing
-   * the bit-encoding of the number. String types NAME, STRING and OBJECT are
-   * currently stored as a token type, followed by a character giving the length
-   * of the string (assumed to be less than 2^16), followed by the characters of
-   * the string inlined into the source string. Changing this to some reference
-   * to to the string in the compiled class' constant pool would probably save a
-   * lot of space... but would require some method of deriving the final
-   * constant pool entry from information available at parse time.
-   * 
-   * Nested functions need a similar mechanism... fortunately the nested
-   * functions for a given function are generated in source order. Nested
-   * functions are encoded as FUNCTION followed by a function number (encoded as
-   * a character), which is enough information to find the proper generated
-   * NativeFunction instance.
-   * 
-   */
-  private void sourceAdd(char c) {
-    if (sourceTop == sourceBuffer.length) {
-      increaseSourceCapacity(sourceTop + 1);
-    }
-    sourceBuffer[sourceTop] = c;
-    ++sourceTop;
-  }
-
-  private void sourceAddString(int type, String str) {
-    int L = str.length();
-    // java string length < 2^16?
-    if (Context.check && L > Character.MAX_VALUE)
-      Context.codeBug();
-
-    if (sourceTop + L + 2 > sourceBuffer.length) {
-      increaseSourceCapacity(sourceTop + L + 2);
-    }
-    sourceAdd((char) type);
-    sourceAdd((char) L);
-    str.getChars(0, L, sourceBuffer, sourceTop);
-    sourceTop += L;
-  }
-
-  private void sourceAddNumber(double n) {
-    sourceAdd((char) TokenStream.NUMBER);
-
-    /*
-     * encode the number in the source stream. Save as NUMBER type (char | char
-     * char char char) where type is 'D' - double, 'S' - short, 'J' - long.
-     * 
-     * We need to retain float vs. integer type info to keep the behavior of
-     * liveconnect type-guessing the same after decompilation. (Liveconnect
-     * tries to present 1.0 to Java as a float/double) OPT: This is no longer
-     * true. We could compress the format.
-     * 
-     * This may not be the most space-efficient encoding; the chars created
-     * below may take up to 3 bytes in constant pool UTF-8 encoding, so a Double
-     * could take up to 12 bytes.
-     */
-
-    long lbits = Double.doubleToLongBits(n);
-    sourceAdd('D');
-    sourceAdd((char) (lbits >> 48));
-    sourceAdd((char) (lbits >> 32));
-    sourceAdd((char) (lbits >> 16));
-    sourceAdd((char) lbits);
-  }
-
-  private void sourceAddNumber(int n) {
-    sourceAdd((char) TokenStream.NUMBER_INT);
-
-    // we can ignore negative values, bc they're already prefixed
-    // by UNARYOP SUB
-    if (Context.check && (long) n < 0)
-      Context.codeBug();
-
-    // will it fit in a char?
-    // this gives a short encoding for integer values up to 2^16.
-    if ((long) n <= Character.MAX_VALUE) {
-      sourceAdd('S');
-      sourceAdd((char) (long) n);
-    } else { // Integral, but won't fit in a char. Store as a long.
-      sourceAdd('J');
-      sourceAdd((char) ((long) n >> 48));
-      sourceAdd((char) ((long) n >> 32));
-      sourceAdd((char) ((long) n >> 16));
-      sourceAdd((char) (long) n);
-    }
-  }
-
-  private void increaseSourceCapacity(int minimalCapacity) {
-    // Call this only when capacity increase is must
-    if (Context.check && minimalCapacity <= sourceBuffer.length)
-      Context.codeBug();
-    int newCapacity = sourceBuffer.length * 2;
-    if (newCapacity < minimalCapacity) {
-      newCapacity = minimalCapacity;
-    }
-    char[] tmp = new char[newCapacity];
-    System.arraycopy(sourceBuffer, 0, tmp, 0, sourceTop);
-    sourceBuffer = tmp;
-  }
-
-  private String sourceToString(int offset) {
-    if (Context.check && (offset < 0 || sourceTop < offset))
-      Context.codeBug();
-    return new String(sourceBuffer, offset, sourceTop - offset);
-  }
-
   private int lastExprEndLine; // Hack to handle function expr termination.
   private IRFactory nf;
   private ErrorReporter er;
   private boolean ok; // Did the parse encounter an error?
 
-  private char[] sourceBuffer = new char[128];
   private int sourceTop;
   private int functionNumber;
   private final boolean insideFunction;
