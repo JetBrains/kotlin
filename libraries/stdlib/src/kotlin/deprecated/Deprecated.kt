@@ -23,6 +23,32 @@ public fun linkedList<T>(vararg values: T): LinkedList<T> = linkedListOf(*values
 deprecated("Use linkedMapOf(...) instead")
 public fun <K, V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K, V> = linkedMapOf(*values)
 
+/** Copies all characters into a [[Collection] */
+deprecated("Use toList() instead.")
+public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
+
+/**
+ * Returns the first character which matches the given *predicate* or *null* if none matched
+ *
+ * @includeFunctionBody ../../test/text/StringTest.kt find
+ */
+deprecated("Use firstOrNull instead")
+public inline fun String.find(predicate: (Char) -> Boolean): Char? {
+    for (c in this) if (predicate(c)) return c
+    return null
+}
+
+/**
+ * Returns the first character which does not match the given *predicate* or *null* if none matched
+ *
+ * @includeFunctionBody ../../test/text/StringTest.kt findNot
+ */
+deprecated("Use firstOrNull instead")
+public inline fun String.findNot(predicate: (Char) -> Boolean): Char? {
+    for (c in this) if (!predicate(c)) return c
+    return null
+}
+
 /**
  * A helper method for creating a [[Runnable]] from a function
  */

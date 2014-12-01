@@ -198,29 +198,6 @@ public fun String.repeat(n: Int): String {
     return sb.toString()
 }
 
-
-/**
- * Returns the first character which matches the given *predicate* or *null* if none matched
- *
- * @includeFunctionBody ../../test/text/StringTest.kt find
- */
-deprecated("Use firstOrNull instead")
-public inline fun String.find(predicate: (Char) -> Boolean): Char? {
-    for (c in this) if (predicate(c)) return c
-    return null
-}
-
-/**
- * Returns the first character which does not match the given *predicate* or *null* if none matched
- *
- * @includeFunctionBody ../../test/text/StringTest.kt findNot
- */
-deprecated("Use firstOrNull instead")
-public inline fun String.findNot(predicate: (Char) -> Boolean): Char? {
-    for (c in this) if (!predicate(c)) return c
-    return null
-}
-
 /**
  * Returns an Appendable containing the everything but the first characters that satisfy the given *predicate*
  *
@@ -248,10 +225,6 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
     for (c in this) if (predicate(c)) result.append(c) else break
     return result
 }
-
-/** Copies all characters into a [[Collection] */
-deprecated("Use toList() instead.")
-public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
 
 /**
  * Replaces every *regexp* occurence in the text with the value retruned by the given function *body* that can handle
