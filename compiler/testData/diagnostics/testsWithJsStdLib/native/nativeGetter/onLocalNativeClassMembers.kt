@@ -41,5 +41,8 @@ fun foo() {
 
         nativeGetter
         fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+        nativeGetter
+        fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
     }
 }

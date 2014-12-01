@@ -83,6 +83,12 @@ private abstract class AbstractNativeIndexerChecker(
         if (parameters.size() != requiredParametersCount) {
             diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_WRONG_PARAMETER_COUNT.on(declaration, requiredParametersCount, indexerKind))
         }
+
+        for (parameter in declaration.getValueParameters()) {
+            if (parameter.hasDefaultValue()) {
+                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS.on(parameter, indexerKind))
+            }
+        }
     }
 }
 

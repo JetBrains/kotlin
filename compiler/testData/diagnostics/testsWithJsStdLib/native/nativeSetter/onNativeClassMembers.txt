@@ -67,6 +67,7 @@ kotlin.js.native() internal final class B {
 kotlin.js.native() internal final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.js.nativeSetter() internal final fun foo(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String = ...): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     kotlin.js.nativeSetter() internal final fun set(): kotlin.Any?
     kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A): kotlin.Any?

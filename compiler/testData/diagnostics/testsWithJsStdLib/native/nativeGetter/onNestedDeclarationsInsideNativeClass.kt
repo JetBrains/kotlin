@@ -62,6 +62,9 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Number = 1.1<!>): Int? = 0
         }
 
         object obj {
@@ -85,6 +88,9 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
         }
 
         val anonymous = object {
@@ -108,6 +114,9 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
         }
     }
 }

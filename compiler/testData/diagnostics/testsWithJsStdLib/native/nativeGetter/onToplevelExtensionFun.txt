@@ -1,5 +1,6 @@
 package
 
+kotlin.js.nativeGetter() internal fun kotlin.Int.baz(/*0*/ a: kotlin.Int = ...): kotlin.String?
 kotlin.js.nativeGetter() internal fun kotlin.Int.get(/*0*/ a: kotlin.Any): kotlin.Int?
 kotlin.js.nativeGetter() internal fun kotlin.Int.get(/*0*/ a: kotlin.String): kotlin.Int?
 kotlin.js.nativeGetter() internal fun kotlin.Int.get2(): kotlin.String?
