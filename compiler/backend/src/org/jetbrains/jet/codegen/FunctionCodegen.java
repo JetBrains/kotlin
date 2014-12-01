@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.bridges.Bridge;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -132,6 +133,10 @@ public class FunctionCodegen extends ParentCodegenAware {
         int flags = getMethodAsmFlags(functionDescriptor, methodContextKind);
         boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
 
+        if (isNative && owner instanceof PackageContext && !(owner instanceof PackageFacadeContext)) {
+            // Native methods are only defined in package facades and do not need package part implementations
+            return;
+        }
         MethodVisitor mv = v.newMethod(origin,
                                        flags,
                                        asmMethod.getName(),
@@ -158,7 +163,6 @@ public class FunctionCodegen extends ParentCodegenAware {
         generateBridges(functionDescriptor);
 
         boolean staticInClassObject = AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor);
-
         if (staticInClassObject) {
             MemberCodegen<?> codegen = getParentCodegen().getParentCodegen();
             ((ImplementationBodyCodegen) codegen).addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
