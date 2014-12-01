@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
@@ -40,6 +39,8 @@ import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
 import com.intellij.psi.PsiClass
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -121,6 +122,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         default
         hasImportFromSamePackage
         notImported
+        notToBeUsedInKotlin
     }
 
     override fun weigh(element: LookupElement): Comparable<Weight> {
@@ -138,6 +140,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             val importPath = ImportPath(qualifiedName)
             val fqName = importPath.fqnPart()
             return when {
+                JavaToKotlinClassMap.getInstance().mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
                 ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
                 importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
                 importCache.isImportedWithAllUnderImport(fqName) -> Weight.allUnderImport
