@@ -35,7 +35,6 @@ import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultArgumentsRefl
 import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparingTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
@@ -247,10 +246,6 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDescriptorRendererTest>()) {
             model("renderer")
-        }
-
-        testClass(javaClass<AbstractLazyResolveRecursiveComparingTest>()) {
-            model("lazyResolve/recursiveComparator")
         }
 
         testClass(javaClass<AbstractModuleXmlParserTest>()) {

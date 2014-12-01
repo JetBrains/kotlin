@@ -1,8 +1,0 @@
-package test
-
-internal val inferTypeFromImportedFun: kotlin.Int
-    internal fun <get-inferTypeFromImportedFun>(): kotlin.Int
-
-internal final class B : testOther.A {
-    /*primary*/ public constructor B()
-}

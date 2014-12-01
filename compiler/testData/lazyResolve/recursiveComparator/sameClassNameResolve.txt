@@ -1,9 +1,0 @@
-package test
-
-internal open class Base {
-    /*primary*/ public constructor Base()
-}
-
-internal final class SubBase : test.Base {
-    /*primary*/ public constructor SubBase()
-}

@@ -6,7 +6,7 @@ import testing.other.*
 import testing.TestFun
 
 // Resolve should be ambiguous
-val a = TestFun()
+val a = <!OVERLOAD_RESOLUTION_AMBIGUITY!>TestFun<!>()
 
 
 //FILE:testing.kt
