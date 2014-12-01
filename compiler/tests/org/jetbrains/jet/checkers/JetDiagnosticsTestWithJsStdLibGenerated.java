@@ -75,6 +75,12 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             doTest(fileName);
         }
 
+        @TestMetadata("delegationBy.kt")
+        public void testDelegationBy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/delegationBy.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dynamicCalls.kt")
         public void testDynamicCalls() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCalls.kt");

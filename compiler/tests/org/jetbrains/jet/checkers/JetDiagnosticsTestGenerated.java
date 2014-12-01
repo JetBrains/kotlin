@@ -3716,6 +3716,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("delegationBy.kt")
+            public void testDelegationBy() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/delegationBy.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupported.kt")
             public void testUnsupported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/unsupported.kt");
