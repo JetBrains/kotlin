@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
-public class MyDeclarations(
+public class ConstraintSystemTestData(
         context: BindingContext,
         private val project: Project,
         private val typeResolver: TypeResolver
@@ -46,21 +46,13 @@ public class MyDeclarations(
     }
 
     private fun findFunctionByName(functions: Collection<FunctionDescriptor>, name: String): FunctionDescriptor {
-        for (function in functions) {
-            if (function.getName().asString() == name) {
-                return function
-            }
-        }
-        throw AssertionError("Function ${name} is not declared")
+        return functions.firstOrNull { it.getName().asString() == name } ?:
+               throw AssertionError("Function ${name} is not declared")
     }
 
     fun getParameterDescriptor(name: String): TypeParameterDescriptor {
-        for (typeParameter in functionFoo.getTypeParameters()) {
-            if (typeParameter.getName().asString() == name) {
-                return typeParameter;
-            }
-        }
-        throw AssertionError("Unsupported type parameter name: " + name + ".")
+        return functionFoo.getTypeParameters().firstOrNull { it.getName().asString() == name } ?:
+               throw AssertionError("Unsupported type parameter name: " + name + ".")
     }
 
     fun getType(name: String): JetType {
