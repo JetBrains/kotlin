@@ -54,7 +54,11 @@ class SuppressNoBodyErrorsForNativeDeclarations : DiagnosticsWithSuppression.Sup
 public class NativeFunChecker : AnnotationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (!descriptor.hasNativeAnnotation()) return
-        if (descriptor is CallableMemberDescriptor &&
+
+        if (DescriptorUtils.isTrait(descriptor.getContainingDeclaration())) {
+            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT.on(declaration))
+        }
+        else if (descriptor is CallableMemberDescriptor &&
             descriptor.getModality() == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
@@ -62,5 +66,6 @@ public class NativeFunChecker : AnnotationChecker {
         if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
+
     }
 }
