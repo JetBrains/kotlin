@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
+import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 class CompletionSessionConfiguration(
@@ -121,8 +123,25 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor>
-            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
+    // set is used only for completion in code fragments
+    private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
+
+    fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
+        val descriptors = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
+        if (!shouldCastToRuntimeType) {
+            if (position.getContainingFile() is JetCodeFragment) {
+                alreadyAddedDescriptors = descriptors
+            }
+            return descriptors
+        }
+        else {
+            return descriptors.filter { desc ->
+                !alreadyAddedDescriptors.any {
+                    comparePossiblyOverridingDescriptors(it, desc)
+                }
+            }
+        }
+    }
 
     protected fun shouldRunTopLevelCompletion(): Boolean
             = configuration.completeNonImportedDeclarations && isNoQualifierContext()
