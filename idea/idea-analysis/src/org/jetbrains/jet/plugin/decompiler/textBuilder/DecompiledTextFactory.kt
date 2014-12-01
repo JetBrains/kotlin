@@ -19,9 +19,7 @@ package org.jetbrains.jet.plugin.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.MemberComparator
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder
@@ -30,11 +28,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+import org.jetbrains.jet.lang.types.flexibility
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
@@ -79,7 +77,14 @@ private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
         .setWithDefinedIn(false)
         .setClassWithPrimaryConstructor(true)
-        .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
+        .setTypeNormalizer {
+            type ->
+            if (type.isFlexible()) {
+                type.flexibility().lowerBound
+            }
+            else type
+
+        }
         .build()
 
 //TODO: should use more accurate way to identify descriptors
@@ -152,8 +157,8 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                         continue
                     }
                     if (member is CallableMemberDescriptor
-                            && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
-                            && !isComponentLike(member.getName())) {
+                        && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
+                        && !isComponentLike(member.getName())) {
                         continue
                     }
 
