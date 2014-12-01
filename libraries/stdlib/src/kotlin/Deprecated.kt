@@ -144,3 +144,8 @@ public val Map<*, *>.size: Int
 deprecated("Use isEmpty() function call instead")
 public val Map<*, *>.empty: Boolean
     get() = isEmpty()
+
+/** Returns true if this collection is not empty */
+deprecated("Use isNotEmpty() function call instead")
+public val Collection<*>.notEmpty: Boolean
+    get() = isNotEmpty()

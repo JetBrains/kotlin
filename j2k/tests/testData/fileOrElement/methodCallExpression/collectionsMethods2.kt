@@ -1,5 +1,5 @@
 // ERROR: Too many arguments for public fun <T> listOf(): kotlin.List<T> defined in kotlin
-// ERROR: Null can not be a value of a non-null type kotlin.String
+// ERROR: Too many arguments for public fun <T> setOf(): kotlin.Set<T> defined in kotlin
 import java.util.*
 
 class A {

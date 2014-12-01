@@ -6,16 +6,9 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.Properties
 
-// Map APIs
-
-// Move back to Maps.kt after KT-2093 will be fixed
-/** Provides [] access to maps */
-public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = this.put(key, value)
-
-/**
- * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
- */
-public fun <K, V> Map<K, V>.toLinkedMap(): LinkedHashMap<K, V> = LinkedHashMap(this)
+/** Provides indexed write access to mutable maps */
+// this code is JVM-specific, because JS has native set function
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
  * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
@@ -35,6 +28,25 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,
     result.putAll(this)
     return result
 }
+
+/**
+ * Returns a new [[SortedMap]] populated with the given pairs where the first value in each pair
+ * is the key and the second value is the value
+ *
+ * @includeFunctionBody ../../test/collections/MapTest.kt createSortedMap
+ */
+public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
+    val answer = TreeMap<K, V>()
+    /**
+    TODO replace by this simpler call when we can pass vararg values into other methods
+    answer.putAll(values)
+     */
+    for (v in values) {
+        answer.put(v.first, v.second)
+    }
+    return answer
+}
+
 
 /**
  * Converts this [[Map]] to a [[Properties]] object
