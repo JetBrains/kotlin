@@ -48,6 +48,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override cannot be 'platformStatic' in object");
         MAP.put(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE, "This declaration does not support ''platformStatic''", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
+        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
     }
 
 

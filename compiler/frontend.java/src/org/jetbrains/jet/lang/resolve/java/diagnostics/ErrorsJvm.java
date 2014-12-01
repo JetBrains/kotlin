@@ -38,6 +38,7 @@ public interface ErrorsJvm {
     DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> PLATFORM_STATIC_ILLEGAL_USAGE = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

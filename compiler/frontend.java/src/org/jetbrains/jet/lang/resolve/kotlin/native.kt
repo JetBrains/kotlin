@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 
@@ -52,10 +53,14 @@ class SuppressNoBodyErrorsForNativeDeclarations : DiagnosticsWithSuppression.Sup
 
 public class NativeFunChecker : AnnotationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
-        if (descriptor.hasNativeAnnotation() &&
-            descriptor is CallableMemberDescriptor &&
+        if (!descriptor.hasNativeAnnotation()) return
+        if (descriptor is CallableMemberDescriptor &&
             descriptor.getModality() == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
+        }
+
+        if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
+            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
     }
 }

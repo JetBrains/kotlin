@@ -3,7 +3,7 @@ package foo
 import kotlin.jvm.*
 
 class WithNative {
-    native fun foo() {}
+    native fun foo()
 }
 
 fun box(): String {
