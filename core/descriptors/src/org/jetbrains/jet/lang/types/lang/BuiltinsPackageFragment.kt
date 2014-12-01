@@ -37,7 +37,9 @@ public class BuiltinsPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    private val nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(fqName)))
+    private val nameResolver = BuiltInsSerializationUtil.getStringTableFilePath(fqName).let { paths ->
+        NameSerializationUtil.deserializeNameResolver(loadResource(paths[0]) ?: getStream(paths[1]))
+    }
 
     public val provider: PackageFragmentProvider = PackageFragmentProviderImpl(listOf(this))
 

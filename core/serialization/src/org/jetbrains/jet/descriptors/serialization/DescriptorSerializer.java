@@ -33,19 +33,19 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
 public class DescriptorSerializer {
 
-    private final NameTable nameTable;
+    private final StringTable stringTable;
     private final Interner<TypeParameterDescriptor> typeParameters;
     private final SerializerExtension extension;
 
-    private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters, SerializerExtension extension) {
-        this.nameTable = nameTable;
+    private DescriptorSerializer(StringTable stringTable, Interner<TypeParameterDescriptor> typeParameters, SerializerExtension extension) {
+        this.stringTable = stringTable;
         this.typeParameters = typeParameters;
         this.extension = extension;
     }
 
     @NotNull
     public static DescriptorSerializer createTopLevel(@NotNull SerializerExtension extension) {
-        return new DescriptorSerializer(new NameTable(), new Interner<TypeParameterDescriptor>(), extension);
+        return new DescriptorSerializer(new StringTable(), new Interner<TypeParameterDescriptor>(), extension);
     }
 
     @NotNull
@@ -67,12 +67,12 @@ public class DescriptorSerializer {
     }
 
     private DescriptorSerializer createChildSerializer() {
-        return new DescriptorSerializer(nameTable, new Interner<TypeParameterDescriptor>(typeParameters), extension);
+        return new DescriptorSerializer(stringTable, new Interner<TypeParameterDescriptor>(typeParameters), extension);
     }
 
     @NotNull
-    public NameTable getNameTable() {
-        return nameTable;
+    public StringTable getStringTable() {
+        return stringTable;
     }
 
     @NotNull
@@ -121,7 +121,7 @@ public class DescriptorSerializer {
         }
 
         for (DeclarationDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors())) {
-            int name = nameTable.getSimpleNameIndex(descriptor.getName());
+            int name = stringTable.getSimpleNameIndex(descriptor.getName());
             if (isEnumEntry(descriptor)) {
                 builder.addEnumEntry(name);
             }
@@ -214,7 +214,7 @@ public class DescriptorSerializer {
             builder.setReceiverType(local.type(receiverParameter.getType()));
         }
 
-        builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
+        builder.setName(stringTable.getSimpleNameIndex(descriptor.getName()));
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
@@ -222,7 +222,7 @@ public class DescriptorSerializer {
 
         builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
 
-        extension.serializeCallable(descriptor, builder, nameTable);
+        extension.serializeCallable(descriptor, builder, stringTable);
 
         return builder;
     }
@@ -283,7 +283,7 @@ public class DescriptorSerializer {
 
         builder.setFlags(Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue()));
 
-        builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
+        builder.setName(stringTable.getSimpleNameIndex(descriptor.getName()));
 
         builder.setType(type(descriptor.getType()));
 
@@ -292,7 +292,7 @@ public class DescriptorSerializer {
             builder.setVarargElementType(type(varargElementType));
         }
 
-        extension.serializeValueParameter(descriptor, builder, nameTable);
+        extension.serializeValueParameter(descriptor, builder, stringTable);
 
         return builder;
     }
@@ -302,7 +302,7 @@ public class DescriptorSerializer {
 
         builder.setId(getTypeParameterId(typeParameter));
 
-        builder.setName(nameTable.getSimpleNameIndex(typeParameter.getName()));
+        builder.setName(stringTable.getSimpleNameIndex(typeParameter.getName()));
 
         // to avoid storing a default
         if (typeParameter.isReified()) {
@@ -361,7 +361,7 @@ public class DescriptorSerializer {
 
         ProtoBuf.Type.Builder builder = type(flexibility.getLowerBound());
 
-        builder.setFlexibleTypeCapabilitiesId(nameTable.getStringIndex(flexibility.getExtraCapabilities().getId()));
+        builder.setFlexibleTypeCapabilitiesId(stringTable.getStringIndex(flexibility.getExtraCapabilities().getId()));
 
         builder.setFlexibleUpperBound(type(flexibility.getUpperBound()));
 
@@ -435,7 +435,7 @@ public class DescriptorSerializer {
     }
 
     private int getClassId(@NotNull ClassDescriptor descriptor) {
-        return nameTable.getFqNameIndex(descriptor);
+        return stringTable.getFqNameIndex(descriptor);
     }
 
     private int getTypeParameterId(@NotNull TypeParameterDescriptor descriptor) {

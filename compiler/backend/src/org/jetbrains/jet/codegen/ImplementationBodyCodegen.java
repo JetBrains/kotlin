@@ -237,7 +237,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
+        ClassData data = new ClassData(createNameResolver(serializer.getStringTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         //noinspection ConstantConditions

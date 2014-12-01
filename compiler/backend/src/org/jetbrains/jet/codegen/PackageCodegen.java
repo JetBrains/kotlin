@@ -280,7 +280,7 @@ public class PackageCodegen {
 
         if (packageProto.getMemberCount() == 0) return;
 
-        PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
+        PackageData data = new PackageData(createNameResolver(serializer.getStringTable()), packageProto);
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);

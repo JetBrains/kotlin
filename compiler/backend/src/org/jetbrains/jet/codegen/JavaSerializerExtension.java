@@ -19,8 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -28,6 +26,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.kotlin.SignatureDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Arrays;
 
@@ -44,17 +44,17 @@ public class JavaSerializerExtension extends SerializerExtension {
     public void serializeCallable(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
-        saveSignature(callable, proto, nameTable);
-        saveImplClassName(callable, proto, nameTable);
+        saveSignature(callable, proto, stringTable);
+        saveImplClassName(callable, proto, stringTable);
     }
 
     @Override
     public void serializeValueParameter(
             @NotNull ValueParameterDescriptor descriptor,
             @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
@@ -65,9 +65,9 @@ public class JavaSerializerExtension extends SerializerExtension {
     private void saveSignature(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
-        SignatureSerializer signatureSerializer = new SignatureSerializer(nameTable);
+        SignatureSerializer signatureSerializer = new SignatureSerializer(stringTable);
         if (callable instanceof FunctionDescriptor) {
             JavaProtoBuf.JavaMethodSignature signature;
             if (callable instanceof DeserializedSimpleFunctionDescriptor) {
@@ -128,19 +128,19 @@ public class JavaSerializerExtension extends SerializerExtension {
     private void saveImplClassName(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
         String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
         if (name != null) {
-            proto.setExtension(JavaProtoBuf.implClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
+            proto.setExtension(JavaProtoBuf.implClassName, stringTable.getSimpleNameIndex(Name.identifier(name)));
         }
     }
 
     private static class SignatureSerializer {
-        private final NameTable nameTable;
+        private final StringTable stringTable;
 
-        public SignatureSerializer(@NotNull NameTable nameTable) {
-            this.nameTable = nameTable;
+        public SignatureSerializer(@NotNull StringTable stringTable) {
+            this.stringTable = stringTable;
         }
 
         @NotNull
@@ -156,7 +156,7 @@ public class JavaSerializerExtension extends SerializerExtension {
         public JavaProtoBuf.JavaMethodSignature methodSignature(@NotNull Method method) {
             JavaProtoBuf.JavaMethodSignature.Builder signature = JavaProtoBuf.JavaMethodSignature.newBuilder();
 
-            signature.setName(nameTable.getSimpleNameIndex(Name.guess(method.getName())));
+            signature.setName(stringTable.getStringIndex(method.getName()));
 
             signature.setReturnType(type(method.getReturnType()));
 
@@ -231,7 +231,7 @@ public class JavaSerializerExtension extends SerializerExtension {
         @NotNull
         public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name, boolean isStaticInOuter) {
             JavaProtoBuf.JavaFieldSignature.Builder signature = JavaProtoBuf.JavaFieldSignature.newBuilder();
-            signature.setName(nameTable.getSimpleNameIndex(Name.guess(name)));
+            signature.setName(stringTable.getStringIndex(name));
             signature.setType(type(type));
             if (isStaticInOuter) {
                 signature.setIsStaticInOuter(true);
@@ -255,7 +255,7 @@ public class JavaSerializerExtension extends SerializerExtension {
 
             if (type.getSort() == Type.OBJECT) {
                 FqName fqName = internalNameToFqName(type.getInternalName());
-                builder.setClassFqName(nameTable.getFqNameIndex(fqName));
+                builder.setClassFqName(stringTable.getFqNameIndex(fqName));
             }
             else {
                 builder.setPrimitiveType(JavaProtoBuf.JavaType.PrimitiveType.valueOf(type.getSort()));

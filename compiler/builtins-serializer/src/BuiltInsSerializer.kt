@@ -135,12 +135,12 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
-        NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable())
-        write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(fqName), nameStream)
+        NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
+        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName).first(), nameStream)
     }
 
     fun writeClassNames(serializer: DescriptorSerializer, classNames: List<Name>, stream: ByteArrayOutputStream) {
-        val nameTable = serializer.getNameTable()
+        val nameTable = serializer.getStringTable()
         DataOutputStream(stream) use { output ->
             output.writeInt(classNames.size())
             for (className in classNames) {

@@ -26,14 +26,14 @@ public abstract class SerializerExtension {
     public void serializeCallable(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
     }
 
     public void serializeValueParameter(
             @NotNull ValueParameterDescriptor descriptor,
             @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
-            @NotNull NameTable nameTable
+            @NotNull StringTable stringTable
     ) {
     }
 }

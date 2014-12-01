@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
-public class NameTable {
+public class StringTable {
     public static final TObjectHashingStrategy<QualifiedName.Builder> QUALIFIED_NAME_BUILDER_HASHING =
             new TObjectHashingStrategy<ProtoBuf.QualifiedNameTable.QualifiedName.Builder>() {
                 @Override
@@ -48,9 +48,6 @@ public class NameTable {
 
     private final Interner<String> strings = new Interner<String>();
     private final Interner<QualifiedName.Builder> qualifiedNames = new Interner<QualifiedName.Builder>(QUALIFIED_NAME_BUILDER_HASHING);
-
-    public NameTable() {
-    }
 
     @NotNull
     public List<String> getStrings() {
