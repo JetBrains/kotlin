@@ -140,7 +140,7 @@ public class LookupElementFactory(
     }
 
     private fun createLookupElement(
-            analyzer: ResolutionFacade,
+            resolutionFacade: ResolutionFacade,
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?
     ): LookupElement {
@@ -155,7 +155,7 @@ public class LookupElementFactory(
         }
 
 
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString())
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), descriptor.getName().asString())
                 .withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
 
         when (descriptor) {
@@ -193,6 +193,13 @@ public class LookupElementFactory(
                     DescriptorUtils.getFqName(container)
                 val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiver.getType())
                 element = element.appendTailText(" for $receiverPresentation in $containerPresentation", true)
+            }
+            else {
+                val container = descriptor.getContainingDeclaration()
+                if (container is PackageFragmentDescriptor) { // we show container only for global functions and properties
+                    //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
+                    element = element.appendTailText(" (${container.fqName})", true)
+                }
             }
         }
 
