@@ -59,6 +59,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ImportedOrder.kt")
+    public void testImportedOrder() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ImportedOrder.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("KeywordsLast.kt")
     public void testKeywordsLast() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/KeywordsLast.kt");

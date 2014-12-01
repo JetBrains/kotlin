@@ -38,6 +38,8 @@ import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
 import com.intellij.psi.PsiClass
+import java.util.HashSet
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -109,11 +111,15 @@ private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMa
 }
 
 private class JetDeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
+    private val importCache = ImportCache()
+
     private enum class Weight {
         kotlinDefaultImport
         thisFile
-        imported
+        preciseImport
+        allUnderImport
         default
+        hasImportFromSamePackage
         notImported
     }
 
@@ -126,25 +132,52 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             }
         }
 
-        val fqName = fqName(o)
+        val qualifiedName = qualifiedName(o)
         // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-        if (fqName != null && isValidJavaFqName(fqName)) {
-            val importPath = ImportPath(fqName)
+        if (qualifiedName != null && isValidJavaFqName(qualifiedName)) {
+            val importPath = ImportPath(qualifiedName)
+            val fqName = importPath.fqnPart()
             return when {
-                ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
                 ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
-                else -> Weight.imported
+                importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
+                importCache.isImportedWithAllUnderImport(fqName) -> Weight.allUnderImport
+                importCache.hasPreciseImportFromPackage(fqName.parent()) -> Weight.hasImportFromSamePackage
+                else -> Weight.notImported
             }
         }
 
         return Weight.default
     }
 
-    private fun fqName(lookupObject: Any): String? {
+    private fun qualifiedName(lookupObject: Any): String? {
         return when (lookupObject) {
             is DeclarationDescriptorLookupObject -> DescriptorUtils.getFqName(lookupObject.descriptor).toString()
             is PsiClass -> lookupObject.getQualifiedName()
             else -> null
         }
+    }
+
+    private inner class ImportCache {
+        private val preciseImports = HashSet<FqName>()
+        private val preciseImportPackages = HashSet<FqName>()
+        private val allUnderImports = HashSet<FqName>()
+
+        ;{
+            for (import in file.getImportDirectives()) {
+                val importPath = import.getImportPath() ?: continue
+                val fqName = importPath.fqnPart()
+                if (importPath.isAllUnder()) {
+                    allUnderImports.add(fqName)
+                }
+                else {
+                    preciseImports.add(fqName)
+                    preciseImportPackages.add(fqName.parent())
+                }
+            }
+        }
+
+        fun isImportedWithPreciseImport(name: FqName) = name in preciseImports
+        fun isImportedWithAllUnderImport(name: FqName) = name.parent() in allUnderImports
+        fun hasPreciseImportFromPackage(packageName: FqName) = packageName in preciseImportPackages
     }
 }
