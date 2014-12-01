@@ -250,7 +250,6 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractLazyResolveRecursiveComparingTest>()) {
-            model("loadJava/compiledKotlin")
             model("lazyResolve/recursiveComparator")
         }
 
