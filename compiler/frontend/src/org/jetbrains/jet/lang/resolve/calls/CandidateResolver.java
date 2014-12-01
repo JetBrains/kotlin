@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -163,7 +162,7 @@ public class CandidateResolver {
 
         // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
         // See TaskPrioritizer for more
-        JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getExtensionReceiver());
+        JetSuperExpression superExpression = getReceiverSuper(candidateCall.getExtensionReceiver());
         if (superExpression != null) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
             candidateCall.addStatus(OTHER_ERROR);
@@ -203,6 +202,18 @@ public class CandidateResolver {
         if (candidateThis == null || candidateThis.getKind().isSingleton()) return true;
 
         return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
+    }
+
+    @Nullable
+    private static JetSuperExpression getReceiverSuper(@NotNull ReceiverValue receiver) {
+        if (receiver instanceof ExpressionReceiver) {
+            ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
+            JetExpression expression = expressionReceiver.getExpression();
+            if (expression instanceof JetSuperExpression) {
+                return (JetSuperExpression) expression;
+            }
+        }
+        return null;
     }
 
     @Nullable
