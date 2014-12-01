@@ -2761,7 +2761,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateExpressionWithNullFallback(@NotNull JetExpression expression, @NotNull Label ifnull) {
-        expression = JetPsiUtil.deparenthesize(expression);
+        JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+        assert deparenthesized != null : "Unexpected empty expression";
+
+        expression = deparenthesized;
         Type type = expressionType(expression);
 
         if (expression instanceof JetSafeQualifiedExpression && !isPrimitive(type)) {
@@ -2849,6 +2852,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateIn(final StackValue leftValue, JetExpression rangeExpression, final JetSimpleNameExpression operationReference) {
         final JetExpression deparenthesized = JetPsiUtil.deparenthesize(rangeExpression);
+
+        assert deparenthesized != null : "For with empty range expression";
+
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {

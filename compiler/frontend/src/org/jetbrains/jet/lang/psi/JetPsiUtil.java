@@ -76,7 +76,6 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    @Contract("!null -> !null")
     public static JetExpression deparenthesize(@Nullable JetExpression expression) {
         return deparenthesize(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ true);
     }
