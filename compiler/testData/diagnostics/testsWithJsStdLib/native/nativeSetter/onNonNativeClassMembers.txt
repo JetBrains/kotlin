@@ -73,4 +73,7 @@ internal final class C {
     kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A, /*1*/ v: kotlin.Any?): kotlin.Unit
     kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    kotlin.js.nativeSetter() internal final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
+    kotlin.js.nativeSetter() internal final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
+    kotlin.js.nativeSetter() internal final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
 }

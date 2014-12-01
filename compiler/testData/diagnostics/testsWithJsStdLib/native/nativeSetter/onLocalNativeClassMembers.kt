@@ -21,6 +21,15 @@ fun foo() {
 
     [native]
     class C {
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
+        fun Int.set(a: String, v: Int)<!> {}
+
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
+        fun Int.set2(a: Number, v: String?)<!> = "OK"
+
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
+        fun Int.set3(a: Double, v: String?)<!> = "OK"
+
         <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeSetter
         fun set(): Any?<!> = null
 

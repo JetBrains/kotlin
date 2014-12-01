@@ -18,6 +18,15 @@ fun foo() {
     }
 
     class C {
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+        fun Int.get(a: String): Int?<!> = 1
+
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+        fun Int.get2(a: Number): String?<!> = "OK"
+
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+        fun Int.get3(a: Int): String?<!> = "OK"
+
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN, NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeGetter
         fun get(): Any?<!> = null
 
