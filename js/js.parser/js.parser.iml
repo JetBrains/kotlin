@@ -9,6 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="js.dart-ast" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" name="intellij-core" level="project" />
   </component>
 </module>
-

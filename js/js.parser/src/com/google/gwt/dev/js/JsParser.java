@@ -19,6 +19,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsLiteral.JsBooleanLiteral;
 import com.google.dart.compiler.common.SourceInfo;
 import com.google.gwt.dev.js.rhino.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -385,25 +386,21 @@ public class JsParser {
     }
 
     private JsInvocation mapCall(Node callNode) throws JsParserException {
-        JsInvocation invocation = new JsInvocation();
-
         // Map the target expression.
         //
         Node from = callNode.getFirstChild();
-        JsExpression to = mapExpression(from);
-        invocation.setQualifier(to);
+        JsExpression qualifier = mapExpression(from);
 
         // Iterate over and map the arguments.
         //
-        List<JsExpression> args = invocation.getArguments();
+        List<JsExpression> arguments = new SmartList<JsExpression>();
         from = from.getNext();
         while (from != null) {
-            to = mapExpression(from);
-            args.add(to);
+            arguments.add(mapExpression(from));
             from = from.getNext();
         }
 
-        return invocation;
+        return new JsInvocation(qualifier, arguments);
     }
 
     private JsExpression mapConditional(Node condNode) throws JsParserException {
