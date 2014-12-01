@@ -69,6 +69,7 @@ import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -831,14 +832,5 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     }
 
     return ExtractableCodeDescriptorWithConflicts(this, conflicts)
-}
-
-private fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
-    if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
-    if (originalDescriptor is CallableDescriptor) {
-        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
-    }
-
-    return false
 }
 

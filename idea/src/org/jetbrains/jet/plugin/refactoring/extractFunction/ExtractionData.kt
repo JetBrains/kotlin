@@ -54,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.plugin.refactoring.compareDescriptors
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean,
@@ -174,12 +175,6 @@ data class ExtractionData(
 
         return referencesInfo
     }
-}
-
-private fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-    return d1 == d2 ||
-            (d1 != null && d2 != null &&
-                    DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2))
 }
 
 // Hack:

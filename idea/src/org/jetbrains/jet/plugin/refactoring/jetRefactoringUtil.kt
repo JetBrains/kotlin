@@ -64,6 +64,9 @@ import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
 import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
@@ -359,4 +362,19 @@ public fun chooseContainerElementIfNecessary<T>(
         containers.size == 1 || ApplicationManager.getApplication()!!.isUnitTestMode() -> onSelect(containers.first())
         else -> chooseContainerElement(containers, editor, title, highlightSelection, toPsi, onSelect)
     }
+}
+
+fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
+    return d1 == d2 ||
+           (d1 != null && d2 != null &&
+            DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2))
+}
+
+public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
+    if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
+    if (originalDescriptor is CallableDescriptor) {
+        if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
+    }
+
+    return false
 }
