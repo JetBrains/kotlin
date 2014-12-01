@@ -1,16 +1,16 @@
 package org.jetbrains
 
-import sun.nio.cs.SingleByte
+import sun.nio.cs.ext.Big5
 import sun.net.spi.nameservice.dns.DNSNameService
 import javax.crypto.Cipher
-import com.sun.java.browser.plugin2.DOM
-import com.sun.crypto.provider.AESCipher
+import com.sun.crypto.provider.SunJCE
+import sun.nio.ByteBuffered
 
 fun box(): String {
-    val a = SingleByte() // charsets.jar
+    val a = Big5() // charsets.jar
     val c = DNSNameService() // dnsns.ajr
     val e : Cipher? = null // jce.jar
-    val f : AESCipher? = null // sunjce_provider.jar
-    val j : DOM? = null // plugin.jar
+    val f : SunJCE? = null // sunjce_provider.jar
+    val j : ByteBuffered? = null // rt.jar
     return "OK"
 }
