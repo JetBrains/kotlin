@@ -31,13 +31,13 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
-import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import java.awt.Color
 import org.jetbrains.jet.lang.types.TypeUtils
+import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 
 public open class LookupElementFactory protected() {
     public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
@@ -49,7 +49,29 @@ public open class LookupElementFactory protected() {
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinClassInsertHandler)
+        var element = LookupElementBuilder.create(psiClass, psiClass.getName()).withInsertHandler(KotlinClassInsertHandler)
+
+        val typeParams = psiClass.getTypeParameters()
+        if (typeParams.isNotEmpty()) {
+            element = element.appendTailText(typeParams.map { it.getName() }.joinToString(", ", "<", ">"), true)
+        }
+
+        val qualifiedName = psiClass.getQualifiedName()
+        val dotIndex = qualifiedName.lastIndexOf('.')
+        val packageName = if (dotIndex <= 0) "<root>" else qualifiedName.substring(0, dotIndex)
+        element = element.appendTailText(" ($packageName)", true)
+
+        if (psiClass.isDeprecated()) {
+            element = element.setStrikeout(true)
+        }
+
+        // add icon in renderElement only to pass presentation.isReal()
+        return object : LookupElementDecorator<LookupElement>(element) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setIcon(DefaultLookupItemRenderer.getRawIcon(element, presentation.isReal()))
+            }
+        }
     }
 
     private fun createLookupElement(
