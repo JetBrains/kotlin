@@ -29,6 +29,7 @@ import java.io.DataInputStream
 import java.io.InputStream
 import java.util.ArrayList
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
+import com.google.protobuf.ExtensionRegistryLite
 
 public class BuiltinsPackageFragment(
         fqName: FqName,
@@ -37,31 +38,47 @@ public class BuiltinsPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
+    private val extensionRegistry: ExtensionRegistryLite
+
+    ;{
+        extensionRegistry = ExtensionRegistryLite.newInstance()
+        BuiltInsProtoBuf.registerAllExtensions(extensionRegistry)
+        extensionRegistry
+    }
+
     private val nameResolver = BuiltInsSerializationUtil.getStringTableFilePath(fqName).let { paths ->
         NameSerializationUtil.deserializeNameResolver(loadResource(paths[0]) ?: getStream(paths[1]))
     }
 
     public val provider: PackageFragmentProvider = PackageFragmentProviderImpl(listOf(this))
 
-    private val members: DeserializedPackageMemberScope =
+    private val members: DeserializedPackageMemberScope = run {
+        val proto = loadPackage()
         DeserializedPackageMemberScope(
                 this,
-                loadPackage(),
+                proto,
                 nameResolver,
                 DeserializationComponents(
                         storageManager, module, BuiltInsClassDataFinder(), AnnotationAndConstantLoader.UNSUPPORTED, // TODO: support annotations
                         provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
                 ),
-                { readClassNames() }
+                { readClassNames(proto) }
         )
+    }
 
     private fun loadPackage(): ProtoBuf.Package {
         val stream = getStream(BuiltInsSerializationUtil.getPackageFilePath(fqName))
-        return ProtoBuf.Package.parseFrom(stream)
+        return ProtoBuf.Package.parseFrom(stream, extensionRegistry)
     }
 
-    private fun readClassNames(): List<Name> {
-        val stream = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(fqName))
+    private fun readClassNames(proto: ProtoBuf.Package): List<Name> {
+        val stream = loadResource(BuiltInsSerializationUtil.getClassNamesFilePath(fqName))
+
+        if (stream == null) {
+            return proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
+        }
+
+        // TODO: drop
         return DataInputStream(stream).use { data ->
             val size = data.readInt()
             val result = ArrayList<Name>(size)

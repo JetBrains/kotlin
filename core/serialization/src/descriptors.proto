@@ -155,6 +155,8 @@ message Class {
 
 message Package {
   repeated Callable member = 1;
+
+  extensions 100 to 199;
 }
 
 message Callable {

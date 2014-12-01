@@ -22,12 +22,9 @@ import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.name.Name
 import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.config.CommonConfigurationKeys
@@ -44,6 +41,23 @@ import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+
+private object BuiltInsSerializerExtension : SerializerExtension() {
+    override fun serializePackage(
+            packageFragments: Collection<PackageFragmentDescriptor>,
+            proto: ProtoBuf.Package.Builder,
+            stringTable: StringTable
+    ) {
+        val classes = packageFragments.flatMap {
+            it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
+        }
+
+        for (descriptor in DescriptorSerializer.sort(classes)) {
+            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.getName()))
+        }
+    }
+}
 
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
@@ -107,9 +121,8 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val serializer = DescriptorSerializer.createTopLevel(SerializerExtension.DEFAULT)
+        val serializer = DescriptorSerializer.createTopLevel(BuiltInsSerializerExtension)
 
-        val classNames = ArrayList<Name>()
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
@@ -117,16 +130,8 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 val stream = ByteArrayOutputStream()
                 classProto.writeTo(stream)
                 write(destDir, getFileName(classDescriptor), stream)
-
-                if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-                    classNames.add(classDescriptor.getName())
-                }
             }
         })
-
-        val classNamesStream = ByteArrayOutputStream()
-        writeClassNames(serializer, classNames, classNamesStream)
-        write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(fqName), classNamesStream)
 
         val packageStream = ByteArrayOutputStream()
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
@@ -137,16 +142,6 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val nameStream = ByteArrayOutputStream()
         NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
         write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName).first(), nameStream)
-    }
-
-    fun writeClassNames(serializer: DescriptorSerializer, classNames: List<Name>, stream: ByteArrayOutputStream) {
-        val nameTable = serializer.getStringTable()
-        DataOutputStream(stream) use { output ->
-            output.writeInt(classNames.size())
-            for (className in classNames) {
-                output.writeInt(nameTable.getSimpleNameIndex(className))
-            }
-        }
     }
 
     fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {

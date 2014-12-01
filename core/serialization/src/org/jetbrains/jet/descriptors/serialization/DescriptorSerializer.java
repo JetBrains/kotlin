@@ -418,6 +418,8 @@ public class DescriptorSerializer {
             }
         }
 
+        extension.serializePackage(fragments, builder, stringTable);
+
         return builder;
     }
 

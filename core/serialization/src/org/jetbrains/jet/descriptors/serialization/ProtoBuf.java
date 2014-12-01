@@ -7726,8 +7726,9 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Class)
   }
 
-  public interface PackageOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+  public interface PackageOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<Package> {
 
     // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 1;
     /**
@@ -7748,10 +7749,10 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Package}
    */
   public static final class Package extends
-      com.google.protobuf.GeneratedMessageLite
-      implements PackageOrBuilder {
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        Package> implements PackageOrBuilder {
     // Use Package.newBuilder() to construct.
-    private Package(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private Package(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package, ?> builder) {
       super(builder);
 
     }
@@ -7874,6 +7875,10 @@ public final class ProtoBuf {
           return false;
         }
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -7881,9 +7886,13 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(1, member_.get(i));
       }
+      extensionWriter.writeUntil(200, output);
     }
 
     private int memoizedSerializedSize = -1;
@@ -7896,6 +7905,7 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, member_.get(i));
       }
+      size += extensionsSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
@@ -7971,9 +7981,8 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Package}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package, Builder>
-        implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.PackageOrBuilder {
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package, Builder> implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.PackageOrBuilder {
       // Construct using org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -8031,6 +8040,7 @@ public final class ProtoBuf {
           }
           
         }
+        this.mergeExtensionFields(other);
         return this;
       }
 
@@ -8040,6 +8050,10 @@ public final class ProtoBuf {
             
             return false;
           }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
         }
         return true;
       }

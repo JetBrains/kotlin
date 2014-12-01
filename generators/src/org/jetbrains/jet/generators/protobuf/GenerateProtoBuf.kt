@@ -34,14 +34,14 @@ fun main(args: Array<String>) {
     try {
         checkVersion()
 
-        val commonProto = "core/serialization/src/descriptors.proto"
-        val javaProto = "core/serialization.java/src/java_descriptors.proto"
-
-        execProtoc(commonProto, "core/serialization/src")
-        execProtoc(javaProto, "core/serialization.java/src")
-
-        modifyAndExecProtoc(commonProto, "compiler/tests")
-        modifyAndExecProtoc(javaProto, "compiler/tests")
+        for ((protoPath, outPath) in listOf(
+                Pair("core/serialization/src/descriptors.proto", "core/serialization/src"),
+                Pair("core/serialization/src/builtins.proto", "core/serialization/src"),
+                Pair("core/serialization.java/src/java_descriptors.proto", "core/serialization.java/src")
+        )) {
+            execProtoc(protoPath, outPath)
+            modifyAndExecProtoc(protoPath, "compiler/tests")
+        }
     }
     catch (e: Throwable) {
         e.printStackTrace()

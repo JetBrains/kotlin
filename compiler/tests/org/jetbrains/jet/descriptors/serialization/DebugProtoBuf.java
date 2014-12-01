@@ -10091,8 +10091,9 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Class)
   }
 
-  public interface PackageOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface PackageOrBuilder extends
+      com.google.protobuf.GeneratedMessage.
+          ExtendableMessageOrBuilder<Package> {
 
     // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 1;
     /**
@@ -10123,10 +10124,10 @@ public final class DebugProtoBuf {
    * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Package}
    */
   public static final class Package extends
-      com.google.protobuf.GeneratedMessage
-      implements PackageOrBuilder {
+      com.google.protobuf.GeneratedMessage.ExtendableMessage<
+        Package> implements PackageOrBuilder {
     // Use Package.newBuilder() to construct.
-    private Package(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Package(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Package, ?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
@@ -10270,6 +10271,10 @@ public final class DebugProtoBuf {
           return false;
         }
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -10277,9 +10282,13 @@ public final class DebugProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessage
+        .ExtendableMessage<org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Package>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(1, member_.get(i));
       }
+      extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
 
@@ -10293,6 +10302,7 @@ public final class DebugProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, member_.get(i));
       }
+      size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
@@ -10375,8 +10385,8 @@ public final class DebugProtoBuf {
      * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Package}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.PackageOrBuilder {
+        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
+          org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Package, Builder> implements org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.PackageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_Package_descriptor;
@@ -10493,6 +10503,7 @@ public final class DebugProtoBuf {
             }
           }
         }
+        this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -10503,6 +10514,10 @@ public final class DebugProtoBuf {
             
             return false;
           }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -14444,33 +14459,33 @@ public final class DebugProtoBuf {
       ".jet.descriptors.serialization.Callable\"" +
       "p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CL" +
       "ASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLAS" +
-      "S\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006\"P\n\007Pac" +
+      "S\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006\"W\n\007Pac" +
       "kage\022E\n\006member\030\001 \003(\01325.org.jetbrains.jet" +
-      ".descriptors.serialization.Callable\"\220\006\n\010" +
-      "Callable\022\r\n\005flags\030\001 \001(\005\022\030\n\020extra_visibil" +
-      "ity\030\002 \001(\t\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014sette",
-      "r_flags\030\n \001(\005\022R\n\016type_parameter\030\004 \003(\0132:." +
-      "org.jetbrains.jet.descriptors.serializat" +
-      "ion.TypeParameter\022H\n\rreceiver_type\030\005 \001(\013" +
-      "21.org.jetbrains.jet.descriptors.seriali" +
-      "zation.Type\022\014\n\004name\030\006 \002(\005\022]\n\017value_param" +
-      "eter\030\007 \003(\0132D.org.jetbrains.jet.descripto" +
-      "rs.serialization.Callable.ValueParameter" +
-      "\022F\n\013return_type\030\010 \002(\01321.org.jetbrains.je" +
-      "t.descriptors.serialization.Type\032\305\001\n\016Val" +
-      "ueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005",
-      "\022?\n\004type\030\003 \002(\01321.org.jetbrains.jet.descr" +
-      "iptors.serialization.Type\022N\n\023vararg_elem" +
-      "ent_type\030\004 \001(\01321.org.jetbrains.jet.descr" +
-      "iptors.serialization.Type*\005\010d\020\310\001\"Q\n\nMemb" +
-      "erKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE" +
-      "\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014C" +
-      "allableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017" +
-      "\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022\t\n\005FI" +
-      "NAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*M\n\nVisibil" +
-      "ity\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTEC",
-      "TED\020\002\022\n\n\006PUBLIC\020\003\022\t\n\005EXTRA\020\004B\022B\rDebugPro" +
-      "toBuf\210\001\000"
+      ".descriptors.serialization.Callable*\005\010d\020" +
+      "\310\001\"\220\006\n\010Callable\022\r\n\005flags\030\001 \001(\005\022\030\n\020extra_" +
+      "visibility\030\002 \001(\t\022\024\n\014getter_flags\030\t \001(\005\022\024",
+      "\n\014setter_flags\030\n \001(\005\022R\n\016type_parameter\030\004" +
+      " \003(\0132:.org.jetbrains.jet.descriptors.ser" +
+      "ialization.TypeParameter\022H\n\rreceiver_typ" +
+      "e\030\005 \001(\01321.org.jetbrains.jet.descriptors." +
+      "serialization.Type\022\014\n\004name\030\006 \002(\005\022]\n\017valu" +
+      "e_parameter\030\007 \003(\0132D.org.jetbrains.jet.de" +
+      "scriptors.serialization.Callable.ValuePa" +
+      "rameter\022F\n\013return_type\030\010 \002(\01321.org.jetbr" +
+      "ains.jet.descriptors.serialization.Type\032" +
+      "\305\001\n\016ValueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004nam",
+      "e\030\002 \002(\005\022?\n\004type\030\003 \002(\01321.org.jetbrains.je" +
+      "t.descriptors.serialization.Type\022N\n\023vara" +
+      "rg_element_type\030\004 \001(\01321.org.jetbrains.je" +
+      "t.descriptors.serialization.Type*\005\010d\020\310\001\"" +
+      "Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_O" +
+      "VERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED" +
+      "\020\003\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003" +
+      "VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modalit" +
+      "y\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*M\n\n" +
+      "Visibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n",
+      "\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\t\n\005EXTRA\020\004B\022B\rD" +
+      "ebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
