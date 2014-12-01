@@ -26,7 +26,6 @@ import com.intellij.codeInsight.lookup.WeighingContext
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -41,6 +40,9 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.types.JetType
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -53,7 +55,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
 
     sorter = sorter.weighAfter(
             "stats",
-            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile)/*TODO: shouldn't it have bigger priority?*/,
+            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             DeprecatedWeigher)
 
     sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
@@ -75,24 +77,39 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
         localOrParameter
         property
+        function
         keyword
         default
         packages
     }
 
-    override fun weigh(element: LookupElement): Comparable<Weight> {
+    private data class CompoundWeight(val weight: Weight, val callableWeight: CallableWeight? = null) : Comparable<CompoundWeight> {
+        override fun compareTo(other: CompoundWeight): Int {
+            if (callableWeight != null && other.callableWeight != null && callableWeight != other.callableWeight) {
+                return callableWeight.compareTo(other.callableWeight)
+            }
+            return weight.compareTo(other.weight)
+        }
+    }
+
+    override fun weigh(element: LookupElement): CompoundWeight {
         val o = element.getObject()
+
         return when (o) {
-            is DeclarationDescriptorLookupObject -> when (o.descriptor) {
-                is LocalVariableDescriptor, is ValueParameterDescriptor -> Weight.localOrParameter
-                is PropertyDescriptor -> Weight.property
-                is PackageViewDescriptor -> Weight.packages
-                else -> Weight.default
+            is DeclarationDescriptorLookupObject -> {
+                val descriptor = o.descriptor
+                when (descriptor) {
+                    is LocalVariableDescriptor, is ValueParameterDescriptor -> CompoundWeight(Weight.localOrParameter)
+                    is PropertyDescriptor -> CompoundWeight(Weight.property, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is PackageViewDescriptor -> CompoundWeight(Weight.packages)
+                    else -> CompoundWeight(Weight.default)
+                }
             }
 
-            is KeywordLookupObject -> Weight.keyword
+            is KeywordLookupObject -> CompoundWeight(Weight.keyword)
 
-            else -> Weight.default
+            else -> CompoundWeight(Weight.default)
         }
     }
 }
@@ -125,7 +142,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         notToBeUsedInKotlin
     }
 
-    override fun weigh(element: LookupElement): Comparable<Weight> {
+    override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
         if (o is DeclarationDescriptorLookupObject) {
             val elementFile = o.psiElement?.getContainingFile()

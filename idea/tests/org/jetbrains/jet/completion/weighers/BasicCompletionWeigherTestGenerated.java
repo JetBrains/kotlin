@@ -31,8 +31,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletionWeigherTest {
+    @TestMetadata("AfterNullable.kt")
+    public void testAfterNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/AfterNullable.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInBasic() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/weighers/basic"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+    }
+
+    @TestMetadata("Callables.kt")
+    public void testCallables() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/Callables.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("DeprecatedFun.kt")

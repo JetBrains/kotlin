@@ -36,8 +36,8 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import java.awt.Color
-import org.jetbrains.jet.lang.types.TypeUtils
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
+import org.jetbrains.jet.lang.types.TypeUtils
 
 public class LookupElementFactory(
         private val receiverTypes: Collection<JetType>?
@@ -59,30 +59,16 @@ public class LookupElementFactory(
     }
 
     private fun LookupElement.boldIfImmediate(descriptor: DeclarationDescriptor): LookupElement {
-        if (receiverTypes == null) return this
-        if (descriptor !is CallableMemberDescriptor) return this
-
-        val isReceiverNullable = receiverTypes.all { it.isNullable() }
-        val receiverParameter = descriptor.getExtensionReceiverParameter()
-
-        val style: Style = if (receiverParameter != null) {
-            val receiverParamType = receiverParameter.getType()
-            if (isReceiverNullable && !receiverParamType.isNullable())
-                Style.GRAYED
-            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
-                Style.BOLD
-            else
-                Style.NORMAL
-        }
-        else {
-            if (isReceiverNullable)
-                Style.GRAYED
-            else if (descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
-                Style.BOLD
-            else
-                Style.NORMAL
+        val weight = callableWeight(descriptor)
+        if (weight != null) {
+            putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
         }
 
+        val style = when (weight) {
+            CallableWeight.thisClassMember, CallableWeight.thisTypeExtension -> Style.BOLD
+            CallableWeight.notApplicableReceiverNullable -> Style.GRAYED
+            else -> Style.NORMAL
+        }
         return if (style != Style.NORMAL) {
             object : LookupElementDecorator<LookupElement>(this) {
                 override fun renderElement(presentation: LookupElementPresentation) {
@@ -215,6 +201,44 @@ public class LookupElementFactory(
         }
 
         return element
+    }
+
+    private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
+        if (receiverTypes == null) return null
+        if (descriptor !is CallableMemberDescriptor) return null
+
+        val isReceiverNullable = receiverTypes.all { it.isNullable() }
+        val receiverParameter = descriptor.getExtensionReceiverParameter()
+
+        if (receiverParameter != null) {
+            val receiverParamType = receiverParameter.getType()
+            return if (isReceiverNullable && !receiverParamType.isNullable())
+                CallableWeight.notApplicableReceiverNullable
+            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
+                CallableWeight.thisTypeExtension
+            else
+                CallableWeight.baseTypeExtension
+        }
+        else {
+            if (isReceiverNullable) {
+                return CallableWeight.notApplicableReceiverNullable
+            }
+            else {
+                val container = descriptor.getContainingDeclaration()
+                return when (container) {
+                    is PackageFragmentDescriptor -> CallableWeight.global
+
+                    is ClassifierDescriptor -> {
+                        if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                            CallableWeight.thisClassMember
+                        else
+                            CallableWeight.baseClassMember
+                    }
+
+                    else -> CallableWeight.local
+                }
+            }
+        }
     }
 
     class object {

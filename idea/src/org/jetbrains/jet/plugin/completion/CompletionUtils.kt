@@ -101,3 +101,15 @@ fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     appendTailText(text, grayed)
     tails.forEach { appendTailText(it.text, it.isGrayed()) }
 }
+
+enum class CallableWeight {
+    local // local non-extension
+    thisClassMember
+    baseClassMember
+    thisTypeExtension
+    baseTypeExtension
+    global // global non-extension
+    notApplicableReceiverNullable
+}
+
+val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
