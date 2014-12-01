@@ -35,7 +35,7 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         private val resolutionFacade: ResolutionFacade,
-        private val boldImmediateLookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: LookupElementFactory
 ) {
     private val elements = ArrayList<LookupElement>()
 
@@ -61,11 +61,10 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, shouldCastToRuntimeType: Boolean) {
         run {
-            var lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
+            var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
             if (shouldCastToRuntimeType) {
                 lookupElement = lookupElement.shouldCastReceiver()
             }
-
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -82,7 +81,7 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
+                        val lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)

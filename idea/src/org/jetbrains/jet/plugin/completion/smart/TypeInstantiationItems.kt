@@ -67,7 +67,8 @@ class TypeInstantiationItems(
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-        val inheritorSearchScope: GlobalSearchScope
+        val inheritorSearchScope: GlobalSearchScope,
+        val lookupElementFactory: LookupElementFactory
 ) {
     public fun addTo(
             items: MutableCollection<LookupElement>,
@@ -132,7 +133,7 @@ class TypeInstantiationItems(
             typeArgs: List<TypeProjection>,
             tail: Tail?
     ): LookupElement? {
-        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
+        var lookupElement = lookupElementFactory.createLookupElement(classifier, resolutionFacade, bindingContext, false)
 
         if (classifier.getKind() == ClassKind.OBJECT) {
             return lookupElement.addTail(tail)
@@ -259,7 +260,7 @@ class TypeInstantiationItems(
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
-            val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(samConstructor, resolutionFacade, bindingContext)
+            val lookupElement = lookupElementFactory.createLookupElement(samConstructor, resolutionFacade, bindingContext, false)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

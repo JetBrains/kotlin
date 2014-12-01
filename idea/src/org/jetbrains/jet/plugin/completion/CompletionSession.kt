@@ -72,8 +72,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val referenceVariantsHelper: ReferenceVariantsHelper?
             = if (bindingContext != null) ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) } else null
 
-    protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
-        if (jetReference != null) {
+    protected val lookupElementFactory: LookupElementFactory = run {
+        val receiverTypes = if (jetReference != null) {
             val expression = jetReference.expression
             val (receivers, callType) = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
             val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
@@ -83,14 +83,15 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             if (callType == ReferenceVariantsHelper.CallType.SAFE) {
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
-            BoldImmediateLookupElementFactory(receiverTypes)
+            receiverTypes
         }
         else {
-            LookupElementFactory.DEFAULT
+            null
         }
+        LookupElementFactory(receiverTypes)
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, boldImmediateLookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory)
 
     protected val project: Project = position.getProject()
 
@@ -166,7 +167,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
-                parameters, resolutionFacade, bindingContext!!, moduleDescriptor,
+                parameters, lookupElementFactory, resolutionFacade, bindingContext!!, moduleDescriptor,
                 searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
         ).collect(collector)
     }
@@ -265,7 +266,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
             val completion = SmartCompletion(jetReference.expression, resolutionFacade, moduleDescriptor, 
                                              bindingContext!!, { isVisibleDescriptor(it) }, originalSearchScope,
-                                             mapper, boldImmediateLookupElementFactory)
+                                             mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

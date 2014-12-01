@@ -47,7 +47,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val inheritorSearchScope: GlobalSearchScope,
                       val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-                      val boldImmediateLookupElementFactory: LookupElementFactory) {
+                      val lookupElementFactory: LookupElementFactory) {
     private val project = expression.getProject()
 
     public class Result(
@@ -133,7 +133,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                         else -> ExpectedInfoClassification.NOT_MATCHES
                     }
                 }
-                result.addLookupElements(expectedInfos, classifier, { boldImmediateLookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext) })
+                result.addLookupElements(expectedInfos, classifier, { lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true) })
 
                 if (receiver == null) {
                     toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
@@ -145,10 +145,10 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val additionalItems = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
         if (receiver == null) {
-            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope)
+            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory)
                     .addTo(additionalItems, inheritanceSearchers, expectedInfos)
 
-            StaticMembers(bindingContext, resolutionFacade).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
+            StaticMembers(bindingContext, resolutionFacade, lookupElementFactory).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
 
             ThisItems(bindingContext).addToCollection(additionalItems, expressionWithType, expectedInfos)
 
@@ -262,7 +262,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = boldImmediateLookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text
@@ -321,7 +321,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (jetType.isError()) return null
         val classifier = jetType.getConstructor().getDeclarationDescriptor() ?: return null
 
-        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
+        val lookupElement = lookupElementFactory.createLookupElement(classifier, resolutionFacade, bindingContext, false)
         val lookupString = lookupElement.getLookupString()
 
         val typeArgs = jetType.getArguments()

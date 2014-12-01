@@ -39,13 +39,78 @@ import java.awt.Color
 import org.jetbrains.jet.lang.types.TypeUtils
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 
-public open class LookupElementFactory protected() {
-    public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
+public class LookupElementFactory(
+        private val receiverTypes: Collection<JetType>?
+) {
+    public fun createLookupElement(
+            resolutionFacade: ResolutionFacade,
+            descriptor: DeclarationDescriptor,
+            boldImmediateMembers: Boolean
+    ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        return createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        var element = createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        if (boldImmediateMembers) {
+            element = element.boldIfImmediate(descriptor)
+        }
+        return element
+    }
+
+    private fun LookupElement.boldIfImmediate(descriptor: DeclarationDescriptor): LookupElement {
+        if (receiverTypes == null) return this
+        if (descriptor !is CallableMemberDescriptor) return this
+
+        val isReceiverNullable = receiverTypes.all { it.isNullable() }
+        val receiverParameter = descriptor.getExtensionReceiverParameter()
+
+        val style: Style = if (receiverParameter != null) {
+            val receiverParamType = receiverParameter.getType()
+            if (isReceiverNullable && !receiverParamType.isNullable())
+                Style.GRAYED
+            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
+                Style.BOLD
+            else
+                Style.NORMAL
+        }
+        else {
+            if (isReceiverNullable)
+                Style.GRAYED
+            else if (descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                Style.BOLD
+            else
+                Style.NORMAL
+        }
+
+        return if (style != Style.NORMAL) {
+            object : LookupElementDecorator<LookupElement>(this) {
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    if (style == Style.BOLD) {
+                        presentation.setItemTextBold(true)
+                    }
+                    else {
+                        presentation.setItemTextForeground(Color.GRAY)
+                        // gray all tail fragments too:
+                        val fragments = presentation.getTailFragments()
+                        presentation.clearTail()
+                        for (fragment in fragments) {
+                            presentation.appendTailText(fragment.text, true)
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            this
+        }
+    }
+
+    private enum class Style {
+        NORMAL
+        BOLD
+        GRAYED
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
@@ -146,8 +211,6 @@ public open class LookupElementFactory protected() {
     }
 
     class object {
-        public val DEFAULT: LookupElementFactory = LookupElementFactory()
-
         public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
             return when (descriptor) {
                 is FunctionDescriptor -> {
@@ -178,63 +241,5 @@ public open class LookupElementFactory protected() {
                 else -> BaseDeclarationInsertHandler()
             }
         }
-    }
-}
-
-public class BoldImmediateLookupElementFactory(private val receiverTypes: Collection<JetType>) : LookupElementFactory() {
-    override fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
-        val element = super.createLookupElement(resolutionFacade, descriptor)
-
-        if (descriptor !is CallableMemberDescriptor) return element
-
-        val isReceiverNullable = receiverTypes.all { it.isNullable() }
-        val receiverParameter = descriptor.getExtensionReceiverParameter()
-
-        val style: Style = if (receiverParameter != null) {
-            val receiverParamType = receiverParameter.getType()
-            if (isReceiverNullable && !receiverParamType.isNullable())
-                Style.GRAYED
-            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
-                Style.BOLD
-            else
-                Style.NORMAL
-        }
-        else {
-            if (isReceiverNullable)
-                Style.GRAYED
-            else if (descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
-                Style.BOLD
-            else
-                Style.NORMAL
-        }
-
-        return if (style != Style.NORMAL) {
-            object : LookupElementDecorator<LookupElement>(element) {
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    super.renderElement(presentation)
-                    if (style == Style.BOLD) {
-                        presentation.setItemTextBold(true)
-                    }
-                    else {
-                        presentation.setItemTextForeground(Color.GRAY)
-                        // gray all tail fragments too:
-                        val fragments = presentation.getTailFragments()
-                        presentation.clearTail()
-                        for (fragment in fragments) {
-                            presentation.appendTailText(fragment.text, true)
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            element
-        }
-    }
-
-    private enum class Style {
-        NORMAL
-        BOLD
-        GRAYED
     }
 }
