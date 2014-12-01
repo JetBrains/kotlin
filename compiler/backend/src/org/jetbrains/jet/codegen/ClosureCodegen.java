@@ -205,7 +205,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     @Override
     protected void done() {
         AsmUtil.writeOuterClassAndEnclosingMethod(classDescriptor, funDescriptor, typeMapper, v);
-        v.done();
         super.done();
     }
 
