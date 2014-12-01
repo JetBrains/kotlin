@@ -10,9 +10,6 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-private fun emptyElementList(): List<Element> = Collections.emptyList<Element>()
-private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()
-
 public var Node.text: String
     get() {
         return textContent
@@ -122,7 +119,7 @@ public fun Document?.elements(namespaceUri: String, localName: String): List<Ele
 public fun NodeList?.toList(): List<Node> {
     return if (this == null) {
         // TODO the following is easier to convert to JS
-        emptyNodeList()
+        emptyList()
     }
     else {
         NodeListAsList(this)
@@ -154,13 +151,13 @@ public fun Document?.get(selector: String): List<Element> {
             return if (element != null)
                 arrayListOf(element)
             else
-                emptyElementList()
+                emptyList()
         } else {
             //  assume its a vanilla element name
             elements(selector)
         }
     } else {
-        emptyElementList()
+        emptyList()
     }
 }
 
@@ -175,7 +172,7 @@ public fun Element.get(selector: String): List<Element> {
         return if (element != null)
             arrayListOf(element)
         else
-            emptyElementList()
+            emptyList()
     } else {
         //  assume its a vanilla element name
         elements(selector)
