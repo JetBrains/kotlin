@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 
@@ -65,6 +66,10 @@ public class NativeFunChecker : AnnotationChecker {
 
         if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
+        }
+
+        if (descriptor.hasInlineAnnotation()) {
+            diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED.on(declaration))
         }
 
     }

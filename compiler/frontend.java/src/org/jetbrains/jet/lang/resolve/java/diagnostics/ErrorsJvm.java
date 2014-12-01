@@ -40,6 +40,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

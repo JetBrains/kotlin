@@ -50,6 +50,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of traits can not be native");
+        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of traits can not be inlined");
     }
 
 

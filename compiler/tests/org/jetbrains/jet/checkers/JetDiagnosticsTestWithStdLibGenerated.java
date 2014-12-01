@@ -668,6 +668,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/inline.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noBody.kt")
         public void testNoBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/noBody.kt");
@@ -677,6 +683,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/override.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reified.kt")
+        public void testReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/reified.kt");
             doTest(fileName);
         }
 
