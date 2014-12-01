@@ -29,34 +29,14 @@
                                 <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib.jar"
                                       tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
                                       overwrite="true" verbose="true"/>
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib-sources.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}-sources.jar"
+                                      overwrite="true" verbose="true"/>
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <id>install-library</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${kotlin-dist}/kotlinc/lib/kotlin-jslib-sources.jar</file>
-                            <classifier>sources</classifier>
-                            <groupId>${groupId}</groupId>
-                            <artifactId>${artifactId}</artifactId>
-                            <version>${version}</version>
-                            <packaging>jar</packaging>
-                            <generatePom>false</generatePom>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

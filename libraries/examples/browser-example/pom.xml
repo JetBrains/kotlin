@@ -17,11 +17,17 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -34,11 +40,6 @@
             <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-js-library</artifactId>
-                <version>${project.version}</version>
-            </dependency>
     </dependencies>
 
     <build>
@@ -56,13 +57,6 @@
                         <id>js</id>
                         <goals>
                             <goal>js</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                     <execution>
@@ -91,7 +85,7 @@
                                     <groupId>org.jetbrains.kotlin</groupId>
                                     <artifactId>kotlin-js-library</artifactId>
                                     <version>${project.version}</version>
-                                    <outputDirectory>${project.build.directory}/js</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/js/lib</outputDirectory>
                                     <includes>*.js</includes>
                                 </artifactItem>
                             </artifactItems>
