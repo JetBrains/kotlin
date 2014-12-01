@@ -652,6 +652,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Native extends AbstractJetDiagnosticsTestWithStdLib {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/abstract.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInNative() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/native"), Pattern.compile("^(.+)\\.kt$"), true);
         }
