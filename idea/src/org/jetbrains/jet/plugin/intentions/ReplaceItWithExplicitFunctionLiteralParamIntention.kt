@@ -21,7 +21,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
@@ -33,10 +32,11 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val simpleNameExpression = PsiTreeUtil.getParentOfType(element, javaClass<JetSimpleNameExpression>())!!
+        val simpleNameExpression = element.getStrictParentOfType<JetSimpleNameExpression>()!!
 
         val simpleNameReference = simpleNameExpression.getReference() as JetReference?
         val target = simpleNameReference?.resolveToDescriptors()?.first()!!
@@ -55,7 +55,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
     }
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        val simpleNameExpression = PsiTreeUtil.getParentOfType(element, javaClass<JetSimpleNameExpression>())
+        val simpleNameExpression = element.getStrictParentOfType<JetSimpleNameExpression>()
         if (simpleNameExpression == null || !isAutoCreatedIt(simpleNameExpression)) {
             return false
         }

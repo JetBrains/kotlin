@@ -4,7 +4,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
@@ -32,7 +32,7 @@ import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val refExpr = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return Collections.emptyList()
-        if (refExpr.getParentByType(javaClass<JetTypeReference>()) != null) return Collections.emptyList()
+        if (refExpr.getNonStrictParentOfType<JetTypeReference>() != null) return Collections.emptyList()
 
         val file = refExpr.getContainingFile() as? JetFile ?: return Collections.emptyList()
 
@@ -48,7 +48,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
             }
         } as? JetExpression ?: return Collections.emptyList()
 
-        val inImport = refExpr.getParentByType(javaClass<JetImportDirective>()) != null
+        val inImport = refExpr.getNonStrictParentOfType<JetImportDirective>() != null
         val qualifierExpected = refExpr.isDotReceiver() || ((refExpr.getParent() as? JetDotQualifiedExpression)?.isDotReceiver() ?: false)
 
         if (inImport || qualifierExpected) {

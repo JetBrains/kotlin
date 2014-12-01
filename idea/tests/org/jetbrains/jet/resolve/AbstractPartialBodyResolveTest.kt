@@ -18,7 +18,7 @@ package org.jetbrains.jet.resolve
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
@@ -59,7 +59,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         else {
             val offset = editor.getCaretModel().getOffset()
             val element = file.findElementAt(offset)
-            element.getParentByType(javaClass<JetSimpleNameExpression>()) ?: error("No JetSimpleNameExpression at caret")
+            element.getNonStrictParentOfType<JetSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
         }
 
         val resolutionFacade = file.getResolutionFacade()

@@ -20,7 +20,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
@@ -38,6 +37,7 @@ import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -60,7 +60,7 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
             if (file is JetFile && o is DeclarationDescriptorLookupObject) {
                 val descriptor = o.descriptor as? CallableDescriptor
                 if (descriptor != null) {
-                    if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
+                    if (element.getStrictParentOfType<JetQualifiedExpression>() != null &&
                         descriptor.getExtensionReceiverParameter() == null) {
                         return@runReadAction
                     }
@@ -103,7 +103,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         val element = context.getFile().findElementAt(startOffset) ?: return
 
         when {
-            PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null -> return
+            element.getStrictParentOfType<JetImportDirective>() != null -> return
 
             isInfixCall(element) -> {
                 if (context.getCompletionChar() == ' ') {
@@ -194,7 +194,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 
         private fun shouldAddBrackets(element : PsiElement) : Boolean {
-            return PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) == null
+            return element.getStrictParentOfType<JetImportDirective>() == null
         }
 
         private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {

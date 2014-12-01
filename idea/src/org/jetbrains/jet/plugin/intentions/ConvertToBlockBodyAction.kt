@@ -20,10 +20,10 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.block.body.action.family.name")
@@ -76,7 +76,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     }
 
     private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
-        val declaration = PsiTreeUtil.getParentOfType(element, javaClass<JetDeclarationWithBody>())
+        val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
         if (declaration == null || declaration is JetFunctionLiteral || declaration.hasBlockBody()) return null
         val body = declaration.getBodyExpression()
         if (body == null) return null

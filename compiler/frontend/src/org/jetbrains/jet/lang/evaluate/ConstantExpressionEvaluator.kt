@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
 import java.math.BigInteger
 import org.jetbrains.jet.lang.diagnostics.Errors
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 
@@ -257,7 +257,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         assert (name == "minus", "Only negation should be checked for overflow")
 
         if (receiver.value == result) {
-            trace.report(Errors.INTEGER_OVERFLOW.on(PsiTreeUtil.getParentOfType(callExpression, javaClass<JetExpression>()) ?: callExpression))
+            trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<JetExpression>() ?: callExpression))
         }
         return result
     }
@@ -282,7 +282,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val resultInBigIntegers = checker(toBigInteger(receiver.value), toBigInteger(parameter.value))
 
         if (toBigInteger(actualResult) != resultInBigIntegers) {
-            trace.report(Errors.INTEGER_OVERFLOW.on(PsiTreeUtil.getParentOfType(callExpression, javaClass<JetExpression>()) ?: callExpression))
+            trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<JetExpression>() ?: callExpression))
         }
         return actualResult
     }

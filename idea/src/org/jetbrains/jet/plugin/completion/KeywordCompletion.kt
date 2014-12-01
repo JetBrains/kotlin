@@ -27,12 +27,12 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.jet.lexer.JetKeywordToken
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 
 import org.jetbrains.jet.lexer.JetTokens.*
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 
 class KeywordLookupObject(val keyword: String)
 
@@ -162,7 +162,7 @@ object KeywordCompletion {
             when {
                 nodeType != keywordTokenType -> false
 
-                elementAt.getParentByType(javaClass<PsiErrorElement>(), strict = false) != null -> false
+                elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false
 
                 elementAt.prevLeafSkipWhitespacesAndComments() is PsiErrorElement -> false
 

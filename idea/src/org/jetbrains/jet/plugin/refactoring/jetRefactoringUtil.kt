@@ -56,7 +56,6 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
@@ -65,6 +64,9 @@ import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
 import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -131,8 +133,8 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<J
 public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<JetElement> {
     if (includeAll) return getAllExtractionContainers(strict)
 
-    val declaration = getParentByType(javaClass<JetDeclaration>(), strict)?.let { declaration ->
-        stream(declaration) { it.getParentByType(javaClass<JetDeclaration>(), true) }.firstOrNull { it !is JetFunctionLiteral }
+    val declaration = getParentOfType<JetDeclaration>(strict)?.let { declaration ->
+        stream(declaration) { it.getStrictParentOfType<JetDeclaration>() }.firstOrNull { it !is JetFunctionLiteral }
     } ?: return Collections.emptyList()
 
     val parent = declaration.getParent()?.let {
@@ -259,7 +261,7 @@ fun PsiElement.getLineCount(): Int {
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
 public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? {
-    val enclosingDeclaration = getParentByType(javaClass<JetDeclaration>(), true)
+    val enclosingDeclaration = getStrictParentOfType<JetDeclaration>()
     val bodyElement = when (enclosingDeclaration) {
         is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
         is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
@@ -291,7 +293,7 @@ public fun chooseContainerElement<T>(
                         return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
                     }
                     if (this is JetObjectDeclaration && this.isClassObject()) {
-                        return "Class object of ${getParentByType(javaClass<JetClassOrObject>(), true)?.renderName() ?: "<anonymous>"}"
+                        return "Class object of ${getStrictParentOfType<JetClassOrObject>()?.renderName() ?: "<anonymous>"}"
                     }
                     return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
                 }

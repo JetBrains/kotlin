@@ -19,16 +19,18 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature.usages
 import org.jetbrains.jet.lang.psi.JetEnumEntry
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry): Boolean {
         if (changeInfo.getNewParameters().size > 0) {
             val psiFactory = JetPsiFactory(element)
 
-            val enumClass = element.getParentByType(javaClass<JetClass>(), true)!!
+            val enumClass = element.getStrictParentOfType<JetClass>()!!
             val delegatorToSuperCall = element.addAfter(
                     psiFactory.createDelegatorToSuperCall("${enumClass.getName()}()"),
                     element.getNameAsDeclaration()

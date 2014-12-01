@@ -20,13 +20,13 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 
 public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
@@ -34,7 +34,7 @@ public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.
         if (psiElement !is JetNamedFunction) return
         if (psiElement.getBodyExpression() != null|| psiElement.getEqualsToken() != null) return
 
-        val parentDeclaration = PsiTreeUtil.getParentOfType(psiElement, javaClass<JetDeclaration>())
+        val parentDeclaration = psiElement.getStrictParentOfType<JetDeclaration>()
         if (parentDeclaration is JetClassOrObject) {
             if (JetPsiUtil.isTrait(parentDeclaration) || psiElement.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
                 return

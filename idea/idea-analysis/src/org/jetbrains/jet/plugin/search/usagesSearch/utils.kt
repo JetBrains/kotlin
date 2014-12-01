@@ -54,16 +54,16 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
 }
 
 fun PsiReference.isImportUsage(): Boolean =
-        getElement()!!.getParentByType(javaClass<JetImportDirective>()) != null
+        getElement()!!.getNonStrictParentOfType<JetImportDirective>() != null
 
 fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean = with (getElement()!!) {
     fun getCallDescriptor(bindingContext: BindingContext): DeclarationDescriptor? {
-        val constructorCalleeExpression = getParentByType(javaClass<JetConstructorCalleeExpression>())
+        val constructorCalleeExpression = getNonStrictParentOfType<JetConstructorCalleeExpression>()
         if (constructorCalleeExpression != null) {
             return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.getConstructorReferenceExpression())
         }
 
-        val callExpression = getParentByType(javaClass<JetCallExpression>())
+        val callExpression = getNonStrictParentOfType<JetCallExpression>()
         if (callExpression != null) {
             val callee = callExpression.getCalleeExpression()
             if (callee is JetReferenceExpression) {
@@ -75,7 +75,7 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
     }
 
     fun checkJavaUsage(): Boolean {
-        val call = getParentByType(javaClass<PsiConstructorCall>())
+        val call = getNonStrictParentOfType<PsiConstructorCall>()
         return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == jetClassOrObject
     }
 
@@ -142,7 +142,7 @@ fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
     if (refTarget is KotlinLightMethod) {
         val origin = refTarget.origin
         val declaration: JetNamedDeclaration? = when (origin) {
-            is JetPropertyAccessor -> origin.getParentByType(javaClass<JetProperty>())
+            is JetPropertyAccessor -> origin.getNonStrictParentOfType<JetProperty>()
             is JetProperty, is JetParameter -> origin as JetNamedDeclaration
             else -> null
         }

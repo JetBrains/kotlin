@@ -26,7 +26,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
@@ -56,7 +56,7 @@ open public class KotlinLightMethodForDeclaration(
     private val typeParamsList: CachedValue<PsiTypeParameterList> by Delegates.blockingLazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiTypeParameterList>({
-            val declaration = if (origin is JetPropertyAccessor) origin.getParentByType(javaClass<JetProperty>()) else origin
+            val declaration = if (origin is JetPropertyAccessor) origin.getNonStrictParentOfType<JetProperty>() else origin
 
             val list = if (origin is JetClassOrObject) {
                 LightTypeParameterListBuilder(getManager(), getLanguage())

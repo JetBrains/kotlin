@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetExpression
 import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
@@ -39,7 +39,7 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
                            }
 
                            Errors.NO_VALUE_FOR_PARAMETER,
-                           Errors.TOO_MANY_ARGUMENTS -> diagElement.getParentByType(javaClass<JetCallExpression>())
+                           Errors.TOO_MANY_ARGUMENTS -> diagElement.getNonStrictParentOfType<JetCallExpression>()
 
                            else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
                        } as? JetExpression ?: return null

@@ -21,18 +21,19 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.asJava.unwrapped
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetProperty
 import java.util.HashSet
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
 import com.intellij.psi.PsiPolyVariantReference
 import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -42,8 +43,8 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
         fun PsiElement.adjust(): PsiElement? {
             val target = unwrapped
             return when {
-                target is JetPropertyAccessor -> target.getParentByType(javaClass<JetProperty>())
-                target is JetObjectDeclaration && target.isClassObject() -> target.getParentByType(javaClass<JetClass>())
+                target is JetPropertyAccessor -> target.getNonStrictParentOfType<JetProperty>()
+                target is JetObjectDeclaration && target.isClassObject() -> target.getNonStrictParentOfType<JetClass>()
                 else -> target
             }
         }
@@ -74,5 +75,5 @@ fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newNa
 
     val expr = OperatorToFunctionIntention.convert(expression) as JetQualifiedExpression
     val newCallee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression()!!.getReference()!!.handleElementRename(newName)
-    return PsiTreeUtil.getParentOfType<JetQualifiedExpression>(newCallee, javaClass<JetQualifiedExpression>()) as JetExpression
+    return newCallee.getStrictParentOfType<JetQualifiedExpression>() as JetExpression
 }

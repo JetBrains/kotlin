@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -202,12 +203,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun isOnlyKeywordCompletion()
-            = PsiTreeUtil.getParentOfType(position, javaClass<JetModifierList>()) != null
+            = position.getStrictParentOfType<JetModifierList>() != null
 
     private fun shouldRunOnlyTypeCompletion(): Boolean {
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
-        val typeReference = PsiTreeUtil.getParentOfType(position, javaClass<JetTypeReference>())
+        val typeReference = position.getStrictParentOfType<JetTypeReference>()
         if (typeReference != null) {
             val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
             return firstPartReference == jetReference!!.expression

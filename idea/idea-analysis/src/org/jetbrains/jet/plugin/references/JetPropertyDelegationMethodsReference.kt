@@ -17,13 +17,13 @@
 package org.jetbrains.jet.plugin.references
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetPropertyDelegate
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class JetPropertyDelegationMethodsReference(element: JetPropertyDelegate) : JetMultiReference<JetPropertyDelegate>(element) {
 
@@ -34,7 +34,7 @@ public class JetPropertyDelegationMethodsReference(element: JetPropertyDelegate)
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val property = PsiTreeUtil.getParentOfType(expression, javaClass<JetProperty>())
+        val property = expression.getStrictParentOfType<JetProperty>()
         if (property == null) {
             return Collections.emptyList()
         }

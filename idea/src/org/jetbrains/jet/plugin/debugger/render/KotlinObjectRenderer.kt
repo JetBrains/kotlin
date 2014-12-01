@@ -35,7 +35,6 @@ import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.psi.PsiClass
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.debugger.SourcePosition
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.debugger.impl.DebuggerContextUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.AbsentInformationException
@@ -46,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import com.sun.jdi.ReferenceType
 import org.jetbrains.jet.codegen.AsmUtil
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public open class KotlinObjectRenderer : ClassRenderer() {
 
@@ -129,7 +129,7 @@ public class KotlinObjectFieldDescriptor(
         if (position != null) {
             val element = position.getElementAt()
             if (element != null) {
-                return PsiTreeUtil.getParentOfType(element, javaClass<JetClassOrObject>())
+                return element.getStrictParentOfType<JetClassOrObject>()
             }
         }
         return null

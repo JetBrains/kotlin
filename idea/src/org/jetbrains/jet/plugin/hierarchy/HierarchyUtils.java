@@ -70,11 +70,11 @@ public class HierarchyUtils {
 
     public static PsiElement getCallHierarchyElement(PsiElement element) {
         //noinspection unchecked
-        return PsiUtilPackage.getParentByTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
+        return PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
     }
 
     public static PsiElement getOverrideHierarchyElement(PsiElement element) {
         //noinspection unchecked
-        return PsiUtilPackage.getParentByTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_OVERRIDE_HIERARCHY_ELEMENT);
+        return PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_OVERRIDE_HIERARCHY_ELEMENT);
     }
 }

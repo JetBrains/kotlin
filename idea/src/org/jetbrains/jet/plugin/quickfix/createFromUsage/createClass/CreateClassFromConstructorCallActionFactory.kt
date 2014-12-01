@@ -2,7 +2,7 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
@@ -21,9 +21,9 @@ import java.util.Collections
 public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagElement = diagnostic.getPsiElement()
-        if (diagElement.getParentByType(javaClass<JetTypeReference>()) != null) return null
+        if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
 
-        val inAnnotationEntry = diagElement.getParentByType(javaClass<JetAnnotationEntry>()) != null
+        val inAnnotationEntry = diagElement.getNonStrictParentOfType<JetAnnotationEntry>() != null
 
         val callExpr = diagElement.getParent() as? JetCallExpression ?: return null
         if (callExpr.getCalleeExpression() != diagElement) return null

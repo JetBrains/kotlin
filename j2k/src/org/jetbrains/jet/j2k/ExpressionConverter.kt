@@ -28,7 +28,7 @@ import org.jetbrains.jet.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetParameter
@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.asJava.KotlinLightField
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 trait ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
@@ -70,7 +72,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression) {
-        val assignment = PsiTreeUtil.getParentOfType(expression, javaClass<PsiAssignmentExpression>())
+        val assignment = expression.getStrictParentOfType<PsiAssignmentExpression>()
         val lvalue = assignment != null && expression == assignment.getLExpression();
         result = ArrayAccessExpression(codeConverter.convertExpression(expression.getArrayExpression()),
                                        codeConverter.convertExpression(expression.getIndexExpression()),
@@ -211,7 +213,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         if (target is KotlinLightMethod) {
             val origin = target.origin
-            val isTopLevel = origin?.getParentByType(javaClass<JetClassOrObject>(), true) == null
+            val isTopLevel = origin?.getStrictParentOfType<JetClassOrObject>() == null
             if (origin is JetProperty || origin is JetPropertyAccessor || origin is JetParameter) {
                 val property = if (origin is JetPropertyAccessor)
                     origin.getParent() as JetProperty

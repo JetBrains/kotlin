@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lang.psi.JetValueArgumentList
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -215,7 +216,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
         // no completion in comments
         // TODO: this must be changed if we will have references in doc-comments
-        if (PsiTreeUtil.getParentOfType(position, javaClass<PsiComment>(), false) != null) return true
+        if (position.getNonStrictParentOfType<PsiComment>() != null) return true
 
         // no completion inside number literals
         if (AFTER_NUMBER_LITERAL.accepts(position)) return true

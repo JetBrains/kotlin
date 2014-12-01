@@ -41,7 +41,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.asJava.namedUnwrappedElement
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import java.util.ArrayList
 import com.intellij.refactoring.util.NonCodeUsageInfo
@@ -158,7 +158,7 @@ fun createMoveUsageInfo(
 
     if (reference is JetReference
         && referencedElement.namedUnwrappedElement!!.isExtensionDeclaration()
-        && element.getParentByType(javaClass<JetImportDirective>()) == null) {
+        && element.getNonStrictParentOfType<JetImportDirective>() == null) {
         return MoveRenameUsageInfoForExtension(
                 element, reference, startOffset, endOffset, referencedElement, element.getContainingFile()!!, addImportToOriginalFile
         )

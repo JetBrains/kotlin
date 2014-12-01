@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
@@ -28,6 +27,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")
@@ -70,7 +70,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     private data class Data(val declaration: JetDeclarationWithBody, val value: JetExpression)
 
     private fun calcData(element: PsiElement): Data? {
-        val declaration = PsiTreeUtil.getParentOfType(element, javaClass<JetDeclarationWithBody>())
+        val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
         if (declaration == null || declaration is JetFunctionLiteral) return null
         val body = declaration.getBodyExpression()
         if (!declaration.hasBlockBody() || body !is JetBlockExpression) return null

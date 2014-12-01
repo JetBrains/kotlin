@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.util.text.CharArrayUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetDeclaration
@@ -37,6 +36,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.JetLoopExpression
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     {
@@ -106,7 +106,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
             val settings = CodeStyleSettingsManager.getSettings(file.getProject())
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
-            val elt = PsiTreeUtil.getParentOfType(file.findElementAt(caretOffset - 1), javaClass<JetBlockExpression>())
+            val elt = file.findElementAt(caretOffset - 1).getStrictParentOfType<JetBlockExpression>()
             if (elt != null) {
                 reformat(elt)
             }
