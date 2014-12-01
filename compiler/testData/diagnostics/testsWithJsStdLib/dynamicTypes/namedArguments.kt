@@ -1,6 +1,3 @@
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun test(d: dynamic) {
     d.foo(name = "name")
 

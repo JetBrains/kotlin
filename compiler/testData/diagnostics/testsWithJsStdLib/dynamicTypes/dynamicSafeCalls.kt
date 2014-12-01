@@ -1,6 +1,3 @@
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun test(d: dynamic) {
     val v1 = d?.foo()
     v1.isDynamic() // to check that anything is resolvable

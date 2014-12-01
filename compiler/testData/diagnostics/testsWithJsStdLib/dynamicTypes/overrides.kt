@@ -1,6 +1,3 @@
-// MODULE[js]: m1
-// FILE: k.kt
-
 trait P
 trait R
 

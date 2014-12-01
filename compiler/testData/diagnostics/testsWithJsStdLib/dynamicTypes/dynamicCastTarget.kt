@@ -1,8 +1,5 @@
 // !DIAGNOSTICS: -REDUNDANT_NULLABLE
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun test(d: Any, dl: Collection<dynamic>) {
     d as <!DYNAMIC_NOT_ALLOWED!>dynamic<!>
     d as <!DYNAMIC_NOT_ALLOWED!>dynamic?<!>

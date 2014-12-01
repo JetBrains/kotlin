@@ -1,9 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun dyn(d: dynamic) {}
 
 fun foo(d: dynamic): String = ""

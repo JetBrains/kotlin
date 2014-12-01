@@ -1,9 +1,6 @@
 // !MARK_DYNAMIC_CALLS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun <T> foo(t1: T, t2: T): T = t1
 
 trait Tr

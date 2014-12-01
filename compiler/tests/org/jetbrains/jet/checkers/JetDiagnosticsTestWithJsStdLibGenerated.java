@@ -30,11 +30,182 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetDiagnosticsTestWithJsStdLibGenerated.Native.class})
+@InnerTestClasses({JetDiagnosticsTestWithJsStdLibGenerated.DynamicTypes.class, JetDiagnosticsTestWithJsStdLibGenerated.Native.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnosticsTestWithJsStdLib {
     public void testAllFilesPresentInTestsWithJsStdLib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DynamicTypes extends AbstractJetDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInDynamicTypes() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("block.kt")
+        public void testBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/block.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callableReferences.kt")
+        public void testCallableReferences() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReferences.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conditions.kt")
+        public void testConditions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conditions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conventions.kt")
+        public void testConventions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conventions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamicCalls.kt")
+        public void testDynamicCalls() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamicCallsWithLambdas.kt")
+        public void testDynamicCallsWithLambdas() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCallsWithLambdas.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamicCastTarget.kt")
+        public void testDynamicCastTarget() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCastTarget.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamicSafeCalls.kt")
+        public void testDynamicSafeCalls() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicSafeCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionVals.kt")
+        public void testExtensionVals() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionVals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionVars.kt")
+        public void testExtensionVars() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionVars.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensions.kt")
+        public void testExtensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionsToDynamic.kt")
+        public void testExtensionsToDynamic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionsToDynamic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitDynamicReceiver.kt")
+        public void testImplicitDynamicReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/implicitDynamicReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inference.kt")
+        public void testInference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/inference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("membersOfAny.kt")
+        public void testMembersOfAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/membersOfAny.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("namedArguments.kt")
+        public void testNamedArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/namedArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noUnsupportedInLocals.kt")
+        public void testNoUnsupportedInLocals() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/noUnsupportedInLocals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overloading.kt")
+        public void testOverloading() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overloading.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overloadingAmbiguity.kt")
+        public void testOverloadingAmbiguity() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overloadingAmbiguity.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrides.kt")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reified.kt")
+        public void testReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/reified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCast.kt")
+        public void testSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/smartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("substitution.kt")
+        public void testSubstitution() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/substitution.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("supertypesAndBounds.kt")
+        public void testSupertypesAndBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/supertypesAndBounds.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargs.kt")
+        public void testVarargs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/varargs.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")

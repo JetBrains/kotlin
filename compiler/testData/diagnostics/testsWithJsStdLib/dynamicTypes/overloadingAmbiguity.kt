@@ -1,9 +1,6 @@
 // !MARK_DYNAMIC_CALLS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun dynamic.foo(s: String, a: Any) {}
 fun dynamic.foo(s: Any, a: String) {}
 

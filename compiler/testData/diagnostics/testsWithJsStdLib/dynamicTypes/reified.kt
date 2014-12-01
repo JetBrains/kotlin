@@ -1,8 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun <reified T> foo(t: T) {}
 class C<reified T>(t: T)
 

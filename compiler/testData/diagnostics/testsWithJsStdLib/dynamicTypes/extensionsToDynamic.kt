@@ -1,8 +1,5 @@
 // !MARK_DYNAMIC_CALLS
 
-// MODULE[js]: m1
-// FILE: k.kt
-
 fun test(d: dynamic) {
     d.onDynamic()
     d.onNullableDynamic()
