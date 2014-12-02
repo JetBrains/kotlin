@@ -50,10 +50,18 @@ A native member of package `p` yields one JVM method:
 ### Native Property Accessors
 
 A property can not be marked `native`.
-A *property accessor* can be marked `native`. In this case the generated code is the same as for a native function defined in the same
-context as the property.
+A *property accessor* can be marked `native` if it has no body (i.e. it is a *default accessor*).
+In this case the generated code is the same as for a native function defined in the same context as the property.
+
+Example:
+``` kotlin
+val foo: Int
+  [native] get
+```
 
 ## Not implemented (yet)
 
 - native property accessors
+ - frontend: when accessors are default and native, don't require an initializer, don't allow a backing field
+ - backend: when accessors are default and native, don't generate a backing field
 - applicability checks: only functions and property accessors
