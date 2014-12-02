@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -29,7 +30,6 @@ import org.jetbrains.jet.context.LazyResolveToken;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
@@ -63,6 +63,7 @@ public class InjectorForLazyResolve {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final ModuleDescriptorImpl moduleDescriptor;
+    private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final BindingTrace bindingTrace;
@@ -72,7 +73,6 @@ public class InjectorForLazyResolve {
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
-    private final KotlinBuiltIns kotlinBuiltIns;
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
@@ -108,6 +108,7 @@ public class InjectorForLazyResolve {
         this.globalContext = globalContext;
         this.storageManager = globalContext.getStorageManager();
         this.moduleDescriptor = moduleDescriptor;
+        this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
         this.bindingTrace = bindingTrace;
@@ -117,7 +118,6 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);

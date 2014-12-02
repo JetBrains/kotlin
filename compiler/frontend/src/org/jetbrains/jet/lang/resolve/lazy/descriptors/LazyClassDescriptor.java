@@ -514,7 +514,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
                         JetClassOrObject classOrObject = info.getCorrespondingClassOrObject();
                         if (classOrObject == null) {
-                            return new Supertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+                            return new Supertypes(Collections.singleton(resolveSession.getModuleDescriptor().getBuiltIns().getAnyType()));
                         }
 
                         List<JetType> allSupertypes = resolveSession.getDescriptorResolver()

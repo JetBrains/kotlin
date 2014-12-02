@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -29,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
@@ -54,6 +54,7 @@ public class InjectorForTests {
 
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
+    private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DescriptorResolver descriptorResolver;
     private final ExpressionTypingServices expressionTypingServices;
@@ -65,7 +66,6 @@ public class InjectorForTests {
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
-    private final KotlinBuiltIns kotlinBuiltIns;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
@@ -88,12 +88,12 @@ public class InjectorForTests {
     ) {
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
+        this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.descriptorResolver = new DescriptorResolver();
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.callResolver = new CallResolver();
-        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver, kotlinBuiltIns);
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();

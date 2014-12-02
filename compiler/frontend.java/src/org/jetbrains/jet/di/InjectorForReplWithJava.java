@@ -21,6 +21,7 @@ import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -47,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider.AdditionalFileScopeProv
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
@@ -99,6 +99,7 @@ public class InjectorForReplWithJava {
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl module;
+    private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
@@ -125,7 +126,6 @@ public class InjectorForReplWithJava {
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
-    private final KotlinBuiltIns kotlinBuiltIns;
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
@@ -180,6 +180,7 @@ public class InjectorForReplWithJava {
         this.storageManager = globalContext.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.module = module;
+        this.kotlinBuiltIns = module.getBuiltIns();
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
@@ -211,7 +212,6 @@ public class InjectorForReplWithJava {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
