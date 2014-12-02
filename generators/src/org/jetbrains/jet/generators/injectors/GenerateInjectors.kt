@@ -103,8 +103,7 @@ private fun generatorForLazyTopDownAnalyzerBasic() =
 
             publicField<LazyTopDownAnalyzer>()
 
-            field<AdditionalCheckerProvider>(
-                  init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
+            field<AdditionalCheckerProvider.Empty>()
         }
 
 private fun generatorForLazyBodyResolve() =
@@ -127,8 +126,7 @@ private fun generatorForTopDownAnalyzerForJs() =
             publicField<LazyTopDownAnalyzer>()
 
             field<MutablePackageFragmentProvider>()
-            field<AdditionalCheckerProvider>(
-                  init = GivenExpression(javaClass<KotlinJsDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
+            field<KotlinJsDeclarationCheckerProvider>()
             field<DynamicTypesAllowed>()
         }
 
@@ -195,8 +193,7 @@ private fun generatorForLazyResolveWithJava() =
             field<LazyResolveToken>()
             field<JavaLazyAnalyzerPostConstruct>()
 
-            field<AdditionalCheckerProvider>(
-                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
+            field<JavaDeclarationCheckerProvider>()
         }
 
 private fun generatorForReplWithJava() =
@@ -217,8 +214,7 @@ private fun generatorForMacro() =
             field<GlobalContext>(useAsContext = true,
                   init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
 
-            field<AdditionalCheckerProvider>(
-                  init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
+            field<AdditionalCheckerProvider.Empty>()
         }
 
 private fun generatorForTests() =
@@ -234,8 +230,7 @@ private fun generatorForTests() =
             field<GlobalContext>(init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"),
                   useAsContext = true)
 
-            field<AdditionalCheckerProvider>(
-                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
+            field<JavaDeclarationCheckerProvider>()
         }
 
 private fun generatorForBodyResolve() =
@@ -302,8 +297,7 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     field<JavaLazyAnalyzerPostConstruct>()
     field<JavaFlexibleTypeCapabilitiesProvider>()
 
-    field<AdditionalCheckerProvider>(
-          init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
+    field<JavaDeclarationCheckerProvider>()
 
     field<VirtualFileFinder>(init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
 }

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -83,7 +83,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ResolveSession resolveSession;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final KotlinJsDeclarationCheckerProvider kotlinJsDeclarationCheckerProvider;
     private final DynamicTypesAllowed dynamicTypesAllowed;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -141,7 +141,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
-        this.additionalCheckerProvider = org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider.INSTANCE$;
+        this.kotlinJsDeclarationCheckerProvider = KotlinJsDeclarationCheckerProvider.INSTANCE$;
         this.dynamicTypesAllowed = new DynamicTypesAllowed();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -171,7 +171,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
-        this.modifiersChecker = new ModifiersChecker(bindingTrace, additionalCheckerProvider);
+        this.modifiersChecker = new ModifiersChecker(bindingTrace, kotlinJsDeclarationCheckerProvider);
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.declarationResolver = new DeclarationResolver();
         this.importsResolver = new ImportsResolver();
@@ -223,7 +223,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
-        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
+        expressionTypingComponents.setAdditionalCheckerProvider(kotlinJsDeclarationCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         expressionTypingComponents.setDynamicTypesSettings(dynamicTypesAllowed);

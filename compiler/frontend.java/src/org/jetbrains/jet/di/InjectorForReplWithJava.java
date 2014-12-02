@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaLazyAnalyzerPostConstruct;
 import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider;
-import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -119,7 +119,7 @@ public class InjectorForReplWithJava {
     private final SingleModuleClassResolver singleModuleClassResolver;
     private final JavaLazyAnalyzerPostConstruct javaLazyAnalyzerPostConstruct;
     private final JavaFlexibleTypeCapabilitiesProvider javaFlexibleTypeCapabilitiesProvider;
-    private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final JavaDeclarationCheckerProvider javaDeclarationCheckerProvider;
     private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -204,7 +204,7 @@ public class InjectorForReplWithJava {
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
         this.javaLazyAnalyzerPostConstruct = new JavaLazyAnalyzerPostConstruct();
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
-        this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
+        this.javaDeclarationCheckerProvider = JavaDeclarationCheckerProvider.INSTANCE$;
         this.additionalFileScopeProvider = additionalFileScopeProvider;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -233,7 +233,7 @@ public class InjectorForReplWithJava {
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
-        this.modifiersChecker = new ModifiersChecker(bindingTrace, additionalCheckerProvider);
+        this.modifiersChecker = new ModifiersChecker(bindingTrace, javaDeclarationCheckerProvider);
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.declarationResolver = new DeclarationResolver();
         this.importsResolver = new ImportsResolver();
@@ -306,7 +306,7 @@ public class InjectorForReplWithJava {
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
-        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
+        expressionTypingComponents.setAdditionalCheckerProvider(javaDeclarationCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
