@@ -527,6 +527,7 @@ fun main(args: Array<String>) {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
             model("configuration/maven", extension = null, recursive = false, testMethod = "doTestWithMaven")
+            model("configuration/js-maven", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
         }
 
         testClass(javaClass<AbstractJetFormatterTest>()) {

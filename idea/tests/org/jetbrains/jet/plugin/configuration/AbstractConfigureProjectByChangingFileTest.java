@@ -33,6 +33,11 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavaMavenConfigurator());
     }
 
+    public void doTestWithJSMaven(@NotNull String path) throws Exception {
+        String pathWithFile = path + "/" + MavenConstants.POM_XML;
+        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavascriptMavenConfigurator());
+    }
+
     public void doTestAndroidGradle(@NotNull String path) throws Exception {
         doTest(path, path.replace("before", "after"), new KotlinAndroidGradleModuleConfigurator());
     }
