@@ -125,7 +125,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
             // skip java.util.Collection, etc.
-            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFqNameSafe(descriptor)).isEmpty()) {
+            if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(DescriptorUtils.getFqNameSafe(descriptor)).isEmpty()) {
                 return null;
             }
 

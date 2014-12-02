@@ -148,7 +148,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name),
                                         DEFAULT_IMPORTS,
-                                        JavaToKotlinClassMap.getInstance());
+                                        JavaToKotlinClassMap.INSTANCE);
     }
 
     @NotNull

@@ -46,7 +46,7 @@ class LazyJavaTypeResolver(
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val canonicalText = javaType.getCanonicalText()
-                val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText)
+                val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass(canonicalText)
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 jetType!!
             }
@@ -65,7 +65,7 @@ class LazyJavaTypeResolver(
     public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
         val javaComponentType = arrayType.getComponentType()
         if (javaComponentType is JavaPrimitiveType) {
-            val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
+            val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
             if (jetType != null) {
                 return if (PLATFORM_TYPES && attr.allowFlexible)
                            FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
@@ -117,7 +117,7 @@ class LazyJavaTypeResolver(
                     val fqName = classifier.getFqName()
                             .sure("Class type should have a FQ name: " + classifier)
 
-                    val javaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
+                    val javaToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
                     val howThisTypeIsUsedEffectively = when {
                         attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
                         attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT

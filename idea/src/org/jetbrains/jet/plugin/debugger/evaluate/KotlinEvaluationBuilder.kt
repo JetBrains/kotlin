@@ -482,7 +482,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
 
     val jvmName = JvmClassName.byInternalName(getInternalName()).getFqNameForClassNameWithoutDollars()
 
-    val platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmName)
+    val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName)
     if (platformClasses.notEmpty) return platformClasses.first()
 
     return runReadAction {
