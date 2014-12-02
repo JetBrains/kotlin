@@ -189,10 +189,11 @@ public class FunctionCodegen extends ParentCodegenAware {
         else if (staticInClassObject) {
             // native platformStatic foo() in class object should delegate to the static native function moved to the outer class
             mv.visitCode();
-            ClassifierDescriptor outerClassDescriptor =
-                    (ClassifierDescriptor) functionDescriptor.getContainingDeclaration().getContainingDeclaration();
-            assert outerClassDescriptor != null : "Class object has no outer class: " + functionDescriptor.getContainingDeclaration();
-            generateDelegateToMethodBody(false, mv, asmMethod, typeMapper.mapClass(outerClassDescriptor).getInternalName());
+            FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
+            JvmMethodSignature jvmMethodSignature =
+                    typeMapper.mapSignature(getParentCodegen().getContext().accessibleFunctionDescriptor(staticFunctionDescriptor));
+            Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
+            generateDelegateToMethodBody(false, mv, jvmMethodSignature.getAsmMethod(), owningType.getInternalName());
         }
 
         endVisit(mv, null, origin.getElement());

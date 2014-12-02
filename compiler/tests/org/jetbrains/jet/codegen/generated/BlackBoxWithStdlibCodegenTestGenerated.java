@@ -1831,6 +1831,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("privateStatic.kt")
+        public void testPrivateStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/privateStatic.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("simpleNative.kt")
         public void testSimpleNative() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/simpleNative.kt");
@@ -1969,6 +1975,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("prefixInc.kt")
         public void testPrefixInc() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/prefixInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("privateMethod.kt")
+        public void testPrivateMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/privateMethod.kt");
             doTestWithStdlib(fileName);
         }
 

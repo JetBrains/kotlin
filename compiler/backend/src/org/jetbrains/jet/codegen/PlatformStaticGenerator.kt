@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.context.MethodContext
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.backend.common.CodegenUtil
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import kotlin.platform.platformStatic
 
 class PlatformStaticGenerator(
         val descriptor: FunctionDescriptor,
@@ -37,17 +38,7 @@ class PlatformStaticGenerator(
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
 
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
-        val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor
-        val copies = CodegenUtil.copyFunctions(
-                memberDescriptor,
-                memberDescriptor,
-                declarationOrigin.descriptor?.getContainingDeclaration()?.getContainingDeclaration(),
-                descriptor.getModality(),
-                descriptor.getVisibility(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED,
-                false
-        )
-        val staticFunctionDescriptor = copies[descriptor]!!
+        val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
 
         val jvmMethodSignature = state.getTypeMapper().mapSignature(staticFunctionDescriptor)
 
@@ -86,5 +77,23 @@ class PlatformStaticGenerator(
                     }
                 }
         )
+    }
+
+    class object {
+        [platformStatic]
+        public fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
+            val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor
+            val copies = CodegenUtil.copyFunctions(
+                    memberDescriptor,
+                    memberDescriptor,
+                    descriptor.getContainingDeclaration()?.getContainingDeclaration(),
+                    descriptor.getModality(),
+                    descriptor.getVisibility(),
+                    CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    false
+            )
+            val staticFunctionDescriptor = copies[descriptor]!!
+            return staticFunctionDescriptor
+        }
     }
 }
