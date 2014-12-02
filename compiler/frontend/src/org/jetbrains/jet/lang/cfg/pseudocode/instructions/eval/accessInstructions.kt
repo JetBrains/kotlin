@@ -68,7 +68,7 @@ public class ReadValueInstruction private (
     }
 
     override fun toString(): String {
-        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().joinToString()}"
+        val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keySet().joinToString()}"
         return "r(${render(element)}$inVal) -> $outputValue"
     }
 

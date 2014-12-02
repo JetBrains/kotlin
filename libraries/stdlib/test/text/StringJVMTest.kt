@@ -217,7 +217,7 @@ class StringJVMTest {
         // group characters by their case
         val data = "abAbaABcD"
         val result = data.groupBy { it.isLowerCase() }
-        assertEquals(2, result.size)
+        assertEquals(2, result.size())
         assertEquals(listOf('a','b','b','a','c'), result.get(true))
     }
 

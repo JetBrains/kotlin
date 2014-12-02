@@ -61,7 +61,7 @@ import org.jetbrains.jet.lang.psi.JetDynamicType
 // invoke this instead of getText() when you need debug text to identify some place in PSI without storing the element itself
 // this is need to avoid unnecessary file parses
 // this defaults to get text if the element is not stubbed
-public fun JetElement.getDebugText(): String? {
+public fun JetElement.getDebugText(): String {
     if (this !is JetElementImplStub<*> || this.getStub() == null) {
         return getText()
     }
@@ -329,12 +329,12 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
 
     fun renderChildren(element: JetElementImplStub<*>, separator: String, prefix: String = "", postfix: String = ""): String? {
         val childrenTexts = element.getStub()?.getChildrenStubs()?.map { (it?.getPsi() as? JetElement)?.getDebugText() }
-        return childrenTexts?.filterNotNull()?.makeString(separator, prefix, postfix) ?: element.getText()
+        return childrenTexts?.filterNotNull()?.join(separator, prefix, postfix) ?: element.getText()
     }
 
     fun render(element: JetElementImplStub<*>, vararg relevantChildren: JetElement?): String? {
         if (element.getStub() == null) return element.getText()
-        return relevantChildren.filterNotNull().map { it.getDebugText() }.makeString("", "", "")
+        return relevantChildren.filterNotNull().map { it.getDebugText() }.join("", "", "")
     }
 }
 

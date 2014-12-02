@@ -60,7 +60,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
-            append(notInferredTypeParameters.map { typeParameter -> IdeRenderers.error(typeParameter.getName()) }.makeString())
+            append(notInferredTypeParameters.map { typeParameter -> IdeRenderers.error(typeParameter.getName()) }.join())
             append("<i> cannot be inferred</i>")
             if (!inferredTypeParameters.isEmpty()) {
                 append("; ")
@@ -71,7 +71,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         if (!inferredTypeParameters.isEmpty()) {
             append(inferredTypeParameters.map { typeParameter ->
                 "${typeParameter.getName()} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
-            }.makeString())
+            }.join())
         }
     }
 
@@ -81,7 +81,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
     }
     append(resultingDescriptor.getName()).append("(")
-    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.makeString())
+    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.join())
     append(if (resolvedCall.hasUnmappedArguments()) IdeRenderers.error(")") else ")")
 
     if (!resolvedCall.getCandidateDescriptor().getTypeParameters().isEmpty()) {

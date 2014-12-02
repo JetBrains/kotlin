@@ -41,7 +41,7 @@ public abstract class OperationInstruction protected(
 
     protected fun renderInstruction(name: String, desc: String): String =
             "$name($desc" +
-            (if (inputValues.notEmpty) "|${inputValues.joinToString(", ")})" else ")") +
+            (if (inputValues.isNotEmpty()) "|${inputValues.joinToString(", ")})" else ")") +
             (if (resultValue != null) " -> $resultValue" else "")
 
     protected fun setResult(value: PseudoValue?): OperationInstruction {

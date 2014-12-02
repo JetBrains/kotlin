@@ -30,7 +30,7 @@ public class CompositeBindingContext private (
     class object {
         public fun create(delegates: List<BindingContext>): BindingContext {
             if (delegates.isEmpty()) return BindingContext.EMPTY
-            if (delegates.size == 1) return delegates.first()
+            if (delegates.size() == 1) return delegates.first()
             return CompositeBindingContext(delegates)
         }
     }

@@ -96,7 +96,7 @@ private fun isNameInitialized(
     initializer: JsStatement
 ): Boolean {
     val thenStmt = (initializer as JsIf).getThenStatement()!!
-    val lastThenStmt = flattenStatement(thenStmt).last
+    val lastThenStmt = flattenStatement(thenStmt).last()
 
     val expr = (lastThenStmt as? JsExpressionStatement)?.getExpression()
     if (expr !is JsBinaryOperation) return false

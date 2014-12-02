@@ -61,7 +61,7 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
             if (tokens[idx] == JetTokens.DOC_COMMENT) return idx
         }
 
-        return tokens.size
+        return tokens.size()
     }
 }
 

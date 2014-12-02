@@ -8,7 +8,7 @@ public inline fun String.indexOf(ch : Char, fromIndex : Int) : Int = indexOf(ch.
 
 public inline fun String.matches(regex : String) : Boolean {
     val result = this.match(regex)
-    return result != null && result.size > 0
+    return result != null && result.size() > 0
 }
 
 /**

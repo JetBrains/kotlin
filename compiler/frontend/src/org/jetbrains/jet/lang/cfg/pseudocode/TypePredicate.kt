@@ -59,14 +59,14 @@ public object AllTypes : TypePredicate {
 
 // todo: simplify computed type predicate when possible
 public fun and(predicates: Collection<TypePredicate>): TypePredicate =
-        when (predicates.size) {
+        when (predicates.size()) {
             0 -> AllTypes
             1 -> predicates.first()
             else -> ForAllTypes(predicates.toList())
         }
 
 public fun or(predicates: Collection<TypePredicate>): TypePredicate? =
-        when (predicates.size) {
+        when (predicates.size()) {
             0 -> null
             1 -> predicates.first()
             else -> ForSomeType(predicates.toList())

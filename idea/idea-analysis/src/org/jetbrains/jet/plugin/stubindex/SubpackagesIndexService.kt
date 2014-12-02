@@ -62,7 +62,7 @@ public class SubpackagesIndexService(private val project: Project) {
         public fun getSubpackages(fqName: FqName, scope: GlobalSearchScope): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()
-            val len = fqName.pathSegments().size
+            val len = fqName.pathSegments().size()
             for (filesFqName in possibleFilesFqNames) {
                 val candidateSubPackageShortName = filesFqName.pathSegments()[len]
                 if (candidateSubPackageShortName in existingSubPackagesShortNames) {

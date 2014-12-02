@@ -259,7 +259,7 @@ public object ShortenReferences {
             val newContext = selectorCopy.analyzeInContext(scope)
             val targetsAfter = (selectorCopy.getCalleeExpressionIfAny() as JetReferenceExpression).getTargets(newContext)
 
-            when (targetsAfter.size) {
+            when (targetsAfter.size()) {
                 0 -> return importInserter.addImport(targetBefore)
 
                 1 -> if (targetBefore == targetsAfter.first()) return true

@@ -30,7 +30,7 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
 
     private val labelScopes = Stack<LabelScope>()
     private val topLabelScope: LabelScope?
-        get() = if (labelScopes.notEmpty) labelScopes.peek() else null
+        get() = if (labelScopes.isNotEmpty()) labelScopes.peek() else null
 
     override fun declareName(identifier: String): JsName = super.declareFreshName(identifier)
 
@@ -45,7 +45,7 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
     }
 
     public fun exitLabel() {
-        assert(labelScopes.notEmpty) { "No scope to exit from" }
+        assert(labelScopes.isNotEmpty()) { "No scope to exit from" }
         labelScopes.pop()
     }
 

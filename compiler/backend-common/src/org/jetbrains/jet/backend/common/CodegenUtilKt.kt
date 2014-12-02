@@ -62,7 +62,7 @@ public object CodegenUtilKt {
                                         (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it)).map { it.getOriginal() }.contains(overriddenDescriptor.getOriginal())
                                     }
                         }
-                assert(actualDelegates.size <= 1) { "Meny delegates found for $delegatingMember: $actualDelegates" }
+                assert(actualDelegates.size() <= 1) { "Meny delegates found for $delegatingMember: $actualDelegates" }
 
                 actualDelegates.firstOrNull()
             }

@@ -88,7 +88,7 @@ public fun isCallInvocation(invocation: JsInvocation): Boolean {
     val qualifier = invocation.getQualifier() as? JsNameRef
     val arguments = invocation.getArguments()
 
-    return qualifier?.getIdent() == Namer.CALL_FUNCTION && arguments.notEmpty
+    return qualifier?.getIdent() == Namer.CALL_FUNCTION && arguments.isNotEmpty()
 }
 
 /**

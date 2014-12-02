@@ -366,7 +366,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
         // array()
         if (CompileTimeConstantUtils.isArrayMethodCall(call)) {
-            val varargType = resultingDescriptor.getValueParameters().first?.getVarargElementType()!!
+            val varargType = resultingDescriptor.getValueParameters().first().getVarargElementType()!!
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
             return ArrayValue(arguments, resultingDescriptor.getReturnType()!!, true, arguments.any() { it.usesVariableAsConstant() })
@@ -427,7 +427,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (argumentCompileTimeType == null) return null
 
         val arguments = argument.getArguments()
-        if (arguments.size != 1) return null
+        if (arguments.size() != 1) return null
 
         val argumentExpression = arguments.first().getArgumentExpression()
         if (argumentExpression == null) return null

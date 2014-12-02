@@ -52,7 +52,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         if (internalTasks == null) {
             val tasks = ArrayList<ResolutionTask<D, F>>()
             for (priority in (0..priorityProvider.getMaxPriority()).reversed()) {
-                for (candidateIndex in 0..candidatesList.size - 1) {
+                for (candidateIndex in candidatesList.indices) {
                     val lazyCandidates = {
                         candidatesList[candidateIndex]().filter { priorityProvider.getPriority(it) == priority }.toReadOnlyList()
                     }

@@ -39,7 +39,7 @@ public abstract class ChangeSupport {
         }
         var listeners = nameListeners?.get(name)
         if (listeners == null) {
-            listeners = arrayList<ChangeListener>()
+            listeners = arrayListOf<ChangeListener>()
             nameListeners?.put(name, listeners!!)
         }
         listeners?.add(listener)
