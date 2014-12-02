@@ -176,7 +176,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @NotNull
     public Map<JetCallableDeclaration, CallableMemberDescriptor> getMembers() {
         if (members == null) {
-            members = Maps.newHashMap();
+            members = Maps.newLinkedHashMap();
             members.putAll(functions);
             members.putAll(properties);
             members.putAll(primaryConstructorParameterProperties);
