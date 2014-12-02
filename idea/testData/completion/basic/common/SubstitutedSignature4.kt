@@ -10,5 +10,5 @@ class Outer : Trait<String> {
     }
 }
 
-// EXIST: { itemText: "extension", tailText: "(t: String) for Trait<String> in <root>", typeText: "String" }
-// EXIST: { itemText: "extension", tailText: "(t: Int) for Trait<Int> in <root>", typeText: "Int" }
+// EXIST: { itemText: "extension", tailText: "(t: String) for Trait<T> in <root>", typeText: "String" }
+// EXIST: { itemText: "extension", tailText: "(t: Int) for Trait<T> in <root>", typeText: "Int" }
