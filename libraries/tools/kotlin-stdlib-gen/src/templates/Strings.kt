@@ -5,17 +5,6 @@ import templates.Family.*
 fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
-        deprecate{"Use joinTo() instead"}
-        returns { "Unit" }
-        exclude(Strings)
-        body {
-            """
-            joinTo(buffer, separator, prefix, postfix, limit, truncated)
-            """
-        }
-    }
-
     templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
@@ -58,17 +47,6 @@ fun strings(): List<GenericFunction> {
             if (limit >= 0 && count > limit) buffer.append(truncated)
             buffer.append(postfix)
             return buffer
-            """
-        }
-    }
-
-    templates add f("makeString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
-        deprecate{"Use joinToString() instead"}
-        exclude(Strings)
-        returns("String")
-        body {
-            """
-            return joinToString(separator, prefix, postfix, limit, truncated)
             """
         }
     }
