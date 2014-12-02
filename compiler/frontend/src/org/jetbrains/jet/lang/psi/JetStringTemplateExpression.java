@@ -17,9 +17,18 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.ElementManipulators;
+import com.intellij.psi.LiteralTextEscaper;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetStringTemplateExpression extends JetExpressionImpl {
+
+public class JetStringTemplateExpression extends JetExpressionImpl implements PsiLanguageInjectionHost {
+    private static final TokenSet TOKENS_SUITABLE_FOR_INJECTION = TokenSet.create(JetNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY, JetNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY);
+
     public JetStringTemplateExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -32,5 +41,28 @@ public class JetStringTemplateExpression extends JetExpressionImpl {
     @NotNull
     public JetStringTemplateEntry[] getEntries() {
         return findChildrenByClass(JetStringTemplateEntry.class);
+    }
+
+    @Override
+    public boolean isValidHost() {
+        ASTNode node = getNode();
+        ASTNode child = node.getFirstChildNode().getTreeNext();
+        while (child != null) {
+            if (child.getElementType() == JetTokens.CLOSING_QUOTE) return true;
+            if (!TOKENS_SUITABLE_FOR_INJECTION.contains(child.getElementType())) return false;
+            child = child.getTreeNext();
+        }
+        return false;
+    }
+
+    @Override
+    public PsiLanguageInjectionHost updateText(@NotNull String text) {
+        return ElementManipulators.handleContentChange(this, text);
+    }
+
+    @NotNull
+    @Override
+    public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
+        return new KotlinStringLiteralTextEscaper(this);
     }
 }

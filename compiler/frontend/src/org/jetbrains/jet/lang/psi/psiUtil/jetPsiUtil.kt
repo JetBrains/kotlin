@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
+import com.intellij.openapi.util.TextRange
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -410,3 +411,13 @@ public fun JetTypeReference?.isProbablyNothing(): Boolean {
 
 public fun JetUserType?.isProbablyNothing(): Boolean
         = this?.getReferencedName() == "Nothing"
+
+public fun JetStringTemplateExpression.getContentRange(): TextRange {
+    val start = getNode().getFirstChildNode().getTextLength()
+    val lastChild = getNode().getLastChildNode()
+    val length = getTextLength()
+    return TextRange(start, if (lastChild.getElementType() == JetTokens.CLOSING_QUOTE) length - lastChild.getTextLength() else length)
+}
+
+public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
+        = getNode().getFirstChildNode().getTextLength() == 1
