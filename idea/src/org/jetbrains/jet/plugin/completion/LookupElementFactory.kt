@@ -207,7 +207,7 @@ public class LookupElementFactory(
         if (receiverTypes == null) return null
         if (descriptor !is CallableMemberDescriptor) return null
 
-        val isReceiverNullable = receiverTypes.all { it.isNullable() }
+        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isNullable() }
         val receiverParameter = descriptor.getExtensionReceiverParameter()
 
         if (receiverParameter != null) {
