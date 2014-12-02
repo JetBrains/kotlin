@@ -162,8 +162,7 @@ public class KotlinIndicesHelper(
 
         return descriptors.stream()
                 .filter(visibilityFilter)
-                .map { it.substituteExtensionIfCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo) }
-                .filterNotNull()
+                .flatMap { it.substituteExtensionIfCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo).stream() }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {

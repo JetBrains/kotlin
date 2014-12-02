@@ -84,7 +84,7 @@ public abstract class BaseJetVariableMacro extends Macro {
 
                 if (variableDescriptor.getExtensionReceiverParameter() != null
                     && ExtensionsUtilsPackage.substituteExtensionIfCallableWithImplicitReceiver(
-                        variableDescriptor, scope, bindingContext, dataFlowInfo) == null) {
+                        variableDescriptor, scope, bindingContext, dataFlowInfo).isEmpty()) {
                     continue;
                 }
 

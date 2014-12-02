@@ -133,7 +133,7 @@ public class ReferenceVariantsHelper(
 
             for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
                 if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
-                    descriptorsSet.addIfNotNull(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, false))
+                    descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, false))
                 }
                 else {
                     descriptorsSet.add(descriptor)
@@ -201,8 +201,7 @@ public class ReferenceVariantsHelper(
     ) {
         if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
             for (callable in resolutionScope.getDescriptorsFiltered(kindFilter.exclude(DescriptorKindExclude.NonExtensions), nameFilter)) {
-                val substituted = (callable as CallableDescriptor).substituteExtensionIfCallable(receiver, isInfixCall, context, dataFlowInfo)
-                addIfNotNull(substituted)
+                addAll((callable as CallableDescriptor).substituteExtensionIfCallable(receiver, isInfixCall, context, dataFlowInfo))
             }
         }
     }

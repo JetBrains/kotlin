@@ -35,18 +35,14 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 
-//TODO: what if multiple receiver types match? this can result in different substitutions
-
 public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collection<ReceiverValue>,
                                                   context: BindingContext,
                                                   dataFlowInfo: DataFlowInfo,
-                                                  isInfixCall: Boolean): CallableDescriptor? {
-    return receivers.stream()
-            .map { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo) }
-            .firstOrNull { it != null }
+                                                  isInfixCall: Boolean): Collection<CallableDescriptor> {
+    return receivers.flatMap { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo) }
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): CallableDescriptor?
+public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor>
         = substituteExtensionIfCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, false)
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
@@ -54,21 +50,18 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         isInfixCall: Boolean,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo
-): CallableDescriptor? {
+): Collection<CallableDescriptor> {
     val receiverParameter = getExtensionReceiverParameter()!!
-    if (!receiver.exists()) return null
+    if (!receiver.exists()) return listOf()
 
     if (isInfixCall && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
-        return null
+        return listOf()
     }
 
-    for (type in SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)) {
-        val substitutor = checkReceiverResolution(type, receiverParameter, getTypeParameters())
-        if (substitutor != null) {
-            return substitute(substitutor)
-        }
-    }
-    return null
+    return SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
+            .map { checkReceiverResolution(it, receiverParameter, getTypeParameters()) }
+            .filterNotNull()
+            .map { substitute(it) }
 }
 
 private fun checkReceiverResolution(
