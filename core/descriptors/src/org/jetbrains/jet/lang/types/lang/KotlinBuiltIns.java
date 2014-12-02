@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.InputStream;
@@ -884,6 +885,10 @@ public class KotlinBuiltIns {
 
     public static boolean isUnit(@NotNull JetType type) {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
+    }
+
+    public boolean isBooleanOrSubtype(@NotNull JetType type) {
+        return JetTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
     }
 
     public static boolean isString(@Nullable JetType type) {

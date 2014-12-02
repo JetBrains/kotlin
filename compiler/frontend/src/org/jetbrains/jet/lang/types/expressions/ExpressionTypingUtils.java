@@ -109,10 +109,6 @@ public class ExpressionTypingUtils {
         return scope;
     }
 
-    public boolean isBoolean(@NotNull JetType type) {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBooleanType());
-    }
-
     public boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
         return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'", context);
     }
@@ -120,7 +116,7 @@ public class ExpressionTypingUtils {
     private boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName, ExpressionTypingContext context) {
         if (resultType != null) {
             // TODO : Relax?
-            if (!isBoolean(resultType)) {
+            if (!builtIns.isBooleanOrSubtype(resultType)) {
                 context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, builtIns.getBooleanType(), resultType));
                 return false;
             }

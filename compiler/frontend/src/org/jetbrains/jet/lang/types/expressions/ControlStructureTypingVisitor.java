@@ -67,7 +67,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     .replaceExpectedType(components.builtIns.getBooleanType()).replaceContextDependency(INDEPENDENT));
             JetType conditionType = typeInfo.getType();
 
-            if (conditionType != null && !components.expressionTypingUtils.isBoolean(conditionType)) {
+            if (conditionType != null && !components.builtIns.isBooleanOrSubtype(conditionType)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
             }
 

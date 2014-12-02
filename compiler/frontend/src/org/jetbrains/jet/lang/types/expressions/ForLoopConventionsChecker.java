@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
@@ -49,6 +50,7 @@ public class ForLoopConventionsChecker {
     private Project project;
     private ExpressionTypingServices expressionTypingServices;
     private ExpressionTypingUtils expressionTypingUtils;
+    private KotlinBuiltIns builtIns;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -63,6 +65,11 @@ public class ForLoopConventionsChecker {
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     public boolean isVariableIterable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
@@ -97,7 +104,7 @@ public class ForLoopConventionsChecker {
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
                                                              HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
                                                              LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
-            if (hasNextType != null && !expressionTypingUtils.isBoolean(hasNextType)) {
+            if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
             return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",
