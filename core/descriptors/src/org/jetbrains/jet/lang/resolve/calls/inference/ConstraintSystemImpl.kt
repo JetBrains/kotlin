@@ -304,13 +304,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
 
         fun simplifyConstraint(subType: JetType, superType: JetType) {
-            // can be equal for the recursive invocations:
-            // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
-            if (isMyTypeVariable(subType) && isMyTypeVariable(superType) && JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return
-
-            assert(!isMyTypeVariable(subType) || !isMyTypeVariable(superType)) {
-                "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType
-            }
+            // can be equal for the recursive invocations: fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
+            // the right processing of constraints connecting type variables is not supported yet
+            if (isMyTypeVariable(subType) && isMyTypeVariable(superType)) return
 
             if (isMyTypeVariable(subType)) {
                 val boundKind = if (constraintKind == SUB_TYPE) UPPER_BOUND else EXACT_BOUND
