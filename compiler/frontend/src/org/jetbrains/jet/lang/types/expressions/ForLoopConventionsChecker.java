@@ -43,7 +43,6 @@ import java.util.Collections;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.isBoolean;
 
 public class ForLoopConventionsChecker {
 
@@ -98,7 +97,7 @@ public class ForLoopConventionsChecker {
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
                                                              HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
                                                              LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
-            if (hasNextType != null && !isBoolean(hasNextType)) {
+            if (hasNextType != null && !expressionTypingUtils.isBoolean(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
             return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",

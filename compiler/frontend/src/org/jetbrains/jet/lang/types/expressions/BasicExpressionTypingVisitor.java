@@ -127,7 +127,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(value, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
-                return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
+                return JetTypeInfo.create(components.expressionTypingUtils.getDefaultType(elementType), context.dataFlowInfo);
             }
         }
 
@@ -989,7 +989,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (resolutionResults.isSuccess()) {
             FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-            if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(), context)) {
+            if (components.expressionTypingUtils.ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(),
+                                                                     context)) {
                 ensureNonemptyIntersectionOfOperandTypes(expression, context);
             }
         }
@@ -1119,7 +1120,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 operationSign,
                 OperatorConventions.CONTAINS);
         JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
-        ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
+        components.expressionTypingUtils.ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
 
         if (left != null) {
             dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);
