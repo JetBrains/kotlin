@@ -802,6 +802,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SubstitutedSignature1.kt")
+        public void testSubstitutedSignature1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature2.kt")
+        public void testSubstitutedSignature2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelClassCompletionInQualifiedCall.kt")
         public void testTopLevelClassCompletionInQualifiedCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/TopLevelClassCompletionInQualifiedCall.kt");
