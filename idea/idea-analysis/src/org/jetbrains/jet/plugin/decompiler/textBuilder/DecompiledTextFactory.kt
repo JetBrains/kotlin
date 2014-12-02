@@ -71,7 +71,8 @@ public fun buildDecompiledText(
     }
 }
 
-private val DECOMPILED_COMMENT = "/* compiled code */"
+private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
+private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 
 public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
@@ -118,7 +119,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         val header = if (isEnumEntry(descriptor))
             descriptor.getName().asString()
         else
-            descriptorRendererForDecompiler.render(descriptor).replace("= ...", "= " + DECOMPILED_COMMENT)
+            descriptorRendererForDecompiler.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
         builder.append(header)
         var endOffset = builder.length()
 
@@ -132,11 +133,11 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         if (descriptor is FunctionDescriptor || descriptor is PropertyDescriptor) {
             if ((descriptor as MemberDescriptor).getModality() != Modality.ABSTRACT) {
                 if (descriptor is FunctionDescriptor) {
-                    builder.append(" { ").append(DECOMPILED_COMMENT).append(" }")
+                    builder.append(" { ").append(DECOMPILED_CODE_COMMENT).append(" }")
                 }
                 else {
                     // descriptor instanceof PropertyDescriptor
-                    builder.append(" ").append(DECOMPILED_COMMENT)
+                    builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
                 endOffset = builder.length()
             }
