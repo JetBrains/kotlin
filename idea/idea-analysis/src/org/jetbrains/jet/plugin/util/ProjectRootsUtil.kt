@@ -36,9 +36,8 @@ public object ProjectRootsUtil {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
 
-        if (!includeLibrarySources) return false
-
-        return (withLibraryClassesRoots && fileIndex.isInLibraryClasses(file)) || fileIndex.isInLibrarySource(file)
+        return (withLibraryClassesRoots && fileIndex.isInLibraryClasses(file))
+               || (includeLibrarySources && fileIndex.isInLibrarySource(file))
     }
 
     platformStatic
