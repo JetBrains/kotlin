@@ -40,4 +40,8 @@ public final class NameClashesTest extends SingleFileTranslationTest {
     public void testMethodOverloadInClassWithTwoUpperBounds() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testExtensionFunctionAndProperty() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
