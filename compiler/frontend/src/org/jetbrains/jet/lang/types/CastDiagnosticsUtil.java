@@ -43,7 +43,7 @@ public class CastDiagnosticsUtil {
             @NotNull JetType rhsType,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
-        if (KotlinBuiltIns.getInstance().isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
+        if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true;
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds

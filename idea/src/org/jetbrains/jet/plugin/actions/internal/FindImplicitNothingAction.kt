@@ -78,7 +78,7 @@ public class FindImplicitNothingAction : AnAction() {
                     try {
                         val bindingContext = resolutionFacade.analyze(expression)
                         val type = bindingContext[BindingContext.EXPRESSION_TYPE, expression] ?: return
-                        if (KotlinBuiltIns.getInstance().isNothing(type) && !expression.hasExplicitNothing(bindingContext)) { //TODO: what about nullable Nothing?
+                        if (KotlinBuiltIns.isNothing(type) && !expression.hasExplicitNothing(bindingContext)) { //TODO: what about nullable Nothing?
                             found.add(expression)
                         }
                     }
@@ -126,9 +126,8 @@ public class FindImplicitNothingAction : AnAction() {
     }
 
     private fun JetType.isNothingOrNothingFunctionType(): Boolean {
-        val builtIns = KotlinBuiltIns.getInstance()
         return when {
-            builtIns.isNothing(this) -> true
+            KotlinBuiltIns.isNothing(this) -> true
 
             KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(this) -> KotlinBuiltIns.getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType()
 

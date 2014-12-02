@@ -43,7 +43,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
         fun generateBody(returnsValue: Boolean): JetExpression {
             val bodyType = expressionType(body)
             val needReturn = returnsValue &&
-                             (bodyType == null || (!KotlinBuiltIns.getInstance().isUnit(bodyType) && !KotlinBuiltIns.getInstance().isNothing(bodyType)))
+                             (bodyType == null || (!KotlinBuiltIns.getInstance().isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
             val oldBodyText = body.getText()!!
             val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
@@ -57,7 +57,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
                     specifyTypeExplicitly(declaration, returnType)
                 }
 
-                val newBody = generateBody(!KotlinBuiltIns.getInstance().isUnit(returnType) && !KotlinBuiltIns.getInstance().isNothing(returnType))
+                val newBody = generateBody(!KotlinBuiltIns.getInstance().isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
 
                 declaration.getEqualsToken()!!.delete()
                 body.replace(newBody)

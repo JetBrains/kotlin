@@ -91,7 +91,7 @@ public class SubstitutionUtils {
                 fullSubstitution.put(parameter.getTypeConstructor(), substitute);
             }
         }
-        if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(context)) return;
+        if (KotlinBuiltIns.isNothingOrNullableNothing(context)) return;
         for (JetType supertype : context.getConstructor().getSupertypes()) {
             fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }

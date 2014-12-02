@@ -130,8 +130,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
         DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
 
-        boolean jumpInThen = thenType != null && KotlinBuiltIns.getInstance().isNothing(thenType);
-        boolean jumpInElse = elseType != null && KotlinBuiltIns.getInstance().isNothing(elseType);
+        boolean jumpInThen = thenType != null && KotlinBuiltIns.isNothing(thenType);
+        boolean jumpInElse = elseType != null && KotlinBuiltIns.isNothing(elseType);
 
         DataFlowInfo resultDataFlowInfo;
         if (thenType == null && elseType == null) {
@@ -167,7 +167,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 presentScope, Collections.singletonList(presentBranch), CoercionStrategy.NO_COERCION, newContext, context.trace);
         JetType type = typeInfo.getType();
         DataFlowInfo dataFlowInfo;
-        if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
+        if (type != null && KotlinBuiltIns.isNothing(type)) {
             dataFlowInfo = otherInfo;
         } else {
             dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);

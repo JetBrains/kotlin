@@ -46,7 +46,7 @@ class TypesWithSmartCasts(val bindingContext: BindingContext) {
         fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
             if (descriptor is CallableDescriptor) {
                 var returnType = descriptor.getReturnType()
-                if (returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType!!)) {
+                if (returnType != null && KotlinBuiltIns.isNothing(returnType!!)) {
                     //TODO: maybe we should include them on the second press?
                     return listOf()
                 }

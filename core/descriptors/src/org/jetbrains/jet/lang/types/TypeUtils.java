@@ -171,7 +171,7 @@ public class TypeUtils {
         boolean nothingTypePresent = false;
         List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
-            nothingTypePresent |= KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type);
+            nothingTypePresent |= KotlinBuiltIns.isNothingOrNullableNothing(type);
             allNullable &= type.isNullable();
             nullabilityStripped.add(makeNotNullable(type));
         }

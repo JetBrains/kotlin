@@ -835,18 +835,19 @@ public class KotlinBuiltIns {
         return FQ_NAMES.any.equals(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isNothing(@NotNull JetType type) {
+    public static boolean isNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
                && !type.isNullable();
     }
 
-    public boolean isNullableNothing(@NotNull JetType type) {
+    public static boolean isNullableNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
                && type.isNullable();
     }
 
-    public boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        return type.getConstructor() == getNothing().getTypeConstructor();
+    public static boolean isNothingOrNullableNothing(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && FQ_NAMES.nothing.equals(DescriptorUtils.getFqName(descriptor));
     }
 
     public boolean isAnyOrNullableAny(@NotNull JetType type) {

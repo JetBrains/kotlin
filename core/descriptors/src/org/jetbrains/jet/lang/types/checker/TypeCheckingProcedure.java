@@ -194,7 +194,7 @@ public class TypeCheckingProcedure {
         }
         subtype = TypeUtils.makeNotNullable(subtype);
         supertype = TypeUtils.makeNotNullable(supertype);
-        if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subtype)) {
+        if (KotlinBuiltIns.isNothingOrNullableNothing(subtype)) {
             return true;
         }
         @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype, constraints);

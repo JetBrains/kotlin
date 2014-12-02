@@ -118,7 +118,7 @@ public class CommonSupertypes {
             JetType type = iterator.next();
             assert type != null;
             assert !TypesPackage.isFlexible(type) : "Flexible type " + type + " passed to commonSuperTypeForInflexible";
-            if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
+            if (KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
             if (type.isError()) {

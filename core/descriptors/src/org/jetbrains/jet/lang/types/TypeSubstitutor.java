@@ -169,7 +169,7 @@ public class TypeSubstitutor {
             );
         }
 
-        if (KotlinBuiltIns.getInstance().isNothing(type) || type.isError()) return originalProjection;
+        if (KotlinBuiltIns.isNothing(type) || type.isError()) return originalProjection;
 
         TypeProjection replacement = substitution.get(type.getConstructor());
 

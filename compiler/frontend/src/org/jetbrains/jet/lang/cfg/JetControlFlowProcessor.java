@@ -198,7 +198,7 @@ public class JetControlFlowProcessor {
             }
 
             JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-            if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
+            if (type != null && KotlinBuiltIns.isNothing(type)) {
                 builder.jumpToError(expression);
             }
         }

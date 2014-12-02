@@ -736,12 +736,12 @@ public class DescriptorResolver {
             @NotNull TypeParameterDescriptor parameter,
             @NotNull JetTypeParameter typeParameter
     ) {
-        if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
+        if (KotlinBuiltIns.isNothing(parameter.getUpperBoundsAsType())) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
         }
 
         JetType classObjectType = parameter.getClassObjectType();
-        if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
+        if (classObjectType != null && KotlinBuiltIns.isNothing(classObjectType)) {
             trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }

@@ -159,7 +159,7 @@ private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): B
 }
 
 private fun JetType.isMeaningful(): Boolean {
-    return KotlinBuiltIns.getInstance().let { builtins -> !builtins.isUnit(this) && !builtins.isNothing(this) }
+    return KotlinBuiltIns.getInstance().let { builtins -> !builtins.isUnit(this) && !KotlinBuiltIns.isNothing(this) }
 }
 
 private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(

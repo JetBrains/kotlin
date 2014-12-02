@@ -93,7 +93,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
 
                 val expressionType = expressionType(statement)
                 if (expressionType != null &&
-                      (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isNothing(expressionType)))
+                      (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.isNothing(expressionType)))
                     Data(declaration, statement)
                 else
                     null

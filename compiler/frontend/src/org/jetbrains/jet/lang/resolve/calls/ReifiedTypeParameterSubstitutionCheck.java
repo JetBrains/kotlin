@@ -50,7 +50,7 @@ public class ReifiedTypeParameterSubstitutionCheck implements CallResolverExtens
                             Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), parameter)
                     );
                 }
-                else if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(argument) || TypesPackage.isDynamic(argument)) {
+                else if (KotlinBuiltIns.isNothingOrNullableNothing(argument) || TypesPackage.isDynamic(argument)) {
                     context.trace.report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getCallElement(context), argument));
                 }
             }
