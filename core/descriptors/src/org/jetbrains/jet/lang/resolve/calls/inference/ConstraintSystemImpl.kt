@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.types.CustomTypeVariable
 import org.jetbrains.jet.lang.types.getCustomTypeVariable
 import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -389,25 +390,22 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     public fun processDeclaredBoundConstraints() {
         for ((typeParameterDescriptor, typeBounds) in typeParameterBounds) {
+            fun compoundPosition(bound: Bound) = CompoundConstraintPosition(
+                    TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
+
+            // todo order matters here
+            // it's important to create a separate variable here,
+            // because the following code may add new elements to typeBounds.bounds collection
+            val bounds = ArrayList(typeBounds.bounds)
             for (declaredUpperBound in typeParameterDescriptor.getUpperBounds()) {
-                //todo order matters here
-                val bounds = ArrayList(typeBounds.bounds)
-                for (bound in bounds) {
-                    if (bound.kind == LOWER_BOUND || bound.kind == EXACT_BOUND) {
-                        val position = CompoundConstraintPosition(
-                                TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
-                        addSubtypeConstraint(bound.constrainingType, declaredUpperBound, position)
-                    }
+                bounds.filter { it.kind != UPPER_BOUND }.forEach {
+                    lowerOrExactBound ->
+                    addSubtypeConstraint(lowerOrExactBound.constrainingType, declaredUpperBound, compoundPosition(lowerOrExactBound))
                 }
-                if (isMyTypeVariable(declaredUpperBound)) {
-                    val typeBoundsForUpperBound = getTypeBounds(declaredUpperBound)
-                    for (bound in typeBoundsForUpperBound.bounds) {
-                        if (bound.kind == UPPER_BOUND || bound.kind == EXACT_BOUND) {
-                            val position = CompoundConstraintPosition(
-                                    TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
-                            typeBounds.addBound(UPPER_BOUND, bound.constrainingType, position)
-                        }
-                    }
+                if (!isMyTypeVariable(declaredUpperBound)) continue
+                getTypeBounds(declaredUpperBound).bounds.filter { it.kind != LOWER_BOUND }.forEach {
+                    upperOrExactBound ->
+                    typeBounds.addBound(UPPER_BOUND, upperOrExactBound.constrainingType, compoundPosition(upperOrExactBound))
                 }
             }
         }
