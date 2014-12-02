@@ -96,7 +96,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject()
-        return if (o is DeclarationDescriptorLookupObject && KotlinBuiltIns.getInstance().isDeprecated(o.descriptor)) 1 else 0
+        return if (o is DeclarationDescriptorLookupObject && KotlinBuiltIns.isDeprecated(o.descriptor)) 1 else 0
     }
 }
 

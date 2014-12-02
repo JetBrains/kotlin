@@ -225,7 +225,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         int boldStartOffset = -1;
         int boldEndOffset = -1;
         boolean isGrey = false;
-        boolean isDeprecated = KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor);
+        boolean isDeprecated = KotlinBuiltIns.isDeprecated(functionDescriptor);
 
         boolean[] usedIndexes = new boolean[valueParameters.size()];
         Arrays.fill(usedIndexes, false);

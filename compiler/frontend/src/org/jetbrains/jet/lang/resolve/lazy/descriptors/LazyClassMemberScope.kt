@@ -130,7 +130,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name) {
-        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return
+        if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         val constructor = getPrimaryConstructor()
         if (constructor == null) return
@@ -240,7 +240,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>) {
-        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return
+        if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         if (getPrimaryConstructor() == null) return
 

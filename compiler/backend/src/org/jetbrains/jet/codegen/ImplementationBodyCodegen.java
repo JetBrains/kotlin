@@ -183,7 +183,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
         }
-        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
+        if (KotlinBuiltIns.isDeprecated(descriptor)) {
             access |= ACC_DEPRECATED;
         }
         if (isEnum) {
@@ -514,7 +514,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsForDataClasses() {
-        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
+        if (!KotlinBuiltIns.isData(descriptor)) return;
 
         new DataClassMethodGeneratorImpl(myClass, bindingContext).generate();
     }
@@ -797,7 +797,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     new DefaultParameterValueLoader() {
                         @Override
                         public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
-                            assert KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration())
+                            assert KotlinBuiltIns.isData((ClassDescriptor) function.getContainingDeclaration())
                                     : "Function container should be annotated with [data]: " + function;
                             PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
                             assert property != null : "Copy function doesn't correspond to any property: " + function;

@@ -107,7 +107,7 @@ public open class LookupElementFactory protected() {
             }
         }
 
-        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
+        if (KotlinBuiltIns.isDeprecated(descriptor)) {
             element = element.withStrikeoutness(true)
         }
 

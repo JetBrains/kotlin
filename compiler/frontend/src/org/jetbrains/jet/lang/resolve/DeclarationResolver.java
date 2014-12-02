@@ -227,7 +227,7 @@ public class DeclarationResolver {
             JetClassOrObject klass = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
-            if (klass instanceof JetClass && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
+            if (klass instanceof JetClass && KotlinBuiltIns.isData(classDescriptor)) {
                 List<ValueParameterDescriptor> parameters =
                         klass.hasPrimaryConstructor() ?
                         getConstructorOfDataClass(classDescriptor).getValueParameters() :

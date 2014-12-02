@@ -149,26 +149,34 @@ public class KotlinBuiltIns {
     }
 
     private static class FqNames {
-        public final FqNameUnsafe any = fqName("Any");
-        public final FqNameUnsafe nothing = fqName("Nothing");
-        public final FqNameUnsafe cloneable = fqName("Cloneable");
-        public final FqNameUnsafe suppress = fqName("suppress");
-        public final FqNameUnsafe unit = fqName("Unit");
-        public final FqNameUnsafe string = fqName("String");
+        public final FqNameUnsafe any = fqNameUnsafe("Any");
+        public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
+        public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");
+        public final FqNameUnsafe suppress = fqNameUnsafe("suppress");
+        public final FqNameUnsafe unit = fqNameUnsafe("Unit");
+        public final FqNameUnsafe string = fqNameUnsafe("String");
+        public final FqName data = fqName("data");
+        public final FqName deprecated = fqName("deprecated");
+        public final FqName tailRecursive = fqName("tailRecursive");
+        public final FqName noinline = fqName("noinline");
 
         public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
         public final Set<FqNameUnsafe> extensionFunctionClasses = computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
         @NotNull
-        private static FqNameUnsafe fqName(@NotNull String simpleName) {
-            return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe();
+        private static FqNameUnsafe fqNameUnsafe(@NotNull String simpleName) {
+            return fqName(simpleName).toUnsafe();
+        }
+
+        private static FqName fqName(String simpleName) {
+            return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
         }
 
         @NotNull
         private static Set<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
             Set<FqNameUnsafe> result = new HashSet<FqNameUnsafe>();
             for (int i = 0; i < count; i++) {
-                result.add(fqName(prefix + i));
+                result.add(fqNameUnsafe(prefix + i));
             }
             return result;
         }
@@ -326,8 +334,8 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getNoinlineClassAnnotation() {
-        return getBuiltInClassByName("noinline");
+    public static FqName getNoinlineClassAnnotationFqName() {
+        return FQ_NAMES.noinline;
     }
 
     @NotNull
@@ -338,11 +346,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getInlineOptionsClassAnnotation() {
         return getBuiltInClassByName("inlineOptions");
-    }
-
-    @NotNull
-    public ClassDescriptor getTailRecursiveAnnotationClass() {
-        return getBuiltInClassByName("tailRecursive");
     }
 
     @NotNull
@@ -876,25 +879,24 @@ public class KotlinBuiltIns {
         return FQ_NAMES.cloneable.equals(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isData(@NotNull ClassDescriptor classDescriptor) {
-        return containsAnnotation(classDescriptor, getDataClassAnnotation());
+    public static boolean isData(@NotNull ClassDescriptor classDescriptor) {
+        return containsAnnotation(classDescriptor, FQ_NAMES.data);
     }
 
-    public boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
+    public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated);
     }
 
-    public boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
+    public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
     }
 
     public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
         return isConstructedFromGivenClass(annotationDescriptor.getType(), FQ_NAMES.suppress);
     }
 
-    static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
-        FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
-        return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
+    static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
+        return descriptor.getOriginal().getAnnotations().findAnnotation(annotationClassFqName) != null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
