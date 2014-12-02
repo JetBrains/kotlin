@@ -29,6 +29,15 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.jet.lang.psi.JetTypeReference
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.completion.ExpectedCompletionUtils
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.completion.handlers.AbstractCompletionHandlerTest
+import com.intellij.codeInsight.completion.CompletionType
+import org.jetbrains.jet.JetTestUtils
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
@@ -56,11 +65,30 @@ public abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompl
     }
 }
 
+public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest() {
+    override fun setUpFixture(testPath: String) {
+        myFixture.configureByCodeFragment(testPath)
+    }
+
+    override val testDataRelativePath: String = "/completion/handlers/runtimeCast/"
+    override val defaultCompletionType: CompletionType = CompletionType.BASIC
+}
+
 private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String) {
     configureByFile(filePath)
 
     val elementAt = getFile()?.findElementAt(getCaretOffset())
     val file = createCodeFragment(filePath, elementAt!!)
+
+    val typeStr = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "// ${ExpectedCompletionUtils.RUNTIME_TYPE} ")
+    if (typeStr != null) {
+        file.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
+            val codeFragment = JetPsiFactory(getProject()).createBlockCodeFragment("val xxx: $typeStr" , PsiTreeUtil.getParentOfType(elementAt, javaClass<JetElement>()))
+            val context = codeFragment.analyzeFully()
+            val typeReference: JetTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), javaClass())
+            context[BindingContext.TYPE, typeReference]
+        })
+    }
 
     configureFromExistingVirtualFile(file.getVirtualFile()!!)
 }

@@ -123,6 +123,8 @@ public class ExpectedCompletionUtils {
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
     private static final String AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:";
 
+    public static final String RUNTIME_TYPE = "RUNTIME_TYPE:";
+
     public static final List<String> KNOWN_PREFIXES = ImmutableList.of(
             EXIST_LINE_PREFIX,
             ABSENT_LINE_PREFIX,
@@ -136,6 +138,7 @@ public class ExpectedCompletionUtils {
             INVOCATION_COUNT_PREFIX,
             WITH_ORDER_PREFIX,
             AUTOCOMPLETE_SETTING_PREFIX,
+            RUNTIME_TYPE,
             AstAccessControl.INSTANCE$.getALLOW_AST_ACCESS_DIRECTIVE());
 
     @NotNull

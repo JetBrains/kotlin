@@ -134,6 +134,7 @@ import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -375,6 +376,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractCompletionCharFilterTest>()) {
             model("completion/handlers/charFilter")
+        }
+
+        testClass(javaClass<AbstractCodeFragmentCompletionHandlerTest>()) {
+            model("completion/handlers/runtimeCast")
         }
 
         testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
