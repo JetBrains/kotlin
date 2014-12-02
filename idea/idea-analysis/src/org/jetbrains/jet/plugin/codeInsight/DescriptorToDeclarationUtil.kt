@@ -67,7 +67,7 @@ public object DescriptorToDeclarationUtil {
             return elements
         }
 
-        val decompiledDeclaration = DecompiledNavigationUtils.findDeclarationForReference(project, descriptor)
+        val decompiledDeclaration = DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, descriptor)
         if (decompiledDeclaration != null) {
             return setOf(decompiledDeclaration)
         }

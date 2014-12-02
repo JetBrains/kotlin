@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,7 +62,8 @@ public class JetGotoClassContributor implements GotoClassContributor {
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-        Collection<JetClassOrObject> classesOrObjects = JetClassShortNameIndex.getInstance().get(name, project, scope);
+        Collection<JetClassOrObject> classesOrObjects =
+                JetClassShortNameIndex.getInstance().get(name, project, JetSourceFilterScope.kotlinSourceAndClassFiles(scope, project));
 
         if (classesOrObjects.isEmpty()) {
             return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;

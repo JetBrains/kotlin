@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.decompiler.navigation;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -38,22 +37,8 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class DecompiledNavigationUtils {
 
-    private static final Logger LOG = Logger.getInstance(DecompiledNavigationUtils.class);
-
     @Nullable
-    public static JetDeclaration findDeclarationForReference(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor referencedDescriptor
-    ) {
-        JetDeclaration declarationFromDecompiledClassFile = getDeclarationFromDecompiledClassFile(project, referencedDescriptor);
-        if (declarationFromDecompiledClassFile == null) {
-            return null;
-        }
-        return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declarationFromDecompiledClassFile);
-    }
-
-    @Nullable
-    private static JetDeclaration getDeclarationFromDecompiledClassFile(
+    public static JetDeclaration getDeclarationFromDecompiledClassFile(
             @NotNull Project project,
             @NotNull DeclarationDescriptor referencedDescriptor
     ) {

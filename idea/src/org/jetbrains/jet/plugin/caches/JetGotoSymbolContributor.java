@@ -27,6 +27,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetPropertyShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,10 +46,11 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
     @NotNull
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-        GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
+        GlobalSearchScope baseScope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
+        GlobalSearchScope noLibrarySourceScope = JetSourceFilterScope.kotlinSourceAndClassFiles(baseScope, project);
 
-        Collection<? extends NavigationItem> functions = JetFunctionShortNameIndex.getInstance().get(name, project, scope);
-        Collection<? extends NavigationItem> properties = JetPropertyShortNameIndex.getInstance().get(name, project, scope);
+        Collection<? extends NavigationItem> functions = JetFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope);
+        Collection<? extends NavigationItem> properties = JetPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope);
 
         List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
         items.addAll(properties);
