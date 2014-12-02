@@ -79,8 +79,8 @@ class LookupElementsCollector(
             val parameters = descriptor.getValueParameters()
             if (parameters.size() == 1) {
                 val parameterType = parameters.get(0).getType()
-                if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
-                    val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
                         val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {

@@ -42,7 +42,7 @@ public class CallResolverUtil {
 
 
     public static boolean hasUnknownFunctionParameter(@NotNull JetType type) {
-        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
+        assert KotlinBuiltIns.isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         // last argument is return type of function type
         List<TypeProjection> functionParameters = arguments.subList(0, arguments.size() - 1);
@@ -56,13 +56,13 @@ public class CallResolverUtil {
     }
 
     public static boolean hasUnknownReturnType(@NotNull JetType type) {
-        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
-        JetType returnTypeFromFunctionType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type);
+        assert KotlinBuiltIns.isFunctionOrExtensionFunctionType(type);
+        JetType returnTypeFromFunctionType = KotlinBuiltIns.getReturnTypeFromFunctionType(type);
         return ErrorUtils.containsErrorType(returnTypeFromFunctionType);
     }
 
     public static JetType replaceReturnTypeByUnknown(@NotNull JetType type) {
-        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
+        assert KotlinBuiltIns.isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         List<TypeProjection> newArguments = Lists.newArrayList();
         newArguments.addAll(arguments.subList(0, arguments.size() - 1));

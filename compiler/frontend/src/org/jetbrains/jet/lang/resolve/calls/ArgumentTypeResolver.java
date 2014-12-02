@@ -78,7 +78,7 @@ public class ArgumentTypeResolver {
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
-        return KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
+        return KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {

@@ -91,7 +91,7 @@ public class DescriptorSerializer {
             builder.addTypeParameter(typeParameter(typeParameterDescriptor));
         }
 
-        if (!KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(classDescriptor)) {
+        if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 builder.addSupertype(type(supertype));

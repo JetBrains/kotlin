@@ -43,7 +43,6 @@ import org.jetbrains.jet.utils.UtilsPackage;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
 
@@ -360,7 +359,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private boolean shouldRenderAsPrettyFunctionType(@NotNull JetType type) {
-        return KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes;
+        return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes;
     }
 
     @NotNull
@@ -484,16 +483,16 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderFunctionType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
-        JetType receiverType = KotlinBuiltIns.getInstance().getReceiverType(type);
+        JetType receiverType = KotlinBuiltIns.getReceiverType(type);
         if (receiverType != null) {
             sb.append(renderNormalizedType(receiverType));
             sb.append(".");
         }
 
         sb.append("(");
-        appendTypeProjections(KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), sb);
+        appendTypeProjections(KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type), sb);
         sb.append(") ").append(arrow()).append(" ");
-        sb.append(renderNormalizedType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
+        sb.append(renderNormalizedType(KotlinBuiltIns.getReturnTypeFromFunctionType(type)));
 
         if (type.isNullable()) {
             return "(" + sb + ")?";

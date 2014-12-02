@@ -103,15 +103,14 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             return false;
         }
 
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType defaultType = ((ClassDescriptor) parent).getDefaultType();
 
-        if (builtIns.isFunctionOrExtensionFunctionType(defaultType)) {
+        if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(defaultType)) {
             return true;
         }
 
         for (JetType supertype : TypeUtils.getAllSupertypes(defaultType)) {
-            if (builtIns.isFunctionOrExtensionFunctionType(supertype)) {
+            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype)) {
                 return true;
             }
         }

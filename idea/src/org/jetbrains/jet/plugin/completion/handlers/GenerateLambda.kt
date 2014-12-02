@@ -86,11 +86,11 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyzeWithPartialBodyResolve(expression)
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(expression) ?: return false
-    val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
+    val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size <= 1) return false
 
-    val lambdaParameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(lambdaType).size
-    return functionTypes.filter { KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
+    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size
+    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
@@ -138,4 +138,4 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
 }
 
 fun functionParameterTypes(functionType: JetType): List<JetType>
-        = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(functionType).map { it.getType() }
+        = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(functionType).map { it.getType() }

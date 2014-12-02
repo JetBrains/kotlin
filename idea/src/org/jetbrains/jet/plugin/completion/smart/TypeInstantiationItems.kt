@@ -87,7 +87,7 @@ class TypeInstantiationItems(
             type: JetType,
             tail: Tail?
     ) {
-        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) return // do not show "object: ..." for function types
+        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) return // do not show "object: ..." for function types
 
         val classifier = type.getConstructor().getDeclarationDescriptor()
         if (classifier !is ClassDescriptor) return
@@ -97,7 +97,7 @@ class TypeInstantiationItems(
         val typeArgs = type.getArguments()
         items.addIfNotNull(createTypeInstantiationItem(classifier, typeArgs, tail))
 
-        if (!KotlinBuiltIns.getInstance().isAny(classifier)) { // do not search inheritors of Any
+        if (!KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
             inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
 
             val javaAnalogFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(DescriptorUtils.getFqNameSafe(classifier))

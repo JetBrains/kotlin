@@ -31,7 +31,7 @@ object LambdaItems {
         val distinctTypes = functionExpectedInfos.map { it.type }.toSet()
 
         val singleType = if (distinctTypes.size == 1) distinctTypes.single() else null
-        val singleSignatureLength = singleType?.let { KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(it).size }
+        val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size }
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
             val lookupElement = LookupElementBuilder.create("{...}")

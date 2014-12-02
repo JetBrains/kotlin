@@ -133,8 +133,8 @@ public open class LookupElementFactory protected() {
 
                         1 -> {
                             val parameterType = parameters.single().getType()
-                            if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
-                                val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                                val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                                 if (parameterCount <= 1) {
                                     // otherwise additional item with lambda template is to be added
                                     return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))

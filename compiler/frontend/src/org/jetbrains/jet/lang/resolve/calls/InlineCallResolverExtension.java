@@ -221,7 +221,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     private static boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
         JetType type = descriptor.getReturnType();
         return type != null &&
-               KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) &&
+               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) &&
                !type.isNullable() &&
                !InlineUtil.hasNoinlineAnnotation(descriptor);
     }
@@ -234,7 +234,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         boolean isInvoke = descriptor.getName().asString().equals("invoke") &&
                            containingDeclaration instanceof ClassDescriptor &&
-                           KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
+                           KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
 
         return isInvoke ||
                //or inline extension

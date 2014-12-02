@@ -149,9 +149,8 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @NotNull CallableDescriptor functionDescriptor,
             @Nullable BindingTrace trace
     ) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType type = parameter.getReturnType();
-        if (type != null && builtIns.isExactFunctionOrExtensionFunctionType(type)) {
+        if (type != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
             if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
                 if (type.isNullable()) {
                     if (trace != null) {

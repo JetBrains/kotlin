@@ -130,7 +130,7 @@ public class FindImplicitNothingAction : AnAction() {
         return when {
             builtIns.isNothing(this) -> true
 
-            builtIns.isExactFunctionOrExtensionFunctionType(this) -> builtIns.getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType()
+            KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(this) -> KotlinBuiltIns.getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType()
 
             else -> false
         }

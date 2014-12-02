@@ -103,7 +103,7 @@ public class KotlinBuiltIns {
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
-    private final FqNames fqNames = new FqNames();
+    private static final FqNames FQ_NAMES = new FqNames();
 
     private KotlinBuiltIns() {
         builtInsModule = new ModuleDescriptorImpl(
@@ -734,11 +734,11 @@ public class KotlinBuiltIns {
 
     // Functions
 
-    public boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
         return isFunctionType(type) || isExtensionFunctionType(type);
     }
 
-    public boolean isFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionType(@NotNull JetType type) {
         if (isExactFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -748,7 +748,7 @@ public class KotlinBuiltIns {
         return false;
     }
 
-    public boolean isExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExtensionFunctionType(@NotNull JetType type) {
         if (isExactExtensionFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -758,16 +758,16 @@ public class KotlinBuiltIns {
         return false;
     }
 
-    public boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
         return isExactFunctionType(type) || isExactExtensionFunctionType(type);
     }
 
-    public boolean isExactFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, fqNames.functionClasses);
+    public static boolean isExactFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, FQ_NAMES.functionClasses);
     }
 
-    public boolean isExactExtensionFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, fqNames.extensionFunctionClasses);
+    public static boolean isExactExtensionFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, FQ_NAMES.extensionFunctionClasses);
     }
 
     private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull Set<FqNameUnsafe> classes) {
@@ -780,7 +780,7 @@ public class KotlinBuiltIns {
     }
 
     @Nullable
-    public JetType getReceiverType(@NotNull JetType type) {
+    public static JetType getReceiverType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type) : type;
         if (isExtensionFunctionType(type)) {
             return type.getArguments().get(0).getType();
@@ -789,7 +789,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
+    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(parameterTypes.size());
@@ -805,14 +805,14 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
+    public static JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
 
     @NotNull
-    public List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
+    public static List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
@@ -826,13 +826,13 @@ public class KotlinBuiltIns {
 
     // Recognized & special
 
-    public boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
+    public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
         FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
-        return fqNames.any.equals(fqName) || fqNames.nothing.equals(fqName);
+        return FQ_NAMES.any.equals(fqName) || FQ_NAMES.nothing.equals(fqName);
     }
 
-    public boolean isAny(@NotNull ClassDescriptor descriptor) {
-        return fqNames.any.equals(DescriptorUtils.getFqName(descriptor));
+    public static boolean isAny(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.any.equals(DescriptorUtils.getFqName(descriptor));
     }
 
     public boolean isNothing(@NotNull JetType type) {
@@ -861,8 +861,8 @@ public class KotlinBuiltIns {
         return getStringType().equals(type);
     }
 
-    public boolean isCloneable(@NotNull ClassDescriptor descriptor) {
-        return fqNames.cloneable.equals(DescriptorUtils.getFqName(descriptor));
+    public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.cloneable.equals(DescriptorUtils.getFqName(descriptor));
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {
@@ -877,9 +877,9 @@ public class KotlinBuiltIns {
         return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
     }
 
-    public boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
+    public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
         ClassifierDescriptor classifier = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        return classifier != null && fqNames.suppress.equals(DescriptorUtils.getFqName(classifier));
+        return classifier != null && FQ_NAMES.suppress.equals(DescriptorUtils.getFqName(classifier));
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {

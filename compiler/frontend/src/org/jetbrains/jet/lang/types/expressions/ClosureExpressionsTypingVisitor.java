@@ -107,7 +107,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (!expression.getFunctionLiteral().hasBody()) return null;
 
         JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
+        boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(
                 expectedType);
 
         AnonymousFunctionDescriptor functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
@@ -118,7 +118,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetType> valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
                 Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
-        if (!noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
+        if (!noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
         }
@@ -145,7 +145,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType effectiveReceiverType;
         if (receiverTypeRef == null) {
             if (functionTypeExpected) {
-                effectiveReceiverType = KotlinBuiltIns.getInstance().getReceiverType(context.expectedType);
+                effectiveReceiverType = KotlinBuiltIns.getReceiverType(context.expectedType);
             }
             else {
                 effectiveReceiverType = null;
@@ -177,7 +177,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetParameter> declaredValueParameters = functionLiteral.getValueParameters();
 
         List<ValueParameterDescriptor> expectedValueParameters =  (functionTypeExpected)
-                                                          ? KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, context.expectedType)
+                                                          ? KotlinBuiltIns.getValueParameters(functionDescriptor, context.expectedType)
                                                           : null;
 
         JetParameterList valueParameterList = functionLiteral.getValueParameterList();
@@ -261,7 +261,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
             boolean functionTypeExpected
     ) {
-        JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(context.expectedType) : null;
+        JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) : null;
         JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
