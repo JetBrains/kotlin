@@ -410,7 +410,7 @@ public class DescriptorUtils {
         if (type instanceof LazyType || type.isNullable()) return true;
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        return builtIns.isPrimitiveType(type) ||
+        return KotlinBuiltIns.isPrimitiveType(type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getStringType(), type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);

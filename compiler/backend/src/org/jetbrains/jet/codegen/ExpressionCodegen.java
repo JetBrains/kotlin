@@ -851,7 +851,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         @Override
         protected void assignToLoopParameter() {
             Type arrayElParamType;
-            if (KotlinBuiltIns.getInstance().isArray(loopRangeType)) {
+            if (KotlinBuiltIns.isArray(loopRangeType)) {
                 arrayElParamType = boxType(asmElementType);
             }
             else {
@@ -3438,7 +3438,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             args.add(va.getArgumentExpression());
         }
 
-        boolean isArray = KotlinBuiltIns.getInstance().isArray(arrayType);
+        boolean isArray = KotlinBuiltIns.isArray(arrayType);
         if (!isArray && args.size() != 1) {
             throw new CompilationException("primitive array constructor requires one argument", null, expression);
         }
@@ -3492,7 +3492,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void newArrayInstruction(@NotNull JetType arrayType) {
-        if (KotlinBuiltIns.getInstance().isArray(arrayType)) {
+        if (KotlinBuiltIns.isArray(arrayType)) {
             JetType elementJetType = arrayType.getArguments().get(0).getType();
             putReifierMarkerIfTypeIsReifiedParameter(
                     elementJetType,
@@ -3519,7 +3519,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             operationDescriptor.getValueParameters().get(0).getType().equals(KotlinBuiltIns.getInstance().getIntType())) {
             assert type != null;
             Type elementType;
-            if (KotlinBuiltIns.getInstance().isArray(type)) {
+            if (KotlinBuiltIns.isArray(type)) {
                 JetType jetElementType = type.getArguments().get(0).getType();
                 elementType = boxType(asmType(jetElementType));
             }

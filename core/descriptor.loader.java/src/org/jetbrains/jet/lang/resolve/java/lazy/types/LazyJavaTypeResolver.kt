@@ -308,7 +308,7 @@ class LazyJavaTypeResolver(
                 //    foo(int) and foo(Integer)
                 // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
                 // so, for such cases, we discriminate Integer in favour of int
-                if (!KotlinBuiltIns.getInstance().isPrimitiveType(otherType) || !KotlinBuiltIns.getInstance().isPrimitiveType(lowerBound)) {
+                if (!KotlinBuiltIns.isPrimitiveType(otherType) || !KotlinBuiltIns.isPrimitiveType(lowerBound)) {
                     return Specificity.Relation.DONT_KNOW
                 }
                 // Int! >< Int?

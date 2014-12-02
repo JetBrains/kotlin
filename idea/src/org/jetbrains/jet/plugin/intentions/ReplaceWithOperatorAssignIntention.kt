@@ -44,7 +44,7 @@ public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetB
         fun checkExpressionRepeat(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression): Boolean {
             val context = expression.analyze()
             val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
-            val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getDefaultType())
+            val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.getDefaultType())
 
             return when {
                 variableExpression.matches(expression.getLeft()) -> {

@@ -51,7 +51,7 @@ fun generate(): String {
     val builtIns = KotlinBuiltIns.getInstance()
     [suppress("UNCHECKED_CAST")]
     val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getDescriptors()
-            .filter { it is ClassDescriptor && builtIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
+            .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
 
     for (descriptor in allPrimitiveTypes + builtIns.getString()) {
         [suppress("UNCHECKED_CAST")]

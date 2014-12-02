@@ -155,10 +155,23 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe suppress = fqNameUnsafe("suppress");
         public final FqNameUnsafe unit = fqNameUnsafe("Unit");
         public final FqNameUnsafe string = fqNameUnsafe("String");
+        public final FqNameUnsafe array = fqNameUnsafe("Array");
+
         public final FqName data = fqName("data");
         public final FqName deprecated = fqName("deprecated");
         public final FqName tailRecursive = fqName("tailRecursive");
         public final FqName noinline = fqName("noinline");
+
+        public final Set<FqNameUnsafe> primitiveTypes;
+        public final Set<FqNameUnsafe> primitiveArrays;
+        {
+            primitiveTypes = new HashSet<FqNameUnsafe>(0);
+            primitiveArrays = new HashSet<FqNameUnsafe>(0);
+            for (PrimitiveType primitiveType : PrimitiveType.values()) {
+                primitiveTypes.add(fqNameUnsafe(primitiveType.getTypeName().asString()));
+                primitiveArrays.add(fqNameUnsafe(primitiveType.getArrayTypeName().asString()));
+            }
+        }
 
         public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
         public final Set<FqNameUnsafe> extensionFunctionClasses = computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
@@ -612,7 +625,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getArrayElementType(@NotNull JetType arrayType) {
-        if (arrayType.getConstructor().getDeclarationDescriptor() == getArray()) {
+        if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
@@ -725,16 +738,18 @@ public class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean isArray(@NotNull JetType type) {
-        return getArray().equals(type.getConstructor().getDeclarationDescriptor());
+    public static boolean isArray(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.array);
     }
 
-    public boolean isPrimitiveArray(@NotNull JetType type) {
-        return jetArrayTypeToPrimitiveJetType.containsKey(TypeUtils.makeNotNullable(type));
+    public static boolean isPrimitiveArray(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && FQ_NAMES.primitiveArrays.contains(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isPrimitiveType(@NotNull JetType type) {
-        return primitiveJetTypeToJetArrayType.containsKey(type);
+    public static boolean isPrimitiveType(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return !type.isNullable() && descriptor != null && FQ_NAMES.primitiveTypes.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     // Functions
