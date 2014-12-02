@@ -265,7 +265,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
-            if (KotlinBuiltIns.getInstance().isUnit(expectedReturnType)) {
+            if (KotlinBuiltIns.isUnit(expectedReturnType)) {
                 return KotlinBuiltIns.getInstance().getUnitType();
             }
         }

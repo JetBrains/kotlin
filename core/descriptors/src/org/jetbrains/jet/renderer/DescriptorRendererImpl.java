@@ -754,7 +754,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderReceiverAfterName(function, builder);
 
         JetType returnType = function.getReturnType();
-        if (unitReturnType || (returnType == null || !KotlinBuiltIns.getInstance().isUnit(returnType))) {
+        if (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType))) {
             builder.append(": ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
         }
 
@@ -964,7 +964,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             Collection<JetType> supertypes = klass.getTypeConstructor().getSupertypes();
 
             if (supertypes.isEmpty() ||
-                supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertypes.iterator().next())) {
+                supertypes.size() == 1 && KotlinBuiltIns.isAnyOrNullableAny(supertypes.iterator().next())) {
             }
             else {
                 renderSpaceIfNeeded(builder);

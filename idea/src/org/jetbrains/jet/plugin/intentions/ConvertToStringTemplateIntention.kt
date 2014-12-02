@@ -41,7 +41,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
 
         val context = element.analyze()
         val elementType = BindingContextUtils.getRecordedTypeInfo(element, context)?.getType()
-        if (!(KotlinBuiltIns.getInstance().isString(elementType))) return false
+        if (!(KotlinBuiltIns.isString(elementType))) return false
 
         val (left, right) = Pair(element.getLeft(), element.getRight())
         if (left == null || right == null) return false

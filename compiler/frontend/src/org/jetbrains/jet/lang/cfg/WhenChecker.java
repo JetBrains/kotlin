@@ -38,7 +38,7 @@ public final class WhenChecker {
 
     public static boolean mustHaveElse(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
-        boolean isUnit = expectedType != null && KotlinBuiltIns.getInstance().isUnit(expectedType);
+        boolean isUnit = expectedType != null && KotlinBuiltIns.isUnit(expectedType);
         // Some "statements" are actually expressions returned from lambdas, their expected types are non-null
         boolean isStatement = BindingContextUtilPackage.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
 

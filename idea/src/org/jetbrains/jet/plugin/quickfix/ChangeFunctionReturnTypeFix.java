@@ -79,7 +79,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         FqName fqName = element.getFqName();
         if (fqName != null) functionName = fqName.asString();
 
-        if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
+        if (KotlinBuiltIns.isUnit(type) && element.hasBlockBody()) {
             return functionName == null ?
                    JetBundle.message("remove.no.name.function.return.type") :
                    JetBundle.message("remove.function.return.type", functionName);
@@ -107,7 +107,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
         }
         else {
-            if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
+            if (!(KotlinBuiltIns.isUnit(type) && element.hasBlockBody())) {
                 element.setTypeReference(JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)));
             }
             else {

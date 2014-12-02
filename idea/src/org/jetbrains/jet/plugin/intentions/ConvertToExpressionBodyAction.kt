@@ -43,7 +43,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
 
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
             val valueType = expressionType(value)
-            if (valueType == null || !KotlinBuiltIns.getInstance().isUnit(valueType)) {
+            if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
                 specifyTypeExplicitly(declaration, "Unit")
             }
         }
@@ -93,7 +93,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
 
                 val expressionType = expressionType(statement)
                 if (expressionType != null &&
-                      (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.isNothing(expressionType)))
+                      (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isNothing(expressionType)))
                     Data(declaration, statement)
                 else
                     null

@@ -427,7 +427,7 @@ public class JetRefactoringUtil {
                     JetExpression expression = (JetExpression)element;
                     BindingContext bindingContext = ResolvePackage.analyze(expression);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
-                    if (expressionType == null || !KotlinBuiltIns.getInstance().isUnit(expressionType)) {
+                    if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
                         expressions.add(expression);
                     }
                 }

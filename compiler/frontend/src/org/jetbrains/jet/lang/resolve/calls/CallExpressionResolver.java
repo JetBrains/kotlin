@@ -302,7 +302,7 @@ public class CallExpressionResolver {
 
         //TODO move further
         if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
-            if (selectorReturnType != null && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
+            if (selectorReturnType != null && !KotlinBuiltIns.isUnit(selectorReturnType)) {
                 if (TypeUtils.isNullableType(receiverType)) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                 }

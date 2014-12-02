@@ -72,7 +72,7 @@ public class ArgumentTypeResolver {
             @NotNull JetType expectedType
     ) {
         if (actualType == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.getInstance().isAnyOrNullableAny(expectedType); //todo function type extends
+            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.isAnyOrNullableAny(expectedType); //todo function type extends
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
     }

@@ -67,7 +67,6 @@ import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBo
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 
@@ -84,7 +83,7 @@ private fun JetType.renderForMessage(): String =
 private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
-private fun JetType.isDefault(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
+private fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
 
 private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
     val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
@@ -159,7 +158,7 @@ private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): B
 }
 
 private fun JetType.isMeaningful(): Boolean {
-    return KotlinBuiltIns.getInstance().let { builtins -> !builtins.isUnit(this) && !KotlinBuiltIns.isNothing(this) }
+    return !KotlinBuiltIns.isUnit(this) && !KotlinBuiltIns.isNothing(this)
 }
 
 private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(

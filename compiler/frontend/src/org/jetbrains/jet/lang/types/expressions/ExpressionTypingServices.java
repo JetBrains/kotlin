@@ -328,7 +328,7 @@ public class ExpressionTypingServices {
         if (!noExpectedType(context.expectedType) || context.expectedType == UNIT_EXPECTED_TYPE) {
             JetType expectedType;
             if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
-                (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType))) {
+                (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.isUnit(context.expectedType))) {
                 expectedType = UNIT_EXPECTED_TYPE;
             }
             else {
@@ -353,7 +353,7 @@ public class ExpressionTypingServices {
             }
             if (mightBeUnit) {
                 // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
-                assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
+                assert result.getType() == null || KotlinBuiltIns.isUnit(result.getType());
                 result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
             }
         }

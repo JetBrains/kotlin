@@ -153,6 +153,8 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe nothing = fqName("Nothing");
         public final FqNameUnsafe cloneable = fqName("Cloneable");
         public final FqNameUnsafe suppress = fqName("suppress");
+        public final FqNameUnsafe unit = fqName("Unit");
+        public final FqNameUnsafe string = fqName("String");
 
         public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
         public final Set<FqNameUnsafe> extensionFunctionClasses = computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
@@ -826,6 +828,15 @@ public class KotlinBuiltIns {
 
     // Recognized & special
 
+    private static boolean isConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && fqName.equals(DescriptorUtils.getFqName(descriptor));
+    }
+
+    private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+        return !type.isNullable() && isConstructedFromGivenClass(type, fqName);
+    }
+
     public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
         FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
         return FQ_NAMES.any.equals(fqName) || FQ_NAMES.nothing.equals(fqName);
@@ -846,20 +857,19 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && FQ_NAMES.nothing.equals(DescriptorUtils.getFqName(descriptor));
+        return isConstructedFromGivenClass(type, FQ_NAMES.nothing);
     }
 
-    public boolean isAnyOrNullableAny(@NotNull JetType type) {
-        return type.getConstructor() == getAny().getTypeConstructor();
+    public static boolean isAnyOrNullableAny(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.any);
     }
 
-    public boolean isUnit(@NotNull JetType type) {
-        return type.equals(getUnitType());
+    public static boolean isUnit(@NotNull JetType type) {
+        return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
 
-    public boolean isString(@Nullable JetType type) {
-        return getStringType().equals(type);
+    public static boolean isString(@Nullable JetType type) {
+        return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
@@ -879,8 +889,7 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
-        ClassifierDescriptor classifier = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        return classifier != null && FQ_NAMES.suppress.equals(DescriptorUtils.getFqName(classifier));
+        return isConstructedFromGivenClass(annotationDescriptor.getType(), FQ_NAMES.suppress);
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {

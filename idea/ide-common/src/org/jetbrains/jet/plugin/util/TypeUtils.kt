@@ -35,8 +35,8 @@ fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
 fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
 
-fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
-fun JetType.isAny(): Boolean = KotlinBuiltIns.getInstance().isAnyOrNullableAny(this)
+fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
+fun JetType.isAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
     if (jetType.isDynamic()) return jetType

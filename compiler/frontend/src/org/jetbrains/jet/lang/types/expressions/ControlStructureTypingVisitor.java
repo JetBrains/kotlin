@@ -495,7 +495,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     .replaceContextDependency(INDEPENDENT));
         }
         else {
-            if (expectedType != null && !noExpectedType(expectedType) && !KotlinBuiltIns.getInstance().isUnit(expectedType)) {
+            if (expectedType != null && !noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }

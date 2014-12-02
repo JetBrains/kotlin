@@ -130,7 +130,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         if (name in setOf("equals", "hashCode", "toString")) return
 
         val returnType = callable.getReturnType()!!
-        if (!KotlinBuiltIns.getInstance().isUnit(returnType)) {
+        if (!KotlinBuiltIns.isUnit(returnType)) {
             checkDescriptor(returnType.getConstructor().getDeclarationDescriptor()!!, callable)
         }
 
@@ -145,7 +145,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
     private fun checkSupertypes(classDescriptor: ClassDescriptor) {
         classDescriptor.getDefaultType().getConstructor().getSupertypes().filter {
-            !KotlinBuiltIns.getInstance().isAnyOrNullableAny(it)
+            !KotlinBuiltIns.isAnyOrNullableAny(it)
         }.map {
             it.getConstructor().getDeclarationDescriptor()!!
         }.forEach {
