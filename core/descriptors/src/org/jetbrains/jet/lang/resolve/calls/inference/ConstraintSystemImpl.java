@@ -391,6 +391,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
         if (isMyTypeVariable(subType) && isMyTypeVariable(superType) && JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return;
 
+        //todo temporary hack KT-6320
+        if (isMyTypeVariable(subType) && isMyTypeVariable(superType)) return;
         assert !isMyTypeVariable(subType) || !isMyTypeVariable(superType) :
                 "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType;
 
