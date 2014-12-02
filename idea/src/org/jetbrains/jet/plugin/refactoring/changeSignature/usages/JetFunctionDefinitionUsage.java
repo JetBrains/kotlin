@@ -18,41 +18,62 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature.usages;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetValVar;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
-public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
-    private final boolean isInherited;
-    private final FunctionDescriptor functionDescriptor;
+public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
+    @NotNull
+    private final FunctionDescriptor originalFunctionDescriptor;
+
+    private FunctionDescriptor currentFunctionDescriptor;
+
+    @NotNull
+    private final JetFunctionDefinitionUsage<? extends PsiElement> baseFunction;
+
     private final boolean hasExpectedType;
 
+    @Nullable
+    private final JetType samCallType;
+
+    @Nullable
+    private TypeSubstitutor typeSubstitutor;
+
     public JetFunctionDefinitionUsage(
-            @NotNull PsiElement function,
-            @NotNull FunctionDescriptor functionDescriptor,
-            boolean isInherited) {
+            @NotNull T function,
+            @NotNull FunctionDescriptor originalFunctionDescriptor,
+            @Nullable JetFunctionDefinitionUsage<PsiElement> baseFunction,
+            @Nullable JetType samCallType) {
         super(function);
-        this.isInherited = isInherited;
-        this.functionDescriptor = functionDescriptor;
-        this.hasExpectedType = checkIfHasExpectedType(functionDescriptor);
+        this.originalFunctionDescriptor = originalFunctionDescriptor;
+        this.baseFunction = baseFunction != null ? baseFunction : this;
+        this.hasExpectedType = checkIfHasExpectedType(originalFunctionDescriptor, isInherited());
+        this.samCallType = samCallType;
     }
 
-    private static boolean checkIfHasExpectedType(@NotNull FunctionDescriptor functionDescriptor) {
-        if (!(functionDescriptor instanceof AnonymousFunctionDescriptor)) return false;
+    private static boolean checkIfHasExpectedType(@NotNull FunctionDescriptor functionDescriptor, boolean isInherited) {
+        if (!(functionDescriptor instanceof AnonymousFunctionDescriptor && isInherited)) return false;
 
         JetFunctionLiteral functionLiteral =
                 (JetFunctionLiteral) DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
@@ -65,12 +86,71 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
         return ResolvePackage.analyze(expression).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
     }
 
-    public final boolean isInherited() {
-        return isInherited;
+    @NotNull
+    public JetFunctionDefinitionUsage getBaseFunction() {
+        return baseFunction;
     }
 
-    public final FunctionDescriptor getFunctionDescriptor() {
-        return functionDescriptor;
+    @NotNull
+    public PsiElement getDeclaration() {
+        //noinspection ConstantConditions
+        return getElement();
+    }
+
+    @Nullable
+    public TypeSubstitutor getOrCreateTypeSubstitutor() {
+        if (!isInherited()) return null;
+
+        if (typeSubstitutor == null) {
+            if (samCallType == null) {
+                typeSubstitutor = ChangeSignaturePackage.getFunctionSubstitutor(baseFunction, this);
+            }
+            else {
+                DeclarationDescriptor currentBaseDescriptor = baseFunction.getCurrentFunctionDescriptor();
+                DeclarationDescriptor classDescriptor = currentBaseDescriptor != null
+                                                        ? currentBaseDescriptor.getContainingDeclaration()
+                                                        : null;
+
+                if (!(classDescriptor instanceof ClassDescriptor)) return null;
+
+                typeSubstitutor = ChangeSignaturePackage.getTypeSubstitutor(
+                        ((ClassDescriptor) classDescriptor).getDefaultType(),
+                        samCallType
+                );
+            }
+        }
+        return typeSubstitutor;
+    }
+
+    public final boolean isInherited() {
+        return baseFunction != this;
+    }
+
+    public boolean hasExpectedType() {
+        return hasExpectedType;
+    }
+
+    @NotNull
+    public final FunctionDescriptor getOriginalFunctionDescriptor() {
+        return originalFunctionDescriptor;
+    }
+
+    @Nullable
+    public final FunctionDescriptor getCurrentFunctionDescriptor() {
+        if (currentFunctionDescriptor == null) {
+            PsiElement element = getDeclaration();
+
+            if (element instanceof JetFunction) {
+                currentFunctionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor((JetFunction) element);
+            }
+            else if (element instanceof JetClass) {
+                currentFunctionDescriptor = ((ClassDescriptor) ResolvePackage.resolveToDescriptor((JetClass) element)).getUnsubstitutedPrimaryConstructor();
+            }
+            else if (element instanceof PsiMethod) {
+                currentFunctionDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) element);
+            }
+        }
+        return currentFunctionDescriptor;
     }
 
     @Override
@@ -90,12 +170,12 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
                 }
             }
 
-            boolean returnTypeIsNeeded = changeInfo.isRefactoringTarget(functionDescriptor)
+            boolean returnTypeIsNeeded = changeInfo.isRefactoringTarget(originalFunctionDescriptor)
                                          || !(function instanceof JetFunctionLiteral)
                                          || function.getTypeReference() != null;
             if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
                 function.setTypeReference(null);
-                String returnTypeText = changeInfo.getNewReturnTypeText();
+                String returnTypeText = changeInfo.renderReturnType(this);
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
@@ -123,11 +203,11 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
                     }
                 }
                 else {
-                    newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(functionDescriptor, isInherited, hasExpectedType, 0));
+                    newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(this, 0));
                 }
             }
             else {
-                newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(functionDescriptor, isInherited, hasExpectedType, 0));
+                newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(this, 0));
             }
 
             if (newParameterList != null) {
@@ -166,8 +246,9 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
             int paramIndex = 0;
 
             for (JetParameter parameter : parameterList.getParameters()) {
-                JetParameterInfo parameterInfo = changeInfo.getNewParameters()[paramIndex++];
-                changeParameter(changeInfo, parameter, parameterInfo);
+                JetParameterInfo parameterInfo = changeInfo.getNewParameters()[paramIndex];
+                changeParameter(paramIndex, parameter, parameterInfo);
+                paramIndex++;
             }
 
             ShortenPackage.addToShorteningWaitSet(parameterList);
@@ -191,7 +272,7 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
         }
     }
 
-    private void changeParameter(JetChangeInfo changeInfo, JetParameter parameter, JetParameterInfo parameterInfo) {
+    private void changeParameter(int parameterIndex, JetParameter parameter, JetParameterInfo parameterInfo) {
         ASTNode valOrVarAstNode = parameter.getValOrVarNode();
         PsiElement valOrVarNode = valOrVarAstNode != null ? valOrVarAstNode.getPsi() : null;
         JetValVar valOrVar = parameterInfo.getValOrVar();
@@ -212,14 +293,14 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
         }
 
         if (parameterInfo.isTypeChanged() && parameter.getTypeReference() != null) {
-            JetTypeReference newTypeRef = psiFactory.createType(parameterInfo.getTypeText());
-            parameter.setTypeReference(newTypeRef);
+            String renderedType = parameterInfo.renderType(parameterIndex, this);
+            parameter.setTypeReference(psiFactory.createType(renderedType));
         }
 
         PsiElement identifier = parameter.getNameIdentifier();
 
         if (identifier != null) {
-            String newName = parameterInfo.getInheritedName(isInherited, functionDescriptor, changeInfo.getFunctionDescriptor());
+            String newName = parameterInfo.getInheritedName(this);
             identifier.replace(psiFactory.createIdentifier(newName));
         }
     }

@@ -23,10 +23,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 
 import java.util.Collection;
 
 public interface JetMethodDescriptor extends MethodDescriptor<JetParameterInfo, Visibility> {
+    @NotNull
+    JetFunctionDefinitionUsage<PsiElement> getOriginalPrimaryFunction();
+
+    @NotNull
+    Collection<JetFunctionDefinitionUsage<PsiElement>> getPrimaryFunctions();
+
     @NotNull
     Collection<UsageInfo> getAffectedFunctions();
 

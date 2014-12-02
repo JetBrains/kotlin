@@ -354,7 +354,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     @Override
     protected String calculateSignature() {
         JetChangeInfo changeInfo = evaluateChangeInfo();
-        return changeInfo.getNewSignature(null, false);
+        return changeInfo.getNewSignature(getMethodDescriptor().getOriginalPrimaryFunction());
     }
 
     @Override

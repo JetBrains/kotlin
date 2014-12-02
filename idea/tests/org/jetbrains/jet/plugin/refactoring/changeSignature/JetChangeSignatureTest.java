@@ -358,6 +358,19 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testGenericsWithOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        newParameters[0].setTypeText("List<C>");
+        newParameters[1].setTypeText("A?");
+        newParameters[2].setTypeText("U<B>");
+
+        changeInfo.setNewReturnTypeText("U<C>?");
+
+        doTest(changeInfo);
+    }
+
     public void testJavaMethodKotlinUsages() throws Exception {
         doJavaTest(
                 new JavaRefactoringProvider() {
@@ -506,6 +519,29 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     @Override
                     PsiType getNewReturnType(@NotNull PsiMethod method) {
                         return PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                    }
+                }
+        );
+    }
+
+    public void testGenericsWithSAMConstructors() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
+
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters[0].setType(factory.createTypeFromText("java.util.List<X<B>>", method.getParameterList()));
+                        newParameters[1].setType(factory.createTypeFromText("X<java.util.Set<A>>", method.getParameterList()));
+                        return newParameters;
+                    }
+
+                    @Nullable
+                    @Override
+                    PsiType getNewReturnType(@NotNull PsiMethod method) {
+                        return factory.createTypeFromText("X<java.util.List<A>>", method);
                     }
                 }
         );

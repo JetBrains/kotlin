@@ -134,4 +134,10 @@ public class KotlinLightTypeParameter
     public Language getLanguage() {
         return JetLanguage.INSTANCE;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        return obj instanceof KotlinLightTypeParameter && getOrigin().equals(((KotlinLightTypeParameter) obj).getOrigin());
+    }
 }

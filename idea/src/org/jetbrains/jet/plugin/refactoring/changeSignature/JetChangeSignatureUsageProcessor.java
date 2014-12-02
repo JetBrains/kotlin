@@ -84,12 +84,15 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetChangeInfo changeInfo,
             Set<UsageInfo> result
     ) {
-        result.add(functionUsageInfo);
+        boolean isInherited = functionUsageInfo.isInherited();
+
+        if (isInherited) {
+            result.add(functionUsageInfo);
+        }
 
         PsiElement functionPsi = functionUsageInfo.getElement();
         if (functionPsi == null) return;
 
-        boolean isInherited = functionUsageInfo.isInherited();
 
         for (PsiReference reference : ReferencesSearch.search(functionPsi, functionPsi.getUseScope())) {
             PsiElement element = reference.getElement();
@@ -98,12 +101,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 PsiElement parent = element.getParent();
 
                 if (parent instanceof JetCallExpression)
-                    result.add(new JetFunctionCallUsage((JetCallExpression) parent, functionUsageInfo.getFunctionDescriptor(), isInherited));
+                    result.add(new JetFunctionCallUsage((JetCallExpression) parent, functionUsageInfo));
                 else if (parent instanceof JetUserType && parent.getParent() instanceof JetTypeReference) {
                     parent = parent.getParent().getParent();
 
                     if (parent instanceof JetConstructorCalleeExpression && parent.getParent() instanceof JetDelegatorToSuperCall)
-                        result.add(new JetFunctionCallUsage((JetDelegatorToSuperCall)parent.getParent(), functionUsageInfo.getFunctionDescriptor(), isInherited));
+                        result.add(new JetFunctionCallUsage((JetDelegatorToSuperCall)parent.getParent(), functionUsageInfo));
                 }
             }
         }
@@ -129,12 +132,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                         if (element instanceof JetSimpleNameExpression &&
                             !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
                         {
-                            JetParameterUsage parameterUsage = new JetParameterUsage(
-                                    (JetSimpleNameExpression) element,
-                                    parameterInfo,
-                                    functionUsageInfo.getFunctionDescriptor(),
-                                    isInherited
-                            );
+                            JetParameterUsage parameterUsage =
+                                    new JetParameterUsage((JetSimpleNameExpression) element, parameterInfo, functionUsageInfo);
                             result.add(parameterUsage);
                         }
                     }
@@ -178,11 +177,16 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetExpression argExpression = arguments.get(0).getArgumentExpression();
             if (!(argExpression instanceof JetFunctionLiteralExpression)) continue;
 
+            BindingContext context = ResolvePackage.analyze(callExpression);
+
             JetFunctionLiteral functionLiteral = ((JetFunctionLiteralExpression) argExpression).getFunctionLiteral();
-            FunctionDescriptor functionDescriptor =
-                    ResolvePackage.analyze(functionLiteral).get(BindingContext.FUNCTION, functionLiteral);
+            FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
             assert functionDescriptor != null : "No descriptor for " + functionLiteral.getText();
-            result.add(new KotlinSAMUsage(functionLiteral, functionDescriptor));
+
+            JetType samCallType = context.get(BindingContext.EXPRESSION_TYPE, callExpression);
+            if (samCallType == null) continue;
+
+            result.add(new KotlinSAMUsage(functionLiteral, functionDescriptor, samCallType));
         }
     }
 
@@ -304,12 +308,24 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     @Nullable
     private static UsageInfo createReplacementUsage(
             UsageInfo originalUsageInfo,
-            JetChangeInfo javaMethodChangeInfo
+            final JetChangeInfo javaMethodChangeInfo
     ) {
         if (originalUsageInfo instanceof KotlinSAMUsage) {
-            JetFunctionLiteral functionLiteral = ((KotlinSAMUsage) originalUsageInfo).getFunctionLiteral();
-            FunctionDescriptor functionDescriptor = ((KotlinSAMUsage) originalUsageInfo).getFunctionDescriptor();
-            return new JavaMethodKotlinDerivedDefinitionUsage(functionLiteral, functionDescriptor, javaMethodChangeInfo);
+            final KotlinSAMUsage samUsage = (KotlinSAMUsage) originalUsageInfo;
+            return new JavaMethodKotlinUsageWithDelegate<JetFunction>(samUsage.getFunctionLiteral(), javaMethodChangeInfo) {
+                private final JetFunctionDefinitionUsage<JetFunction> delegateUsage = new JetFunctionDefinitionUsage<JetFunction>(
+                        samUsage.getFunctionLiteral(),
+                        samUsage.getFunctionDescriptor(),
+                        javaMethodChangeInfo.getFunctionDescriptor().getOriginalPrimaryFunction(),
+                        samUsage.getSamCallType()
+                );
+
+                @NotNull
+                @Override
+                protected JetUsageInfo<JetFunction> getDelegateUsage() {
+                    return delegateUsage;
+                }
+            };
         }
 
         JetCallElement callElement = PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), JetCallElement.class);
@@ -470,7 +486,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     @Override
     public boolean processPrimaryMethod(ChangeInfo changeInfo) {
-        ((JetChangeInfo)changeInfo).primaryMethodUpdated();
+        if (!(changeInfo instanceof JetChangeInfo)) return false;
+
+        JetChangeInfo jetChangeInfo = (JetChangeInfo) changeInfo;
+        for (JetFunctionDefinitionUsage primaryFunction : jetChangeInfo.getFunctionDescriptor().getPrimaryFunctions()) {
+            primaryFunction.processUsage(jetChangeInfo, primaryFunction.getDeclaration());
+        }
+        jetChangeInfo.primaryMethodUpdated();
         return true;
     }
 

@@ -37,14 +37,16 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.Collection;
@@ -96,7 +98,7 @@ public class JetChangeInfo implements ChangeInfo {
         return KotlinPackage.firstOrNull(psiMethods);
     }
 
-    public String getNewSignature(@Nullable FunctionDescriptor inheritedFunctionDescriptor, boolean isInherited) {
+    public String getNewSignature(@NotNull JetFunctionDefinitionUsage inheritedFunction) {
         StringBuilder buffer = new StringBuilder();
 
         if (isConstructor()) {
@@ -112,7 +114,7 @@ public class JetChangeInfo implements ChangeInfo {
             buffer.append(JetTokens.FUN_KEYWORD).append(' ').append(newName);
         }
 
-        buffer.append(getNewParametersSignature(inheritedFunctionDescriptor, isInherited, false, buffer.length()));
+        buffer.append(getNewParametersSignature(inheritedFunction, buffer.length()));
 
         if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && !isConstructor())
             buffer.append(": ").append(newReturnTypeText);
@@ -126,16 +128,12 @@ public class JetChangeInfo implements ChangeInfo {
     }
 
     public String getNewParametersSignature(
-            @Nullable FunctionDescriptor inheritedFunctionDescriptor,
-            boolean isInherited,
-            boolean hasExpectedType,
+            @NotNull JetFunctionDefinitionUsage inheritedFunction,
             int indentLength
     ) {
-        hasExpectedType = hasExpectedType && !isRefactoringTarget(inheritedFunctionDescriptor);
-
-        boolean isLambda = inheritedFunctionDescriptor instanceof AnonymousFunctionDescriptor;
-        if (isLambda && newParameters.size() == 1 && !newParameters.get(0).requiresExplicitType(inheritedFunctionDescriptor, hasExpectedType)) {
-            return newParameters.get(0).getDeclarationSignature(isInherited, hasExpectedType, inheritedFunctionDescriptor, oldDescriptor);
+        boolean isLambda = inheritedFunction.getDeclaration() instanceof JetFunctionLiteral;
+        if (isLambda && newParameters.size() == 1 && !newParameters.get(0).requiresExplicitType(inheritedFunction)) {
+            return newParameters.get(0).getDeclarationSignature(0, inheritedFunction);
         }
 
         StringBuilder buffer = new StringBuilder("(");
@@ -148,7 +146,7 @@ public class JetChangeInfo implements ChangeInfo {
                 buffer.append(indent);
             }
 
-            buffer.append(parameterInfo.getDeclarationSignature(isInherited, hasExpectedType, inheritedFunctionDescriptor, oldDescriptor));
+            buffer.append(parameterInfo.getDeclarationSignature(i, inheritedFunction));
         }
 
         buffer.append(")");
@@ -271,10 +269,6 @@ public class JetChangeInfo implements ChangeInfo {
         return oldDescriptor.isConstructor();
     }
 
-    public String getNewReturnTypeText() {
-        return newReturnTypeText;
-    }
-
     public void setNewReturnTypeText(String newReturnTypeText) {
         this.newReturnTypeText = newReturnTypeText;
     }
@@ -311,6 +305,17 @@ public class JetChangeInfo implements ChangeInfo {
     @NotNull
     public Collection<UsageInfo> getAffectedFunctions() {
         return oldDescriptor.getAffectedFunctions();
+    }
+
+    public String renderReturnType(@NotNull JetFunctionDefinitionUsage inheritedFunction) {
+        TypeSubstitutor typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor();
+        if (typeSubstitutor == null) return newReturnTypeText;
+
+        FunctionDescriptor currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor();
+        if (currentBaseFunction == null) return newReturnTypeText;
+
+        JetType originalType = currentBaseFunction.getReturnType();
+        return ChangeSignaturePackage.renderTypeWithSubstitution(originalType, typeSubstitutor, newReturnTypeText, false);
     }
 
     @Nullable
