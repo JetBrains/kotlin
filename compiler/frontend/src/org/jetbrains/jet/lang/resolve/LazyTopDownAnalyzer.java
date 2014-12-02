@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -58,6 +59,10 @@ public class LazyTopDownAnalyzer {
     @SuppressWarnings("ConstantConditions")
     @NotNull
     private OverloadResolver overloadResolver = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private VarianceChecker varianceChecker = null;
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
@@ -93,6 +98,11 @@ public class LazyTopDownAnalyzer {
     @Inject
     public void setOverrideResolver(@NotNull OverrideResolver overrideResolver) {
         this.overrideResolver = overrideResolver;
+    }
+
+    @Inject
+    public void setVarianceChecker(@NotNull VarianceChecker varianceChecker) {
+        this.varianceChecker = varianceChecker;
     }
 
     @Inject
@@ -308,6 +318,8 @@ public class LazyTopDownAnalyzer {
         CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
 
         overrideResolver.check(c);
+
+        varianceChecker.check(c);
 
         resolveImportsInAllFiles(c, resolveSession);
 

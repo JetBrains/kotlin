@@ -60,6 +60,7 @@ import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -111,6 +112,7 @@ public class InjectorForTopDownAnalyzerBasic {
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final ScriptHeaderResolver scriptHeaderResolver;
+    private final VarianceChecker varianceChecker;
 
     public InjectorForTopDownAnalyzerBasic(
         @NotNull Project project,
@@ -164,6 +166,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
+        this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
@@ -172,6 +175,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
+        this.topDownAnalyzer.setVarianceChecker(varianceChecker);
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);

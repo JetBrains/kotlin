@@ -62,6 +62,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -115,6 +116,7 @@ public class InjectorForLazyBodyResolve {
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final ScriptHeaderResolver scriptHeaderResolver;
+    private final VarianceChecker varianceChecker;
 
     public InjectorForLazyBodyResolve(
         @NotNull Project project,
@@ -169,6 +171,7 @@ public class InjectorForLazyBodyResolve {
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(moduleDescriptor);
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
+        this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
         this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
@@ -178,6 +181,7 @@ public class InjectorForLazyBodyResolve {
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
+        this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
@@ -273,6 +277,7 @@ public class InjectorForLazyBodyResolve {
         topDownAnalyzer.setOverrideResolver(overrideResolver);
         topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
         topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
+        topDownAnalyzer.setVarianceChecker(varianceChecker);
 
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);

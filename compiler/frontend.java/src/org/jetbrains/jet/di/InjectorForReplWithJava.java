@@ -80,6 +80,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
@@ -156,6 +157,7 @@ public class InjectorForReplWithJava {
     private final TopDownAnalyzer topDownAnalyzer;
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final ScriptHeaderResolver scriptHeaderResolver;
+    private final VarianceChecker varianceChecker;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -240,6 +242,7 @@ public class InjectorForReplWithJava {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
+        this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -257,6 +260,7 @@ public class InjectorForReplWithJava {
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
+        this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
         javaClassFinder.setComponentPostConstruct(javaLazyAnalyzerPostConstruct);
         javaClassFinder.setProject(project);
@@ -375,6 +379,7 @@ public class InjectorForReplWithJava {
         topDownAnalyzer.setOverrideResolver(overrideResolver);
         topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
         topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
+        topDownAnalyzer.setVarianceChecker(varianceChecker);
 
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
