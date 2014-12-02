@@ -32,12 +32,12 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
+import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.plugin.util.extensionsUtils.substituteExtensionIfCallable
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
@@ -131,11 +131,13 @@ public class ReferenceVariantsHelper(
             val dataFlowInfo = context.getDataFlowInfo(expression)
             val receiverValues = receivers.map { it.getValue() }
 
-            resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter).filterTo(descriptorsSet) {
-                if (it is CallableDescriptor && it.getExtensionReceiverParameter() != null)
-                    it.isExtensionCallable(receiverValues, context, dataFlowInfo, false)
-                else
-                    true
+            for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {
+                if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
+                    descriptorsSet.addIfNotNull(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, false))
+                }
+                else {
+                    descriptorsSet.add(descriptor)
+                }
             }
 
             return descriptorsSet
@@ -198,8 +200,10 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ) {
         if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
-            resolutionScope.getDescriptorsFiltered(kindFilter.exclude(DescriptorKindExclude.NonExtensions), nameFilter)
-                    .filterTo(this) { (it as CallableDescriptor).isExtensionCallable(receiver, isInfixCall, context, dataFlowInfo) }
+            for (callable in resolutionScope.getDescriptorsFiltered(kindFilter.exclude(DescriptorKindExclude.NonExtensions), nameFilter)) {
+                val substituted = (callable as CallableDescriptor).substituteExtensionIfCallable(receiver, isInfixCall, context, dataFlowInfo)
+                addIfNotNull(substituted)
+            }
         }
     }
 

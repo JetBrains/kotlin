@@ -83,7 +83,10 @@ public abstract class BaseJetVariableMacro extends Macro {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 
                 if (variableDescriptor.getExtensionReceiverParameter() != null
-                    && !ExtensionsUtilsPackage.isExtensionCallableWithImplicitReceiver(variableDescriptor, scope, bindingContext, dataFlowInfo)) continue;
+                    && ExtensionsUtilsPackage.substituteExtensionIfCallableWithImplicitReceiver(
+                        variableDescriptor, scope, bindingContext, dataFlowInfo) == null) {
+                    continue;
+                }
 
                 if (isSuitable(variableDescriptor, scope, project, components)) {
                     filteredDescriptors.add(variableDescriptor);

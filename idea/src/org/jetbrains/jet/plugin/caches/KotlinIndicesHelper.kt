@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
+import org.jetbrains.jet.plugin.util.extensionsUtils.substituteExtensionIfCallable
 
 public class KotlinIndicesHelper(
         private val project: Project,
@@ -122,7 +122,7 @@ public class KotlinIndicesHelper(
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
 
             matchingNames.flatMapTo(this) {
-                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, moduleDescriptor, bindingContext).stream()
+                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, moduleDescriptor, bindingContext)
             }
         }
         else {
@@ -130,7 +130,7 @@ public class KotlinIndicesHelper(
 
             for (receiver in resolutionScope.getImplicitReceiversHierarchy()) {
                 matchingNames.flatMapTo(this) {
-                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, false, resolutionScope, moduleDescriptor, bindingContext).stream()
+                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, false, resolutionScope, moduleDescriptor, bindingContext)
                 }
             }
         }
@@ -146,7 +146,7 @@ public class KotlinIndicesHelper(
                                        isInfixCall: Boolean,
                                        resolutionScope: JetScope,
                                        module: ModuleDescriptor,
-                                       bindingContext: BindingContext): Collection<CallableDescriptor> {
+                                       bindingContext: BindingContext): Stream<CallableDescriptor> {
         val fqnString = callableFQN.asString()
         val descriptors = if (index != null) {
             index.get(fqnString, project, scope)
@@ -160,9 +160,10 @@ public class KotlinIndicesHelper(
                     .filter { it.getExtensionReceiverParameter() != null }
         }
 
-        return descriptors.filter {
-            visibilityFilter(it) && it.isExtensionCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo)
-        }
+        return descriptors.stream()
+                .filter(visibilityFilter)
+                .map { it.substituteExtensionIfCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo) }
+                .filterNotNull()
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {

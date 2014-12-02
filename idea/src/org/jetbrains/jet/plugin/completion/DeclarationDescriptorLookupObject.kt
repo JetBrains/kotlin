@@ -35,7 +35,7 @@ public class DeclarationDescriptorLookupObject(
     }
 
     override fun hashCode(): Int {
-        return descriptor.hashCode()
+        return descriptor.getOriginal().hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -49,7 +49,8 @@ public class DeclarationDescriptorLookupObject(
             return false
         }
 
-        return lookupObject.descriptor == descriptor
+        //TODO: different substitutions
+        return lookupObject.descriptor.getOriginal() == descriptor.getOriginal()
     }
 
     class object {

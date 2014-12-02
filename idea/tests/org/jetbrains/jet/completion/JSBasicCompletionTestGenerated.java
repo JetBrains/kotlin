@@ -814,6 +814,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("SubstitutedSignature3.kt")
+        public void testSubstitutedSignature3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelClassCompletionInQualifiedCall.kt")
         public void testTopLevelClassCompletionInQualifiedCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/TopLevelClassCompletionInQualifiedCall.kt");

@@ -33,52 +33,69 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.jet.utils.addIfNotNull
 import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.jet.lang.types.TypeSubstitutor
 
-public fun CallableDescriptor.isExtensionCallable(receivers: Collection<ReceiverValue>,
+//TODO: what if multiple receiver types match? this can result in different substitutions
+
+public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collection<ReceiverValue>,
                                                   context: BindingContext,
                                                   dataFlowInfo: DataFlowInfo,
-                                                  isInfixCall: Boolean): Boolean
-        = receivers.any { isExtensionCallable(it, isInfixCall, context, dataFlowInfo) }
+                                                  isInfixCall: Boolean): CallableDescriptor? {
+    return receivers.stream()
+            .map { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo) }
+            .firstOrNull { it != null }
+}
 
-public fun CallableDescriptor.isExtensionCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Boolean
-        = isExtensionCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, false)
+public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): CallableDescriptor?
+        = substituteExtensionIfCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, false)
 
-public fun CallableDescriptor.isExtensionCallable(
+public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,
         isInfixCall: Boolean,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo
-): Boolean {
+): CallableDescriptor? {
     val receiverParameter = getExtensionReceiverParameter()!!
-    if (!receiver.exists()) return false
+    if (!receiver.exists()) return null
 
     if (isInfixCall && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
-        return false
+        return null
     }
 
-    return SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
-            .any { checkReceiverResolution(it, receiverParameter, getTypeParameters()) }
+    for (type in SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)) {
+        val substitutor = checkReceiverResolution(type, receiverParameter, getTypeParameters())
+        if (substitutor != null) {
+            return substitute(substitutor)
+        }
+    }
+    return null
 }
 
 private fun checkReceiverResolution(
         receiverType: JetType,
         receiverParameter: ReceiverParameterDescriptor,
         typeParameters: List<TypeParameterDescriptor>
-): Boolean {
-    val typeNamesInReceiver = HashSet<TypeParameterDescriptor>()
-    typeNamesInReceiver.addUsedTypeParameters(receiverParameter.getType())
+): TypeSubstitutor? {
+    val typeParamsInReceiver = HashSet<TypeParameterDescriptor>()
+    typeParamsInReceiver.addUsedTypeParameters(receiverParameter.getType())
 
     val constraintSystem = ConstraintSystemImpl()
     val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
     for (typeParameter in typeParameters) {
-        if (typeNamesInReceiver.contains(typeParameter)) {
+        if (typeParamsInReceiver.contains(typeParameter)) {
             typeVariables[typeParameter] = Variance.INVARIANT
         }
     }
     constraintSystem.registerTypeVariables(typeVariables)
 
     constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION)
-    return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)
+
+    if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {
+        return constraintSystem.getResultingSubstitutor()
+    }
+    else {
+        return null
+    }
 }
 
 private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(jetType: JetType) {
