@@ -55,11 +55,9 @@ import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.cre
 
 public class DelegatedPropertyResolver {
    
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
-
-    @NotNull
     private CallResolver callResolver;
+    private KotlinBuiltIns builtIns;
 
     private static final String PD_METHOD_NAME = "propertyDelegated";
 
@@ -71,6 +69,11 @@ public class DelegatedPropertyResolver {
     @Inject
     public void setCallResolver(@NotNull CallResolver callResolver) {
         this.callResolver = callResolver;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     @Nullable
@@ -118,11 +121,11 @@ public class DelegatedPropertyResolver {
     }
 
     @NotNull
-    private static JetExpression createExpressionForPropertyMetadata(
+    private JetExpression createExpressionForPropertyMetadata(
             @NotNull JetPsiFactory psiFactory,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return psiFactory.createExpression(KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() +
+        return psiFactory.createExpression(builtIns.getPropertyMetadataImpl().getName().asString() +
                                            "(\"" +
                                            propertyDescriptor.getName().asString() +
                                            "\")");
@@ -363,7 +366,7 @@ public class DelegatedPropertyResolver {
                 JetType typeOfThis =
                         extensionReceiver != null ? extensionReceiver.getType() :
                         dispatchReceiver != null ? dispatchReceiver.getType() :
-                        KotlinBuiltIns.getInstance().getNullableNothingType();
+                        builtIns.getNullableNothingType();
 
                 List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();
                 if (valueParameters.isEmpty()) return;

@@ -65,10 +65,16 @@ public class ExpressionTypingUtils {
 
     private final ExpressionTypingServices expressionTypingServices;
     private final CallResolver callResolver;
+    private final KotlinBuiltIns builtIns;
 
-    public ExpressionTypingUtils(@NotNull ExpressionTypingServices expressionTypingServices, @NotNull CallResolver resolver) {
+    public ExpressionTypingUtils(
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull CallResolver resolver,
+            @NotNull KotlinBuiltIns builtIns
+    ) {
         this.expressionTypingServices = expressionTypingServices;
-        callResolver = resolver;
+        this.callResolver = resolver;
+        this.builtIns = builtIns;
     }
 
     @Nullable

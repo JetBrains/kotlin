@@ -116,7 +116,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getExtensionReceiverParameter());
         List<JetType> valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
-        JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
+        JetType resultType = components.builtIns.getFunctionType(
                 Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
         if (!noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
@@ -266,7 +266,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
             if (KotlinBuiltIns.isUnit(expectedReturnType)) {
-                return KotlinBuiltIns.getInstance().getUnitType();
+                return components.builtIns.getUnitType();
             }
         }
         return returnType == null ? CANT_INFER_LAMBDA_PARAM_TYPE : returnType;
@@ -314,7 +314,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         return CommonSupertypes.commonSupertype(returnedExpressionTypes);
     }
 
-    private static List<JetType> getTypesOfLocallyReturnedExpressions(
+    private List<JetType> getTypesOfLocallyReturnedExpressions(
             final JetFunctionLiteral functionLiteral,
             final BindingTrace trace,
             Collection<JetReturnExpression> returnExpressions
@@ -336,7 +336,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
                 JetExpression returnedExpression = returnExpression.getReturnedExpression();
                 if (returnedExpression == null) {
-                    return KotlinBuiltIns.getInstance().getUnitType();
+                    return components.builtIns.getUnitType();
                 }
                 JetType returnedType = trace.get(EXPRESSION_TYPE, returnedExpression);
                 assert returnedType != null : "No type for returned expression: " + returnedExpression + ",\n" +

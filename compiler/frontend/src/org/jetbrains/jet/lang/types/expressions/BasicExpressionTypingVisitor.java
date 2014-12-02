@@ -357,7 +357,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else {
                 // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
                 JetType type = supertypes.isEmpty()
-                               ? KotlinBuiltIns.getInstance().getAnyType()
+                               ? components.builtIns.getAnyType()
                                : supertypes.iterator().next();
                 result = substitutor.substitute(type, Variance.INVARIANT);
             }
@@ -745,7 +745,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             assert returnType != null : "returnType is null for " + resolutionResults.getResultingDescriptor();
             if (KotlinBuiltIns.isUnit(returnType)) {
-                result = ErrorUtils.createErrorType(KotlinBuiltIns.getInstance().getUnit().getName().asString());
+                result = ErrorUtils.createErrorType(components.builtIns.getUnit().getName().asString());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
@@ -916,10 +916,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitEquality(expression, context, operationSign, left, right);
         }
         else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationType)) {
-            context.trace.record(REFERENCE_TARGET, operationSign, KotlinBuiltIns.getInstance().getIdentityEquals());
+            context.trace.record(REFERENCE_TARGET, operationSign, components.builtIns.getIdentityEquals());
             ensureNonemptyIntersectionOfOperandTypes(expression, context);
             // TODO : Check comparison pointlessness
-            result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), context.dataFlowInfo);
+            result = JetTypeInfo.create(components.builtIns.getBooleanType(), context.dataFlowInfo);
         }
         else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
             ValueArgument leftArgument = CallMaker.makeValueArgument(left, left != null ? left : operationSign);
@@ -951,7 +951,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (right == null || left == null) {
             ExpressionTypingUtils.getTypeInfoOrNullType(right, context, facade);
             ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
-            return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
+            return JetTypeInfo.create(components.builtIns.getBooleanType(), dataFlowInfo);
         }
         ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
@@ -965,7 +965,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
                 context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
-        traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
+        traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, components.builtIns.getNullableAnyType());
 
         Call call = CallMaker.makeCallWithExpressions(expression, receiver, null, operationSign, Collections.singletonList(right));
         ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
@@ -1001,7 +1001,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(EQUALS_MISSING.on(operationSign));
             }
         }
-        return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
+        return JetTypeInfo.create(components.builtIns.getBooleanType(), dataFlowInfo);
     }
 
     @NotNull
@@ -1015,9 +1015,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
         if (compareToReturnType != null && !compareToReturnType.isError()) {
-            KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-            if (JetTypeChecker.DEFAULT.equalTypes(builtIns.getIntType(), compareToReturnType)) {
-                type = builtIns.getBooleanType();
+            if (JetTypeChecker.DEFAULT.equalTypes(components.builtIns.getIntType(), compareToReturnType)) {
+                type = components.builtIns.getBooleanType();
             }
             else {
                 context.trace.report(COMPARE_TO_TYPE_MISMATCH.on(operationSign, compareToReturnType));
@@ -1033,7 +1032,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @Nullable JetExpression right,
             @NotNull ExpressionTypingContext context
     ) {
-        JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
+        JetType booleanType = components.builtIns.getBooleanType();
         JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context.replaceExpectedType(booleanType), facade);
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
@@ -1126,7 +1125,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);
         }
 
-        return JetTypeInfo.create(resolutionResult.isSuccess() ? KotlinBuiltIns.getInstance().getBooleanType() : null, dataFlowInfo);
+        return JetTypeInfo.create(resolutionResult.isSuccess() ? components.builtIns.getBooleanType() : null, dataFlowInfo);
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {
@@ -1279,7 +1278,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             });
         }
         ConstantExpressionEvaluator.OBJECT$.evaluate(expression, context.trace, contextWithExpectedType.expectedType);
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getStringType(), expression, contextWithExpectedType, dataFlowInfo[0]);
+        return DataFlowUtils.checkType(components.builtIns.getStringType(), expression, contextWithExpectedType, dataFlowInfo[0]);
     }
 
     @Override

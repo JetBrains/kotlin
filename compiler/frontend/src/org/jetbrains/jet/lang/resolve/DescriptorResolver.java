@@ -71,16 +71,12 @@ public class DescriptorResolver {
         MODIFIERS_ILLEGAL_ON_PARAMETERS.remove(JetTokens.VARARG_KEYWORD);
     }
 
-    @NotNull
     private TypeResolver typeResolver;
-    @NotNull
     private AnnotationResolver annotationResolver;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
-    @NotNull
     private DelegatedPropertyResolver delegatedPropertyResolver;
-    @NotNull
     private StorageManager storageManager;
+    private KotlinBuiltIns builtIns;
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -105,6 +101,11 @@ public class DescriptorResolver {
     @Inject
     public void setStorageManager(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     public void resolveMutableClassDescriptor(
@@ -178,7 +179,7 @@ public class DescriptorResolver {
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
-            supertypes.add(0, KotlinBuiltIns.getInstance().getEnumType(classDescriptor.getDefaultType()));
+            supertypes.add(0, builtIns.getEnumType(classDescriptor.getDefaultType()));
         }
 
         if (supertypes.isEmpty()) {
@@ -219,9 +220,9 @@ public class DescriptorResolver {
             }
         }
         else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
-            return KotlinBuiltIns.getInstance().getAnnotationType();
+            return builtIns.getAnnotationType();
         }
-        return KotlinBuiltIns.getInstance().getAnyType();
+        return builtIns.getAnyType();
     }
 
     public Collection<JetType> resolveDelegationSpecifiers(
@@ -350,7 +351,7 @@ public class DescriptorResolver {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
         }
         else if (function.hasBlockBody()) {
-            returnType = KotlinBuiltIns.getInstance().getUnitType();
+            returnType = builtIns.getUnitType();
         }
         else {
             if (function.hasBody()) {
@@ -554,7 +555,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private static ValueParameterDescriptorImpl resolveValueParameterDescriptor(
+    private ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,
             Annotations annotations
@@ -582,12 +583,12 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private static JetType getVarargParameterType(@NotNull JetType elementType) {
-        JetType primitiveArrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+    private JetType getVarargParameterType(@NotNull JetType elementType) {
+        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
-        return KotlinBuiltIns.getInstance().getArrayType(Variance.INVARIANT, elementType);
+        return builtIns.getArrayType(Variance.INVARIANT, elementType);
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(

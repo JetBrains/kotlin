@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.types.DynamicTypesSettings;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
@@ -66,6 +67,7 @@ public class InjectorForMacros {
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final LazinessToken lazinessToken;
     private final DynamicTypesSettings dynamicTypesSettings;
+    private final KotlinBuiltIns kotlinBuiltIns;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
@@ -99,13 +101,14 @@ public class InjectorForMacros {
         this.lazinessToken = new LazinessToken();
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
-        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver());
+        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver(), kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -114,6 +117,7 @@ public class InjectorForMacros {
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
+        this.expressionTypingServices.setBuiltIns(kotlinBuiltIns);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
@@ -123,6 +127,7 @@ public class InjectorForMacros {
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
         this.expressionTypingComponents.setAdditionalCheckerProvider(empty);
+        this.expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
         this.expressionTypingComponents.setCallResolver(callResolver);
         this.expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         this.expressionTypingComponents.setDynamicTypesSettings(dynamicTypesSettings);
@@ -147,11 +152,13 @@ public class InjectorForMacros {
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
+        descriptorResolver.setBuiltIns(kotlinBuiltIns);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
+        delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
@@ -159,6 +166,7 @@ public class InjectorForMacros {
         forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
         forLoopConventionsChecker.setProject(project);
 
+        argumentTypeResolver.setBuiltIns(kotlinBuiltIns);
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);
 

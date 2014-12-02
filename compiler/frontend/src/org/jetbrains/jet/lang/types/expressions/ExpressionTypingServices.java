@@ -61,22 +61,15 @@ public class ExpressionTypingServices {
     @NotNull
     private final ExpressionTypingComponents expressionTypingComponents;
 
-    @NotNull
     private Project project;
-    @NotNull
     private CallResolver callResolver;
-    @NotNull
     private CallExpressionResolver callExpressionResolver;
-    @NotNull
     private DescriptorResolver descriptorResolver;
-    @NotNull
     private TypeResolver typeResolver;
-    @NotNull
     private AnnotationResolver annotationResolver;
-    @NotNull
     private CallResolverExtensionProvider extensionProvider;
-    @NotNull
     private PartialBodyResolveProvider partialBodyResolveProvider;
+    private KotlinBuiltIns builtIns;
 
     @NotNull
     public Project getProject() {
@@ -151,6 +144,11 @@ public class ExpressionTypingServices {
     @Inject
     public void setPartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
         this.partialBodyResolveProvider = partialBodyResolveProvider;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
@@ -240,7 +238,7 @@ public class ExpressionTypingServices {
 
         JetTypeInfo r;
         if (block.isEmpty()) {
-            r = DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, context, context.dataFlowInfo);
+            r = DataFlowUtils.checkType(builtIns.getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, context.trace);
@@ -288,7 +286,7 @@ public class ExpressionTypingServices {
             @NotNull BindingTrace trace
     ) {
         if (block.isEmpty()) {
-            return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
+            return JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
@@ -354,7 +352,7 @@ public class ExpressionTypingServices {
             if (mightBeUnit) {
                 // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
                 assert result.getType() == null || KotlinBuiltIns.isUnit(result.getType());
-                result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
+                result = JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
             }
         }
         return result;

@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.DynamicTypesSettings;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 
@@ -37,6 +38,7 @@ public class ExpressionTypingComponents {
     /*package*/ ReflectionTypes reflectionTypes;
     /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
+    /*package*/ KotlinBuiltIns builtIns;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -86,6 +88,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setDynamicTypesSettings(@NotNull DynamicTypesSettings dynamicTypesSettings) {
         this.dynamicTypesSettings = dynamicTypesSettings;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     @NotNull
