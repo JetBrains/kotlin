@@ -76,6 +76,7 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
 import org.jetbrains.jet.plugin.util.attachment.mergeAttachments
+import com.sun.jdi.ClassType
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -346,6 +347,22 @@ private fun SuspendContext.getInvokePolicy(): Int {
     return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
 }
 
+private fun com.sun.jdi.Type?.isSubclass(superClassName: String): Boolean {
+    if (this !is ClassType) return false
+    if (allInterfaces().any { it.name() == superClassName }) {
+        return true
+    }
+
+    var superClass = this.superclass()
+    while (superClass != null) {
+        if (superClass.name() == superClassName) {
+            return true
+        }
+        superClass = superClass.superclass()
+    }
+    return false
+}
+
 fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
     val project = getDebugProcess().getProject()
     val frame = getFrameProxy()?.getStackFrame()
@@ -354,6 +371,10 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
     fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean): Boolean {
         if (!shouldCheckType || asmType == null || value.asmType == asmType) return true
         if (project == null) return false
+
+        if ((value.obj() as? com.sun.jdi.ObjectReference)?.referenceType().isSubclass(asmType.getClassName())) {
+            return true
+        }
 
         val thisDesc = value.asmType.getClassDescriptor(project)
         val expDesc = asmType.getClassDescriptor(project)

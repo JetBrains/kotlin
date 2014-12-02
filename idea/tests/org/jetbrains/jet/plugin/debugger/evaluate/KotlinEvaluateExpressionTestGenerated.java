@@ -46,6 +46,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("anonymousObjects.kt")
+        public void testAnonymousObjects() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/anonymousObjects.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("arrays.kt")
         public void testArrays() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/arrays.kt");
