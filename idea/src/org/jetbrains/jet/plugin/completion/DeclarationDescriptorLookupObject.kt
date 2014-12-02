@@ -52,6 +52,8 @@ public class DeclarationDescriptorLookupObject(
 
         if (lookupObject.descriptor.getOriginal() != descriptor.getOriginal()) return false
         if (descriptor !is CallableDescriptor) return true
+        // optimization:
+        if (descriptor == (descriptor as CallableDescriptor).getOriginal() && lookupObject.descriptor == lookupObject.descriptor.getOriginal()) return true
         return substitutionsEqual(descriptor as CallableDescriptor, lookupObject.descriptor as CallableDescriptor)
     }
 

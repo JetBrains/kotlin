@@ -39,7 +39,13 @@ public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collectio
                                                   context: BindingContext,
                                                   dataFlowInfo: DataFlowInfo,
                                                   isInfixCall: Boolean): Collection<CallableDescriptor> {
-    return receivers.flatMap { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo) }
+    val stream = receivers.stream().flatMap { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo).stream() }
+    if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
+        return stream.firstOrNull()?.let { listOf(it) } ?: listOf()
+    }
+    else {
+        return stream.toList()
+    }
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor>
@@ -58,10 +64,16 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         return listOf()
     }
 
-    return SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
+    val substitutors = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
+            .stream()
             .map { checkReceiverResolution(it, receiverParameter, getTypeParameters()) }
             .filterNotNull()
-            .map { substitute(it) }
+    if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
+        return if (substitutors.any()) listOf(this) else listOf()
+    }
+    else {
+        return substitutors.map { substitute(it) }.toList()
+    }
 }
 
 private fun checkReceiverResolution(
