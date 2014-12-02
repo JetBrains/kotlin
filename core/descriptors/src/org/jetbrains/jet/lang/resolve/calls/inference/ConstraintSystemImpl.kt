@@ -149,7 +149,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             for (declaredUpperBound in typeVariable.getUpperBounds()) {
                 if (KotlinBuiltIns.getInstance().getNullableAnyType() == declaredUpperBound) continue //todo remove this line (?)
                 val substitutedBound = constantSubstitutor?.substitute(declaredUpperBound, Variance.INVARIANT)
-                if (substitutedBound != null) {
+                if (substitutedBound != null && !isErrorOrSpecialType(substitutedBound)) {
                     typeBounds.addBound(UPPER_BOUND, substitutedBound, TYPE_BOUND_POSITION.position(typeVariable.getIndex()))
                 }
             }
