@@ -41,6 +41,7 @@ import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.plugin.util.CallType
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -80,7 +81,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             var receiverTypes = receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
             }
-            if (callType == ReferenceVariantsHelper.CallType.SAFE) {
+            if (callType == CallType.SAFE) {
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
             receiverTypes

@@ -111,13 +111,13 @@ class ExpectedInfoClassification private(val substitutor: TypeSubstitutor?, val 
 }
 
 fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
-    val substitutor = matchedSubstitutor(expectedInfo.type)
+    val substitutor = checkIsSubtypeOf(expectedInfo.type)
     if (substitutor != null) {
         return ExpectedInfoClassification.matches(substitutor)
     }
 
     if (isNullable()) {
-        val substitutor2 = makeNotNullable().matchedSubstitutor(expectedInfo.type)
+        val substitutor2 = makeNotNullable().checkIsSubtypeOf(expectedInfo.type)
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
         }

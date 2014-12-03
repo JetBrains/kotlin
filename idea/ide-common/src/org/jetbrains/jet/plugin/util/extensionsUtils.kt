@@ -23,23 +23,19 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
-import java.util.LinkedHashMap
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
-import org.jetbrains.jet.utils.addIfNotNull
-import java.util.HashSet
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.jet.lang.types.TypeUtils
+
+public enum class CallType {
+    NORMAL
+    SAFE
+    INFIX
+}
 
 public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collection<ReceiverValue>,
                                                   context: BindingContext,
                                                   dataFlowInfo: DataFlowInfo,
-                                                  isInfixCall: Boolean): Collection<CallableDescriptor> {
-    val stream = receivers.stream().flatMap { substituteExtensionIfCallable(it, isInfixCall, context, dataFlowInfo).stream() }
+                                                  callType: CallType): Collection<CallableDescriptor> {
+    val stream = receivers.stream().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo).stream() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return stream.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
@@ -49,65 +45,42 @@ public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collectio
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor>
-        = substituteExtensionIfCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, false)
+        = substituteExtensionIfCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, CallType.NORMAL)
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,
-        isInfixCall: Boolean,
+        callType: CallType,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
-    val receiverParameter = getExtensionReceiverParameter()!!
     if (!receiver.exists()) return listOf()
 
-    if (isInfixCall && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
+    if (callType == CallType.INFIX && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
         return listOf()
     }
 
-    val substitutors = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
-            .stream()
-            .map { checkReceiverResolution(it, receiverParameter, getTypeParameters()) }
+    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo).stream()
+
+    if (callType == CallType.SAFE) {
+        types = types.map { it.makeNotNullable() }
+    }
+
+    val extensionReceiverType = fuzzyExtensionReceiverType()!!
+    val substitutors = types
+            .map {
+                var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
+                // check if we may fail due to receiver expression being nullable
+                if (substitutor == null && TypeUtils.isNullableType(it) && !TypeUtils.isNullableType(extensionReceiverType.type)) {
+                    substitutor = extensionReceiverType.checkIsSuperTypeOf(it.makeNotNullable())
+                }
+                substitutor
+            }
             .filterNotNull()
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
         return substitutors.map { substitute(it) }.toList()
-    }
-}
-
-private fun checkReceiverResolution(
-        receiverType: JetType,
-        receiverParameter: ReceiverParameterDescriptor,
-        typeParameters: List<TypeParameterDescriptor>
-): TypeSubstitutor? {
-    val typeParamsInReceiver = HashSet<TypeParameterDescriptor>()
-    typeParamsInReceiver.addUsedTypeParameters(receiverParameter.getType())
-
-    val constraintSystem = ConstraintSystemImpl()
-    val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
-    for (typeParameter in typeParameters) {
-        if (typeParamsInReceiver.contains(typeParameter)) {
-            typeVariables[typeParameter] = Variance.INVARIANT
-        }
-    }
-    constraintSystem.registerTypeVariables(typeVariables)
-
-    constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION)
-
-    if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {
-        return constraintSystem.getResultingSubstitutor()
-    }
-    else {
-        return null
-    }
-}
-
-private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(jetType: JetType) {
-    addIfNotNull(jetType.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor)
-
-    for (argument in jetType.getArguments()) {
-        addUsedTypeParameters(argument.getType())
     }
 }
 

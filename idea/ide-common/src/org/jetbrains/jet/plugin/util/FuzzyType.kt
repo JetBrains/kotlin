@@ -26,8 +26,6 @@ import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.plugin.util.makeNullable
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 
@@ -36,7 +34,6 @@ fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {
     return FuzzyType(returnType, getTypeParameters())
 }
 
-//TODO: replace code in extensionsUtils.kt with use of FuzzyType
 fun CallableDescriptor.fuzzyExtensionReceiverType(): FuzzyType? {
     val receiverParameter = getExtensionReceiverParameter()
     return if (receiverParameter != null) FuzzyType(receiverParameter.getType(), getTypeParameters()) else null
@@ -64,10 +61,30 @@ class FuzzyType(
         }
     }
 
-    public fun matchedSubstitutor(expectedType: JetType): TypeSubstitutor? {
+    public fun checkIsSubtypeOf(otherType: JetType): TypeSubstitutor?
+            = matchedSubstitutor(otherType, MatchKind.IS_SUBTYPE)
+
+    public fun checkIsSuperTypeOf(otherType: JetType): TypeSubstitutor?
+            = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
+
+    private enum class MatchKind {
+        IS_SUBTYPE
+        IS_SUPERTYPE
+    }
+
+    private fun matchedSubstitutor(otherType: JetType, matchKind: MatchKind): TypeSubstitutor? {
         if (type.isError()) return null
+        if (otherType.isError()) return null
+
+        fun JetType.checkInheritance(otherType: JetType): Boolean {
+            return when (matchKind) {
+                MatchKind.IS_SUBTYPE -> this.isSubtypeOf(otherType)
+                MatchKind.IS_SUPERTYPE -> otherType.isSubtypeOf(this)
+            }
+        }
+
         if (usedTypeParameters == null || usedTypeParameters.isEmpty()) {
-            return if (type.isSubtypeOf(expectedType)) TypeSubstitutor.EMPTY else null
+            return if (type.checkInheritance(otherType)) TypeSubstitutor.EMPTY else null
         }
 
         val constraintSystem = ConstraintSystemImpl()
@@ -79,11 +96,15 @@ class FuzzyType(
         }
         constraintSystem.registerTypeVariables(typeVariables)
 
-        constraintSystem.addSubtypeConstraint(type, expectedType, ConstraintPosition.SPECIAL/*TODO?*/)
+        when (matchKind) {
+            MatchKind.IS_SUBTYPE -> constraintSystem.addSubtypeConstraint(type, otherType, ConstraintPosition.SPECIAL)
+            MatchKind.IS_SUPERTYPE -> constraintSystem.addSubtypeConstraint(otherType, type, ConstraintPosition.SPECIAL)
+        }
+
         if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {
             val substitutor = constraintSystem.getResultingSubstitutor()
-            val substitutedType = substitutor.substitute(type, Variance.INVARIANT/*TODO?*/)
-            return if (substitutedType.isSubtypeOf(expectedType)) substitutor else null
+            val substitutedType = substitutor.substitute(type, Variance.INVARIANT)
+            return if (substitutedType != null && substitutedType.checkInheritance(otherType)) substitutor else null
         }
         else {
             return null

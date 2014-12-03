@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import com.intellij.openapi.project.Project
 import java.util.HashSet
@@ -36,6 +35,8 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
+import org.jetbrains.jet.plugin.util.CallType
+import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 
 public class KotlinIndicesHelper(
         private val project: Project,
@@ -110,9 +111,9 @@ public class KotlinIndicesHelper(
             dataFlowInfo: DataFlowInfo) {
         val matchingNames = fqNames.filter { nameFilter(it.shortName().asString()) }
 
-        val receiverExpression = expression.getReceiverExpression()
-        if (receiverExpression != null) {
-            val isInfixCall = expression.getParent() is JetBinaryExpression
+        val receiverPair = ReferenceVariantsHelper.getReferenceVariantsReceiver(expression)
+        if (receiverPair != null) {
+            val (receiverExpression, callType) = receiverPair
 
             val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
             if (expressionType == null || expressionType.isError()) return
@@ -122,7 +123,7 @@ public class KotlinIndicesHelper(
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
 
             matchingNames.flatMapTo(this) {
-                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, moduleDescriptor, bindingContext)
+                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, callType, resolutionScope, moduleDescriptor, bindingContext)
             }
         }
         else {
@@ -130,7 +131,7 @@ public class KotlinIndicesHelper(
 
             for (receiver in resolutionScope.getImplicitReceiversHierarchy()) {
                 matchingNames.flatMapTo(this) {
-                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, false, resolutionScope, moduleDescriptor, bindingContext)
+                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, resolutionScope, moduleDescriptor, bindingContext)
                 }
             }
         }
@@ -143,7 +144,7 @@ public class KotlinIndicesHelper(
                                        index: StringStubIndexExtension<out JetCallableDeclaration>?,
                                        receiverValue: ReceiverValue,
                                        dataFlowInfo: DataFlowInfo,
-                                       isInfixCall: Boolean,
+                                       callType: CallType,
                                        resolutionScope: JetScope,
                                        module: ModuleDescriptor,
                                        bindingContext: BindingContext): Stream<CallableDescriptor> {
@@ -162,7 +163,7 @@ public class KotlinIndicesHelper(
 
         return descriptors.stream()
                 .filter(visibilityFilter)
-                .flatMap { it.substituteExtensionIfCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo).stream() }
+                .flatMap { it.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo).stream() }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
