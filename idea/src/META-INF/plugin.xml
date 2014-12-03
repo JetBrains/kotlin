@@ -826,6 +826,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
+        displayName="Unused Symbol"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+      
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>
