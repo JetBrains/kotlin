@@ -24,11 +24,23 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public enum class CallType {
     NORMAL
     SAFE
-    INFIX
+
+    INFIX {
+        override fun canCall(descriptor: DeclarationDescriptor)
+                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1
+    }
+
+    UNARY {
+        override fun canCall(descriptor: DeclarationDescriptor)
+                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 0
+    }
+
+    public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collection<ReceiverValue>,
@@ -54,10 +66,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
     if (!receiver.exists()) return listOf()
-
-    if (callType == CallType.INFIX && (this !is SimpleFunctionDescriptor || getValueParameters().size() != 1)) {
-        return listOf()
-    }
+    if (!callType.canCall(this)) return listOf()
 
     var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo).stream()
 

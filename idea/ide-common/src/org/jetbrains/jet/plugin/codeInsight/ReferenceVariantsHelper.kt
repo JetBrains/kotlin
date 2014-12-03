@@ -84,8 +84,6 @@ public class ReferenceVariantsHelper(
         val pair = getExplicitReceiverData(expression)
         if (pair != null) {
             val (receiverExpression, callType) = pair
-            fun filterIfInfix(descriptor: DeclarationDescriptor)
-                    = if (callType == CallType.INFIX) descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1 else true
 
             // Process as call expression
             val descriptors = HashSet<DeclarationDescriptor>()
@@ -93,7 +91,7 @@ public class ReferenceVariantsHelper(
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
                 // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors)  { callType.canCall(it) }
             }
 
             val expressionType = if (shouldCastToRuntimeType)
@@ -106,7 +104,7 @@ public class ReferenceVariantsHelper(
 
                 val mask = kindFilter.withoutKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK).exclude(DescriptorKindExclude.Extensions)
                 for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
-                    variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                    variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors) { callType.canCall(it) }
                 }
 
                 descriptors.addCallableExtensions(resolutionScope, receiverValue, dataFlowInfo, callType, kindFilter, nameFilter)
@@ -203,6 +201,8 @@ public class ReferenceVariantsHelper(
                     else
                         CallType.NORMAL
                 }
+
+                is JetUnaryExpression -> CallType.UNARY
 
                 else -> return null
             }
