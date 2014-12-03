@@ -29,14 +29,21 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import org.jetbrains.kotlin.asJava.LightClassUtil
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
+    private val javaInspection = UnusedDeclarationInspection()
+
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : JetVisitorVoid() {
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
+
+                val lightClass = LightClassUtil.getPsiClass(klass)
+                if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return
 
                 val usagesSearchHelper = KotlinClassFindUsagesOptions(holder.getProject()).toClassHelper()
                 val request = usagesSearchHelper.newRequest(UsagesSearchTarget(klass, klass.getUseScope()))
