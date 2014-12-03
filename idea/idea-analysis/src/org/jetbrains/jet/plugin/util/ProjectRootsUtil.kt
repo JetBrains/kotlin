@@ -24,6 +24,8 @@ import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
+import com.intellij.openapi.roots.FileIndex
+import com.intellij.ide.highlighter.JavaClassFileType
 
 public object ProjectRootsUtil {
     platformStatic
@@ -65,5 +67,15 @@ public object ProjectRootsUtil {
     platformStatic
     public fun isInProjectOrLibSource(element: PsiElement): Boolean {
         return isInSource(element, true)
+    }
+
+    platformStatic
+    public fun isLibraryClassFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
+        return fileIndex.isInLibraryClasses(virtualFile) && virtualFile.getFileType() == JavaClassFileType.INSTANCE
+    }
+
+    platformStatic
+    public fun isLibraryFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
+        return fileIndex.isInLibraryClasses(virtualFile) || fileIndex.isInLibrarySource(virtualFile)
     }
 }
