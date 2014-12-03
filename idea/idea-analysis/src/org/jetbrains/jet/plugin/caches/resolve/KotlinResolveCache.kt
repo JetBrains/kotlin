@@ -239,12 +239,14 @@ private object KotlinResolveDataProvider {
 
             val trace = DelegatingBindingTrace(resolveSession.getBindingContext(), "Trace for resolution of " + analyzableElement)
 
+            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile())
             val lazyTopDownAnalyzer = InjectorForLazyBodyResolve(
                     project,
                     SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker()),
                     resolveSession,
                     trace,
-                    TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile()).getAdditionalCheckerProvider()
+                    targetPlatform.getAdditionalCheckerProvider(),
+                    targetPlatform.getDynamicTypesSettings()
             ).getLazyTopDownAnalyzer()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(

@@ -49,8 +49,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
@@ -259,7 +260,8 @@ public class JetSourceNavigationHelper {
                 moduleDescriptor,
                 providerFactory,
                 new BindingTraceContext(),
-                AdditionalCheckerProvider.Empty.INSTANCE$).getResolveSession();
+                AdditionalCheckerProvider.Empty.INSTANCE$,
+                new DynamicTypesSettings()).getResolveSession();
 
         moduleDescriptor.initialize(resolveSession.getPackageFragmentProvider());
         return resolveSession;

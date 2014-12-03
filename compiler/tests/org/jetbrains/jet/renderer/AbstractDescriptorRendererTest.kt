@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.types.DynamicTypesSettings
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
     protected open fun getDescriptor(declaration: JetDeclaration, resolveSession: ResolveSession): DeclarationDescriptor {
@@ -66,7 +67,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 getProject(), globalContext, lazyModule,
                 FileBasedDeclarationProviderFactory(globalContext.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                JavaDeclarationCheckerProvider).getResolveSession()
+                JavaDeclarationCheckerProvider, DynamicTypesSettings()).getResolveSession()
 
         lazyModule.initialize(resolveSession.getPackageFragmentProvider())
 

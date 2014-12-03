@@ -22,6 +22,7 @@ import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -33,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
-import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
@@ -77,6 +77,7 @@ public class InjectorForLazyBodyResolve {
     private final KotlinCodeAnalyzer analyzer;
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final DynamicTypesSettings dynamicTypesSettings;
     private final ModuleDescriptor moduleDescriptor;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
@@ -88,7 +89,6 @@ public class InjectorForLazyBodyResolve {
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
-    private final DynamicTypesSettings dynamicTypesSettings;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final ReflectionTypes reflectionTypes;
@@ -125,7 +125,8 @@ public class InjectorForLazyBodyResolve {
         @NotNull GlobalContext globalContext,
         @NotNull KotlinCodeAnalyzer analyzer,
         @NotNull BindingTrace bindingTrace,
-        @NotNull AdditionalCheckerProvider additionalCheckerProvider
+        @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+        @NotNull DynamicTypesSettings dynamicTypesSettings
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -133,6 +134,7 @@ public class InjectorForLazyBodyResolve {
         this.analyzer = analyzer;
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
+        this.dynamicTypesSettings = dynamicTypesSettings;
         this.moduleDescriptor = analyzer.getModuleDescriptor();
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
@@ -144,7 +146,6 @@ public class InjectorForLazyBodyResolve {
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
-        this.dynamicTypesSettings = new DynamicTypesSettings();
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
