@@ -261,6 +261,8 @@
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
 
+    <qualifiedNameProvider implementation="org.jetbrains.jet.plugin.actions.KotlinQualifiedNameProvider"/>
+
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
     <codeInsight.gotoSuper language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.GotoSuperActionHandler"/>
