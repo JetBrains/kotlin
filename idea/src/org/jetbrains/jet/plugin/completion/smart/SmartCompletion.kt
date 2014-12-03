@@ -205,11 +205,11 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
     // skip declarations of type Nothing or of generic parameter type which has no real bounds
     private fun shouldSkipDeclarationsOfType(type: FuzzyType): Boolean {
-        if (KotlinBuiltIns.getInstance().isNothing(type.type)) return true
+        if (KotlinBuiltIns.isNothing(type.type)) return true
         if (type.freeParameters.isEmpty()) return false
         val typeParameter = type.type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor ?: return false
         if (!type.freeParameters.contains(typeParameter)) return false
-        return KotlinBuiltIns.getInstance().isAnyOrNullableAny(typeParameter.getUpperBoundsAsType())
+        return KotlinBuiltIns.isAnyOrNullableAny(typeParameter.getUpperBoundsAsType())
         //TODO: check for class object constraint when there will be supported
     }
 

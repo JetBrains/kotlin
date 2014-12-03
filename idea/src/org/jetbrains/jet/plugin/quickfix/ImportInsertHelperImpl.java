@@ -117,7 +117,7 @@ public class ImportInsertHelperImpl extends ImportInsertHelper {
                                    ? TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
                                    : TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS;
         if (importPath.fqnPart().asString().startsWith("java.lang.")
-            && !JavaToKotlinClassMap.getInstance().mapPlatformClass(importPath.fqnPart()).isEmpty()) {
+            && !JavaToKotlinClassMap.INSTANCE.mapPlatformClass(importPath.fqnPart()).isEmpty()) {
             return false;
         }
         return NamePackage.isImported(importPath, defaultImports);
