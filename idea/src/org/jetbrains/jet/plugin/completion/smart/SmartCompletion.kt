@@ -128,21 +128,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
             val result = ArrayList<LookupElement>()
             val types = descriptor.fuzzyTypes(smartCastTypes)
-            val classifier = { (expectedInfo: ExpectedInfo) ->
-                val substitutor = types.stream().map { it.checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
-                if (substitutor != null) {
-                    ExpectedInfoClassification.matches(substitutor)
-                }
-                else {
-                    val substitutor2 = types.stream().map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
-                    if (substitutor2 != null) {
-                        ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
-                    }
-                    else {
-                        ExpectedInfoClassification.notMatches
-                    }
-                }
-            }
+            val classifier = { (expectedInfo: ExpectedInfo) -> types.classifyExpectedInfo(expectedInfo) }
             result.addLookupElements(descriptor, expectedInfos, classifier) { descriptor ->
                 lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
             }

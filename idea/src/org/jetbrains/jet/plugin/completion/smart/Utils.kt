@@ -110,14 +110,15 @@ class ExpectedInfoClassification private(val substitutor: TypeSubstitutor?, val 
     }
 }
 
-fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
-    val substitutor = checkIsSubtypeOf(expectedInfo.type)
+fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
+    val stream = stream()
+    val substitutor = stream.map { it.checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
     if (substitutor != null) {
         return ExpectedInfoClassification.matches(substitutor)
     }
 
-    if (isNullable()) {
-        val substitutor2 = makeNotNullable().checkIsSubtypeOf(expectedInfo.type)
+    if (stream.any { it.isNullable() }) {
+        val substitutor2 = stream.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
         }
@@ -125,6 +126,8 @@ fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClas
 
     return ExpectedInfoClassification.notMatches
 }
+
+fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).classifyExpectedInfo(expectedInfo)
 
 fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
         descriptor: TDescriptor,
