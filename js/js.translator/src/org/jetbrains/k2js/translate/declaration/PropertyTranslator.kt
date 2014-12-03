@@ -45,9 +45,9 @@ public fun translateAccessors(
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
-    if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
-        PropertyTranslator(descriptor, declaration, context).translate(result)
-    }
+    if (descriptor.getModality() == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor)) return
+
+    PropertyTranslator(descriptor, declaration, context).translate(result)
 }
 
 public fun translateAccessors(
