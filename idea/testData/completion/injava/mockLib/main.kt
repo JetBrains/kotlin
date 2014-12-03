@@ -11,7 +11,13 @@ public class LibClass {
         public object NestedObject
     }
 
-    public class Nested
+    public class Nested {
+        public val valInNested: Int = 1
+        public fun funInNested() {
+        }
+    }
+
+    public val nested: Nested = Nested()
 }
 
 public trait LibTrait {
@@ -33,3 +39,13 @@ public fun String.topLevelExtFunction(): String = ""
 
 public var topLevelVar: String = ""
 
+class F() {
+    class object {
+        class F {
+            class object {
+                object F {
+                }
+            }
+        }
+    }
+}
