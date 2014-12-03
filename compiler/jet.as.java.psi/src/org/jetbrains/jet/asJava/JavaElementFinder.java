@@ -36,10 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
@@ -121,7 +119,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         findClassesAndObjects(qualifiedName, scope, answer);
 
         if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {
-            findPackageClass(qualifiedName.parent(), scope, answer);
+            answer.addAll(lightClassGenerationSupport.getPackageClasses(qualifiedName.parent(), scope));
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
@@ -137,26 +135,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
                 PsiClass lightClass = LightClassUtil.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
-                }
-            }
-        }
-    }
-
-    private void findPackageClass(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
-        List<LightClassGenerationSupport.KotlinLightPackageClassInfo>
-                packageClassesInfos = lightClassGenerationSupport.findPackageClassesInfos(qualifiedName, scope);
-        for (LightClassGenerationSupport.KotlinLightPackageClassInfo info : packageClassesInfos) {
-            Collection<JetFile> files = info.getFiles();
-            if (PackagePartClassUtils.getPackageFilesWithCallables(files).isEmpty()) continue;
-            KotlinLightClassForPackage lightClass =
-                    KotlinLightClassForPackage.create(psiManager, qualifiedName, info.getScope(), files);
-            if (lightClass == null) continue;
-
-            answer.add(lightClass);
-
-            if (files.size() > 1) {
-                for (JetFile file : files) {
-                    answer.add(new FakeLightClassForFileOfPackage(psiManager, lightClass, file));
                 }
             }
         }
@@ -222,7 +200,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         List<PsiClass> answer = new SmartList<PsiClass>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        findPackageClass(packageFQN, scope, answer);
+        answer.addAll(lightClassGenerationSupport.getPackageClasses(packageFQN, scope));
 
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (JetClassOrObject declaration : declarations) {

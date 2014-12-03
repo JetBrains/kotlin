@@ -21,20 +21,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.LightClassConstructionContext;
-import org.jetbrains.jet.asJava.LightClassGenerationSupport;
+import org.jetbrains.jet.asJava.*;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
@@ -57,10 +57,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     private final Project project;
 
     private final Comparator<JetFile> jetFileComparator;
+    private final PsiManager psiManager;
 
     public IDELightClassGenerationSupport(@NotNull Project project) {
         this.project = project;
         this.jetFileComparator = byScopeComparator(GlobalSearchScope.allScope(project));
+        this.psiManager = PsiManager.getInstance(project);
     }
 
 
@@ -157,21 +159,6 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @NotNull
-    @Override
-    public List<KotlinLightPackageClassInfo> findPackageClassesInfos(
-            @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
-    ) {
-        Collection<JetFile> allFiles = findFilesForPackage(fqName, wholeScope);
-        Map<IdeaModuleInfo, List<JetFile>> filesByInfo = groupByModuleInfo(allFiles);
-        List<KotlinLightPackageClassInfo> result = new ArrayList<KotlinLightPackageClassInfo>();
-        for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
-            result.add(new KotlinLightPackageClassInfo(entry.getValue(), entry.getKey().contentScope()));
-        }
-        sortByClasspath(wholeScope, result);
-        return result;
-    }
-
-    @NotNull
     private static Map<IdeaModuleInfo, List<JetFile>> groupByModuleInfo(@NotNull Collection<JetFile> allFiles) {
         return KotlinPackage.groupByTo(
                 allFiles,
@@ -182,19 +169,6 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                         return ResolvePackage.getModuleInfo(file);
                     }
                 });
-    }
-
-    private static void sortByClasspath(@NotNull GlobalSearchScope wholeScope, @NotNull List<KotlinLightPackageClassInfo> result) {
-        final Comparator<JetFile> byScopeComparator = byScopeComparator(wholeScope);
-        Collections.sort(result, new Comparator<KotlinLightPackageClassInfo>() {
-            @Override
-            public int compare(@NotNull KotlinLightPackageClassInfo info1, @NotNull KotlinLightPackageClassInfo info2) {
-                JetFile file1 = info1.getFiles().iterator().next();
-                JetFile file2 = info2.getFiles().iterator().next();
-                //classes earlier that would appear earlier on classpath should go first
-                return -byScopeComparator.compare(file1, file2);
-            }
-        });
     }
 
     @NotNull
@@ -224,7 +198,43 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             return JetSourceNavigationHelper.getOriginalClass(classOrObject);
         }
 
-        return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+    }
+
+    @NotNull
+    @Override
+    public Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
+        List<PsiClass> result = new ArrayList<PsiClass>();
+        List<KotlinLightPackageClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
+        for (KotlinLightPackageClassInfo info : packageClassesInfos) {
+            Collection<JetFile> files = info.getFiles();
+            if (PackagePartClassUtils.getPackageFilesWithCallables(files).isEmpty()) continue;
+            KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, packageFqName, info.getScope(), files);
+            if (lightClass == null) continue;
+
+            result.add(lightClass);
+
+            if (files.size() > 1) {
+                for (JetFile file : files) {
+                    result.add(new FakeLightClassForFileOfPackage(psiManager, lightClass, file));
+                }
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    private List<KotlinLightPackageClassInfo> findPackageClassesInfos(
+            @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
+    ) {
+        Collection<JetFile> allFiles = findFilesForPackage(fqName, wholeScope);
+        Map<IdeaModuleInfo, List<JetFile>> filesByInfo = groupByModuleInfo(allFiles);
+        List<KotlinLightPackageClassInfo> result = new ArrayList<KotlinLightPackageClassInfo>();
+        for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
+            result.add(new KotlinLightPackageClassInfo(entry.getValue(), entry.getKey().contentScope()));
+        }
+        sortByClasspath(wholeScope, result);
+        return result;
     }
 
     @NotNull
@@ -240,5 +250,38 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 return searchScope.compare(f1, f2);
             }
         };
+    }
+
+    private static void sortByClasspath(@NotNull GlobalSearchScope wholeScope, @NotNull List<KotlinLightPackageClassInfo> result) {
+        final Comparator<JetFile> byScopeComparator = byScopeComparator(wholeScope);
+        Collections.sort(result, new Comparator<KotlinLightPackageClassInfo>() {
+            @Override
+            public int compare(@NotNull KotlinLightPackageClassInfo info1, @NotNull KotlinLightPackageClassInfo info2) {
+                JetFile file1 = info1.getFiles().iterator().next();
+                JetFile file2 = info2.getFiles().iterator().next();
+                //classes earlier that would appear earlier on classpath should go first
+                return -byScopeComparator.compare(file1, file2);
+            }
+        });
+    }
+
+    private static final class KotlinLightPackageClassInfo {
+        private final Collection<JetFile> files;
+        private final GlobalSearchScope scope;
+
+        public KotlinLightPackageClassInfo(@NotNull Collection<JetFile> files, @NotNull GlobalSearchScope scope) {
+            this.files = files;
+            this.scope = scope;
+        }
+
+        @NotNull
+        public Collection<JetFile> getFiles() {
+            return files;
+        }
+
+        @NotNull
+        public GlobalSearchScope getScope() {
+            return scope;
+        }
     }
 }
