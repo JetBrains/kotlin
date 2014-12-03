@@ -290,14 +290,11 @@ public final class StaticContext {
                         }
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                     } else {
-                        if (descriptor instanceof PropertyDescriptor) {
-                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
-                        } else {
-                            String propertyJsName = getNameForDescriptor(propertyDescriptor).getIdent();
-                            boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                            String accessorName = Namer.getNameForAccessor(propertyJsName, isGetter, false);
-                            return declarePropertyOrPropertyAccessorName(descriptor, accessorName, false);
-                        }
+                        assert !(descriptor instanceof PropertyDescriptor) : "descriptor should not be instance of PropertyDescriptor: " + descriptor;
+
+                        boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
+                        String accessorName = Namer.getNameForAccessor(propertyName, isGetter, false);
+                        return declarePropertyOrPropertyAccessorName(descriptor, accessorName, false);
                     }
                 }
             };
