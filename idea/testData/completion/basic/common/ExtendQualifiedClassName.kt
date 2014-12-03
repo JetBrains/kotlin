@@ -6,7 +6,7 @@ open class TestClass {
 fun globalFun(){}
 val globalProp: Int = 1
 
-class A() : Test.SubTest.AnotherTest.Te<caret> {
+class A() : Test.SubTest.AnotherTest.<caret> {
     public fun test() {
     }
 }
