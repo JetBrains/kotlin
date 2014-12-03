@@ -79,11 +79,11 @@ public class TypeCheckingProcedure {
             return heterogeneousEquivalence(type1, type2);
         }
 
-        if (type1.isNullable() != type2.isNullable()) {
+        if (type1.isMarkedNullable() != type2.isMarkedNullable()) {
             return false;
         }
 
-        if (type1.isNullable()) {
+        if (type1.isMarkedNullable()) {
             // Then type2 is nullable, too (see the previous condition
             return constraints.assertEqualTypes(TypeUtils.makeNotNullable(type1), TypeUtils.makeNotNullable(type2), this);
         }
@@ -189,7 +189,7 @@ public class TypeCheckingProcedure {
         if (subtype.isError() || supertype.isError()) {
             return true;
         }
-        if (!supertype.isNullable() && subtype.isNullable()) {
+        if (!supertype.isMarkedNullable() && subtype.isMarkedNullable()) {
             return false;
         }
         subtype = TypeUtils.makeNotNullable(subtype);

@@ -43,7 +43,7 @@ class DeserializedType(
 
     override fun getArguments(): List<TypeProjection> = arguments
 
-    override fun isNullable(): Boolean = typeProto.getNullable()
+    override fun isMarkedNullable(): Boolean = typeProto.getNullable()
 
     private fun computeMemberScope(): JetScope =
             if (isError()) {

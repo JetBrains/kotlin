@@ -54,11 +54,11 @@ public class RangeCodegenUtil {
     private RangeCodegenUtil() {}
 
     public static boolean isRange(JetType rangeType) {
-        return !rangeType.isNullable() && getPrimitiveRangeElementType(rangeType) != null;
+        return !rangeType.isMarkedNullable() && getPrimitiveRangeElementType(rangeType) != null;
     }
 
     public static boolean isProgression(JetType rangeType) {
-        return !rangeType.isNullable() && getPrimitiveProgressionElementType(rangeType) != null;
+        return !rangeType.isMarkedNullable() && getPrimitiveProgressionElementType(rangeType) != null;
     }
 
     @Nullable

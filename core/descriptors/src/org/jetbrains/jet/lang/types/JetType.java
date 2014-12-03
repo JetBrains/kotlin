@@ -36,7 +36,7 @@ public interface JetType extends Annotated {
     @ReadOnly
     List<TypeProjection> getArguments();
 
-    boolean isNullable();
+    boolean isMarkedNullable();
 
     @NotNull
     JetScope getMemberScope();

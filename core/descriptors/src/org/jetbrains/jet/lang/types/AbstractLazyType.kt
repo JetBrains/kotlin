@@ -37,7 +37,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
 
     protected abstract fun computeMemberScope(): JetScope
 
-    override fun isNullable() = false
+    override fun isMarkedNullable() = false
 
     override fun isError() = getConstructor().getDeclarationDescriptor()?.let { d -> ErrorUtils.isError(d) } ?: false
 

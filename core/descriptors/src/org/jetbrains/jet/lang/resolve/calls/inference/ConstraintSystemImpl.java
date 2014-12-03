@@ -433,7 +433,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         TypeBoundsImpl typeBounds = getTypeBounds(parameterType);
         assert typeBounds != null : "constraint should be generated only for type variables";
 
-        if (!parameterType.isNullable() || !constrainingType.isNullable()) {
+        if (!parameterType.isMarkedNullable() || !constrainingType.isMarkedNullable()) {
             typeBounds.addBound(boundKind, constrainingType, constraintPosition);
             return;
         }

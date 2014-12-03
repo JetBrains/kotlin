@@ -69,7 +69,7 @@ public final class JetTypeImpl extends AbstractJetType {
     }
 
     @Override
-    public boolean isNullable() {
+    public boolean isMarkedNullable() {
         return nullable;
     }
 

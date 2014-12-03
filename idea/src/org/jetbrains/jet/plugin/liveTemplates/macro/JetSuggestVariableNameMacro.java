@@ -41,6 +41,6 @@ public class JetSuggestVariableNameMacro extends BaseJetVariableMacro {
             @NotNull Project project,
             @NotNull ExpressionTypingComponents components
     ) {
-        return variableDescriptor.getType().isNullable();
+        return variableDescriptor.getType().isMarkedNullable();
     }
 }

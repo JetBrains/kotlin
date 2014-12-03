@@ -1079,7 +1079,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType rightType = rightTypeInfo.getType();
 
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
-        if (leftType != null && rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isNullable()) {
+        if (leftType != null && rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable()) {
             DataFlowValue value = createDataFlowValue(left, leftType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }

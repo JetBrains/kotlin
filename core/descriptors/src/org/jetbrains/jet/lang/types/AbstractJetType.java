@@ -38,7 +38,7 @@ public abstract class AbstractJetType implements JetType {
     public final int hashCode() {
         int result = getConstructor().hashCode();
         result = 31 * result + getArguments().hashCode();
-        result = 31 * result + (isNullable() ? 1 : 0);
+        result = 31 * result + (isMarkedNullable() ? 1 : 0);
         return result;
     }
 
@@ -49,13 +49,13 @@ public abstract class AbstractJetType implements JetType {
 
         JetType type = (JetType) obj;
 
-        return isNullable() == type.isNullable() && JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
+        return isMarkedNullable() == type.isMarkedNullable() && JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 
     @Override
     public String toString() {
         List<TypeProjection> arguments = getArguments();
-        return getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (isNullable() ? "?" : "");
+        return getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (isMarkedNullable() ? "?" : "");
     }
 
     private static StringBuilder argumentsToString(List<TypeProjection> arguments) {

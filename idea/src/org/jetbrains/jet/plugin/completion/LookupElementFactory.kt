@@ -207,12 +207,12 @@ public class LookupElementFactory(
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
         if (descriptor !is CallableDescriptor) return null
 
-        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isNullable() }
+        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isMarkedNullable() }
         val receiverParameter = descriptor.getExtensionReceiverParameter()
 
         if (receiverParameter != null) {
             val receiverParamType = receiverParameter.getType()
-            return if (isReceiverNullable && !receiverParamType.isNullable())
+            return if (isReceiverNullable && !receiverParamType.isMarkedNullable())
                 CallableWeight.notApplicableReceiverNullable
             else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
                 CallableWeight.thisTypeExtension

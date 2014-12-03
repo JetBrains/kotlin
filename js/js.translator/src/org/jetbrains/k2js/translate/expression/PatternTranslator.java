@@ -117,7 +117,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     private boolean isNullable(JetTypeReference typeReference) {
-        return getTypeByReference(bindingContext(), typeReference).isNullable();
+        return getTypeByReference(bindingContext(), typeReference).isMarkedNullable();
     }
 
     @NotNull

@@ -41,7 +41,7 @@ fun CallableDescriptor.fuzzyExtensionReceiverType(): FuzzyType? {
 
 fun FuzzyType.makeNotNullable() = FuzzyType(type.makeNotNullable(), freeParameters)
 fun FuzzyType.makeNullable() = FuzzyType(type.makeNullable(), freeParameters)
-fun FuzzyType.isNullable() = type.isNullable()
+fun FuzzyType.isNullable() = type.isMarkedNullable()
 
 class FuzzyType(
         val type: JetType,

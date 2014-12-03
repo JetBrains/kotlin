@@ -57,7 +57,7 @@ object KeywordValues {
 
         collection.addLookupElements(null,
                                      expectedInfos,
-                                     { info -> if (info.type.isNullable()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches },
+                                     { info -> if (info.type.isMarkedNullable()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches },
                                      { LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL) })
     }
 }

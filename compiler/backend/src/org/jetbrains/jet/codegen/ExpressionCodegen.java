@@ -3863,7 +3863,7 @@ The "returned" value of try expression with no finally is either the last expres
                 if (leaveExpressionOnStack) {
                     v.dup();
                 }
-                if (jetType.isNullable()) {
+                if (jetType.isMarkedNullable()) {
                     Label nope = new Label();
                     Label end = new Label();
 

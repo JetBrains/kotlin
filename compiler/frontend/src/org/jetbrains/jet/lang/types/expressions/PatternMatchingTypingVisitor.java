@@ -289,7 +289,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
         }
 
-        if (!subjectType.isNullable() && targetType.isNullable()) {
+        if (!subjectType.isMarkedNullable() && targetType.isMarkedNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();
             assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();
             JetNullableType nullableType = (JetNullableType) element;

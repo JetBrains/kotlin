@@ -30,7 +30,7 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
+        val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isMarkedNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
         return CreateCallableFromUsageFix(forExpr, FunctionInfo("iterator", iterableType, returnType))
     }

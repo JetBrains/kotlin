@@ -190,7 +190,7 @@ public class SmartCastUtils {
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        if (!receiver.getType().isNullable()) return true;
+        if (!receiver.getType().isMarkedNullable()) return true;
 
         List<JetType> smartCastVariants = getSmartCastVariants(receiver, bindingContext, dataFlowInfo);
         for (JetType smartCastVariant : smartCastVariants) {

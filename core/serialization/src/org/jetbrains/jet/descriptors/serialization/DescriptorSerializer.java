@@ -351,7 +351,7 @@ public class DescriptorSerializer {
         }
 
         // to avoid storing a default
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             builder.setNullable(true);
         }
 

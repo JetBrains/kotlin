@@ -124,7 +124,7 @@ public class CommonSupertypes {
             if (type.isError()) {
                 return ErrorUtils.createErrorType("Supertype of error type " + type);
             }
-            nullable |= type.isNullable();
+            nullable |= type.isMarkedNullable();
         }
 
         // Everything deleted => it's Nothing or Nothing?
@@ -220,7 +220,7 @@ public class CommonSupertypes {
 
         boolean nullable = false;
         for (JetType type : types) {
-            nullable |= type.isNullable();
+            nullable |= type.isMarkedNullable();
         }
 
         // TODO : attributes?

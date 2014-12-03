@@ -54,7 +54,7 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     val arguments = getArguments().map { it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
     val typeArgumentString = if (arguments.notEmpty) arguments.joinToString(", ", "<", ">") else ""
-    val nullifier = if (isNullable()) "?" else ""
+    val nullifier = if (isMarkedNullable()) "?" else ""
     return "$typeString$typeArgumentString$nullifier"
 }
 
@@ -203,7 +203,7 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 private class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
 
 private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
-    val nullable = isNullable()
+    val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 
     if (when (variance) {
@@ -218,7 +218,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
-        return JetTypeImpl(getAnnotations(), getConstructor(), isNullable(), newArguments, getMemberScope())
+        return JetTypeImpl(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }
 }
 

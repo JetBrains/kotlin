@@ -285,7 +285,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
         if (isPrimitive(type)) {
-            if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
+            if (!propertyDescriptor.getType().isMarkedNullable() && value instanceof Number) {
                 if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
                     return true;
                 }

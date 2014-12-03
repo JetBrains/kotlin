@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
@@ -62,7 +61,7 @@ public class DataFlowValueFactory {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
             JetType type = receiverValue.getType();
-            boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
+            boolean nullable = type.isMarkedNullable() || TypeUtils.hasNullableSuperType(type);
             return new DataFlowValue(receiverValue, type, nullable, Nullability.NOT_NULL);
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {

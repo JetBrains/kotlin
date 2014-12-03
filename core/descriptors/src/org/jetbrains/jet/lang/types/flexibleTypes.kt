@@ -117,7 +117,7 @@ public trait Approximation : TypeCapability {
 }
 
 fun Approximation.Info.assertNotNull(): Boolean {
-    return from.upperIfFlexible().isNullable() && !TypeUtils.isNullableType(to)
+    return from.upperIfFlexible().isMarkedNullable() && !TypeUtils.isNullableType(to)
 }
 
 public fun JetType.getApproximationTo(
@@ -161,9 +161,9 @@ public open class DelegatingFlexibleType protected (
                 extraCapabilities)
     }
 
-    override fun computeIsNullable() = delegateType.isNullable()
+    override fun computeIsNullable() = delegateType.isMarkedNullable()
 
-    override fun isNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
+    override fun isMarkedNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
 
     override fun approximateToExpectedType(expectedType: JetType, dataFlowExtras: Approximation.DataFlowExtras): Approximation.Info? {
         // val foo: Any? = foo() : Foo!

@@ -64,7 +64,7 @@ public class TypeUtils {
         }
 
         @Override
-        public boolean isNullable() {
+        public boolean isMarkedNullable() {
             throw new IllegalStateException(name);
         }
 
@@ -136,7 +136,7 @@ public class TypeUtils {
         }
 
         // checking to preserve laziness
-        if (!(type instanceof LazyType) && type.isNullable() == nullable) {
+        if (!(type instanceof LazyType) && type.isMarkedNullable() == nullable) {
             return type;
         }
 
@@ -172,7 +172,7 @@ public class TypeUtils {
         List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
             nothingTypePresent |= KotlinBuiltIns.isNothingOrNullableNothing(type);
-            allNullable &= type.isNullable();
+            allNullable &= type.isMarkedNullable();
             nullabilityStripped.add(makeNotNullable(type));
         }
 
@@ -299,7 +299,7 @@ public class TypeUtils {
     }
 
     public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             return true;
         }
         if (!type.getConstructor().isFinal()) {
@@ -401,7 +401,7 @@ public class TypeUtils {
 
     @NotNull
     public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
-        boolean isNullable = type.isNullable();
+        boolean isNullable = type.isMarkedNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         Collection<JetType> originalSupertypes = type.getConstructor().getSupertypes();
         List<JetType> result = new ArrayList<JetType>(originalSupertypes.size());
@@ -434,7 +434,7 @@ public class TypeUtils {
 
     public static boolean hasNullableLowerBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         for (JetType bound : typeParameterDescriptor.getLowerBounds()) {
-            if (bound.isNullable()) {
+            if (bound.isMarkedNullable()) {
                 return true;
             }
         }
@@ -446,7 +446,7 @@ public class TypeUtils {
      * @return true if a value of this type can be null
      */
     public static boolean isNullableType(@NotNull JetType type) {
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             return true;
         }
         if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
@@ -465,7 +465,7 @@ public class TypeUtils {
         }
 
         for (JetType supertype : getImmediateSupertypes(type)) {
-            if (supertype.isNullable()) return true;
+            if (supertype.isMarkedNullable()) return true;
             if (hasNullableSuperType(supertype)) return true;
         }
 
@@ -775,7 +775,7 @@ public class TypeUtils {
         }
 
         @Override
-        public abstract boolean isNullable();
+        public abstract boolean isMarkedNullable();
 
         @Override
         @NotNull
@@ -802,7 +802,7 @@ public class TypeUtils {
         }
 
         @Override
-        public boolean isNullable() {
+        public boolean isMarkedNullable() {
             return true;
         }
     }
@@ -814,7 +814,7 @@ public class TypeUtils {
         }
 
         @Override
-        public boolean isNullable() {
+        public boolean isMarkedNullable() {
             return false;
         }
     }

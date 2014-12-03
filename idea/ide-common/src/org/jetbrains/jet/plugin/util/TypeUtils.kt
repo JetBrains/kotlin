@@ -59,7 +59,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
     return JetTypeImpl(
             jetType.getAnnotations(),
             jetType.getConstructor(),
-            jetType.isNullable(),
+            jetType.isMarkedNullable(),
             jetType.getArguments().map { TypeProjectionImpl(it.getProjectionKind(), approximateFlexibleTypes(it.getType(), false)) },
             ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )

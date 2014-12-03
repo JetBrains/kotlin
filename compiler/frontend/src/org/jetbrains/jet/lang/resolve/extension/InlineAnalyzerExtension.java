@@ -152,7 +152,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         JetType type = parameter.getReturnType();
         if (type != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
             if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
-                if (type.isNullable()) {
+                if (type.isMarkedNullable()) {
                     if (trace != null) {
                         trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
                     }

@@ -52,7 +52,7 @@ public class CompileTimeConstantUtils {
             JetType parameterType = parameterDescriptor.getType();
             JetTypeReference typeReference = parameter.getTypeReference();
             if (typeReference != null) {
-                if (parameterType.isNullable()) {
+                if (parameterType.isMarkedNullable()) {
                     trace.report(NULLABLE_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
                 }
                 else if (!isAcceptableTypeForAnnotationParameter(parameterType)) {
@@ -82,7 +82,7 @@ public class CompileTimeConstantUtils {
             List<TypeProjection> arguments = parameterType.getArguments();
             if (arguments.size() == 1) {
                 JetType arrayType = arguments.get(0).getType();
-                if (arrayType.isNullable()) {
+                if (arrayType.isMarkedNullable()) {
                     return false;
                 }
                 ClassDescriptor arrayTypeDescriptor = TypeUtils.getClassDescriptor(arrayType);

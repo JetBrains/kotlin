@@ -750,7 +750,7 @@ public class KotlinBuiltIns {
 
     public static boolean isPrimitiveType(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return !type.isNullable() && descriptor != null && FQ_NAMES.primitiveTypes.contains(DescriptorUtils.getFqName(descriptor));
+        return !type.isMarkedNullable() && descriptor != null && FQ_NAMES.primitiveTypes.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     // Functions
@@ -853,7 +853,7 @@ public class KotlinBuiltIns {
     }
 
     private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
-        return !type.isNullable() && isConstructedFromGivenClass(type, fqName);
+        return !type.isMarkedNullable() && isConstructedFromGivenClass(type, fqName);
     }
 
     public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
@@ -867,12 +867,12 @@ public class KotlinBuiltIns {
 
     public static boolean isNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isNullable();
+               && !type.isMarkedNullable();
     }
 
     public static boolean isNullableNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
-               && type.isNullable();
+               && type.isMarkedNullable();
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull JetType type) {

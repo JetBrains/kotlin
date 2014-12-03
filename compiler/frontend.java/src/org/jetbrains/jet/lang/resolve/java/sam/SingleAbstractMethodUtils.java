@@ -78,7 +78,7 @@ public class SingleAbstractMethodUtils {
         return new JetTypeImpl(
                 functionType.getAnnotations(),
                 functionType.getConstructor(),
-                functionType.isNullable(),
+                functionType.isMarkedNullable(),
                 arguments,
                 ((ClassDescriptor) classifier).getMemberScope(arguments)
         );
@@ -106,7 +106,7 @@ public class SingleAbstractMethodUtils {
                     return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
                 }
 
-                return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isNullable());
+                return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isMarkedNullable());
             }
         }
         return null;

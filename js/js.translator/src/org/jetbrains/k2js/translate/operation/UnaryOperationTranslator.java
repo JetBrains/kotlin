@@ -57,7 +57,7 @@ public final class UnaryOperationTranslator {
             JetExpression baseExpression = getBaseExpression(expression);
             JetType type = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.EXPRESSION_TYPE, baseExpression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
-            return type.isNullable() ? sure(translatedExpression, context) : translatedExpression;
+            return type.isMarkedNullable() ? sure(translatedExpression, context) : translatedExpression;
         }
 
         if (operationToken == JetTokens.MINUS) {

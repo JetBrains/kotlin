@@ -445,7 +445,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             sb.append(renderTypeName(type.getConstructor()));
         }
         sb.append(renderTypeArguments(type.getArguments()));
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             sb.append("?");
         }
         return sb.toString();
@@ -494,7 +494,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         sb.append(") ").append(arrow()).append(" ");
         sb.append(renderNormalizedType(KotlinBuiltIns.getReturnTypeFromFunctionType(type)));
 
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             return "(" + sb + ")?";
         }
         return sb.toString();

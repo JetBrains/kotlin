@@ -407,7 +407,7 @@ public class DescriptorUtils {
     public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull JetType type) {
         if (variable.isVar() || type.isError()) return false;
 
-        if (type instanceof LazyType || type.isNullable()) return true;
+        if (type instanceof LazyType || type.isMarkedNullable()) return true;
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         return KotlinBuiltIns.isPrimitiveType(type) ||

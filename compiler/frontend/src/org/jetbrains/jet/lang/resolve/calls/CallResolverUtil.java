@@ -67,7 +67,7 @@ public class CallResolverUtil {
         List<TypeProjection> newArguments = Lists.newArrayList();
         newArguments.addAll(arguments.subList(0, arguments.size() - 1));
         newArguments.add(new TypeProjectionImpl(Variance.INVARIANT, DONT_CARE));
-        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
+        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope());
     }
 
     private static boolean hasReturnTypeDependentOnUninferredParams(
@@ -115,7 +115,7 @@ public class CallResolverUtil {
             fakeTypeArguments.add(new TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE));
         }
         return new JetTypeImpl(
-                receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),
+                receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(),
                 fakeTypeArguments, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true));
     }
 

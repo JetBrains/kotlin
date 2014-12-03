@@ -259,7 +259,7 @@ class LazyJavaTypeResolver(
             when (classifier()) {
                 is JavaTypeParameter -> {
                     if (isConstructorTypeParameter())
-                        getConstructorTypeParameterSubstitute().isNullable()
+                        getConstructorTypeParameterSubstitute().isMarkedNullable()
                     else
                         attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
@@ -269,7 +269,7 @@ class LazyJavaTypeResolver(
             }
         }
 
-        override fun isNullable(): Boolean = nullable()
+        override fun isMarkedNullable(): Boolean = nullable()
 
         override fun getAnnotations() = attr.annotations
     }
@@ -314,7 +314,7 @@ class LazyJavaTypeResolver(
                 // Int! >< Int?
                 if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
                 // Int? >< Int!
-                if (otherType.isNullable()) return Specificity.Relation.DONT_KNOW
+                if (otherType.isMarkedNullable()) return Specificity.Relation.DONT_KNOW
                 // Int! lessSpecific Int
                 return Specificity.Relation.LESS_SPECIFIC
             }

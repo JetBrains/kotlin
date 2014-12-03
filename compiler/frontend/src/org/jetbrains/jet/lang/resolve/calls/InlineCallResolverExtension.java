@@ -222,7 +222,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         JetType type = descriptor.getReturnType();
         return type != null &&
                KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) &&
-               !type.isNullable() &&
+               !type.isMarkedNullable() &&
                !InlineUtil.hasNoinlineAnnotation(descriptor);
     }
 
