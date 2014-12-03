@@ -19,13 +19,10 @@ package org.jetbrains.jet.plugin.completion.smart
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.lang.psi.JetExpression
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.ui.LayeredIcon
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.completion.Tail
 import org.jetbrains.jet.plugin.completion.ItemPriority
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -37,9 +34,11 @@ import java.util.ArrayList
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.assignPriority
 import com.intellij.codeInsight.lookup.Lookup
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
-                                    val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType>) {
+                                    val smartCastTypes: (VariableDescriptor) -> Collection<JetType>) {
 
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
@@ -95,7 +94,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.getLocalVariable(name) ?: scope.getProperties(name).singleOrNull() ?: return null
-        return if (typesWithAutoCasts(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastTypes(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else
             null

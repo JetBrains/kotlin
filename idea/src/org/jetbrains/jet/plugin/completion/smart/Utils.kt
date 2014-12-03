@@ -27,9 +27,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import java.util.ArrayList
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
@@ -39,6 +37,9 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.types.TypeSubstitutor
+import java.util.ArrayList
+import java.util.HashMap
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -98,36 +99,71 @@ fun LookupElement.addTailAndNameSimilarity(matchedExpectedInfos: Collection<Expe
     return lookupElement
 }
 
-enum class ExpectedInfoClassification {
-    MATCHES
-    MAKE_NOT_NULLABLE
-    NOT_MATCHES
+class ExpectedInfoClassification private(val substitutor: TypeSubstitutor?, val makeNotNullable: Boolean) {
+    class object {
+        val notMatches = ExpectedInfoClassification(null, false)
+        fun matches(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)
+        fun matchesIfNotNullable(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, true)
+    }
 }
 
-fun MutableCollection<LookupElement>.addLookupElements(expectedInfos: Collection<ExpectedInfo>,
-                                                       infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
-                                                       lookupElementFactory: () -> LookupElement?) {
-    val matchedInfos = ArrayList<ExpectedInfo>()
-    val matchedInfosNotNullable = ArrayList<ExpectedInfo>()
+fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
+    val substitutor = matchedSubstitutor(expectedInfo.type)
+    if (substitutor != null) {
+        return ExpectedInfoClassification.matches(substitutor)
+    }
+
+    if (isNullable()) {
+        val substitutor2 = makeNotNullable().matchedSubstitutor(expectedInfo.type)
+        if (substitutor2 != null) {
+            return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
+        }
+    }
+
+    return ExpectedInfoClassification.notMatches
+}
+
+fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
+        descriptor: TDescriptor,
+        expectedInfos: Collection<ExpectedInfo>,
+        infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+        lookupElementFactory: (TDescriptor) -> LookupElement?
+) {
+    class DescriptorWrapper(val descriptor: TDescriptor) {
+        override fun equals(other: Any?) = other is DescriptorWrapper && descriptorsEqualWithSubstitution(this.descriptor, other.descriptor)
+        override fun hashCode() = if (this.descriptor != null) this.descriptor.getOriginal().hashCode() else 0
+    }
+    fun TDescriptor.wrap() = DescriptorWrapper(this)
+    fun DescriptorWrapper.unwrap() = this.descriptor
+
+    val matchedInfos = HashMap<DescriptorWrapper, MutableList<ExpectedInfo>>()
+    val makeNullableInfos = HashMap<DescriptorWrapper, MutableList<ExpectedInfo>>()
     for (info in expectedInfos) {
-        when (infoClassifier(info)) {
-            ExpectedInfoClassification.MATCHES -> matchedInfos.add(info)
-            ExpectedInfoClassification.MAKE_NOT_NULLABLE -> matchedInfosNotNullable.add(info)
+        val classification = infoClassifier(info)
+        if (classification.substitutor != null) {
+            [suppress("UNCHECKED_CAST")]
+            val substitutedDescriptor = descriptor?.substitute(classification.substitutor) as TDescriptor
+            val map = if (classification.makeNotNullable) makeNullableInfos else matchedInfos
+            map.getOrPut(substitutedDescriptor.wrap()) { ArrayList() }.add(info)
         }
     }
 
-    if (matchedInfos.isNotEmpty()) {
-        val lookupElement = lookupElementFactory()
-        if (lookupElement != null) {
-            add(lookupElement.addTailAndNameSimilarity(matchedInfos))
+    if (!matchedInfos.isEmpty()) {
+        for ((substitutedDescriptor, infos) in matchedInfos) {
+            val lookupElement = lookupElementFactory(substitutedDescriptor.unwrap())
+            if (lookupElement != null) {
+                add(lookupElement.addTailAndNameSimilarity(infos))
+            }
         }
     }
-    else if (matchedInfosNotNullable.isNotEmpty()) {
-        addLookupElementsForNullable(lookupElementFactory, matchedInfosNotNullable)
+    else {
+        for ((substitutedDescriptor, infos) in makeNullableInfos) {
+            addLookupElementsForNullable({ lookupElementFactory(substitutedDescriptor.unwrap()) }, infos)
+        }
     }
 }
 
-fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
+private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
     var lookupElement = factory()
     if (lookupElement != null) {
         lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
@@ -205,8 +241,6 @@ fun LookupElementFactory.createLookupElement(
     return element
 }
 
-fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.DEFAULT.isSubtypeOf(this, expectedType)
-
 fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
@@ -235,4 +269,3 @@ fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPri
     putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
     return this
 }
-

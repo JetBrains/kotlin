@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -50,22 +49,7 @@ public class DeclarationDescriptorLookupObject(
             return false
         }
 
-        if (lookupObject.descriptor.getOriginal() != descriptor.getOriginal()) return false
-        if (descriptor !is CallableDescriptor) return true
-        // optimization:
-        if (descriptor == (descriptor as CallableDescriptor).getOriginal() && lookupObject.descriptor == lookupObject.descriptor.getOriginal()) return true
-        return substitutionsEqual(descriptor as CallableDescriptor, lookupObject.descriptor as CallableDescriptor)
-    }
-
-    private fun substitutionsEqual(callable1: CallableDescriptor, callable2: CallableDescriptor): Boolean {
-        if (callable1.getReturnType() != callable2.getReturnType()) return false
-        val parameters1 = callable1.getValueParameters()
-        val parameters2 = callable2.getValueParameters()
-        if (parameters1.size() != parameters2.size()) return false
-        for (i in parameters1.indices) {
-            if (parameters1[i].getType() != parameters2[i].getType()) return false
-        }
-        return true
+        return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
     }
 
     class object {

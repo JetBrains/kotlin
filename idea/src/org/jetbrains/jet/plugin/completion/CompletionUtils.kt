@@ -35,6 +35,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -113,3 +114,23 @@ enum class CallableWeight {
 }
 
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
+
+fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
+    if (descriptor1 == descriptor2) return true
+    if (descriptor1 == null || descriptor2 == null) return false
+    if (descriptor1.getOriginal() != descriptor2.getOriginal()) return false
+    if (descriptor1 !is CallableDescriptor) return true
+    descriptor2 as CallableDescriptor
+
+    // optimization:
+    if (descriptor1 == descriptor1.getOriginal() && descriptor2 == descriptor2.getOriginal()) return true
+
+    if (descriptor1.getReturnType() != descriptor2.getReturnType()) return false
+    val parameters1 = descriptor1.getValueParameters()
+    val parameters2 = descriptor2.getValueParameters()
+    if (parameters1.size() != parameters2.size()) return false
+    for (i in parameters1.indices) {
+        if (parameters1[i].getType() != parameters2[i].getType()) return false
+    }
+    return true
+}

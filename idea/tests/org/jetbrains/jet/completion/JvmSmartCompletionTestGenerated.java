@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -258,9 +257,45 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("GenericFunction1.kt")
+    public void testGenericFunction1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction2.kt")
+    public void testGenericFunction2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction3.kt")
+    public void testGenericFunction3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction4.kt")
+    public void testGenericFunction4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction5.kt")
+    public void testGenericFunction5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction5.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GenericMethodArgument.kt")
     public void testGenericMethodArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericMethodArgument.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GroupBySubstitutor.kt")
+    public void testGroupBySubstitutor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GroupBySubstitutor.kt");
         doTest(fileName);
     }
 
@@ -729,6 +764,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SAMExpected1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SkipDeclarationsOfType.kt")
+    public void testSkipDeclarationsOfType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SkipDeclarationsOfType.kt");
         doTest(fileName);
     }
 

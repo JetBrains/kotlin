@@ -40,7 +40,6 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetContainerNode
-import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
 import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.JetBlockExpression
@@ -68,6 +67,7 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 
 enum class Tail {
     COMMA

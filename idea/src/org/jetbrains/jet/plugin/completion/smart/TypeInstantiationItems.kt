@@ -60,6 +60,7 @@ import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
