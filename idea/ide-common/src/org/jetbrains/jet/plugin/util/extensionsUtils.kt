@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public enum class CallType {
@@ -79,7 +78,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
             .map {
                 var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
                 // check if we may fail due to receiver expression being nullable
-                if (substitutor == null && TypeUtils.isNullableType(it) && !TypeUtils.isNullableType(extensionReceiverType.type)) {
+                if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
                     substitutor = extensionReceiverType.checkIsSuperTypeOf(it.makeNotNullable())
                 }
                 substitutor

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.types.flexibility
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.types.isDynamic
+import org.jetbrains.jet.lang.types.isNullabilityFlexible
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -78,4 +79,18 @@ public fun JetType.getAllReferencedTypes(): Set<JetType> {
 
     addType(this)
     return types
+}
+
+public enum class TypeNullability {
+    NOT_NULL
+    NULLABLE
+    FLEXIBLE
+}
+
+public fun JetType.nullability(): TypeNullability {
+    return when {
+        isNullabilityFlexible() -> TypeNullability.FLEXIBLE
+        TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
+        else -> TypeNullability.NOT_NULL
+    }
 }

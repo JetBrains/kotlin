@@ -38,6 +38,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.jet.lang.types.TypeUtils
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
+import org.jetbrains.jet.plugin.util.nullability
+import org.jetbrains.jet.plugin.util.TypeNullability
 
 public class LookupElementFactory(
         private val receiverTypes: Collection<JetType>
@@ -207,12 +209,12 @@ public class LookupElementFactory(
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
         if (descriptor !is CallableDescriptor) return null
 
-        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isMarkedNullable() }
+        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.nullability() == TypeNullability.NULLABLE }
         val receiverParameter = descriptor.getExtensionReceiverParameter()
 
         if (receiverParameter != null) {
             val receiverParamType = receiverParameter.getType()
-            return if (isReceiverNullable && !receiverParamType.isMarkedNullable())
+            return if (isReceiverNullable && receiverParamType.nullability() == TypeNullability.NOT_NULL)
                 CallableWeight.notApplicableReceiverNullable
             else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
                 CallableWeight.thisTypeExtension

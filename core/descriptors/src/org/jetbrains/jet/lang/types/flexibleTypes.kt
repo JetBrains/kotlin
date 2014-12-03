@@ -61,6 +61,11 @@ public trait Flexibility : TypeCapability, SubtypingRepresentatives {
 public fun JetType.isFlexible(): Boolean = this.getCapability(javaClass<Flexibility>()) != null
 public fun JetType.flexibility(): Flexibility = this.getCapability(javaClass<Flexibility>())!!
 
+public fun JetType.isNullabilityFlexible(): Boolean {
+    val flexibility = this.getCapability(javaClass<Flexibility>()) ?: return false
+    return TypeUtils.isNullableType(flexibility.lowerBound) != TypeUtils.isNullableType(flexibility.upperBound)
+}
+
 // This function is intended primarily for sets: since JetType.equals() represents _syntactical_ equality of types,
 // whereas JetTypeChecker.DEFAULT.equalsTypes() represents semantical equality
 // A set of types (e.g. exact bounds etc) may contain, for example, X, X? and X!
