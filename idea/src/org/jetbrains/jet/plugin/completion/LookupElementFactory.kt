@@ -35,9 +35,9 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import java.awt.Color
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.jet.lang.types.TypeUtils
+import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 
 public class LookupElementFactory(
         private val receiverTypes: Collection<JetType>
@@ -78,7 +78,7 @@ public class LookupElementFactory(
                         presentation.setItemTextBold(true)
                     }
                     else {
-                        presentation.setItemTextForeground(Color.GRAY)
+                        presentation.setItemTextForeground(LookupCellRenderer.getGrayedForeground(false))
                         // gray all tail fragments too:
                         val fragments = presentation.getTailFragments()
                         presentation.clearTail()

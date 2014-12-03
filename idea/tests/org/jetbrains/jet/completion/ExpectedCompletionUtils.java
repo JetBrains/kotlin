@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.impl.LookupCellRenderer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
@@ -326,7 +327,7 @@ public class ExpectedCompletionUtils {
         }
         Color foreground = presentation.getItemTextForeground();
         if (!foreground.equals(JBColor.foreground())) {
-            assert foreground.equals(Color.GRAY);
+            assert foreground.equals(LookupCellRenderer.getGrayedForeground(false));
             if (builder.length() > 0) builder.append(" ");
             builder.append("grayed");
         }
