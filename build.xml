@@ -312,7 +312,7 @@
         </jar>
     </target>
 
-    <target name="builtins">
+    <target name="serialize-builtins">
         <cleandir dir="${output}/builtins"/>
         <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage"
               classpath="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"
@@ -606,50 +606,96 @@
         <copy file="dependencies/annotations/kotlin-android-sdk-annotations.jar" todir="${kotlin-home}/lib"/>
     </target>
 
-    <target name="runtime">
-        <macrodef name="new-kotlinc">
-            <attribute name="src"/>
-            <attribute name="output"/>
-            <attribute name="classpath"/>
+    <macrodef name="new-kotlinc">
+        <attribute name="output"/>
+        <attribute name="withJava" default="true"/>
+        <element name="src"/>
+        <!-- This element should have been named "classpath" but it conflicts with classpath elements present in java and javac tasks -->
+        <element name="class-path"/>
 
-            <sequential>
-                <cleandir dir="@{output}"/>
+        <sequential>
+            <cleandir dir="@{output}"/>
 
-                <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
-                    <classpath>
-                        <path refid="classpath"/>
-                        <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                    </classpath>
-                    <assertions>
-                        <enable/>
-                    </assertions>
-                    <arg line="@{src}"/>
-                    <arg value="-d"/>
-                    <arg value="@{output}"/>
-                    <arg value="-no-stdlib"/>
-                    <arg value="-classpath"/>
-                    <arg value="@{classpath}"/>
-                </java>
-            </sequential>
-        </macrodef>
+            <!-- All properties declared in this macro should be local because otherwise their value won't change after the first run,
+                 which effectively would make this macro non-reusable -->
+            <local name="src.paths"/>
+            <local name="src.line"/>
+            <local name="classpath.paths"/>
 
-        <new-kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src ${basedir}/core/reflection.jvm/src"
-                     output="${output}/classes/runtime"
-                     classpath="${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection.jvm/src"/>
+            <dirset dir="${basedir}" id="src.dirset">
+                <src/>
+            </dirset>
 
-        <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <src path="${basedir}/core/runtime.jvm/src"/>
-            <src path="${basedir}/core/reflection.jvm/src"/>
-            <classpath location="${output}/classes/runtime"/>
-        </javac2>
+            <path id="classpath.path">
+                <class-path/>
+            </path>
 
-        <new-kotlinc src="${basedir}/libraries/stdlib/src"
-                     output="${output}/classes/stdlib"
-                     classpath="${output}/classes/runtime"/>
+            <!-- Source paths separated by the system path separator -->
+            <pathconvert property="src.paths" refid="src.dirset"/>
+            <!-- Source paths separated by space (to pass to "arg line" below) -->
+            <pathconvert property="src.line" refid="src.dirset" pathsep=" "/>
+            <!-- Classpath separated by the system path separator -->
+            <pathconvert property="classpath.paths" refid="classpath.path"/>
 
+            <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
+                <classpath>
+                    <path refid="classpath"/>
+                    <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                </classpath>
+                <assertions>
+                    <enable/>
+                </assertions>
+                <arg line="${src.line}"/>
+                <arg value="-d"/>
+                <arg value="@{output}"/>
+                <arg value="-no-stdlib"/>
+                <arg value="-classpath"/>
+                <!-- Include source paths to classpath for Kotlin compiler to resolve symbols from Java sources -->
+                <arg value="${src.paths}${path.separator}${classpath.paths}"/>
+            </java>
+
+            <if>
+                <equals arg1="@{withJava}" arg2="true"/>
+                <then>
+                    <javac2 srcdir="${src.paths}" destdir="@{output}" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+                            source="${java.target}" target="${java.target}">
+                        <classpath>
+                            <path refid="classpath.path"/>
+                            <!-- Include @{output} here for Java compiler to resolve symbols from Kotlin sources -->
+                            <pathelement location="@{output}"/>
+                        </classpath>
+                    </javac2>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <target name="builtins">
+        <new-kotlinc output="${output}/classes/builtins">
+            <src>
+                <include name="core/builtins/src"/>
+                <include name="core/runtime.jvm/src"/>
+                <include name="core/reflection/src"/>
+                <include name="core/reflection.jvm/src"/>
+            </src>
+            <class-path/>
+        </new-kotlinc>
+    </target>
+
+    <target name="stdlib">
+        <new-kotlinc output="${output}/classes/stdlib" withJava="false">
+            <src>
+                <include name="libraries/stdlib/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output.relative}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
+    <target name="pack-runtime">
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
-            <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${output}/classes/builtins"/>
             <fileset dir="${output}/classes/stdlib"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -663,7 +709,7 @@
         </jar>
     </target>
 
-    <target name="runtime-sources">
+    <target name="pack-runtime-sources">
         <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar">
             <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
             <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
@@ -683,16 +729,18 @@
         </jar>
     </target>
 
+    <target name="runtime" depends="builtins,stdlib,pack-runtime,pack-runtime-sources"/>
+
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,runtime-sources,jslib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib"
             description="Builds redistributables from sources"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,runtime-sources,jslib"/>
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib"/>
 
     <target name="dist-quick-compiler-only"
-            depends="init,prepare-dist,preloader,builtins,compiler-quick"
+            depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
             description="Builds compiler jar from project out dir"/>
 
     <target name="zip-compiler" depends="dist">
@@ -727,7 +775,7 @@
                 <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
                 <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
                 <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
-                <pathelement location="${output}/classes/runtime"/>
+                <pathelement location="${output}/classes/builtins"/>
                 <pathelement location="${output}/classes/compiler"/>
                 <pathelement location="${output}/classes/stdlib"/>
             </classpath>
@@ -740,7 +788,7 @@
         <jar jarfile="${output}/kotlin-for-upsource0.jar">
             <fileset dir="${output}/classes/idea-analysis"/>
             <fileset dir="${output}/classes/compiler"/>
-            <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${output}/classes/builtins"/>
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
