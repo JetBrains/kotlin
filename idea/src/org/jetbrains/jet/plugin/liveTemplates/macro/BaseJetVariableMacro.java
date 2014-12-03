@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.util.extensionsUtils.ExtensionsUtilsPackage;
+import org.jetbrains.jet.plugin.util.UtilPackage;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -83,7 +83,7 @@ public abstract class BaseJetVariableMacro extends Macro {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 
                 if (variableDescriptor.getExtensionReceiverParameter() != null
-                    && ExtensionsUtilsPackage.substituteExtensionIfCallableWithImplicitReceiver(
+                    && UtilPackage.substituteExtensionIfCallableWithImplicitReceiver(
                         variableDescriptor, scope, bindingContext, dataFlowInfo).isEmpty()) {
                     continue;
                 }

@@ -35,6 +35,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.jet.plugin.util.FuzzyType
+import org.jetbrains.jet.plugin.util.fuzzyReturnType
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)

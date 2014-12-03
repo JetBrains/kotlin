@@ -36,8 +36,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.utils.addIfNotNull
-import org.jetbrains.jet.plugin.util.extensionsUtils.substituteExtensionIfCallable
+import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,

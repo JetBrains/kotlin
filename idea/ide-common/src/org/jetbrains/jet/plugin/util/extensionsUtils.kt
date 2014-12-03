@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.util.extensionsUtils
+package org.jetbrains.jet.plugin.util
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.plugin.util.FuzzyType
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {

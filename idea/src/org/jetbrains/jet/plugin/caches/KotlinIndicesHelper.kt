@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.plugin.util.extensionsUtils.substituteExtensionIfCallable
+import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
 
 public class KotlinIndicesHelper(
         private val project: Project,

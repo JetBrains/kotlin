@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.completion.smart
+package org.jetbrains.jet.plugin.util
 
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
