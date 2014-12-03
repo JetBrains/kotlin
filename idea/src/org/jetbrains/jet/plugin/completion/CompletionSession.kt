@@ -87,7 +87,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             receiverTypes
         }
         else {
-            null
+            listOf()
         }
         LookupElementFactory(receiverTypes)
     }

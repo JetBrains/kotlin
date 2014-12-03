@@ -40,7 +40,7 @@ import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.jet.lang.types.TypeUtils
 
 public class LookupElementFactory(
-        private val receiverTypes: Collection<JetType>?
+        private val receiverTypes: Collection<JetType>
 ) {
     public fun createLookupElement(
             resolutionFacade: ResolutionFacade,
@@ -52,18 +52,19 @@ public class LookupElementFactory(
         else
             descriptor
         var element = createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+
+        val weight = callableWeight(descriptor)
+        if (weight != null) {
+            element.putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
+        }
+
         if (boldImmediateMembers) {
-            element = element.boldIfImmediate(descriptor)
+            element = element.boldIfImmediate(weight)
         }
         return element
     }
 
-    private fun LookupElement.boldIfImmediate(descriptor: DeclarationDescriptor): LookupElement {
-        val weight = callableWeight(descriptor)
-        if (weight != null) {
-            putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
-        }
-
+    private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
         val style = when (weight) {
             CallableWeight.thisClassMember, CallableWeight.thisTypeExtension -> Style.BOLD
             CallableWeight.notApplicableReceiverNullable -> Style.GRAYED
@@ -204,8 +205,7 @@ public class LookupElementFactory(
     }
 
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
-        if (receiverTypes == null) return null
-        if (descriptor !is CallableMemberDescriptor) return null
+        if (descriptor !is CallableDescriptor) return null
 
         val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isNullable() }
         val receiverParameter = descriptor.getExtensionReceiverParameter()
@@ -229,7 +229,7 @@ public class LookupElementFactory(
                     is PackageFragmentDescriptor -> CallableWeight.global
 
                     is ClassifierDescriptor -> {
-                        if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                        if ((descriptor as CallableMemberDescriptor).getKind() == CallableMemberDescriptor.Kind.DECLARATION)
                             CallableWeight.thisClassMember
                         else
                             CallableWeight.baseClassMember

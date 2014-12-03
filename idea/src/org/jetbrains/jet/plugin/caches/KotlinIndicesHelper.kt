@@ -111,7 +111,7 @@ public class KotlinIndicesHelper(
             dataFlowInfo: DataFlowInfo) {
         val matchingNames = fqNames.filter { nameFilter(it.shortName().asString()) }
 
-        val receiverPair = ReferenceVariantsHelper.getReferenceVariantsReceiver(expression)
+        val receiverPair = ReferenceVariantsHelper.getExplicitReceiverData(expression)
         if (receiverPair != null) {
             val (receiverExpression, callType) = receiverPair
 

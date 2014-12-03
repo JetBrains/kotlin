@@ -81,7 +81,7 @@ public class ReferenceVariantsHelper(
             return resolutionScope.getDescriptorsFiltered(restrictedFilter, nameFilter)
         }
 
-        val pair = getReferenceVariantsReceiver(expression)
+        val pair = getExplicitReceiverData(expression)
         if (pair != null) {
             val (receiverExpression, callType) = pair
             fun filterIfInfix(descriptor: DeclarationDescriptor)
@@ -139,7 +139,7 @@ public class ReferenceVariantsHelper(
     }
 
     public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression): ReceiversData {
-        val receiverData = getReferenceVariantsReceiver(expression)
+        val receiverData = getExplicitReceiverData(expression)
         if (receiverData != null) {
             val receiverExpression = receiverData.first
             val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return ReceiversData.Empty
@@ -184,7 +184,7 @@ public class ReferenceVariantsHelper(
     }
 
     class object {
-        public fun getReferenceVariantsReceiver(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
+        public fun getExplicitReceiverData(expression: JetSimpleNameExpression): Pair<JetExpression, CallType>? {
             val receiverExpression = expression.getReceiverExpression() ?: return null
             val parent = expression.getParent()
             val callType = when (parent) {

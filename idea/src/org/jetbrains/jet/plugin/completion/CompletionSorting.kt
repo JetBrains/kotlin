@@ -40,9 +40,8 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -75,8 +74,7 @@ private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.sma
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
-        localOrParameter
-        property
+        variable // variable or property
         function
         keyword
         default
@@ -99,8 +97,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
             is DeclarationDescriptorLookupObject -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
-                    is LocalVariableDescriptor, is ValueParameterDescriptor -> CompoundWeight(Weight.localOrParameter)
-                    is PropertyDescriptor -> CompoundWeight(Weight.property, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
                     is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
                     is PackageViewDescriptor -> CompoundWeight(Weight.packages)
                     else -> CompoundWeight(Weight.default)
