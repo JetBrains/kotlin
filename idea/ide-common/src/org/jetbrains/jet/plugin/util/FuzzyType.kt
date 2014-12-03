@@ -102,6 +102,8 @@ class FuzzyType(
         }
 
         if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {
+            // currently ConstraintSystem return successful status in case there are problems with nullability
+            // that's why we have to check subtyping manually
             val substitutor = constraintSystem.getResultingSubstitutor()
             val substitutedType = substitutor.substitute(type, Variance.INVARIANT)
             return if (substitutedType != null && substitutedType.checkInheritance(otherType)) substitutor else null
