@@ -2,19 +2,19 @@
 
 Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
+ * [Kotlin Site](http://kotlinlang.org/)
  * [Getting Started Guide](http://kotlinlang.org/docs/tutorials/getting-started.html)
  * [Web Demo](http://kotlin-demo.jetbrains.com/)
- * [Kotlin Site](http://jetbrains.github.com/kotlin/)
  * [API](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html)
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
  * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
- * [follow Kotlin on twitter](http://twitter.com/#!/project_kotlin)
+ * [Follow Kotlin on Twitter](http://twitter.com/#!/project_kotlin)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
 
 ## Editing Kotlin
 
- * [Kotlin IDEA Plugin](http://hadihariri.com/2012/02/17/the-kotlin-journey-part-i-getting-things-set-up/)
+ * [Kotlin IntelliJ IDEA Plugin](http://hadihariri.com/2012/02/17/the-kotlin-journey-part-i-getting-things-set-up/)
  * [Kotlin TextMate Bundle](https://github.com/k33g/kotlin-textmate-bundle#readme)
 
 ## Building
@@ -41,9 +41,9 @@ which will build the binaries of the compiler and put them into the 'dist' direc
 
 from 'libraries' directory after building the compiler. Refer to `libraries/ReadMe.md` for details.
 
-## Working with the project in IDEA
+## Working with the project in IntelliJ IDEA
 
-The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IDEA project, you can just open it in IDEA.
+The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IntelliJ IDEA project, you can just open it in IntelliJ IDEA.
 
 You may need to set the Project SDK (File -> Project Structure -> Project).
 You may also need to add `tools.jar` to your SDK: File -> Project Structure -> SDKs -> <Your JDK> -> Classpath,
@@ -55,21 +55,21 @@ Since Kotlin project contains code written in Kotlin itself, you will also need 
 To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
 you should install the according to the [instructions below](#plugin-for-contributors).
 
-If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin
-plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IDEA installs using different configurations and plugin directories.
+If you want to have an IntelliJ IDEA installation without the Kotlin plugin which is separate to your default IntelliJ IDEA installation which has the Kotlin
+plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IntelliJ IDEA installations using different configurations and plugin directories.
 
-From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest greatest IDEA plugin
+From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
 
 * VCS -> Git -> Pull
-* Run IDEA
-* a child IDEA with the Kotlin plugin will then startup
+* Run IntelliJ IDEA
+* a child IntelliJ IDEA with the Kotlin plugin will then startup
 * you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
 
-### <a name="pre-built-plugin"></a>Using a pre-built Kotlin IDEA plugin
+### <a name="pre-built-plugin"></a>Using a pre-built Kotlin IntelliJ IDEA plugin
 
-There are several options for getting Kotlin plugin. A stable version can be obtained as any other plugin for Intellij IDEA:
+There are several options for getting Kotlin plugin. A stable version can be obtained as any other plugin for IntelliJ IDEA:
 
-    Preferences -> Plugins -> Browse Repositories -> Search with "Kotlin" string
+    Preferences -> Plugins -> Install JetBrains plugin... -> Search with "Kotlin" string
 
 The most recent version of the plugin can be downloaded from the
 [IDEA Plugin and Tests CI build](https://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview). When downloading is
@@ -81,7 +81,7 @@ You can now open any Kotlin based projects.
 
 <a name="plugin-for-contributors"></a>
 **Note for contributors**: If you are planning to contribute to Kotlin project you probably want to have locally the same version of plugin that build server is using for building.
-As this version is constantly moving, the best way to always be updated is to let IDEA notify you when it is time to renew you plugin.
+As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
 
 Open 
 
@@ -95,7 +95,7 @@ Then update the list of plugins in "Browse Repositories", you'll see two version
 
 # Contributing
 
-We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](https://youtrack.jetbrains.com/issues/KT?q=Subtask+of%3A+KT-2554+%23Unresolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
+We love contributions! There's [lots to do on Kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](https://youtrack.jetbrains.com/issues/KT?q=Subtask+of%3A+KT-2554+%23Unresolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
 
 If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues?q=tag%3A+%7BUp+For+Grabs%7D+%23Unresolved) which should find all issues that marked as "up-for-grabs".
 
@@ -110,7 +110,7 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 ## If you want to work on the compiler
 
-The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IDEA plugin is
+The Kotlin compiler is written in Java and Kotlin (we gradually migrate more and more of it to pure Kotlin). So the easiest way to work on the compiler or IntelliJ IDEA plugin is
 
 * download a clean [IDEA 14 EAP build](http://confluence.jetbrains.com/display/IDEADEV/IDEA+14+EAP)
 * [install the Kotlin plugin](#pre-built-plugin)
