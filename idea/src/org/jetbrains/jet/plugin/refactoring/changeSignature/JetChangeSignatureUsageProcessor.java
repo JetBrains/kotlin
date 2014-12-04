@@ -58,7 +58,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         Set<UsageInfo> result = new HashSet<UsageInfo>();
 
         if (info instanceof JetChangeInfo) {
-            findAllMethodUsages((JetChangeInfo)info, result);
+            findAllMethodUsages((JetChangeInfo) info, result);
         }
 
         return result.toArray(new UsageInfo[result.size()]);
@@ -275,6 +275,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             for (UsageInfo usage : javaUsageInfos) {
                 if (usage instanceof OverriderUsageInfo && beforeMethodChange) continue;
                 for (ChangeSignatureUsageProcessor processor : processors) {
+                    if (processor instanceof JetChangeSignatureUsageProcessor) continue;
                     if (usage instanceof OverriderUsageInfo) {
                         processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
                     }
