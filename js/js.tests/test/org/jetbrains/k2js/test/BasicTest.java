@@ -43,6 +43,7 @@ import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.k2js.facade.Status;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
@@ -161,15 +162,15 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config
     ) throws Exception {
-        //noinspection unchecked
-        OutputFileCollection outputFiles =
-                translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
-                                                getOutputPrefixFile(), getOutputPostfixFile(),
-                                                config, getConsumer());
+        Status<OutputFileCollection> status = translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
+                                                                              getOutputPrefixFile(), getOutputPostfixFile(),
+                                                                              config, getConsumer());
+
+        if (status.isFail()) return;
 
         File outputDir = outputFile.getParentFile();
         assert outputDir != null : "Parent file for output file should not be null, outputFilePath: " + outputFile.getPath();
-        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+        OutputUtilsPackage.writeAllTo(status.getResult(), outputDir);
     }
 
     protected File getOutputPostfixFile() {

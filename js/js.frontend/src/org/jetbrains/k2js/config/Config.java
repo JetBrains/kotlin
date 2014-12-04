@@ -23,13 +23,10 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +50,7 @@ public abstract class Config {
     private final boolean sourcemap;
 
     @NotNull
-    private DiagnosticSink trace = new BindingTraceContext();
+    private final BindingTrace trace = new BindingTraceContext();
 
     public Config(
             @NotNull Project project,
@@ -111,12 +108,8 @@ public abstract class Config {
     }
 
     @NotNull
-    public DiagnosticSink getTrace() {
+    public BindingTrace getTrace() {
         return trace;
-    }
-
-    public void setTrace(@NotNull DiagnosticSink trace) {
-        this.trace = trace;
     }
 
     @Nullable

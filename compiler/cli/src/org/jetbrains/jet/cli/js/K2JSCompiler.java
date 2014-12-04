@@ -50,11 +50,12 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.Status;
 
 import java.io.File;
 import java.util.List;
@@ -149,15 +150,22 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
-        BindingTraceContext trace = new BindingTraceContext();
-        config.setTrace(trace);
-        OutputFileCollection outputFiles = translate(mainCallParameters, config, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile);
+        Status<OutputFileCollection> status;
 
-        Diagnostics diagnostics = trace.getBindingContext().getDiagnostics();
-        if (AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector)) {
-            return ExitCode.COMPILATION_ERROR;
+        try {
+            //noinspection unchecked
+            status = translateWithMainCallParameters(mainCallParameters, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile,
+                                                    config, Consumer.EMPTY_CONSUMER);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
+        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
+        AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector);
+
+        if (status.isFail()) return ExitCode.COMPILATION_ERROR;
+
+        OutputFileCollection outputFiles = status.getResult();
         if (outputFile.isDirectory()) {
             messageCollector.report(CompilerMessageSeverity.ERROR,
                                     "Cannot open output file '" + outputFile.getPath() + "': is a directory",
@@ -188,23 +196,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         });
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
                                 CompilerMessageLocation.NO_LOCATION);
-    }
-
-    private static OutputFileCollection translate(
-            @NotNull MainCallParameters mainCall,
-            @NotNull Config config,
-            @NotNull List<JetFile> sourceFiles,
-            @NotNull File outputFile,
-            @Nullable File outputPrefix,
-            @Nullable File outputPostfix
-    ) {
-        try {
-            //noinspection unchecked
-            return translateWithMainCallParameters(mainCall, sourceFiles, outputFile, outputPrefix, outputPostfix, config, Consumer.EMPTY_CONSUMER);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
