@@ -1,0 +1,35 @@
+package
+
+internal var a1: kotlin.Int
+internal var a2: kotlin.Int
+internal var b1: kotlin.Int
+internal var b2: kotlin.Int
+internal var c1: kotlin.Int
+internal var c2: kotlin.Int
+
+internal final class A</*0*/ R> {
+    public constructor A</*0*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun </*0*/ T> get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun </*0*/ T> set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B</*0*/ R> {
+    public constructor B</*0*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun </*0*/ T> get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: R): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class C</*0*/ R> {
+    public constructor C</*0*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun get(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata): R
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun </*0*/ T> set(/*0*/ t: kotlin.Any?, /*1*/ p: kotlin.PropertyMetadata, /*2*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

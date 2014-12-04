@@ -3147,6 +3147,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("genericMethodInGenericClass.kt")
+                public void testGenericMethodInGenericClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/genericMethodInGenericClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericMethods.kt")
+                public void testGenericMethods() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/genericMethods.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("labeledDelegatedExpression.kt")
                 public void testLabeledDelegatedExpression() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
