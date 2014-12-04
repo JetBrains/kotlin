@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,86 +14,81 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package org.jetbrains.jet.lang.diagnostics
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiWhiteSpace;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiWhiteSpace
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collections
 
-public class PositioningStrategy<E extends PsiElement> {
-    @NotNull
-    public List<TextRange> markDiagnostic(@NotNull ParametrizedDiagnostic<? extends E> diagnostic) {
-        return mark(diagnostic.getPsiElement());
+public open class PositioningStrategy<E : PsiElement> {
+    public open fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out E>): List<TextRange> {
+        return mark(diagnostic.getPsiElement())
     }
 
-    @NotNull
-    protected List<TextRange> mark(@NotNull E element) {
-        return markElement(element);
+    protected open fun mark(element: E): List<TextRange> {
+        return markElement(element)
     }
 
-    public boolean isValid(@NotNull E element) {
-        return !hasSyntaxErrors(element);
+    public open fun isValid(element: E): Boolean {
+        return !hasSyntaxErrors(element)
     }
 
-    @NotNull
-    protected static List<TextRange> markElement(@NotNull PsiElement element) {
-        return Collections.singletonList(new TextRange(getStartOffset(element), getEndOffset(element)));
-    }
+    class object {
 
-    @NotNull
-    protected static List<TextRange> markNode(@NotNull ASTNode node) {
-        return markElement(node.getPsi());
-    }
-
-    @NotNull
-    protected static List<TextRange> markRange(@NotNull TextRange range) {
-        return Collections.singletonList(range);
-    }
-
-    @NotNull
-    protected static List<TextRange> markRange(@NotNull PsiElement from, @NotNull PsiElement to) {
-        return markRange(new TextRange(getStartOffset(from), getEndOffset(to)));
-    }
-
-    private static int getStartOffset(@NotNull PsiElement element) {
-        PsiElement child = element.getFirstChild();
-        if (child != null) {
-            while (child instanceof PsiComment || child instanceof PsiWhiteSpace) {
-                child = child.getNextSibling();
-            }
-            if (child != null) {
-                return getStartOffset(child);
-            }
+        protected fun markElement(element: PsiElement): List<TextRange> {
+            return listOf(TextRange(getStartOffset(element), getEndOffset(element)))
         }
-        return element.getTextRange().getStartOffset();
-    }
 
-    private static int getEndOffset(@NotNull PsiElement element) {
-        PsiElement child = element.getLastChild();
-        if (child != null) {
-            while (child instanceof PsiComment || child instanceof PsiWhiteSpace) {
-                child = child.getPrevSibling();
-            }
-            if (child != null) {
-                return getEndOffset(child);
-            }
+        protected fun markNode(node: ASTNode): List<TextRange> {
+            return markElement(node.getPsi())
         }
-        return element.getTextRange().getEndOffset();
-    }
 
-    protected static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
-        if (psiElement instanceof PsiErrorElement) return true;
+        protected fun markRange(range: TextRange): List<TextRange> {
+            return listOf(range)
+        }
 
-        PsiElement[] children = psiElement.getChildren();
-        if (children.length > 0 && hasSyntaxErrors(children[children.length - 1])) return true;
+        protected fun markRange(from: PsiElement, to: PsiElement): List<TextRange> {
+            return markRange(TextRange(getStartOffset(from), getEndOffset(to)))
+        }
 
-        return false;
+        private fun getStartOffset(element: PsiElement): Int {
+            var child: PsiElement? = element.getFirstChild()
+            if (child != null) {
+                while (child is PsiComment || child is PsiWhiteSpace) {
+                    child = child!!.getNextSibling()
+                }
+                if (child != null) {
+                    return getStartOffset(child)
+                }
+            }
+            return element.getTextRange().getStartOffset()
+        }
+
+        private fun getEndOffset(element: PsiElement): Int {
+            var child: PsiElement? = element.getLastChild()
+            if (child != null) {
+                while (child is PsiComment || child is PsiWhiteSpace) {
+                    child = child!!.getPrevSibling()
+                }
+                if (child != null) {
+                    return getEndOffset(child)
+                }
+            }
+            return element.getTextRange().getEndOffset()
+        }
+
+        protected fun hasSyntaxErrors(psiElement: PsiElement): Boolean {
+            if (psiElement is PsiErrorElement) return true
+
+            val children = psiElement.getChildren()
+            if (children.size > 0 && hasSyntaxErrors(children[children.size - 1])) return true
+
+            return false
+        }
     }
 }
