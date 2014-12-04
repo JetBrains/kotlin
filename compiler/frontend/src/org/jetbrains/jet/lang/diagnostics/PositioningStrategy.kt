@@ -23,8 +23,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 
-import java.util.Collections
-
 public open class PositioningStrategy<E : PsiElement> {
     public open fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out E>): List<TextRange> {
         return mark(diagnostic.getPsiElement())
@@ -37,58 +35,54 @@ public open class PositioningStrategy<E : PsiElement> {
     public open fun isValid(element: E): Boolean {
         return !hasSyntaxErrors(element)
     }
+}
 
-    class object {
+fun markElement(element: PsiElement): List<TextRange> {
+    return listOf(TextRange(getStartOffset(element), getEndOffset(element)))
+}
 
-        protected fun markElement(element: PsiElement): List<TextRange> {
-            return listOf(TextRange(getStartOffset(element), getEndOffset(element)))
+fun markNode(node: ASTNode): List<TextRange> {
+    return markElement(node.getPsi())
+}
+
+fun markRange(range: TextRange): List<TextRange> {
+    return listOf(range)
+}
+
+fun markRange(from: PsiElement, to: PsiElement): List<TextRange> {
+    return markRange(TextRange(getStartOffset(from), getEndOffset(to)))
+}
+
+private fun getStartOffset(element: PsiElement): Int {
+    var child = element.getFirstChild()
+    if (child != null) {
+        while (child is PsiComment || child is PsiWhiteSpace) {
+            child = child!!.getNextSibling()
         }
-
-        protected fun markNode(node: ASTNode): List<TextRange> {
-            return markElement(node.getPsi())
-        }
-
-        protected fun markRange(range: TextRange): List<TextRange> {
-            return listOf(range)
-        }
-
-        protected fun markRange(from: PsiElement, to: PsiElement): List<TextRange> {
-            return markRange(TextRange(getStartOffset(from), getEndOffset(to)))
-        }
-
-        private fun getStartOffset(element: PsiElement): Int {
-            var child: PsiElement? = element.getFirstChild()
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child!!.getNextSibling()
-                }
-                if (child != null) {
-                    return getStartOffset(child)
-                }
-            }
-            return element.getTextRange().getStartOffset()
-        }
-
-        private fun getEndOffset(element: PsiElement): Int {
-            var child: PsiElement? = element.getLastChild()
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child!!.getPrevSibling()
-                }
-                if (child != null) {
-                    return getEndOffset(child)
-                }
-            }
-            return element.getTextRange().getEndOffset()
-        }
-
-        protected fun hasSyntaxErrors(psiElement: PsiElement): Boolean {
-            if (psiElement is PsiErrorElement) return true
-
-            val children = psiElement.getChildren()
-            if (children.size > 0 && hasSyntaxErrors(children[children.size - 1])) return true
-
-            return false
+        if (child != null) {
+            return getStartOffset(child!!)
         }
     }
+    return element.getTextRange().getStartOffset()
 }
+
+private fun getEndOffset(element: PsiElement): Int {
+    var child = element.getLastChild()
+    if (child != null) {
+        while (child is PsiComment || child is PsiWhiteSpace) {
+            child = child!!.getPrevSibling()
+        }
+        if (child != null) {
+            return getEndOffset(child!!)
+        }
+    }
+    return element.getTextRange().getEndOffset()
+}
+
+fun hasSyntaxErrors(psiElement: PsiElement): Boolean {
+    if (psiElement is PsiErrorElement) return true
+
+    val children = psiElement.getChildren()
+    return children.isNotEmpty() && hasSyntaxErrors(children.last())
+}
+
