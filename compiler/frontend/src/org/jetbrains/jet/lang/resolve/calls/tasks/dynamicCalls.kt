@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
+import org.jetbrains.jet.lang.resolve.DescriptorFactory
 
 object DynamicCallableDescriptors {
 
@@ -111,6 +112,10 @@ object DynamicCallableDescriptors {
                 createTypeParameters(propertyDescriptor, call),
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
                 null: JetType?
+        )
+        propertyDescriptor.initialize(
+                DescriptorFactory.createDefaultGetter(propertyDescriptor),
+                DescriptorFactory.createDefaultSetter(propertyDescriptor)
         )
 
         return propertyDescriptor
