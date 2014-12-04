@@ -10,10 +10,6 @@ public abstract class JsUnaryOperation extends JsExpressionImpl {
 
     private final JsUnaryOperator op;
 
-    public JsUnaryOperation(JsUnaryOperator op) {
-        this(op, null);
-    }
-
     public JsUnaryOperation(JsUnaryOperator op, JsExpression arg) {
         super();
         this.op = op;
