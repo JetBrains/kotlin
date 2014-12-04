@@ -16,9 +16,7 @@
     <option name="TEST_SEARCH_SCOPE">
       <value defaultName="moduleWithDependencies" />
     </option>
-    <envs>
-      <env name="kotlin.tests.actually.compile" value="false" />
-    </envs>
+    <envs />
     <patterns>
       <pattern testClass="org.jetbrains.jet.jps.build.IncrementalJpsTestGenerated" />
       <pattern testClass="org.jetbrains.jet.jps.build.IncrementalCacheVersionChangedTest" />
