@@ -90,14 +90,11 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
 
     private void doTest() {
         classFile = getClassFile(PACKAGE, getTestName(false), myModule);
-        PsiFile clsFileForClassFile = PsiManager.getInstance(getProject()).findFile(classFile);
-        assertNotNull(clsFileForClassFile);
-        assertTrue("Expecting kotlin class file, was: " + clsFileForClassFile.getClass(), clsFileForClassFile instanceof JetClsFile);
-        PsiFile decompiledPsiFile = ((ClsFileImpl) clsFileForClassFile).getDecompiledPsiFile();
+        PsiFile decompiledPsiFile = PsiManager.getInstance(getProject()).findFile(classFile);
         assertNotNull(decompiledPsiFile);
-        assertTrue("Expecting decompiled Kotlin file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetFile);
+        assertTrue("Expecting kotlin class file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetClsFile);
         Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
-                (JetFile) decompiledPsiFile, ((JetClsFile) clsFileForClassFile).getRenderedDescriptorsToRange()
+                (JetFile) decompiledPsiFile, ((JetClsFile) decompiledPsiFile).getRenderedDescriptorsToRange()
         );
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 

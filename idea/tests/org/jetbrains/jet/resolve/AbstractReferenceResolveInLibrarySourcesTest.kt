@@ -39,7 +39,7 @@ public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCod
         val gotoData = NavigationTestUtils.invokeGotoImplementations(fixture.getEditor(), fixture.getFile())!!
         Assert.assertEquals("Single target expected for origianl file", 1, gotoData.targets.size)
 
-        val testedPsiElement = gotoData.targets[0]
+        val testedPsiElement = gotoData.targets[0].getNavigationElement()
         val testedElementFile = testedPsiElement.getContainingFile()!!
 
         val lineContext = InTextDirectivesUtils.findStringWithPrefixes(fixture.getFile()!!.getText(), "CONTEXT:")
