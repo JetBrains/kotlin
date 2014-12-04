@@ -473,12 +473,7 @@ public interface Errors {
     // Control flow / Data flow
 
     DiagnosticFactory1<JetElement, List<TextRange>> UNREACHABLE_CODE = DiagnosticFactory1.create(
-            WARNING, PositioningStrategies.markTextRangesFromDiagnostic(new Function1<Diagnostic, List<TextRange>>() {
-                @Override
-                public List<TextRange> invoke(Diagnostic diagnostic) {
-                    return UNREACHABLE_CODE.cast(diagnostic).getA();
-                }
-            }));
+            WARNING, PositioningStrategies.UNREACHABLE_CODE);
 
     DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 

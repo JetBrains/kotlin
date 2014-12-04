@@ -360,12 +360,9 @@ public object PositioningStrategies {
         }
     }
 
-    [platformStatic]
-    public fun markTextRangesFromDiagnostic(getTextRanges: (Diagnostic) -> List<TextRange>): PositioningStrategy<PsiElement> {
-        return object : PositioningStrategy<PsiElement>() {
-            override fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out PsiElement>): List<TextRange> {
-                return getTextRanges(diagnostic)
-            }
+    public val UNREACHABLE_CODE: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out PsiElement>): List<TextRange> {
+            return Errors.UNREACHABLE_CODE.cast(diagnostic).getA()
         }
     }
 }
