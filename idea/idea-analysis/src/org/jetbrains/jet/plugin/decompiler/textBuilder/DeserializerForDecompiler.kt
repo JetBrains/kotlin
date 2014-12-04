@@ -75,7 +75,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
     private val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, localClassFinder, LOGGING_REPORTER)
+            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, localClassFinder, LoggingErrorReporter(LOG))
 
     private val packageFragmentProvider = object : PackageFragmentProvider {
         override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
@@ -112,17 +112,5 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     class object {
         private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
-
-        private object LOGGING_REPORTER: ErrorReporter {
-            override fun reportLoadingError(message: String, exception: Exception?) {
-                LOG.error(message, exception)
-            }
-            override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
-                LOG.error("Could not infer visibility for $descriptor")
-            }
-            override fun reportIncompatibleAbiVersion(kotlinClass: KotlinJvmBinaryClass, actualVersion: Int) {
-                LOG.error("Incompatible ABI version for class ${kotlinClass.getClassId()}, actual version: $actualVersion")
-            }
-        }
     }
 }
