@@ -42,3 +42,14 @@ With that, an exact type of an expression can be checked in the following way:
 #### Usage:
 
     // !CHECK_TYPE
+
+### 3. FILE
+
+The directive let you compose a test consisting of several files in one actual file.
+
+#### Usage:
+// FILE: A.java
+/* Java code */
+
+// FILE: B.kt
+/* kotlin code */
