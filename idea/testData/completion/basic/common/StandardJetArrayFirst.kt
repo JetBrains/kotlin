@@ -3,7 +3,7 @@ fun main(args: Array<String>) {
 }
 
 // INVOCATION_COUNT: 2
-// WITH_ORDER: 1
+// WITH_ORDER: true
 // EXIST: { lookupString:"Array", tailText:"<T> (kotlin)" }
 // EXIST_JAVA_ONLY: { lookupString:"Array", tailText:" (java.sql)" }
 // EXIST: { lookupString:"ArrayList", tailText:"<E> (java.util)" }
