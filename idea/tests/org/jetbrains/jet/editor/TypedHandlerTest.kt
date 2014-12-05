@@ -222,6 +222,18 @@ public class TypedHandlerTest : LightCodeInsightTestCase() {
             "}"
     )
 
+    public fun testAutoInsertParenInStringLiteral(): Unit = doCharTypeTest(
+            '(',
+            """fun f() { println("$amp{f<caret>}") }""",
+            """fun f() { println("$amp{f(<caret>)}") }"""
+    )
+
+    public fun testAutoInsertParenInCode(): Unit = doCharTypeTest(
+            '(',
+            """fun f() { val a = f<caret> }""",
+            """fun f() { val a = f(<caret>) }"""
+    )
+
     public fun testTypeLtInFunDeclaration() {
         doLtGtTest("fun <caret>")
     }
