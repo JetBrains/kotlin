@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,321 +14,274 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.editor;
+package org.jetbrains.jet.editor
 
-import com.intellij.testFramework.EditorTestUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
-import org.jetbrains.jet.utils.UtilsPackage;
+import com.intellij.testFramework.EditorTestUtil
+import com.intellij.testFramework.LightCodeInsightTestCase
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 
-import java.io.IOException;
+public class TypedHandlerTest : LightCodeInsightTestCase() {
+    val amp = '$'
 
-public class TypedHandlerTest extends LightCodeInsightTestCase {
-    public void testTypeStringTemplateStart() {
-        doCharTypeTest(
-                '{',
+    public fun testTypeStringTemplateStart(): Unit = doCharTypeTest(
+            '{',
+            """val x = "$<caret>" """,
+            """val x = "$amp{}" """
+    )
 
-                "val x = \"$<caret>\"",
+    public fun testAutoIndentRightOpenBrace(): Unit = doCharTypeTest(
+            '{',
 
-                "val x = \"${}\""
-        );
+            "fun test() {\n" +
+            "<caret>\n" +
+            "}",
+
+            "fun test() {\n" +
+            "    {<caret>}\n" +
+            "}"
+    )
+
+    public fun testAutoIndentLeftOpenBrace(): Unit = doCharTypeTest(
+            '{',
+
+            "fun test() {\n" +
+            "      <caret>\n" +
+            "}",
+
+            "fun test() {\n" +
+            "    {<caret>}\n" +
+            "}"
+    )
+
+    public fun testTypeStringTemplateStartWithCloseBraceAfter(): Unit = doCharTypeTest(
+            '{',
+            """fun foo() { "$<caret>" }""",
+            """fun foo() { "$amp{}" }"""
+    )
+
+    public fun testTypeStringTemplateStartBeforeString(): Unit = doCharTypeTest(
+            '{',
+            """fun foo() { "$<caret>something" }""",
+            """fun foo() { "$amp{}something" }"""
+    )
+
+    public fun testKT3575(): Unit = doCharTypeTest(
+            '{',
+            """val x = "$<caret>]" """,
+            """val x = "$amp{}]" """
+    )
+
+    public fun testAutoCloseBraceInFunctionDeclaration(): Unit = doCharTypeTest(
+            '{',
+            "fun foo() <caret>",
+            "fun foo() {<caret>}"
+    )
+
+    public fun testAutoCloseBraceInLocalFunctionDeclaration(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    fun bar() <caret>\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    fun bar() {<caret>}\n" +
+            "}"
+    )
+
+    public fun testAutoCloseBraceInAssignment(): Unit = doCharTypeTest(
+            '{',
+            "fun foo() {\n" +
+            "    val a = <caret>\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    val a = {<caret>}\n" +
+            "}"
+    )
+
+    public fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnSameLine(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    if() <caret>foo()\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    if() {foo()\n" +
+            "}"
+    )
+
+    public fun testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnSameLine(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    while() <caret>foo()\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    while() {foo()\n" +
+            "}"
+    )
+
+    public fun testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnNewLine(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    while()\n" +
+            "<caret>\n" +
+            "    foo()\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    while()\n" +
+            "    {\n" +
+            "    foo()\n" +
+            "}"
+    )
+
+    public fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnOtherLine(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    if(true) <caret>\n" +
+            "    foo()\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    if(true) {<caret>\n" +
+            "    foo()\n" +
+            "}"
+    )
+
+    public fun testDoNotAutoCloseBraceInUnfinishedIfSurroundOnNewLine(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    if(true)\n" +
+            "        <caret>\n" +
+            "    foo()\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    if(true)\n" +
+            "    {<caret>\n" +
+            "    foo()\n" +
+            "}"
+    )
+
+    public fun testAutoCloseBraceInsideFor(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    for (elem in some.filter <caret>) {\n" +
+            "    }\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    for (elem in some.filter {<caret>}) {\n" +
+            "    }\n" +
+            "}"
+    )
+
+    public fun testAutoCloseBraceInsideForAfterCloseParen(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    for (elem in some.foo(true) <caret>) {\n" +
+            "    }\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    for (elem in some.foo(true) {<caret>}) {\n" +
+            "    }\n" +
+            "}"
+    )
+
+    public fun testAutoCloseBraceBeforeIf(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    <caret>if (true) {}\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    {<caret>if (true) {}\n" +
+            "}"
+    )
+
+    public fun testAutoCloseBraceInIfCondition(): Unit = doCharTypeTest(
+            '{',
+
+            "fun foo() {\n" +
+            "    if (some.hello (12) <caret>)\n" +
+            "}",
+
+            "fun foo() {\n" +
+            "    if (some.hello (12) {<caret>})\n" +
+            "}"
+    )
+
+    public fun testTypeLtInFunDeclaration() {
+        doLtGtTest("fun <caret>")
     }
 
-    public void testAutoIndentRightOpenBrace() {
-        doCharTypeTest(
-                '{',
-
-                "fun test() {\n" +
-                "<caret>\n" +
-                "}",
-
-                "fun test() {\n" +
-                "    {<caret>}\n" +
-                "}"
-        );
+    public fun testTypeLtInOngoingConstructorCall() {
+        doLtGtTest("fun test() { Collection<caret> }")
     }
 
-    public void testAutoIndentLeftOpenBrace() {
-        doCharTypeTest(
-                '{',
-
-                "fun test() {\n" +
-                "      <caret>\n" +
-                "}",
-
-                "fun test() {\n" +
-                "    {<caret>}\n" +
-                "}"
-        );
+    public fun testTypeLtInClassDeclaration() {
+        doLtGtTest("class Some<caret> {}")
     }
 
-    public void testTypeStringTemplateStartWithCloseBraceAfter() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() { \"$<caret>\" }",
-
-                "fun foo() { \"${}\" }"
-        );
+    public fun testTypeLtInPropertyType() {
+        doLtGtTest("val a: List<caret> ")
     }
 
-    public void testTypeStringTemplateStartBeforeString() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() { \"$<caret>something\" }",
-
-                "fun foo() { \"${}something\" }"
-        );
+    public fun testTypeLtInExtensionFunctionReceiver() {
+        doLtGtTest("fun <T> Collection<caret> ")
     }
 
-    public void testKT3575() {
-        doCharTypeTest(
-                '{',
-
-                "val x = \"$<caret>]\"",
-
-                "val x = \"${}]\""
-        );
+    public fun testTypeLtInFunParam() {
+        doLtGtTest("fun some(a : HashSet<caret>)")
     }
 
-    public void testAutoCloseBraceInFunctionDeclaration() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() <caret>",
-
-                "fun foo() {<caret>}"
-        );
+    public fun testTypeLtInFun() {
+        doLtGtTestNoAutoClose("fun some() { <<caret> }")
     }
 
-    public void testAutoCloseBraceInLocalFunctionDeclaration() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    fun bar() <caret>\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    fun bar() {<caret>}\n" +
-                "}"
-        );
+    public fun testTypeLtInLess() {
+        doLtGtTestNoAutoClose("fun some() { val a = 12; a <<caret> }")
     }
 
-    public void testAutoCloseBraceInAssignment() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    val a = <caret>\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    val a = {<caret>}\n" +
-                "}"
-        );
+    public fun testMoveThroughGT() {
+        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
+        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
+        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
+        checkResultByText("val a: List<Set<Int>><caret>")
     }
 
-    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnSameLine() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    if() <caret>foo()\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    if() {foo()\n" +
-                "}"
-        );
+    private fun doCharTypeTest(ch: Char, beforeText: String, afterText: String) {
+        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText)
+        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
+        checkResultByText(afterText)
     }
 
-    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnSameLine() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    while() <caret>foo()\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    while() {foo()\n" +
-                "}"
-        );
+    private fun doLtGtTestNoAutoClose(initText: String) {
+        doLtGtTest(initText, false)
     }
 
-    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnNewLine() {
-        doCharTypeTest(
-                '{',
+    private fun doLtGtTest(initText: String, shouldCloseBeInsert: Boolean) {
+        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", initText)
 
-                "fun foo() {\n" +
-                "    while()\n" +
-                "<caret>\n" +
-                "    foo()\n" +
-                "}",
+        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '<')
+        checkResultByText(if (shouldCloseBeInsert) initText.replace("<caret>", "<<caret>>") else initText.replace("<caret>", "<<caret>"))
 
-                "fun foo() {\n" +
-                "    while()\n" +
-                "    {\n" +
-                "    foo()\n" +
-                "}"
-        );
+        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), EditorTestUtil.BACKSPACE_FAKE_CHAR)
+        checkResultByText(initText)
     }
 
-    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnOtherLine() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    if(true) <caret>\n" +
-                "    foo()\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    if(true) {<caret>\n" +
-                "    foo()\n" +
-                "}"
-        );
-    }
-
-    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnNewLine() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    if(true)\n" +
-                "        <caret>\n" +
-                "    foo()\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    if(true)\n" +
-                "    {<caret>\n" +
-                "    foo()\n" +
-                "}"
-        );
-    }
-
-    public void testAutoCloseBraceInsideFor() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    for (elem in some.filter <caret>) {\n" +
-                "    }\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    for (elem in some.filter {<caret>}) {\n" +
-                "    }\n" +
-                "}"
-        );
-    }
-
-    public void testAutoCloseBraceInsideForAfterCloseParen() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    for (elem in some.foo(true) <caret>) {\n" +
-                "    }\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    for (elem in some.foo(true) {<caret>}) {\n" +
-                "    }\n" +
-                "}"
-        );
-    }
-
-    public void testAutoCloseBraceBeforeIf() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    <caret>if (true) {}\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    {<caret>if (true) {}\n" +
-                "}"
-        );
-    }
-
-    public void testAutoCloseBraceInIfCondition() {
-        doCharTypeTest(
-                '{',
-
-                "fun foo() {\n" +
-                "    if (some.hello (12) <caret>)\n" +
-                "}",
-
-                "fun foo() {\n" +
-                "    if (some.hello (12) {<caret>})\n" +
-                "}"
-        );
-    }
-
-    public void testTypeLtInFunDeclaration() throws Exception {
-        doLtGtTest("fun <caret>");
-    }
-
-    public void testTypeLtInOngoingConstructorCall() throws Exception {
-        doLtGtTest("fun test() { Collection<caret> }");
-    }
-
-    public void testTypeLtInClassDeclaration() throws Exception {
-        doLtGtTest("class Some<caret> {}");
-    }
-
-    public void testTypeLtInPropertyType() throws Exception {
-        doLtGtTest("val a: List<caret> ");
-    }
-
-    public void testTypeLtInExtensionFunctionReceiver() throws Exception {
-        doLtGtTest("fun <T> Collection<caret> ");
-    }
-
-    public void testTypeLtInFunParam() throws Exception {
-        doLtGtTest("fun some(a : HashSet<caret>)");
-    }
-
-    public void testTypeLtInFun() throws Exception {
-        doLtGtTestNoAutoClose("fun some() { <<caret> }");
-    }
-
-    public void testTypeLtInLess() throws Exception {
-        doLtGtTestNoAutoClose("fun some() { val a = 12; a <<caret> }");
-    }
-
-    public void testMoveThroughGT() throws Exception {
-        configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>");
-        EditorTestUtil.performTypingAction(getEditor(), '>');
-        EditorTestUtil.performTypingAction(getEditor(), '>');
-        checkResultByText("val a: List<Set<Int>><caret>");
-    }
-
-    private void doCharTypeTest(char ch, String beforeText, String afterText) {
-        configureFromFileText("a.kt", beforeText);
-        EditorTestUtil.performTypingAction(getEditor(), ch);
-        checkResultByText(afterText);
-    }
-
-    private void doLtGtTestNoAutoClose(String initText) throws Exception {
-        doLtGtTest(initText, false);
-    }
-
-    private void doLtGtTest(String initText, boolean shouldCloseBeInsert) throws Exception {
-        configureFromFileText("a.kt", initText);
-
-        EditorTestUtil.performTypingAction(getEditor(), '<');
-        checkResultByText(shouldCloseBeInsert ? initText.replace("<caret>", "<<caret>>") : initText.replace("<caret>", "<<caret>"));
-
-        EditorTestUtil.performTypingAction(getEditor(), EditorTestUtil.BACKSPACE_FAKE_CHAR);
-        checkResultByText(initText);
-    }
-
-    private void doLtGtTest(String initText) throws Exception {
-        doLtGtTest(initText, true);
+    private fun doLtGtTest(initText: String) {
+        doLtGtTest(initText, true)
     }
 }
