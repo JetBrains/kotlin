@@ -9,7 +9,9 @@ class SomeTest : Test {
         <selection><caret>throw UnsupportedOperationException()</selection>
     }
 
-    override val testProp: Int = 0
+    override val testProp: Int
+        get() = 0
+
     /**
      * test
      */

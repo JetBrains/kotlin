@@ -3,5 +3,6 @@ trait T {
 }
 
 class GC() : T {
-    override val v: Int = <selection><caret>0</selection>
+    override val v: Int
+        get() = <selection><caret>0</selection>
 }

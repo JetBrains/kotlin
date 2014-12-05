@@ -5,7 +5,8 @@ trait A {
 
 fun some() : A {
     return object : A {<caret>
-        override val method: () -> Unit? = ?
+        override val method: () -> Unit?
+            get() = ?
     }
 }
 

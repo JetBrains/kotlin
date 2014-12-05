@@ -206,15 +206,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         StringBuilder body = new StringBuilder();
         String defaultInitializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
         String initializer = defaultInitializer != null ? " = " + defaultInitializer : " = ?";
-        if (descriptor.getExtensionReceiverParameter() != null) {
-            body.append("\nget()");
-            body.append(initializer);
-            if (descriptor.isVar()) {
-                body.append("\nset(value) {}");
-            }
-        }
-        else {
-            body.append(initializer);
+        body.append("\nget()");
+        body.append(initializer);
+        if (descriptor.isVar()) {
+            body.append("\nset(value) {}");
         }
         return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }

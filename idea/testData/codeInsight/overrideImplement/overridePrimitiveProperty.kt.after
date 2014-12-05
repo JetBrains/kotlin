@@ -10,12 +10,20 @@ trait T {
 }
 
 class C : T {
-    override val a1: Byte = <selection><caret>0</selection>
-    override val a2: Short = 0
-    override val a3: Int = 0
-    override val a4: Long = 0
-    override val a5: Float = 0.0f
-    override val a6: Double = 0.0
-    override val a7: Char = '\u0000'
-    override val a8: Boolean = false
+    override val a1: Byte
+        get() = <selection><caret>0</selection>
+    override val a2: Short
+        get() = 0
+    override val a3: Int
+        get() = 0
+    override val a4: Long
+        get() = 0
+    override val a5: Float
+        get() = 0.0f
+    override val a6: Double
+        get() = 0.0
+    override val a7: Char
+        get() = '\u0000'
+    override val a8: Boolean
+        get() = false
 }
