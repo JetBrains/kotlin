@@ -26,6 +26,7 @@ import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
+import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -38,12 +39,17 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
             if (!isAfterDot(document, startOffset)) {
                 val qualifiedName = qualifiedNameToInsert(item)
 
-                // we need to insert prefix&suffix otherwise parser can sometimes produce no suitable reference here
-                val tempPrefix = "$;val v:"
+                val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+                psiDocumentManager.commitAllDocuments()
+
+                val token = file.findElementAt(startOffset)
+                val tempPrefix = if (token.getParent() is JetNameReferenceExpression)
+                    " " // insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
+                else
+                    "$;val v:" // if we have no reference in the current context we have a more complicated prefix to get one
                 val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
                 document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
 
-                val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
 
                 val classNameStart = startOffset + tempPrefix.length()
@@ -52,7 +58,6 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
                 val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
 
                 ShortenReferences.process(file, classNameStart, classNameEnd)
-                psiDocumentManager.commitAllDocuments()
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
                 if (rangeMarker.isValid() && wholeRangeMarker.isValid()) {
