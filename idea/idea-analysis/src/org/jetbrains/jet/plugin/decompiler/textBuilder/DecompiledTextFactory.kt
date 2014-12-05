@@ -159,6 +159,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     }
                     if (member is CallableMemberDescriptor
                         && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
+                        //TODO: not synthesized and component like
                         && !isComponentLike(member.getName())) {
                         continue
                     }
