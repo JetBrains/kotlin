@@ -31,7 +31,6 @@ import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -164,10 +163,6 @@ public abstract class KotlinIntegrationTestBase {
         File file = PathUtil.getKotlinPathsForDistDirectory().getLibPath().getAbsoluteFile();
         assertTrue("Lib directory doesn't exist. Run 'ant dist'", file.isDirectory());
         return file;
-    }
-
-    protected static String getKotlinRuntimePath() {
-        return ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath();
     }
 
     protected static File getKotlinProjectHome() {

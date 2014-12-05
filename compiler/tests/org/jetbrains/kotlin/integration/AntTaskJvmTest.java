@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,16 +41,20 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     private void doJvmAntTest(String... extraJavaArgs) throws Exception {
         doAntTest(SUCCESSFUL, extraJavaArgs);
 
-        String jar = getOutputFileByName(JVM_OUT_FILE).getAbsolutePath();
+        String classpath = UtilsPackage.join(Arrays.asList(
+                getOutputFileByName(JVM_OUT_FILE).getAbsolutePath(),
+                ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
+                ForTestCompileRuntime.reflectJarForTests().getAbsolutePath()
+        ), File.pathSeparator);
 
-        runJava("hello.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "hello.HelloPackage");
+        runJava("hello.run", "-cp", classpath, "hello.HelloPackage");
     }
 
     private static String getClassPathForAnt() {
         return UtilsPackage.join(Arrays.asList(
                 getCompilerLib() + File.separator + "kotlin-ant.jar",
                 getCompilerLib() + File.separator + "kotlin-compiler.jar",
-                getKotlinRuntimePath()
+                ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath()
         ), File.pathSeparator);
     }
 

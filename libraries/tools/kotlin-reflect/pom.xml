@@ -21,6 +21,16 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -40,7 +50,13 @@
                             <target>
                                 <delete dir="${basedir}/target/copied-sources" failonerror="false" />
                                 <copy todir="${basedir}/target/copied-sources">
+                                    <fileset dir="${basedir}/../../../core/descriptor.loader.java/src"/>
+                                    <fileset dir="${basedir}/../../../core/descriptors/src"/>
+                                    <fileset dir="${basedir}/../../../core/descriptors.runtime/src"/>
                                     <fileset dir="${basedir}/../../../core/reflection.jvm/src"/>
+                                    <fileset dir="${basedir}/../../../core/serialization/src"/>
+                                    <fileset dir="${basedir}/../../../core/serialization.jvm/src"/>
+                                    <fileset dir="${basedir}/../../../core/util.runtime/src"/>
                                 </copy>
                             </target>
                         </configuration>
