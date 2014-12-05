@@ -144,7 +144,11 @@ public class LookupElementFactory(
         }
 
 
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), descriptor.getName().asString())
+        val name = if (descriptor is ConstructorDescriptor)
+            descriptor.getContainingDeclaration().getName().asString()
+        else
+            descriptor.getName().asString()
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), name)
                 .withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
 
         when (descriptor) {

@@ -110,6 +110,9 @@ public class DescriptorKindFilter(
     public fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)
 
+    public fun withKinds(kinds: Int): DescriptorKindFilter
+            = DescriptorKindFilter(kindMask or kinds, excludes)
+
     public fun restrictedToKinds(kinds: Int): DescriptorKindFilter? {
         val mask = kindMask and kinds
         if (mask == 0) return null

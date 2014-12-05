@@ -444,6 +444,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("InnerClass.kt")
+    public void testInnerClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InnerClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InsideIdentifier.kt")
     public void testInsideIdentifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InsideIdentifier.kt");
