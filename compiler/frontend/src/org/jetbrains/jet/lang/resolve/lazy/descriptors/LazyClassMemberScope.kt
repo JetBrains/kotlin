@@ -185,7 +185,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
             if (descriptor.getKind() != FAKE_OVERRIDE && descriptor.getKind() != DELEGATION) {
                 OverridingUtil.resolveUnknownVisibilityForMember(descriptor, OverrideResolver.createCannotInferVisibilityReporter(trace))
             }
-//            VarianceChecker.recordPrivateToThisIfNeeded(trace, descriptor); todo make visibility lazy and enable
+            VarianceChecker.recordPrivateToThisIfNeeded(trace, descriptor);
         }
     }
 

@@ -89,7 +89,7 @@ class VarianceChecker(private val trace: BindingTrace) {
 
     class object {
         platformStatic fun recordPrivateToThisIfNeeded(trace: BindingTrace, descriptor: CallableMemberDescriptor) {
-            if (descriptor.getVisibility() != Visibilities.PRIVATE) return
+            if (isIrrelevant(descriptor) || descriptor.getVisibility() != Visibilities.PRIVATE) return
 
             val psiElement = descriptor.getSource().getPsi()
             if (psiElement !is JetCallableDeclaration) return
@@ -99,7 +99,14 @@ class VarianceChecker(private val trace: BindingTrace) {
             }
         }
 
-        private fun recordPrivateToThis(descriptor: CallableDescriptor) {
+        private fun isIrrelevant(descriptor: CallableDescriptor): Boolean {
+            val containingClass = descriptor.getContainingDeclaration()
+            if (containingClass !is ClassDescriptor) return true
+
+            return containingClass.getTypeConstructor().getParameters().all { it.getVariance() == INVARIANT }
+        }
+
+        private fun recordPrivateToThis(descriptor: CallableMemberDescriptor) {
             if (descriptor is FunctionDescriptorImpl) {
                 descriptor.setVisibility(Visibilities.PRIVATE_TO_THIS);
             }
@@ -120,7 +127,7 @@ class VarianceChecker(private val trace: BindingTrace) {
                 descriptor: CallableDescriptor,
                 diagnosticSink: DiagnosticSink
         ): Boolean {
-            if (descriptor.getContainingDeclaration() !is ClassDescriptor) return true
+            if (isIrrelevant(descriptor)) return true
             var noError = true
 
             noError = noError and declaration.checkTypeParameters(trace, IN_VARIANCE, diagnosticSink)
