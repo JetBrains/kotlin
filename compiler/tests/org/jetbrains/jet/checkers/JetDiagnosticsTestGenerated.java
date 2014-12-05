@@ -10304,6 +10304,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FunctionTypes.kt")
+            public void testFunctionTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/FunctionTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InPosition.kt")
             public void testInPosition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/InPosition.kt");
@@ -10313,6 +10319,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("InvariantPosition.kt")
             public void testInvariantPosition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/InvariantPosition.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NullableTypes.kt")
+            public void testNullableTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/NullableTypes.kt");
                 doTest(fileName);
             }
 
