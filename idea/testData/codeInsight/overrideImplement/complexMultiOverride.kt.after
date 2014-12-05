@@ -6,25 +6,25 @@ open class Base<A, B, C>() {
 
 class C : Base<String, C, Unit>() {
     override fun bar(value: () -> Unit): (String) -> Unit {
-        <selection><caret>return super<Base>.bar(value)</selection>
+        <selection><caret>return super.bar(value)</selection>
     }
 
     override fun equals(other: Any?): Boolean {
-        return super<Base>.equals(other)
+        return super.equals(other)
     }
 
     override fun foo(value: C): C {
-        return super<Base>.foo(value)
+        return super.foo(value)
     }
 
     override fun hashCode(): Int {
-        return super<Base>.hashCode()
+        return super.hashCode()
     }
 
     override val method: (String?) -> String
         get() = ?
 
     override fun toString(): String {
-        return super<Base>.toString()
+        return super.toString()
     }
 }

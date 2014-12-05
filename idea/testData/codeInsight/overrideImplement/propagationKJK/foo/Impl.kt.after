@@ -2,6 +2,6 @@ package foo
 
 class Impl : Bar() {
     override fun f(): Any? {
-        <selection><caret>return super<Bar>.f()</selection>
+        <selection><caret>return super.f()</selection>
     }
 }

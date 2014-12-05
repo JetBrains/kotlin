@@ -5,22 +5,22 @@ trait A {
 
 class C : A {
     override fun bar(): String {
-        <selection><caret>return super<A>.bar()</selection>
+        <selection><caret>return super.bar()</selection>
     }
 
     override fun equals(other: Any?): Boolean {
-        return super<A>.equals(other)
+        return super.equals(other)
     }
 
     override fun foo(value: String): Int {
-        return super<A>.foo(value)
+        return super.foo(value)
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 }

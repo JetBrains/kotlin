@@ -101,8 +101,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 PsiElement firstGenerated = null;
 
                 List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-                JetFile file = classOrObject.getContainingJetFile();
-                for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+                for (JetElement element : generateOverridingMembers(selectedElements, classOrObject)) {
                     PsiElement added = body.addAfter(element, afterAnchor);
 
                     if (firstGenerated == null) {
@@ -179,22 +178,22 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return whiteSpace;
     }
 
-    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
+    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetClassOrObject classOrObject) {
         List<JetElement> overridingMembers = new ArrayList<JetElement>();
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
+                overridingMembers.add(overrideFunction(classOrObject, (SimpleFunctionDescriptor) descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
+                overridingMembers.add(overrideProperty(classOrObject, (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
     }
 
     @NotNull
-    private static JetElement overrideProperty(@NotNull Project project, @NotNull PropertyDescriptor descriptor) {
+    private static JetElement overrideProperty(@NotNull JetClassOrObject classOrObject, @NotNull PropertyDescriptor descriptor) {
         PropertyDescriptor newDescriptor = (PropertyDescriptor) descriptor.copy(
                 descriptor.getContainingDeclaration(),
                 Modality.OPEN,
@@ -211,11 +210,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (descriptor.isVar()) {
             body.append("\nset(value) {}");
         }
-        return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
+        return JetPsiFactory(classOrObject.getProject()).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull
-    private static JetNamedFunction overrideFunction(@NotNull Project project, @NotNull FunctionDescriptor descriptor) {
+    private static JetNamedFunction overrideFunction(@NotNull JetClassOrObject classOrObject, @NotNull FunctionDescriptor descriptor) {
         FunctionDescriptor newDescriptor = descriptor.copy(
                 descriptor.getContainingDeclaration(),
                 Modality.OPEN,
@@ -230,8 +229,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             delegationBuilder.append("throw UnsupportedOperationException()");
         }
         else {
-            delegationBuilder.append("super<").append(descriptor.getContainingDeclaration().getName());
-            delegationBuilder.append(">.").append(descriptor.getName()).append("(");
+            delegationBuilder.append("super");
+            if (classOrObject.getDelegationSpecifiers().size() > 1) {
+                delegationBuilder.append("<").append(descriptor.getContainingDeclaration().getName()).append(">");
+            }
+            delegationBuilder.append(".").append(descriptor.getName()).append("(");
         }
         boolean first = true;
         if (!isAbstractFun) {
@@ -250,7 +252,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
         String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
 
-        return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
+        return JetPsiFactory(classOrObject.getProject()).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull

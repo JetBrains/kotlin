@@ -10,19 +10,19 @@ class C : A() {
         get() = <selection><caret>0</selection>
 
     override fun equals(other: Any?): Boolean {
-        return super<A>.equals(other)
+        return super.equals(other)
     }
 
     override fun foo(value: Int) {
-        super<A>.foo(value)
+        super.foo(value)
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 
     /*

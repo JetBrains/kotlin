@@ -4,15 +4,15 @@ trait Some {
 
 class Other {
     override fun equals(other: Any?): Boolean {
-        <selection><caret>return super<Any>.equals(other)</selection>
+        <selection><caret>return super.equals(other)</selection>
     }
 
     override fun hashCode(): Int {
-        return super<Any>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<Any>.toString()
+        return super.toString()
     }
 
     fun test() {
