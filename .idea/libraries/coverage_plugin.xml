@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="coverage-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/coverage/lib/coverage.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/coverage/src" />
+    </SOURCES>
+  </library>
+</component>
