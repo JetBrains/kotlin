@@ -23,7 +23,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.CallType
 import org.jetbrains.jet.plugin.completion.isVisible
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -187,18 +187,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             val completeReference = jetReference != null && !isOnlyKeywordCompletion()
             val onlyTypes = completeReference && shouldRunOnlyTypeCompletion()
 
-            val kindMask = if (onlyTypes)
-                DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
+            val kindFilter = if (onlyTypes)
+                DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
             else
-                DescriptorKindFilter.ALL_KINDS_MASK
-            val kindFilter = DescriptorKindFilter(kindMask)
+                DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
 
             if (completeReference) {
                 addReferenceVariants(kindFilter, shouldCastToRuntimeType = false)
-
-                if (onlyTypes) {
-                    collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
-                }
             }
 
             KeywordCompletion.complete(parameters, prefixMatcher.getPrefix(), collector)
@@ -223,7 +218,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addNonImported(onlyTypes: Boolean) {
         if (shouldRunTopLevelCompletion()) {
-            addAllClasses { if (onlyTypes) !it.isSingleton() else it != ClassKind.ENUM_ENTRY }
+            addAllClasses { it != ClassKind.ENUM_ENTRY }
 
             if (!onlyTypes) {
                 collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)

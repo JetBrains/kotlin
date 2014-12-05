@@ -700,12 +700,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("NoObjectInTypePosition.kt")
-        public void testNoObjectInTypePosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoObjectInTypePosition.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("NoPackageFacadeClasses.kt")
         public void testNoPackageFacadeClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoPackageFacadeClasses.kt");
@@ -721,6 +715,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NoTopLevelCompletionInQualifiedUserTypes.kt")
         public void testNoTopLevelCompletionInQualifiedUserTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoTopLevelCompletionInQualifiedUserTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ObjectInTypePosition.kt")
+        public void testObjectInTypePosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ObjectInTypePosition.kt");
             doTest(fileName);
         }
 

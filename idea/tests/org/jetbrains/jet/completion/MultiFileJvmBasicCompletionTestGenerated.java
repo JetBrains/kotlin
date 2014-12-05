@@ -174,6 +174,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("ObjectInTypePosition")
+    public void testObjectInTypePosition() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ObjectInTypePosition/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/TopLevelFunction/");

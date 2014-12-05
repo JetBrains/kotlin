@@ -185,17 +185,20 @@ public class DescriptorKindFilter(
 public trait DescriptorKindExclude {
     public fun matches(descriptor: DeclarationDescriptor): Boolean
 
+    override fun toString() = this.javaClass.getSimpleName()
+
     public object Extensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
-
-        override fun toString() = this.javaClass.getSimpleName()
     }
 
     public object NonExtensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
+    }
 
-        override fun toString() = this.javaClass.getSimpleName()
+    public object EnumEntry : DescriptorKindExclude {
+        override fun matches(descriptor: DeclarationDescriptor)
+                = descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
     }
 }

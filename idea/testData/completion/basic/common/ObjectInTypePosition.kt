@@ -4,5 +4,4 @@ fun test() {
   val a : Named<caret>
 }
 
-// INVOCATION_COUNT: 2
-// ABSENT: NamedObject
+// EXIST: NamedObject
