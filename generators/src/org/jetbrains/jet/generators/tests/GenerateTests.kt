@@ -137,6 +137,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletion
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
 import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
+import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -365,6 +366,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
             model("completion/basic/custom", recursive = false)
+        }
+
+        testClass(javaClass<AbstractBasicCompletionHandlerTest>()) {
+            model("completion/handlers/basic")
         }
 
         testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {

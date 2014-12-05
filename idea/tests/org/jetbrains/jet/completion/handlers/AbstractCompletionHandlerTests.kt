@@ -63,6 +63,11 @@ public abstract class AbstractCompletionHandlerTest() : CompletionHandlerTestBas
     protected abstract val defaultCompletionType: CompletionType
 }
 
+public abstract class AbstractBasicCompletionHandlerTest() : AbstractCompletionHandlerTest() {
+    override val defaultCompletionType: CompletionType = CompletionType.BASIC
+    override val testDataRelativePath: String = "/completion/handlers/basic"
+}
+
 public abstract class AbstractSmartCompletionHandlerTest() : AbstractCompletionHandlerTest() {
     override val defaultCompletionType: CompletionType = CompletionType.SMART
     override val testDataRelativePath: String = "/completion/handlers/smart"

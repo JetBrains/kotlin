@@ -37,21 +37,27 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
             val document = context.getDocument()
             if (!isAfterDot(document, startOffset)) {
                 val qualifiedName = qualifiedNameToInsert(item)
-                // insert dot after because otherwise parser can sometimes produce no suitable reference here
+
+                // we need to insert prefix&suffix otherwise parser can sometimes produce no suitable reference here
+                val tempPrefix = "$;val v:"
                 val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
-                document.replaceString(startOffset, context.getTailOffset(), qualifiedName + tempSuffix)
-                val classNameEnd = startOffset + qualifiedName.length()
+                document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
 
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
-                val rangeMarker = document.createRangeMarker(classNameEnd, classNameEnd + tempSuffix.length())
 
-                ShortenReferences.process(file, startOffset, classNameEnd)
+                val classNameStart = startOffset + tempPrefix.length()
+                val classNameEnd = classNameStart + qualifiedName.length()
+                val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
+                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
+
+                ShortenReferences.process(file, classNameStart, classNameEnd)
                 psiDocumentManager.commitAllDocuments()
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
-                if (rangeMarker.isValid()) {
-                    document.deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                if (rangeMarker.isValid() && wholeRangeMarker.isValid()) {
+                    document.deleteString(wholeRangeMarker.getStartOffset(), rangeMarker.getStartOffset())
+                    document.deleteString(rangeMarker.getEndOffset(), wholeRangeMarker.getEndOffset())
                 }
             }
         }

@@ -1,0 +1,9 @@
+import java.util.HashMap
+import java.util.HashSet
+
+fun foo() {
+    val v = HashMap<String, HashSet<caret>
+}
+
+// INVOCATION_COUNT: 2
+// ELEMENT: HashSet
