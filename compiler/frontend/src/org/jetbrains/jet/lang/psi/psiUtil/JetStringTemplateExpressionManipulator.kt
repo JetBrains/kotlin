@@ -16,13 +16,17 @@
 
 package org.jetbrains.jet.lang.psi.psiUtil
 
-import com.intellij.psi.AbstractElementManipulator
 import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.ElementManipulator
 
-public class JetStringTemplateExpressionManipulator : AbstractElementManipulator<JetStringTemplateExpression>() {
+public class JetStringTemplateExpressionManipulator : ElementManipulator<JetStringTemplateExpression> {
+    override fun handleContentChange(element: JetStringTemplateExpression?, newContent: String?): JetStringTemplateExpression? {
+        return handleContentChange(element!!, getRangeInElement(element), newContent!!)
+    }
+
     override fun handleContentChange(element: JetStringTemplateExpression, range: TextRange, newContent: String): JetStringTemplateExpression? {
         val node = element.getNode()
         val content = if (element.isSingleQuoted()) StringUtil.escapeStringCharacters(newContent) else newContent
