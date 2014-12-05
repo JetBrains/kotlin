@@ -150,7 +150,7 @@ import org.jetbrains.jet.android.AbstractAndroidGotoTest
 import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.jet.android.AbstractAndroidRenameTest
 import org.jetbrains.jet.android.AbstractAndroidFindUsagesTest
-import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBytecodePersistenceTest
+import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBytecodeShapeTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -746,8 +746,8 @@ fun main(args: Array<String>) {
             model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
         }
 
-        testClass(javaClass<AbstractAndroidBytecodePersistenceTest>()) {
-            model("codegen/androidPersistence", recursive = false, extension = null)
+        testClass(javaClass<AbstractAndroidBytecodeShapeTest>()) {
+            model("codegen/bytecodeShape", recursive = false, extension = null)
         }
     }
 
