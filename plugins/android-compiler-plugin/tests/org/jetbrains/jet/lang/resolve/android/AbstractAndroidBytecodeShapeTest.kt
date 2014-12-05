@@ -29,7 +29,7 @@ import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
-public abstract class AbstractAndroidBytecodePersistenceTest : AbstractBytecodeTextTest() {
+public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
