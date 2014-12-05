@@ -189,17 +189,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         if (value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(object : CachedValueProvider<JetTypeMapper> {
                 override fun compute(): CachedValueProvider.Result<JetTypeMapper>? {
-                    val project = file.getProject()
-                    val packageFacadeScope = key.second.contentScope()
-                    val packageFiles = PackageIndexUtil.findFilesWithExactPackage(key.first, packageFacadeScope, project)
-
-                    val analysisResult = KotlinCacheService.getInstance(project).getAnalysisResults(packageFiles)
-                    analysisResult.throwIfError()
-
-                    val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
-                                                analysisResult.bindingContext, ArrayList(packageFiles))
-                    state.beforeCompile()
-                    return CachedValueProvider.Result<JetTypeMapper>(state.getTypeMapper(), PsiModificationTracker.MODIFICATION_COUNT)
+                    val typeMapper = createTypeMapper(file, key.second)
+                    return CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
                 }
             }, false)
 
@@ -249,6 +240,21 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
     }
 
     class object {
+        public fun createTypeMapper(file: JetFile, moduleInfo: IdeaModuleInfo): JetTypeMapper {
+            val project = file.getProject()
+            val packageFacadeScope = moduleInfo.contentScope()
+            val packageFiles = PackageIndexUtil.findFilesWithExactPackage(file.getPackageFqName(), packageFacadeScope, project)
+
+            val analysisResult = KotlinCacheService.getInstance(project).getAnalysisResults(packageFiles)
+            analysisResult.throwIfError()
+
+            val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
+                                        analysisResult.bindingContext, ArrayList(packageFiles))
+            state.beforeCompile()
+            val typeMapper = state.getTypeMapper()
+            return typeMapper
+        }
+
         public fun getClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: JetFile, isInLibrary: Boolean): String? {
             val element = getElementToCalculateClassName(notPositionedElement)
             when {
