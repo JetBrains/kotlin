@@ -35,7 +35,6 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
-import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator;
 import org.jetbrains.jet.plugin.framework.ui.CreateLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
@@ -53,6 +52,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
 
     private static final String DEFAULT_LIB_DIR_NAME = "lib";
 
+    private final String configuratorName;
     private final String libraryName;
     private final String dialogTitle;
     private final String modulesSeparatorCaption;
@@ -67,6 +67,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
      */
     public CustomLibraryDescriptorWithDefferConfig(
             @Nullable Project project,
+            @NotNull String configuratorName,
             @NotNull String libraryName,
             @NotNull String dialogTitle,
             @NotNull String modulesSeparatorCaption,
@@ -74,6 +75,7 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
             @NotNull Set<? extends LibraryKind> suitableLibraryKinds
     ) {
         useRelativePaths = project == null;
+        this.configuratorName = configuratorName;
         this.libraryName = libraryName;
         this.dialogTitle = dialogTitle;
         this.modulesSeparatorCaption = modulesSeparatorCaption;
@@ -162,8 +164,8 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
         KotlinWithLibraryConfigurator configurator =
-                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-        assert configurator != null : "Configurator with name " + KotlinJavaModuleConfigurator.NAME + " should exists";
+                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtils.getConfiguratorByName(configuratorName);
+        assert configurator != null : "Configurator with name " + configuratorName + " should exists";
 
         deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);
 

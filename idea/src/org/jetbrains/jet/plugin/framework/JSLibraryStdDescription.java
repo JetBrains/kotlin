@@ -42,7 +42,7 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
      * @param project null when project doesn't exist yet (called from project wizard)
      */
     public JSLibraryStdDescription(@Nullable Project project) {
-        super(project, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVASCRIPT_KIND, SUITABLE_LIBRARY_KINDS);
+        super(project, KotlinJsModuleConfigurator.NAME, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVASCRIPT_KIND, SUITABLE_LIBRARY_KINDS);
     }
 
     @TestOnly

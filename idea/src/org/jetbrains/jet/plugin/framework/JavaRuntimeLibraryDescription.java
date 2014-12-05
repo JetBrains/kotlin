@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 
 import java.util.Set;
 
@@ -36,6 +37,6 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDe
      * @param project null when project doesn't exist yet (called from project wizard)
      */
     public JavaRuntimeLibraryDescription(@Nullable Project project) {
-        super(project, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVA_RUNTIME_KIND, SUITABLE_LIBRARY_KINDS);
+        super(project, KotlinJavaModuleConfigurator.NAME, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVA_RUNTIME_KIND, SUITABLE_LIBRARY_KINDS);
     }
 }
