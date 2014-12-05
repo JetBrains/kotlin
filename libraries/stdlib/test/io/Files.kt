@@ -68,6 +68,23 @@ class FilesTest {
         }
     }
 
+    test fun relativeTo() {
+        assertEquals("kotlin", File("src/kotlin".separatorsToSystem()).relativeTo(File("src")))
+        assertEquals("", File("dir").relativeTo(File("dir")))
+        assertEquals("..", File("dir").relativeTo(File("dir/subdir".separatorsToSystem())))
+        assertEquals("../../test".separatorsToSystem(), File("test").relativeTo(File("dir/dir".separatorsToSystem())))
+
+        val file1 = File("C:/dir1".separatorsToSystem())
+        val file2 = File("D:/dir2".separatorsToSystem())
+        try {
+            val winRelPath = file1.relativeTo(file2)
+            assert(file1.canonicalPath.charAt(0) == '/')
+            assertEquals("../../C:/dir1", winRelPath)
+        } catch (e: IllegalArgumentException) {
+            assert(Character.isLetter(file1.canonicalPath.charAt(0)))
+        }
+    }
+
     test fun relativePath() {
         val file1 = File("src")
         val file2 = File(file1, "kotlin")

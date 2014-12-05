@@ -126,8 +126,62 @@ public fun File.isDescendant(file: File): Boolean {
 }
 
 /**
- * Returns the relative path of the given descendant of this file if it is a descendant
+ * Returns path of this file relatively to the given directory.
+ * Note that the base file is treated as a directory.
+ * If this file matches the base directory, then an empty string will be returned.
+ *
+ * Throws IllegalArgumentException if child and parent have different roots.
  */
+public fun File.relativeTo(base: File): String {
+    fun getDriveLetter(path: String): Char? {
+        return if (path.length() >= 2 && Character.isLetter(path.charAt(0)) && path.charAt(1) == ':') {
+            path.charAt(0)
+        } else {
+            null
+        }
+    }
+
+    val thisCanonical = canonicalPath
+    val baseCanonical = base.canonicalPath
+    if (thisCanonical.equals(baseCanonical)) {
+        return ""
+    }
+    if (getDriveLetter(thisCanonical) != getDriveLetter(baseCanonical)) {
+        throw IllegalArgumentException("this and base files have different roots")
+    }
+
+    fun String.longestCommonPrefixLen(o: String): Int {
+        var i = 0
+        val len = length()
+        val oLen = o.length()
+        while (i < len && i < oLen && this[i] == o[i]) {
+            i++
+        }
+        return i
+    }
+
+    val commonPrefLen = thisCanonical.longestCommonPrefixLen(baseCanonical)
+    val thisSuffix = thisCanonical.substring(commonPrefLen + if (commonPrefLen == baseCanonical.length()) 1 else 0)
+    val baseSuffix = baseCanonical.substring(commonPrefLen + if (commonPrefLen == thisCanonical.length()) 1 else 0)
+    val separator = File.separator.charAt(0)
+    val ups = if (baseSuffix.isEmpty()) 0 else baseSuffix.count { it == separator } + 1
+    val result = StringBuilder()
+    for (i in 1 .. ups) {
+        if (i != 1) {
+            result.append(separator)
+        }
+        result.append("..")
+    }
+    if (commonPrefLen != thisCanonical.length()) {
+        if (result.length() != 0) {
+            result.append(separator)
+        }
+        result.append(thisSuffix)
+    }
+    return result.toString()
+}
+
+deprecated("Use relativeTo() function instead")
 public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath
