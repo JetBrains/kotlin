@@ -27,6 +27,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -37,13 +40,21 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
             val startOffset = context.getStartOffset()
             val document = context.getDocument()
             if (!isAfterDot(document, startOffset)) {
-                val qualifiedName = qualifiedNameToInsert(item)
-
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
 
+                val qualifiedName = qualifiedNameToInsert(item)
+
+                // first try to resolve short name for faster handling
                 val token = file.findElementAt(startOffset)
-                val tempPrefix = if (token.getParent() is JetNameReferenceExpression)
+                val nameRef = token.getParent() as? JetNameReferenceExpression
+                if (nameRef != null) {
+                    val bindingContext = nameRef.getResolutionFacade().analyzeWithPartialBodyResolve(nameRef)
+                    val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
+                    if (target != null && DescriptorUtils.getFqNameSafe(target).asString() == qualifiedName) return
+                }
+
+                val tempPrefix = if (nameRef != null)
                     " " // insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
                 else
                     "$;val v:" // if we have no reference in the current context we have a more complicated prefix to get one
