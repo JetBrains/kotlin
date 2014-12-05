@@ -37,6 +37,11 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
+import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.plugin.util.CallType
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -68,27 +73,34 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val referenceVariantsHelper: ReferenceVariantsHelper?
             = if (bindingContext != null) ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) } else null
 
-    protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
-        if (jetReference != null) {
+    protected val lookupElementFactory: LookupElementFactory = run {
+        val receiverTypes = if (jetReference != null) {
             val expression = jetReference.expression
-            val receivers = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
+            val (receivers, callType) = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
             val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
-            val receiverTypes = receivers.flatMap {
+            var receiverTypes = receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
             }
-            BoldImmediateLookupElementFactory(receiverTypes)
+            if (callType == CallType.SAFE) {
+                receiverTypes = receiverTypes.map { it.makeNotNullable() }
+            }
+            receiverTypes
         }
         else {
-            LookupElementFactory.DEFAULT
+            listOf()
         }
+        LookupElementFactory(receiverTypes)
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, boldImmediateLookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory)
 
     protected val project: Project = position.getProject()
 
+
+    protected val originalSearchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
+
     // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
-    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(parameters.getOriginalFile().getResolveScope()) {
+    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(originalSearchScope) {
         override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
     }
 
@@ -117,8 +129,25 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor>
-            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, prefixMatcher.asNameFilter())
+    // set is used only for completion in code fragments
+    private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
+
+    fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
+        val descriptors = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
+        if (!shouldCastToRuntimeType) {
+            if (position.getContainingFile() is JetCodeFragment) {
+                alreadyAddedDescriptors = descriptors
+            }
+            return descriptors
+        }
+        else {
+            return descriptors.filter { desc ->
+                !alreadyAddedDescriptors.any {
+                    comparePossiblyOverridingDescriptors(it, desc)
+                }
+            }
+        }
+    }
 
     protected fun shouldRunTopLevelCompletion(): Boolean
             = configuration.completeNonImportedDeclarations && isNoQualifierContext()
@@ -134,15 +163,12 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
-    protected fun getKotlinTopLevelObjects(): Collection<DeclarationDescriptor>
-            = indicesHelper.getTopLevelObjects({ prefixMatcher.prefixMatches(it) })
-
     protected fun getKotlinExtensions(): Collection<CallableDescriptor>
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
-                parameters, resolutionFacade, bindingContext!!, moduleDescriptor,
+                parameters, lookupElementFactory, resolutionFacade, bindingContext!!, moduleDescriptor,
                 searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
         ).collect(collector)
     }
@@ -158,13 +184,14 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
             val completeReference = jetReference != null && !isOnlyKeywordCompletion()
-            val onlyTypes = shouldRunOnlyTypeCompletion()
+            val onlyTypes = completeReference && shouldRunOnlyTypeCompletion()
+
+            val kindMask = if (onlyTypes)
+                DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
+            else
+                DescriptorKindFilter.ALL_KINDS_MASK
 
             if (completeReference) {
-                val kindMask = if (onlyTypes)
-                    DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
-                else
-                    DescriptorKindFilter.ALL_KINDS_MASK
                 addReferenceVariants(DescriptorKindFilter(kindMask))
 
                 if (onlyTypes) {
@@ -181,6 +208,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 flushToResultSet()
                 addNonImported(onlyTypes)
+            }
+
+            if (completeReference && position.getContainingFile() is JetCodeFragment) {
+                flushToResultSet()
+                addReferenceVariants(DescriptorKindFilter(kindMask), true)
             }
         }
 
@@ -202,12 +234,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun isOnlyKeywordCompletion()
-            = PsiTreeUtil.getParentOfType(position, javaClass<JetModifierList>()) != null
+            = position.getStrictParentOfType<JetModifierList>() != null
 
     private fun shouldRunOnlyTypeCompletion(): Boolean {
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
-        val typeReference = PsiTreeUtil.getParentOfType(position, javaClass<JetTypeReference>())
+        val typeReference = position.getStrictParentOfType<JetTypeReference>()
         if (typeReference != null) {
             val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
             return firstPartReference == jetReference!!.expression
@@ -216,8 +248,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter) {
-        collector.addDescriptorElements(getReferenceVariants(kindFilter), suppressAutoInsertion = false)
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean = false) {
+        collector.addDescriptorElements(
+                getReferenceVariants(kindFilter, shouldCastToRuntimeType),
+                suppressAutoInsertion = false,
+                shouldCastToRuntimeType = shouldCastToRuntimeType)
     }
 }
 
@@ -229,18 +264,31 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolutionFacade, bindingContext!!, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+            val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
+            val completion = SmartCompletion(jetReference.expression, resolutionFacade, moduleDescriptor, 
+                                             bindingContext!!, { isVisibleDescriptor(it) }, originalSearchScope,
+                                             mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach { collector.addElements(filter(it)) }
-
+                    getReferenceVariants(DESCRIPTOR_KIND_MASK, false).forEach { collector.addElements(filter(it)) }
                     flushToResultSet()
 
                     processNonImported { collector.addElements(filter(it)) }
+                    flushToResultSet()
+
+                    if (position.getContainingFile() is JetCodeFragment) {
+                        getReferenceVariants(DESCRIPTOR_KIND_MASK, true).forEach { collector.addElementsWithReceiverCast(filter(it)) }
+                        flushToResultSet()
+                    }
+                }
+
+                result.inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+                    collector.addElement(it)
+                    flushToResultSet()
                 }
             }
         }
@@ -249,7 +297,6 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
         if (shouldRunTopLevelCompletion()) {
             getKotlinTopLevelCallables().forEach(processor)
-            getKotlinTopLevelObjects().forEach(processor) //TODO: shouldn't it work via inheritors search?
         }
 
         if (shouldRunExtensionsCompletion()) {

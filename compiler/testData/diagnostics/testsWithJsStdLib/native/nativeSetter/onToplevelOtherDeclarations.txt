@@ -1,0 +1,11 @@
+package
+
+kotlin.js.nativeSetter() internal val toplevelVal: kotlin.Int = 0
+kotlin.js.nativeSetter() internal fun toplevelFun(): kotlin.Any
+
+kotlin.js.nativeSetter() internal final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

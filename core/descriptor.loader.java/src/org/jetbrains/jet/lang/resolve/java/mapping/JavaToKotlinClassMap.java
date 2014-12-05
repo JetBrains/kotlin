@@ -33,15 +33,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.*;
 
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
-    private static JavaToKotlinClassMap instance = null;
-
-    @NotNull
-    public static JavaToKotlinClassMap getInstance() {
-        if (instance == null) {
-            instance = new JavaToKotlinClassMap();
-        }
-        return instance;
-    }
+    public static final JavaToKotlinClassMap INSTANCE = new JavaToKotlinClassMap();
 
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();

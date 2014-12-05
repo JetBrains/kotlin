@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -42,12 +41,6 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     @NotNull
     public JetType getType() {
         return annotationType;
-    }
-
-    @Override
-    @Nullable
-    public CompileTimeConstant<?> getValueArgument(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
-        return getAllValueArguments().get(valueParameterDescriptor);
     }
 
     @Override

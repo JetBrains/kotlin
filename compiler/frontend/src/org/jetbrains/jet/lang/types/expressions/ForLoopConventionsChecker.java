@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
@@ -43,13 +44,13 @@ import java.util.Collections;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.isBoolean;
 
 public class ForLoopConventionsChecker {
 
     private Project project;
     private ExpressionTypingServices expressionTypingServices;
     private ExpressionTypingUtils expressionTypingUtils;
+    private KotlinBuiltIns builtIns;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -64,6 +65,11 @@ public class ForLoopConventionsChecker {
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     public boolean isVariableIterable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
@@ -87,7 +93,6 @@ public class ForLoopConventionsChecker {
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
                 expressionTypingUtils.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator);
-        Call iteratorCall = calls.getFirst();
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {
@@ -99,7 +104,7 @@ public class ForLoopConventionsChecker {
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
                                                              HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
                                                              LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
-            if (hasNextType != null && !isBoolean(hasNextType)) {
+            if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
             return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",
@@ -108,11 +113,6 @@ public class ForLoopConventionsChecker {
         }
         else {
             if (iteratorResolutionResults.isAmbiguity()) {
-//                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResultingCalls()) {
-//                        stringBuffer.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(functionDescriptor)).append(" ");
-//                    }
-//                    errorMessage = stringBuffer.toString();
                 context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));
             }
             else {

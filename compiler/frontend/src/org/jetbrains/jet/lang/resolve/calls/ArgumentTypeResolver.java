@@ -52,10 +52,9 @@ import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
 
-    @NotNull
     private TypeResolver typeResolver;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
+    private KotlinBuiltIns builtIns;
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -67,18 +66,23 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
+    }
+
     public static boolean isSubtypeOfForArgumentType(
             @NotNull JetType actualType,
             @NotNull JetType expectedType
     ) {
         if (actualType == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.getInstance().isAnyOrNullableAny(expectedType); //todo function type extends
+            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.isAnyOrNullableAny(expectedType); //todo function type extends
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
-        return KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
+        return KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
@@ -205,7 +209,7 @@ public class ArgumentTypeResolver {
             boolean expectedTypeIsUnknown
     ) {
         if (expression.getFunctionLiteral().getValueParameterList() == null) {
-            return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : KotlinBuiltIns.getInstance().getFunctionType(
+            return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : builtIns.getFunctionType(
                     Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = expression.getValueParameters();
@@ -219,7 +223,7 @@ public class ArgumentTypeResolver {
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeReference(), scope, temporaryTrace, null);
-        return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
+        return builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
                                                             returnType);
     }
 

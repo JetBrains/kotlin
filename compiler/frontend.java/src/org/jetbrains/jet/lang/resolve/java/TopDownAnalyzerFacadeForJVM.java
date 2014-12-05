@@ -20,11 +20,13 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
@@ -36,7 +38,10 @@ import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +62,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegration(
+    public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
@@ -65,22 +70,6 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleDescriptorImpl module
     ) {
         return analyzeFilesWithJavaIntegration(project, files, trace, topDownAnalysisParameters, module, null, null);
-    }
-
-    @NotNull
-    public static AnalysisResult analyzeFilesWithJavaIntegration(
-            @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull BindingTrace trace,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull ModuleDescriptorImpl module,
-            @Nullable List<String> moduleIds,
-            @Nullable IncrementalCacheProvider incrementalCacheProvider
-    ) {
-        return analyzeFilesWithJavaIntegrationWithCustomContext(
-                project, ContextPackage.GlobalContext(), files, trace,
-                filesToAnalyzeCompletely, module, moduleIds,
-                incrementalCacheProvider);
     }
 
     @NotNull
@@ -103,7 +92,8 @@ public enum TopDownAnalyzerFacadeForJVM {
         );
 
         return analyzeFilesWithJavaIntegration(
-                project, files, trace, topDownAnalysisParameters, module, moduleIds, incrementalCacheProvider);
+                project, files, trace, topDownAnalysisParameters, module,
+                moduleIds, incrementalCacheProvider);
     }
 
     @NotNull
@@ -116,7 +106,18 @@ public enum TopDownAnalyzerFacadeForJVM {
             @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        FileBasedDeclarationProviderFactory providerFactory =
+                new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), files);
+
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+                project,
+                topDownAnalysisParameters,
+                trace,
+                module,
+                providerFactory,
+                GlobalSearchScope.allScope(project)
+        );
+
         try {
             List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
@@ -135,7 +136,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
+            injector.getLazyTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
             return AnalysisResult.success(trace.getBindingContext(), module);
         }
         finally {
@@ -145,6 +146,17 @@ public enum TopDownAnalyzerFacadeForJVM {
 
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
+        return new ModuleDescriptorImpl(Name.special(name),
+                                        DEFAULT_IMPORTS,
+                                        JavaToKotlinClassMap.INSTANCE);
+    }
+
+    @NotNull
+    public static ModuleDescriptorImpl createSealedJavaModule() {
+        ModuleDescriptorImpl module = createJavaModule("<shared-module>");
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
+        return module;
     }
 }

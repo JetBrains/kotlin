@@ -43,7 +43,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -98,7 +97,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                         if (typeDescriptor.getKind() != ClassKind.TRAIT && functionDescriptor.getModality() != Modality.ABSTRACT) {
                             functionBody = "{}";
                             JetType returnType = functionDescriptor.getReturnType();
-                            if (returnType == null || !KotlinBuiltIns.getInstance().isUnit(returnType)) {
+                            if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
                                 functionBody = "{ throw UnsupportedOperationException() }";
                             }
                         }

@@ -28,27 +28,21 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.plugin.util.FuzzyType
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
-        if (scope == null) return
+        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
 
         val receivers: List<ReceiverParameterDescriptor> = scope.getImplicitReceiversHierarchy()
         for (i in 0..receivers.size - 1) {
             val receiver = receivers[i]
             val thisType = receiver.getType()
-            val classifier = { (expectedInfo: ExpectedInfo) ->
-                when {
-                    thisType.isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MATCHES
-                    thisType.isNullable() && thisType.makeNotNullable().isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
-                    else -> ExpectedInfoClassification.NOT_MATCHES
-                }
-            }
-            fun lookupElementFactory(): LookupElement? {
+            val fuzzyType = FuzzyType(thisType, listOf())
+            val classifier = { (expectedInfo: ExpectedInfo) -> fuzzyType.classifyExpectedInfo(expectedInfo) }
+            fun createLookupElement(): LookupElement? {
                 //TODO: use this code when KT-4258 fixed
                 //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: return null)
                 val qualifier = if (i == 0) null else (thisQualifierName(receiver) ?: return null)
@@ -57,7 +51,7 @@ class ThisItems(val bindingContext: BindingContext) {
                         .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
                         .assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
             }
-            collection.addLookupElements(expectedInfos, classifier, ::lookupElementFactory)
+            collection.addLookupElements(null, expectedInfos, classifier) { createLookupElement() }
         }
     }
 

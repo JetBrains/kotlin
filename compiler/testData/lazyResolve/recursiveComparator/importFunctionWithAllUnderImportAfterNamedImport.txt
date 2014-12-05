@@ -1,4 +1,0 @@
-package test
-
-internal val a: [ERROR : Type for TestFun()]
-    internal fun <get-a>(): [ERROR : Type for TestFun()]

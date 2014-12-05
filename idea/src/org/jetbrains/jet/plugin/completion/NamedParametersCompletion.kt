@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.completion
 
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lexer.JetTokens
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
@@ -40,6 +39,7 @@ import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -56,9 +56,9 @@ object NamedParametersCompletion {
     public fun isOnlyNamedParameterExpected(position: PsiElement): Boolean {
         if (!positionFilter.isAcceptable(position, position)) return false
 
-        val thisArgument = PsiTreeUtil.getParentOfType(position, javaClass<JetValueArgument>())!!
+        val thisArgument = position.getStrictParentOfType<JetValueArgument>()!!
 
-        val callElement = PsiTreeUtil.getParentOfType(thisArgument, javaClass<JetCallElement>()) ?: return false
+        val callElement = thisArgument.getStrictParentOfType<JetCallElement>() ?: return false
 
         for (argument in callElement.getValueArguments()) {
             if (argument == thisArgument) break
@@ -71,9 +71,9 @@ object NamedParametersCompletion {
     public fun complete(position: PsiElement, collector: LookupElementsCollector) {
         if (!positionFilter.isAcceptable(position, position)) return
 
-        val valueArgument = PsiTreeUtil.getParentOfType(position, javaClass<JetValueArgument>())!!
+        val valueArgument = position.getStrictParentOfType<JetValueArgument>()!!
 
-        val callElement = PsiTreeUtil.getParentOfType(valueArgument, javaClass<JetCallElement>()) ?: return
+        val callElement = valueArgument.getStrictParentOfType<JetCallElement>() ?: return
         val callSimpleName = callElement.getCallNameExpression() ?: return
 
         val callReference = callSimpleName.getReference() as JetReference

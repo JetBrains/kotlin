@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 
 import java.util.Collections;
 
@@ -43,7 +44,8 @@ import java.util.Collections;
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object,
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+            @NotNull DynamicTypesSettings dynamicTypesSettings
     ) {
         TopDownAnalysisParameters topDownAnalysisParameters =
                 TopDownAnalysisParameters.createForLocalDeclarations(
@@ -57,7 +59,8 @@ import java.util.Collections;
                 topDownAnalysisParameters,
                 context.trace,
                 DescriptorUtils.getContainingModule(containingDeclaration),
-                additionalCheckerProvider
+                additionalCheckerProvider,
+                dynamicTypesSettings
         );
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);

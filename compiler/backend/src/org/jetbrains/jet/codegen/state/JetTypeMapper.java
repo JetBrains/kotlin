@@ -264,7 +264,7 @@ public class JetTypeMapper {
             return asmType;
         }
 
-        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.getInstance().isArray(jetType)) {
+        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isArray(jetType)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -493,7 +493,7 @@ public class JetTypeMapper {
                     invokeOpcode = INVOKEINTERFACE;
                 }
                 else {
-                    boolean isPrivateFunInvocation = functionDescriptor.getVisibility() == Visibilities.PRIVATE;
+                    boolean isPrivateFunInvocation = Visibilities.isPrivate(functionDescriptor.getVisibility());
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
 
@@ -683,11 +683,11 @@ public class JetTypeMapper {
      */
     private static boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
         //noinspection ConstantConditions
-        if (!KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getReturnType())) return false;
+        if (!KotlinBuiltIns.isPrimitiveType(descriptor.getReturnType())) return false;
 
         for (FunctionDescriptor overridden : getAllOverriddenDescriptors(descriptor)) {
             //noinspection ConstantConditions
-            if (!KotlinBuiltIns.getInstance().isPrimitiveType(overridden.getOriginal().getReturnType())) return true;
+            if (!KotlinBuiltIns.isPrimitiveType(overridden.getOriginal().getReturnType())) return true;
         }
 
         return false;

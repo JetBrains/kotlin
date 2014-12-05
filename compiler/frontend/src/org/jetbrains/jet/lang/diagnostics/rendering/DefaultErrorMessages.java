@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -26,16 +28,17 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.renderer.MultiRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
@@ -44,6 +47,8 @@ import static org.jetbrains.jet.renderer.DescriptorRenderer.*;
 public class DefaultErrorMessages {
 
     public interface Extension {
+        ExtensionPointName<Extension> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.defaultErrorMessages");
+
         @NotNull
         DiagnosticFactoryToRendererMap getMap();
     }
@@ -52,7 +57,7 @@ public class DefaultErrorMessages {
     public static final List<DiagnosticFactoryToRendererMap> MAPS = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
                     .addAll(
                             KotlinPackage.map(
-                                ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()),
+                                Extensions.getExtensions(Extension.EP_NAME),
                                 new Function1<Extension, DiagnosticFactoryToRendererMap>() {
                                     @Override
                                     public DiagnosticFactoryToRendererMap invoke(Extension extension) {
@@ -256,6 +261,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed. You can use ':' if you need a cast to a super type");
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
+        MAP.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
@@ -318,6 +324,7 @@ public class DefaultErrorMessages {
         MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(FINAL_CLASS_OBJECT_UPPER_BOUND, "''{0}'' is a final type, and thus a class object cannot extend it", RENDER_TYPE);
         MAP.put(FINAL_UPPER_BOUND, "''{0}'' is a final type, and thus a value of the type parameter is predetermined", RENDER_TYPE);
+        MAP.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound");
         MAP.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
         MAP.put(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS, "Class object upper bounds of {0} have empty intersection", NAME);
@@ -361,6 +368,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ANONYMOUS_INITIALIZER_IN_TRAIT, "Anonymous initializers are not allowed in traits");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
+        MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
         MAP.put(BASE_WITH_NULLABLE_UPPER_BOUND, "''{0}'' has a nullable upper bound. " +
                                                 "This means that a value of this type may be null. " +
@@ -382,6 +390,20 @@ public class DefaultErrorMessages {
                 "Smart cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and traits");
+        MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
+                new MultiRenderer<VarianceConflictDiagnosticData>() {
+                    @NotNull
+                    @Override
+                    public String[] render(@NotNull VarianceConflictDiagnosticData data) {
+                        return new String[] {
+                            NAME.render(data.getTypeParameter()),
+                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance()),
+                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition()),
+                            RENDER_TYPE.render(data.getContainingType())
+                        };
+                    }
+                });
+
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);
 
@@ -480,7 +502,7 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
         MAP.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified");
-        MAP.put(REIFIED_TYPE_NOTHING_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
+        MAP.put(REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
 
         MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");
         MAP.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter");

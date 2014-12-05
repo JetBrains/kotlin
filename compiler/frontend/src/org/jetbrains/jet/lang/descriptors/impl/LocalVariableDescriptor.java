@@ -42,6 +42,7 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
     @NotNull
     @Override
     public LocalVariableDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+        if (substitutor.isEmpty()) return this;
         throw new UnsupportedOperationException(); // TODO
     }
 

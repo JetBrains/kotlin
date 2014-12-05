@@ -172,9 +172,9 @@ public class MethodInliner {
                         result.addClassToRemove(anonymousObjectGen.getOwnerInternalName());
                     }
 
-                    if (transformResult.needFurtherReification()) {
+                    if (transformResult.getReifiedTypeParametersUsages().wereUsedReifiedParameters()) {
                         ReifiedTypeInliner.putNeedClassReificationMarker(mv);
-                        result.markAsNeededFurtherReificationIf(true);
+                        result.getReifiedTypeParametersUsages().mergeAll(transformResult.getReifiedTypeParametersUsages());
                     }
                 }
             }

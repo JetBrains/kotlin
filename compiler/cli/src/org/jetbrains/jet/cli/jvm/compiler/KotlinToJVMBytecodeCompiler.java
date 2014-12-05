@@ -42,6 +42,7 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -62,7 +63,9 @@ import org.jetbrains.jet.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -114,7 +117,8 @@ public class KotlinToJVMBytecodeCompiler {
         Disposable parentDisposable = Disposer.newDisposable();
         JetCoreEnvironment environment = null;
         try {
-            environment = JetCoreEnvironment.createForProduction(parentDisposable, compilerConfiguration);
+            environment = JetCoreEnvironment
+                    .createForProduction(parentDisposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             AnalysisResult result = analyze(environment);
             if (result == null) {
@@ -282,23 +286,25 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     private static AnalysisResult analyze(@NotNull final JetCoreEnvironment environment) {
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
-                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
+        MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        assert collector != null;
+
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(collector);
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), new Function0<AnalysisResult>() {
                     @NotNull
                     @Override
                     public AnalysisResult invoke() {
-                        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
-                        BindingTrace sharedTrace = support.getTrace();
-                        ModuleDescriptorImpl sharedModule = support.newModule();
+                        BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
+                        ModuleDescriptorImpl analyzeModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
-                        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                                 environment.getProject(),
+                                ContextPackage.GlobalContext(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 Predicates.<PsiFile>alwaysTrue(),
-                                sharedModule,
+                                analyzeModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)
                         );

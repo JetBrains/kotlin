@@ -74,7 +74,7 @@ public fun or(predicates: Collection<TypePredicate>): TypePredicate? =
 
 fun JetType.getSubtypesPredicate(): TypePredicate {
     return when {
-        KotlinBuiltIns.getInstance().isAnyOrNullableAny(this) && isNullable() -> AllTypes
+        KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable() -> AllTypes
         TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, this) -> AllSubtypes(this)
         else -> SingleType(this)
     }

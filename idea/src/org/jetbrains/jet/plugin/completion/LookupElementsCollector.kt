@@ -35,7 +35,7 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         private val resolutionFacade: ResolutionFacade,
-        private val boldImmediateLookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: LookupElementFactory
 ) {
     private val elements = ArrayList<LookupElement>()
 
@@ -51,16 +51,20 @@ class LookupElementsCollector(
         private set
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
-                                     suppressAutoInsertion: Boolean // auto-insertion suppression is used for elements that require adding an import
+                                     suppressAutoInsertion: Boolean, // auto-insertion suppression is used for elements that require adding an import
+                                     shouldCastToRuntimeType: Boolean = false
     ) {
         for (descriptor in descriptors) {
-            addDescriptorElements(descriptor, suppressAutoInsertion)
+            addDescriptorElements(descriptor, suppressAutoInsertion, shouldCastToRuntimeType)
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, shouldCastToRuntimeType: Boolean) {
         run {
-            val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
+            var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+            if (shouldCastToRuntimeType) {
+                lookupElement = lookupElement.shouldCastReceiver()
+            }
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -74,10 +78,10 @@ class LookupElementsCollector(
             val parameters = descriptor.getValueParameters()
             if (parameters.size() == 1) {
                 val parameterType = parameters.get(0).getType()
-                if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
-                    val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
+                        val lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
@@ -135,5 +139,9 @@ class LookupElementsCollector(
 
     public fun addElements(elements: Iterable<LookupElement>) {
         elements.forEach { addElement(it) }
+    }
+
+    public fun addElementsWithReceiverCast(elements: Iterable<LookupElement>) {
+        elements.forEach { addElement(it.shouldCastReceiver()) }
     }
 }

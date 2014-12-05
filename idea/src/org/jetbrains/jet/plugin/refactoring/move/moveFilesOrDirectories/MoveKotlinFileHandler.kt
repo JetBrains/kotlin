@@ -75,7 +75,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val declarationMoveProcessor = MoveKotlinTopLevelDeclarationsProcessor(
                 project,
                 MoveKotlinTopLevelDeclarationsOptions(
-                        elementsToMove = psiFile.getDeclarations().filterIsInstance(javaClass<JetNamedDeclaration>()),
+                        elementsToMove = psiFile.getDeclarations().filterIsInstance<JetNamedDeclaration>(),
                         moveTarget = DeferredJetFileKotlinMoveTarget(project, packageNameInfo.newPackageName) {
                             MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
                             newParent.findFile(psiFile.getName()) as? JetFile

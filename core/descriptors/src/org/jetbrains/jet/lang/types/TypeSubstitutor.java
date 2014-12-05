@@ -169,7 +169,7 @@ public class TypeSubstitutor {
             );
         }
 
-        if (KotlinBuiltIns.getInstance().isNothing(type) || type.isError()) return originalProjection;
+        if (KotlinBuiltIns.isNothing(type) || type.isError()) return originalProjection;
 
         TypeProjection replacement = substitution.get(type.getConstructor());
 
@@ -191,7 +191,7 @@ public class TypeSubstitutor {
                     }
                     else {
                         // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
-                        substitutedType = type.isNullable() ? TypeUtils.makeNullable(replacement.getType()) : replacement.getType();
+                        substitutedType = type.isMarkedNullable() ? TypeUtils.makeNullable(replacement.getType()) : replacement.getType();
                     }
 
                     Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
@@ -231,7 +231,7 @@ public class TypeSubstitutor {
         };
         JetType substitutedType = new JetTypeImpl(type.getAnnotations(),   // Old annotations. This is questionable
                                            type.getConstructor(),   // The same constructor
-                                           type.isNullable(),       // Same nullability
+                                           type.isMarkedNullable(),       // Same nullability
                                            substitutedArguments,
                                            new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)));
         return new TypeProjectionImpl(projectionKind, substitutedType);

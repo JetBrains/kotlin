@@ -93,7 +93,7 @@ public class CandidateResolver {
 
 
         DeclarationDescriptorWithVisibility invisibleMember =
-                Visibilities.findInvisibleMember(candidate, context.scope.getContainingDeclaration());
+                Visibilities.findInvisibleMember(ReceiverValue.IRRELEVANT_RECEIVER, candidate, context.scope.getContainingDeclaration());
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);
@@ -250,7 +250,7 @@ public class CandidateResolver {
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, false);
         }
-        if (expectedType == null || !KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)
+        if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
                 || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
             return;
         }
@@ -596,9 +596,8 @@ public class CandidateResolver {
         JetType receiverArgumentType = receiverArgument.getType();
 
         BindingContext bindingContext = trace.getBindingContext();
-        if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgumentType.isNullable()) {
-            if (!SmartCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
-
+        if (!safeAccess && !receiverParameter.getType().isMarkedNullable() && receiverArgumentType.isMarkedNullable()) {
+            if (!SmartCastUtils.canBeSmartCast(receiverParameter, receiverArgument, bindingContext, context.dataFlowInfo)) {
                 context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 return UNSAFE_CALL_ERROR;
             }

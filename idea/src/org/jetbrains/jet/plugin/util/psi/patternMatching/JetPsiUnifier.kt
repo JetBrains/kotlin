@@ -339,7 +339,7 @@ public class JetPsiUnifier(
             if (type1 != null && type2 != null) {
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
 
-                if (type1.isNullable() != type2.isNullable()) return UNMATCHED
+                if (type1.isMarkedNullable() != type2.isMarkedNullable()) return UNMATCHED
                 if (!matchDescriptors(
                         type1.getConstructor().getDeclarationDescriptor(),
                         type2.getConstructor().getDeclarationDescriptor())) return UNMATCHED

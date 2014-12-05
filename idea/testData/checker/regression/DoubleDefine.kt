@@ -9,7 +9,7 @@ fun takeFirst(expr: StringBuilder): Char {
 }
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
-  if (expr.length == 0) throw Exception("Syntax error: Character expected");
+  if (expr.length() == 0) throw Exception("Syntax error: Character expected");
   val c = takeFirst(<error>expr</error>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'

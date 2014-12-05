@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates
 import java.util.LinkedHashSet
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 public class ModuleDescriptorImpl(
         moduleName: Name,
@@ -95,4 +96,7 @@ public class ModuleDescriptorImpl(
         assert(!isSealed, "Attempt to add friend module ${friend.id} to sealed module $id")
         friendModules.add(friend)
     }
+
+    override val builtIns: KotlinBuiltIns
+        get() = KotlinBuiltIns.getInstance()
 }

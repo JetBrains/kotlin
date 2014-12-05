@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypesAndPredicate
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfTypesAndPredicate
 import com.intellij.codeInsight.intention.IntentionAction
 
 public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key: String, val elementType: Class<T>) : IntentionAction {
@@ -37,7 +37,7 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key
 
     protected fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()
-        return file.findElementAt(offset)?.getParentByTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, editor) }
+        return file.findElementAt(offset)?.getParentOfTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, editor) }
     }
 
     public override fun getFamilyName(): String {

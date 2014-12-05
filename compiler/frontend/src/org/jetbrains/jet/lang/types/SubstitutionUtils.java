@@ -43,7 +43,7 @@ public class SubstitutionUtils {
         return typeSubstitutor;
     }
 
-    /*
+    /**
       For each supertype of a given type, we map type parameters to type arguments.
 
       For instance, we have the following class hierarchy:
@@ -91,7 +91,7 @@ public class SubstitutionUtils {
                 fullSubstitution.put(parameter.getTypeConstructor(), substitute);
             }
         }
-        if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(context)) return;
+        if (KotlinBuiltIns.isNothingOrNullableNothing(context)) return;
         for (JetType supertype : context.getConstructor().getSupertypes()) {
             fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }

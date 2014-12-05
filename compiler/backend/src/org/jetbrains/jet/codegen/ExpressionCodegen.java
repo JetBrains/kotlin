@@ -207,28 +207,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
         literalCodegen.generate();
 
-        if (containsReifiedParametersInSupertypes(classDescriptor)) {
-            literalCodegen.setWereReifierMarkers(true);
-        }
+        addReifiedParametersFromSignature(literalCodegen, classDescriptor);
+        propagateChildReifiedTypeParametersUsages(literalCodegen.getReifiedTypeParametersUsages());
 
-        if (literalCodegen.wereReifierMarkers()) {
-            getParentCodegen().setWereReifierMarkers(true);
-        }
-
-        return new ObjectLiteralResult(literalCodegen.wereReifierMarkers(), classDescriptor);
+        return new ObjectLiteralResult(
+                literalCodegen.getReifiedTypeParametersUsages().wereUsedReifiedParameters(),
+                classDescriptor
+        );
     }
 
-    private static boolean containsReifiedParametersInSupertypes(@NotNull ClassDescriptor descriptor) {
+    private static void addReifiedParametersFromSignature(@NotNull MemberCodegen member, @NotNull ClassDescriptor descriptor) {
         for (JetType type : descriptor.getTypeConstructor().getSupertypes()) {
             for (TypeProjection supertypeArgument : type.getArguments()) {
                 TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(supertypeArgument.getType());
                 if (parameterDescriptor != null && parameterDescriptor.isReified()) {
-                    return true;
+                    member.getReifiedTypeParametersUsages().addUsedReifiedParameter(parameterDescriptor.getName().asString());
                 }
             }
         }
-
-        return false;
     }
 
     private static class ObjectLiteralResult {
@@ -855,7 +851,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         @Override
         protected void assignToLoopParameter() {
             Type arrayElParamType;
-            if (KotlinBuiltIns.getInstance().isArray(loopRangeType)) {
+            if (KotlinBuiltIns.isArray(loopRangeType)) {
                 arrayElParamType = boxType(asmElementType);
             }
             else {
@@ -1387,26 +1383,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private StackValue genClosure(
-            @NotNull PsiElement declaration,
+            @NotNull JetElement declaration,
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
             @NotNull KotlinSyntheticClass.Kind kind
     ) {
-        boolean wereReifiedMarkers = parentCodegen.wereReifierMarkers();
-        parentCodegen.setWereReifierMarkers(false);
+        Type asmType = asmTypeForAnonymousClass(bindingContext, descriptor);
+        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
+        ClassContext closureContext = context.intoClosure(descriptor, this, typeMapper);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, descriptor, samType, context, kind, this,
-                strategy, parentCodegen
+                state, declaration, descriptor, samType, closureContext, kind,
+                strategy, parentCodegen, cv, asmType
         );
-        closureCodegen.gen();
 
-        if (parentCodegen.wereReifierMarkers()) {
+        closureCodegen.generate();
+
+        if (closureCodegen.getReifiedTypeParametersUsages().wereUsedReifiedParameters()) {
             ReifiedTypeInliner.putNeedClassReificationMarker(v);
-        }
-        if (wereReifiedMarkers) {
-            parentCodegen.setWereReifierMarkers(true);
+            propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
         }
 
         return closureCodegen.putInstanceOnStack(this);
@@ -2305,7 +2301,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall) {
         Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
-        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings(typeArguments.size());
+        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
             if (!key.isReified()) continue;
@@ -2315,16 +2311,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 // type is not generic
                 // boxType call needed because inlined method is compiled for T as java/lang/Object
                 mappings.addParameterMappingToType(
-                        key.getIndex(),
                         key.getName().getIdentifier(),
                         boxType(asmType(entry.getValue()))
                 );
             }
             else {
                 mappings.addParameterMappingToNewParameter(
-                        key.getIndex(),
                         key.getName().getIdentifier(),
-                        parameterDescriptor.getIndex(),
                         parameterDescriptor.getName().getIdentifier()
                 );
             }
@@ -2768,7 +2761,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateExpressionWithNullFallback(@NotNull JetExpression expression, @NotNull Label ifnull) {
-        expression = JetPsiUtil.deparenthesize(expression);
+        JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+        assert deparenthesized != null : "Unexpected empty expression";
+
+        expression = deparenthesized;
         Type type = expressionType(expression);
 
         if (expression instanceof JetSafeQualifiedExpression && !isPrimitive(type)) {
@@ -2856,6 +2852,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateIn(final StackValue leftValue, JetExpression rangeExpression, final JetSimpleNameExpression operationReference) {
         final JetExpression deparenthesized = JetPsiUtil.deparenthesize(rangeExpression);
+
+        assert deparenthesized != null : "For with empty range expression";
+
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -3439,7 +3438,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             args.add(va.getArgumentExpression());
         }
 
-        boolean isArray = KotlinBuiltIns.getInstance().isArray(arrayType);
+        boolean isArray = KotlinBuiltIns.isArray(arrayType);
         if (!isArray && args.size() != 1) {
             throw new CompilationException("primitive array constructor requires one argument", null, expression);
         }
@@ -3493,7 +3492,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void newArrayInstruction(@NotNull JetType arrayType) {
-        if (KotlinBuiltIns.getInstance().isArray(arrayType)) {
+        if (KotlinBuiltIns.isArray(arrayType)) {
             JetType elementJetType = arrayType.getArguments().get(0).getType();
             putReifierMarkerIfTypeIsReifiedParameter(
                     elementJetType,
@@ -3520,7 +3519,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             operationDescriptor.getValueParameters().get(0).getType().equals(KotlinBuiltIns.getInstance().getIntType())) {
             assert type != null;
             Type elementType;
-            if (KotlinBuiltIns.getInstance().isArray(type)) {
+            if (KotlinBuiltIns.isArray(type)) {
                 JetType jetElementType = type.getArguments().get(0).getType();
                 elementType = boxType(asmType(jetElementType));
             }
@@ -3864,7 +3863,7 @@ The "returned" value of try expression with no finally is either the last expres
                 if (leaveExpressionOnStack) {
                     v.dup();
                 }
-                if (jetType.isNullable()) {
+                if (jetType.isMarkedNullable()) {
                     Label nope = new Label();
                     Label end = new Label();
 
@@ -3902,13 +3901,21 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
-            parentCodegen.setWereReifierMarkers(true);
-            v.iconst(typeParameterDescriptor.getIndex());
+            if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
+                parentCodegen.getReifiedTypeParametersUsages().
+                        addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
+            }
+
+            v.visitLdcInsn(typeParameterDescriptor.getName().asString());
             v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
-                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE), false
+                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
             );
         }
+    }
+
+    public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
+        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(usages, context);
     }
 
     @Override

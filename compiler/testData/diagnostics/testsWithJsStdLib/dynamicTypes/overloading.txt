@@ -1,0 +1,8 @@
+package
+
+internal fun dyn(/*0*/ d: dynamic): kotlin.Unit
+internal fun foo(/*0*/ d: dynamic): kotlin.String
+internal fun foo(/*0*/ d: kotlin.Int): kotlin.Int
+internal fun nothing(/*0*/ d: dynamic): kotlin.Int
+internal fun nothing(/*0*/ d: kotlin.Nothing): kotlin.String
+internal fun test(/*0*/ d: dynamic): kotlin.Unit

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.AbstractDiagnosticWithParame
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -82,7 +83,12 @@ public class CheckerTestUtil {
     private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile(INDIVIDUAL_DIAGNOSTIC);
     private static final Pattern INDIVIDUAL_PARAMETER_PATTERN = Pattern.compile(DIAGNOSTIC_PARAMETER);
 
-    public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, final PsiElement root) {
+    @NotNull
+    public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(
+            @NotNull BindingContext bindingContext,
+            @NotNull final PsiElement root,
+            boolean markDynamicCalls
+    ) {
         List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics().all(),
                                                new Predicate<Diagnostic>() {
@@ -94,12 +100,17 @@ public class CheckerTestUtil {
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
-        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext);
+        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls);
         diagnostics.addAll(debugAnnotations);
         return diagnostics;
     }
 
-    public static List<Diagnostic> getDebugInfoDiagnostics(@NotNull PsiElement root, @NotNull BindingContext bindingContext) {
+    @NotNull
+    public static List<Diagnostic> getDebugInfoDiagnostics(
+            @NotNull PsiElement root,
+            @NotNull BindingContext bindingContext,
+            final boolean markDynamicCalls
+    ) {
         final List<Diagnostic> debugAnnotations = Lists.newArrayList();
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
@@ -117,8 +128,15 @@ public class CheckerTestUtil {
                 newDiagnostic(expression, DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET);
             }
 
-            private void newDiagnostic(JetReferenceExpression expression, DebugInfoDiagnosticFactory factory) {
-                debugAnnotations.add(new DebugInfoDiagnostic(expression, factory));
+            @Override
+            public void reportDynamicCall(@NotNull JetElement element) {
+                if (markDynamicCalls) {
+                    newDiagnostic(element, DebugInfoDiagnosticFactory.DYNAMIC);
+                }
+            }
+
+            private void newDiagnostic(JetElement element, DebugInfoDiagnosticFactory factory) {
+                debugAnnotations.add(new DebugInfoDiagnostic(element, factory));
             }
         });
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
@@ -486,6 +504,7 @@ public class CheckerTestUtil {
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
+        public static final DebugInfoDiagnosticFactory DYNAMIC = new DebugInfoDiagnosticFactory("DYNAMIC");
 
         private final String name;
         private DebugInfoDiagnosticFactory(String name, Severity severity) {
@@ -505,8 +524,8 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnostic extends AbstractDiagnosticForTests {
-        public DebugInfoDiagnostic(@NotNull JetExpression reference, @NotNull DebugInfoDiagnosticFactory factory) {
-            super(reference, factory);
+        public DebugInfoDiagnostic(@NotNull JetElement element, @NotNull DebugInfoDiagnosticFactory factory) {
+            super(element, factory);
         }
     }
 

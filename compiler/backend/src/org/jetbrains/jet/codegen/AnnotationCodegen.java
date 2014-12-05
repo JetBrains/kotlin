@@ -216,7 +216,7 @@ public abstract class AnnotationCodegen {
 
     private static boolean isBareTypeParameterWithNullableUpperBound(@NotNull JetType type) {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-        return !type.isNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
+        return !type.isMarkedNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
     }
 
     public void generateAnnotationDefaultValue(@NotNull CompileTimeConstant value, @NotNull JetType expectedType) {

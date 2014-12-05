@@ -18,14 +18,11 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
@@ -33,11 +30,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -67,6 +62,10 @@ public class LazyTopDownAnalyzer {
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
+    private VarianceChecker varianceChecker = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     private ModuleDescriptor moduleDescriptor = null;
 
     @SuppressWarnings("ConstantConditions")
@@ -77,6 +76,11 @@ public class LazyTopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver = null;
 
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private TopDownAnalyzer topDownAnalyzer = null;
+
+    @Inject
     public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
         this.resolveSession = kotlinCodeAnalyzer;
     }
@@ -97,6 +101,11 @@ public class LazyTopDownAnalyzer {
     }
 
     @Inject
+    public void setVarianceChecker(@NotNull VarianceChecker varianceChecker) {
+        this.varianceChecker = varianceChecker;
+    }
+
+    @Inject
     public void setOverloadResolver(@NotNull OverloadResolver overloadResolver) {
         this.overloadResolver = overloadResolver;
     }
@@ -111,38 +120,36 @@ public class LazyTopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
+    @Inject
+    public void setTopDownAnalyzer(@NotNull TopDownAnalyzer topDownAnalyzer) {
+        this.topDownAnalyzer = topDownAnalyzer;
+    }
+
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
-            @NotNull Project project,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<JetFile> files,
-            @NotNull List<? extends PackageFragmentProvider> additionalProviders,
-            AdditionalCheckerProvider additionalCheckerProvider
+            @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
-        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        if (!topDownAnalysisParameters.isLazy()) {
+            return topDownAnalyzer.analyzeFiles(
+                    topDownAnalysisParameters, files,
+                    additionalProviders.toArray(new PackageFragmentProvider[additionalProviders.size()]));
+        }
+        
+        PackageFragmentProvider provider;
+        if (additionalProviders.isEmpty()) {
+            provider = resolveSession.getPackageFragmentProvider();
+        }
+        else {
+            provider = new CompositePackageFragmentProvider(KotlinPackage.plus(
+                    Arrays.asList(resolveSession.getPackageFragmentProvider()),
+                    additionalProviders));
+        }
 
-        ResolveSession resolveSession = new InjectorForLazyResolve(
-                project,
-                new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
-                (ModuleDescriptorImpl) moduleDescriptor, // TODO
-                new FileBasedDeclarationProviderFactory(c.getStorageManager(), files),
-                trace,
-                additionalCheckerProvider
-        ).getResolveSession();
+        ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
 
-        CompositePackageFragmentProvider provider =
-                new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(resolveSession.getPackageFragmentProvider()), additionalProviders));
-
-        ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
-
-        setKotlinCodeAnalyzer(resolveSession);
-
-        analyzeDeclarations(
-                c.getTopDownAnalysisParameters(),
-                files
-        );
-
-        return c;
+        return analyzeDeclarations(topDownAnalysisParameters, files);
     }
 
     @NotNull
@@ -312,6 +319,8 @@ public class LazyTopDownAnalyzer {
 
         overrideResolver.check(c);
 
+        varianceChecker.check(c);
+
         resolveImportsInAllFiles(c, resolveSession);
 
         declarationResolver.resolveAnnotationsOnFiles(c, resolveSession.getScopeProvider());
@@ -399,6 +408,11 @@ public class LazyTopDownAnalyzer {
                 topLevelFqNames.put(fqName, declaration);
             }
         }
+    }
+
+    @NotNull
+    public KotlinCodeAnalyzer getCodeAnalyzer() {
+        return resolveSession;
     }
 }
 

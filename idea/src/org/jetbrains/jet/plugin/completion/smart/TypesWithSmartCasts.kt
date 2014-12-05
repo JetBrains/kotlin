@@ -17,13 +17,8 @@
 package org.jetbrains.jet.plugin.completion.smart
 
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue
@@ -34,40 +29,23 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class TypesWithSmartCasts(val bindingContext: BindingContext) {
-    public fun calculate(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
+    public fun calculate(expression: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
-        val (variableToTypes: Map<VariableDescriptor, Collection<JetType>>, notNullVariables: Set<VariableDescriptor>)
-            = processDataFlowInfo(dataFlowInfo, receiver)
+        val (variableToTypes, notNullVariables) = processDataFlowInfo(dataFlowInfo, receiver)
 
-        fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
-            if (descriptor is CallableDescriptor) {
-                var returnType = descriptor.getReturnType()
-                if (returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType!!)) {
-                    //TODO: maybe we should include them on the second press?
-                    return listOf()
-                }
-                if (descriptor is VariableDescriptor) {
-                    if (notNullVariables.contains(descriptor)) {
-                        returnType = returnType?.makeNotNullable()
-                    }
+        fun typesOf(descriptor: VariableDescriptor): Collection<JetType> {
+            var type = descriptor.getReturnType() ?: return listOf()
+            if (notNullVariables.contains(descriptor)) {
+                type = type.makeNotNullable()
+            }
 
-                    val smartCastTypes = variableToTypes[descriptor]
-                    if (smartCastTypes != null && !smartCastTypes.isEmpty()) {
-                        return smartCastTypes + returnType.toList()
-                    }
-                }
-                return returnType.toList()
-            }
-            else if (descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-                return listOf(descriptor.getDefaultType())
-            }
-            else {
-                return listOf()
-            }
+            val smartCastTypes = variableToTypes[descriptor]
+            if (smartCastTypes == null || smartCastTypes.isEmpty()) return type.toList()
+            return smartCastTypes + type.toList()
         }
 
         return ::typesOf

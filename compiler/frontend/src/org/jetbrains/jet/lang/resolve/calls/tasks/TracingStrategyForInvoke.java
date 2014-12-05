@@ -91,7 +91,7 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
     }
 
     private void functionExpectedOrNoReceiverAllowed(BindingTrace trace) {
-        if (KotlinBuiltIns.getInstance().isFunctionType(calleeType)) {
+        if (KotlinBuiltIns.isFunctionType(calleeType)) {
             LOG.assertTrue(call.getExplicitReceiver().exists(),
                            "'Invoke' is not found on expression of function type (" + calleeType + "): "
                            + PsiUtilPackage.getTextWithLocation(call.getCallElement()));

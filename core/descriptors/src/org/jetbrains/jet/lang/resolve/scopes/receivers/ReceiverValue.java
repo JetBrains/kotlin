@@ -38,6 +38,24 @@ public interface ReceiverValue {
         }
     };
 
+    ReceiverValue IRRELEVANT_RECEIVER = new ReceiverValue() {
+        @NotNull
+        @Override
+        public JetType getType() {
+            throw new UnsupportedOperationException("IRRELEVANT_RECEIVER.getType()");
+        }
+
+        @Override
+        public boolean exists() {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "IRRELEVANT_RECEIVER";
+        }
+    };
+
     @NotNull
     JetType getType();
 

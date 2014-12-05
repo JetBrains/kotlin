@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -38,10 +40,12 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.storage.StorageManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -135,13 +139,27 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForExplicitReceiver(
+            @NotNull ReceiverValue explicitReceiver,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
+            @NotNull TaskPrioritizerContext<D, F> c,
+            boolean isExplicit
+    ) {
+        addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
+
+        if (TypesPackage.isDynamic(explicitReceiver.getType())) {
+            addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit);
+        }
+        else {
+            addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit);
+        }
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void addExtensionCandidates(
             @NotNull final ReceiverValue explicitReceiver,
             @NotNull Collection<ReceiverValue> implicitReceivers,
             @NotNull final TaskPrioritizerContext<D, F> c,
             final boolean isExplicit
     ) {
-        addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
-
         for (final CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             //member extensions
             for (ReceiverValue implicitReceiver : implicitReceivers) {
@@ -184,6 +202,50 @@ public class TaskPrioritizer {
                 }
             });
         }
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesForDynamicReceiver(
+            @NotNull final ReceiverValue explicitReceiver,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
+            @NotNull final TaskPrioritizerContext<D, F> c,
+            boolean isExplicit
+    ) {
+        TaskPrioritizerContext<D, F> onlyDynamicReceivers = c.replaceCollectors(TasksPackage.onlyDynamicReceivers(c.callableDescriptorCollectors));
+        addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit);
+
+        c.result.addCandidates(
+                new Function0<Collection<? extends ResolutionCandidate<D>>>() {
+                    @Override
+                    public Collection<? extends ResolutionCandidate<D>> invoke() {
+
+                        JetScope dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(
+                                c.context.call,
+                                c.scope.getContainingDeclaration()
+                        );
+
+                        Collection<D> dynamicDescriptors = new ArrayList<D>();
+                        for (CallableDescriptorCollector<D> collector : c.callableDescriptorCollectors) {
+                            dynamicDescriptors.addAll(collector.getNonExtensionsByName(dynamicScope, c.name, c.context.trace));
+                        }
+
+                        return KotlinPackage.map(
+                                dynamicDescriptors,
+                                new Function1<D, ResolutionCandidate<D>>() {
+                                    @Override
+                                    public ResolutionCandidate<D> invoke(D dynamicDescriptor) {
+                                        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
+                                                c.context.call,
+                                                dynamicDescriptor
+                                        );
+                                        dynamicCandidate.setDispatchReceiver(explicitReceiver);
+                                        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
+                                        return dynamicCandidate;
+                                    }
+                                }
+                        );
+                    }
+                }
+        );
     }
 
     private static ExplicitReceiverKind createKind(ExplicitReceiverKind kind, boolean isExplicit) {
@@ -439,5 +501,11 @@ public class TaskPrioritizer {
         private TaskPrioritizerContext<D, F> replaceScope(JetScope newScope) {
             return new TaskPrioritizerContext<D, F>(name, result, context, newScope, callableDescriptorCollectors);
         }
+
+        private TaskPrioritizerContext<D, F> replaceCollectors(CallableDescriptorCollectors<D> newCollectors) {
+            return new TaskPrioritizerContext<D, F>(name, result, context, scope, newCollectors);
+        }
+
+
     }
 }

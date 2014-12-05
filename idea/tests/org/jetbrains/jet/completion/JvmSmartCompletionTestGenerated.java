@@ -168,6 +168,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ConstructorForGenericJavaClass.kt")
+    public void testConstructorForGenericJavaClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ConstructorForGenericJavaClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConstructorForGenericType.kt")
     public void testConstructorForGenericType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ConstructorForGenericType.kt");
@@ -252,9 +258,45 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("GenericFunction1.kt")
+    public void testGenericFunction1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction2.kt")
+    public void testGenericFunction2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction3.kt")
+    public void testGenericFunction3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction4.kt")
+    public void testGenericFunction4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericFunction5.kt")
+    public void testGenericFunction5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericFunction5.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GenericMethodArgument.kt")
     public void testGenericMethodArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GenericMethodArgument.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GroupBySubstitutor.kt")
+    public void testGroupBySubstitutor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/GroupBySubstitutor.kt");
         doTest(fileName);
     }
 
@@ -381,6 +423,24 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("InfixCall.kt")
     public void testInfixCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InfixCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Inheritors1.kt")
+    public void testInheritors1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Inheritors1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Inheritors2.kt")
+    public void testInheritors2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Inheritors2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Inheritors3.kt")
+    public void testInheritors3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Inheritors3.kt");
         doTest(fileName);
     }
 
@@ -606,6 +666,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("Object.kt")
+    public void testObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Object.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ObjectsFromType.kt")
     public void testObjectsFromType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ObjectsFromType.kt");
@@ -699,6 +765,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SAMExpected1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SkipDeclarationsOfType.kt")
+    public void testSkipDeclarationsOfType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SkipDeclarationsOfType.kt");
         doTest(fileName);
     }
 

@@ -65,6 +65,6 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<Je
         val context = this.analyze()
         val elementType = BindingContextUtils.getRecordedTypeInfo(this, context)?.getType()
 
-        return KotlinBuiltIns.getInstance().isString(elementType)
+        return KotlinBuiltIns.isString(elementType)
     }
 }

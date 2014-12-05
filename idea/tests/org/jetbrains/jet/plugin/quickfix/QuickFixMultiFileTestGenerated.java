@@ -86,6 +86,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("falsePostfixOperator.before.Main.kt")
+        public void testFalsePostfixOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/falsePostfixOperator.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("functionImport.before.Main.kt")
         public void testFunctionImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/functionImport.before.Main.kt");

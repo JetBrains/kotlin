@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
-import org.jetbrains.k2js.test.config.JsUnitTestReporter;
+import org.jetbrains.k2js.test.utils.JsUnitTestReporter;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 import org.jetbrains.k2js.test.rhino.RhinoUtils;
 

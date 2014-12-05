@@ -178,7 +178,7 @@ public abstract class LazyJavaMemberScope(
                 }
                 else {
                     val jetType = c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage)
-                    if (!PLATFORM_TYPES && jetType.isNullable() && c.hasNotNullAnnotation(javaParameter))
+                    if (!PLATFORM_TYPES && jetType.isMarkedNullable() && c.hasNotNullAnnotation(javaParameter))
                         TypeUtils.makeNotNullable(jetType) to null
                     else
                         jetType to null

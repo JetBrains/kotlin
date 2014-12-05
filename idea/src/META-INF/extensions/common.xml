@@ -1,0 +1,12 @@
+<idea-plugin>
+    <id>org.jetbrains.kotlin</id>
+
+    <extensionPoints>
+        <extensionPoint name="defaultErrorMessages"
+                        interface="org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages$Extension"/>
+        <extensionPoint name="suppressStringProvider"
+                        interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$SuppressStringProvider"/>
+        <extensionPoint name="diagnosticSuppressor"
+                        interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
+    </extensionPoints>
+</idea-plugin>

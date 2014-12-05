@@ -1,8 +1,0 @@
-package test
-
-internal val checkTypeProp: test.PropType? = null
-    internal fun <get-checkTypeProp>(): test.PropType?
-
-internal final class PropType {
-    /*primary*/ public constructor PropType()
-}

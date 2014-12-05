@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.psi.findDocComment.FindDocCommentPackage;
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassOrObjectStub;
 
 abstract class JetDeclarationStub<T extends StubElement> extends JetModifierListOwnerStub<T> implements JetDeclaration {
     public JetDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
@@ -43,7 +44,8 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetModifierList
     @Override
     public PsiElement getParent() {
         T stub = getStub();
-        if (stub != null) {
+        // we build stubs for local classes/objects too but they have wrong parent
+        if (stub != null && !(stub instanceof KotlinClassOrObjectStub && ((KotlinClassOrObjectStub) stub).isLocal())) {
             return stub.getParentStub().getPsi();
         }
         return super.getParent();

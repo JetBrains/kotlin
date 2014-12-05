@@ -23,6 +23,7 @@ typeDescriptor
   : functionType
   : userType
   : nullableType
+  : "dynamic"
   ;
 
 nullableType

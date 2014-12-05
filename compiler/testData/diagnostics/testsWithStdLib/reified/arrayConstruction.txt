@@ -1,0 +1,10 @@
+package
+
+internal fun </*0*/ T> fail1(): kotlin.Array<T>
+internal fun </*0*/ T> fail2(): kotlin.Array<T>
+internal fun </*0*/ T> fail3(/*0*/ block: () -> T): kotlin.Pair<kotlin.Array<T>, kotlin.Array<T>>
+internal fun </*0*/ T> ok1(/*0*/ block: () -> kotlin.Array<T>): kotlin.Array<T>
+kotlin.inline() internal fun </*0*/ reified T> ok2(): kotlin.Array<T>
+internal fun </*0*/ T> ok3(/*0*/ block: () -> kotlin.Array<T>): kotlin.Array<T>
+kotlin.inline() internal fun </*0*/ reified T> ok4(): kotlin.Array<T>
+kotlin.inline() internal fun </*0*/ reified T> ok5(/*0*/ block: () -> T): kotlin.Pair<kotlin.Array<T>, kotlin.Array<T>>

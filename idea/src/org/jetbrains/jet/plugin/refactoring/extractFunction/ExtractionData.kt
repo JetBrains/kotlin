@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetUserType
@@ -52,6 +52,9 @@ import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.plugin.refactoring.compareDescriptors
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean,
@@ -84,11 +87,11 @@ data class ExtractionData(
     val project: Project = originalFile.getProject()
     val originalElements: List<PsiElement> = originalRange.elements
 
-    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true)?.let {
+    val insertBefore: Boolean = targetSibling.getStrictParentOfType<JetDeclaration>()?.let {
         it is JetDeclarationWithBody || it is JetClassInitializer
     } ?: false
 
-    fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance(javaClass<JetExpression>())
+    fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance<JetExpression>()
 
     fun getCodeFragmentTextRange(): TextRange? {
         val originalElements = originalElements
@@ -172,12 +175,6 @@ data class ExtractionData(
 
         return referencesInfo
     }
-}
-
-private fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-    return d1 == d2 ||
-            (d1 != null && d2 != null &&
-                    DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2))
 }
 
 // Hack:

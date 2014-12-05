@@ -30,8 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +184,7 @@ public class CodeInsightUtils {
 
     public static String defaultInitializer(JetType type) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             return "null";
         }
         else if (type.equals(builtIns.getIntType()) || type.equals(builtIns.getLongType()) ||

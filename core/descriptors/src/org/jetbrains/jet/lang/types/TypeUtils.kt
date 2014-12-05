@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.Flexibility
 import org.jetbrains.jet.lang.types.TypeConstructor
 import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
 fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
@@ -58,4 +59,7 @@ public fun JetType.getContainedAndCapturedTypeParameterConstructors(): Collectio
     val typeParameters = getContainedTypeParameters() + getConstructor().getDeclarationDescriptor().getCapturedTypeParameters()
     return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
 }
+
+public fun JetType.isSubtypeOf(superType: JetType): Boolean = JetTypeChecker.DEFAULT.isSubtypeOf(this, superType)
+
 

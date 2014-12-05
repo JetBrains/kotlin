@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.psi.*
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.types.TypeSubstitutor
 
 object KeywordValues {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {
@@ -48,14 +49,15 @@ object KeywordValues {
 
         if (!skipTrueFalse) {
             val booleanInfoClassifier = { (info: ExpectedInfo) ->
-                if (info.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+                if (info.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches
             }
-            collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) })
-            collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) })
+            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) })
+            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) })
         }
 
-        collection.addLookupElements(expectedInfos,
-                                     { info -> if (info.type.isNullable()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES },
+        collection.addLookupElements(null,
+                                     expectedInfos,
+                                     { info -> if (info.type.isMarkedNullable()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches },
                                      { LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL) })
     }
 }

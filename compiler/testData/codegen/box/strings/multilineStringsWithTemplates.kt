@@ -14,7 +14,7 @@ fun box() : String {
 
     val test5 =
 """
-  ${s.length}
+  ${s.length()}
 """
     if (test5 != "\n  3\n") return "Fail 5: $test5"
 

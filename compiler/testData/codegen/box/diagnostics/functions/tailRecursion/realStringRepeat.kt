@@ -4,5 +4,5 @@ tailRecursive fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()
 
 fun box() : String {
     val s = "a".repeat(10000)
-    return if (s.length == 10000) "OK" else "FAIL: ${s.length}"
+    return if (s.length() == 10000) "OK" else "FAIL: ${s.length()}"
 }

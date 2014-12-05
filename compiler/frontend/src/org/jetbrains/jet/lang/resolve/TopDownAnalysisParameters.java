@@ -28,10 +28,11 @@ import org.jetbrains.jet.storage.StorageManager;
  * Various junk that cannot be placed into context (yet).
  */
 public class TopDownAnalysisParameters extends LazinessToken implements GlobalContext {
-    private static boolean LAZY;
+    @Deprecated
+    public static final boolean LAZY;
 
     static {
-        LAZY = "true".equals(System.getProperty("lazy.tda"));
+        LAZY = !"false".equals(System.getProperty("lazy.tda"));
     }
 
     @NotNull
@@ -44,18 +45,6 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
     ) {
         return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
                                              declaredLocally, LAZY);
-    }
-
-    @NotNull
-    public static TopDownAnalysisParameters createForLazy(
-            @NotNull StorageManager storageManager,
-            @NotNull ExceptionTracker exceptionTracker,
-            @NotNull Predicate<PsiFile> analyzeCompletely,
-            boolean analyzingBootstrapLibrary,
-            boolean declaredLocally
-    ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
-                                             declaredLocally, true);
     }
 
     @NotNull

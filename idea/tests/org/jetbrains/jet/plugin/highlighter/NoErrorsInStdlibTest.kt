@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.highlighter
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.vfs.VfsUtil
@@ -31,8 +30,9 @@ import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.jet.JetTestUtils
 import kotlin.test.assertTrue
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 
-public class NoErrorsInStdlibTest : LightCodeInsightFixtureTestCase() {
+public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
         val root = myFixture.copyDirectoryToProject("../libraries/stdlib/src", "")
 

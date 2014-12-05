@@ -45,6 +45,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.k2js.translate.utils.TranslationUtils
 import org.jetbrains.k2js.translate.context.TranslationContext
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 
 val CallInfo.callableDescriptor: CallableDescriptor
@@ -58,7 +60,7 @@ fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescr
 
 fun CallInfo.isSuperInvocation(): Boolean {
     val dispatchReceiver = resolvedCall.getDispatchReceiver()
-    return dispatchReceiver is ExpressionReceiver && ((dispatchReceiver as ExpressionReceiver)).getExpression() is JetSuperExpression
+    return dispatchReceiver is ExpressionReceiver && dispatchReceiver.getExpression() is JetSuperExpression
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor
@@ -69,7 +71,16 @@ val VariableAccessInfo.variableName: JsName
 
 fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 
-fun VariableAccessInfo.getAccessFunctionName(): String = Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
+fun VariableAccessInfo.getAccessFunctionName(): String {
+    val descriptor = variableDescriptor
+    if (descriptor is PropertyDescriptor && descriptor.isExtension) {
+        val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getGetter() else descriptor.getSetter()
+        return context.getNameForDescriptor(propertyAccessorDescriptor).getIdent()
+    }
+    else {
+        return Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
+    }
+}
 
 fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpression {
     if (isGetAccess()) {

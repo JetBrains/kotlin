@@ -31,13 +31,11 @@ import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 class AllClassesCompletion(val parameters: CompletionParameters,
+                           val lookupElementFactory: LookupElementFactory,
                            val resolutionFacade: ResolutionFacade,
                            val bindingContext: BindingContext,
                            val moduleDescriptor: ModuleDescriptor,
@@ -75,7 +73,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
                         else -> ClassKind.CLASS
                     }
                     if (kindFilter(kind)) {
-                        collector.addElementWithAutoInsertionSuppressed(LookupElementFactory.DEFAULT.createLookupElementForJavaClass(psiClass))
+                        collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(psiClass))
                     }
                 }
             }

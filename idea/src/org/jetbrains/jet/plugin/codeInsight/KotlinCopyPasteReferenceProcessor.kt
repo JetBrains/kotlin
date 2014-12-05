@@ -65,6 +65,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -337,7 +338,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                 parent.replace(createQualifiedExpression(psiFactory, text))
             }
             else if (parent is JetUserType) {
-                val typeReference = PsiTreeUtil.getParentOfType(expression, javaClass<JetTypeReference>())
+                val typeReference = expression.getStrictParentOfType<JetTypeReference>()
                 LOG.assertTrue(typeReference != null, "JetUserType is expected to have parent of type JetTypeReference:\n" +
                     "At: ${DiagnosticUtils.atLocation(expression)}\nFILE:\n${expression.getContainingFile()!!.getText()}")
                 typeReference!!.replace(psiFactory.createType("$prefixToInsert.${typeReference.getText()}"))

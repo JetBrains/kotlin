@@ -67,6 +67,7 @@ public interface JetNodeTypes {
     IElementType TYPE_REFERENCE                     = JetStubElementTypes.TYPE_REFERENCE;
 
     IElementType USER_TYPE                = JetStubElementTypes.USER_TYPE;
+    IElementType DYNAMIC_TYPE             = JetStubElementTypes.DYNAMIC_TYPE;
     IElementType FUNCTION_TYPE            = JetStubElementTypes.FUNCTION_TYPE;
     IElementType FUNCTION_TYPE_RECEIVER   = JetStubElementTypes.FUNCTION_TYPE_RECEIVER;
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);

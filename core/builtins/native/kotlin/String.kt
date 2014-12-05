@@ -19,7 +19,13 @@ package kotlin
 public class String : Comparable<String>, CharSequence {
     public fun plus(other: Any?): String
 
+    public fun get(index: Int): Char
+
+    public override fun length(): Int
+
+    public override fun charAt(index: Int): Char
+
+    public override fun subSequence(start: Int, end: Int): CharSequence
+
     public override fun compareTo(other: String): Int
-    public override fun get(index: Int): Char
-    public override val length: Int
 }

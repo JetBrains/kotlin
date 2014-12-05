@@ -43,7 +43,7 @@ public class CastDiagnosticsUtil {
             @NotNull JetType rhsType,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
-        if (KotlinBuiltIns.getInstance().isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
+        if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true;
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
@@ -112,7 +112,7 @@ public class CastDiagnosticsUtil {
      */
     public static boolean isCastErased(@NotNull JetType supertype, @NotNull JetType subtype, @NotNull JetTypeChecker typeChecker) {
         // cast between T and T? is always OK
-        if (supertype.isNullable() || subtype.isNullable()) {
+        if (supertype.isMarkedNullable() || subtype.isMarkedNullable()) {
             return isCastErased(TypeUtils.makeNotNullable(supertype), TypeUtils.makeNotNullable(subtype), typeChecker);
         }
 
@@ -154,7 +154,7 @@ public class CastDiagnosticsUtil {
      *  result = List<*>, some arguments were not inferred, replaced with '*'
      */
     public static TypeReconstructionResult findStaticallyKnownSubtype(@NotNull JetType supertype, @NotNull TypeConstructor subtypeConstructor) {
-        assert !supertype.isNullable() : "This method only makes sense for non-nullable types";
+        assert !supertype.isMarkedNullable() : "This method only makes sense for non-nullable types";
 
         // Assume we are casting an expression of type Collection<Foo> to List<Bar>
         // First, let's make List<T>, where T is a type variable

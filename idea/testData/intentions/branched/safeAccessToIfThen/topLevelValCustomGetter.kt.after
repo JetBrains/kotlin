@@ -5,5 +5,5 @@ val a: String?
 
 fun main(args: Array<String>) {
     val s = a
-    doSomething(if (s != null) s.length else null)
+    doSomething(if (s != null) s.length() else null)
 }

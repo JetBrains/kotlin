@@ -41,13 +41,16 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
         }
 
-        FqName fqn = stub.getFqName();
-        if (fqn != null) {
-            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.asString());
+        FqName fqName = stub.getFqName();
+        if (fqName != null) {
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
+
+            if (stub.isTopLevel()) {
+                sink.occurrence(JetTopLevelClassByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
         }
 
         indexSuperNames(stub, sink);
-        recordClassOrObjectByPackage(stub, sink);
     }
 
     @Override
@@ -70,18 +73,17 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         if (name != null) {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
-
-            if (stub.isTopLevel()) {
-                sink.occurrence(JetTopLevelObjectShortNameIndex.getInstance().getKey(), name);
-            }
         }
 
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
+
+            if (stub.isTopLevel()) {
+                sink.occurrence(JetTopLevelClassByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
         }
 
         indexSuperNames(stub, sink);
-        recordClassOrObjectByPackage(stub, sink);
     }
 
     private static void indexSuperNames(KotlinClassOrObjectStub<? extends JetClassOrObject> stub, IndexSink sink) {
@@ -90,38 +92,24 @@ public class StubIndexServiceImpl implements StubIndexService {
         }
     }
 
-    private static void recordClassOrObjectByPackage(StubElement<? extends JetClassOrObject> stub, IndexSink sink) {
-        StubElement parentStub = stub.getParentStub();
-        if (parentStub instanceof KotlinFileStub) {
-            KotlinFileStub jetFileStub = (KotlinFileStub) parentStub;
-            FqName packageFqName = jetFileStub.getPackageFqName();
-            sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageFqName.asString());
-        }
-    }
-
     @Override
     public void indexFunction(KotlinFunctionStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            if (stub.isTopLevel()) {
-                // Collection only top level functions as only they are expected in completion without explicit import
-                if (!stub.isExtension()) {
-                    sink.occurrence(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getKey(), name);
-                }
-                else {
-                    sink.occurrence(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getKey(), name);
-                }
-            }
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
 
             if (stub.isProbablyNothingType()) {
                 sink.occurrence(JetProbablyNothingFunctionShortNameIndex.getInstance().getKey(), name);
             }
         }
-        // can have special fq name in case of syntactically incorrect function with no name
-        FqName topFQName = stub.getFqName();
-        if (topFQName != null) {
-            sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.asString());
+
+        if (stub.isTopLevel()) {
+            // can have special fq name in case of syntactically incorrect function with no name
+            FqName fqName = stub.getFqName();
+            if (fqName != null) {
+                sink.occurrence(JetTopLevelFunctionFqnNameIndex.getInstance().getKey(), fqName.asString());
+                sink.occurrence(JetTopLevelFunctionByPackageIndex.getInstance().getKey(), fqName.parent().asString());
+            }
         }
     }
 
@@ -129,27 +117,19 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexProperty(KotlinPropertyStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            if (stub.isTopLevel()) {
-                // Collection only top level functions as only they are expected in completion without explicit import
-                if (!stub.hasReceiverTypeRef()) {
-                    sink.occurrence(JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().getKey(), name);
-                }
-                else {
-                    sink.occurrence(JetTopLevelExtensionPropertyShortNameIndex.getInstance().getKey(), name);
-                }
-            }
-
             sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), name);
 
             if (stub.isProbablyNothingType()) {
                 sink.occurrence(JetProbablyNothingPropertyShortNameIndex.getInstance().getKey(), name);
             }
         }
-        // can have special fq name in case of syntactically incorrect function with no name
+
         if (stub.isTopLevel()) {
-            FqName topFQName = stub.getFqName();
-            if (topFQName != null) {
-                sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.asString());
+            FqName fqName = stub.getFqName();
+            // can have special fq name in case of syntactically incorrect property with no name
+            if (fqName != null) {
+                sink.occurrence(JetTopLevelPropertyFqnNameIndex.getInstance().getKey(), fqName.asString());
+                sink.occurrence(JetTopLevelPropertyByPackageIndex.getInstance().getKey(), fqName.parent().asString());
             }
         }
     }

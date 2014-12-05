@@ -48,7 +48,7 @@ public class ManglingUtils {
         String suggestedName = descriptor.getName().asString();
 
         if (descriptor instanceof FunctionDescriptor ||
-            descriptor instanceof PropertyDescriptor && JsDescriptorUtils.isExtension((PropertyDescriptor) descriptor)
+            descriptor instanceof PropertyDescriptor && DescriptorUtils.isExtension((PropertyDescriptor) descriptor)
         ) {
             suggestedName = getMangledName((CallableMemberDescriptor) descriptor);
         }
@@ -69,7 +69,7 @@ public class ManglingUtils {
     private static boolean needsStableMangling(CallableMemberDescriptor descriptor) {
         // Use stable mangling for overrides because we use stable mangling when any function inside a overridable declaration
         // for avoid clashing names when inheritance.
-        if (JsDescriptorUtils.isOverride(descriptor)) {
+        if (DescriptorUtils.isOverride(descriptor)) {
             return true;
         }
 

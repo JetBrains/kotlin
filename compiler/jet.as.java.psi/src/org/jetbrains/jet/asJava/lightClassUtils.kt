@@ -19,7 +19,7 @@ package org.jetbrains.jet.asJava
 import com.intellij.psi.*
 import org.jetbrains.jet.lang.psi.*
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
@@ -64,7 +64,7 @@ public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         }
 
 public fun JetParameter.toPsiParameter(): PsiParameter? {
-    val paramList = getParentByType(javaClass<JetParameterList>())
+    val paramList = getNonStrictParentOfType<JetParameterList>()
     if (paramList == null) return null
 
     val paramIndex = paramList.getParameters().indexOf(this)
@@ -85,11 +85,11 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
 }
 
 public fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
-    val paramList = getParentByType(javaClass<JetTypeParameterList>())
+    val paramList = getNonStrictParentOfType<JetTypeParameterList>()
     if (paramList == null) return listOf()
 
     val paramIndex = paramList.getParameters().indexOf(this)
-    val jetDeclaration = paramList.getParentByType(javaClass<JetDeclaration>()) ?: return listOf()
+    val jetDeclaration = paramList.getNonStrictParentOfType<JetDeclaration>() ?: return listOf()
     val lightOwners = jetDeclaration.toLightElements()
 
     return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
@@ -100,4 +100,4 @@ public val PsiElement.unwrapped: PsiElement?
     get() = if (this is KotlinLightElement<*, *>) origin else this
 
 public val PsiElement.namedUnwrappedElement: PsiNamedElement?
-    get() = unwrapped?.getParentByType(javaClass<PsiNamedElement>())
+    get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()

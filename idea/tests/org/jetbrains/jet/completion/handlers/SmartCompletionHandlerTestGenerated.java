@@ -240,6 +240,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ConstructorForGenericType2.kt")
+    public void testConstructorForGenericType2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/ConstructorForGenericType2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConstructorForJavaClass.kt")
     public void testConstructorForJavaClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/ConstructorForJavaClass.kt");

@@ -219,7 +219,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(originalClassFqName);
         if (javaFqName == null) return null;
 
-        Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.getInstance().mapPlatformClass(javaFqName);
+        Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(javaFqName);
         for (ClassDescriptor descriptor : descriptors) {
             String fqName = DescriptorUtils.getFqName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {

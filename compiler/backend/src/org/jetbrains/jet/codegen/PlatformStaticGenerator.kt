@@ -30,11 +30,10 @@ class PlatformStaticGenerator(
         val state: GenerationState
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
 
-    override fun invoke(p1: ImplementationBodyCodegen, p2: ClassBuilder) {
+    override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val typeMapper = state.getTypeMapper()
-        val callable = typeMapper.mapToCallableMethod(descriptor, false, p1.getContext())
-        val asmMethod = callable.getAsmMethod()
-        val methodVisitor = p2.newMethod(
+        val asmMethod = typeMapper.mapSignature(descriptor).getAsmMethod()
+        val methodVisitor = classBuilder.newMethod(
                 Synthetic(declarationOrigin.element, descriptor),
                 Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION),
                 asmMethod.getName()!!,
@@ -55,7 +54,13 @@ class PlatformStaticGenerator(
                 iv.load(index, paramType);
                 index += paramType.getSize();
             }
-            callable.invokeWithoutAssertions(iv)
+
+            val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
+                    codegen.getContext().accessibleFunctionDescriptor(descriptor),
+                    false,
+                    codegen.getContext()
+            )
+            syntheticOrOriginalMethod.invokeWithoutAssertions(iv)
             iv.areturn(asmMethod.getReturnType());
             methodVisitor.visitEnd();
         }

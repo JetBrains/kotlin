@@ -40,8 +40,8 @@ public abstract class DelegatingType implements JetType {
     }
 
     @Override
-    public boolean isNullable() {
-        return getDelegate().isNullable();
+    public boolean isMarkedNullable() {
+        return getDelegate().isMarkedNullable();
     }
 
     @NotNull

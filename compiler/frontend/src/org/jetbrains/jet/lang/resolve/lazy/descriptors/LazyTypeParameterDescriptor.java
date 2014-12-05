@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
@@ -73,7 +72,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         resolveUpperBoundsFromWhereClause(upperBounds);
 
         if (upperBounds.isEmpty()) {
-            upperBounds.add(KotlinBuiltIns.getInstance().getDefaultBound());
+            upperBounds.add(resolveSession.getModuleDescriptor().getBuiltIns().getDefaultBound());
         }
 
         return upperBounds;

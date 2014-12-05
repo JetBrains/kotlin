@@ -52,7 +52,7 @@ public class CompileTimeConstantUtils {
             JetType parameterType = parameterDescriptor.getType();
             JetTypeReference typeReference = parameter.getTypeReference();
             if (typeReference != null) {
-                if (parameterType.isNullable()) {
+                if (parameterType.isMarkedNullable()) {
                     trace.report(NULLABLE_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
                 }
                 else if (!isAcceptableTypeForAnnotationParameter(parameterType)) {
@@ -72,17 +72,17 @@ public class CompileTimeConstantUtils {
         if (isEnumClass(typeDescriptor) ||
             isAnnotationClass(typeDescriptor) ||
             isJavaLangClass(typeDescriptor) ||
-            builtIns.isPrimitiveArray(parameterType) ||
-            builtIns.isPrimitiveType(parameterType) ||
+            KotlinBuiltIns.isPrimitiveArray(parameterType) ||
+            KotlinBuiltIns.isPrimitiveType(parameterType) ||
             builtIns.getStringType().equals(parameterType)) {
                 return true;
         }
 
-        if (builtIns.isArray(parameterType)) {
+        if (KotlinBuiltIns.isArray(parameterType)) {
             List<TypeProjection> arguments = parameterType.getArguments();
             if (arguments.size() == 1) {
                 JetType arrayType = arguments.get(0).getType();
-                if (arrayType.isNullable()) {
+                if (arrayType.isMarkedNullable()) {
                     return false;
                 }
                 ClassDescriptor arrayTypeDescriptor = TypeUtils.getClassDescriptor(arrayType);

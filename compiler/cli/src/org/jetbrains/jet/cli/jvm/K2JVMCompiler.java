@@ -26,10 +26,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
-import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -73,7 +70,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        IncrementalCacheProvider incrementalCacheProvider = (IncrementalCacheProvider) services.get(IncrementalCacheProvider.class);
+        IncrementalCacheProvider incrementalCacheProvider = services.get(IncrementalCacheProvider.class);
         if (incrementalCacheProvider != null) {
             configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider);
         }
@@ -152,11 +149,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
-                JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
+                JetCoreEnvironment environment =
+                        JetCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
                 KotlinToJVMBytecodeCompiler.compileAndExecuteScript(paths, environment, scriptArgs);
             }
             else {
-                JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
+                JetCoreEnvironment environment =
+                        JetCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
             return OK;

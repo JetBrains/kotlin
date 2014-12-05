@@ -225,7 +225,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         int boldStartOffset = -1;
         int boldEndOffset = -1;
         boolean isGrey = false;
-        boolean isDeprecated = KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor);
+        boolean isDeprecated = KotlinBuiltIns.isDeprecated(functionDescriptor);
 
         boolean[] usedIndexes = new boolean[valueParameters.size()];
         Arrays.fill(usedIndexes, false);
@@ -410,7 +410,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         };
         Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, visibilityFilter).getReferenceVariants(
                 callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
-                                                             Collections.<DescriptorKindExclude>emptyList()), nameFilter);
+                                                             Collections.<DescriptorKindExclude>emptyList()), false, nameFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolutionFacade>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolutionFacade>>();
         for (DeclarationDescriptor variant : variants) {

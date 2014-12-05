@@ -1,0 +1,23 @@
+package test
+
+internal final annotation class AnnotationArray : kotlin.Annotation {
+    public constructor AnnotationArray(/*0*/ annotationArray: kotlin.Array<test.JustAnnotation>)
+    internal final val annotationArray: kotlin.Array<test.JustAnnotation>
+}
+
+test.JustAnnotation(annotation = test.Empty(): test.Empty) test.AnnotationArray(annotationArray = {}: kotlin.Array<test.JustAnnotation>) internal final class C1 {
+    public constructor C1()
+}
+
+test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty(): test.Empty), test.JustAnnotation(annotation = test.Empty(): test.Empty)}: kotlin.Array<test.JustAnnotation>) internal final class C2 {
+    public constructor C2()
+}
+
+internal final annotation class Empty : kotlin.Annotation {
+    public constructor Empty()
+}
+
+internal final annotation class JustAnnotation : kotlin.Annotation {
+    public constructor JustAnnotation(/*0*/ annotation: test.Empty)
+    internal final val annotation: test.Empty
+}

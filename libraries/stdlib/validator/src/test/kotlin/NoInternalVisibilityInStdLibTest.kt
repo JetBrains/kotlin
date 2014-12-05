@@ -16,6 +16,7 @@
 
 import org.junit.Test
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -42,6 +43,8 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig
 import org.jetbrains.k2js.config.EcmaVersion
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS
 import com.intellij.openapi.Disposable
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.jet.context.GlobalContext
 
 private val ANALYZE_PACKAGE_ROOTS_FOR_JVM = listOf("kotlin")
 private val ANALYZE_PACKAGE_ROOTS_FOR_JS = listOf("kotlin", "jquery", "html5")
@@ -111,16 +114,17 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/generated")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
 
-            val environment = JetCoreEnvironment.createForProduction(it, configuration)
+            val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
             module.addDependencyOnModule(module)
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
 
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     environment.getProject(),
+                    GlobalContext(),
                     environment.getSourceFiles(),
-                    BindingTraceContext(),
+                    CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                     { true },
                     module,
                     null,
@@ -132,7 +136,7 @@ class NoInternalVisibilityInStdLibTest {
     Test fun testJsStdlibJar() {
         doTest(ANALYZE_PACKAGE_ROOTS_FOR_JS, ADDITIONALLY_REQUIRED_PACKAGES_FOR_JS) {
             val configuration = CompilerConfiguration()
-            val environment = JetCoreEnvironment.createForProduction(it, configuration)
+            val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val project = environment.getProject()
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().path
             val config = LibrarySourcesConfig(project, "testModule", listOf("@", pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)

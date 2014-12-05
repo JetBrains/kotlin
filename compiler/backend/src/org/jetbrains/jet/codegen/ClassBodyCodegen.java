@@ -58,14 +58,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
-                    generateDeclaration(propertyCodegen, declaration);
+                    generateDeclaration(declaration);
                 }
             }
         }
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (!shouldProcessFirst(declaration)) {
-                generateDeclaration(propertyCodegen, declaration);
+                generateDeclaration(declaration);
             }
         }
 
@@ -88,7 +88,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
     }
 
 
-    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
+    protected void generateDeclaration(JetDeclaration declaration) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
             genFunctionOrProperty(declaration);
         }

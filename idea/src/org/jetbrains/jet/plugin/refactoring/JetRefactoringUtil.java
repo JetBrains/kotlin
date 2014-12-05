@@ -81,7 +81,7 @@ public class JetRefactoringUtil {
         else if (visibility == Visibilities.INTERNAL) {
             return JetTokens.INTERNAL_KEYWORD;
         }
-        else if (visibility == Visibilities.PRIVATE) {
+        else if (Visibilities.isPrivate(visibility)) {
             return JetTokens.PRIVATE_KEYWORD;
         }
 
@@ -427,7 +427,7 @@ public class JetRefactoringUtil {
                     JetExpression expression = (JetExpression)element;
                     BindingContext bindingContext = ResolvePackage.analyze(expression);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
-                    if (expressionType == null || !KotlinBuiltIns.getInstance().isUnit(expressionType)) {
+                    if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
                         expressions.add(expression);
                     }
                 }

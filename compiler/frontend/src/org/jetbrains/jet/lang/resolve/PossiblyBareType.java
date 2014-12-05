@@ -84,7 +84,7 @@ public class PossiblyBareType {
 
     public boolean isNullable() {
         if (isBare()) return isBareTypeNullable();
-        return getActualType().isNullable();
+        return getActualType().isMarkedNullable();
     }
 
     public PossiblyBareType makeNullable() {

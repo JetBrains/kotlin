@@ -183,7 +183,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
         }
-        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
+        if (KotlinBuiltIns.isDeprecated(descriptor)) {
             access |= ACC_DEPRECATED;
         }
         if (isEnum) {
@@ -237,7 +237,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
+        ClassData data = new ClassData(createNameResolver(serializer.getStringTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         //noinspection ConstantConditions
@@ -514,7 +514,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsForDataClasses() {
-        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
+        if (!KotlinBuiltIns.isData(descriptor)) return;
 
         new DataClassMethodGeneratorImpl(myClass, bindingContext).generate();
     }
@@ -797,7 +797,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     new DefaultParameterValueLoader() {
                         @Override
                         public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
-                            assert KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration())
+                            assert KotlinBuiltIns.isData((ClassDescriptor) function.getContainingDeclaration())
                                     : "Function container should be annotated with [data]: " + function;
                             PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
                             assert property != null : "Copy function doesn't correspond to any property: " + function;
@@ -1532,7 +1532,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
+    protected void generateDeclaration(JetDeclaration declaration) {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             assert name != null : "Enum entry has no name: " + declaration.getText();
@@ -1543,7 +1543,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             myEnumConstants.add((JetEnumEntry) declaration);
         }
 
-        super.generateDeclaration(propertyCodegen, declaration);
+        super.generateDeclaration(declaration);
     }
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();

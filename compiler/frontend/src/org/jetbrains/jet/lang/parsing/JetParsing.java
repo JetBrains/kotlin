@@ -53,7 +53,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, CAPITALIZED_THIS_KEYWORD, HASH);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, CAPITALIZED_THIS_KEYWORD, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
@@ -1501,6 +1501,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : userType
      *   : tupleType
      *   : nullableType
+     *   : "dynamic"
      *   ;
      *
      * nullableType
@@ -1525,7 +1526,14 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
-        if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
+        IElementType lookahead = lookahead(1);
+        IElementType lookahead2 = lookahead(2);
+        if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
+            PsiBuilder.Marker dynamicType = mark();
+            advance(); // DYNAMIC_KEYWORD
+            dynamicType.done(DYNAMIC_TYPE);
+        }
+        else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
         }
         else if (at(HASH)) {
@@ -1835,25 +1843,12 @@ public class JetParsing extends AbstractJetParsing {
         assert _at(LPAR) : tt();
         PsiBuilder.Marker functionType = mark();
 
-//        advance(); // LPAR
-//
-//        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(COLON), false);
-//        if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
-//            TODO : -1 is a hack?
-//            createTruncatedBuilder(lastLPar - 1).parseTypeRef();
-//            advance(); // DOT
-//        }
-
         parseValueParameterList(true, TokenSet.EMPTY);
-
-//        if (at(COLON)) {
-//            advance(); // COLON // expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
 
         expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
         parseTypeRef();
-//        }
 
-        return functionType;//.done(FUNCTION_TYPE);
+        return functionType;
     }
 
     /*

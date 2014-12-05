@@ -76,7 +76,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     @Nullable
     protected static PsiMethod getRepresentativePsiMethod(PsiElement element) {
         while (true) {
-            element = PsiUtilPackage.getParentByTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_NON_LOCAL_DECLARATION);
+            element = PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_NON_LOCAL_DECLARATION);
             if (element == null) return null;
 
             PsiMethod method = getRepresentativePsiMethodForNonLocalDeclaration(element);

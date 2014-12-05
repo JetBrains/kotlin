@@ -1,0 +1,50 @@
+package
+
+internal fun </*0*/ T> getT(): T
+
+internal trait In</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Out</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun explicitReturnType1(): I
+    internal abstract fun explicitReturnType2(): O
+    internal abstract fun explicitReturnType3(): P
+    internal abstract fun explicitReturnType4(): In<I>
+    internal abstract fun explicitReturnType5(): In<O>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal open fun imlicitReturnType1(): I
+    internal open fun imlicitReturnType2(): O
+    internal open fun imlicitReturnType3(): P
+    internal open fun imlicitReturnType4(): In<I>
+    internal open fun imlicitReturnType5(): In<O>
+    internal abstract fun parameters1(/*0*/ i: I, /*1*/ o: O, /*2*/ p: P): kotlin.Unit
+    internal abstract fun parameters2(/*0*/ i: In<I>): kotlin.Unit
+    internal abstract fun parameters3(/*0*/ i: In<O>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal abstract fun </*0*/ X : I> typeParameter1(): kotlin.Unit
+    internal abstract fun </*0*/ X : O> typeParameter2(): kotlin.Unit
+    internal abstract fun </*0*/ X : P> typeParameter3(): kotlin.Unit
+    internal abstract fun </*0*/ X : In<I>> typeParameter4(): kotlin.Unit
+    internal abstract fun </*0*/ X : In<O>> typeParameter5(): kotlin.Unit
+    internal abstract fun I.receiver1(): kotlin.Unit
+    internal abstract fun O.receiver2(): kotlin.Unit
+    internal abstract fun P.receiver3(): kotlin.Unit
+    internal abstract fun In<I>.receiver4(): kotlin.Unit
+    internal abstract fun In<O>.receiver5(): kotlin.Unit
+}

@@ -186,7 +186,7 @@ class Converter private(private val elementToConvert: PsiElement,
     private fun convertAnnotationType(psiClass: PsiClass): Class {
         val paramModifiers = Modifiers(listOf(Modifier.PUBLIC)).assignNoPrototype()
         val noBlankLinesInheritance = CommentsAndSpacesInheritance(blankLinesBefore = false)
-        val annotationMethods = psiClass.getMethods().filterIsInstance(javaClass<PsiAnnotationMethod>())
+        val annotationMethods = psiClass.getMethods().filterIsInstance<PsiAnnotationMethod>()
         val parameters = annotationMethods
                 .map { method ->
                     val returnType = method.getReturnType()

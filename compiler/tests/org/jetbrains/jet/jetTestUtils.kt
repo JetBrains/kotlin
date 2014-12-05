@@ -25,18 +25,14 @@ public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
 
-public fun CodeInsightTestFixture.configureWithExtraFile(path: String, extraNamePart: String = ".Data") {
+public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = array(".Data")) {
     val noExtensionPath = FileUtil.getNameWithoutExtension(path)
-    val extraPath = array("kt", "java").stream()
-            .map { ext -> "$noExtensionPath$extraNamePart.$ext" }
-            .firstOrNull { extraPath -> File(extraPath).exists() }
+    val extensions = array("kt", "java")
+    val extraPaths: List<String> = extraNameParts
+            .flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
+            .filter { File(it).exists() }
 
-    if (extraPath != null) {
-        configureByFiles(path, extraPath)
-    }
-    else {
-        configureByFile(path)
-    }
+    configureByFiles(*(listOf(path) + extraPaths).copyToArray())
 }
 
 public fun String.trimIndent(): String {

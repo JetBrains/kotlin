@@ -65,10 +65,16 @@ public class ExpressionTypingUtils {
 
     private final ExpressionTypingServices expressionTypingServices;
     private final CallResolver callResolver;
+    private final KotlinBuiltIns builtIns;
 
-    public ExpressionTypingUtils(@NotNull ExpressionTypingServices expressionTypingServices, @NotNull CallResolver resolver) {
+    public ExpressionTypingUtils(
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull CallResolver resolver,
+            @NotNull KotlinBuiltIns builtIns
+    ) {
         this.expressionTypingServices = expressionTypingServices;
-        callResolver = resolver;
+        this.callResolver = resolver;
+        this.builtIns = builtIns;
     }
 
     @Nullable
@@ -103,19 +109,15 @@ public class ExpressionTypingUtils {
         return scope;
     }
 
-    public static boolean isBoolean(@NotNull JetType type) {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
-    }
-
-    public static boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
+    public boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
         return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'", context);
     }
 
-    public static boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName, ExpressionTypingContext context) {
+    private boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName, ExpressionTypingContext context) {
         if (resultType != null) {
             // TODO : Relax?
-            if (!isBoolean(resultType)) {
-                context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, KotlinBuiltIns.getInstance().getBooleanType(), resultType));
+            if (!builtIns.isBooleanOrSubtype(resultType)) {
+                context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, builtIns.getBooleanType(), resultType));
                 return false;
             }
         }
@@ -123,21 +125,21 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static JetType getDefaultType(IElementType constantType) {
+    public JetType getDefaultType(IElementType constantType) {
         if (constantType == JetNodeTypes.INTEGER_CONSTANT) {
-            return KotlinBuiltIns.getInstance().getIntType();
+            return builtIns.getIntType();
         }
         else if (constantType == JetNodeTypes.FLOAT_CONSTANT) {
-            return KotlinBuiltIns.getInstance().getDoubleType();
+            return builtIns.getDoubleType();
         }
         else if (constantType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            return KotlinBuiltIns.getInstance().getBooleanType();
+            return builtIns.getBooleanType();
         }
         else if (constantType == JetNodeTypes.CHARACTER_CONSTANT) {
-            return KotlinBuiltIns.getInstance().getCharType();
+            return builtIns.getCharType();
         }
         else if (constantType == JetNodeTypes.NULL) {
-            return KotlinBuiltIns.getInstance().getNullableNothingType();
+            return builtIns.getNullableNothingType();
         }
         else {
             throw new IllegalArgumentException("Unsupported constant type: " + constantType);

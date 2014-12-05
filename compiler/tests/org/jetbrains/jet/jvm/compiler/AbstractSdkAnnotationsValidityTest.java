@@ -21,6 +21,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
@@ -69,7 +70,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
             try {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                BindingTrace trace = new BindingTraceContext();
+                BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 InjectorForJavaDescriptorResolver injector =
                         InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace, false);
 
@@ -124,7 +125,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
             // skip java.util.Collection, etc.
-            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFqNameSafe(descriptor)).isEmpty()) {
+            if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(DescriptorUtils.getFqNameSafe(descriptor)).isEmpty()) {
                 return null;
             }
 

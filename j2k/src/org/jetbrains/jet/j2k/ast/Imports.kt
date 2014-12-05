@@ -68,7 +68,7 @@ private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElemen
     if (name in annotationConverter.annotationsToRemove) return null
 
     // If imported class has a kotlin analog, drop the import
-    if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(FqName(name)).isEmpty()) return null
+    if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name)).isEmpty()) return null
 
     val target = ref.resolve()
     if (target is KotlinLightClassForPackage) {

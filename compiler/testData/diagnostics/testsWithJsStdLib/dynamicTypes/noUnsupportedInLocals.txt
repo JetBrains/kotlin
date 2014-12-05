@@ -1,0 +1,4 @@
+package
+
+internal val foo: dynamic = 1
+internal fun foo(): kotlin.Unit

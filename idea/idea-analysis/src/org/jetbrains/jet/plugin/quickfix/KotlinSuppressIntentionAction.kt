@@ -135,7 +135,7 @@ public class KotlinSuppressIntentionAction(
         val context = annotated.analyze()
         for (entry in annotated.getAnnotationEntries()) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
-            if (annotationDescriptor != null && KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) {
+            if (annotationDescriptor != null && KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) {
                 return entry
             }
         }

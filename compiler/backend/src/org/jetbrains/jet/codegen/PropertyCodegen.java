@@ -149,7 +149,7 @@ public class PropertyCodegen {
         if (isClassObject(descriptor.getContainingDeclaration())) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
-        if (kind == OwnerKind.IMPLEMENTATION && descriptor.getVisibility() == Visibilities.PRIVATE) {
+        if (kind == OwnerKind.IMPLEMENTATION && Visibilities.isPrivate(descriptor.getVisibility())) {
             return !isDefaultAccessor;
         }
 
@@ -158,7 +158,7 @@ public class PropertyCodegen {
 
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
         generateBackingField(p, descriptor);
-        if (descriptor.getVisibility() != Visibilities.PRIVATE) {
+        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
             generateGetter(p, descriptor, null);
             if (descriptor.isVar()) {
                 generateSetter(p, descriptor, null);

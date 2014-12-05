@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -192,7 +193,7 @@ public object ShortenReferences {
             }
             if (target == null) return false
 
-            val typeReference = PsiTreeUtil.getParentOfType(userType, javaClass<JetTypeReference>())!!
+            val typeReference = userType.getStrictParentOfType<JetTypeReference>()!!
             val scope = resolutionFacade.analyze(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
             val name = target.getName()
             val targetByName = scope.getClassifier(name)

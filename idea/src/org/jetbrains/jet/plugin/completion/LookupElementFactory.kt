@@ -31,27 +31,103 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
-import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
+import org.jetbrains.jet.lang.types.TypeUtils
+import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 
-public open class LookupElementFactory protected() {
-    public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
+public class LookupElementFactory(
+        private val receiverTypes: Collection<JetType>
+) {
+    public fun createLookupElement(
+            resolutionFacade: ResolutionFacade,
+            descriptor: DeclarationDescriptor,
+            boldImmediateMembers: Boolean
+    ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        return createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        var element = createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+
+        val weight = callableWeight(descriptor)
+        if (weight != null) {
+            element.putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
+        }
+
+        if (boldImmediateMembers) {
+            element = element.boldIfImmediate(weight)
+        }
+        return element
+    }
+
+    private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
+        val style = when (weight) {
+            CallableWeight.thisClassMember, CallableWeight.thisTypeExtension -> Style.BOLD
+            CallableWeight.notApplicableReceiverNullable -> Style.GRAYED
+            else -> Style.NORMAL
+        }
+        return if (style != Style.NORMAL) {
+            object : LookupElementDecorator<LookupElement>(this) {
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    if (style == Style.BOLD) {
+                        presentation.setItemTextBold(true)
+                    }
+                    else {
+                        presentation.setItemTextForeground(LookupCellRenderer.getGrayedForeground(false))
+                        // gray all tail fragments too:
+                        val fragments = presentation.getTailFragments()
+                        presentation.clearTail()
+                        for (fragment in fragments) {
+                            presentation.appendTailText(fragment.text, true)
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            this
+        }
+    }
+
+    private enum class Style {
+        NORMAL
+        BOLD
+        GRAYED
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinClassInsertHandler)
+        var element = LookupElementBuilder.create(psiClass, psiClass.getName()).withInsertHandler(KotlinClassInsertHandler)
+
+        val typeParams = psiClass.getTypeParameters()
+        if (typeParams.isNotEmpty()) {
+            element = element.appendTailText(typeParams.map { it.getName() }.joinToString(", ", "<", ">"), true)
+        }
+
+        val qualifiedName = psiClass.getQualifiedName()
+        val dotIndex = qualifiedName.lastIndexOf('.')
+        val packageName = if (dotIndex <= 0) "<root>" else qualifiedName.substring(0, dotIndex)
+        element = element.appendTailText(" ($packageName)", true)
+
+        if (psiClass.isDeprecated()) {
+            element = element.setStrikeout(true)
+        }
+
+        // add icon in renderElement only to pass presentation.isReal()
+        return object : LookupElementDecorator<LookupElement>(element) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setIcon(DefaultLookupItemRenderer.getRawIcon(element, presentation.isReal()))
+            }
+        }
     }
 
     private fun createLookupElement(
-            analyzer: ResolutionFacade,
+            resolutionFacade: ResolutionFacade,
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?
     ): LookupElement {
@@ -66,7 +142,7 @@ public open class LookupElementFactory protected() {
         }
 
 
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString())
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), descriptor.getName().asString())
                 .withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
 
         when (descriptor) {
@@ -81,6 +157,11 @@ public open class LookupElementFactory protected() {
             }
 
             is ClassDescriptor -> {
+                val typeParams = descriptor.getTypeConstructor().getParameters()
+                if (typeParams.isNotEmpty()) {
+                    element = element.appendTailText(typeParams.map { it.getName().asString() }.joinToString(", ", "<", ">"), true)
+                }
+
                 element = element.appendTailText(" (" + DescriptorUtils.getFqName(descriptor.getContainingDeclaration()) + ")", true)
             }
 
@@ -90,15 +171,26 @@ public open class LookupElementFactory protected() {
         }
 
         if (descriptor is CallableDescriptor) {
-            val receiver = descriptor.getExtensionReceiverParameter()
-            if (receiver != null) {
-                val tail = " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiver.getType()) +
-                           " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
-                element = element.appendTailText(tail, true)
+            if (descriptor.getExtensionReceiverParameter() != null) {
+                val container = descriptor.getContainingDeclaration()
+                val containerPresentation = if (container is ClassDescriptor)
+                    DescriptorUtils.getFqNameFromTopLevelClass(container)
+                else
+                    DescriptorUtils.getFqName(container)
+                val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
+                val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
+                element = element.appendTailText(" for $receiverPresentation in $containerPresentation", true)
+            }
+            else {
+                val container = descriptor.getContainingDeclaration()
+                if (container is PackageFragmentDescriptor) { // we show container only for global functions and properties
+                    //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
+                    element = element.appendTailText(" (${container.fqName})", true)
+                }
             }
         }
 
-        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
+        if (KotlinBuiltIns.isDeprecated(descriptor)) {
             element = element.withStrikeoutness(true)
         }
 
@@ -112,9 +204,44 @@ public open class LookupElementFactory protected() {
         return element
     }
 
-    class object {
-        public val DEFAULT: LookupElementFactory = LookupElementFactory()
+    private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
+        if (descriptor !is CallableDescriptor) return null
 
+        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.isMarkedNullable() }
+        val receiverParameter = descriptor.getExtensionReceiverParameter()
+
+        if (receiverParameter != null) {
+            val receiverParamType = receiverParameter.getType()
+            return if (isReceiverNullable && !receiverParamType.isMarkedNullable())
+                CallableWeight.notApplicableReceiverNullable
+            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
+                CallableWeight.thisTypeExtension
+            else
+                CallableWeight.baseTypeExtension
+        }
+        else {
+            if (isReceiverNullable) {
+                return CallableWeight.notApplicableReceiverNullable
+            }
+            else {
+                val container = descriptor.getContainingDeclaration()
+                return when (container) {
+                    is PackageFragmentDescriptor -> CallableWeight.global
+
+                    is ClassifierDescriptor -> {
+                        if ((descriptor as CallableMemberDescriptor).getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                            CallableWeight.thisClassMember
+                        else
+                            CallableWeight.baseClassMember
+                    }
+
+                    else -> CallableWeight.local
+                }
+            }
+        }
+    }
+
+    class object {
         public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
             return when (descriptor) {
                 is FunctionDescriptor -> {
@@ -124,8 +251,8 @@ public open class LookupElementFactory protected() {
 
                         1 -> {
                             val parameterType = parameters.single().getType()
-                            if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
-                                val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                                val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                                 if (parameterCount <= 1) {
                                     // otherwise additional item with lambda template is to be added
                                     return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
@@ -144,33 +271,6 @@ public open class LookupElementFactory protected() {
 
                 else -> BaseDeclarationInsertHandler()
             }
-        }
-    }
-}
-
-public class BoldImmediateLookupElementFactory(private val receiverTypes: Collection<JetType>) : LookupElementFactory() {
-    override fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
-        val element = super.createLookupElement(resolutionFacade, descriptor)
-
-        if (descriptor !is CallableMemberDescriptor) return element
-        val receiverParameter = descriptor.getExtensionReceiverParameter()
-        val bold = if (receiverParameter != null) {
-            receiverTypes.any { it == receiverParameter.getType() }
-        }
-        else {
-            descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
-        }
-
-        return if (bold) {
-            object : LookupElementDecorator<LookupElement>(element) {
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    super.renderElement(presentation)
-                    presentation.setItemTextBold(true)
-                }
-            }
-        }
-        else {
-            element
         }
     }
 }

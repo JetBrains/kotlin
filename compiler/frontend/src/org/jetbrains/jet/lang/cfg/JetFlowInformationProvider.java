@@ -245,7 +245,7 @@ public class JetFlowInformationProvider {
                     if (!(element instanceof JetExpression || element instanceof JetWhenCondition)) return;
 
                     if (blockBody && !noExpectedType(expectedReturnType)
-                            && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType)
+                            && !KotlinBuiltIns.isUnit(expectedReturnType)
                             && !unreachableCode.getElements().contains(element)) {
                         noReturnError[0] = true;
                     }
@@ -435,7 +435,7 @@ public class JetFlowInformationProvider {
             if (operationReference != null) {
                 DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference);
                 if (descriptor instanceof FunctionDescriptor) {
-                    if (KotlinBuiltIns.getInstance().isUnit(((FunctionDescriptor) descriptor).getReturnType())) {
+                    if (KotlinBuiltIns.isUnit(((FunctionDescriptor) descriptor).getReturnType())) {
                         hasReassignMethodReturningUnit = true;
                     }
                 }
@@ -444,7 +444,7 @@ public class JetFlowInformationProvider {
                             trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference);
                     if (descriptors != null) {
                         for (DeclarationDescriptor referenceDescriptor : descriptors) {
-                            if (KotlinBuiltIns.getInstance().isUnit(((FunctionDescriptor) referenceDescriptor).getReturnType())) {
+                            if (KotlinBuiltIns.isUnit(((FunctionDescriptor) referenceDescriptor).getReturnType())) {
                                 hasReassignMethodReturningUnit = true;
                             }
                         }
@@ -745,7 +745,7 @@ public class JetFlowInformationProvider {
     public void markTailCalls() {
         final DeclarationDescriptor subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
         if (!(subroutineDescriptor instanceof FunctionDescriptor)) return;
-        if (!KotlinBuiltIns.getInstance().isTailRecursive(subroutineDescriptor)) return;
+        if (!KotlinBuiltIns.isTailRecursive(subroutineDescriptor)) return;
 
         // finally blocks are copied which leads to multiple diagnostics reported on one instruction
         class KindAndCall {

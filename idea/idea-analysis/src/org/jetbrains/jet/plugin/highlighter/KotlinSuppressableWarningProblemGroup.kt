@@ -25,7 +25,7 @@ import org.jetbrains.jet.plugin.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.quickfix.AnnotationHostKind
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 class KotlinSuppressableWarningProblemGroup(
         private val diagnosticFactory: DiagnosticFactory<*>
@@ -86,7 +86,7 @@ private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>(
     override fun visitClass(d: JetClass, _: Unit?) = detect(d, if (d.isTrait()) "trait" else "class")
 
     override fun visitClassObject(d: JetClassObject, _: Unit?) = detect(d, "class object",
-                                                                        name = "of " + PsiTreeUtil.getParentOfType(d, javaClass<JetClass>())?.getName())
+                                                                        name = "of " + d.getStrictParentOfType<JetClass>()?.getName())
 
     override fun visitNamedFunction(d: JetNamedFunction, _: Unit?) = detect(d, "fun")
 

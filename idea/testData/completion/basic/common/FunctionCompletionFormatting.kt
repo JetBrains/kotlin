@@ -4,4 +4,4 @@ fun some() {
     tes<caret>
 }
 
-// EXIST: { lookupString:"test", itemText:"test", tailText:"(a: Int)" }
+// EXIST: { lookupString:"test", itemText:"test", tailText:"(a: Int) (<root>)" }

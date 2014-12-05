@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVE
 import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker
 
 public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   declarationProvider: ClassMemberDeclarationProvider,
@@ -129,7 +130,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name) {
-        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return
+        if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         val constructor = getPrimaryConstructor()
         if (constructor == null) return
@@ -184,6 +185,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
             if (descriptor.getKind() != FAKE_OVERRIDE && descriptor.getKind() != DELEGATION) {
                 OverridingUtil.resolveUnknownVisibilityForMember(descriptor, OverrideResolver.createCannotInferVisibilityReporter(trace))
             }
+//            VarianceChecker.recordPrivateToThisIfNeeded(trace, descriptor); todo make visibility lazy and enable
         }
     }
 
@@ -238,7 +240,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>) {
-        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return
+        if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         if (getPrimaryConstructor() == null) return
 

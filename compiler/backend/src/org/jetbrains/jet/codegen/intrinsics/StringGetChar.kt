@@ -23,20 +23,21 @@ import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetExpression
 
 public class StringGetChar : LazyIntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen,
-                              returnType: Type,
-                              element: PsiElement?,
-                              arguments: List<JetExpression>,
-                              receiver: StackValue): StackValue {
-
+    override fun generateImpl(
+            codegen: ExpressionCodegen,
+            returnType: Type,
+            element: PsiElement?,
+            arguments: List<JetExpression>,
+            receiver: StackValue
+    ): StackValue {
         return StackValue.operation(Type.CHAR_TYPE) {
             if (receiver != StackValue.none()) {
                 receiver.put(receiver.type, it)
             }
             if (!arguments.isEmpty()) {
-                codegen.gen(arguments.get(0)).put(Type.INT_TYPE, it)
+                codegen.gen(arguments.first()).put(Type.INT_TYPE, it)
             }
-            it.invokeinterface("java/lang/CharSequence", "charAt", "(I)C")
+            it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
         }
     }
 }

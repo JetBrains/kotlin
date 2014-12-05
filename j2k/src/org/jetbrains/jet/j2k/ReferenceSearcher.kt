@@ -43,7 +43,7 @@ public object EmptyReferenceSearcher: ReferenceSearcher {
 
 public object IdeaReferenceSearcher : ReferenceSearcher {
     override fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
-        return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance(javaClass<PsiReferenceExpression>())
+        return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance<PsiReferenceExpression>()
     }
 
     override fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {

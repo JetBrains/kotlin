@@ -8,32 +8,19 @@ import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
+    @NotNull
     private JsExpression qualifier;
 
-    public JsInvocation() {
-        super(new SmartList<JsExpression>());
-    }
-
-    public JsInvocation(JsExpression qualifier, @NotNull List<JsExpression> arguments) {
+    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<JsExpression> arguments) {
         super(arguments);
         this.qualifier = qualifier;
     }
 
-    public JsInvocation(JsExpression qualifier, JsExpression arg) {
-        this(qualifier, new SmartList<JsExpression>(arg));
-    }
-
-    public JsInvocation(JsExpression qualifier, JsExpression... arguments) {
-        this(qualifier, Arrays.asList(arguments));
-    }
-
-    public JsInvocation(JsExpression qualifier) {
-        this();
-        this.qualifier = qualifier;
+    public JsInvocation(@NotNull JsExpression qualifier, JsExpression... arguments) {
+        this(qualifier, new SmartList<JsExpression>(arguments));
     }
 
     @NotNull
@@ -42,12 +29,9 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         return arguments;
     }
 
+    @NotNull
     public JsExpression getQualifier() {
         return qualifier;
-    }
-
-    public void setQualifier(JsExpression qualifier) {
-        this.qualifier = qualifier;
     }
 
     @Override

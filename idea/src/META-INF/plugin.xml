@@ -1,5 +1,5 @@
-<idea-plugin version="2" url="http://kotlin.jetbrains.org">
-  <id>org.jetbrains.kotlin</id>
+<idea-plugin version="2" url="http://kotlin.jetbrains.org" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
   <description>Kotlin language support</description>
@@ -158,6 +158,9 @@
     <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer"
+                      serviceImplementation="org.jetbrains.jet.lang.resolve.DummyCodeAnalyzerInitializer"/>
+
     <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
 
@@ -218,6 +221,8 @@
     <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
     <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
+    <lang.elementManipulator forClass="org.jetbrains.jet.lang.psi.JetStringTemplateExpression"
+                             implementationClass="org.jetbrains.jet.lang.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.jet.plugin.findUsages.KotlinDeclarationGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule"/>
     <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
@@ -391,20 +396,17 @@
 
     <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionPropertyShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPropertyShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelExtensionFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelExtensionPropertyShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
@@ -817,18 +819,15 @@
 
   </extensions>
 
-    <extensionPoints>
-        <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
-        <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
-        <extensionPoint name="suppressStringProvider" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$SuppressStringProvider"/>
-        <extensionPoint name="diagnosticSuppressor" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
-    </extensionPoints>
+  <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
-        <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
-        <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
-        <diagnosticSuppressor implementation="org.jetbrains.jet.plugin.debugger.DiagnosticSuppressorForDebugger"/>
-    </extensions>
+  <extensionPoints>
+    <xi:include href="extensions/common.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+      <xi:include href="extensions/kotlin2jvm.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+      <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+  </extensions>
+
 </idea-plugin>

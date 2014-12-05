@@ -1,0 +1,68 @@
+package 
+
+internal trait In</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Out</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Pair</*0*/ out X, /*1*/ out Y> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
+    internal abstract fun Ok10(/*0*/ i: I): kotlin.Unit
+    internal abstract fun Ok11(/*0*/ i: In<O>): kotlin.Unit
+    internal abstract fun Ok12(/*0*/ i: In<In<I>>): kotlin.Unit
+    internal abstract fun Ok13(/*0*/ i: Out<I>): kotlin.Unit
+    internal abstract fun Ok14(/*0*/ i: Pair<In<O>, I>): kotlin.Unit
+    internal abstract fun Ok15(/*0*/ i: Inv<out I>): kotlin.Unit
+    internal abstract fun Ok20(/*0*/ i: Inv<in O>): kotlin.Unit
+    internal abstract fun Ok21(/*0*/ i: Inv<in P>): kotlin.Unit
+    internal abstract fun Ok22(/*0*/ i: Inv<out I>): kotlin.Unit
+    internal abstract fun Ok23(/*0*/ i: Inv<out P>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun neOk1(/*0*/ i: O): kotlin.Unit
+    internal abstract fun neOk10(/*0*/ i: Out<O>): kotlin.Unit
+    internal abstract fun neOk11(/*0*/ i: Inv<in I>): kotlin.Unit
+    internal abstract fun neOk12(/*0*/ i: Inv<out O>): kotlin.Unit
+    internal abstract fun neOk2(/*0*/ i: In<I>): kotlin.Unit
+    internal abstract fun neOk3(/*0*/ i: In<In<O>>): kotlin.Unit
+    internal abstract fun neOk30(/*0*/ i: Pair<O, [ERROR : No type element]>): kotlin.Unit
+    internal abstract fun neOk31(/*0*/ i: Pair<O, [ERROR : Inv]>): kotlin.Unit
+    internal abstract fun neOk32(/*0*/ i: [ERROR : Inv]): kotlin.Unit
+    internal abstract fun neOk33(/*0*/ i: Inv<[ERROR : No type element]>): kotlin.Unit
+    internal abstract fun neOk34(/*0*/ i: Inv<[ERROR : C]>): kotlin.Unit
+    internal abstract fun neOk35(/*0*/ i: [ERROR : Inv<P, P>]): kotlin.Unit
+    internal abstract fun neOk4(/*0*/ i: Inv<I>): kotlin.Unit
+    internal abstract fun neOk5(/*0*/ i: Inv<O>): kotlin.Unit
+    internal abstract fun neOk6(/*0*/ i: In<In<O>>): kotlin.Unit
+    internal abstract fun neOk7(/*0*/ i: Pair<In<I>, O>): kotlin.Unit
+    internal abstract fun neOk8(/*0*/ i: Inv<out O>): kotlin.Unit
+    internal abstract fun neOk9(/*0*/ i: In<out P>): kotlin.Unit
+    internal abstract fun ok1(/*0*/ i: I): kotlin.Unit
+    internal abstract fun ok2(/*0*/ i: In<O>): kotlin.Unit
+    internal abstract fun ok3(/*0*/ i: In<In<I>>): kotlin.Unit
+    internal abstract fun ok4(/*0*/ i: Inv<P>): kotlin.Unit
+    internal abstract fun ok5(/*0*/ i: P): kotlin.Unit
+    internal abstract fun ok6(/*0*/ i: Out<I>): kotlin.Unit
+    internal abstract fun ok7(/*0*/ i: Out<Out<I>>): kotlin.Unit
+    internal abstract fun ok8(/*0*/ i: Out<In<O>>): kotlin.Unit
+    internal abstract fun ok9(/*0*/ i: Out<In<P>>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -25,7 +25,7 @@ import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import java.util.Comparator
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.types.isDynamic
 
 public object CodegenUtilKt {
 
@@ -39,9 +39,10 @@ public object CodegenUtilKt {
             toTrait: ClassDescriptor,
             delegateExpressionType: JetType? = null
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
+        if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
 
         return descriptor.getDefaultType().getMemberScope().getDescriptors().stream()
-            .filterIsInstance(javaClass<CallableMemberDescriptor>())
+            .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
             .toList()
             .sortBy(MemberComparator.INSTANCE as Comparator<CallableMemberDescriptor>) // Workaround for KT-6030

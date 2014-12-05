@@ -98,12 +98,12 @@ public class FunctionDescriptorUtil {
             @NotNull Visibility visibility
     ) {
 
-        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionType);
-        functionDescriptor.initialize(KotlinBuiltIns.getInstance().getReceiverType(functionType),
+        assert KotlinBuiltIns.isFunctionOrExtensionFunctionType(functionType);
+        functionDescriptor.initialize(KotlinBuiltIns.getReceiverType(functionType),
                                       dispatchReceiverParameter,
                                       Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                      KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, functionType),
-                                      KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(functionType),
+                                      KotlinBuiltIns.getValueParameters(functionDescriptor, functionType),
+                                      KotlinBuiltIns.getReturnTypeFromFunctionType(functionType),
                                       modality,
                                       visibility);
     }

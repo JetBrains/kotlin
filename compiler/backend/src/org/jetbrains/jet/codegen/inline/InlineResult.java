@@ -24,7 +24,7 @@ import java.util.Set;
 public class InlineResult {
 
     private final Set<String> classesToRemove = new HashSet<String>();
-    private boolean needFurtherReification = false;
+    private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
 
     private InlineResult() {
 
@@ -50,11 +50,8 @@ public class InlineResult {
         return classesToRemove;
     }
 
-    public boolean needFurtherReification() {
-        return needFurtherReification;
-    }
-
-    public void markAsNeededFurtherReificationIf(boolean condtition) {
-        this.needFurtherReification |= condtition;
+    @NotNull
+    public ReifiedTypeParametersUsages getReifiedTypeParametersUsages() {
+        return reifiedTypeParametersUsages;
     }
 }

@@ -33,13 +33,13 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
@@ -51,7 +51,7 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).bindingContext
 
         val element = jetFile.findElementAt(text.indexOf("<caret>"))
-        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
+        val expression = element.getStrictParentOfType<JetExpression>()
 
         val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
 

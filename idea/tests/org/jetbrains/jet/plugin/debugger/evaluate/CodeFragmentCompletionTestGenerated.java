@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/codeFragments")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({CodeFragmentCompletionTestGenerated.RuntimeType.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {
@@ -58,5 +59,38 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
     public void testTopLevel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/topLevel.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/testData/completion/basic/codeFragments/runtimeType")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RuntimeType extends AbstractCodeFragmentCompletionTest {
+        public void testAllFilesPresentInRuntimeType() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("castWithGenerics.kt")
+        public void testCastWithGenerics() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/runtimeType/castWithGenerics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexHierarchy.kt")
+        public void testComplexHierarchy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/runtimeType/complexHierarchy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionMethod.kt")
+        public void testExtensionMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/runtimeType/extensionMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("runtimeCast.kt")
+        public void testRuntimeCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/runtimeType/runtimeCast.kt");
+            doTest(fileName);
+        }
     }
 }

@@ -105,7 +105,7 @@ public class JetControlFlowProcessor {
 
         JetType returnType = subroutineDescriptor.getReturnType();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        if (returnType != null && builtIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
+        if (returnType != null && KotlinBuiltIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
 
         PseudoValue returnValue = builder.getBoundValue(bodyExpression);
         if (returnValue == null) return;
@@ -198,7 +198,7 @@ public class JetControlFlowProcessor {
             }
 
             JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-            if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
+            if (type != null && KotlinBuiltIns.isNothing(type)) {
                 builder.jumpToError(expression);
             }
         }

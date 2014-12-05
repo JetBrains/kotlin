@@ -1,0 +1,6 @@
+package
+
+internal var bar: kotlin.Int
+internal val dyn: dynamic = null
+internal val foo: kotlin.Int
+internal fun test(/*0*/ d: dynamic): kotlin.Unit

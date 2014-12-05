@@ -137,7 +137,7 @@ public final class ClassTranslator extends AbstractTranslator {
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
         delegationTranslator.generateDelegated(properties);
 
-        if (KotlinBuiltIns.getInstance().isData(descriptor)) {
+        if (KotlinBuiltIns.isData(descriptor)) {
             new JsDataClassGenerator(classDeclaration, declarationContext, properties).generate();
         }
 

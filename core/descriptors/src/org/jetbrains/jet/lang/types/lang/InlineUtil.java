@@ -35,7 +35,7 @@ import java.util.List;
 public class InlineUtil {
 
     public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {
-        return KotlinBuiltIns.containsAnnotation(valueParameterDescriptor, KotlinBuiltIns.getInstance().getNoinlineClassAnnotation());
+        return KotlinBuiltIns.containsAnnotation(valueParameterDescriptor, KotlinBuiltIns.getNoinlineClassAnnotationFqName());
     }
 
     @NotNull

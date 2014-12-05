@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
@@ -40,8 +41,11 @@ public class ClassPathInParentClassLoaderTest extends CodegenTestCase {
     public void testKt2781() throws Exception {
         File javaClassesTempDirectory = compileJava("classPathInParentClassLoader/kt2781.java");
 
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+        myEnvironment = JetCoreEnvironment.createForTests(
+                getTestRootDisposable(),
+                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                                                           JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         loadFile("classPathInParentClassLoader/kt2781.kt");
         assertThrows(generateFunction(), IllegalAccessError.class, null);

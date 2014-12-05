@@ -25,17 +25,22 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
+import com.intellij.psi.PsiClass
+import java.util.HashSet
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -48,7 +53,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
 
     sorter = sorter.weighAfter(
             "stats",
-            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile)/*TODO: shouldn't it have bigger priority?*/,
+            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             DeprecatedWeigher)
 
     sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher(parameters))
@@ -67,26 +72,39 @@ private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.sma
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
-        localOrParameter
-        property
+        variable // variable or property
+        function
         keyword
         default
         packages
     }
 
-    override fun weigh(element: LookupElement): Comparable<Weight> {
+    private data class CompoundWeight(val weight: Weight, val callableWeight: CallableWeight? = null) : Comparable<CompoundWeight> {
+        override fun compareTo(other: CompoundWeight): Int {
+            if (callableWeight != null && other.callableWeight != null && callableWeight != other.callableWeight) {
+                return callableWeight.compareTo(other.callableWeight)
+            }
+            return weight.compareTo(other.weight)
+        }
+    }
+
+    override fun weigh(element: LookupElement): CompoundWeight {
         val o = element.getObject()
+
         return when (o) {
-            is DeclarationDescriptorLookupObject -> when (o.descriptor) {
-                is LocalVariableDescriptor, is ValueParameterDescriptor -> Weight.localOrParameter
-                is PropertyDescriptor -> Weight.property
-                is PackageViewDescriptor -> Weight.packages
-                else -> Weight.default
+            is DeclarationDescriptorLookupObject -> {
+                val descriptor = o.descriptor
+                when (descriptor) {
+                    is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is PackageViewDescriptor -> CompoundWeight(Weight.packages)
+                    else -> CompoundWeight(Weight.default)
+                }
             }
 
-            is KeywordLookupObject -> Weight.keyword
+            is KeywordLookupObject -> CompoundWeight(Weight.keyword)
 
-            else -> Weight.default
+            else -> CompoundWeight(Weight.default)
         }
     }
 }
@@ -94,7 +112,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject()
-        return if (o is DeclarationDescriptorLookupObject && KotlinBuiltIns.getInstance().isDeprecated(o.descriptor)) 1 else 0
+        return if (o is DeclarationDescriptorLookupObject && KotlinBuiltIns.isDeprecated(o.descriptor)) 1 else 0
     }
 }
 
@@ -106,34 +124,75 @@ private class PreferMatchingItemWeigher(private val parameters: CompletionParame
 }
 
 private class JetDeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
+    private val importCache = ImportCache()
+
     private enum class Weight {
         kotlinDefaultImport
         thisFile
-        imported
-        normal
+        preciseImport
+        allUnderImport
+        default
+        hasImportFromSamePackage
         notImported
+        notToBeUsedInKotlin
     }
 
-    override fun weigh(element: LookupElement): Comparable<Weight> {
+    override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
         if (o is DeclarationDescriptorLookupObject) {
             val elementFile = o.psiElement?.getContainingFile()
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
                 return Weight.thisFile
             }
+        }
 
-            val fqName = DescriptorUtils.getFqName(o.descriptor).toString()
-            // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-            if (isValidJavaFqName(fqName)) {
-                val importPath = ImportPath(fqName)
-                return when {
-                    ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
-                    ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
-                    else -> Weight.imported
+        val qualifiedName = qualifiedName(o)
+        // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
+        if (qualifiedName != null && isValidJavaFqName(qualifiedName)) {
+            val importPath = ImportPath(qualifiedName)
+            val fqName = importPath.fqnPart()
+            return when {
+                JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
+                ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
+                importCache.isImportedWithAllUnderImport(fqName) -> Weight.allUnderImport
+                importCache.hasPreciseImportFromPackage(fqName.parent()) -> Weight.hasImportFromSamePackage
+                else -> Weight.notImported
+            }
+        }
+
+        return Weight.default
+    }
+
+    private fun qualifiedName(lookupObject: Any): String? {
+        return when (lookupObject) {
+            is DeclarationDescriptorLookupObject -> DescriptorUtils.getFqName(lookupObject.descriptor).toString()
+            is PsiClass -> lookupObject.getQualifiedName()
+            else -> null
+        }
+    }
+
+    private inner class ImportCache {
+        private val preciseImports = HashSet<FqName>()
+        private val preciseImportPackages = HashSet<FqName>()
+        private val allUnderImports = HashSet<FqName>()
+
+        ;{
+            for (import in file.getImportDirectives()) {
+                val importPath = import.getImportPath() ?: continue
+                val fqName = importPath.fqnPart()
+                if (importPath.isAllUnder()) {
+                    allUnderImports.add(fqName)
+                }
+                else {
+                    preciseImports.add(fqName)
+                    preciseImportPackages.add(fqName.parent())
                 }
             }
         }
 
-        return Weight.normal
+        fun isImportedWithPreciseImport(name: FqName) = name in preciseImports
+        fun isImportedWithAllUnderImport(name: FqName) = name.parent() in allUnderImports
+        fun hasPreciseImportFromPackage(packageName: FqName) = packageName in preciseImportPackages
     }
 }

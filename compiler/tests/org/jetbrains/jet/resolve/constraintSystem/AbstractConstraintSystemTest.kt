@@ -55,7 +55,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     override fun setUp() {
         super.setUp()
 
-        val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule()!!)
+        val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule())
         _typeResolver = injector.getTypeResolver()!!
         _myDeclarations = analyzeDeclarations()
     }

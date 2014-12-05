@@ -373,7 +373,7 @@ public class SignaturesPropagationData {
 
             assert isArrayType(originalType);
 
-            if (builtIns.isPrimitiveArray(originalType)) {
+            if (KotlinBuiltIns.isPrimitiveArray(originalType)) {
                 // replace IntArray? with IntArray
                 return new VarargCheckResult(TypeUtils.makeNotNullable(originalType), true);
             }
@@ -387,7 +387,7 @@ public class SignaturesPropagationData {
 
             assert isArrayType(originalType);
 
-            if (builtIns.isPrimitiveArray(originalType)) {
+            if (KotlinBuiltIns.isPrimitiveArray(originalType)) {
                 // replace IntArray with IntArray?
                 return new VarargCheckResult(TypeUtils.makeNullable(originalType), false);
             }
@@ -682,7 +682,7 @@ public class SignaturesPropagationData {
 
     private static boolean isArrayType(@NotNull JetType type) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
+        return KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type);
     }
 
     private static class VarargCheckResult {

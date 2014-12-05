@@ -1,3 +1,3 @@
 val c: java.io.Closeable = <caret>
 
-//ELEMENT: object
+//ELEMENT_TEXT: "object: Closeable{...}"

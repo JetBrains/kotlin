@@ -37,6 +37,7 @@ public class InjectorForJavaDescriptorResolverUtil {
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         }
         module.seal();
+
         return injector;
     }
 }

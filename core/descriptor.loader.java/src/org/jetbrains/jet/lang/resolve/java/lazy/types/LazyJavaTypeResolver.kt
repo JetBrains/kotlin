@@ -46,7 +46,7 @@ class LazyJavaTypeResolver(
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val canonicalText = javaType.getCanonicalText()
-                val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText)
+                val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass(canonicalText)
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 jetType!!
             }
@@ -65,7 +65,7 @@ class LazyJavaTypeResolver(
     public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
         val javaComponentType = arrayType.getComponentType()
         if (javaComponentType is JavaPrimitiveType) {
-            val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
+            val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
             if (jetType != null) {
                 return if (PLATFORM_TYPES && attr.allowFlexible)
                            FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
@@ -117,7 +117,7 @@ class LazyJavaTypeResolver(
                     val fqName = classifier.getFqName()
                             .sure("Class type should have a FQ name: " + classifier)
 
-                    val javaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
+                    val javaToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
                     val howThisTypeIsUsedEffectively = when {
                         attr.flexibility == FLEXIBLE_LOWER_BOUND -> MEMBER_SIGNATURE_COVARIANT
                         attr.flexibility == FLEXIBLE_UPPER_BOUND -> MEMBER_SIGNATURE_CONTRAVARIANT
@@ -259,7 +259,7 @@ class LazyJavaTypeResolver(
             when (classifier()) {
                 is JavaTypeParameter -> {
                     if (isConstructorTypeParameter())
-                        getConstructorTypeParameterSubstitute().isNullable()
+                        getConstructorTypeParameterSubstitute().isMarkedNullable()
                     else
                         attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
@@ -269,7 +269,7 @@ class LazyJavaTypeResolver(
             }
         }
 
-        override fun isNullable(): Boolean = nullable()
+        override fun isMarkedNullable(): Boolean = nullable()
 
         override fun getAnnotations() = attr.annotations
     }
@@ -308,13 +308,13 @@ class LazyJavaTypeResolver(
                 //    foo(int) and foo(Integer)
                 // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
                 // so, for such cases, we discriminate Integer in favour of int
-                if (!KotlinBuiltIns.getInstance().isPrimitiveType(otherType) || !KotlinBuiltIns.getInstance().isPrimitiveType(lowerBound)) {
+                if (!KotlinBuiltIns.isPrimitiveType(otherType) || !KotlinBuiltIns.isPrimitiveType(lowerBound)) {
                     return Specificity.Relation.DONT_KNOW
                 }
                 // Int! >< Int?
                 if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
                 // Int? >< Int!
-                if (otherType.isNullable()) return Specificity.Relation.DONT_KNOW
+                if (otherType.isMarkedNullable()) return Specificity.Relation.DONT_KNOW
                 // Int! lessSpecific Int
                 return Specificity.Relation.LESS_SPECIFIC
             }

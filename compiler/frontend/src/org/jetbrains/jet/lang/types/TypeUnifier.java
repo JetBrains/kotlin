@@ -75,7 +75,7 @@ public class TypeUnifier {
         }
 
         // Foo? ~ X?  =>  Foo ~ X
-        if (known.isNullable() && withVariables.isNullable()) {
+        if (known.isMarkedNullable() && withVariables.isMarkedNullable()) {
             doUnify(
                     new TypeProjectionImpl(knownProjectionKind, TypeUtils.makeNotNullable(known)),
                     new TypeProjectionImpl(withVariablesProjectionKind, TypeUtils.makeNotNullable(withVariables)),
@@ -93,7 +93,7 @@ public class TypeUnifier {
         }
 
         // Foo ~ X? => fail
-        if (!known.isNullable() && withVariables.isNullable()) {
+        if (!known.isMarkedNullable() && withVariables.isMarkedNullable()) {
             result.fail();
             return;
         }
@@ -106,7 +106,7 @@ public class TypeUnifier {
         }
 
         // Foo? ~ Foo || in Foo ~ Foo || Foo ~ Bar
-        boolean structuralMismatch = known.isNullable() != withVariables.isNullable()
+        boolean structuralMismatch = known.isMarkedNullable() != withVariables.isMarkedNullable()
                 || knownProjectionKind != withVariablesProjectionKind
                 || !known.getConstructor().equals(withVariables.getConstructor());
         if (structuralMismatch) {

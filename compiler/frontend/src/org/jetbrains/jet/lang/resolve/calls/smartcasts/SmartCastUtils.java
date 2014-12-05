@@ -22,6 +22,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -183,16 +184,17 @@ public class SmartCastUtils {
         }
     }
 
-    public static boolean isNotNull(
+    public static boolean canBeSmartCast(
+            @NotNull ReceiverParameterDescriptor receiverParameter,
             @NotNull ReceiverValue receiver,
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        if (!receiver.getType().isNullable()) return true;
+        if (!receiver.getType().isMarkedNullable()) return true;
 
         List<JetType> smartCastVariants = getSmartCastVariants(receiver, bindingContext, dataFlowInfo);
         for (JetType smartCastVariant : smartCastVariants) {
-            if (!smartCastVariant.isNullable()) return true;
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(smartCastVariant, receiverParameter.getType())) return true;
         }
         return false;
     }

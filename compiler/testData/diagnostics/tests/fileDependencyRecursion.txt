@@ -1,0 +1,11 @@
+package
+
+package test {
+    internal val fromImported: kotlin.Int = 1
+    internal val normal: kotlin.Int = 1
+}
+
+package testOther {
+    internal val fromImported: kotlin.Int = 1
+    internal val some: kotlin.Int = 1
+}

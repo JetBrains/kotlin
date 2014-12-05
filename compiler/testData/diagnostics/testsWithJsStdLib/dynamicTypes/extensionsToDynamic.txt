@@ -1,0 +1,18 @@
+package
+
+internal val dynamic.valOnDynamic: kotlin.Int
+internal var dynamic.varOnDynamic: kotlin.Int
+internal fun test(/*0*/ d: dynamic): kotlin.Unit
+internal fun dynamic.extTest(): kotlin.Unit
+internal fun dynamic.onDynamic(): kotlin.Unit
+internal fun dynamic.onNullableDynamic(): kotlin.Unit
+
+internal final class ForMemberExtensions {
+    public constructor ForMemberExtensions()
+    internal final val dynamic.memberExtensionVal: kotlin.Int
+    internal final var dynamic.memberExtensionVar: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(/*0*/ d: dynamic): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

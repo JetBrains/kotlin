@@ -417,7 +417,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public boolean isNullable() {
+        public boolean isMarkedNullable() {
             return false;
         }
 

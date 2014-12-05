@@ -44,7 +44,7 @@ public class NeedSyntheticCallResolverExtension implements CallResolverExtension
     //      e.g.: from class to classobject) controlled via NEED_SYNTHETIC_ACCESSOR slice
     private boolean needSyntheticAccessor(JetScope invokationScope, CallableDescriptor targetDescriptor) {
         return targetDescriptor instanceof CallableMemberDescriptor &&
-               targetDescriptor.getVisibility() == Visibilities.PRIVATE &&
+               Visibilities.isPrivate(targetDescriptor.getVisibility()) &&
                targetDescriptor.getContainingDeclaration() != invokationScope.getContainingDeclaration().getContainingDeclaration();
     }
 }

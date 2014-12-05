@@ -61,8 +61,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -301,10 +301,10 @@ public class JetSourceNavigationHelper {
             @NotNull JetNamedDeclaration decompiledDeclaration
     ) {
         if (decompiledDeclaration instanceof JetNamedFunction) {
-            return JetTopLevelFunctionsFqnNameIndex.getInstance();
+            return JetTopLevelFunctionFqnNameIndex.getInstance();
         }
         if (decompiledDeclaration instanceof JetProperty) {
-            return JetTopLevelPropertiesFqnNameIndex.getInstance();
+            return JetTopLevelPropertyFqnNameIndex.getInstance();
         }
         throw new IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration.getClass().getName());
     }

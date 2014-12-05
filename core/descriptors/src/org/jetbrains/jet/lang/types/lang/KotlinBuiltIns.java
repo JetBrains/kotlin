@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,8 +33,10 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
+import java.io.InputStream;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -101,13 +104,21 @@ public class KotlinBuiltIns {
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
-    private final FqNames fqNames = new FqNames();
+    private static final FqNames FQ_NAMES = new FqNames();
 
     private KotlinBuiltIns() {
-        builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                  Collections.<ImportPath>emptyList(),
-                                                  PlatformToKotlinClassMap.EMPTY);
-        builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
+        builtInsModule = new ModuleDescriptorImpl(
+                Name.special("<built-ins lazy module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
+        );
+        builtinsPackageFragment = new BuiltinsPackageFragment(
+                BUILT_INS_PACKAGE_FQ_NAME, new LockBasedStorageManager(), builtInsModule,
+                new Function1<String, InputStream>() {
+                    @Override
+                    public InputStream invoke(String path) {
+                        return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+                    }
+                }
+        );
         builtInsModule.initialize(builtinsPackageFragment.getProvider());
         builtInsModule.addDependencyOnModule(builtInsModule);
         builtInsModule.seal();
@@ -139,24 +150,47 @@ public class KotlinBuiltIns {
     }
 
     private static class FqNames {
-        public final FqNameUnsafe any = fqName("Any");
-        public final FqNameUnsafe nothing = fqName("Nothing");
-        public final FqNameUnsafe cloneable = fqName("Cloneable");
-        public final FqNameUnsafe suppress = fqName("suppress");
+        public final FqNameUnsafe any = fqNameUnsafe("Any");
+        public final FqNameUnsafe nothing = fqNameUnsafe("Nothing");
+        public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");
+        public final FqNameUnsafe suppress = fqNameUnsafe("suppress");
+        public final FqNameUnsafe unit = fqNameUnsafe("Unit");
+        public final FqNameUnsafe string = fqNameUnsafe("String");
+        public final FqNameUnsafe array = fqNameUnsafe("Array");
+
+        public final FqName data = fqName("data");
+        public final FqName deprecated = fqName("deprecated");
+        public final FqName tailRecursive = fqName("tailRecursive");
+        public final FqName noinline = fqName("noinline");
+
+        public final Set<FqNameUnsafe> primitiveTypes;
+        public final Set<FqNameUnsafe> primitiveArrays;
+        {
+            primitiveTypes = new HashSet<FqNameUnsafe>(0);
+            primitiveArrays = new HashSet<FqNameUnsafe>(0);
+            for (PrimitiveType primitiveType : PrimitiveType.values()) {
+                primitiveTypes.add(fqNameUnsafe(primitiveType.getTypeName().asString()));
+                primitiveArrays.add(fqNameUnsafe(primitiveType.getArrayTypeName().asString()));
+            }
+        }
 
         public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
         public final Set<FqNameUnsafe> extensionFunctionClasses = computeIndexedFqNames("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
         @NotNull
-        private static FqNameUnsafe fqName(@NotNull String simpleName) {
-            return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe();
+        private static FqNameUnsafe fqNameUnsafe(@NotNull String simpleName) {
+            return fqName(simpleName).toUnsafe();
+        }
+
+        private static FqName fqName(String simpleName) {
+            return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
         }
 
         @NotNull
         private static Set<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
             Set<FqNameUnsafe> result = new HashSet<FqNameUnsafe>();
             for (int i = 0; i < count; i++) {
-                result.add(fqName(prefix + i));
+                result.add(fqNameUnsafe(prefix + i));
             }
             return result;
         }
@@ -314,8 +348,8 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getNoinlineClassAnnotation() {
-        return getBuiltInClassByName("noinline");
+    public static FqName getNoinlineClassAnnotationFqName() {
+        return FQ_NAMES.noinline;
     }
 
     @NotNull
@@ -326,11 +360,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getInlineOptionsClassAnnotation() {
         return getBuiltInClassByName("inlineOptions");
-    }
-
-    @NotNull
-    public ClassDescriptor getTailRecursiveAnnotationClass() {
-        return getBuiltInClassByName("tailRecursive");
     }
 
     @NotNull
@@ -597,7 +626,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getArrayElementType(@NotNull JetType arrayType) {
-        if (arrayType.getConstructor().getDeclarationDescriptor() == getArray()) {
+        if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
@@ -710,25 +739,27 @@ public class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public boolean isArray(@NotNull JetType type) {
-        return getArray().equals(type.getConstructor().getDeclarationDescriptor());
+    public static boolean isArray(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.array);
     }
 
-    public boolean isPrimitiveArray(@NotNull JetType type) {
-        return jetArrayTypeToPrimitiveJetType.containsKey(TypeUtils.makeNotNullable(type));
+    public static boolean isPrimitiveArray(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && FQ_NAMES.primitiveArrays.contains(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isPrimitiveType(@NotNull JetType type) {
-        return primitiveJetTypeToJetArrayType.containsKey(type);
+    public static boolean isPrimitiveType(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return !type.isMarkedNullable() && descriptor != null && FQ_NAMES.primitiveTypes.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     // Functions
 
-    public boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
         return isFunctionType(type) || isExtensionFunctionType(type);
     }
 
-    public boolean isFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionType(@NotNull JetType type) {
         if (isExactFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -738,7 +769,7 @@ public class KotlinBuiltIns {
         return false;
     }
 
-    public boolean isExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExtensionFunctionType(@NotNull JetType type) {
         if (isExactExtensionFunctionType(type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
@@ -748,16 +779,16 @@ public class KotlinBuiltIns {
         return false;
     }
 
-    public boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
         return isExactFunctionType(type) || isExactExtensionFunctionType(type);
     }
 
-    public boolean isExactFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, fqNames.functionClasses);
+    public static boolean isExactFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, FQ_NAMES.functionClasses);
     }
 
-    public boolean isExactExtensionFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, fqNames.extensionFunctionClasses);
+    public static boolean isExactExtensionFunctionType(@NotNull JetType type) {
+        return isTypeConstructorFqNameInSet(type, FQ_NAMES.extensionFunctionClasses);
     }
 
     private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull Set<FqNameUnsafe> classes) {
@@ -770,7 +801,7 @@ public class KotlinBuiltIns {
     }
 
     @Nullable
-    public JetType getReceiverType(@NotNull JetType type) {
+    public static JetType getReceiverType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type) : type;
         if (isExtensionFunctionType(type)) {
             return type.getArguments().get(0).getType();
@@ -779,7 +810,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
+    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(parameterTypes.size());
@@ -795,14 +826,14 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
+    public static JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
 
     @NotNull
-    public List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
+    public static List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
@@ -816,65 +847,76 @@ public class KotlinBuiltIns {
 
     // Recognized & special
 
-    public boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
+    private static boolean isConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && fqName.equals(DescriptorUtils.getFqName(descriptor));
+    }
+
+    private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+        return !type.isMarkedNullable() && isConstructedFromGivenClass(type, fqName);
+    }
+
+    public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
         FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
-        return fqNames.any.equals(fqName) || fqNames.nothing.equals(fqName);
+        return FQ_NAMES.any.equals(fqName) || FQ_NAMES.nothing.equals(fqName);
     }
 
-    public boolean isAny(@NotNull ClassDescriptor descriptor) {
-        return fqNames.any.equals(DescriptorUtils.getFqName(descriptor));
+    public static boolean isAny(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.any.equals(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isNothing(@NotNull JetType type) {
+    public static boolean isNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isNullable();
+               && !type.isMarkedNullable();
     }
 
-    public boolean isNullableNothing(@NotNull JetType type) {
+    public static boolean isNullableNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
-               && type.isNullable();
+               && type.isMarkedNullable();
     }
 
-    public boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        return type.getConstructor() == getNothing().getTypeConstructor();
+    public static boolean isNothingOrNullableNothing(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.nothing);
     }
 
-    public boolean isAnyOrNullableAny(@NotNull JetType type) {
-        return type.getConstructor() == getAny().getTypeConstructor();
+    public static boolean isAnyOrNullableAny(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.any);
     }
 
-    public boolean isUnit(@NotNull JetType type) {
-        return type.equals(getUnitType());
+    public static boolean isUnit(@NotNull JetType type) {
+        return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
 
-    public boolean isString(@Nullable JetType type) {
-        return getStringType().equals(type);
+    public boolean isBooleanOrSubtype(@NotNull JetType type) {
+        return JetTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
     }
 
-    public boolean isCloneable(@NotNull ClassDescriptor descriptor) {
-        return fqNames.cloneable.equals(DescriptorUtils.getFqName(descriptor));
+    public static boolean isString(@Nullable JetType type) {
+        return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
-    public boolean isData(@NotNull ClassDescriptor classDescriptor) {
-        return containsAnnotation(classDescriptor, getDataClassAnnotation());
+    public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
+        return FQ_NAMES.cloneable.equals(DescriptorUtils.getFqName(descriptor));
     }
 
-    public boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
+    public static boolean isData(@NotNull ClassDescriptor classDescriptor) {
+        return containsAnnotation(classDescriptor, FQ_NAMES.data);
     }
 
-    public boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
+    public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated);
     }
 
-    public boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
-        ClassifierDescriptor classifier = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        return classifier != null && fqNames.suppress.equals(DescriptorUtils.getFqName(classifier));
+    public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
     }
 
-    static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
-        FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
-        return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
+    public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
+        return isConstructedFromGivenClass(annotationDescriptor.getType(), FQ_NAMES.suppress);
+    }
+
+    static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
+        return descriptor.getOriginal().getAnnotations().findAnnotation(annotationClassFqName) != null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

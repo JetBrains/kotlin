@@ -71,16 +71,12 @@ public class DescriptorResolver {
         MODIFIERS_ILLEGAL_ON_PARAMETERS.remove(JetTokens.VARARG_KEYWORD);
     }
 
-    @NotNull
     private TypeResolver typeResolver;
-    @NotNull
     private AnnotationResolver annotationResolver;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
-    @NotNull
     private DelegatedPropertyResolver delegatedPropertyResolver;
-    @NotNull
     private StorageManager storageManager;
+    private KotlinBuiltIns builtIns;
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -105,6 +101,11 @@ public class DescriptorResolver {
     @Inject
     public void setStorageManager(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
+    }
+
+    @Inject
+    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
     }
 
     public void resolveMutableClassDescriptor(
@@ -178,7 +179,7 @@ public class DescriptorResolver {
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
-            supertypes.add(0, KotlinBuiltIns.getInstance().getEnumType(classDescriptor.getDefaultType()));
+            supertypes.add(0, builtIns.getEnumType(classDescriptor.getDefaultType()));
         }
 
         if (supertypes.isEmpty()) {
@@ -219,9 +220,9 @@ public class DescriptorResolver {
             }
         }
         else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
-            return KotlinBuiltIns.getInstance().getAnnotationType();
+            return builtIns.getAnnotationType();
         }
-        return KotlinBuiltIns.getInstance().getAnyType();
+        return builtIns.getAnyType();
     }
 
     public Collection<JetType> resolveDelegationSpecifiers(
@@ -238,9 +239,15 @@ public class DescriptorResolver {
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
-                result.add(resolver.resolveType(extensibleScope, typeReference, trace, checkBounds));
-                JetTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
-                checkProjectionsInImmediateArguments(trace, bareSuperType);
+                JetType supertype = resolver.resolveType(extensibleScope, typeReference, trace, checkBounds);
+                if (TypesPackage.isDynamic(supertype)) {
+                    trace.report(DYNAMIC_SUPERTYPE.on(typeReference));
+                }
+                else {
+                    result.add(supertype);
+                    JetTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
+                    checkProjectionsInImmediateArguments(trace, bareSuperType);
+                }
             }
             else {
                 result.add(ErrorUtils.createErrorType("No type reference"));
@@ -344,7 +351,7 @@ public class DescriptorResolver {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
         }
         else if (function.hasBlockBody()) {
-            returnType = KotlinBuiltIns.getInstance().getUnitType();
+            returnType = builtIns.getUnitType();
         }
         else {
             if (function.hasBody()) {
@@ -548,7 +555,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private static ValueParameterDescriptorImpl resolveValueParameterDescriptor(
+    private ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,
             Annotations annotations
@@ -576,12 +583,12 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private static JetType getVarargParameterType(@NotNull JetType elementType) {
-        JetType primitiveArrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+    private JetType getVarargParameterType(@NotNull JetType elementType) {
+        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
-        return KotlinBuiltIns.getInstance().getArrayType(Variance.INVARIANT, elementType);
+        return builtIns.getArrayType(Variance.INVARIANT, elementType);
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
@@ -730,12 +737,12 @@ public class DescriptorResolver {
             @NotNull TypeParameterDescriptor parameter,
             @NotNull JetTypeParameter typeParameter
     ) {
-        if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
+        if (KotlinBuiltIns.isNothing(parameter.getUpperBoundsAsType())) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
         }
 
         JetType classObjectType = parameter.getClassObjectType();
-        if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
+        if (classObjectType != null && KotlinBuiltIns.isNothing(classObjectType)) {
             trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }
@@ -790,6 +797,9 @@ public class DescriptorResolver {
             else {
                 trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
             }
+        }
+        if (TypesPackage.isDynamic(upperBoundType)) {
+            trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
         }
     }
 
@@ -880,7 +890,7 @@ public class DescriptorResolver {
 
     private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
-        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
+        if (getter == null && !Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
             getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
             getter.initialize(propertyDescriptor.getType());
         }
@@ -1135,7 +1145,7 @@ public class DescriptorResolver {
         boolean isLocal = DescriptorUtils.isLocal(descriptor);
         Visibility visibility = descriptor.getVisibility();
         boolean transformNeeded = !isLocal && !visibility.isPublicAPI()
-                                  && !(definedInClass && Visibilities.PRIVATE.equals(visibility));
+                                  && !(definedInClass && Visibilities.isPrivate(visibility));
         if (transformNeeded) {
             if (type.getConstructor().getSupertypes().size() == 1) {
                 assert type.getArguments().isEmpty() : "Object expression couldn't have any type parameters!";
@@ -1366,7 +1376,7 @@ public class DescriptorResolver {
         List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
 
         // A type reference from Kotlin code can yield a flexible type only if it's `ft<T1, T2>`, whose bounds should not be checked
-        if (TypesPackage.isFlexible(type)) {
+        if (TypesPackage.isFlexible(type) && !TypesPackage.isDynamic(type)) {
             assert jetTypeArguments.size() == 2
                     : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
                       + JetPsiUtil.getElementTextWithContext(typeReference);

@@ -78,6 +78,8 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);
 
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
+    JetPlaceHolderStubElementType<JetDynamicType> DYNAMIC_TYPE =
+            new JetPlaceHolderStubElementType<JetDynamicType>("DYNAMIC_TYPE", JetDynamicType.class);
 
     JetPlaceHolderStubElementType<JetFunctionType> FUNCTION_TYPE =
             new JetPlaceHolderStubElementType<JetFunctionType>("FUNCTION_TYPE", JetFunctionType.class);
@@ -115,7 +117,7 @@ public interface JetStubElementTypes {
 
     TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS, THIS_CALL);
 
-    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE);
+    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE);
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 }

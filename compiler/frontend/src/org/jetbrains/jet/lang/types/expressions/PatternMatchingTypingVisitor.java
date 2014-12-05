@@ -283,18 +283,23 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
         PossiblyBareType possiblyBareTarget = components.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
-        JetType type = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace);
-        if (!subjectType.isNullable() && type.isNullable()) {
+        JetType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace);
+
+        if (TypesPackage.isDynamic(targetType)) {
+            context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
+        }
+
+        if (!subjectType.isMarkedNullable() && targetType.isMarkedNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();
             assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();
             JetNullableType nullableType = (JetNullableType) element;
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(nullableType));
         }
-        checkTypeCompatibility(context, type, subjectType, typeReferenceAfterIs);
-        if (CastDiagnosticsUtil.isCastErased(subjectType, type, JetTypeChecker.DEFAULT)) {
-            context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, type));
+        checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs);
+        if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, JetTypeChecker.DEFAULT)) {
+            context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType));
         }
-        return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, type), context.dataFlowInfo);
+        return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, targetType), context.dataFlowInfo);
     }
 
     private static DataFlowInfos noChange(ExpressionTypingContext context) {
@@ -320,7 +325,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // check if the pattern is essentially a 'null' expression
-        if (KotlinBuiltIns.getInstance().isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
+        if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn));
         }
     }

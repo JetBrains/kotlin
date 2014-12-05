@@ -35,9 +35,6 @@ import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultArgumentsRefl
 import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparingTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
@@ -82,7 +79,7 @@ import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteCon
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil
-import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRendererTest
+import org.jetbrains.jet.resolve.AbstractAdditionalResolveDescriptorRendererTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
@@ -108,7 +105,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractKotlinEvaluateExpressi
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
-import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
+import org.jetbrains.jet.plugin.stubs.AbstractResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
@@ -131,6 +128,10 @@ import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTes
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
+import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest
+import org.jetbrains.jet.types.AbstractJetTypeBindingTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -145,6 +146,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {
             model("diagnostics/testsWithStdLib")
+        }
+
+        testClass(javaClass<AbstractJetDiagnosticsTestWithJsStdLib>()) {
+            model("diagnostics/testsWithJsStdLib")
         }
 
         testClass(javaClass<AbstractResolveTest>()) {
@@ -238,17 +243,8 @@ fun main(args: Array<String>) {
             model("compileKotlinAgainstKotlin", extension = "A.kt")
         }
 
-        testClass(javaClass<AbstractLazyResolveDescriptorRendererTest>()) {
+        testClass(javaClass<AbstractDescriptorRendererTest>()) {
             model("renderer")
-        }
-
-        testClass(javaClass<AbstractLazyResolveTest>()) {
-            model("resolve/imports", recursive = false, extension = "resolve")
-        }
-
-        testClass(javaClass<AbstractLazyResolveRecursiveComparingTest>()) {
-            model("loadJava/compiledKotlin")
-            model("lazyResolve/recursiveComparator")
         }
 
         testClass(javaClass<AbstractModuleXmlParserTest>()) {
@@ -294,6 +290,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlinLightClassTest>()) {
             model("asJava/lightClasses")
         }
+
+        testClass(javaClass<AbstractJetTypeBindingTest>()) {
+            model("type/binding")
+        }
     }
 
     testGroup("idea/tests", "idea/testData") {
@@ -302,7 +302,7 @@ fun main(args: Array<String>) {
             model("typeSubstitution", extension = "java")
         }
 
-        testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
+        testClass(javaClass<AbstractAdditionalResolveDescriptorRendererTest>()) {
             model("resolve/additionalLazyResolve")
         }
 
@@ -364,6 +364,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractCompletionCharFilterTest>()) {
             model("completion/handlers/charFilter")
+        }
+
+        testClass(javaClass<AbstractCodeFragmentCompletionHandlerTest>()) {
+            model("completion/handlers/runtimeCast")
         }
 
         testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
@@ -636,7 +640,7 @@ fun main(args: Array<String>) {
     }
 
     testGroup("idea/tests", "compiler/testData") {
-        testClass(javaClass<AbstractLazyResolveByStubTest>()) {
+        testClass(javaClass<AbstractResolveByStubTest>()) {
             model("loadJava/compiledKotlin")
         }
     }

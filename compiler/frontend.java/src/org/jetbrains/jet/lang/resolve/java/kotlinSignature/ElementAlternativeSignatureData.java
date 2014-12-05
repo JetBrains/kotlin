@@ -91,7 +91,7 @@ public abstract class ElementAlternativeSignatureData {
             @Nullable JetTypeReference altReturnTypeReference,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters) {
         if (altReturnTypeReference == null) {
-            if (KotlinBuiltIns.getInstance().isUnit(originalType)) {
+            if (KotlinBuiltIns.isUnit(originalType)) {
                 return originalType;
             }
             else {

@@ -118,7 +118,7 @@ class LazyJavaClassDescriptor(
                         supertype ->
                         c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
                     }
-                    .filter { supertype -> !supertype.isError() && !KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertype) }
+                    .filter { supertype -> !supertype.isError() && !KotlinBuiltIns.isAnyOrNullableAny(supertype) }
                     .toList()
                     .ifEmpty {
                         listOf(KotlinBuiltIns.getInstance().getAnyType())

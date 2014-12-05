@@ -242,7 +242,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             ValueParameterDescriptor parameter =
                     DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
             if (parameter != null) {
-                CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
+                CompileTimeConstant<?> valueArgument = descriptor.getAllValueArguments().get(parameter);
                 if (valueArgument != null) {
                     Object value = valueArgument.getValue();
                     if (value instanceof String) {

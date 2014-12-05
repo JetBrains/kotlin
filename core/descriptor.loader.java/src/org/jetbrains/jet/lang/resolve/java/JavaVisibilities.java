@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 public class JavaVisibilities {
     private JavaVisibilities() {
@@ -26,14 +27,14 @@ public class JavaVisibilities {
 
     public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return areInSamePackage(what, from);
         }
 
         @Override
         protected Integer compareTo(@NotNull Visibility visibility) {
             if (this == visibility) return 0;
-            if (visibility == Visibilities.PRIVATE) return 1;
+            if (Visibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 
@@ -51,7 +52,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
         @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }
@@ -66,7 +67,7 @@ public class JavaVisibilities {
             if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
                 return true;
             }
-            return isVisible(what, fromClass.getContainingDeclaration());
+            return isVisible(receiver, what, fromClass.getContainingDeclaration());
         }
 
         @Override
@@ -83,7 +84,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
         @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }
@@ -97,14 +98,14 @@ public class JavaVisibilities {
             if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
                 return true;
             }
-            return isVisible(what, fromClass.getContainingDeclaration());
+            return isVisible(receiver, what, fromClass.getContainingDeclaration());
         }
 
         @Override
         protected Integer compareTo(@NotNull Visibility visibility) {
             if (this == visibility) return 0;
             if (visibility == Visibilities.INTERNAL) return null;
-            if (visibility == Visibilities.PRIVATE) return 1;
+            if (Visibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 

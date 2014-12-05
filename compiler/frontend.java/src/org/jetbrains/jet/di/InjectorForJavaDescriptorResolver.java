@@ -33,15 +33,14 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitialize
 import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSourceElementFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolverPostConstruct;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader;
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage;
-import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader;
+import org.jetbrains.jet.lang.resolve.kotlin.BinaryClassAnnotationAndConstantLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -66,15 +65,14 @@ public class InjectorForJavaDescriptorResolver {
     private final SamConversionResolverImpl samConversionResolver;
     private final JavaSourceElementFactoryImpl javaSourceElementFactory;
     private final SingleModuleClassResolver singleModuleClassResolver;
+    private final JavaDescriptorResolverPostConstruct javaDescriptorResolverPostConstruct;
     private final VirtualFileFinder virtualFileFinder;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final JavaClassDataFinder javaClassDataFinder;
-    private final AnnotationDescriptorLoader annotationDescriptorLoader;
-    private final DescriptorLoadersStorage descriptorLoadersStorage;
-    private final ConstantDescriptorLoader constantDescriptorLoader;
+    private final BinaryClassAnnotationAndConstantLoaderImpl binaryClassAnnotationAndConstantLoader;
 
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
@@ -101,12 +99,12 @@ public class InjectorForJavaDescriptorResolver {
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);
+        this.javaDescriptorResolverPostConstruct = new JavaDescriptorResolverPostConstruct();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.descriptorLoadersStorage = new DescriptorLoadersStorage(lockBasedStorageManager, getModule());
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(getModule(), descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
-        this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
-        this.deserializationComponentsForJava = new DeserializationComponentsForJava(lockBasedStorageManager, getModule(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModule(), lockBasedStorageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(lockBasedStorageManager, getModule(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
+        this.javaClassFinder.setComponentPostConstruct(javaDescriptorResolverPostConstruct);
         this.javaClassFinder.setProject(project);
         this.javaClassFinder.setScope(globalSearchScope);
 
@@ -123,9 +121,15 @@ public class InjectorForJavaDescriptorResolver {
 
         singleModuleClassResolver.setResolver(javaDescriptorResolver);
 
+        javaDescriptorResolverPostConstruct.setModule(module);
+        javaDescriptorResolverPostConstruct.setProject(project);
+        javaDescriptorResolverPostConstruct.setTrace(bindingTrace);
+
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava);
 
         javaClassFinder.initialize();
+
+        javaDescriptorResolverPostConstruct.postCreate();
 
     }
 

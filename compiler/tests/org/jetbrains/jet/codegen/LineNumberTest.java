@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
@@ -53,8 +54,11 @@ public class LineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private JetCoreEnvironment createEnvironment() {
-        return JetCoreEnvironment.createForTests(myTestRootDisposable, JetTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
+        return JetCoreEnvironment.createForTests(
+                myTestRootDisposable,
+                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                                                           JetTestUtils.getAnnotationsJar(), tmpdir),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override

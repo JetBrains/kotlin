@@ -16,7 +16,20 @@
 
 package org.jetbrains.k2js
 
-public enum class PredefinedAnnotation(public val fqName: String) {
+import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.resolve.name.FqName
+
+public enum class PredefinedAnnotation(fqName: String) {
     LIBRARY : PredefinedAnnotation("kotlin.js.library")
     NATIVE : PredefinedAnnotation("kotlin.js.native")
+    NATIVE_INVOKE : PredefinedAnnotation("kotlin.js.nativeInvoke")
+    NATIVE_GETTER : PredefinedAnnotation("kotlin.js.nativeGetter")
+    NATIVE_SETTER : PredefinedAnnotation("kotlin.js.nativeSetter")
+
+    public val fqName: FqName = FqName(fqName)
+
+    class object {
+        // TODO: replace with straight assignment when KT-5761 will be fixed
+        val WITH_CUSTOM_NAME by Delegates.lazy { setOf(LIBRARY, NATIVE) }
+    }
 }

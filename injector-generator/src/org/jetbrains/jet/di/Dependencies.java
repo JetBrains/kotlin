@@ -128,36 +128,37 @@ public class Dependencies {
 
         Class<?> clazz = type.getClazz();
         if (clazz.isInterface()) {
+            if (initializeAsSingleton(field, type)) return;
             throw new IllegalArgumentException("cannot instantiate interface: " + clazz.getName() + " needed for " + neededFor);
         }
         if (Modifier.isAbstract(clazz.getModifiers())) {
+            if (initializeAsSingleton(field, type)) return;
             throw new IllegalArgumentException("cannot instantiate abstract class: " + clazz.getName() + " needed for " + neededFor);
         }
 
         // Note: projections are not computed here
 
-        if (isKotlinSingletonObject(clazz)) {
-            field.setInitialization(new ObjectInstanceFieldAccess(clazz));
-            return;
+        // Look for constructor
+        List<Constructor<?>> publicConstructors = findPublicConstructors(clazz.getConstructors());
+        if (publicConstructors.size() != 1) {
+            if (initializeAsSingleton(field, type)) return;
+            if (publicConstructors.size() == 0) {
+                throw new IllegalArgumentException("No public constructor: " + clazz.getName() + " needed for " + neededFor);
+            }
+            else {
+                throw new IllegalArgumentException("Too many public constructors in " + clazz.getName() + " needed for " + neededFor);
+            }
         }
 
-        // Look for constructor
-        Constructor<?>[] constructors = clazz.getConstructors();
-        if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
-            throw new IllegalArgumentException("No constructor: " + clazz.getName() + " needed for " + neededFor);
-        }
-        if (constructors.length > 1) {
-            throw new IllegalArgumentException("Too many constructors in " + clazz.getName() + " needed for " + neededFor);
-        }
-        Constructor<?> constructor = constructors[0];
+        Constructor<?> publicConstructor = publicConstructors.get(0);
 
         // Find arguments
-        ConstructorCall dependency = new ConstructorCall(constructor);
-        Type[] parameterTypes = constructor.getGenericParameterTypes();
+        ConstructorCall dependency = new ConstructorCall(publicConstructor);
+        Type[] parameterTypes = publicConstructor.getGenericParameterTypes();
         for (Type parameterType : parameterTypes) {
             Field fieldForParameter = findDependencyOfType(
                     DiType.fromReflectionType(parameterType),
-                    "constructor: " + constructor + ", parameter: " + parameterType,
+                    "constructor: " + publicConstructor + ", parameter: " + parameterType,
                     neededFor.prepend(field)
             );
             used.add(fieldForParameter);
@@ -167,14 +168,48 @@ public class Dependencies {
         field.setInitialization(dependency);
     }
 
-    private static boolean isKotlinSingletonObject(Class<?> clazz) {
+    @NotNull
+    private static List<Constructor<?>> findPublicConstructors(Constructor<?>[] constructors) {
+        List<Constructor<?>> result = new ArrayList<Constructor<?>>();
+        for (Constructor<?> constructor : constructors) {
+            if (Modifier.isPublic(constructor.getModifiers())) {
+                result.add(constructor);
+            }
+        }
+        return result;
+    }
+
+    private static boolean initializeAsSingleton(Field field, DiType type) {
+        Class<?> clazz = type.getClazz();
+
+        return initializeBySingletonMethod(field, clazz, "getInstance")
+                || initializeBySingletonField(field, clazz, "INSTANCE")
+                || initializeBySingletonField(field, clazz, "INSTANCE$");
+    }
+
+    private static boolean initializeBySingletonMethod(Field field, Class<?> clazz, String name) {
         try {
-            clazz.getDeclaredField("INSTANCE$");
+            clazz.getMethod(name);
+            field.setInitialization(GetSingleton.byMethod(clazz, name));
+            return true;
+        }
+        catch (NoSuchMethodException e) {
+            // Ignored
+        }
+        return false;
+    }
+
+    private static boolean initializeBySingletonField(Field field, Class<?> clazz, String name) {
+        try {
+            clazz.getField(name);
+            field.setInitialization(GetSingleton.byField(clazz, name));
             return true;
         }
         catch (NoSuchFieldException e) {
-            return false;
+            // Ignored
         }
+
+        return false;
     }
 
     public Collection<Field> satisfyDependencies() {

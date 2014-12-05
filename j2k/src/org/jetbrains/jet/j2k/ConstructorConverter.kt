@@ -344,7 +344,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
     private fun generateArtificialPrimaryConstructor(classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
-        val propertiesToInitialize = classBody.members.filterIsInstance(javaClass<Property>()).filter { it.isVal }
+        val propertiesToInitialize = classBody.members.filterIsInstance<Property>().filter { it.isVal }
         for (function in classBody.factoryFunctions) {
             function.body!!.updateGenerator { (codeConverter, block) ->
                 // 2 cases: secondary constructor either calls another constructor or does not call any

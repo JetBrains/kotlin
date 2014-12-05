@@ -30,8 +30,7 @@ public class TruncatedSemanticWhitespaceAwarePsiBuilder extends SemanticWhitespa
 
     @Override
     public boolean eof() {
-        if (super.eof()) return true;
-        return myEOFPosition >= 0 && getCurrentOffset() >= myEOFPosition;
+        return super.eof() || isOffsetBeyondEof(getCurrentOffset());
     }
 
     @Override
@@ -46,4 +45,35 @@ public class TruncatedSemanticWhitespaceAwarePsiBuilder extends SemanticWhitespa
         return super.getTokenType();
     }
 
+    @Override
+    public IElementType lookAhead(int steps) {
+        if (eof()) return null;
+
+        int rawLookAheadSteps = rawLookAhead(steps);
+        if (isOffsetBeyondEof(rawTokenTypeStart(rawLookAheadSteps))) return null;
+
+        return super.rawLookup(rawLookAheadSteps);
+    }
+
+    private int rawLookAhead(int steps) {
+        // This code reproduces the behavior of PsiBuilderImpl.lookAhead(), but returns a number of raw steps instead of a token type
+        // This is required for implementing truncated builder behavior
+        int cur = 0;
+        while (steps > 0) {
+            cur++;
+
+            IElementType rawTokenType = rawLookup(cur);
+            while (rawTokenType != null && isWhitespaceOrComment(rawTokenType)) {
+                cur++;
+                rawTokenType = rawLookup(cur);
+            }
+
+            steps--;
+        }
+        return cur;
+    }
+
+    private boolean isOffsetBeyondEof(int offsetFromCurrent) {
+        return myEOFPosition >= 0 && offsetFromCurrent >= myEOFPosition;
+    }
 }

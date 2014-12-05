@@ -54,7 +54,7 @@ private fun getSuperClassesReachableByClassInheritance(
 ): Set<ClassDescriptor> {
     val superClass = getSuperClass(descriptor)
     result.add(superClass)
-    if (!KotlinBuiltIns.getInstance().isAny(superClass)) {
+    if (!KotlinBuiltIns.isAny(superClass)) {
         getSuperClassesReachableByClassInheritance(superClass, result)
     }
     return result

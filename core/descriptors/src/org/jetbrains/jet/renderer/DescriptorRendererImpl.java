@@ -43,7 +43,6 @@ import org.jetbrains.jet.utils.UtilsPackage;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
 
@@ -311,6 +310,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type instanceof LazyType && debugMode) {
             return type.toString();
         }
+        if (TypesPackage.isDynamic(type)) {
+            return "dynamic";
+        }
         if (TypesPackage.isFlexible(type)) {
             if (debugMode) {
                 return renderFlexibleTypeWithBothBounds(TypesPackage.flexibility(type).getLowerBound(),
@@ -357,7 +359,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private boolean shouldRenderAsPrettyFunctionType(@NotNull JetType type) {
-        return KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes;
+        return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes;
     }
 
     @NotNull
@@ -443,7 +445,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             sb.append(renderTypeName(type.getConstructor()));
         }
         sb.append(renderTypeArguments(type.getArguments()));
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             sb.append("?");
         }
         return sb.toString();
@@ -481,18 +483,18 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderFunctionType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
-        JetType receiverType = KotlinBuiltIns.getInstance().getReceiverType(type);
+        JetType receiverType = KotlinBuiltIns.getReceiverType(type);
         if (receiverType != null) {
             sb.append(renderNormalizedType(receiverType));
             sb.append(".");
         }
 
         sb.append("(");
-        appendTypeProjections(KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), sb);
+        appendTypeProjections(KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type), sb);
         sb.append(") ").append(arrow()).append(" ");
-        sb.append(renderNormalizedType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
+        sb.append(renderNormalizedType(KotlinBuiltIns.getReturnTypeFromFunctionType(type)));
 
-        if (type.isNullable()) {
+        if (type.isMarkedNullable()) {
             return "(" + sb + ")?";
         }
         return sb.toString();
@@ -671,7 +673,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (typeParameter.isReified()) {
             builder.append(renderKeyword("reified")).append(" ");
         }
-        String variance = typeParameter.getVariance().toString();
+        String variance = typeParameter.getVariance().getLabel();
         if (!variance.isEmpty()) {
             builder.append(renderKeyword(variance)).append(" ");
         }
@@ -752,7 +754,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderReceiverAfterName(function, builder);
 
         JetType returnType = function.getReturnType();
-        if (unitReturnType || (returnType == null || !KotlinBuiltIns.getInstance().isUnit(returnType))) {
+        if (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType))) {
             builder.append(": ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
         }
 
@@ -962,7 +964,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             Collection<JetType> supertypes = klass.getTypeConstructor().getSupertypes();
 
             if (supertypes.isEmpty() ||
-                supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertypes.iterator().next())) {
+                supertypes.size() == 1 && KotlinBuiltIns.isAnyOrNullableAny(supertypes.iterator().next())) {
             }
             else {
                 renderSpaceIfNeeded(builder);

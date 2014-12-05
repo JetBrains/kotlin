@@ -108,6 +108,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+        if (substitutor.isEmpty()) return this;
         throw new UnsupportedOperationException(); // TODO
     }
 

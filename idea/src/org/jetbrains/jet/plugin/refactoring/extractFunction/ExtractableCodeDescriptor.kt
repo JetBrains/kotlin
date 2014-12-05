@@ -290,11 +290,11 @@ data class ControlFlow(
 ) {
     val outputValueBoxer = boxerFactory(outputValues)
 
-    val defaultOutputValue: ExpressionValue? = with(outputValues.filterIsInstance(javaClass<ExpressionValue>())) {
+    val defaultOutputValue: ExpressionValue? = with(outputValues.filterIsInstance<ExpressionValue>()) {
         if (size > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
     }
 
-    val jumpOutputValue: Jump? = with(outputValues.filterIsInstance(javaClass<Jump>())) {
+    val jumpOutputValue: Jump? = with(outputValues.filterIsInstance<Jump>()) {
         when {
             isEmpty() ->
                 null

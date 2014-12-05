@@ -33,3 +33,6 @@ val prop9 = "a" + "b"
 
 // val prop10: \"abb\"
 val prop10 = prop9 + "b"
+
+// val prop11: 6
+val prop11 = "kotlin".length()

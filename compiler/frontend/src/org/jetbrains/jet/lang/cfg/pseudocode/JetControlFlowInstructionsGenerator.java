@@ -486,7 +486,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                     resolvedCall,
                     receiverValues,
                     arguments,
-                    returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType) ? null : valueFactory
+                    returnType != null && KotlinBuiltIns.isNothing(returnType) ? null : valueFactory
             );
             add(instruction);
             return instruction;

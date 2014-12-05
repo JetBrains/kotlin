@@ -139,6 +139,12 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
         return null;
     }
 
+    @NotNull
+    @Override
+    public List<JetParameter> getValueParameters() {
+        return Collections.emptyList();
+    }
+
     @Nullable
     @Override
     public JetTypeReference getReceiverTypeReference() {

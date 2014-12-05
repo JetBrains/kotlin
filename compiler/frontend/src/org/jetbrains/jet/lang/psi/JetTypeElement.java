@@ -32,6 +32,7 @@ public interface JetTypeElement extends JetElement {
         }
     };
 
+    // may contain null
     @NotNull
     List<JetTypeReference> getTypeArgumentsAsTypes();
 }

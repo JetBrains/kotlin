@@ -17,12 +17,9 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
@@ -31,39 +28,42 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
+@Deprecated
 public class TopDownAnalyzer {
 
-    @NotNull
-    private BindingTrace trace;
-    @NotNull
+    @SuppressWarnings("NullableProblems") @NotNull
     private DeclarationResolver declarationResolver;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private TypeHierarchyResolver typeHierarchyResolver;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private OverrideResolver overrideResolver;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
+    private VarianceChecker varianceChecker;
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private OverloadResolver overloadResolver;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private ModuleDescriptor moduleDescriptor;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private MutablePackageFragmentProvider packageFragmentProvider;
-    @NotNull
+
+    @SuppressWarnings("NullableProblems") @NotNull
     private BodyResolver bodyResolver;
-    @NotNull
-    private AdditionalCheckerProvider additionalCheckerProvider;
-    @NotNull
-    private Project project;
 
-    @NotNull
-    private LazyTopDownAnalyzer lazyTopDownAnalyzer;
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
+    public TopDownAnalyzer() {
     }
 
     @Inject
@@ -79,6 +79,11 @@ public class TopDownAnalyzer {
     @Inject
     public void setOverrideResolver(@NotNull OverrideResolver overrideResolver) {
         this.overrideResolver = overrideResolver;
+    }
+
+    @Inject
+    public void setVarianceChecker(@NotNull VarianceChecker varianceChecker) {
+        this.varianceChecker = varianceChecker;
     }
 
     @Inject
@@ -101,21 +106,6 @@ public class TopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
-    @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
-    }
-
-    @Inject
-    public void setLazyTopDownAnalyzer(@NotNull LazyTopDownAnalyzer lazyTopDownAnalyzer) {
-        this.lazyTopDownAnalyzer = lazyTopDownAnalyzer;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(@NotNull AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
-    }
-
     public void doProcess(
             @NotNull TopDownAnalysisContext c,
             @NotNull JetScope outerScope,
@@ -128,6 +118,7 @@ public class TopDownAnalyzer {
         typeHierarchyResolver.process(c, outerScope, owner, declarations);
         declarationResolver.process(c);
         overrideResolver.process(c);
+        varianceChecker.process(c);
         lockScopes(c);
 
         overloadResolver.process(c);
@@ -137,17 +128,8 @@ public class TopDownAnalyzer {
         }
 
         c.debug("Exit");
+        //noinspection UseOfSystemOutOrSystemErr
         c.printDebugOutput(System.out);
-    }
-
-    private static Collection<JetFile> getFiles(Collection<? extends PsiElement> declarations) {
-        return new LinkedHashSet<JetFile>(KotlinPackage.map(declarations, new Function1<PsiElement, JetFile>() {
-            @Nullable
-            @Override
-            public JetFile invoke(PsiElement element) {
-                return (JetFile) element.getContainingFile();
-            }
-        }));
     }
 
     private void lockScopes(@NotNull TopDownAnalysisContext c) {
@@ -185,10 +167,8 @@ public class TopDownAnalyzer {
             @NotNull Collection<JetFile> files,
             @NotNull List<PackageFragmentProvider> additionalProviders
     ) {
-        if (topDownAnalysisParameters.isLazy()) {
-            return lazyTopDownAnalyzer.analyzeFiles(
-                    project, topDownAnalysisParameters, files, additionalProviders, additionalCheckerProvider);
-        }
+        //noinspection deprecation
+        assert !topDownAnalysisParameters.isLazy() : "Lazy resolve must be disabled for this method";
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
         CompositePackageFragmentProvider provider =
@@ -208,7 +188,6 @@ public class TopDownAnalyzer {
     public MutablePackageFragmentProvider getPackageFragmentProvider() {
         return packageFragmentProvider;
     }
-
 }
 
 

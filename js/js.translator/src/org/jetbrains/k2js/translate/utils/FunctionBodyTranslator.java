@@ -100,7 +100,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     private boolean mustAddReturnToGeneratedFunctionBody() {
         JetType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.getInstance().isUnit(functionReturnType));
+        return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.isUnit(functionReturnType));
     }
 
     @NotNull

@@ -40,14 +40,14 @@ public class NameSerializationUtil {
     }
 
     public static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
-        serializeNameTable(out, nameResolver.getStringTable(), nameResolver.getQualifiedNameTable());
+        serializeStringTable(out, nameResolver.getStringTable(), nameResolver.getQualifiedNameTable());
     }
 
-    public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) {
-        serializeNameTable(out, toStringTable(nameTable), toQualifiedNameTable(nameTable));
+    public static void serializeStringTable(@NotNull OutputStream out, @NotNull StringTable stringTable) {
+        serializeStringTable(out, toStringTable(stringTable), toQualifiedNameTable(stringTable));
     }
 
-    private static void serializeNameTable(
+    private static void serializeStringTable(
             @NotNull OutputStream out,
             @NotNull ProtoBuf.StringTable stringTable,
             @NotNull ProtoBuf.QualifiedNameTable qualifiedNameTable
@@ -62,25 +62,25 @@ public class NameSerializationUtil {
     }
 
     @NotNull
-    public static ProtoBuf.StringTable toStringTable(@NotNull NameTable nameTable) {
+    public static ProtoBuf.StringTable toStringTable(@NotNull StringTable stringTable) {
         ProtoBuf.StringTable.Builder simpleNames = ProtoBuf.StringTable.newBuilder();
-        for (String simpleName : nameTable.getStrings()) {
+        for (String simpleName : stringTable.getStrings()) {
             simpleNames.addString(simpleName);
         }
         return simpleNames.build();
     }
 
     @NotNull
-    public static ProtoBuf.QualifiedNameTable toQualifiedNameTable(@NotNull NameTable nameTable) {
+    public static ProtoBuf.QualifiedNameTable toQualifiedNameTable(@NotNull StringTable stringTable) {
         ProtoBuf.QualifiedNameTable.Builder qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder();
-        for (ProtoBuf.QualifiedNameTable.QualifiedName.Builder qName : nameTable.getFqNames()) {
+        for (ProtoBuf.QualifiedNameTable.QualifiedName.Builder qName : stringTable.getFqNames()) {
             qualifiedNames.addQualifiedName(qName);
         }
         return qualifiedNames.build();
     }
 
     @NotNull
-    public static NameResolver createNameResolver(@NotNull NameTable table) {
+    public static NameResolver createNameResolver(@NotNull StringTable table) {
         return new NameResolver(toStringTable(table), toQualifiedNameTable(table));
     }
 }

@@ -19,24 +19,22 @@ package org.jetbrains.k2js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsInvocation
-import java.util.Collections
 import java.util.ArrayList
 import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsNew
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.k2js.translate.general.Translation
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.psi.Call.CallType
 import com.intellij.util.SmartList
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import com.google.dart.compiler.backend.js.ast.JsArrayAccess
+import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.k2js.PredefinedAnnotation
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -140,6 +138,32 @@ object DelegateFunctionIntrinsic : DelegateIntrinsic<FunctionCallInfo> {
     }
 }
 
+abstract class AnnotatedAsNativeXCallCase(val annotation: PredefinedAnnotation) : FunctionCallCase {
+    abstract fun translateCall(receiver: JsExpression, argumentsInfo: CallArgumentTranslator.ArgumentsInfo): JsExpression
+
+    fun canApply(callInfo: FunctionCallInfo): Boolean = AnnotationsUtils.hasAnnotation(callInfo.callableDescriptor, annotation)
+
+    final override fun FunctionCallInfo.dispatchReceiver() = translateCall(dispatchReceiver!!, argumentsInfo)
+    final override fun FunctionCallInfo.extensionReceiver() = translateCall(extensionReceiver!!, argumentsInfo)
+}
+
+object NativeInvokeCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NATIVE_INVOKE) {
+    override fun translateCall(receiver: JsExpression, argumentsInfo: CallArgumentTranslator.ArgumentsInfo) =
+            JsInvocation(receiver, argumentsInfo.getTranslateArguments())
+}
+
+object NativeGetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NATIVE_GETTER) {
+    override fun translateCall(receiver: JsExpression, argumentsInfo: CallArgumentTranslator.ArgumentsInfo) =
+            JsArrayAccess(receiver, argumentsInfo.getTranslateArguments()[0])
+}
+
+object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NATIVE_SETTER) {
+    override fun translateCall(receiver: JsExpression, argumentsInfo: CallArgumentTranslator.ArgumentsInfo): JsExpression {
+        val args = argumentsInfo.getTranslateArguments()
+        return JsAstUtils.assignment(JsArrayAccess(receiver, args[0]), args[1])
+    }
+}
+
 object InvokeIntrinsic : FunctionCallCase {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         if (!callInfo.callableDescriptor.getName().asString().equals("invoke"))
@@ -212,6 +236,14 @@ fun FunctionCallInfo.translateFunctionCall(): JsExpression {
     return when {
         intrinsic != null ->
             intrinsic
+
+        NativeInvokeCallCase.canApply(this) ->
+            NativeInvokeCallCase.translate(this)
+        NativeGetterCallCase.canApply(this) ->
+            NativeGetterCallCase.translate(this)
+        NativeSetterCallCase.canApply(this) ->
+            NativeSetterCallCase.translate(this)
+
         InvokeIntrinsic.canApply(this) ->
             InvokeIntrinsic.translate(this)
         ConstructorCallCase.canApply(this) ->

@@ -26,6 +26,7 @@ public interface JetDeclarationWithBody extends JetDeclaration {
     @Nullable
     JetExpression getBodyExpression();
 
+    @Override
     @Nullable
     String getName();
 

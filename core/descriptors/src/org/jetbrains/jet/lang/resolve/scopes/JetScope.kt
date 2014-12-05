@@ -178,7 +178,6 @@ public class DescriptorKindFilter(
                 .filterNotNull()
                 .toReadOnlyList()
 
-        [suppress("NOTHING_TO_INLINE")]
         private inline fun <reified T> staticFields() = javaClass<T>().getFields().filter { Modifier.isStatic(it.getModifiers()) }
     }
 }

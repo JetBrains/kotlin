@@ -10,5 +10,5 @@ class Foo {
 fun main(args: Array<String>) {
     val a = Foo()
     val s = a.b
-    doSomething(if (s != null) s.length else null)
+    doSomething(if (s != null) s.length() else null)
 }

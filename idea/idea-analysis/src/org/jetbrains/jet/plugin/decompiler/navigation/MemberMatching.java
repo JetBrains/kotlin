@@ -97,6 +97,11 @@ public class MemberMatching {
                 assert innerType != null : "No inner type: " + nullableType;
                 return innerType.accept(this, null);
             }
+
+            @Override
+            public String visitDynamicType(@NotNull JetDynamicType type, Void data) {
+                return "dynamic";
+            }
         }, null);
     }
 

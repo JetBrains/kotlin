@@ -37,7 +37,7 @@ public fun PsiElement.canDeleteElement(): Boolean {
     if (isObjectLiteral()) return false
 
     if (this is JetParameter) {
-        val declaration = getParentByType(javaClass<JetDeclaration>(), true)
+        val declaration = getStrictParentOfType<JetDeclaration>()
         return declaration != null && !(declaration is JetPropertyAccessor && declaration.isSetter())
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.HashMap
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetExpression
 import com.intellij.psi.PsiElement
@@ -59,6 +59,8 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.Stron
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.psi.psiUtil.parents
 import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
@@ -107,7 +109,7 @@ fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNam
             object: JetTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                     val offset = expression.getTextRange()!!.getStartOffset() - fromOffset
-                    val newExpression = to.findElementAt(offset)?.getParentByType(javaClass<JetSimpleNameExpression>())
+                    val newExpression = to.findElementAt(offset)?.getNonStrictParentOfType<JetSimpleNameExpression>()
                     assert(newExpression!= null, "Couldn't find expression at $offset in '${to.getText()}'")
 
                     map[expression] = newExpression!!
@@ -200,7 +202,7 @@ private fun makeCall(
     fun insertCall(anchor: PsiElement, wrappedCall: JetExpression) {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is JetExpression } as? JetExpression
         if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
+            val functionLiteralArgument = firstExpression?.getStrictParentOfType<JetFunctionLiteralArgument>()!!
             functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
             return
         }
@@ -402,7 +404,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
          * before calls/types themselves
          */
         for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
-            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(javaClass<JetSimpleNameExpression>())
+            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<JetSimpleNameExpression>()
             assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
             originalOffsetByExpr[expr!!] = offsetInBody
@@ -422,7 +424,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
             replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
             expressionsToReplaceWithReturn = jumpValue.elementsToReplace.map { jumpElement ->
                 val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - extractionData.originalStartOffset!!
-                val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(jumpElement.javaClass)
+                val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(jumpElement.javaClass)
                 assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
                 expr!!

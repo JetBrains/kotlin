@@ -1,0 +1,17 @@
+package
+
+internal var kotlin.Any.onAnyVar: kotlin.Int
+internal var dynamic.onDynamicVar: kotlin.Int
+internal var kotlin.Any?.onNullableAnyVar: kotlin.Int
+internal var kotlin.String.onStringVar: kotlin.Int
+internal fun test(/*0*/ d: dynamic): kotlin.Unit
+
+internal final class C {
+    public constructor C()
+    internal final var memberVar: kotlin.Int
+    internal final var kotlin.Any.memberExtensionVar: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(/*0*/ d: dynamic): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

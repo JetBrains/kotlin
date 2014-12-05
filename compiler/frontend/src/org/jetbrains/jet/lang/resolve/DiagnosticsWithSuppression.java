@@ -232,7 +232,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
                 builder.addAll(suppressStringProvider.get(annotationDescriptor));
             }
 
-            if (!KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) continue;
+            if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) continue;
 
             // We only add strings and skip other values to facilitate recovery in presence of erroneous code
             for (CompileTimeConstant<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {

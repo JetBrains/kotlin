@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.HashMultimap
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
@@ -35,8 +34,8 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
     protected class Index {
         // This mutable state is only modified under inside the computable
         val allDeclarations = ArrayList<JetDeclaration>()
-        val functions = HashMultimap.create<Name, JetNamedFunction>()
-        val properties = HashMultimap.create<Name, JetProperty>()
+        val functions = ArrayListMultimap.create<Name, JetNamedFunction>()
+        val properties = ArrayListMultimap.create<Name, JetProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, JetClassLikeInfo>() // order matters here
 
         public fun putToIndex(declaration: JetDeclaration) {

@@ -18,6 +18,8 @@ package org.jetbrains.jet.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.InTextDirectivesUtils
+import com.intellij.openapi.util.io.FileUtil
+import java.io.File
 
 public abstract class AbstractCompletionHandlerTest() : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
@@ -28,9 +30,9 @@ public abstract class AbstractCompletionHandlerTest() : CompletionHandlerTestBas
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
 
     protected fun doTest(testPath: String) {
-        fixture.configureByFile(testPath)
+        setUpFixture(testPath)
 
-        val fileText = fixture.getFile()!!.getText()
+        val fileText = FileUtil.loadFile(File(testPath))
         val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
         val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
         val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
@@ -52,6 +54,10 @@ public abstract class AbstractCompletionHandlerTest() : CompletionHandlerTestBas
         }
 
         doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar)
+    }
+
+    protected open fun setUpFixture(testPath: String) {
+        fixture.configureByFile(testPath)
     }
 
     protected abstract val defaultCompletionType: CompletionType

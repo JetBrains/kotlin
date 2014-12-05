@@ -15,7 +15,6 @@ public class Y extends X<String> {
 // FILE: test.kt
 
 fun main() {
-    Y().foo().length
+    Y().foo().length()
     Y().bar(null)
 }
-

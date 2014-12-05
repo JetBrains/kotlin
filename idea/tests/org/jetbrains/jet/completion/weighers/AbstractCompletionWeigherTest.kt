@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 
 public abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : JetLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        myFixture.configureWithExtraFile(path)
+        myFixture.configureWithExtraFile(path, ".Data", ".Data1", ".Data2", ".Data3")
 
         val text = myFixture.getEditor().getDocument().getText()
 

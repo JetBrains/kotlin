@@ -19,16 +19,14 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -69,8 +67,12 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
         JetExpression callee = expression.getCalleeExpression();
         ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
         if (callee instanceof JetReferenceExpression && resolvedCall != null) {
-            DeclarationDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
+
+            if (TasksPackage.isDynamic(calleeDescriptor)) {
+                JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.DYNAMIC_FUNCTION_CALL);
+            }
+            else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 JetPsiChecker.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
                                                             ? JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL
                                                             : JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
@@ -101,15 +103,14 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             return false;
         }
 
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType defaultType = ((ClassDescriptor) parent).getDefaultType();
 
-        if (builtIns.isFunctionOrExtensionFunctionType(defaultType)) {
+        if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(defaultType)) {
             return true;
         }
 
         for (JetType supertype : TypeUtils.getAllSupertypes(defaultType)) {
-            if (builtIns.isFunctionOrExtensionFunctionType(supertype)) {
+            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype)) {
                 return true;
             }
         }

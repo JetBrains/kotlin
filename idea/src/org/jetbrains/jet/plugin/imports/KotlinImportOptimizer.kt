@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.resolve.name.*
@@ -29,6 +28,7 @@ import org.jetbrains.jet.plugin.references.JetReference
 import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -80,8 +80,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             override fun visitJetElement(element: JetElement) {
-                if (PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null ||
-                    PsiTreeUtil.getParentOfType(element, javaClass<JetPackageDirective>()) != null) {
+                if (element.getStrictParentOfType<JetImportDirective>() != null ||
+                    element.getStrictParentOfType<JetPackageDirective>() != null) {
                     return
                 }
                 val reference = element.getReference()

@@ -109,19 +109,19 @@ public class Intrinsics {
         throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
     }
 
-    public static void reifyNewArray(int parameterTypeIndex) {
+    public static void reifyNewArray(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
-    public static void reifyCheckcast(int parameterTypeIndex) {
+    public static void reifyCheckcast(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
-    public static void reifyInstanceof(int parameterTypeIndex) {
+    public static void reifyInstanceof(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
-    public static void reifyJavaClass(int parameterTypeIndex) {
+    public static void reifyJavaClass(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 

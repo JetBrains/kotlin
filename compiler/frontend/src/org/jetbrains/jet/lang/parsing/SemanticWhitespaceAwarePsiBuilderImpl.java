@@ -19,9 +19,12 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.PsiBuilderAdapter;
+import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import com.intellij.util.containers.Stack;
@@ -35,10 +38,36 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
 
+    private final PsiBuilderImpl delegateImpl;
+
     public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate) {
         super(delegate);
         newlinesEnabled.push(true);
         joinComplexTokens.push(true);
+
+        delegateImpl = findPsiBuilderImpl(delegate);
+    }
+
+    @Nullable
+    private static PsiBuilderImpl findPsiBuilderImpl(PsiBuilder builder) {
+        // This is a hackish workaround for PsiBuilder interface not exposing isWhitespaceOrComment() method
+        // We have to unwrap all the adapters to find an Impl inside
+        while (true) {
+            if (builder instanceof PsiBuilderImpl) {
+                return (PsiBuilderImpl) builder;
+            }
+            if (!(builder instanceof PsiBuilderAdapter)) {
+                return null;
+            }
+
+            builder = ((PsiBuilderAdapter) builder).getDelegate();
+        }
+    }
+
+    @Override
+    public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
+        assert delegateImpl != null : "PsiBuilderImpl not found";
+        return delegateImpl.whitespaceOrComment(elementType);
     }
 
     @Override

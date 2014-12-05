@@ -110,7 +110,7 @@ import static org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability.NOT_NU
 
         Set<JetType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
         JetType originalType = key.getType();
-        if (originalType.isNullable()) {
+        if (originalType.isMarkedNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
         }
         for (JetType type : types) {
@@ -152,7 +152,7 @@ import static org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability.NOT_NU
         if (value.getType().equals(type)) return this;
         if (getPossibleTypes(value).contains(type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
-                type.isNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
+                type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
         SetMultimap<DataFlowValue, JetType> newTypeInfo = ImmutableSetMultimap.of(value, type);
         return new DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo);
     }

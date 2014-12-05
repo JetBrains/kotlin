@@ -20,7 +20,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
@@ -38,6 +37,15 @@ import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
+import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 
 public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -60,7 +68,7 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
             if (file is JetFile && o is DeclarationDescriptorLookupObject) {
                 val descriptor = o.descriptor as? CallableDescriptor
                 if (descriptor != null) {
-                    if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
+                    if (element.getStrictParentOfType<JetQualifiedExpression>() != null &&
                         descriptor.getExtensionReceiverParameter() == null) {
                         return@runReadAction
                     }
@@ -103,7 +111,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         val element = context.getFile().findElementAt(startOffset) ?: return
 
         when {
-            PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null -> return
+            element.getStrictParentOfType<JetImportDirective>() != null -> return
 
             isInfixCall(element) -> {
                 if (context.getCompletionChar() == ' ') {
@@ -194,7 +202,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 
         private fun shouldAddBrackets(element : PsiElement) : Boolean {
-            return PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) == null
+            return element.getStrictParentOfType<JetImportDirective>() == null
         }
 
         private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {
@@ -210,5 +218,35 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         private fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
                 = CodeStyleSettingsManager.getSettings(project)
                       .getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+    }
+}
+
+object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
+        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<JetSimpleNameExpression>(), false)
+        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<JetQualifiedExpression>(), true)
+        if (qualifiedExpression != null) {
+            val receiver = qualifiedExpression.getReceiverExpression()
+
+            val descriptor = (item.getObject() as? DeclarationDescriptorLookupObject)?.descriptor as CallableDescriptor
+            val project = context.getProject()
+
+            val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()
+            val fqName = qualifiedNameForSourceCode(thisObj.getType().getConstructor().getDeclarationDescriptor())
+
+            val parentCast = JetPsiFactory(project).createExpression("(expr as $fqName)") as JetParenthesizedExpression
+            val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS
+            cast.getLeft().replace(receiver)
+
+            val psiDocumentManager = PsiDocumentManager.getInstance(project)
+            psiDocumentManager.commitAllDocuments()
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
+
+            val expr = receiver.replace(parentCast) as JetParenthesizedExpression
+
+            ShortenReferences.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
+        }
     }
 }

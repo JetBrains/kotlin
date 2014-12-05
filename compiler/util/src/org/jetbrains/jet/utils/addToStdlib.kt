@@ -35,37 +35,31 @@ public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Colle
 
 public fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T : Any> Stream<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T : Any> Array<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T> Stream<*>.firstIsInstance(): T {
     for (element in this) if (element is T) return element
     throw NoSuchElementException("No element of given type found")
 }
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T> Iterable<*>.firstIsInstance(): T {
     for (element in this) if (element is T) return element
     throw NoSuchElementException("No element of given type found")
 }
 
-[suppress("NOTHING_TO_INLINE")]
 public inline fun <reified T> Array<*>.firstIsInstance(): T {
     for (element in this) if (element is T) return element
     throw NoSuchElementException("No element of given type found")

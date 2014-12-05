@@ -25,6 +25,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetFileType
 import java.util.HashSet
+import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.types.JetType
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -90,7 +92,7 @@ public abstract class JetCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.makeString(IMPORT_SEPARATOR)
+        return myImports.joinToString(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
@@ -100,7 +102,7 @@ public abstract class JetCodeFragment(
     }
 
     public fun importsAsImportList(): JetImportList? {
-        return JetPsiFactory(this).createFile(myImports.makeString("\n")).getImportList()
+        return JetPsiFactory(this).createFile(myImports.joinToString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
@@ -119,6 +121,7 @@ public abstract class JetCodeFragment(
 
     class object {
         public val IMPORT_SEPARATOR: String = ","
+        public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
 
         public fun getImportsForElement(elementAtCaret: PsiElement): String {
             val containingFile = elementAtCaret.getContainingFile()
@@ -126,7 +129,7 @@ public abstract class JetCodeFragment(
 
             return containingFile.getImportList()?.getImports()
                         ?.map { it.getText() }
-                        ?.makeString(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
+                        ?.joinToString(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
         }
     }
 }

@@ -33,10 +33,10 @@ import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfTypeAndBranch
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -45,7 +45,7 @@ public class JetSimpleNameReference(
     override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
 
     override fun canRename(): Boolean {
-        if (expression.getParentByTypeAndBranch(javaClass<JetWhenConditionInRange>()) { getOperationReference() } != null) return false
+        if (expression.getParentOfTypeAndBranch<JetWhenConditionInRange>(strict = true){ getOperationReference() } != null) return false
 
         val elementType = expression.getReferencedNameElementType()
         if (elementType == JetTokens.PLUSPLUS || elementType == JetTokens.MINUSMINUS) return false

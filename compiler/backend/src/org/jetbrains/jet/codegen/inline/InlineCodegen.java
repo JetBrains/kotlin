@@ -29,7 +29,6 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -142,6 +141,8 @@ public class InlineCodegen implements CallGenerator {
     private void endCall(@NotNull InlineResult result) {
         leaveTemps();
 
+        codegen.propagateChildReifiedTypeParametersUsages(result.getReifiedTypeParametersUsages());
+
         state.getFactory().removeInlinedClasses(result.getClassesToRemove());
     }
 
@@ -192,11 +193,7 @@ public class InlineCodegen implements CallGenerator {
                 );
             }
             else {
-                FunctionCodegen.generateMethodBody(
-                        maxCalcAdapter, functionDescriptor, methodContext, jvmSignature,
-                        new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, (JetDeclarationWithBody) element),
-                        parentCodegen
-                );
+                generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, (JetDeclarationWithBody) element, jvmSignature);
             }
             maxCalcAdapter.visitMaxs(-1, -1);
             maxCalcAdapter.visitEnd();
@@ -205,7 +202,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     private InlineResult inlineCall(MethodNode node) {
-        reifiedTypeInliner.reifyInstructions(node.instructions);
+        ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node.instructions);
         generateClosuresBodies();
 
         //through generation captured parameters will be added to invocationParamBuilder
@@ -230,6 +227,7 @@ public class InlineCodegen implements CallGenerator {
 
         MethodNode adapter = InlineCodegenUtil.createEmptyMethodNode();
         InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
+        result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
         LabelOwner labelOwner = new LabelOwner() {
 
@@ -277,13 +275,55 @@ public class InlineCodegen implements CallGenerator {
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
-        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), codegen.getParentCodegen());
+        generateMethodBody(adapter, descriptor, context, declaration, jvmMethodSignature);
         adapter.visitMaxs(-1, -1);
 
         return methodNode;
     }
 
+    private void generateMethodBody(
+            @NotNull MethodVisitor adapter,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull MethodContext context,
+            @NotNull JetDeclarationWithBody declaration,
+            @NotNull JvmMethodSignature jvmMethodSignature
+    ) {
+        FunctionCodegen.generateMethodBody(
+            adapter, descriptor, context, jvmMethodSignature,
+            new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration),
+            // Wrapping for preventing marking actual parent codegen as containing reifier markers
+            new FakeMemberCodegen(codegen.getParentCodegen())
+        );
+    }
 
+    private static class FakeMemberCodegen extends MemberCodegen {
+        private final MemberCodegen delegate;
+        public FakeMemberCodegen(@NotNull MemberCodegen wrapped) {
+            super(wrapped);
+            delegate = wrapped;
+        }
+
+        @Override
+        protected void generateDeclaration() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        protected void generateBody() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        protected void generateKotlinAnnotation() {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public NameGenerator getInlineNameGenerator() {
+            return delegate.getInlineNameGenerator();
+        }
+    }
 
     @Override
     public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor) {

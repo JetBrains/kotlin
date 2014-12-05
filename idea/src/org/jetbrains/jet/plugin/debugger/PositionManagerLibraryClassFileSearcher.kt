@@ -82,7 +82,7 @@ fun findPackagePartInternalNameForLibraryFile(elementAt: JetElement): String? {
     }
 
     val deserializedDescriptor = descriptors
-            .filterIsInstance(javaClass<DeserializedCallableMemberDescriptor>())
+            .filterIsInstance<DeserializedCallableMemberDescriptor>()
             .filter { render(it) == descFromSourceText }
             .singleOrNull()
 

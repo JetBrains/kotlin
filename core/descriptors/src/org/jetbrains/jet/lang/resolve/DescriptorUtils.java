@@ -129,6 +129,14 @@ public class DescriptorUtils {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
+    public static boolean isExtension(@NotNull CallableDescriptor descriptor) {
+        return (descriptor.getExtensionReceiverParameter() != null);
+    }
+
+    public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
+        return !descriptor.getOverriddenDescriptors().isEmpty();
+    }
+
     /**
      * @return true iff this is a top-level declaration or a class member with no expected "this" object (e.g. static members in Java,
      * values() and valueOf() methods of enum classes, etc.)
@@ -183,6 +191,18 @@ public class DescriptorUtils {
         ModuleDescriptor module = getParentOfType(descriptor, ModuleDescriptor.class, false);
         assert module != null : "Descriptor without a containing module: " + descriptor;
         return module;
+    }
+
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        while (containing != null) {
+            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
+                return (ClassDescriptor) containing;
+            }
+            containing = containing.getContainingDeclaration();
+        }
+        return null;
     }
 
     public static boolean isAncestor(
@@ -387,10 +407,10 @@ public class DescriptorUtils {
     public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull JetType type) {
         if (variable.isVar() || type.isError()) return false;
 
-        if (type instanceof LazyType || type.isNullable()) return true;
+        if (type instanceof LazyType || type.isMarkedNullable()) return true;
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        return builtIns.isPrimitiveType(type) ||
+        return KotlinBuiltIns.isPrimitiveType(type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getStringType(), type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
                JetTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
@@ -441,5 +461,13 @@ public class DescriptorUtils {
             result.addAll(getAllOverriddenDeclarations((D) overriddenDeclaration));
         }
         return result;
+    }
+
+    public static boolean containsReifiedTypeParameterWithName(@NotNull CallableDescriptor descriptor, @NotNull String name) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            if (typeParameterDescriptor.isReified() && typeParameterDescriptor.getName().asString().equals(name)) return true;
+        }
+
+        return false;
     }
 }

@@ -49,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -112,7 +113,7 @@ public class JetTestUtils {
      *
      * Several files may follow one module
      */
-    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile("(?://\\s*MODULE(?:\\[(\\w+)\\])?:\\s*(\\w+)(\\(\\w+(?:, \\w+)*\\))?\\s*)?" +
+    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile("(?://\\s*MODULE:\\s*(\\w+)(\\(\\w+(?:, \\w+)*\\))?\\s*)?" +
                                                                          "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
@@ -277,8 +278,10 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return JetCoreEnvironment.createForTests(disposable, compilerConfigurationForTests(
-                configurationKind, jdkKind, getAnnotationsJar()));
+        return JetCoreEnvironment.createForTests(
+                disposable,
+                compilerConfigurationForTests(configurationKind, jdkKind, getAnnotationsJar()),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     public static File findMockJdkRtJar() {
@@ -416,11 +419,6 @@ public class JetTestUtils {
         return configuration;
     }
 
-    public static void newTrace(@NotNull JetCoreEnvironment environment) {
-        // let the next analysis use another trace
-        CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).newBindingTrace();
-    }
-
     public static void resolveAllKotlinFiles(JetCoreEnvironment environment) throws IOException {
         List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
         if (paths == null) return;
@@ -438,7 +436,7 @@ public class JetTestUtils {
                 }
             }
         }
-        LazyResolveTestUtil.resolveEagerly(jetFiles, environment);
+        LazyResolveTestUtil.resolve(jetFiles, environment);
     }
 
     @NotNull
@@ -502,7 +500,7 @@ public class JetTestUtils {
 
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
-        M createModule(@NotNull String name, @Nullable String platform, @NotNull List<String> dependencies);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies);
     }
 
     public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void, F> {
@@ -520,7 +518,7 @@ public class JetTestUtils {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
 
         @Override
-        public Void createModule(@NotNull String name, @Nullable String platform, @NotNull List<String> dependencies) {
+        public Void createModule(@NotNull String name, @NotNull List<String> dependencies) {
             return null;
         }
     }
@@ -540,14 +538,13 @@ public class JetTestUtils {
             M module = null;
             // Many files
             while (true) {
-                String platform = matcher.group(1);
-                String moduleName = matcher.group(2);
-                String moduleDependencies = matcher.group(3);
+                String moduleName = matcher.group(1);
+                String moduleDependencies = matcher.group(2);
                 if (moduleName != null) {
-                    module = factory.createModule(moduleName, platform, parseDependencies(moduleDependencies));
+                    module = factory.createModule(moduleName, parseDependencies(moduleDependencies));
                 }
 
-                String fileName = matcher.group(4);
+                String fileName = matcher.group(3);
                 int start = processedChars;
 
                 boolean nextFileExists = matcher.find();

@@ -1,0 +1,72 @@
+package test
+
+test.JustEnum(weapon = Weapon.SCISSORS: test.Weapon) test.EnumArray(enumArray = {}: kotlin.Array<test.Weapon>) internal final class C1 {
+    public constructor C1()
+}
+
+test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}: kotlin.Array<test.Weapon>) internal final class C2 {
+    public constructor C2()
+}
+
+internal final annotation class EnumArray : kotlin.Annotation {
+    public constructor EnumArray(/*0*/ enumArray: kotlin.Array<test.Weapon>)
+    internal final val enumArray: kotlin.Array<test.Weapon>
+}
+
+internal final annotation class JustEnum : kotlin.Annotation {
+    public constructor JustEnum(/*0*/ weapon: test.Weapon)
+    internal final val weapon: test.Weapon
+}
+
+internal final enum class Weapon : kotlin.Enum<test.Weapon> {
+    public enum entry ROCK : test.Weapon {
+        private constructor ROCK()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ROCK> : test.Weapon.ROCK {
+            private constructor <class-object-for-ROCK>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry PAPER : test.Weapon {
+        private constructor PAPER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-PAPER> : test.Weapon.PAPER {
+            private constructor <class-object-for-PAPER>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry SCISSORS : test.Weapon {
+        private constructor SCISSORS()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-SCISSORS> : test.Weapon.SCISSORS {
+            private constructor <class-object-for-SCISSORS>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    private constructor Weapon()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Weapon
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Weapon>
+}

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ModifiersChecker;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
@@ -132,7 +133,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.visibility = isSyntheticClassObject(this)
                           ? DescriptorUtils.getSyntheticClassObjectVisibility()
                           : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
-        this.isInner = isInnerClass(modifierList);
+        this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
 
         StorageManager storageManager = resolveSession.getStorageManager();
 
@@ -499,7 +500,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 new Function0<Supertypes>() {
                     @Override
                     public Supertypes invoke() {
-                        if (KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
+                        if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
                             return new Supertypes(Collections.<JetType>emptyList());
                         }
 
@@ -513,7 +514,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
                         JetClassOrObject classOrObject = info.getCorrespondingClassOrObject();
                         if (classOrObject == null) {
-                            return new Supertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+                            return new Supertypes(Collections.singleton(resolveSession.getModuleDescriptor().getBuiltIns().getAnyType()));
                         }
 
                         List<JetType> allSupertypes = resolveSession.getDescriptorResolver()

@@ -98,7 +98,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
     ) {
-        if (functionDescriptor.getVisibility() == Visibilities.PRIVATE || functionDescriptor.getModality() == Modality.FINAL) {
+        if (Visibilities.isPrivate(functionDescriptor.getVisibility()) || functionDescriptor.getModality() == Modality.FINAL) {
             return;
         }
 
@@ -128,9 +128,19 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
+        hasInlinable |= containsReifiedTypeParameters(functionDescriptor);
+
         if (!hasInlinable) {
             trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
         }
+    }
+
+    private static boolean containsReifiedTypeParameters(@NotNull FunctionDescriptor descriptor) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            if (typeParameterDescriptor.isReified()) return true;
+        }
+
+        return false;
     }
 
     public static boolean checkInlinableParameter(
@@ -139,11 +149,10 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @NotNull CallableDescriptor functionDescriptor,
             @Nullable BindingTrace trace
     ) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType type = parameter.getReturnType();
-        if (type != null && builtIns.isExactFunctionOrExtensionFunctionType(type)) {
+        if (type != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
             if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
-                if (type.isNullable()) {
+                if (type.isMarkedNullable()) {
                     if (trace != null) {
                         trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
                     }

@@ -154,7 +154,7 @@ public class ModifiersChecker {
         }
     }
 
-    private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof ClassDescriptor)) return true;
         ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
         if (classDescriptor.getKind() != ClassKind.CLASS) return true;

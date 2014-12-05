@@ -42,9 +42,57 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("GenericInheritors1")
+    public void testGenericInheritors1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/GenericInheritors1/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericInheritors2")
+    public void testGenericInheritors2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/GenericInheritors2/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericInheritors3")
+    public void testGenericInheritors3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/GenericInheritors3/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("GenericInheritors4")
+    public void testGenericInheritors4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/GenericInheritors4/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InheritorInTheSameFile")
+    public void testInheritorInTheSameFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/InheritorInTheSameFile/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Inheritors")
+    public void testInheritors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/Inheritors/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InheritorsAndMultipleExpectedTypes")
+    public void testInheritorsAndMultipleExpectedTypes() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/InheritorsAndMultipleExpectedTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaStaticMethodArgument")
     public void testJavaStaticMethodArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/JavaStaticMethodArgument/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoObjectDuplication")
+    public void testNoObjectDuplication() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/NoObjectDuplication/");
         doTest(fileName);
     }
 }

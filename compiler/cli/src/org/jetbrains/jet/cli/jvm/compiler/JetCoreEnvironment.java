@@ -21,6 +21,8 @@ import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
+import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
+import com.intellij.ide.plugins.PluginManagerCoreProxy;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.mock.MockProject;
@@ -55,7 +57,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression;
+import org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
@@ -65,9 +67,9 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.core.CoreApplicationEnvironment.registerApplicationExtensionPoint;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
@@ -81,7 +83,8 @@ public class JetCoreEnvironment {
     @NotNull
     public static JetCoreEnvironment createForProduction(
             @NotNull Disposable parentDisposable,
-            @NotNull CompilerConfiguration configuration
+            @NotNull CompilerConfiguration configuration,
+            @NotNull List<String> configFilePaths
     ) {
         // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
         // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
@@ -96,7 +99,8 @@ public class JetCoreEnvironment {
             }
         });
         JetCoreEnvironment environment =
-                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(), configuration);
+                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configFilePaths), configuration);
+
         synchronized (APPLICATION_LOCK) {
             ourProjectCount++;
         }
@@ -105,18 +109,22 @@ public class JetCoreEnvironment {
 
     @TestOnly
     @NotNull
-    public static JetCoreEnvironment createForTests(@NotNull Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
+    public static JetCoreEnvironment createForTests(
+            @NotNull Disposable parentDisposable,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull List<String> extensionConfigs
+    ) {
         // Tests are supposed to create a single project and dispose it right after use
-        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable), configuration);
+        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, extensionConfigs), configuration);
     }
 
     @NotNull
-    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction() {
+    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction(@NotNull List<String> configFilePaths) {
         synchronized (APPLICATION_LOCK) {
             if (ourApplicationEnvironment != null) return ourApplicationEnvironment;
 
             Disposable parentDisposable = Disposer.newDisposable();
-            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable);
+            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configFilePaths);
             ourProjectCount = 0;
             Disposer.register(parentDisposable, new Disposable() {
                 @Override
@@ -140,10 +148,15 @@ public class JetCoreEnvironment {
     }
 
     @NotNull
-    private static JavaCoreApplicationEnvironment createApplicationEnvironment(@NotNull Disposable parentDisposable) {
+    private static JavaCoreApplicationEnvironment createApplicationEnvironment(
+            @NotNull Disposable parentDisposable,
+            @NotNull List<String> configFilePaths
+    ) {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
-        registerApplicationExtensionPointsForCLI();
+        for (String config : configFilePaths) {
+            registerApplicationExtensionPointsAndExtensionsFrom(config);
+        }
 
         registerApplicationServicesForCLI(applicationEnvironment);
         registerApplicationServices(applicationEnvironment);
@@ -151,12 +164,22 @@ public class JetCoreEnvironment {
         return applicationEnvironment;
     }
 
-    private static void registerApplicationExtensionPointsForCLI() {
-        registerApplicationExtensionPoint(DiagnosticsWithSuppression.SuppressStringProvider.EP_NAME,
-                                          DiagnosticsWithSuppression.SuppressStringProvider.class);
+    private static void registerApplicationExtensionPointsAndExtensionsFrom(String configFilePath) {
+        IdeaPluginDescriptorImpl descriptor;
+        File jar = PathUtil.getPathUtilJar();
+        if (jar.isFile()) {
+            descriptor = PluginManagerCoreProxy.loadDescriptorFromJar(jar, configFilePath);
+        }
+        else {
+            // hack for load extensions when compiler run directly from out directory(e.g. in tests)
+            File srcDir = jar.getParentFile().getParentFile().getParentFile();
+            File pluginDir = new File(srcDir, "idea/src");
+            descriptor = PluginManagerCoreProxy.loadDescriptorFromDir(pluginDir, configFilePath);
+        }
 
-        registerApplicationExtensionPoint(DiagnosticsWithSuppression.DiagnosticSuppressor.EP_NAME,
-                                          DiagnosticsWithSuppression.DiagnosticSuppressor.class);
+        assert descriptor != null : "Can not load descriptor from " + configFilePath + " relative to " + jar;
+
+        PluginManagerCoreProxy.registerExtensionPointsAndExtensions(Extensions.getRootArea(), Collections.singletonList(descriptor));
     }
 
     private static void registerApplicationServicesForCLI(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {
@@ -244,6 +267,7 @@ public class JetCoreEnvironment {
         CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(CodeAnalyzerInitializer.class, cliLightClassGenerationSupport);
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));

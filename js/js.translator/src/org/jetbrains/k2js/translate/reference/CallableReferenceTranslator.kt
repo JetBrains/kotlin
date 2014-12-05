@@ -83,7 +83,7 @@ object CallableReferenceTranslator {
 
     private fun isConstructor(descriptor: CallableDescriptor): Boolean = descriptor is ConstructorDescriptor
 
-    private fun isExtension(descriptor: CallableDescriptor): Boolean = JsDescriptorUtils.isExtension(descriptor)
+    private fun isExtension(descriptor: CallableDescriptor): Boolean = DescriptorUtils.isExtension(descriptor)
 
     private fun isMember(descriptor: CallableDescriptor): Boolean = JsDescriptorUtils.getContainingDeclaration(descriptor) is ClassDescriptor
 

@@ -17,26 +17,18 @@
 package org.jetbrains.jet.utils.builtinsSerializer
 
 import java.io.File
-import java.io.PrintStream
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
-import org.jetbrains.jet.descriptors.serialization.SerializerExtension
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import java.util.ArrayList
+import org.jetbrains.jet.descriptors.serialization.*
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
-import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
@@ -47,35 +39,90 @@ import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 
-public class BuiltInsSerializer(val out: PrintStream?) {
+private object BuiltInsSerializerExtension : SerializerExtension() {
+    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
+        for (annotation in descriptor.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.classAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+
+    override fun serializePackage(
+            packageFragments: Collection<PackageFragmentDescriptor>,
+            proto: ProtoBuf.Package.Builder,
+            stringTable: StringTable
+    ) {
+        val classes = packageFragments.flatMap {
+            it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
+        }
+
+        for (descriptor in DescriptorSerializer.sort(classes)) {
+            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.getName()))
+        }
+    }
+
+    override fun serializeCallable(
+            callable: CallableMemberDescriptor,
+            proto: ProtoBuf.Callable.Builder,
+            stringTable: StringTable
+    ) {
+        for (annotation in callable.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.callableAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+
+    override fun serializeValueParameter(
+            descriptor: ValueParameterDescriptor,
+            proto: ProtoBuf.Callable.ValueParameter.Builder,
+            stringTable: StringTable
+    ) {
+        for (annotation in descriptor.getAnnotations()) {
+            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+}
+
+public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
     private var totalFiles = 0
 
-    public fun serialize(destDir: File, srcDirs: Collection<File>) {
+    public fun serialize(
+            destDir: File,
+            srcDirs: Collection<File>,
+            extraClassPath: Collection<File>,
+            onComplete: (totalSize: Int, totalFiles: Int) -> Unit
+    ) {
         val rootDisposable = Disposer.newDisposable()
         try {
-            serialize(rootDisposable, destDir, srcDirs)
+            serialize(rootDisposable, destDir, srcDirs, extraClassPath)
+            onComplete(totalSize, totalFiles)
         }
         finally {
             Disposer.dispose(rootDisposable)
         }
     }
 
-    private class BuiltinsSourcesModule : ModuleInfo {
-        override val name: Name = Name.special("<module for resolving builtin source files>")
+    private inner class BuiltinsSourcesModule : ModuleInfo {
+        override val name = Name.special("<module for resolving builtin source files>")
         override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltins(): ModuleInfo.DependencyOnBuiltins = ModuleInfo.DependenciesOnBuiltins.NONE
+        override fun dependencyOnBuiltins(): ModuleInfo.DependencyOnBuiltins =
+                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
     }
 
-    fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>) {
+    fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>, extraClassPath: Collection<File>) {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
         val sourceRoots = srcDirs map { it.path }
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourceRoots)
 
-        val environment = JetCoreEnvironment.createForTests(disposable, configuration)
+        for (path in extraClassPath) {
+            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, path)
+        }
+
+        val environment = JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val files = environment.getSourceFiles()
 
@@ -100,8 +147,6 @@ public class BuiltInsSerializer(val out: PrintStream?) {
             fqName ->
             serializePackage(moduleDescriptor, fqName, destDir)
         }
-
-        out?.println("Total bytes written: $totalSize to $totalFiles files")
     }
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
@@ -110,9 +155,8 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val serializer = DescriptorSerializer.createTopLevel(SerializerExtension.DEFAULT)
+        val serializer = DescriptorSerializer.createTopLevel(BuiltInsSerializerExtension)
 
-        val classNames = ArrayList<Name>()
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
@@ -120,16 +164,8 @@ public class BuiltInsSerializer(val out: PrintStream?) {
                 val stream = ByteArrayOutputStream()
                 classProto.writeTo(stream)
                 write(destDir, getFileName(classDescriptor), stream)
-
-                if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-                    classNames.add(classDescriptor.getName())
-                }
             }
         })
-
-        val classNamesStream = ByteArrayOutputStream()
-        writeClassNames(serializer, classNames, classNamesStream)
-        write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(fqName), classNamesStream)
 
         val packageStream = ByteArrayOutputStream()
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
@@ -138,18 +174,8 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
-        NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable())
-        write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(fqName), nameStream)
-    }
-
-    fun writeClassNames(serializer: DescriptorSerializer, classNames: List<Name>, stream: ByteArrayOutputStream) {
-        val nameTable = serializer.getNameTable()
-        DataOutputStream(stream) use { output ->
-            output.writeInt(classNames.size())
-            for (className in classNames) {
-                output.writeInt(nameTable.getSimpleNameIndex(className))
-            }
-        }
+        NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
+        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName).first(), nameStream)
     }
 
     fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {

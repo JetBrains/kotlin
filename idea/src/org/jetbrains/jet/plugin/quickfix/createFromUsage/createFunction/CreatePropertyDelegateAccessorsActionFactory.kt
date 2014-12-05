@@ -10,7 +10,7 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.Functio
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableInfo
@@ -29,7 +29,7 @@ object CreatePropertyDelegateAccessorsActionFactory : JetSingleIntentionActionFa
 
         val builtIns = KotlinBuiltIns.getInstance()
 
-        val property = expression.getParentByType(javaClass<JetProperty>()) ?: return null
+        val property = expression.getNonStrictParentOfType<JetProperty>() ?: return null
         val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor
                                  ?: return null
 

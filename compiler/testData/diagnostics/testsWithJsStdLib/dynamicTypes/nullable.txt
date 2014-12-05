@@ -1,0 +1,3 @@
+package
+
+internal fun foo(/*0*/ dn: dynamic, /*1*/ d: dynamic, /*2*/ dnn: dynamic): kotlin.Unit

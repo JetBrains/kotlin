@@ -25,7 +25,6 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.bridges.Bridge;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
@@ -71,7 +70,6 @@ import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.callableDescriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -228,7 +226,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor descriptor = descriptors.next();
                 name = descriptor.getName().asString();
-                nullableType = descriptor.getType().isNullable();
+                nullableType = descriptor.getType().isMarkedNullable();
             }
             else {
                 String lowercaseKind = kind.name().toLowerCase();
@@ -241,7 +239,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
                 if (kind == JvmMethodParameterKind.RECEIVER) {
                     ReceiverParameterDescriptor receiver = functionDescriptor.getExtensionReceiverParameter();
-                    nullableType = receiver == null || receiver.getType().isNullable();
+                    nullableType = receiver == null || receiver.getType().isMarkedNullable();
                 }
                 else {
                     nullableType = true;
@@ -754,8 +752,8 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         if (CodegenBinding.canHaveOuter(context, classDescriptor)) return false;
 
-        if (classDescriptor.getVisibility() == Visibilities.PRIVATE ||
-            constructorDescriptor.getVisibility() == Visibilities.PRIVATE) return false;
+        if (Visibilities.isPrivate(classDescriptor.getVisibility()) ||
+            Visibilities.isPrivate(constructorDescriptor.getVisibility())) return false;
 
         if (constructorDescriptor.getValueParameters().isEmpty()) return false;
 

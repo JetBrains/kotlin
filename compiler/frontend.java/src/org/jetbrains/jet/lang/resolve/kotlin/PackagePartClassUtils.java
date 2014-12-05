@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -85,7 +86,7 @@ public class PackagePartClassUtils {
     @NotNull
     public static FqName getPackagePartFqName(@NotNull DeserializedCallableMemberDescriptor callable) {
         FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
-        return packageFqName.child(BaseDescriptorLoader.getPackagePartClassName(callable));
+        return packageFqName.child(callable.getNameResolver().getName(callable.getProto().getExtension(JavaProtoBuf.implClassName)));
     }
 
     @NotNull

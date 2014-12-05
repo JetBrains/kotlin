@@ -20,10 +20,10 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.block.body.action.family.name")
@@ -43,7 +43,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
         fun generateBody(returnsValue: Boolean): JetExpression {
             val bodyType = expressionType(body)
             val needReturn = returnsValue &&
-                             (bodyType == null || (!KotlinBuiltIns.getInstance().isUnit(bodyType) && !KotlinBuiltIns.getInstance().isNothing(bodyType)))
+                             (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
             val oldBodyText = body.getText()!!
             val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
@@ -53,11 +53,11 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
         val newBody = when (declaration) {
             is JetNamedFunction -> {
                 val returnType = functionReturnType(declaration)!!
-                if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.getInstance().isUnit(returnType)) {
+                if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
                     specifyTypeExplicitly(declaration, returnType)
                 }
 
-                val newBody = generateBody(!KotlinBuiltIns.getInstance().isUnit(returnType) && !KotlinBuiltIns.getInstance().isNothing(returnType))
+                val newBody = generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
 
                 declaration.getEqualsToken()!!.delete()
                 body.replace(newBody)
@@ -76,7 +76,7 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     }
 
     private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
-        val declaration = PsiTreeUtil.getParentOfType(element, javaClass<JetDeclarationWithBody>())
+        val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
         if (declaration == null || declaration is JetFunctionLiteral || declaration.hasBlockBody()) return null
         val body = declaration.getBodyExpression()
         if (body == null) return null

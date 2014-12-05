@@ -1007,7 +1007,7 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
     override fun toString() = if (nullable) "$name?" else name
 
     val nullable: Boolean
-    get() = jetType.isNullable()
+    get() = jetType.isMarkedNullable()
 }
 
 class KClass(

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.io.Files;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -73,7 +75,12 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         if (kotlinSourceRoot != null) {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, kotlinSourceRoot.getPath());
         }
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+        return createEnvironment(getTestRootDisposable(), configuration);
+    }
+
+    @NotNull
+    protected JetCoreEnvironment createEnvironment(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        return JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Nullable
@@ -126,8 +133,8 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
                     }
 
                     @Override
-                    public M createModule(@NotNull String name, @Nullable String platform, @NotNull List<String> dependencies) {
-                        M module = createTestModule(name, platform);
+                    public M createModule(@NotNull String name, @NotNull List<String> dependencies) {
+                        M module = createTestModule(name);
                         ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
                         assert oldValue == null : "Module " + name + " declared more than once";
 
@@ -138,7 +145,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         doMultiFileTest(file, modules, testFiles);
     }
 
-    protected abstract M createTestModule(@NotNull String name, @Nullable String platform);
+    protected abstract M createTestModule(@NotNull String name);
 
     protected abstract F createTestFile(M module, String fileName, String text, Map<String, String> directives);
 

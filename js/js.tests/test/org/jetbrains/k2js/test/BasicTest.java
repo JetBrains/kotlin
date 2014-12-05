@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -84,7 +85,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration());
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES);
     }
 
     protected boolean shouldCreateOut() {

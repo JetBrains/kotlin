@@ -30,6 +30,18 @@
       <option name="FOREGROUND" value="4a86e8" />
     </value>
   </option>
+  <option name="KOTLIN_DYNAMIC_FUNCTION_CALL">
+    <value>
+      <option name="FONT_TYPE" value="3" />
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
+  <option name="KOTLIN_DYNAMIC_PROPERTY_CALL">
+    <value>
+      <option name="FONT_TYPE" value="3" />
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
   <option name="KOTLIN_DEBUG_INFO">
     <value>
       <option name="EFFECT_COLOR" value="000000"/>

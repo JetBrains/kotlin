@@ -31,6 +31,11 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import com.intellij.codeInsight.completion.PrefixMatcher
 import org.jetbrains.jet.lang.resolve.name.Name
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.codeInsight.completion.InsertionContext
+import org.jetbrains.jet.plugin.completion.handlers.CastReceiverInsertHandler
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -46,6 +51,15 @@ fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
 }
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
+
+fun LookupElement.shouldCastReceiver(): LookupElement {
+    return object: LookupElementDecorator<LookupElement>(this) {
+        override fun handleInsert(context: InsertionContext) {
+            super.handleInsert(context)
+            CastReceiverInsertHandler.handleInsert(context, getDelegate())
+        }
+    }
+}
 
 val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
 
@@ -65,7 +79,7 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     return exception
 }
 
-fun qualifiedNameForSourceCode(descriptor: ClassDescriptor): String? {
+fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String? {
     val name = descriptor.getName()
     if (name.isSpecial()) return null
     val nameString = IdeDescriptorRenderers.SOURCE_CODE.renderName(name)
@@ -87,4 +101,36 @@ fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     clearTail()
     appendTailText(text, grayed)
     tails.forEach { appendTailText(it.text, it.isGrayed()) }
+}
+
+enum class CallableWeight {
+    local // local non-extension
+    thisClassMember
+    baseClassMember
+    thisTypeExtension
+    baseTypeExtension
+    global // global non-extension
+    notApplicableReceiverNullable
+}
+
+val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
+
+fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
+    if (descriptor1 == descriptor2) return true
+    if (descriptor1 == null || descriptor2 == null) return false
+    if (descriptor1.getOriginal() != descriptor2.getOriginal()) return false
+    if (descriptor1 !is CallableDescriptor) return true
+    descriptor2 as CallableDescriptor
+
+    // optimization:
+    if (descriptor1 == descriptor1.getOriginal() && descriptor2 == descriptor2.getOriginal()) return true
+
+    if (descriptor1.getReturnType() != descriptor2.getReturnType()) return false
+    val parameters1 = descriptor1.getValueParameters()
+    val parameters2 = descriptor2.getValueParameters()
+    if (parameters1.size() != parameters2.size()) return false
+    for (i in parameters1.indices) {
+        if (parameters1[i].getType() != parameters2[i].getType()) return false
+    }
+    return true
 }

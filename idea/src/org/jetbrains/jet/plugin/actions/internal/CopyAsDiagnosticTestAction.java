@@ -42,7 +42,7 @@ public class CopyAsDiagnosticTestAction extends AnAction {
 
         BindingContext bindingContext = ResolvePackage.analyzeFully((JetFile) psiFile);
 
-        List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
+        List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false);
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

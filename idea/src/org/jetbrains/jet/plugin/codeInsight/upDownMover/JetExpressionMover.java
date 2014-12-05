@@ -396,7 +396,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     @Nullable
     private static PsiElement getMovableElement(@NotNull PsiElement element, boolean lookRight) {
         //noinspection unchecked
-        PsiElement movableElement = PsiUtilPackage.getParentByTypesAndPredicate(
+        PsiElement movableElement = PsiUtilPackage.getParentOfTypesAndPredicate(
                 element,
                 false,
                 MOVABLE_ELEMENT_CLASSES,

@@ -26,6 +26,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.codegen.GenerationUtils;
@@ -109,9 +110,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         String ktFile = relativePath(new File(ktFileFullPath));
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory
-        ));
+        myEnvironment =
+                JetCoreEnvironment.createForTests(getTestRootDisposable(),
+                                                  JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
+                                                                                             JetTestUtils.getAnnotationsJar(),
+                                                                                             javaClassesTempDirectory),
+                                                  EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         loadFile(ktFile);
         blackBox();
@@ -140,7 +144,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
         );
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, dirFile);
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         loadFiles(ArrayUtil.toStringArray(ktFilePaths));
         classFileFactory =
                 GenerationUtils.compileManyFilesGetGenerationStateForTest(myEnvironment.getProject(), myFiles.getPsiFiles()).getFactory();

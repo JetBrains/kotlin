@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
+import com.intellij.openapi.util.TextRange
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -50,7 +51,7 @@ public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     }
 }
 
-public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
+public fun PsiElement.getParentOfTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
 ) : T? {
     var element = if (strict) getParent() else this
@@ -69,8 +70,20 @@ public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
     return null
 }
 
-public fun PsiElement.getParentByType<T: PsiElement>(parentClass : Class<T>, strict : Boolean = false) : T? {
-    return PsiTreeUtil.getParentOfType(this, parentClass, strict)
+public fun PsiElement.getNonStrictParentOfType<T: PsiElement>(parentClass : Class<T>) : T? {
+    return PsiTreeUtil.getParentOfType(this, parentClass, false)
+}
+
+inline public fun PsiElement.getParentOfType<reified T: PsiElement>(strict: Boolean): T? {
+    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), strict)
+}
+
+inline public fun PsiElement.getStrictParentOfType<reified T: PsiElement>(): T? {
+    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), true)
+}
+
+inline public fun PsiElement.getNonStrictParentOfType<reified T: PsiElement>(): T? {
+    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
 }
 
 public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
@@ -81,9 +94,8 @@ public fun <T: PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: T
     return if (branch().isAncestor(element)) this else null
 }
 
-public fun PsiElement.getParentByTypeAndBranch<T: PsiElement>(
-        parentClass : Class<T>, strict : Boolean = false, branch: T.() -> PsiElement?) : T? {
-    return getParentByType(parentClass, strict)?.getIfChildIsInBranch(this, branch)
+inline public fun PsiElement.getParentOfTypeAndBranch<reified T: PsiElement>(strict: Boolean = false, noinline branch: T.() -> PsiElement?) : T? {
+    return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
 }
 
 public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
@@ -192,7 +204,7 @@ public fun JetDeclaration.isOverridable(): Boolean {
 public fun PsiElement.isExtensionDeclaration(): Boolean {
     val callable: JetCallableDeclaration? = when (this) {
         is JetNamedFunction, is JetProperty -> this as JetCallableDeclaration
-        is JetPropertyAccessor -> getParentByType(javaClass<JetProperty>())
+        is JetPropertyAccessor -> getNonStrictParentOfType<JetProperty>()
         else -> null
     }
 
@@ -399,3 +411,13 @@ public fun JetTypeReference?.isProbablyNothing(): Boolean {
 
 public fun JetUserType?.isProbablyNothing(): Boolean
         = this?.getReferencedName() == "Nothing"
+
+public fun JetStringTemplateExpression.getContentRange(): TextRange {
+    val start = getNode().getFirstChildNode().getTextLength()
+    val lastChild = getNode().getLastChildNode()
+    val length = getTextLength()
+    return TextRange(start, if (lastChild.getElementType() == JetTokens.CLOSING_QUOTE) length - lastChild.getTextLength() else length)
+}
+
+public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
+        = getNode().getFirstChildNode().getTextLength() == 1

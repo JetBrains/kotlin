@@ -111,6 +111,7 @@ public class ImportInsertHelperImpl extends ImportInsertHelper {
 
     @Override
     public boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile) {
+
         List<ImportPath> defaultImports = ProjectStructureUtil.isJsKotlinModule(contextFile)
                                    ? TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
                                    : TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS;

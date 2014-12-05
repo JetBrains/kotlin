@@ -64,7 +64,7 @@ class PropagationHeuristics {
                         JetTypeImpl betterTypeInSuper = new JetTypeImpl(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
-                                arrayTypeFromSuper.isNullable(),
+                                arrayTypeFromSuper.isMarkedNullable(),
                                 Arrays.asList(new TypeProjectionImpl(Variance.OUT_VARIANCE, elementTypeInSuper)),
                                 JetScope.Empty.INSTANCE$);
 

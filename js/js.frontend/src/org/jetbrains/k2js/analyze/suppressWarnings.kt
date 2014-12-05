@@ -19,7 +19,6 @@ package org.jetbrains.k2js.analyze
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression
 import org.jetbrains.k2js.PredefinedAnnotation
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
@@ -30,7 +29,7 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig
 class SuppressUnusedParameterForJsNative : DiagnosticsWithSuppression.SuppressStringProvider {
     override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
         val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.getType())
-        if (PredefinedAnnotation.NATIVE.fqName == DescriptorUtils.getFqName(descriptor).asString()) {
+        if (PredefinedAnnotation.NATIVE.fqName == DescriptorUtils.getFqNameSafe(descriptor)) {
             return listOf(Errors.UNUSED_PARAMETER.getName().toLowerCase())
         }
 

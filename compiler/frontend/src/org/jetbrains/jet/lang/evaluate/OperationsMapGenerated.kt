@@ -100,6 +100,7 @@ private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, 
     unaryOperation(SHORT, "toLong", { a -> a.toLong() }, emptyUnaryFun),
     unaryOperation(SHORT, "toShort", { a -> a.toShort() }, emptyUnaryFun),
     unaryOperation(SHORT, "toString", { a -> a.toString() }, emptyUnaryFun),
+    unaryOperation(STRING, "length", { a -> a.length() }, emptyUnaryFun),
     unaryOperation(STRING, "toString", { a -> a.toString() }, emptyUnaryFun)
 )
 
@@ -418,6 +419,7 @@ private val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<A
     binaryOperation(SHORT, LONG, "times", { a, b -> a.times(b) }, { a, b -> a.multiply(b) }),
     binaryOperation(SHORT, SHORT, "times", { a, b -> a.times(b) }, { a, b -> a.multiply(b) }),
     binaryOperation(SHORT, ANY, "equals", { a, b -> a.equals(b) }, emptyBinaryFun),
+    binaryOperation(STRING, INT, "charAt", { a, b -> a.charAt(b) }, emptyBinaryFun),
     binaryOperation(STRING, STRING, "compareTo", { a, b -> a.compareTo(b) }, emptyBinaryFun),
     binaryOperation(STRING, INT, "get", { a, b -> a.get(b) }, emptyBinaryFun),
     binaryOperation(STRING, ANY, "plus", { a, b -> a.plus(b) }, emptyBinaryFun),

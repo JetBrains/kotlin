@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetExpression
@@ -52,7 +52,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>("split.
             else -> element as JetSimpleNameExpression
         }
 
-        val ifExpression = currentElement!!.getParentByType(javaClass<JetIfExpression>())
+        val ifExpression = currentElement!!.getNonStrictParentOfType<JetIfExpression>()
         val expression = currentElement.getParent() as JetBinaryExpression
         val rightExpression = getRight(expression, ifExpression!!.getCondition() as JetExpression)
         val leftExpression = expression.getLeft()

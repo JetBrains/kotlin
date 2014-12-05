@@ -68,6 +68,10 @@ public class KotlinCacheService(val project: Project) {
             override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
                 return cache.getAnalysisResultsForElements(elements)
             }
+
+            override fun <T> get(extension: CacheExtension<T>): T {
+                return cache[extension]
+            }
         }
     }
 

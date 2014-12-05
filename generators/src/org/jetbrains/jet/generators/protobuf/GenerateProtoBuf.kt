@@ -18,6 +18,7 @@ package org.jetbrains.jet.generators.protobuf
 
 import com.intellij.execution.util.ExecUtil
 import java.io.File
+import java.util.regex.Pattern
 
 // This file generates protobuf classes from formal description.
 // To run it, you'll need protoc (protobuf compiler) 2.5.0 installed.
@@ -30,18 +31,37 @@ import java.io.File
 // You may need to provide custom path to protoc executable, just modify this constant:
 val PROTOC_EXE = "protoc"
 
+public data class ProtoPath(
+        public val file: String,
+        public val outPath: String
+) {
+    public val packageName: String = findFirst(Pattern.compile("package (.+);"))
+    public val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
+    public val debugClassName: String = "Debug$className"
+
+    private fun findFirst(pattern: Pattern): String {
+        for (line in File(file).readLines()) {
+            val m = pattern.matcher(line)
+            if (m.find()) return m.group(1)
+        }
+        error("Pattern not found in $file: $pattern")
+    }
+}
+
+public val PROTO_PATHS: List<ProtoPath> = listOf(
+        ProtoPath("core/serialization/src/descriptors.proto", "core/serialization/src"),
+        ProtoPath("core/serialization/src/builtins.proto", "core/serialization/src"),
+        ProtoPath("core/serialization.java/src/java_descriptors.proto", "core/serialization.java/src")
+)
+
 fun main(args: Array<String>) {
     try {
         checkVersion()
 
-        val commonProto = "core/serialization/src/descriptors.proto"
-        val javaProto = "core/serialization.java/src/java_descriptors.proto"
-
-        execProtoc(commonProto, "core/serialization/src")
-        execProtoc(javaProto, "core/serialization.java/src")
-
-        modifyAndExecProtoc(commonProto, "compiler/tests")
-        modifyAndExecProtoc(javaProto, "compiler/tests")
+        for (protoPath in PROTO_PATHS) {
+            execProtoc(protoPath.file, protoPath.outPath)
+            modifyAndExecProtoc(protoPath)
+        }
     }
     catch (e: Throwable) {
         e.printStackTrace()
@@ -56,7 +76,7 @@ fun main(args: Array<String>) {
 fun checkVersion() {
     val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, "--version"), null)
 
-    val version = processOutput.getStdout()!!.trim()
+    val version = processOutput.getStdout().trim()
     if (version.isEmpty()) {
         throw AssertionError("Output is empty, stderr: " + processOutput.getStderr())
     }
@@ -73,20 +93,18 @@ fun execProtoc(protoPath: String, outPath: String) {
     }
 }
 
-fun modifyAndExecProtoc(protoPath: String, outPath: String) {
-    val originalText = File(protoPath).readText()
-
-    val debugProtoFile = File(protoPath.replace(".proto", ".debug.proto"))
-    debugProtoFile.writeText(modifyForDebug(originalText))
+fun modifyAndExecProtoc(protoPath: ProtoPath) {
+    val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
+    debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
 
-    execProtoc(debugProtoFile.getPath(), outPath)
+    execProtoc(debugProtoFile.getPath(), "compiler/tests")
 }
 
-fun modifyForDebug(originalProto: String): String {
-    return originalProto
-            .replace("java_outer_classname = \"", "java_outer_classname = \"Debug") // give different name for class
+fun modifyForDebug(protoPath: ProtoPath): String {
+    return File(protoPath.file).readText()
+            .replace("option java_outer_classname = \"${protoPath.className}\"",
+                     "option java_outer_classname = \"${protoPath.debugClassName}\"") // give different name for class
             .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
             .replace(".proto\"", ".debug.proto\"") // for "import" statement in proto
 }
-

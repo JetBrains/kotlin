@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -74,7 +75,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull JetBinaryExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (assignmentType != null && !KotlinBuiltIns.getInstance().isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
+        if (assignmentType != null && !KotlinBuiltIns.isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
             TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
@@ -87,7 +88,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         LocalClassifierAnalyzer.processClassOrObject(
                 components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration,
-                components.additionalCheckerProvider);
+                components.additionalCheckerProvider,
+                components.dynamicTypesSettings);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
 
@@ -184,7 +186,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         LocalClassifierAnalyzer.processClassOrObject(
                 components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass,
-                components.additionalCheckerProvider);
+                components.additionalCheckerProvider,
+                components.dynamicTypesSettings);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
 
@@ -284,7 +287,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         else if (assignmentOperationType != null && (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess())) {
             // There's 'plusAssign()', so we do a.plusAssign(b)
             temporaryForAssignmentOperation.commit();
-            if (!KotlinBuiltIns.getInstance().isUnit(assignmentOperationType)) {
+            if (!JetTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
                 context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
             }
         }

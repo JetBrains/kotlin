@@ -18,20 +18,23 @@ package org.jetbrains.jet.plugin.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
+import com.intellij.psi.stubs.StringStubIndexExtension
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -42,29 +45,23 @@ public class StubBasedPackageMemberDeclarationProvider(
     override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
         val result = ArrayList<JetDeclaration>()
 
+        fun addFromIndex(index: StringStubIndexExtension<out JetNamedDeclaration>) {
+            index.get(fqName.asString(), project, searchScope).filterTo(result) { nameFilter(it.getNameAsSafeName()) }
+        }
+
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            result.addDeclarations(JetFullClassNameIndex.getInstance(), nameFilter)
+            addFromIndex(JetTopLevelClassByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
+            addFromIndex(JetTopLevelFunctionByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            result.addDeclarations(JetTopLevelPropertiesFqnNameIndex.getInstance(), nameFilter)
+            addFromIndex(JetTopLevelPropertyByPackageIndex.getInstance())
         }
 
         return result
-    }
-
-    private fun MutableCollection<JetDeclaration>.addDeclarations(index: StringStubIndexExtension<out JetNamedDeclaration>,
-                                                                  nameFilter: (Name) -> Boolean) {
-        index.getAllKeys(project)
-                .stream()
-                .map { FqName(it) }
-                .filter { !it.isRoot() && it.parent() == fqName && nameFilter(it.shortName()) }
-                .toSet()
-                .flatMapTo(this) { index[it.asString(), project, searchScope] }
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
@@ -73,11 +70,11 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction> {
-        return JetTopLevelFunctionsFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return JetTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getPropertyDeclarations(name: Name): Collection<JetProperty> {
-        return JetTopLevelPropertiesFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return JetTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getAllDeclaredSubPackages(): Collection<FqName> {

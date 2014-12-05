@@ -22,7 +22,7 @@ import kotlin.platform.platformStatic
 public object BuiltInsSerializationUtil {
     private val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
     private val PACKAGE_FILE_NAME = ".kotlin_package"
-    private val NAME_TABLE_FILE_NAME = ".kotlin_name_table"
+    private val STRING_TABLE_FILE_NAME = ".kotlin_string_table"
     private val CLASS_NAMES_FILE_NAME = ".kotlin_class_names"
     private val CLASS_OBJECT_NAME = "object"
 
@@ -45,8 +45,11 @@ public object BuiltInsSerializationUtil {
     platformStatic public fun getPackageFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + PACKAGE_FILE_NAME
 
-    platformStatic public fun getNameTableFilePath(fqName: FqName): String =
-            packageFqNameToPath(fqName) + "/" + NAME_TABLE_FILE_NAME
+    platformStatic public fun getStringTableFilePath(fqName: FqName): List<String> =
+            listOf(
+                    packageFqNameToPath(fqName) + "/" + STRING_TABLE_FILE_NAME,
+                    packageFqNameToPath(fqName) + "/.kotlin_name_table" // TODO: drop
+            )
 
     platformStatic public fun getClassNamesFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME

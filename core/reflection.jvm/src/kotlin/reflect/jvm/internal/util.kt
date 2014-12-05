@@ -24,7 +24,7 @@ suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private fun String.capitalizeWithJavaBeanConvention(): String {
     // The code is a bit crooked because otherwise there are overload resolution ambiguities caused by the fact
     // that we compile it with the built-ins both in source and as a compiled library
-    val l = length
+    val l = length()
     if (l > 1 && Character.isUpperCase(get(1))) return this
     val first = get(0)
     this as java.lang.String

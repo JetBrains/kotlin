@@ -31,8 +31,9 @@ import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
 import org.jetbrains.k2js.translate.context.Namer.*
 import org.jetbrains.k2js.translate.utils.ast.*
 import org.jetbrains.k2js.translate.utils.TranslationUtils.*
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isExtension
+import org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 /**
  * Translates single property /w accessors.
@@ -44,9 +45,9 @@ public fun translateAccessors(
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
-    if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
-        PropertyTranslator(descriptor, declaration, context).translate(result)
-    }
+    if (descriptor.getModality() == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor)) return
+
+    PropertyTranslator(descriptor, declaration, context).translate(result)
 }
 
 public fun translateAccessors(
@@ -64,7 +65,7 @@ public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
         generateSetter: () -> JsPropertyInitializer
 ) {
     val to: MutableList<JsPropertyInitializer>
-    if (!JsDescriptorUtils.isExtension(descriptor)) {
+    if (!isExtension(descriptor)) {
         to = SmartList<JsPropertyInitializer>()
         this.add(JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
     }
@@ -120,6 +121,7 @@ private class PropertyTranslator(
             return generateDelegatedGetterFunction(getterDescriptor, delegatedCall)
         }
 
+        assert(!descriptor.isExtension, "Unexpected extension property $descriptor}")
         val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
         val result = backingFieldReference(context(), descriptor)
         val body = JsBlock(JsReturn(result))
@@ -172,6 +174,7 @@ private class PropertyTranslator(
                 (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
             }
         } else {
+            assert(!descriptor.isExtension, "Unexpected extension property $descriptor}")
             val assignment = assignmentToBackingField(withAliased, descriptor, valueParameter.makeRef())
             function.addStatement(assignment.makeStmt())
         }

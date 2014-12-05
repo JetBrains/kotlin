@@ -28,15 +28,20 @@ import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
+import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.jet.plugin.util.fuzzyReturnType
 
 // adds java static members, enum members and members from class object
-class StaticMembers(val bindingContext: BindingContext, val resolutionFacade: ResolutionFacade) {
+class StaticMembers(
+        val bindingContext: BindingContext,
+        val resolutionFacade: ResolutionFacade,
+        val lookupElementFactory: LookupElementFactory
+) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: JetExpression,
@@ -64,29 +69,19 @@ class StaticMembers(val bindingContext: BindingContext, val resolutionFacade: Re
 
             val classifier: (ExpectedInfo) -> ExpectedInfoClassification
             if (descriptor is CallableDescriptor) {
-                val returnType = descriptor.getReturnType() ?: return
-                classifier = {
-                    expectedInfo ->
-                        when {
-                            returnType.isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MATCHES
-                            returnType.isNullable() && returnType.makeNotNullable().isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
-                            else -> ExpectedInfoClassification.NOT_MATCHES
-                        }
-                }
+                val returnType = descriptor.fuzzyReturnType() ?: return
+                classifier = { expectedInfo -> returnType.classifyExpectedInfo(expectedInfo) }
             }
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
-                classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
-            }
-            else if (descriptor is ClassDescriptor && DescriptorUtils.isObject(descriptor)) {
-                classifier = { expectedInfo ->
-                    if (descriptor.getDefaultType().isSubtypeOf(expectedInfo.type)) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
-                }
+                classifier = { ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
             else {
                 return
             }
 
-            collection.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, classDescriptor) })
+            collection.addLookupElements(descriptor, expectedInfos, classifier) {
+                descriptor -> createLookupElement(descriptor, classDescriptor)
+            }
         }
 
         classDescriptor.getStaticScope().getAllDescriptors().forEach(::processMember)
@@ -106,7 +101,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolutionFacade: Re
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(memberDescriptor, resolutionFacade, bindingContext)
+        val lookupElement = lookupElementFactory.createLookupElement(memberDescriptor, resolutionFacade, bindingContext, false)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 

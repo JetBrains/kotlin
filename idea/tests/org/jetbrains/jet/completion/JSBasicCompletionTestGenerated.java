@@ -48,6 +48,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("AfterNullable.kt")
+        public void testAfterNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterNullableAutoCast.kt")
+        public void testAfterNullableAutoCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullableAutoCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterNullableAutoCast2.kt")
+        public void testAfterNullableAutoCast2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AfterNullableAutoCast2.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInCommon() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -289,6 +307,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("GenericExtensionFunTypeArgument2.kt")
         public void testGenericExtensionFunTypeArgument2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericExtensionFunTypeArgument2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericKotlinClass.kt")
+        public void testGenericKotlinClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericKotlinClass.kt");
             doTest(fileName);
         }
 
@@ -724,6 +748,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("SafeCallAfterNullable.kt")
+        public void testSafeCallAfterNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SafeCallAfterNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShortClassNamesInTypePosition.kt")
         public void testShortClassNamesInTypePosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ShortClassNamesInTypePosition.kt");
@@ -769,6 +799,42 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("SubpackageInFun.kt")
         public void testSubpackageInFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubpackageInFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature1.kt")
+        public void testSubstitutedSignature1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature2.kt")
+        public void testSubstitutedSignature2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature3.kt")
+        public void testSubstitutedSignature3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature4.kt")
+        public void testSubstitutedSignature4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature5.kt")
+        public void testSubstitutedSignature5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SubstitutedSignature6.kt")
+        public void testSubstitutedSignature6() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SubstitutedSignature6.kt");
             doTest(fileName);
         }
 

@@ -35,19 +35,16 @@ import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -66,60 +63,39 @@ import java.util.List;
  *
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
-public class CliLightClassGenerationSupport extends LightClassGenerationSupport {
-
+public class CliLightClassGenerationSupport extends LightClassGenerationSupport implements CodeAnalyzerInitializer {
     public static CliLightClassGenerationSupport getInstanceForCli(@NotNull Project project) {
         return ServiceManager.getService(project, CliLightClassGenerationSupport.class);
     }
 
-    private BindingTrace trace;
-    private ModuleDescriptorImpl module;
+    private BindingContext bindingContext = null;
+    private ModuleDescriptor module = null;
 
     public CliLightClassGenerationSupport() {
     }
 
-    @NotNull
-    public BindingTrace getTrace() {
-        if (trace == null) {
-            trace = new BindingTraceContextWithoutScopeRecording();
-        }
-        return trace;
-    }
-
-    @NotNull
-    public ModuleDescriptorImpl newModule() {
-        assert this.module == null : "module already configured: " + module;
-        module = TopDownAnalyzerFacadeForJVM.createJavaModule("<shared-module-for-cli-light-classes>");
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        module.seal();
-        return module;
-    }
-
-    @NotNull
-    private ModuleDescriptorImpl getModule() {
-        if (module == null) {
-           return newModule();
-        }
-        return module;
-    }
-
-    @TestOnly
-    @Nullable
-    public ModuleDescriptorImpl getLightClassModule() {
-        return module;
-    }
-
-    @TestOnly
-    public void setModule(@NotNull ModuleDescriptorImpl module) {
-        assert this.module == null : "module already configured: " + module;
+    @Override
+    public void initialize(@NotNull BindingTrace trace, @NotNull ModuleDescriptor module, @Nullable KotlinCodeAnalyzer analyzer) {
+        this.bindingContext = trace.getBindingContext();
         this.module = module;
+
+        if (!(trace instanceof CliBindingTrace)) {
+            throw new IllegalArgumentException("Shared trace is expected to be subclass of " + CliBindingTrace.class.getSimpleName() + " class");
+        }
+
+        ((CliBindingTrace) trace).setKotlinCodeAnalyzer(analyzer);
     }
 
-    @TestOnly
-    public void newBindingTrace() {
-        trace = null;
-        module = null;
+    @NotNull
+    private BindingContext getBindingContext() {
+        assert bindingContext != null : "Call initialize() first";
+        return bindingContext;
+    }
+
+    @NotNull
+    private ModuleDescriptor getModule() {
+        assert module != null : "Call initialize() first";
+        return module;
     }
 
     @NotNull
@@ -136,13 +112,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     private LightClassConstructionContext getContext() {
-        return new LightClassConstructionContext(getTrace().getBindingContext(), getModule());
+        return new LightClassConstructionContext(bindingContext, getModule());
     }
 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
+        ClassDescriptor classDescriptor = getBindingContext().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
         if (classDescriptor != null) {
             PsiElement element = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
             if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
@@ -174,7 +150,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        Collection<JetFile> files = getTrace().get(BindingContext.PACKAGE_TO_FILES, fqName);
+        Collection<JetFile> files = getBindingContext().get(BindingContext.PACKAGE_TO_FILES, fqName);
         if (files != null) {
             return Collections2.filter(files, new Predicate<JetFile>() {
                 @Override
@@ -240,7 +216,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
     }
 
-    public static class BindingTraceContextWithoutScopeRecording extends BindingTraceContext {
+    @NotNull
+    @Override
+    public BindingTraceContext createTrace() {
+        return new NoScopeRecordCliBindingTrace();
+    }
+
+    public static class NoScopeRecordCliBindingTrace extends CliBindingTrace {
         @Override
         public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
             if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
@@ -252,7 +234,44 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
         @Override
         public String toString() {
-            return "Filtering trace for the CLI compiler: does not save scopes";
+            return NoScopeRecordCliBindingTrace.class.getName();
+        }
+    }
+
+    public static class CliBindingTrace extends BindingTraceContext {
+        private KotlinCodeAnalyzer kotlinCodeAnalyzer;
+
+        @TestOnly
+        public CliBindingTrace() {
+        }
+
+        @Override
+        public String toString() {
+            return CliBindingTrace.class.getName();
+        }
+
+        public void setKotlinCodeAnalyzer(KotlinCodeAnalyzer kotlinCodeAnalyzer) {
+            this.kotlinCodeAnalyzer = kotlinCodeAnalyzer;
+        }
+
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            V value = super.get(slice, key);
+
+            if (value == null && TopDownAnalysisParameters.LAZY) {
+                if (BindingContext.FUNCTION == slice || BindingContext.VARIABLE == slice) {
+                    if (key instanceof JetDeclaration) {
+                        JetDeclaration jetDeclaration = (JetDeclaration) key;
+                        if (!JetPsiUtil.isLocal(jetDeclaration)) {
+                            kotlinCodeAnalyzer.resolveToDescriptor(jetDeclaration);
+                        }
+                    }
+                }
+                
+                return super.get(slice, key);
+            }
+
+            return value;
         }
     }
 }

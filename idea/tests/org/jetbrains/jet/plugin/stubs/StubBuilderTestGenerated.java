@@ -84,6 +84,12 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DynamicType.kt")
+    public void testDynamicType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/DynamicType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FilePackage.kt")
     public void testFilePackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/FilePackage.kt");

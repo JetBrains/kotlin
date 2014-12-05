@@ -35,7 +35,7 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -54,7 +54,7 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     val arguments = getArguments().map { it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
     val typeArgumentString = if (arguments.notEmpty) arguments.joinToString(", ", "<", ">") else ""
-    val nullifier = if (isNullable()) "?" else ""
+    val nullifier = if (isMarkedNullable()) "?" else ""
     return "$typeString$typeArgumentString$nullifier"
 }
 
@@ -95,7 +95,7 @@ fun JetExpression.guessTypes(
     if (coerceUnusedToUnit
         && this !is JetDeclaration
         && isUsedAsStatement(context)
-        && getParentByType(javaClass<JetAnnotationEntry>()) == null) return array(builtIns.getUnitType())
+        && getNonStrictParentOfType<JetAnnotationEntry>() == null) return array(builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
@@ -203,7 +203,7 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 private class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
 
 private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
-    val nullable = isNullable()
+    val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 
     if (when (variance) {
@@ -218,7 +218,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
-        return JetTypeImpl(getAnnotations(), getConstructor(), isNullable(), newArguments, getMemberScope())
+        return JetTypeImpl(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }
 }
 

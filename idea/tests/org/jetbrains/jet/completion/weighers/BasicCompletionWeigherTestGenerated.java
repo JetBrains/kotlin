@@ -32,8 +32,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletionWeigherTest {
+    @TestMetadata("AfterNullable.kt")
+    public void testAfterNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/AfterNullable.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInBasic() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/weighers/basic"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+    }
+
+    @TestMetadata("Callables.kt")
+    public void testCallables() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/Callables.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("DeprecatedFun.kt")
@@ -45,6 +57,24 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestMetadata("ExactMatchForKeyword.kt")
     public void testExactMatchForKeyword() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ExactMatchForKeyword.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportedFirst.kt")
+    public void testImportedFirst() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ImportedFirst.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportedFirstForJavaClass.kt")
+    public void testImportedFirstForJavaClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ImportedFirstForJavaClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportedOrder.kt")
+    public void testImportedOrder() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/basic/ImportedOrder.kt");
         doTest(fileName);
     }
 

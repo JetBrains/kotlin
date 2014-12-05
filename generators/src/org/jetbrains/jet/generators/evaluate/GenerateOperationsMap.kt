@@ -22,13 +22,12 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import java.util.Collections
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.JetType
 
 val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/jet/lang/evaluate/OperationsMapGenerated.kt")
-private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec")
+private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")
 
 fun main(args: Array<String>) {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())
@@ -52,11 +51,11 @@ fun generate(): String {
     val builtIns = KotlinBuiltIns.getInstance()
     [suppress("UNCHECKED_CAST")]
     val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getDescriptors()
-            .filter { it is ClassDescriptor && builtIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
+            .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
 
     for (descriptor in allPrimitiveTypes + builtIns.getString()) {
         [suppress("UNCHECKED_CAST")]
-        val functions = descriptor.getMemberScope(Collections.emptyList()).getDescriptors()
+        val functions = descriptor.getMemberScope(listOf()).getDescriptors()
                 .filter { it is FunctionDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<FunctionDescriptor>
 
         for (function in functions) {
@@ -82,7 +81,7 @@ fun generate(): String {
         val (funcName, parameters) = unaryOperationsMapIterator.next()
         p.println(
                 "unaryOperation(",
-                parameters.map { it.asSrting() }.makeString(", "),
+                parameters.map { it.asString() }.joinToString(", "),
                 ", ",
                 "\"$funcName\"",
                 ", { a -> a.${funcName}() }, ",
@@ -105,7 +104,7 @@ fun generate(): String {
         val (funcName, parameters) = binaryOperationsMapIterator.next()
         p.println(
                 "binaryOperation(",
-                parameters.map { it.asSrting() }.makeString(", "),
+                parameters.map { it.asString() }.joinToString(", "),
                 ", ",
                 "\"$funcName\"",
                 ", { a, b -> a.${funcName}(b) }, ",
@@ -168,4 +167,4 @@ private fun FunctionDescriptor.getParametersTypes(): List<JetType> {
     return list
 }
 
-private fun JetType.asSrting(): String = getConstructor().getDeclarationDescriptor()!!.getName().asString().toUpperCase()
+private fun JetType.asString(): String = getConstructor().getDeclarationDescriptor()!!.getName().asString().toUpperCase()

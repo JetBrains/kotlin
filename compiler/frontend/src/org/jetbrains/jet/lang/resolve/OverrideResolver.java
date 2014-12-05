@@ -939,7 +939,7 @@ public class OverrideResolver {
     }
 
     private void checkVisibility(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
+        for (Map.Entry<JetCallableDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
             checkVisibilityForMember(entry.getKey(), entry.getValue());
         }
     }

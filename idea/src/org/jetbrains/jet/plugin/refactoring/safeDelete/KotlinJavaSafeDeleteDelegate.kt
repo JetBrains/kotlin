@@ -26,7 +26,7 @@ import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.parameterIndex
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
@@ -40,7 +40,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val element = reference.getElement() as JetElement
 
-        val callExpression = element.getParentByType(javaClass<JetCallExpression>())
+        val callExpression = element.getNonStrictParentOfType<JetCallExpression>()
         if (callExpression == null) return
 
         val calleeExpression = callExpression.getCalleeExpression()

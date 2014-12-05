@@ -42,7 +42,7 @@ import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.*
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.deleteElementAndCleanParent
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
@@ -88,9 +88,9 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteReferenceJavaDeleteUsageInfo ->
                         usageInfo.getElement()?.let { usageElement ->
-                            if (usageElement.getParentByType(javaClass<JetValueArgumentName>()) != null) null
+                            if (usageElement.getNonStrictParentOfType<JetValueArgumentName>() != null) null
                             else {
-                                usageElement.getParentByType(javaClass<JetImportDirective>())?.let { importDirective ->
+                                usageElement.getNonStrictParentOfType<JetImportDirective>()?.let { importDirective ->
                                     SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as JetDeclaration)
                                 } ?: if (forceReferencedElementUnwrapping) {
                                     SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete())
@@ -126,7 +126,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .stream()
                     .filterNot { reference -> getIgnoranceCondition().value(reference.getElement()) }
                     .mapTo(usages) { reference ->
-                        reference.getElement().getParentByType(javaClass<JetImportDirective>())?.let { importDirective ->
+                        reference.getElement().getNonStrictParentOfType<JetImportDirective>()?.let { importDirective ->
                             SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as JetDeclaration)
                         } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false)
                     }
@@ -135,7 +135,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         fun findTypeParameterUsages(parameter: JetTypeParameter) {
-            val owner = parameter.getParentByType(javaClass<JetTypeParameterListOwner>())
+            val owner = parameter.getNonStrictParentOfType<JetTypeParameterListOwner>()
             if (owner == null) return
 
             val parameterList = owner.getTypeParameters()
@@ -146,9 +146,9 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                 val referencedElement = reference.getElement()
 
-                val argList = referencedElement.getParentByType(javaClass<JetUserType>())?.let { jetType ->
+                val argList = referencedElement.getNonStrictParentOfType<JetUserType>()?.let { jetType ->
                     jetType.getTypeArgumentList()
-                } ?: referencedElement.getParentByType(javaClass<JetCallExpression>())?.let { callExpression ->
+                } ?: referencedElement.getNonStrictParentOfType<JetCallExpression>()?.let { callExpression ->
                     callExpression.getTypeArgumentList()
                 } ?: null
 
@@ -202,7 +202,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
     override fun findConflicts(element: PsiElement, allElementsToDelete: Array<out PsiElement>): MutableCollection<String>? {
         if (element is JetNamedFunction || element is JetProperty) {
-            val jetClass = element.getParentByType(javaClass<JetClass>())
+            val jetClass = element.getNonStrictParentOfType<JetClass>()
             if (jetClass == null || jetClass.getBody() != element.getParent()) return null
 
             val modifierList = jetClass.getModifierList()

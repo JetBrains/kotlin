@@ -111,7 +111,7 @@ public class JetChangeInfo implements ChangeInfo {
 
         buffer.append(getNewParametersSignature(inheritedFunction, isInherited, buffer.length()));
 
-        if (newReturnType != null && !KotlinBuiltIns.getInstance().isUnit(newReturnType) && !isConstructor())
+        if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && !isConstructor())
             buffer.append(": ").append(newReturnTypeText);
 
         return buffer.toString();

@@ -25,7 +25,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.impl.LookupCellRenderer;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +36,9 @@ import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.stubs.AstAccessControl;
 import org.junit.Assert;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Extract a number of statements about completion from the given text. Those statements
@@ -123,6 +127,8 @@ public class ExpectedCompletionUtils {
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
     private static final String AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:";
 
+    public static final String RUNTIME_TYPE = "RUNTIME_TYPE:";
+
     public static final List<String> KNOWN_PREFIXES = ImmutableList.of(
             EXIST_LINE_PREFIX,
             ABSENT_LINE_PREFIX,
@@ -136,6 +142,7 @@ public class ExpectedCompletionUtils {
             INVOCATION_COUNT_PREFIX,
             WITH_ORDER_PREFIX,
             AUTOCOMPLETE_SETTING_PREFIX,
+            RUNTIME_TYPE,
             AstAccessControl.INSTANCE$.getALLOW_AST_ACCESS_DIRECTIVE());
 
     @NotNull
@@ -317,6 +324,12 @@ public class ExpectedCompletionUtils {
         if (presentation.isItemTextUnderlined()) {
             if (builder.length() > 0) builder.append(" ");
             builder.append("underlined");
+        }
+        Color foreground = presentation.getItemTextForeground();
+        if (!foreground.equals(JBColor.foreground())) {
+            assert foreground.equals(LookupCellRenderer.getGrayedForeground(false));
+            if (builder.length() > 0) builder.append(" ");
+            builder.append("grayed");
         }
         if (presentation.isStrikeout()) {
             if (builder.length() > 0) builder.append(" ");

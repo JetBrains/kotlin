@@ -113,7 +113,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
-        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
         declareIntrinsicFunction("String", "get", 1, new StringGetChar());
 
         declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);
@@ -129,9 +128,6 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName, "compareTo", 1, new CompareTo());
             declareIntrinsicFunction(typeName + "Iterator", "next", 0, ITERATOR_NEXT);
         }
-
-        declareIntrinsicProperty("CharSequence", "length", new StringLength());
-        declareIntrinsicProperty("String", "length", new StringLength());
 
         declareArrayMethods();
     }
@@ -166,10 +162,6 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName().asString(), methodName, 1, op);
         }
-    }
-
-    private void declareIntrinsicProperty(@NotNull String className, @NotNull String methodName, @NotNull IntrinsicMethod implementation) {
-        declareIntrinsicFunction(className, methodName, -1, implementation);
     }
 
     private void declareIntrinsicFunction(

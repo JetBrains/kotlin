@@ -2,6 +2,7 @@ package test.kotlin
 
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -33,7 +34,7 @@ class PsiUtilsTest {
 
         val configuration = CompilerConfiguration()
         configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
-        environment = JetCoreEnvironment.createForTests(rootDisposable, configuration)
+        environment = JetCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     [After]

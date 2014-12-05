@@ -19,6 +19,7 @@ package org.jetbrains.jet.checkers;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
@@ -28,11 +29,13 @@ public abstract class AbstractJetDiagnosticsTestWithStdLib extends AbstractJetDi
     @Override
     protected JetCoreEnvironment createEnvironment() {
         File javaFilesDir = createJavaFilesDir();
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL,
-                TestJdkKind.MOCK_JDK,
-                Arrays.asList(JetTestUtils.getAnnotationsJar()),
-                Arrays.asList(javaFilesDir)
-        ));
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(),
+                                                 JetTestUtils.compilerConfigurationForTests(
+                                                         ConfigurationKind.ALL,
+                                                         TestJdkKind.MOCK_JDK,
+                                                         Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                                                         Arrays.asList(javaFilesDir)
+                                                 ),
+                                                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 }

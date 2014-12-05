@@ -118,13 +118,13 @@ public class CommonSupertypes {
             JetType type = iterator.next();
             assert type != null;
             assert !TypesPackage.isFlexible(type) : "Flexible type " + type + " passed to commonSuperTypeForInflexible";
-            if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
+            if (KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
             if (type.isError()) {
                 return ErrorUtils.createErrorType("Supertype of error type " + type);
             }
-            nullable |= type.isNullable();
+            nullable |= type.isMarkedNullable();
         }
 
         // Everything deleted => it's Nothing or Nothing?
@@ -220,7 +220,7 @@ public class CommonSupertypes {
 
         boolean nullable = false;
         for (JetType type : types) {
-            nullable |= type.isNullable();
+            nullable |= type.isMarkedNullable();
         }
 
         // TODO : attributes?
@@ -267,7 +267,7 @@ public class CommonSupertypes {
 
         for (TypeProjection projection : typeProjections) {
             Variance projectionKind = projection.getProjectionKind();
-            if (projectionKind.allowsInPosition()) {
+            if (projectionKind.getAllowsInPosition()) {
                 if (ins != null) {
                     ins.add(projection.getType());
                 }
@@ -276,7 +276,7 @@ public class CommonSupertypes {
                 ins = null;
             }
 
-            if (projectionKind.allowsOutPosition()) {
+            if (projectionKind.getAllowsOutPosition()) {
                 if (outs != null) {
                     outs.add(projection.getType());
                 }

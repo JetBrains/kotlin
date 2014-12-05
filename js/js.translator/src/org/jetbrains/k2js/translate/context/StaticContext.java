@@ -39,6 +39,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension;
 import static org.jetbrains.k2js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
@@ -220,6 +221,7 @@ public final class StaticContext {
         return result;
     }
 
+    @NotNull
     public Config getConfig() {
         return config;
     }
@@ -283,19 +285,16 @@ public final class StaticContext {
                     String propertyName = getSuggestedName(propertyDescriptor);
 
                     if (!isExtension(propertyDescriptor)) {
-                        if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
+                        if (Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
                             propertyName = getMangledName(propertyDescriptor, propertyName);
                         }
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                     } else {
-                        if (descriptor instanceof PropertyDescriptor) {
-                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
-                        } else {
-                            String propertyJsName = getNameForDescriptor(propertyDescriptor).getIdent();
-                            boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                            String accessorName = Namer.getNameForAccessor(propertyJsName, isGetter, false);
-                            return declarePropertyOrPropertyAccessorName(descriptor, accessorName, false);
-                        }
+                        assert !(descriptor instanceof PropertyDescriptor) : "descriptor should not be instance of PropertyDescriptor: " + descriptor;
+
+                        boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
+                        String accessorName = Namer.getNameForAccessor(propertyName, isGetter, false);
+                        return declarePropertyOrPropertyAccessorName(descriptor, accessorName, false);
                     }
                 }
             };
