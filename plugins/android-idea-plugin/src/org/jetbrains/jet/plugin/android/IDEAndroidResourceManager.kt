@@ -30,28 +30,24 @@ import com.intellij.openapi.vfs.VirtualFile
 
 public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
-    private class NoAndroidFacetException: Exception("No android facet found in project")
-
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
-        try {
-            val directories = getAndroidFacet().getAllResourceDirectories()
-            return directories.flatMap { (it.findChild("layout")?.getChildren() ?: array<VirtualFile>()).map { virtualFileToPsi(it)!! } }
-        } catch (e: NoAndroidFacetException) {
-            return listOf()
+        val directories = getAndroidFacet()?.getAllResourceDirectories() ?: listOf()
+        return directories.flatMap {
+            (it.findChild("layout")?.getChildren() ?: array<VirtualFile>()).map { virtualFileToPsi(it)!! }
         }
     }
 
-    private fun getAndroidFacet(): AndroidFacet {
+    private fun getAndroidFacet(): AndroidFacet? {
         for (module in ModuleManager.getInstance(project).getModules()) {
             val facet = AndroidFacet.getInstance(module)
             if (facet != null) return facet
         }
-        throw NoAndroidFacetException()
+        return null
     }
 
     override fun readManifest(): AndroidManifest {
         val facet = getAndroidFacet()
-        val attributeValue = facet.getManifest()!!.getPackage()
+        val attributeValue = facet?.getManifest()!!.getPackage()
         return AndroidManifest(attributeValue!!.getRawText()!!)
     }
 
