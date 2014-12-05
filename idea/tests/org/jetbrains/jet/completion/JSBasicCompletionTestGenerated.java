@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTest {
     @TestMetadata("idea/testData/completion/basic/common")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class, Common.Visibility.class})
+    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class, Common.TypeArgsOrNot.class, Common.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Common extends AbstractJSBasicCompletionTest {
         @TestMetadata("AfterFloatOnNewLine.kt")
@@ -1020,6 +1020,51 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("WithParameterExpression.kt")
             public void testWithParameterExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/namedParameters/WithParameterExpression.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/completion/basic/common/typeArgsOrNot")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeArgsOrNot extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInTypeArgsOrNot() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common/typeArgsOrNot"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ConstructorTypeArg.kt")
+            public void testConstructorTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/ConstructorTypeArg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FunctionTypeArg.kt")
+            public void testFunctionTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/FunctionTypeArg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FunctionTypeArg2.kt")
+            public void testFunctionTypeArg2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/FunctionTypeArg2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LessThan.kt")
+            public void testLessThan() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/LessThan.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NestedTypeArg.kt")
+            public void testNestedTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/NestedTypeArg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SecondTypeArg.kt")
+            public void testSecondTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/typeArgsOrNot/SecondTypeArg.kt");
                 doTest(fileName);
             }
         }
