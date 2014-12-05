@@ -3,8 +3,8 @@ package
 internal trait Test</*0*/ in I, /*1*/ out O> {
     internal abstract var interlan_private_set: O
     internal abstract val internal_val: I
-    private abstract var private_private_set: O
-    private abstract val private_val: I
+    private/*private to this*/ abstract var private_private_set: O
+    private/*private to this*/ abstract val private_val: I
     protected abstract var protected_private_set: O
     protected abstract val protected_val: I
     public abstract var public_private_set: O
@@ -12,7 +12,7 @@ internal trait Test</*0*/ in I, /*1*/ out O> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal abstract fun internal_fun(/*0*/ i: O): I
-    private abstract fun private_fun(/*0*/ i: O): I
+    private/*private to this*/ abstract fun private_fun(/*0*/ i: O): I
     protected abstract fun protected_fun(/*0*/ i: O): I
     public abstract fun public_fun(/*0*/ i: O): I
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

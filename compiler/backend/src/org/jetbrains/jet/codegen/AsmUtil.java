@@ -88,6 +88,7 @@ public class AsmUtil {
     @NotNull
     private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()
             .put(Visibilities.PRIVATE, ACC_PRIVATE)
+            .put(Visibilities.PRIVATE_TO_THIS, ACC_PRIVATE)
             .put(Visibilities.PROTECTED, ACC_PROTECTED)
             .put(JavaVisibilities.PROTECTED_STATIC_VISIBILITY, ACC_PROTECTED)
             .put(JavaVisibilities.PROTECTED_AND_PACKAGE, ACC_PROTECTED)

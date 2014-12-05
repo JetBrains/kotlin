@@ -1466,6 +1466,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateToThis.kt")
+        public void testPrivateToThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/privateToThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyDelegation.kt")
         public void testPropertyDelegation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/propertyDelegation.kt");

@@ -20,6 +20,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -58,7 +59,24 @@ public class Visibilities {
         }
     };
 
-    public static final Visibility PRIVATE_TO_THIS = PRIVATE;
+    public static final Visibility PRIVATE_TO_THIS = new Visibility("private_to_this", false) {
+        @Override
+        protected boolean isVisible(@NotNull ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            if (PRIVATE.isVisible(thisObject, what, from)) {
+                DeclarationDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
+
+                if (classDescriptor != null && thisObject instanceof ClassReceiver) {
+                    return ((ClassReceiver) thisObject).getDeclarationDescriptor().getOriginal() == classDescriptor.getOriginal();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "private/*private to this*/";
+        }
+    };
 
     public static final Visibility PROTECTED = new Visibility("protected", true) {
         @Override
@@ -116,7 +134,7 @@ public class Visibilities {
     };
 
     public static final Set<Visibility> INVISIBLE_FROM_OTHER_MODULES =
-            Collections.unmodifiableSet(KotlinPackage.setOf(PRIVATE, INTERNAL, LOCAL));
+            Collections.unmodifiableSet(KotlinPackage.setOf(PRIVATE, PRIVATE_TO_THIS, INTERNAL, LOCAL));
 
     private Visibilities() {
     }
@@ -154,6 +172,7 @@ public class Visibilities {
 
     static {
         Map<Visibility, Integer> visibilities = UtilsPackage.newHashMapWithExpectedSize(4);
+        visibilities.put(PRIVATE_TO_THIS, 0);
         visibilities.put(PRIVATE, 0);
         visibilities.put(INTERNAL, 1);
         visibilities.put(PROTECTED, 1);
