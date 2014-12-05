@@ -191,9 +191,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
             else
                 DescriptorKindFilter.ALL_KINDS_MASK
+            val kindFilter = DescriptorKindFilter(kindMask)
 
             if (completeReference) {
-                addReferenceVariants(DescriptorKindFilter(kindMask))
+                addReferenceVariants(kindFilter, shouldCastToRuntimeType = false)
 
                 if (onlyTypes) {
                     collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
@@ -213,7 +214,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
             if (completeReference && position.getContainingFile() is JetCodeFragment) {
                 flushToResultSet()
-                addReferenceVariants(DescriptorKindFilter(kindMask), true)
+                addReferenceVariants(kindFilter, shouldCastToRuntimeType = true)
             }
         }
 
@@ -249,7 +250,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean = false) {
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean) {
         collector.addDescriptorElements(
                 getReferenceVariants(kindFilter, shouldCastToRuntimeType),
                 suppressAutoInsertion = false,
