@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -49,7 +50,7 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
                 val token = file.findElementAt(startOffset)
                 val nameRef = token.getParent() as? JetNameReferenceExpression
                 if (nameRef != null) {
-                    val bindingContext = nameRef.getResolutionFacade().analyzeWithPartialBodyResolve(nameRef)
+                    val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
                     if (target != null && DescriptorUtils.getFqNameSafe(target).asString() == qualifiedName) return
                 }

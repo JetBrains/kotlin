@@ -28,11 +28,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
-import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNames;
-import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
-import org.jetbrains.jet.lang.resolve.lazy.ProbablyNothingCallableNames;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.*;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
@@ -62,7 +58,7 @@ public class ResolveElementCache extends ElementResolver {
                                         manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
-                                                return elementAdditionalResolve(jetElement, PartialBodyResolveProvider.NONE);
+                                                return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
                                             }
                                         });
 

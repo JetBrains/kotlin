@@ -43,6 +43,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.CallType
 import org.jetbrains.jet.plugin.completion.isVisible
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -60,7 +61,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     private val file = position.getContainingFile() as JetFile
     protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
-    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyzeWithPartialBodyResolve(it.expression) }
+    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyze(it.expression, BodyResolveMode.PARTIAL_FOR_COMPLETION) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 
     // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()

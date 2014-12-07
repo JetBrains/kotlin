@@ -65,6 +65,7 @@ import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
@@ -292,7 +293,7 @@ private object KotlinResolveDataProvider {
         else {
             if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-            val contextForElement = contextElement.getResolutionFacade().analyzeWithPartialBodyResolve(contextElement)
+            val contextForElement = contextElement.getResolutionFacade().analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
 
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
             dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)

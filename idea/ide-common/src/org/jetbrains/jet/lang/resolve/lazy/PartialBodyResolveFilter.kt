@@ -35,7 +35,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val declaration: JetDeclaration,
-        probablyNothingCallableNames: ProbablyNothingCallableNames
+        probablyNothingCallableNames: ProbablyNothingCallableNames,
+        forCompletion: Boolean
 ) : PartialBodyResolveProvider() {
 
     private val statementMarks = StatementMarks()
@@ -74,7 +75,7 @@ class PartialBodyResolveFilter(
             }
         })
 
-        statementMarks.mark(elementToResolve, MarkLevel.NEED_COMPLETION)
+        statementMarks.mark(elementToResolve, if (forCompletion) MarkLevel.NEED_COMPLETION else MarkLevel.NEED_REFERENCE_RESOLVE)
         declaration.blocks().forEach { processBlock(it) }
     }
 

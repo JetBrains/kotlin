@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
@@ -65,7 +66,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         val resolutionFacade = file.getResolutionFacade()
 
         // optimized resolve
-        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyzeWithPartialBodyResolve(expression))
+        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL_FOR_COMPLETION))
 
         // full body resolve
         val (target2, type2, processedStatements2) = doResolve(expression, resolutionFacade.analyze(expression))

@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -303,7 +304,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull ResolutionFacade resolutionFacade
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = resolutionFacade.analyze(functionLiteralExpression);
+        BindingContext context = resolutionFacade.analyze(functionLiteralExpression, BodyResolveMode.FULL);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -323,7 +324,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
-            BindingContext context = resolutionFacade.analyze(inlinedExpression);
+            BindingContext context = resolutionFacade.analyze(inlinedExpression, BodyResolveMode.FULL);
             Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();

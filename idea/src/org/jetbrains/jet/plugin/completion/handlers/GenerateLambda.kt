@@ -40,6 +40,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -84,7 +85,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     if (expression == null) return false
 
     val resolutionFacade = file.getResolutionFacade()
-    val bindingContext = resolutionFacade.analyzeWithPartialBodyResolve(expression)
+    val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size <= 1) return false

@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -285,7 +286,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
         assert(balance > 0)
 
         val nameRef = nameToken.getParent() as? JetNameReferenceExpression ?: return null
-        val bindingContext = nameRef.getResolutionFacade().analyzeWithPartialBodyResolve(nameRef) //TODO: analyze with "resolve" mode instead of "completion"
+        val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
         val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
         val targets = if (target != null) {
             listOf(target)
