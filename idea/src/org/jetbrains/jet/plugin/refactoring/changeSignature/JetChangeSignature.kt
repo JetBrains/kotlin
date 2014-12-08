@@ -212,7 +212,7 @@ public class JetChangeSignature(val project: Project,
                                                options: List<String>): Int {
         val superString = superFunctions.map {
             it.getContainingDeclaration().getName().asString()
-        }.makeString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
+        }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
         val message = JetBundle.message("x.overrides.y.in.class.list",
                                         DescriptorRenderer.COMPACT.render(functionFromEditor),
                                         functionFromEditor.getContainingDeclaration().getName().asString(), superString,
