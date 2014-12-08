@@ -67,7 +67,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.method;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_IMPL_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -253,7 +253,7 @@ public class PackageCodegen {
 
     private void generateKotlinPackageReflectionField() {
         MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        Method method = method("kPackage", K_PACKAGE_IMPL_TYPE, getType(Class.class));
+        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class));
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
         iv.areturn(Type.VOID_TYPE);

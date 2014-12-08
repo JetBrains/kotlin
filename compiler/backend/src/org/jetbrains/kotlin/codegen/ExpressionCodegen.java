@@ -2640,57 +2640,59 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         final Method factoryMethod;
         if (receiverParameter != null) {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE, getType(Class.class)};
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE, getType(Class.class)};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes)
-                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes)
+                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes);
         }
         else {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_IMPL_TYPE};
+            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes)
-                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_IMPL_TYPE, parameterTypes);
+                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE, parameterTypes)
+                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_TYPE, parameterTypes);
         }
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
-                v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_IMPL_TYPE.getDescriptor());
+                v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
 
                 if (receiverParameter != null) {
                     putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
                 }
 
-                v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
                 return Unit.INSTANCE$;
             }
         });
     }
 
     @NotNull
-    private StackValue generateMemberPropertyReference(@NotNull final VariableDescriptor descriptor, @NotNull final ClassDescriptor containingClass) {
-        final Type classAsmType = typeMapper.mapClass(containingClass);
-
+    private StackValue generateMemberPropertyReference(
+            @NotNull final VariableDescriptor descriptor,
+            @NotNull final ClassDescriptor containingClass
+    ) {
         final Method factoryMethod = descriptor.isVar()
-                               ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE)
-                               : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE);
+                                     ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE)
+                                     : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE);
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
+                v.visitLdcInsn(descriptor.getName().asString());
+
+                Type classAsmType = typeMapper.mapClass(containingClass);
+
                 if (containingClass instanceof JavaClassDescriptor) {
                     v.aconst(classAsmType);
-                    v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
-                                   Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
+                    v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
                 }
                 else {
-                    v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_IMPL_TYPE.getDescriptor());
+                    v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
                 }
 
-
-                v.visitLdcInsn(descriptor.getName().asString());
-                v.invokevirtual(K_CLASS_IMPL_TYPE.getInternalName(), factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
 
                 return Unit.INSTANCE$;
             }

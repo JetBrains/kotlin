@@ -447,7 +447,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         v.aconst(thisAsmType);
-        v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factory.getName(), factory.getDescriptor(), false);
+        v.invokestatic(REFLECTION, factory.getName(), factory.getDescriptor(), false);
         v.putstatic(thisAsmType.getInternalName(), fieldName, type);
     }
 

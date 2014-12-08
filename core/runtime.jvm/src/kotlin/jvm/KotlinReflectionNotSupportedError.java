@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal;
+package kotlin.jvm;
 
-import kotlin.reflect.jvm.KotlinReflectionNotSupportedError;
-
-public class InternalPackage {
-    public static KClassImpl foreignKotlinClass(Class jClass) {
-        throw new KotlinReflectionNotSupportedError();
-    }
-
-    public static KClassImpl kClassFromKotlin(Class jClass) {
-        return null;
-    }
-
-    public static KPackageImpl kPackage(Class c) {
-        return null;
+public class KotlinReflectionNotSupportedError extends Error {
+    public KotlinReflectionNotSupportedError() {
+        super("Kotlin reflection implementation is not found at runtime. " +
+              "Make sure you do have kotlin-runtime.jar and do not have kotlin-runtime-minimal.jar in the classpath");
     }
 }

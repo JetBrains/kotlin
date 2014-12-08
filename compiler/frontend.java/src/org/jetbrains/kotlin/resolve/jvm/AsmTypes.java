@@ -33,24 +33,24 @@ public class AsmTypes {
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType("kotlin/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
-    public static final Type K_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMemberProperty");
-    public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMutableMemberProperty");
+    public static final Type K_CLASS_TYPE = reflect("KClass");
+    public static final Type K_PACKAGE_TYPE = reflect("KPackage");
 
-    public static final Type K_CLASS_IMPL_TYPE = reflectInternal("KClassImpl");
-    public static final Type K_PACKAGE_IMPL_TYPE = reflectInternal("KPackageImpl");
-    public static final Type K_TOP_LEVEL_VARIABLE_IMPL_TYPE = reflectInternal("KTopLevelVariableImpl");
-    public static final Type K_MUTABLE_TOP_LEVEL_VARIABLE_IMPL_TYPE = reflectInternal("KMutableTopLevelVariableImpl");
-    public static final Type K_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KTopLevelExtensionPropertyImpl");
-    public static final Type K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelExtensionPropertyImpl");
+    public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");
+    public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = reflect("KMutableMemberProperty");
+    public static final Type K_TOP_LEVEL_VARIABLE_TYPE = reflect("KTopLevelVariable");
+    public static final Type K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE = reflect("KMutableTopLevelVariable");
+    public static final Type K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KTopLevelExtensionProperty");
+    public static final Type K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KMutableTopLevelExtensionProperty");
 
-    public static final String REFLECTION_INTERNAL_PACKAGE = reflectInternal("InternalPackage").getInternalName();
+    public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 
     public static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
     public static final Type OBJECT_REF_TYPE = Type.getObjectType(REF_TYPE_PREFIX + "ObjectRef");
 
     @NotNull
-    private static Type reflectInternal(@NotNull String className) {
-        return Type.getObjectType("kotlin/reflect/jvm/internal/" + className);
+    private static Type reflect(@NotNull String className) {
+        return Type.getObjectType("kotlin/reflect/" + className);
     }
 
     @NotNull
