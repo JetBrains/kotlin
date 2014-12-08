@@ -27,10 +27,9 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.jet.JetTestUtils
 import kotlin.test.assertTrue
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import java.io.File
 
 public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
@@ -68,9 +67,7 @@ public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val dir = JetTestUtils.tmpDir("noErrorsInStdlibTest")
-        ForTestCompileRuntime.compileBuiltIns(dir)
-        return object : JetJdkAndLibraryProjectDescriptor(dir) {
+        return object : JetJdkAndLibraryProjectDescriptor(File("dist/classes/builtins")) {
             override fun getSdk(): Sdk? = PluginTestCaseBase.fullJdk()
         }
     }

@@ -54,7 +54,8 @@ public class JetPairMatcher implements PairedBraceMatcher {
                 || contextType == JetTokens.RPAR
                 || contextType == JetTokens.RBRACKET
                 || contextType == JetTokens.RBRACE
-                || contextType == JetTokens.LBRACE;
+                || contextType == JetTokens.LBRACE
+                || contextType == JetTokens.LONG_TEMPLATE_ENTRY_END;
     }
 
     @Override
