@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
-import java.util.ArrayList
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.getPackageFqName())

@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm
 
 import java.lang.reflect.*
+import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 
@@ -58,11 +59,13 @@ public val KMemberProperty<*, *>.javaField: Field?
 
 // Java reflection -> Kotlin reflection
 
+// TODO: getstatic $kotlinClass or go to foreignKClasses
 public val <T> Class<T>.kotlin: KClass<T>
-    get() = kClass(this)
+    get() = KClassImpl(this, false)
 
+// TODO: getstatic $kotlinPackage
 public val Class<*>.kotlinPackage: KPackage
-    get() = kPackage(this)
+    get() = KPackageImpl(this)
 
 
 public val Field.kotlin: KProperty<*>
@@ -73,12 +76,12 @@ public val Field.kotlin: KProperty<*>
         val static = Modifier.isStatic(modifiers)
         val final = Modifier.isFinal(modifiers)
         if (static) {
-            val kPackage = kPackage(clazz)
-            return if (final) topLevelVariable(name, kPackage) else mutableTopLevelVariable(name, kPackage)
+            val kPackage = clazz.kotlinPackage
+            return if (final) Reflection.topLevelVariable(name, kPackage) else Reflection.mutableTopLevelVariable(name, kPackage)
         }
         else {
-            val kClass = kClass(clazz as Class<Any>)
-            return if (final) kClass.memberProperty(name) else kClass.mutableMemberProperty(name)
+            val kClass = (clazz as Class<Any>).kotlin
+            return if (final) Reflection.memberProperty(name, kClass) else Reflection.mutableMemberProperty(name, kClass)
         }
     }
 
