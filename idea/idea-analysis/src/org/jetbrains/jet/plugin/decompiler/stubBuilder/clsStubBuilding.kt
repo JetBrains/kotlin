@@ -64,7 +64,7 @@ fun createPackageFacadeFileStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub(packageFqName: FqName) = createFileStub(packageFqName)
+fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
 
 fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
     val fileStub = KotlinFileStubImpl(null, packageFqName.asString(), packageFqName.isRoot())
