@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -243,6 +242,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("NoFinalInParameterList.kt")
     public void testNoFinalInParameterList() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoFinalInParameterList.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NotInNotIs.kt")
+    public void testNotInNotIs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NotInNotIs.kt");
         doTest(fileName);
     }
 
