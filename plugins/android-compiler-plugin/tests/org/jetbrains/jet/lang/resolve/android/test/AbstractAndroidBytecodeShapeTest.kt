@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.jet.lang.resolve.android.test
 
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest
 import org.jetbrains.jet.JetTestUtils
@@ -42,12 +42,7 @@ public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTes
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val resPath = path + "res/layout/"
         val manifestPath = path + "../AndroidManifest.xml"
-        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
-        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        val project = myEnvironment.getProject()
-        ExternalDeclarationsProvider.registerExtension(project, AndroidTestDeclarationsProvider(project, resPath, manifestPath))
-        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+        myEnvironment = createAndroidTestEnvironment(configuration, resPath, manifestPath)
     }
 
     public override fun doTest(path: String) {

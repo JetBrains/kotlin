@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.jet.lang.resolve.android.test
 
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
@@ -30,6 +30,8 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.junit.Assert
 import kotlin.test.fail
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
+import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 

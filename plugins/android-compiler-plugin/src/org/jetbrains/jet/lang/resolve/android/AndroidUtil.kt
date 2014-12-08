@@ -62,7 +62,7 @@ public fun isRClassField(element: PsiElement): Boolean {
         if (outerClass !is PsiClass) return false
         val processor = ServiceManager.getService<AndroidUIXmlProcessor>(element.getProject(), javaClass<AndroidUIXmlProcessor>())
         val packageName = processor?.resourceManager?.readManifest()?._package
-        if ((outerClass as PsiClass).getQualifiedName()?.startsWith(packageName ?: "") ?: false)
+        if ((outerClass : PsiClass).getQualifiedName()?.startsWith(packageName ?: "") ?: false)
         true else false
     }
     else false
