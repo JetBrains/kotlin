@@ -118,7 +118,7 @@ public class JetChangeSignature(val project: Project,
             return
         }
 
-        val affectedFunctions = dialog.getMethodDescriptor().getAffectedFunctions().map { it.getElement() }.filterNotNull()
+        val affectedFunctions = dialog.getMethodDescriptor().affectedFunctions.map { it.getElement() }.filterNotNull()
 
         if (affectedFunctions.any { !checkModifiable(it) }) {
             return

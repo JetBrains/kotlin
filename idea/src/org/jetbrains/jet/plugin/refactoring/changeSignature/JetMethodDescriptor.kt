@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.changeSignature;
+package org.jetbrains.jet.plugin.refactoring.changeSignature
 
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
-import com.intellij.usageView.UsageInfo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.changeSignature.MethodDescriptor
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.Visibility
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
-import java.util.Collection;
+public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
+    val baseDeclaration: PsiElement
+    val baseDescriptor: FunctionDescriptor
 
-public interface JetMethodDescriptor extends MethodDescriptor<JetParameterInfo, Visibility> {
-    @NotNull
-    JetFunctionDefinitionUsage<PsiElement> getOriginalPrimaryFunction();
-
-    @NotNull
-    Collection<JetFunctionDefinitionUsage<PsiElement>> getPrimaryFunctions();
-
-    @NotNull
-    Collection<UsageInfo> getAffectedFunctions();
-
-    boolean isConstructor();
-
-    @Nullable
-    String getReturnTypeText();
-
-    @NotNull
-    PsiElement getContext();
-
-    @Nullable
-    FunctionDescriptor getDescriptor();
+    val originalPrimaryFunction: JetFunctionDefinitionUsage<PsiElement>
+    val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>>
+    val affectedFunctions: Collection<UsageInfo>
 }
+
+val JetMethodDescriptor.isConstructor: Boolean
+    get() = baseDescriptor is ConstructorDescriptor
+
+fun JetMethodDescriptor.renderOriginalReturnType(): String =
+        baseDescriptor.getReturnType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""

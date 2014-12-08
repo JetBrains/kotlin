@@ -164,7 +164,7 @@ public class JetChangeInfo implements ChangeInfo {
 
     private Map<String, Integer> initOldNameToParameterIndex() {
         Map<String, Integer> map = new HashMap<String, Integer>();
-        FunctionDescriptor descriptor = oldDescriptor.getDescriptor();
+        FunctionDescriptor descriptor = oldDescriptor.getBaseDescriptor();
 
         if (descriptor != null) {
             List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
@@ -259,7 +259,7 @@ public class JetChangeInfo implements ChangeInfo {
 
     @Nullable
     public FunctionDescriptor getOldDescriptor() {
-        return oldDescriptor.getDescriptor();
+        return oldDescriptor.getBaseDescriptor();
     }
 
     public JetMethodDescriptor getFunctionDescriptor() {
@@ -267,7 +267,7 @@ public class JetChangeInfo implements ChangeInfo {
     }
 
     public boolean isConstructor() {
-        return oldDescriptor.isConstructor();
+        return ChangeSignaturePackage.getIsConstructor(oldDescriptor);
     }
 
     public void setNewReturnTypeText(String newReturnTypeText) {
@@ -276,7 +276,7 @@ public class JetChangeInfo implements ChangeInfo {
 
     @Override
     public boolean isReturnTypeChanged() {
-        return !newReturnTypeText.equals(oldDescriptor.getReturnTypeText());
+        return !newReturnTypeText.equals(ChangeSignaturePackage.renderOriginalReturnType(oldDescriptor));
     }
 
     @Nullable
@@ -376,7 +376,7 @@ public class JetChangeInfo implements ChangeInfo {
 
         //noinspection ConstantConditions
         final List<ValueParameterDescriptor> originalParameterDescriptors =
-                originalChangeSignatureDescriptor.getDescriptor().getValueParameters();
+                originalChangeSignatureDescriptor.getBaseDescriptor().getValueParameters();
 
 
         List<JetParameterInfo> newParameters = KotlinPackage.map(

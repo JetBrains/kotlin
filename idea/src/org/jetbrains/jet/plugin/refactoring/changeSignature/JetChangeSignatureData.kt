@@ -14,258 +14,134 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.changeSignature;
+package org.jetbrains.jet.plugin.refactoring.changeSignature
 
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
-import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightMethod;
-import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.refactoring.changeSignature.MethodDescriptor
+import com.intellij.refactoring.changeSignature.OverriderUsageInfo
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.jet.asJava.KotlinLightMethod
+import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 
-import java.util.*;
+import java.util.*
+import kotlin.properties.Delegates
 
-public final class JetChangeSignatureData implements JetMethodDescriptor {
-    @NotNull
-    private final FunctionDescriptor baseDescriptor;
-    @NotNull
-    private final PsiElement baseDeclaration;
-    @NotNull
-    private final List<JetParameterInfo> parameters;
-    @NotNull
-    private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
-    private JetFunctionDefinitionUsage<PsiElement> originalPrimaryFunction;
-    private Collection<JetFunctionDefinitionUsage<PsiElement>> primaryFunctions = null;
-    private Collection<UsageInfo> affectedFunctions = null;
+public class JetChangeSignatureData(
+        override val baseDescriptor: FunctionDescriptor,
+        override val baseDeclaration: PsiElement,
+        private val descriptorsForSignatureChange: Collection<FunctionDescriptor>
+) : JetMethodDescriptor {
+    private val parameters: MutableList<JetParameterInfo>
 
-    public JetChangeSignatureData(
-            @NotNull FunctionDescriptor baseDescriptor,
-            @NotNull PsiElement baseDeclaration,
-            @NotNull Collection<FunctionDescriptor> descriptorsForSignatureChange
-    ) {
-        this.baseDescriptor = baseDescriptor;
-        this.baseDeclaration = baseDeclaration;
-        this.descriptorsForSignatureChange = descriptorsForSignatureChange;
-        final List<JetParameter> valueParameters = this.baseDeclaration instanceof JetFunction
-                                                   ? ((JetFunction) this.baseDeclaration).getValueParameters()
-                                                   : this.baseDeclaration instanceof JetClass
-                                                     ? ((JetClass) this.baseDeclaration).getPrimaryConstructorParameters()
-                                                     : null;
-        this.parameters = new ArrayList<JetParameterInfo>(
-                ContainerUtil.map(this.baseDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetParameterInfo>() {
-                    @Override
-                    public JetParameterInfo fun(ValueParameterDescriptor param) {
-                        JetParameter parameter = valueParameters != null ? valueParameters.get(param.getIndex()) : null;
-                        JetParameterInfo parameterInfo = new JetParameterInfo(
-                                param.getIndex(),
-                                param.getName().asString(),
-                                param.getType(),
-                                parameter != null ? parameter.getDefaultValue() : null,
-                                parameter != null ? parameter.getValOrVarNode() : null
-                        );
-                        parameterInfo.setModifierList(parameter != null ? parameter.getModifierList() : null);
-                        return parameterInfo;
-                    }
-                }));
-    }
-
-    @Override
-    @NotNull
-    public List<JetParameterInfo> getParameters() {
-        return parameters;
-    }
-
-    public void addParameter(JetParameterInfo parameter) {
-        parameters.add(parameter);
-    }
-
-    public void removeParameter(int index) {
-        parameters.remove(index);
-    }
-
-    public void clearParameters() {
-        parameters.clear();
-    }
-
-    @NotNull
-    @Override
-    public JetFunctionDefinitionUsage<PsiElement> getOriginalPrimaryFunction() {
-        if (originalPrimaryFunction == null) {
-            originalPrimaryFunction = KotlinPackage.first(
-                    getPrimaryFunctions(),
-                    new Function1<JetFunctionDefinitionUsage<PsiElement>, Boolean>() {
-                        @Override
-                        public Boolean invoke(JetFunctionDefinitionUsage<PsiElement> usage) {
-                            return usage.getDeclaration() == baseDeclaration;
-                        }
-                    }
-            );
+    ;{
+        val valueParameters = when {
+            baseDeclaration is JetFunction -> baseDeclaration.getValueParameters()
+            baseDeclaration is JetClass -> baseDeclaration.getPrimaryConstructorParameters()
+            else -> null
         }
-        return originalPrimaryFunction;
+        parameters = baseDescriptor.getValueParameters().mapTo(ArrayList()) { parameterDescriptor ->
+            val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
+            val parameterInfo = JetParameterInfo(
+                    parameterDescriptor.getIndex(),
+                    parameterDescriptor.getName().asString(),
+                    parameterDescriptor.getType(),
+                    jetParameter?.getDefaultValue(),
+                    jetParameter?.getValOrVarNode()
+            )
+            parameterInfo.setModifierList(jetParameter?.getModifierList())
+            parameterInfo
+        }
     }
 
-    @Override
-    @NotNull
-    public Collection<JetFunctionDefinitionUsage<PsiElement>> getPrimaryFunctions() {
-        if (primaryFunctions == null) {
-            primaryFunctions = KotlinPackage.map(
-                    descriptorsForSignatureChange,
-                    new Function1<FunctionDescriptor, JetFunctionDefinitionUsage<PsiElement>>() {
-                        @Override
-                        public JetFunctionDefinitionUsage<PsiElement> invoke(FunctionDescriptor descriptor) {
-                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
-                                                                                                          descriptor);
-                            assert declaration != null : "No declaration found for " + descriptor;
-                            return new JetFunctionDefinitionUsage<PsiElement>(declaration, descriptor, null, null);
-                        }
-                    }
-            );
+    override val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>> by Delegates.lazy {
+        descriptorsForSignatureChange.map {
+            val declaration = DescriptorToDeclarationUtil.getDeclaration(baseDeclaration.getProject(), it)
+            assert(declaration != null) { "No declaration found for " + baseDescriptor }
+            JetFunctionDefinitionUsage<PsiElement>(declaration, it, null, null)
         }
-
-        return primaryFunctions;
     }
 
-    @Override
-    @NotNull
-    public Collection<UsageInfo> getAffectedFunctions() {
-        if (affectedFunctions == null) {
-            affectedFunctions = KotlinPackage.flatMapTo(
-                    getPrimaryFunctions(),
-                    new HashSet<UsageInfo>(),
-                    new Function1<JetFunctionDefinitionUsage<PsiElement>, Iterable<? extends UsageInfo>>() {
-                        @Override
-                        public Iterable<? extends UsageInfo> invoke(final JetFunctionDefinitionUsage<PsiElement> primaryFunction) {
-                            Set<UsageInfo> result = Sets.newHashSet();
-                            result.add(primaryFunction);
-
-                            PsiElement primaryDeclaration = primaryFunction.getDeclaration();
-                            if (!(primaryDeclaration instanceof JetNamedFunction)) return result;
-
-                            final PsiMethod baseLightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) primaryDeclaration);
-                            // there are valid situations when light method is null: local functions and literals
-                            if (baseLightMethod == null) return result;
-
-                            return KotlinPackage.filterNotNullTo(
-                                    KotlinPackage.map(
-                                            OverridingMethodsSearch.search(baseLightMethod).findAll(),
-                                            new Function1<PsiMethod, UsageInfo>() {
-                                                @Override
-                                                public UsageInfo invoke(PsiMethod method) {
-                                                    if (method instanceof KotlinLightMethod) {
-                                                        JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-                                                        if (declaration == null) return null;
-
-                                                        FunctionDescriptor currentDescriptor =
-                                                                (FunctionDescriptor) ResolvePackage.resolveToDescriptor(declaration);
-
-                                                        return new JetFunctionDefinitionUsage<PsiElement>(declaration,
-                                                                                              currentDescriptor,
-                                                                                              primaryFunction,
-                                                                                              null);
-                                                    }
-
-                                                    return new OverriderUsageInfo(method, baseLightMethod, true, true, true);
-                                                }
-                                            }
-                                    ),
-                                    result
-                            );
-                        }
-                    }
-            );
-        }
-        return affectedFunctions;
+    override val originalPrimaryFunction: JetFunctionDefinitionUsage<PsiElement> by Delegates.lazy {
+        primaryFunctions.first { it.getDeclaration() == baseDeclaration }
     }
 
-    @Override
-    public String getName() {
-        if (baseDescriptor instanceof ConstructorDescriptor) {
-            return baseDescriptor.getContainingDeclaration().getName().asString();
+    override val affectedFunctions: Collection<UsageInfo> by Delegates.lazy {
+        primaryFunctions + primaryFunctions.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
+            val primaryDeclaration = primaryFunction.getDeclaration() as? JetNamedFunction
+            val lightMethod = primaryDeclaration?.let { LightClassUtil.getLightClassMethod(it) }
+            val overrides = lightMethod?.let { OverridingMethodsSearch.search(it).findAll() } ?: Collections.emptyList()
+            overrides.map { method ->
+                if (method is KotlinLightMethod) {
+                    val overridingDeclaration = method.origin
+                    val overridingDescriptor = overridingDeclaration?.resolveToDescriptor() as FunctionDescriptor
+                    JetFunctionDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
+                }
+                else OverriderUsageInfo(method, lightMethod, true, true, true)
+            }.filterNotNullTo(HashSet<UsageInfo>())
         }
-        else if (baseDescriptor instanceof AnonymousFunctionDescriptor) {
-            return "";
+    }
+
+    override fun getParameters(): List<JetParameterInfo> {
+        return parameters
+    }
+
+    public fun addParameter(parameter: JetParameterInfo) {
+        parameters.add(parameter)
+    }
+
+    public fun removeParameter(index: Int) {
+        parameters.remove(index)
+    }
+
+    public fun clearParameters() {
+        parameters.clear()
+    }
+
+    override fun getName(): String {
+        if (baseDescriptor is ConstructorDescriptor) {
+            return baseDescriptor.getContainingDeclaration().getName().asString()
+        }
+        else if (baseDescriptor is AnonymousFunctionDescriptor) {
+            return ""
         }
         else {
-            return baseDescriptor.getName().asString();
+            return baseDescriptor.getName().asString()
         }
     }
 
-    @Override
-    public int getParametersCount() {
-        return baseDescriptor.getValueParameters().size();
+    override fun getParametersCount(): Int {
+        return baseDescriptor.getValueParameters().size()
     }
 
-    @Override
-    public Visibility getVisibility() {
-        return baseDescriptor.getVisibility();
+    override fun getVisibility(): Visibility {
+        return baseDescriptor.getVisibility()
     }
 
-    @Override
-    public PsiElement getMethod() {
-        return baseDeclaration;
+    override fun getMethod(): PsiElement {
+        return baseDeclaration
     }
 
-    @Override
-    public boolean canChangeVisibility() {
-        DeclarationDescriptor parent = baseDescriptor.getContainingDeclaration();
-        return !(baseDescriptor instanceof AnonymousFunctionDescriptor ||
-                 parent instanceof ClassDescriptor && ((ClassDescriptor) parent).getKind() == ClassKind.TRAIT);
+    override fun canChangeVisibility(): Boolean {
+        val parent = baseDescriptor.getContainingDeclaration()
+        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.getKind() == ClassKind.TRAIT)
     }
 
-    @Override
-    public boolean canChangeParameters() {
-        return true;
+    override fun canChangeParameters(): Boolean {
+        return true
     }
 
-    @Override
-    public boolean canChangeName() {
-        return !(baseDescriptor instanceof ConstructorDescriptor ||
-                 baseDescriptor instanceof AnonymousFunctionDescriptor);
+    override fun canChangeName(): Boolean {
+        return !(baseDescriptor is ConstructorDescriptor || baseDescriptor is AnonymousFunctionDescriptor)
     }
 
-    @Override
-    public MethodDescriptor.ReadWriteOption canChangeReturnType() {
-        return baseDescriptor instanceof ConstructorDescriptor ? ReadWriteOption.None : ReadWriteOption.ReadWrite;
-    }
-
-    @Override
-    public boolean isConstructor() {
-        return baseDescriptor instanceof ConstructorDescriptor;
-    }
-
-    @NotNull
-    @Override
-    public PsiElement getContext() {
-        return baseDeclaration;
-    }
-
-    @Nullable
-    @Override
-    public FunctionDescriptor getDescriptor() {
-        return baseDescriptor;
-    }
-
-    @Override
-    @Nullable
-    public String getReturnTypeText() {
-        JetType returnType = baseDescriptor.getReturnType();
-        return returnType != null ? IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(returnType) : null;
+    override fun canChangeReturnType(): MethodDescriptor.ReadWriteOption {
+        return if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
     }
 }
