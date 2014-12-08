@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.android
 
-import org.jetbrains.jet.plugin.findUsages.handlers.KotlinIsReferenceToExtension
+import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 
-public class AndroidKotlinIsReferenceToExtension : KotlinIsReferenceToExtension {
+public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
     override fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean? {
         val resolvedElement = reference.resolve()
         if (resolvedElement == null) {
