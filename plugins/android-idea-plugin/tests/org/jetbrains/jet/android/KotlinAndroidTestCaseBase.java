@@ -180,7 +180,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         AndroidSdkAdditionalData data = new AndroidSdkAdditionalData(sdk);
         AndroidSdkData sdkData = AndroidSdkData.getSdkData(sdkPath);
         assertNotNull(sdkData);
-        IAndroidTarget target = sdkData.findTargetByName("Android 4.2"); // TODO: Get rid of this hardcoded version number
+        IAndroidTarget target = sdkData.findTargetByName("Android 5.0"); // TODO: Get rid of this hardcoded version number
         if (target == null) {
             IAndroidTarget[] targets = sdkData.getTargets();
             for (IAndroidTarget t : targets) {
