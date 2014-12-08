@@ -81,14 +81,33 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
        return addKotlinRuntimeDependency(myProject);
     }
 
+    protected JpsLibrary addKotlinJavaScriptStdlibDependency() {
+        return addKotlinJavaScriptStdlibDependency(myProject);
+    }
+
+    protected JpsLibrary addKotlinJavaScriptDependency(String libraryName, File libraryFile) {
+        return addDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false, libraryName, libraryFile);
+    }
+
     static JpsLibrary addKotlinRuntimeDependency(@NotNull JpsProject project) {
        return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false);
     }
 
+    static JpsLibrary addKotlinJavaScriptStdlibDependency(@NotNull JpsProject project) {
+        return addKotlinJavaScriptStdlibDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false);
+    }
+
     protected static JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
-        JpsLibrary library = modules.iterator().next().getProject().addLibrary("kotlin-runtime", JpsJavaLibraryType.INSTANCE);
-        File runtime = PathUtil.getKotlinPathsForDistDirectory().getRuntimePath();
-        library.addRoot(runtime, JpsOrderRootType.COMPILED);
+        return addDependency(type, modules, exported, "kotlin-runtime", PathUtil.getKotlinPathsForDistDirectory().getRuntimePath());
+    }
+
+    protected static JpsLibrary addKotlinJavaScriptStdlibDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
+        return addDependency(type, modules, exported, "KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
+    }
+
+    protected static JpsLibrary addDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported, String libraryName, File file) {
+        JpsLibrary library = modules.iterator().next().getProject().addLibrary(libraryName, JpsJavaLibraryType.INSTANCE);
+        library.addRoot(file, JpsOrderRootType.COMPILED);
         for (JpsModule module : modules) {
             JpsModuleRootModificationUtil.addDependency(module, library, type, exported);
         }

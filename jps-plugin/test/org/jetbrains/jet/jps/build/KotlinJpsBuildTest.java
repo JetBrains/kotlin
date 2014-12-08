@@ -20,13 +20,14 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.io.ZipUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
-import org.jetbrains.jet.compiler.CompilerSettings;
-import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
@@ -38,9 +39,12 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream;
 
 public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
@@ -48,7 +52,31 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
     private static final String[] EXCLUDE_FILES = { "Excluded.class", "YetAnotherExcluded.class" };
     private static final String[] NOTHING = {};
-
+    private static final String KOTLIN_JS_LIBRARY = "jslib-example";
+    private static final String PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY;
+    private static final String KOTLIN_JS_LIBRARY_JAR = KOTLIN_JS_LIBRARY + ".jar";
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf(PROJECT_NAME + ".js", "lib/kotlin.js");
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = KotlinPackage.hashSetOf(PROJECT_NAME + ".js");
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR =
+        KotlinPackage.hashSetOf(
+            PROJECT_NAME + ".js",
+            "lib/kotlin.js",
+            "lib/jslib-example.js",
+            "lib/file0.js",
+            "lib/dir/file1.js",
+            "lib/META-INF-ex/file2.js",
+            "lib/res0.js",
+            "lib/resdir/res1.js");
+    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR =
+        KotlinPackage.hashSetOf(
+            PROJECT_NAME + ".js",
+            "custom/kotlin.js",
+            "custom/jslib-example.js",
+            "custom/file0.js",
+            "custom/dir/file1.js",
+            "custom/META-INF-ex/file2.js",
+            "custom/res0.js",
+            "custom/resdir/res1.js");
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -84,10 +112,75 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         makeAll().assertSuccessful();
     }
 
+    public void doTestWithKotlinJavaScriptLibrary() {
+        initProject();
+        addKotlinJavaScriptStdlibDependency();
+        createKotlinJavaScriptLibraryArchive();
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY_JAR));
+        makeAll().assertSuccessful();
+    }
+
     public void testKotlinProject() {
         doTest();
 
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"));
+    }
+
+    public void testKotlinJavaScriptProject() {
+        initProject();
+        addKotlinJavaScriptStdlibDependency();
+        makeAll().assertSuccessful();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
+        initProject();
+        File jslibJar = PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath();
+        File jslibDir = new File(workDir, "KotlinJavaScript");
+        try {
+            ZipUtil.extract(jslibJar, jslibDir, null);
+        }
+        catch (IOException ex) {
+            throw new IllegalStateException(ex.getMessage());
+        }
+        addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir);
+        makeAll().assertSuccessful();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
+        initProject();
+        addKotlinJavaScriptStdlibDependency();
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY));
+        makeAll().assertSuccessful();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithLibrary() {
+        doTestWithKotlinJavaScriptLibrary();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithLibraryCustomOutputDir() {
+        doTestWithKotlinJavaScriptLibrary();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+    }
+
+    public void testKotlinJavaScriptProjectWithLibraryNoCopy() {
+        doTestWithKotlinJavaScriptLibrary();
+
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY, contentOfOutputDir(PROJECT_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
     }
 
     public void testExcludeFolderInSourceRoot() {
@@ -274,6 +367,43 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"));
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"));
+    }
+
+    private void createKotlinJavaScriptLibraryArchive() {
+        File jarFile = new File(workDir, KOTLIN_JS_LIBRARY_JAR);
+        try {
+            ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
+            ZipUtil.addDirToZipRecursively(zip, jarFile, new File(PATH_TO_KOTLIN_JS_LIBRARY), "", null, null);
+            zip.close();
+        }
+        catch (FileNotFoundException ex) {
+            throw new IllegalStateException(ex.getMessage());
+        }
+        catch (IOException ex) {
+            throw new IllegalStateException(ex.getMessage());
+        }
+    }
+
+    @NotNull
+    private static String[] k2jsOutput(String moduleName) {
+        String outputDir = "out/production/" + moduleName;
+        String[] result = new String[1];
+        result[0] = outputDir + "/" + moduleName + ".js";
+        return result;
+    }
+
+    @NotNull
+    private Set<String> contentOfOutputDir(String moduleName) {
+        String outputDir = "out/production/" + moduleName;
+        File baseDir = new File(workDir, outputDir);
+        List<File> files = FileUtil.findFilesByMask(Pattern.compile(".*"), baseDir);
+        Set<String> result = new HashSet<String>();
+        for(File file : files) {
+            String relativePath = FileUtil.getRelativePath(baseDir, file);
+            assert relativePath != null : "relativePath should not be null";
+            result.add(FileUtil.toSystemIndependentName(relativePath));
+        }
+        return result;
     }
 
     @NotNull
