@@ -5,12 +5,12 @@ fun test() : Unit {
   x : Int?
   y : Int
   x as Int : Int
-  y <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as Int</warning> : Int
-  x <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as Int?</warning> : Int?
-  y <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as Int?</warning> : Int?
+  y <warning>as Int</warning> : Int
+  x <warning>as Int?</warning> : Int?
+  y <warning>as Int?</warning> : Int?
   x as? Int : Int?
-  y <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as? Int</warning> : Int?
-  x <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as? Int?</warning> : Int?
-  y <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as? Int?</warning> : Int?
+  y <warning>as? Int</warning> : Int?
+  x <warning>as? Int?</warning> : Int?
+  y <warning>as? Int?</warning> : Int?
   Unit
 }

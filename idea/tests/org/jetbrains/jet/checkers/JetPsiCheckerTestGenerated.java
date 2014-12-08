@@ -339,6 +339,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Unused.kt")
+        public void testUnused() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Unused.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Variance.kt")
         public void testVariance() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Variance.kt");
