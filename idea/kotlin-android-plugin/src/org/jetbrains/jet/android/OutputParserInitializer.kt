@@ -45,6 +45,9 @@ public fun initializeOutputParser() {
     catch (e: ClassNotFoundException) {
         // skip: Android plugin doesn't exist
     }
+    catch (e: NoSuchFieldException) {
+        // BuildOutputParser in Teamcity jps can differ from the one in Android Studio
+    }
 }
 
 public class OutputParserInitializer : ProjectComponent {
