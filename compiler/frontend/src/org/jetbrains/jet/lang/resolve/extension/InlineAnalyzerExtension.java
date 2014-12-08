@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
@@ -128,19 +129,11 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
-        hasInlinable |= containsReifiedTypeParameters(functionDescriptor);
+        hasInlinable |= DescriptorUtils.containsReifiedTypeParameters(functionDescriptor);
 
         if (!hasInlinable) {
             trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
         }
-    }
-
-    private static boolean containsReifiedTypeParameters(@NotNull FunctionDescriptor descriptor) {
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if (typeParameterDescriptor.isReified()) return true;
-        }
-
-        return false;
     }
 
     public static boolean checkInlinableParameter(
