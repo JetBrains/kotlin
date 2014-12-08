@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.jet.lang.resolve.android.test
 
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.jet.config.CompilerConfiguration
+import java.io.File
+import com.intellij.util.Processor
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.JetTestUtils
+import java.util.regex.Pattern
+import com.intellij.openapi.util.io.FileUtil
+import java.util.ArrayList
 import java.util.Collections
 import com.intellij.util.ArrayUtil
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import java.util.ArrayList
-import com.intellij.util.Processor
-import org.jetbrains.jet.codegen.CodegenTestFiles
-import java.util.regex.Pattern
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.jet.JetTestCaseBuilder
-import com.intellij.openapi.application.PathManager
-import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
-import org.jetbrains.kotlin.android.AndroidExpressionCodegen
-import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.jet.codegen.CodegenTestFiles
 
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
@@ -52,12 +44,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val resPath = path + "layout/"
         val manifestPath = path + "AndroidManifest.xml"
-        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
-        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        val project = myEnvironment.getProject()
-        ExternalDeclarationsProvider.registerExtension(project, AndroidTestDeclarationsProvider(project, resPath, manifestPath))
-        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
+        myEnvironment = createAndroidTestEnvironment(configuration, resPath, manifestPath)
     }
 
     public fun doCompileAgainstAndroidSdkTest(path: String) {
@@ -80,11 +67,8 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         return !FileUtil.findFilesByMask(Pattern.compile("^0.kt$"), File(path)).empty
     }
 
-    override fun relativePath(file: File): String {
-        val stringToCut = "plugins/android-compiler-plugin/testData/codegen/"
-        val systemIndependentPath = file.getPath().replace(File.separatorChar, '/')
-        assert(systemIndependentPath.startsWith(stringToCut), "File path is not absolute: $file ")
-        return systemIndependentPath.substring(stringToCut.length())
+    override fun codegenTestBasePath(): String {
+        return "plugins/android-compiler-plugin/testData/codegen/"
     }
 
     private fun doMultiFileTest(path: String, additionalFiles: Collection<String>? = null) {
@@ -92,9 +76,15 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         FileUtil.processFilesRecursively(File(path), object : Processor<File> {
             override fun process(file: File?): Boolean {
                 when (file!!.getName()) {
-                    "1.kt" -> { if (additionalFiles == null) files.add(relativePath(file)) }
-                    "0.kt" -> { if (additionalFiles != null) files.add(relativePath(file)) }
-                    else   -> { if (file.getName().endsWith(".kt")) files.add(relativePath(file)) }
+                    "1.kt" -> {
+                        if (additionalFiles == null) files.add(relativePath(file))
+                    }
+                    "0.kt" -> {
+                        if (additionalFiles != null) files.add(relativePath(file))
+                    }
+                    else -> {
+                        if (file.getName().endsWith(".kt")) files.add(relativePath(file))
+                    }
                 }
                 return true
             }
