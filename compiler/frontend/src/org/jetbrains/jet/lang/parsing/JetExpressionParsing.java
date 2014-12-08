@@ -847,7 +847,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // COMMA
         }
 
-        expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
+        expect(ARROW, "Expecting '->'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
         }

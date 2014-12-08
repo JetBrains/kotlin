@@ -1395,6 +1395,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("NoArrowInWhen.kt")
+            public void testNoArrowInWhen() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/NoArrowInWhen.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("PackageNewLineRecovery.kt")
             public void testPackageNewLineRecovery() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/PackageNewLineRecovery.kt");
