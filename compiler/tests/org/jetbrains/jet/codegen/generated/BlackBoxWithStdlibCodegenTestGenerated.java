@@ -108,6 +108,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("arrayConstructorsSimple.kt")
+        public void testArrayConstructorsSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/arrayConstructorsSimple.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("arrayGetAssignMultiIndex.kt")
         public void testArrayGetAssignMultiIndex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/arrayGetAssignMultiIndex.kt");
@@ -177,6 +183,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt945.kt")
         public void testKt945() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt945.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multiArrayConstructors.kt")
+        public void testMultiArrayConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/multiArrayConstructors.kt");
             doTestWithStdlib(fileName);
         }
 
