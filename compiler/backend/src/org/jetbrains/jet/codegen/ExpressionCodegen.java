@@ -2283,7 +2283,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         if (callElement == null) return defaultCallGenerator;
 
-        boolean isInline = state.isInlineEnabled() &&
+        // We should inline callable containing reified type parameters even if inline is disabled
+        // because they may contain something to reify and straight call will probably fail at runtime
+        boolean isInline = (state.isInlineEnabled() || DescriptorUtils.containsReifiedTypeParameters(descriptor)) &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
 
