@@ -28,7 +28,7 @@ import java.io.File
 
 public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
 
-    private val SDK_NAME = "Android API 17 Platform"
+    private val SDK_NAME = "Android API 21 Platform"
 
     override fun setUp() {
         super.setUp()
@@ -61,10 +61,10 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
     private fun addJdkAndAndroidSdk(): JpsSdk<JpsSimpleElement<JpsAndroidSdkProperties>> {
         val jdkName = "java_sdk"
         addJdk(jdkName)
-        val properties = JpsAndroidSdkProperties("android-17", jdkName)
-        val sdkPath = getHomePath() + "/androidSDK/"
+        val properties = JpsAndroidSdkProperties("android-21", jdkName)
+        val sdkPath = getHomePath() + "/../dependencies/androidSDK"
         val library = myModel!!.getGlobal().addSdk<JpsSimpleElement<JpsAndroidSdkProperties>>(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
-        library!!.addRoot(File(sdkPath + "/platforms/android-17/android.jar"), JpsOrderRootType.COMPILED)
+        library!!.addRoot(File(sdkPath + "/platforms/android-21/android.jar"), JpsOrderRootType.COMPILED)
         return library.getProperties()
     }
 }
