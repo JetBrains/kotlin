@@ -223,7 +223,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     protected JBTableRowEditor getTableEditor(final JTable t, final ParameterTableModelItemBase<JetParameterInfo> item) {
         return new JBTableRowEditor() {
             private final List<JComponent> components = new ArrayList<JComponent>();
-            private final boolean defaultValueColumnEnabled = item.parameter.isNewParameter();
+            private final boolean defaultValueColumnEnabled = item.parameter.getIsNewParameter();
 
             @Override
             public void prepareEditor(JTable table, final int row) {
@@ -414,8 +414,8 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
         for (int i = 0; i < parameters.size(); i++) {
             JetParameterInfo parameter = parameters.get(i);
-            parameter.setTypeText(myParametersTableModel.getItems().get(i).typeCodeFragment.getText().trim());
-            parameter.setDefaultValueText(myParametersTableModel.getItems().get(i).defaultValueCodeFragment.getText().trim());
+            parameter.setCurrentTypeText(myParametersTableModel.getItems().get(i).typeCodeFragment.getText().trim());
+            parameter.setDefaultValueForCall(myParametersTableModel.getItems().get(i).defaultValueCodeFragment.getText().trim());
         }
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
@@ -429,9 +429,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         List<JetParameterInfo> parameters = myMethod.getParameters();
         for (int i = 0; i < parameters.size(); i++) {
             JetParameterInfo info = parameters.get(i);
-            if (info.isNewParameter()) {
-                return i;
-            }
+            if (info.getIsNewParameter()) return i;
         }
         return super.getSelectedIdx();
     }

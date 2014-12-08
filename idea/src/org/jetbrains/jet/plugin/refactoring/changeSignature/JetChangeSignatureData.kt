@@ -40,7 +40,7 @@ public class JetChangeSignatureData(
 ) : JetMethodDescriptor {
     private val parameters: MutableList<JetParameterInfo>
 
-    ;{
+            ;{
         val valueParameters = when {
             baseDeclaration is JetFunction -> baseDeclaration.getValueParameters()
             baseDeclaration is JetClass -> baseDeclaration.getPrimaryConstructorParameters()
@@ -48,15 +48,14 @@ public class JetChangeSignatureData(
         }
         parameters = baseDescriptor.getValueParameters().mapTo(ArrayList()) { parameterDescriptor ->
             val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
-            val parameterInfo = JetParameterInfo(
-                    parameterDescriptor.getIndex(),
-                    parameterDescriptor.getName().asString(),
-                    parameterDescriptor.getType(),
-                    jetParameter?.getDefaultValue(),
-                    jetParameter?.getValOrVarNode()
+            JetParameterInfo(
+                    originalIndex = parameterDescriptor.getIndex(),
+                    name = parameterDescriptor.getName().asString(),
+                    type = parameterDescriptor.getType(),
+                    defaultValueForParameter = jetParameter?.getDefaultValue(),
+                    valOrVarNode = jetParameter?.getValOrVarNode(),
+                    modifierList = jetParameter?.getModifierList()
             )
-            parameterInfo.setModifierList(jetParameter?.getModifierList())
-            parameterInfo
         }
     }
 

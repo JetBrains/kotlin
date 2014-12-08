@@ -66,7 +66,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                 changeSignatureData.clearParameters();
                 for (JetType type : parameterTypes) {
                     String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
-                    changeSignatureData.addParameter(new JetParameterInfo(name, type));
+                    changeSignatureData.addParameter(new JetParameterInfo(-1, name, type, null, "", null, null));
                 }
             }
 

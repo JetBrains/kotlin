@@ -137,16 +137,18 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                         JetType parameterType = parameters.get(i).getType();
 
                         if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
-                            changeSignatureData.getParameters().get(i).setTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType));
+                            changeSignatureData.getParameters().get(i).setCurrentTypeText(
+                                    IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType)
+                            );
                             typesToShorten.add(argumentType);
                         }
                     }
                     else {
                         JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
-                        typesToShorten.add(parameterInfo.getType());
+                        typesToShorten.add(parameterInfo.getOriginalType());
 
                         if (expression != null) {
-                            parameterInfo.setDefaultValueText(expression.getText());
+                            parameterInfo.setDefaultValueForCall(expression.getText());
                         }
 
                         changeSignatureData.addParameter(parameterInfo);

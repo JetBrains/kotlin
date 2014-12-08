@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,212 +14,118 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.changeSignature;
+package org.jetbrains.jet.plugin.refactoring.changeSignature
 
-import com.intellij.lang.ASTNode;
-import com.intellij.refactoring.changeSignature.ParameterInfo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import com.intellij.lang.ASTNode
+import com.intellij.refactoring.changeSignature.ParameterInfo
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetModifierList
 
-import java.util.List;
+public class JetParameterInfo(
+        val originalIndex: Int = -1,
+        private var name: String,
+        type: JetType? = null,
+        var defaultValueForParameter: JetExpression? = null,
+        var defaultValueForCall: String = "",
+        valOrVarNode: ASTNode? = null,
+        val modifierList: JetModifierList? = null
+): ParameterInfo {
+    val originalType: JetType? = type
+    var currentTypeText: String = getOldTypeText()
+    var valOrVar: JetValVar = valOrVarNode.toValVar()
 
-public class JetParameterInfo implements ParameterInfo {
-    private String name = "";
-    private final int oldIndex;
-    private JetType type;
-    private String typeText;
-    private String defaultValueText = "";
-    private JetValVar valOrVar;
-    @Nullable private JetExpression defaultValue;
-    @Nullable JetModifierList modifierList;
+    private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: ""
 
-    public JetParameterInfo(int oldIndex, String name, JetType type, @Nullable JetExpression defaultValue, @Nullable ASTNode valOrVar) {
-        this.oldIndex = oldIndex;
-        this.name = name;
-        this.type = type;
-        this.typeText = getOldTypeText();
-        this.defaultValue = defaultValue;
+    override fun getOldIndex(): Int = originalIndex
 
-        if (valOrVar == null)
-            this.valOrVar = JetValVar.None;
-        else if (valOrVar.getElementType() == JetTokens.VAL_KEYWORD)
-            this.valOrVar = JetValVar.Val;
-        else if (valOrVar.getElementType() == JetTokens.VAR_KEYWORD)
-            this.valOrVar = JetValVar.Var;
-        else
-            throw new IllegalArgumentException("Unknown val/var token: " + valOrVar.getText());
+    public val isNewParameter: Boolean
+        get() = originalIndex == -1
+
+    override fun getDefaultValue(): String? = null
+
+    override fun getName(): String = name
+
+    override fun setName(name: String?) {
+        this.name = name ?: ""
     }
 
-    public JetParameterInfo(String name, JetType type) {
-        this(-1, name, type, null, null);
+    override fun getTypeText(): String = currentTypeText
+
+    public val isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
+
+    override fun isUseAnySingleVariable(): Boolean = false
+
+    override fun setUseAnySingleVariable(b: Boolean) {
+        throw UnsupportedOperationException()
     }
 
-    public JetParameterInfo(int index) {
-        oldIndex = index;
-        typeText = "";
-        valOrVar = JetValVar.None;
+    public fun renderType(parameterIndex: Int, inheritedFunction: JetFunctionDefinitionUsage<*>): String {
+        val typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor() ?: return currentTypeText
+        val currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor() ?: return currentTypeText
+        val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
+        return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public fun getInheritedName(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+        if (!inheritedFunction.isInherited()) return name
+
+        val baseFunction = inheritedFunction.getBaseFunction()
+        val baseFunctionDescriptor = baseFunction.getOriginalFunctionDescriptor()
+
+        val inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor()
+        val inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters()
+        if (originalIndex < 0
+            || originalIndex >= baseFunctionDescriptor.getValueParameters().size()
+            || originalIndex >= inheritedParameterDescriptors.size()) return name
+
+        val inheritedParamName = inheritedParameterDescriptors.get(originalIndex).getName().asString()
+        val oldParamName = baseFunctionDescriptor.getValueParameters().get(originalIndex).getName().asString()
+
+        return when {
+            oldParamName == inheritedParamName && inheritedFunctionDescriptor !is AnonymousFunctionDescriptor -> name
+            else -> inheritedParamName
+        }
     }
 
-    public String renderType(int parameterIndex, @NotNull JetFunctionDefinitionUsage inheritedFunction) {
-        TypeSubstitutor typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor();
-        if (typeSubstitutor == null) return typeText;
+    public fun requiresExplicitType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): Boolean {
+        val inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor()
+        if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
-        FunctionDescriptor currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor();
-        if (currentBaseFunction == null) return typeText;
+        if (originalIndex < 0) return !inheritedFunction.hasExpectedType()
 
-        JetType parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType();
-
-        return ChangeSignaturePackage.renderTypeWithSubstitution(parameterType, typeSubstitutor, typeText, true);
+        val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
+        val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? JetParameter ?: return false
+        return parameter.getTypeReference() != null
     }
 
-    public String getInheritedName(@NotNull JetFunctionDefinitionUsage inheritedFunction) {
-        if (!inheritedFunction.isInherited()) return name;
-
-        JetFunctionDefinitionUsage baseFunction = inheritedFunction.getBaseFunction();
-        FunctionDescriptor baseFunctionDescriptor = baseFunction.getOriginalFunctionDescriptor();
-
-        FunctionDescriptor inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor();
-        List<ValueParameterDescriptor> inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters();
-        if (oldIndex < 0
-            || oldIndex >= baseFunctionDescriptor.getValueParameters().size()
-            || oldIndex >= inheritedParameterDescriptors.size()) return name;
-
-        String inheritedParamName = inheritedParameterDescriptors.get(oldIndex).getName().asString();
-        String oldParamName = baseFunctionDescriptor.getValueParameters().get(oldIndex).getName().asString();
-
-        return oldParamName.equals(inheritedParamName) && !(inheritedFunctionDescriptor instanceof AnonymousFunctionDescriptor)
-               ? name
-               : inheritedParamName;
-    }
-
-    @Override
-    public int getOldIndex() {
-        return oldIndex;
-    }
-
-    public boolean isNewParameter() {
-        return oldIndex == -1;
-    }
-
-    @Nullable
-    @Override
-    public String getDefaultValue() {
-        return null;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name != null ? name : "";
-    }
-
-    @Override
-    public boolean isUseAnySingleVariable() {
-        return false;
-    }
-
-    @Override
-    public void setUseAnySingleVariable(boolean b) {
-        throw new UnsupportedOperationException();
-    }
-
-    private String getOldTypeText() {
-        return IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
-    }
-
-    @Override
-    public String getTypeText() {
-        return typeText;
-    }
-
-    public void setTypeText(String typeText) {
-        this.typeText = typeText;
-    }
-
-    public boolean isTypeChanged() {
-        return !getOldTypeText().equals(typeText);
-    }
-
-    public String getDefaultValueText() {
-        return defaultValueText;
-    }
-
-    public void setDefaultValueText(String defaultValueText) {
-        this.defaultValueText = defaultValueText;
-    }
-
-    public JetValVar getValOrVar() {
-        return valOrVar != null ? valOrVar : JetValVar.None;
-    }
-
-    public void setValOrVar(JetValVar valOrVar) {
-        this.valOrVar = valOrVar;
-    }
-
-    public JetType getType() {
-        return type;
-    }
-
-    @Nullable
-    public JetModifierList getModifierList() {
-        return modifierList;
-    }
-
-    public void setModifierList(@Nullable JetModifierList modifierList) {
-        this.modifierList = modifierList;
-    }
-
-    public boolean requiresExplicitType(@NotNull JetFunctionDefinitionUsage inheritedFunction) {
-        FunctionDescriptor inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor();
-        if (!(inheritedFunctionDescriptor instanceof AnonymousFunctionDescriptor)) return true;
-
-        if (oldIndex < 0) return !inheritedFunction.hasExpectedType();
-
-        ValueParameterDescriptor inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(oldIndex);
-        JetParameter parameter = (JetParameter) DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor);
-        if (parameter == null) return false;
-
-        return parameter.getTypeReference() != null;
-    }
-
-    public String getDeclarationSignature(int parameterIndex, @NotNull JetFunctionDefinitionUsage inheritedFunction) {
-        StringBuilder buffer = new StringBuilder();
+    public fun getDeclarationSignature(parameterIndex: Int, inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+        val buffer = StringBuilder()
 
         if (modifierList != null) {
-            buffer.append(modifierList.getText()).append(' ');
+            buffer.append(modifierList.getText()).append(' ')
         }
 
-        JetValVar valVar = getValOrVar();
-        if (valVar != JetValVar.None) {
-            buffer.append(valVar.toString()).append(' ');
+        if (valOrVar != JetValVar.None) {
+            buffer.append(valOrVar).append(' ')
         }
 
-        buffer.append(getInheritedName(inheritedFunction));
+        buffer.append(getInheritedName(inheritedFunction))
 
         if (requiresExplicitType(inheritedFunction)) {
-            buffer.append(": ").append(renderType(parameterIndex, inheritedFunction));
+            buffer.append(": ").append(renderType(parameterIndex, inheritedFunction))
         }
 
-        if (defaultValue != null && !inheritedFunction.isInherited()) {
-            buffer.append(" = ").append(defaultValue.getText());
+        if (!inheritedFunction.isInherited()) {
+            defaultValueForParameter?.let { buffer.append(" = ").append(it.getText()) }
         }
 
-        return buffer.toString();
+        return buffer.toString()
     }
 }

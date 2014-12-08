@@ -48,7 +48,7 @@ public class JetConstructorParameterTableModel extends JetFunctionParameterTable
 
         @Override
         public boolean isCellEditable(ParameterTableModelItemBase<JetParameterInfo> item) {
-            return !item.isEllipsisType() && item.parameter.isNewParameter();
+            return !item.isEllipsisType() && item.parameter.getIsNewParameter();
         }
 
         @Override

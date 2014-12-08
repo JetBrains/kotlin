@@ -343,7 +343,7 @@ public class JetChangeInfo implements ChangeInfo {
                             PsiType type = primaryMethodUpdated
                                            ? currentPsiMethod.getParameterList().getParameters()[pair.getFirst()].getType()
                                            : PsiType.VOID;
-                            return new ParameterInfoImpl(info.getOldIndex(), info.getName(), type, info.getDefaultValueText());
+                            return new ParameterInfoImpl(info.getOldIndex(), info.getName(), type, info.getDefaultValueForCall());
                         }
                     }
             );
@@ -390,10 +390,16 @@ public class JetChangeInfo implements ChangeInfo {
                         JetType originalType = oldIndex >= 0
                                                ? originalParameterDescriptors.get(oldIndex).getType()
                                                : currentType;
+                        String defaultValue = info.getDefaultValue();
 
-                        JetParameterInfo jetParameterInfo = new JetParameterInfo(oldIndex, info.getName(), originalType, null, null);
-                        jetParameterInfo.setDefaultValueText(info.getDefaultValue());
-                        jetParameterInfo.setTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(currentType));
+                        JetParameterInfo jetParameterInfo =
+                                new JetParameterInfo(oldIndex,
+                                                     info.getName(),
+                                                     originalType, null,
+                                                     defaultValue != null ? defaultValue : "",
+                                                     null,
+                                                     null);
+                        jetParameterInfo.setCurrentTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(currentType));
                         return jetParameterInfo;
                     }
                 }

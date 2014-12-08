@@ -292,7 +292,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
         }
 
-        if (parameterInfo.isTypeChanged() && parameter.getTypeReference() != null) {
+        if (parameterInfo.getIsTypeChanged() && parameter.getTypeReference() != null) {
             String renderedType = parameterInfo.renderType(parameterIndex, this);
             parameter.setTypeReference(psiFactory.createType(renderedType));
         }
@@ -300,7 +300,8 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         PsiElement identifier = parameter.getNameIdentifier();
 
         if (identifier != null) {
-            String newName = parameterInfo.getInheritedName(this);
+            //noinspection unchecked
+            String newName = parameterInfo.getInheritedName((JetFunctionDefinitionUsage<PsiElement>) this);
             identifier.replace(psiFactory.createIdentifier(newName));
         }
     }

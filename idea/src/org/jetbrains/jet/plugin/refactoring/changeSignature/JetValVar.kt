@@ -16,10 +16,22 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature
 
+import com.intellij.lang.ASTNode
+import org.jetbrains.jet.lexer.JetTokens
+
 public enum class JetValVar(val name: String) {
     None: JetValVar("none")
     Val: JetValVar("val")
     Var: JetValVar("var")
 
     override fun toString(): String = name
+}
+
+fun ASTNode?.toValVar(): JetValVar {
+    return when {
+        this == null -> JetValVar.None
+        getElementType() == JetTokens.VAL_KEYWORD -> JetValVar.Val
+        getElementType() == JetTokens.VAR_KEYWORD -> JetValVar.Var
+        else -> throw IllegalArgumentException("Unknown val/var token: " + getText())
+    }
 }

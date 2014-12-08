@@ -53,10 +53,10 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
             }
         }
 
-        val parameterInfo = JetParameterInfo(refExpr.getReferencedName(), paramType)
+        val parameterInfo = JetParameterInfo(name = refExpr.getReferencedName(), type = paramType)
 
         fun chooseContainingClass(it: PsiElement): JetClass? {
-            parameterInfo.setValOrVar(if (varExpected) JetValVar.Var else JetValVar.Val)
+            parameterInfo.valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
             return it.parents(false).firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
         }
 
