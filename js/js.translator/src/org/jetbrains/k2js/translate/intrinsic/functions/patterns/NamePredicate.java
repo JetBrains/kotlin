@@ -60,6 +60,9 @@ public final class NamePredicate implements Predicate<Name> {
     public static final NamePredicate NUMBER = new NamePredicate("Number");
 
     @NotNull
+    public static final NamePredicate BOOLEAN = new NamePredicate("Boolean");
+
+    @NotNull
     public static final NamePredicate CHAR = new NamePredicate(PrimitiveType.CHAR.getTypeName());
 
     @NotNull

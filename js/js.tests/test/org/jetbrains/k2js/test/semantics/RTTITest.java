@@ -51,4 +51,8 @@ public class RTTITest extends SingleFileTranslationTest {
     public void testStdlibEmptyListClass() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testIsJsPrimitiveType() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
