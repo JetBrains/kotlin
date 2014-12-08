@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.changeSignature;
+package org.jetbrains.jet.plugin.refactoring.changeSignature
 
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.usageView.UsageViewBundle;
-import com.intellij.usageView.UsageViewDescriptor;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.usageView.UsageViewBundle
+import com.intellij.usageView.UsageViewDescriptor
 
-public class JetUsagesViewDescriptor implements UsageViewDescriptor {
-    private final PsiElement myElement;
-    private final String myElementsHeader;
+public class JetUsagesViewDescriptor(private val element: PsiElement, private val elementsHeader: String) : UsageViewDescriptor {
+    override fun getElements(): Array<PsiElement> = array(element)
 
-    public JetUsagesViewDescriptor(PsiElement element, String elementsHeader) {
-        myElement = element;
-        myElementsHeader = elementsHeader;
-    }
+    override fun getProcessedElementsHeader(): String = elementsHeader
 
-    @NotNull
-    @Override
-    public PsiElement[] getElements() {
-        return myElement != null ? new PsiElement[] {myElement} : new PsiElement[0];
-    }
+    override fun getCodeReferencesText(usagesCount: Int, filesCount: Int): String =
+            RefactoringBundle.message("references.to.be.changed", UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
-    @Override
-    public String getProcessedElementsHeader() {
-        return myElementsHeader;
-    }
-
-    @Override
-    public String getCodeReferencesText(int usagesCount, int filesCount) {
-        return RefactoringBundle.message("references.to.be.changed", UsageViewBundle.getReferencesString(usagesCount, filesCount));
-    }
-
-    @Override
-    public String getCommentReferencesText(int usagesCount, int filesCount) {
-        return RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount));
-    }
+    override fun getCommentReferencesText(usagesCount: Int, filesCount: Int): String? =
+            RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount))
 }
