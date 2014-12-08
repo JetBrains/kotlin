@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 
-public trait KotlinIsReferenceToExtension {
+public trait SimpleNameReferenceExtension {
     class object {
-        public val EP_NAME: ExtensionPointName<KotlinIsReferenceToExtension> = ExtensionPointName.create("org.jetbrains.kotlin.isReferenceToExtension")!!
+        public val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> = ExtensionPointName.create("org.jetbrains.kotlin.simpleNameReferenceExtension")!!
     }
 
     fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean?

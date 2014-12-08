@@ -25,6 +25,6 @@
       <externalDeclarationsProvider implementation="org.jetbrains.kotlin.android.AndroidDeclarationsProvider"/>
       <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
       <findUsagesHandlerDecorator implementation="org.jetbrains.jet.plugin.android.AndroidFindUsageHandlerDecorator"/>
-      <isReferenceToExtension implementation="org.jetbrains.jet.plugin.android.AndroidKotlinIsReferenceToExtension"/>
+      <simpleNameReferenceExtension implementation="org.jetbrains.jet.plugin.android.AndroidSimpleNameReferenceExtension"/>
   </extensions>
 </idea-plugin>

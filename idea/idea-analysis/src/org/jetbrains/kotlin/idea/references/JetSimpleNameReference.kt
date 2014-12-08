@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.jet.plugin.findUsages.handlers.KotlinIsReferenceToExtension
+import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -48,7 +48,7 @@ public class JetSimpleNameReference(
     override fun isReferenceTo(element: PsiElement?): Boolean {
         if (element != null) {
             val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(
-                    KotlinIsReferenceToExtension.EP_NAME).getExtensions()
+                    SimpleNameReferenceExtension.EP_NAME).getExtensions()
             for (extension in extensions) {
                 val value = extension.isReferenceTo(this, element)
                 if (value != null) {
@@ -89,7 +89,7 @@ public class JetSimpleNameReference(
             JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
             else -> {
                 val extensions = Extensions.getArea(expression.getProject()).getExtensionPoint(
-                        KotlinIsReferenceToExtension.EP_NAME).getExtensions()
+                        SimpleNameReferenceExtension.EP_NAME).getExtensions()
 
                 var handled: PsiElement? = null
                 for (extension in extensions) {
