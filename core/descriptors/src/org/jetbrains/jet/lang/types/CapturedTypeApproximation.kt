@@ -51,12 +51,14 @@ private val NULLABLE_ANY = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private val NOTHING = KotlinBuiltIns.getInstance().getNothingType()
 
+private val NULLABLE_NOTHING = KotlinBuiltIns.getInstance().getNullableNothingType()
+
 private fun TypeArgument.toTypeProjection(): TypeProjection {
     assert(isConsistent) { "Only consistent enhanced type propection can be converted to type projection" }
     fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.getVariance()) Variance.INVARIANT else variance
     return when {
         inProjection == outProjection -> TypeProjectionImpl(inProjection)
-        inProjection == NOTHING -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
+        inProjection == NOTHING || inProjection == NULLABLE_NOTHING -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
         outProjection == NULLABLE_ANY -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
         else -> throw AssertionError("Enhanced type projection can't be converted to type projection: $this")
     }
@@ -99,10 +101,13 @@ public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType>
     val typeConstructor = type.getConstructor()
     if (type.isCaptured()) {
         val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
+        // todo: preserve flexibility as well
+        fun JetType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
+        val bound = typeProjection.getType().makeNullableIfNeeded()
 
         return when (typeProjection.getProjectionKind()) {
-            Variance.IN_VARIANCE -> ApproximationBounds(typeProjection.getType(), NULLABLE_ANY)
-            Variance.OUT_VARIANCE -> ApproximationBounds(NOTHING, typeProjection.getType())
+            Variance.IN_VARIANCE -> ApproximationBounds(bound, NULLABLE_ANY)
+            Variance.OUT_VARIANCE -> ApproximationBounds(NOTHING.makeNullableIfNeeded(), bound)
             else -> throw AssertionError("Only nontrivial projections should have been captured, not: $typeProjection")
         }
     }

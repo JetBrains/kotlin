@@ -72,6 +72,12 @@ public class CapturedTypeApproximationTestGenerated extends AbstractCapturedType
         doTest(fileName);
     }
 
+    @TestMetadata("nullableTypeVariable.kt")
+    public void testNullableTypeVariable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/capturedTypeApproximation/nullableTypeVariable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("useSiteVarianceIn.kt")
     public void testUseSiteVarianceIn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/capturedTypeApproximation/useSiteVarianceIn.kt");

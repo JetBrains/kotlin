@@ -5094,6 +5094,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/capturedTypes"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("captureForNullableTypes.kt")
+                public void testCaptureForNullableTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureForNullableTypes.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("captureForPlatformTypes.kt")
                 public void testCaptureForPlatformTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureForPlatformTypes.kt");
