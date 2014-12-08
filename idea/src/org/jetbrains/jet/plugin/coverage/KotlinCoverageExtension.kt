@@ -33,6 +33,8 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import com.intellij.psi.PsiElement
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
@@ -73,7 +75,17 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             val classNames = HashSet<String>()
             srcFile.acceptChildren(object: JetTreeVisitorVoid() {
                 override fun visitDeclaration(dcl: JetDeclaration) {
-                    val className = JetPositionManager.getClassNameForElement(dcl.getFirstChild(), typeMapper, srcFile, false)
+                    super.visitDeclaration(dcl)
+                    collectClassName(dcl.getFirstChild())
+                }
+
+                override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
+                    super.visitFunctionLiteralExpression(expression)
+                    collectClassName(expression.getFunctionLiteral().getFirstChild())
+                }
+
+                private fun collectClassName(element: PsiElement) {
+                    val className = JetPositionManager.getClassNameForElement(element, typeMapper, srcFile, false)
                     if (className != null) {
                         classNames.add(className)
                     }
