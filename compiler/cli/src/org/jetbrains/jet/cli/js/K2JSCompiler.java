@@ -28,6 +28,8 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
@@ -79,7 +81,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services,
-            @NotNull MessageCollector messageCollector,
+            @NotNull final MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
         if (arguments.freeArgs.isEmpty()) {
@@ -109,6 +111,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         File outputFile = new File(arguments.outputFile);
 
         Config config = getConfig(arguments, project);
+        if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
+            @Override
+            public Unit invoke(String message) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+                return Unit.INSTANCE$;
+            }
+        })) {
+            return COMPILATION_ERROR;
+        }
+
         if (analyzeAndReportErrors(messageCollector, sourcesFiles, config)) {
             return COMPILATION_ERROR;
         }

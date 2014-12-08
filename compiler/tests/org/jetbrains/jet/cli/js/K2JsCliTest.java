@@ -76,4 +76,18 @@ public class K2JsCliTest extends CliBaseTest {
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), "out.js").isFile());
     }
+
+    @Test
+    public void libraryDirNotFound() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void notValidLibraryDir() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
 }

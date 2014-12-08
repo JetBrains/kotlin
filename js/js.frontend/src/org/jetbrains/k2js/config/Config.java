@@ -18,6 +18,8 @@ package org.jetbrains.k2js.config;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -81,6 +83,8 @@ public abstract class Config {
     public String getModuleId() {
         return moduleId;
     }
+
+    public abstract  boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
 
     @NotNull
     protected abstract List<JetFile> generateLibFiles();

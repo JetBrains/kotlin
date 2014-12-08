@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.config;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -24,7 +23,11 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.io.URLUtil;
+import kotlin.Function1;
+import kotlin.Function2;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.k2js.JavaScript;
@@ -43,8 +46,6 @@ public class LibrarySourcesConfig extends Config {
     @NotNull
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
-    @NotNull
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.k2js.config.LibrarySourcesConfig");
     public static final String STDLIB_JS_MODULE_NAME = "stdlib";
     public static final String BUILTINS_JS_MODULE_NAME = "builtins";
     public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
@@ -72,11 +73,44 @@ public class LibrarySourcesConfig extends Config {
             return Collections.emptyList();
         }
 
-        List<JetFile> jetFiles = new ArrayList<JetFile>();
+        final List<JetFile> jetFiles = new ArrayList<JetFile>();
+        final PsiManager psiManager = PsiManager.getInstance(getProject());
+
+        Function1<String, Unit> report = new Function1<String, Unit>() {
+            @Override
+            public Unit invoke(String message) {
+                throw new IllegalStateException(message);
+            }
+        };
+
+        Function2<String, VirtualFile, Unit> action = new Function2<String, VirtualFile, Unit>() {
+            @Override
+            public Unit invoke(String moduleName, VirtualFile file) {
+                JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, moduleName, psiManager);
+                VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
+                return Unit.INSTANCE$;
+            }
+        };
+
+        boolean hasErrors = checkLibFilesAndReportErrors(report, action);
+        assert !hasErrors : "hasErrors should be false";
+
+        return jetFiles;
+    }
+
+    @Override
+    public boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report) {
+        return checkLibFilesAndReportErrors(report, null);
+    }
+
+    private boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report, @Nullable Function2<String, VirtualFile, Unit> action) {
+        if (files.isEmpty()) {
+            return false;
+        }
+
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        PsiManager psiManager = PsiManager.getInstance(getProject());
         String moduleName = null;
 
         for (String path : files) {
@@ -87,6 +121,12 @@ public class LibrarySourcesConfig extends Config {
                 continue;
             }
 
+            File filePath = new File(path);
+            if (!filePath.exists()) {
+                report.invoke("Path '" + path + "'does not exist");
+                return true;
+            }
+
             if (path.endsWith(".jar") || path.endsWith(".zip")) {
                 file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
             }
@@ -95,23 +135,29 @@ public class LibrarySourcesConfig extends Config {
             }
 
             if (file == null) {
-                LOG.error("File '" + path + "' not found.'");
+                report.invoke("File '" + path + "'does not exist or could not be read");
+                return true;
             }
             else {
-                File filePath = new File(path);
                 if (isKotlinJavascriptLibrary(filePath)) {
                     actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
-                if (actualModuleName == null) {
-                    LOG.error("Could not find " + LibraryUtils.KOTLIN_JS_MODULE_NAME + " for " + filePath);
+                else if (actualModuleName == null) {
+                    report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
+                    return true;
                 }
-                JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, actualModuleName, psiManager);
-                VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
+                if (actualModuleName == null) {
+                    report.invoke("Could not find " + LibraryUtils.KOTLIN_JS_MODULE_NAME + " for '" + path + "'");
+                    return true;
+                }
+                if (action != null) {
+                    action.invoke(actualModuleName, file);
+                }
             }
             moduleName = null;
         }
 
-        return jetFiles;
+        return false;
     }
 
     protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {

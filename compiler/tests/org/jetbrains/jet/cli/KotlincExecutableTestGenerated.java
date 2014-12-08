@@ -168,6 +168,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJsTest(fileName);
         }
 
+        @TestMetadata("libraryDirNotFound.args")
+        public void testLibraryDirNotFound() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/libraryDirNotFound.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("nativeDeclarations.args")
         public void testNativeDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/nativeDeclarations.args");
@@ -177,6 +183,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("outputIsDirectory.args")
         public void testOutputIsDirectory() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/outputIsDirectory.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("notValidLibraryDir.args")
+        public void testNotValidLibraryDir() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/notValidLibraryDir.args");
             doJsTest(fileName);
         }
 
