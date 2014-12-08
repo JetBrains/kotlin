@@ -10,8 +10,8 @@ fun main(args : Array<String>) {
     }
 }
 
-fun foo() : Unit <selection>{
-    println() {
+fun foo() : Unit {
+<selection>    println() {
         println()
 
 
@@ -21,4 +21,4 @@ fun foo() : Unit <selection>{
 
     println(array(1, 2, 3))
     println()
-}</selection>
+</selection>}

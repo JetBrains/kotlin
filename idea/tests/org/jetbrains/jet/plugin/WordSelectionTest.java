@@ -23,29 +23,27 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
-    public void testStatements() {
-        doTest();
-    }
+    public void testStatements() { doTest(); }
 
-    public void testWhenEntries() {
-        doTest();
-    }
+    public void testWhenEntries() { doTest(); }
 
-    public void testTypeArguments() {
-        doTest();
-    }
+    public void testTypeArguments() { doTest(); }
 
-    public void testValueArguments() {
-        doTest();
-    }
+    public void testValueArguments() { doTest(); }
 
-    public void testTypeParameters() {
-        doTest();
-    }
+    public void testTypeParameters() { doTest(); }
 
-    public void testValueParameters() {
-        doTest();
-    }
+    public void testValueParameters() { doTest(); }
+
+    public void testDocComment() { doTest(); }
+
+    public void testFunctionWithLineCommentBefore() { doTest(); }
+
+    public void testFunctionWithLineCommentAfter() { doTest(); }
+
+    public void testLineComment() { doTest(); }
+
+    public void testSimpleComment() { doTest(); }
 
     private void doTest() {
         String dirName = getTestName(false);

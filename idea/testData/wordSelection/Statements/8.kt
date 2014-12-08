@@ -18,7 +18,7 @@ fun foo() : Unit {
         pr<caret>intln()
         println()
     }
-
+</selection>
     println(array(1, 2, 3))
     println()
-</selection>}
+}

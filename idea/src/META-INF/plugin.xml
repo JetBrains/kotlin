@@ -318,6 +318,8 @@
 
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStatementGroupSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinCodeBlockSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDocCommentSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDeclarationSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinListSelectioner"/>
 
     <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>

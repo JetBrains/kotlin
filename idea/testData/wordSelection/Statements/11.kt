@@ -1,4 +1,4 @@
-<selection>fun main(args : Array<String>) {
+fun main(args : Array<String>) {
     for (i in 1..100) {
         when {
             i%3 == 0 -> {print("Fizz"); continue;}
@@ -10,7 +10,7 @@
     }
 }
 
-fun foo() : Unit {
+<selection>fun foo() : Unit {
     println() {
         println()
 

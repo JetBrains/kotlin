@@ -11,7 +11,7 @@ fun main(args : Array<String>) {
 }
 
 fun foo() : Unit {
-<selection>    println() {
+    println() <selection>{
         println()
 
 
