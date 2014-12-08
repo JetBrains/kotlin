@@ -77,7 +77,6 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         JetFunctionParameterTableModel
         >
 {
-    private final JetGeneratedInfo generatedInfo = new JetGeneratedInfo();
     private final String commandName;
 
     public JetChangeSignatureDialog(Project project, @NotNull JetMethodDescriptor methodDescriptor, PsiElement context, String commandName) {
@@ -417,7 +416,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
         return new JetChangeInfo(myMethod, getMethodName(), getReturnType(), returnTypeText,
-                                 getVisibility(), parameters, myDefaultValueContext, generatedInfo
+                                 getVisibility(), parameters, myDefaultValueContext
         );
     }
 

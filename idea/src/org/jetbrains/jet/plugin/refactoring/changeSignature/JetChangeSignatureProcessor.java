@@ -149,15 +149,6 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
         return isPreviewUsages();
     }
 
-    @NotNull
-    @Override
-    protected Collection<? extends PsiElement> getElementsToWrite(@NotNull UsageViewDescriptor descriptor) {
-        Collection<PsiElement> elements = new ArrayList<PsiElement>();
-        elements.addAll(super.getElementsToWrite(descriptor));
-        elements.addAll(getChangeInfo().getGeneratedInfo().getFilesToWrite());
-        return elements;
-    }
-
     @Override
     protected String getCommandName() {
         return commandName;

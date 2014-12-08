@@ -62,7 +62,6 @@ public class JetChangeInfo implements ChangeInfo {
     private Visibility newVisibility;
     private final List<JetParameterInfo> newParameters;
     private final PsiElement context;
-    private final JetGeneratedInfo generatedInfo;
     private Boolean parameterNamesChanged;
     private Map<String, Integer> oldNameToParameterIndex;
     private boolean primaryMethodUpdated;
@@ -77,8 +76,7 @@ public class JetChangeInfo implements ChangeInfo {
             String newReturnTypeText,
             Visibility newVisibility,
             List<JetParameterInfo> newParameters,
-            PsiElement context,
-            JetGeneratedInfo generatedInfo
+            PsiElement context
     ) {
         this.oldDescriptor = oldDescriptor;
         this.newName = newName;
@@ -87,7 +85,6 @@ public class JetChangeInfo implements ChangeInfo {
         this.newVisibility = newVisibility;
         this.newParameters = newParameters;
         this.context = context;
-        this.generatedInfo = generatedInfo;
         this.originalPsiMethod = getCurrentPsiMethod();
     }
 
@@ -293,10 +290,6 @@ public class JetChangeInfo implements ChangeInfo {
         return newName;
     }
 
-    public JetGeneratedInfo getGeneratedInfo() {
-        return generatedInfo;
-    }
-
     public PsiElement getContext() {
         return context;
     }
@@ -416,8 +409,7 @@ public class JetChangeInfo implements ChangeInfo {
                 returnTypeText,
                 functionDescriptor.getVisibility(),
                 newParameters,
-                method,
-                new JetGeneratedInfo()
+                method
         );
     }
 }
