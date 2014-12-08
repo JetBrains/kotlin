@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.changeSignature;
+package org.jetbrains.jet.plugin.refactoring.changeSignature
 
-public enum JetValVar {
-    None,
-    Val,
-    Var;
+public enum class JetValVar(val name: String) {
+    None: JetValVar("none")
+    Val: JetValVar("val")
+    Var: JetValVar("var")
 
-    @Override
-    public String toString() {
-        switch (this) {
-            case None:
-                return "none";
-            case Val:
-                return "val";
-            case Var:
-                return "var";
-        }
-
-        return "";
-    }
+    override fun toString(): String = name
 }
