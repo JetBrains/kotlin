@@ -92,6 +92,10 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
         }
 
+        PsiElement navigationElement = declaration.getNavigationElement();
+        if (navigationElement instanceof JetDeclaration) {
+            declaration = (JetDeclaration) navigationElement;
+        }
         KDoc comment = declaration.getDocComment();
         if (comment != null) {
             renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
