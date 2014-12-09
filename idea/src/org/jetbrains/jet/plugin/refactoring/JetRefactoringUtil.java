@@ -169,7 +169,7 @@ public class JetRefactoringUtil {
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT.render(declarationDescriptor),
+                DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
                 JetBundle.message(actionStringKey)
