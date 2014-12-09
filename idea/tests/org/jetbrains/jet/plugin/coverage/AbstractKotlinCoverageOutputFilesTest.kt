@@ -25,6 +25,7 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import kotlin.test.assertEquals
 import java.io.File
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.jet.JetTestUtils
 
 public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"
@@ -32,9 +33,8 @@ public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsig
     override fun getTestDataPath(): String? = TEST_DATA_PATH
 
     public fun doTest(path: String) {
-        var kotlinFile = myFixture.configureByFile(path) as JetFile
+        val kotlinFile = myFixture.configureByFile(path) as JetFile
         val actualClasses = KotlinCoverageExtension.collectOutputClassNames(kotlinFile)
-        val expectedClasses = FileUtil.loadLines(path.replace(".kt", ".expected.txt"))
-        UsefulTestCase.assertSameElements(actualClasses, expectedClasses)
+        JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses.join("\n"))
     }
 }

@@ -35,6 +35,7 @@ import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import com.intellij.psi.PsiElement
+import java.util.LinkedHashSet
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
@@ -70,9 +71,9 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     }
 
     class object {
-        TestOnly public fun collectOutputClassNames(srcFile: JetFile): Set<String> {
+        public fun collectOutputClassNames(srcFile: JetFile): Set<String> {
             val typeMapper = JetPositionManager.createTypeMapper(srcFile, srcFile.getModuleInfo())
-            val classNames = HashSet<String>()
+            val classNames = LinkedHashSet<String>()
             srcFile.acceptChildren(object: JetTreeVisitorVoid() {
                 override fun visitDeclaration(dcl: JetDeclaration) {
                     super.visitDeclaration(dcl)

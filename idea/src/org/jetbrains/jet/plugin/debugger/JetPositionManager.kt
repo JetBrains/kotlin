@@ -69,6 +69,7 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {
     private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()
@@ -82,12 +83,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
             throw NoDataException()
         }
 
-        val lineNumber: Int
-        try {
-            lineNumber = location.lineNumber() - 1
+        val lineNumber = try {
+            location.lineNumber() - 1
         }
         catch (e: InternalError) {
-            lineNumber = -1
+            -1
         }
 
 
@@ -170,16 +170,12 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
     }
 
     private fun classNameForPosition(sourcePosition: SourcePosition): String? {
-        val result = Ref.create<String>()
-
-        ApplicationManager.getApplication().runReadAction {
+        return runReadAction {
             val file = sourcePosition.getFile() as JetFile
             val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
             val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(sourcePosition.getElementAt(), file)
-            result.set(getClassNameForElement(sourcePosition.getElementAt(), typeMapper, file, isInLibrary))
+            getClassNameForElement(sourcePosition.getElementAt(), typeMapper, file, isInLibrary)
         }
-
-        return result.get()
     }
 
     private fun prepareTypeMapper(file: JetFile): JetTypeMapper {
@@ -187,12 +183,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
 
         var value: CachedValue<JetTypeMapper>? = myTypeMappers.get(key)
         if (value == null) {
-            value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(object : CachedValueProvider<JetTypeMapper> {
-                override fun compute(): CachedValueProvider.Result<JetTypeMapper>? {
-                    val typeMapper = createTypeMapper(file, key.second)
-                    return CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
-                }
-            }, false)
+            value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
+                    {() ->
+                        val typeMapper = createTypeMapper(file, key.second)
+                        CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
+                    }, false)
 
             myTypeMappers.put(key, value)
         }
@@ -231,10 +226,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
 
     TestOnly
     public fun addTypeMapper(file: JetFile, typeMapper: JetTypeMapper) {
-        val value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(object : CachedValueProvider<JetTypeMapper> {
-            override fun compute() = CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT)
-        }, false)
-
+        val value = CachedValuesManager.getManager(file.getProject()).createCachedValue<JetTypeMapper>(
+                { () -> CachedValueProvider.Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
         val key = createKeyForTypeMapper(file)
         myTypeMappers.put(key, value)
     }
@@ -249,10 +242,9 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
             analysisResult.throwIfError()
 
             val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
-                                        analysisResult.bindingContext, ArrayList(packageFiles))
+                                        analysisResult.bindingContext, packageFiles.toList())
             state.beforeCompile()
-            val typeMapper = state.getTypeMapper()
-            return typeMapper
+            return state.getTypeMapper()
         }
 
         public fun getClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: JetFile, isInLibrary: Boolean): String? {
@@ -383,10 +375,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
             val inlineType = InlineUtil.getInlineType(call.getResultingDescriptor())
             if (!inlineType.isInline()) return false
 
-            for (entry in call.getValueArguments().entrySet()) {
-                val valueParameterDescriptor = entry.getKey()
-                val resolvedValueArgument = entry.getValue()
-
+            for ((valueParameterDescriptor, resolvedValueArgument) in call.getValueArguments()) {
                 for (next in resolvedValueArgument.getArguments()) {
                     val expression = next.getArgumentExpression()
                     if (valueArgument == expression) {
