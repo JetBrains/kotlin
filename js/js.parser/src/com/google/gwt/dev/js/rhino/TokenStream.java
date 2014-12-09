@@ -38,6 +38,8 @@
 package com.google.gwt.dev.js.rhino;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class implements the JavaScript scanner.
@@ -50,6 +52,7 @@ import java.io.*;
 
 public class TokenStream {
 
+    private static final Map<String, Integer> KEYWORDS = new HashMap<String, Integer>();
 
     /*
      * JSTokenStream flags, mirroring those in jsscan.h.  These are used
@@ -451,147 +454,44 @@ public class TokenStream {
         return "";
     }
 
-    private static int getKeywordId(String name) {
-// #string_id_map#
-// The following assumes that EOF == 0
-        final int
-            Id_break         = BREAK,
-            Id_case          = CASE,
-            Id_continue      = CONTINUE,
-            Id_default       = DEFAULT,
-            Id_delete        = DELPROP,
-            Id_do            = DO,
-            Id_else          = ELSE,
-            Id_export        = EXPORT,
-            Id_false         = PRIMARY | (FALSE << 8),
-            Id_for           = FOR,
-            Id_function      = FUNCTION,
-            Id_if            = IF,
-            Id_in            = RELOP | (IN << 8),
-            Id_new           = NEW,
-            Id_null          = PRIMARY | (NULL << 8),
-            Id_return        = RETURN,
-            Id_switch        = SWITCH,
-            Id_this          = PRIMARY | (THIS << 8),
-            Id_true          = PRIMARY | (TRUE << 8),
-            Id_typeof        = UNARYOP | (TYPEOF << 8),
-            Id_var           = VAR,
-            Id_void          = UNARYOP | (VOID << 8),
-            Id_while         = WHILE,
-            Id_with          = WITH,
-            Id_catch         = CATCH,
-            Id_finally       = FINALLY,
-            Id_import        = IMPORT,
-            Id_instanceof    = RELOP | (INSTANCEOF << 8),
-            Id_throw         = THROW,
-            Id_try           = TRY,
-
-        int id;
-        String s = name;
-// #generated# Last update: 2001-06-01 17:45:01 CEST
-        L0: { id = 0; String X = null; int c;
-            L: switch (s.length()) {
-            case 2: c=s.charAt(1);
-                if (c=='f') { if (s.charAt(0)=='i') {id=Id_if; break L0;} }
-                else if (c=='n') { if (s.charAt(0)=='i') {id=Id_in; break L0;} }
-                else if (c=='o') { if (s.charAt(0)=='d') {id=Id_do; break L0;} }
-                break L;
-            case 3: switch (s.charAt(0)) {
-                case 'f': if (s.charAt(2)=='r' && s.charAt(1)=='o') {id=Id_for; break L0;} break L;
-                case 'i': if (s.charAt(2)=='t' && s.charAt(1)=='n') {id=Id_int; break L0;} break L;
-                case 'n': if (s.charAt(2)=='w' && s.charAt(1)=='e') {id=Id_new; break L0;} break L;
-                case 't': if (s.charAt(2)=='y' && s.charAt(1)=='r') {id=Id_try; break L0;} break L;
-                case 'v': if (s.charAt(2)=='r' && s.charAt(1)=='a') {id=Id_var; break L0;} break L;
-                } break L;
-            case 4: switch (s.charAt(0)) {
-                case 'b': X="byte";id=Id_byte; break L;
-                case 'c': c=s.charAt(3);
-                    if (c=='e') { if (s.charAt(2)=='s' && s.charAt(1)=='a') {id=Id_case; break L0;} }
-                    else if (c=='r') { if (s.charAt(2)=='a' && s.charAt(1)=='h') {id=Id_char; break L0;} }
-                    break L;
-                case 'e': c=s.charAt(3);
-                    if (c=='e') { if (s.charAt(2)=='s' && s.charAt(1)=='l') {id=Id_else; break L0;} }
-                    else if (c=='m') { if (s.charAt(2)=='u' && s.charAt(1)=='n') {id=Id_enum; break L0;} }
-                    break L;
-                case 'g': X="goto";id=Id_goto; break L;
-                case 'l': X="long";id=Id_long; break L;
-                case 'n': X="null";id=Id_null; break L;
-                case 't': c=s.charAt(3);
-                    if (c=='e') { if (s.charAt(2)=='u' && s.charAt(1)=='r') {id=Id_true; break L0;} }
-                    else if (c=='s') { if (s.charAt(2)=='i' && s.charAt(1)=='h') {id=Id_this; break L0;} }
-                    break L;
-                case 'v': X="void";id=Id_void; break L;
-                case 'w': X="with";id=Id_with; break L;
-                } break L;
-            case 5: switch (s.charAt(2)) {
-                case 'a': X="class";id=Id_class; break L;
-                case 'e': X="break";id=Id_break; break L;
-                case 'i': X="while";id=Id_while; break L;
-                case 'l': X="false";id=Id_false; break L;
-                case 'n': c=s.charAt(0);
-                    if (c=='c') { X="const";id=Id_const; }
-                    else if (c=='f') { X="final";id=Id_final; }
-                    break L;
-                case 'o': c=s.charAt(0);
-                    if (c=='f') { X="float";id=Id_float; }
-                    else if (c=='s') { X="short";id=Id_short; }
-                    break L;
-                case 'p': X="super";id=Id_super; break L;
-                case 'r': X="throw";id=Id_throw; break L;
-                case 't': X="catch";id=Id_catch; break L;
-                } break L;
-            case 6: switch (s.charAt(1)) {
-                case 'a': X="native";id=Id_native; break L;
-                case 'e': c=s.charAt(0);
-                    if (c=='d') { X="delete";id=Id_delete; }
-                    else if (c=='r') { X="return";id=Id_return; }
-                    break L;
-                case 'h': X="throws";id=Id_throws; break L;
-                case 'm': X="import";id=Id_import; break L;
-                case 'o': X="double";id=Id_double; break L;
-                case 't': X="static";id=Id_static; break L;
-                case 'u': X="public";id=Id_public; break L;
-                case 'w': X="switch";id=Id_switch; break L;
-                case 'x': X="export";id=Id_export; break L;
-                case 'y': X="typeof";id=Id_typeof; break L;
-                } break L;
-            case 7: switch (s.charAt(1)) {
-                case 'a': X="package";id=Id_package; break L;
-                case 'e': X="default";id=Id_default; break L;
-                case 'i': X="finally";id=Id_finally; break L;
-                case 'o': X="boolean";id=Id_boolean; break L;
-                case 'r': X="private";id=Id_private; break L;
-                case 'x': X="extends";id=Id_extends; break L;
-                } break L;
-            case 8: switch (s.charAt(0)) {
-                case 'a': X="abstract";id=Id_abstract; break L;
-                case 'c': X="continue";id=Id_continue; break L;
-                case 'd': X="debugger";id=Id_debugger; break L;
-                case 'f': X="function";id=Id_function; break L;
-                case 'v': X="volatile";id=Id_volatile; break L;
-                } break L;
-            case 9: c=s.charAt(0);
-                if (c=='i') { X="interface";id=Id_interface; }
-                else if (c=='p') { X="protected";id=Id_protected; }
-                else if (c=='t') { X="transient";id=Id_transient; }
-                break L;
-            case 10: c=s.charAt(1);
-                if (c=='m') { X="implements";id=Id_implements; }
-                else if (c=='n') { X="instanceof";id=Id_instanceof; }
-                break L;
-            case 12: X="synchronized";id=Id_synchronized; break L;
-            }
-            if (X!=null && X!=s && !X.equals(s)) id = 0;
-        }
-// #/generated#
-// #/string_id_map#
-
-        return id;
+    static {
+        KEYWORDS.put("break", BREAK);
+        KEYWORDS.put("case", CASE);
+        KEYWORDS.put("continue", CONTINUE);
+        KEYWORDS.put("default", DEFAULT);
+        KEYWORDS.put("delete", DELPROP);
+        KEYWORDS.put("do", DO);
+        KEYWORDS.put("else", ELSE);
+        KEYWORDS.put("export", EXPORT);
+        KEYWORDS.put("false", PRIMARY | (FALSE << 8));
+        KEYWORDS.put("for", FOR);
+        KEYWORDS.put("function", FUNCTION);
+        KEYWORDS.put("if", IF);
+        KEYWORDS.put("in", RELOP | (IN << 8));
+        KEYWORDS.put("new", NEW);
+        KEYWORDS.put("null", PRIMARY | (NULL << 8));
+        KEYWORDS.put("return", RETURN);
+        KEYWORDS.put("switch", SWITCH);
+        KEYWORDS.put("this", PRIMARY | (THIS << 8));
+        KEYWORDS.put("true", PRIMARY | (TRUE << 8));
+        KEYWORDS.put("typeof", UNARYOP | (TYPEOF << 8));
+        KEYWORDS.put("var", VAR);
+        KEYWORDS.put("void", UNARYOP | (VOID << 8));
+        KEYWORDS.put("while", WHILE);
+        KEYWORDS.put("with", WITH);
+        KEYWORDS.put("catch", CATCH);
+        KEYWORDS.put("debugger", DEBUGGER);
+        KEYWORDS.put("finally", FINALLY);
+        KEYWORDS.put("import", IMPORT);
+        KEYWORDS.put("instanceof", RELOP | (INSTANCEOF << 8));
+        KEYWORDS.put("throw", THROW);
+        KEYWORDS.put("try", TRY);
     }
     
     private int stringToKeyword(String name) {
-        int id = getKeywordId(name);
-        if (id == 0) { return EOF; }
+        Integer id = KEYWORDS.get(name);
+        if (id == null) return EOF;
+
         this.op = id >> 8;
         return id & 0xff;
     }
