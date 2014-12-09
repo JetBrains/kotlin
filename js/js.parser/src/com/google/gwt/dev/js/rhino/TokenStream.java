@@ -50,7 +50,6 @@ import java.io.*;
 
 public class TokenStream {
 
-    static final boolean RESERVED_KEYWORD_AS_IDENTIFIER = false;
 
     /*
      * JSTokenStream flags, mirroring those in jsscan.h.  These are used
@@ -212,7 +211,6 @@ public class TokenStream {
         WITH        = 124, // with keyword
         CATCH       = 125, // catch keyword
         FINALLY     = 126, // finally keyword
-        RESERVED    = 127, // reserved keywords
 
         /** Added by Mike - these are JSOPs in the jsref, but I
          * don't have them yet in the java implementation...
@@ -395,7 +393,6 @@ public class TokenStream {
                 case WITH:            return "with";
                 case CATCH:           return "catch";
                 case FINALLY:         return "finally";
-                case RESERVED:        return "reserved";
                 case NOP:             return "nop";
                 case NOT:             return "not";
                 case PRE:             return "pre";
@@ -482,43 +479,12 @@ public class TokenStream {
             Id_void          = UNARYOP | (VOID << 8),
             Id_while         = WHILE,
             Id_with          = WITH,
-
-            // the following are #ifdef RESERVE_JAVA_KEYWORDS in jsscan.c
-            Id_abstract      = RESERVED,
-            Id_boolean       = RESERVED,
-            Id_byte          = RESERVED,
             Id_catch         = CATCH,
-            Id_char          = RESERVED,
-            Id_class         = RESERVED,
-            Id_const         = RESERVED,
-            Id_debugger      = DEBUGGER,
-            Id_double        = RESERVED,
-            Id_enum          = RESERVED,
-            Id_extends       = RESERVED,
-            Id_final         = RESERVED,
             Id_finally       = FINALLY,
-            Id_float         = RESERVED,
-            Id_goto          = RESERVED,
-            Id_implements    = RESERVED,
             Id_import        = IMPORT,
             Id_instanceof    = RELOP | (INSTANCEOF << 8),
-            Id_int           = RESERVED,
-            Id_interface     = RESERVED,
-            Id_long          = RESERVED,
-            Id_native        = RESERVED,
-            Id_package       = RESERVED,
-            Id_private       = RESERVED,
-            Id_protected     = RESERVED,
-            Id_public        = RESERVED,
-            Id_short         = RESERVED,
-            Id_static        = RESERVED,
-            Id_super         = RESERVED,
-            Id_synchronized  = RESERVED,
             Id_throw         = THROW,
-            Id_throws        = RESERVED,
-            Id_transient     = RESERVED,
             Id_try           = TRY,
-            Id_volatile      = RESERVED;
 
         int id;
         String s = name;
@@ -838,20 +804,7 @@ public class TokenStream {
                 // Return the corresponding token if it's a keyword
                 int result = stringToKeyword(str);
                 if (result != EOF) {
-                    if (result != RESERVED) {
-                        return result;
-                    }
-                    else if (!RESERVED_KEYWORD_AS_IDENTIFIER)
-                    {
-                        return result;
-                    }
-                    else {
-                        // If implementation permits to use future reserved
-                        // keywords in violation with the EcmaScript standard,
-                        // treat it as name but issue warning
-                        Object[] errArgs = { str };
-                        reportSyntaxWarning("msg.reserved.keyword", errArgs);
-                    }
+                    return result;
                 }
             }
             this.string = str;

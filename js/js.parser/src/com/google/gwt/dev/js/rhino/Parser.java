@@ -1149,10 +1149,6 @@ public class Parser {
       case TokenStream.PRIMARY:
         return nf.createLeaf(ts.PRIMARY, ts.getOp());
 
-      case TokenStream.RESERVED:
-        reportError(ts, "msg.reserved.id");
-        break;
-
       case TokenStream.ERROR:
         /* the scanner or one of its subroutines reported the error. */
         break;
