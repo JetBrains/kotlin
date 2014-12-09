@@ -88,7 +88,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
 
             Editor editor = e.getEditor();
             PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
-            if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE || !ProjectRootsUtil.isInProjectOrLibSource(psiFile)) {
+            if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE || !ProjectRootsUtil.isInProjectOrLibraryContent(psiFile)) {
                 return;
             }
 
