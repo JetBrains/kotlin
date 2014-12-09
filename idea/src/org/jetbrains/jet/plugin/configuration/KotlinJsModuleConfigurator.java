@@ -28,13 +28,14 @@ import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialogWithMo
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.k2js.JavaScript;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
-    public static final String NAME = "js";
+    public static final String NAME = JavaScript.LOWER_NAME;
 
     @NotNull
     @Override
@@ -45,7 +46,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public String getPresentableText() {
-        return "JavaScript";
+        return JavaScript.FULL_NAME;
     }
 
     @Override

@@ -16,12 +16,11 @@
 
 package org.jetbrains.k2js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public final class JsTestUtils {
 
     @NotNull
     public static String convertFileNameToDotJsFile(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
-        String postFix = "_" + ecmaVersion.toString() + ".js";
+        String postFix = "_" + ecmaVersion.toString() + JavaScript.DOT_EXTENSION;
         int index = filename.lastIndexOf('.');
         if (index < 0) {
             return filename + postFix;

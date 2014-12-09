@@ -27,6 +27,7 @@ import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.k2js.JavaScript;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ public class LibrarySourcesConfig extends Config {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.k2js.config.LibrarySourcesConfig");
     public static final String STDLIB_JS_MODULE_NAME = "stdlib";
     public static final String BUILTINS_JS_MODULE_NAME = "builtins";
-    public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + ".js";
-    public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + ".js";
+    public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
+    public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + JavaScript.DOT_EXTENSION;
 
     @NotNull
     private final List<String> files;
