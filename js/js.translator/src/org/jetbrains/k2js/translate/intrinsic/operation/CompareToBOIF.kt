@@ -67,17 +67,17 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
-        if (JsDescriptorUtils.isBuiltin(descriptor))
-            when {
-                COMPARE_TO_CHAR.apply(descriptor) ->
-                    return CompareToCharIntrinsic
-                CHAR_COMPARE_TO.apply(descriptor) ->
-                    return CompareCharToPrimitiveIntrinsic
-                PRIMITIVE_COMPARE_TO.apply(descriptor) ->
-                    return CompareToIntrinsic
-                else ->
-                    return CompareToFunctionIntrinsic
-            }
-        return null
+        if (!JsDescriptorUtils.isBuiltin(descriptor)) return null
+
+        return when {
+            COMPARE_TO_CHAR.apply(descriptor) ->
+                CompareToCharIntrinsic
+            CHAR_COMPARE_TO.apply(descriptor) ->
+                CompareCharToPrimitiveIntrinsic
+            PRIMITIVE_COMPARE_TO.apply(descriptor) ->
+                CompareToIntrinsic
+            else ->
+                CompareToFunctionIntrinsic
+        }
     }
 }
