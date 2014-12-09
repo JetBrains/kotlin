@@ -74,6 +74,6 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        return ProjectRootsUtil.isInSources(project, file, includeLibrarySourceFiles, includeClassFiles, index);
+        return ProjectRootsUtil.isInContent(project, file, true, includeLibrarySourceFiles, includeClassFiles, index);
     }
 }

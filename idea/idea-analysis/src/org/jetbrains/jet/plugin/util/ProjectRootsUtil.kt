@@ -24,58 +24,64 @@ import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
-import com.intellij.openapi.roots.FileIndex
 import com.intellij.ide.highlighter.JavaClassFileType
 
 public object ProjectRootsUtil {
     platformStatic
-    public fun isInSources(project: Project,
-                           file: VirtualFile,
-                           includeLibrarySources: Boolean,
-                           withLibraryClassesRoots: Boolean,
+    public fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
+                           includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
-        if (fileIndex.isInSourceContent(file)) {
+        if (includeProjectSource && fileIndex.isInSourceContent(file)) {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
+        if (!includeLibraryClasses && !includeLibrarySource) return false
 
-        return (withLibraryClassesRoots && fileIndex.isInLibraryClasses(file))
-               || (includeLibrarySources && fileIndex.isInLibrarySource(file))
+        // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
+        val isClassFile = file.getFileType() == JavaClassFileType.INSTANCE
+        return (includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file))
+               || (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))
     }
 
     platformStatic
-    public fun isInSource(
+    public fun isInContent(
             element: PsiElement,
-            includeLibrarySources: Boolean,
-            withLibraryClassesRoots: Boolean = false
+            includeProjectSource: Boolean,
+            includeLibrarySource: Boolean,
+            includeLibraryClasses: Boolean
     ): Boolean {
-        return runReadAction { (): Boolean ->
-            val virtualFile = when(element) {
+        return runReadAction {(): Boolean ->
+            val virtualFile = when (element) {
                                   is PsiDirectory -> element.getVirtualFile()
                                   else -> element.getContainingFile()?.getVirtualFile()
                               } ?: return@runReadAction false
 
             val project = element.getProject()
-            return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
+            return@runReadAction isInContent(project, virtualFile, includeProjectSource, includeLibrarySource, includeLibraryClasses)
         }
     }
 
     platformStatic
     public fun isInProjectSource(element: PsiElement): Boolean {
-        return isInSource(element, false)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false)
     }
 
     platformStatic
     public fun isInProjectOrLibSource(element: PsiElement): Boolean {
-        return isInSource(element, true)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false)
     }
 
     platformStatic
-    public fun isLibraryClassFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
-        return fileIndex.isInLibraryClasses(virtualFile) && virtualFile.getFileType() == JavaClassFileType.INSTANCE
+    public fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true)
     }
 
     platformStatic
-    public fun isLibraryFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
-        return fileIndex.isInLibraryClasses(virtualFile) || fileIndex.isInLibrarySource(virtualFile)
+    public fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true)
+    }
+
+    platformStatic
+    public fun isLibraryFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true)
     }
 }
