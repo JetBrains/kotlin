@@ -37,11 +37,11 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import java.util.ServiceLoader
 import java.io.IOException
 import java.util.Enumeration
+import org.jetbrains.kotlin.compiler.plugin.parsePluginOption
+import org.jetbrains.kotlin.compiler.plugin.PluginOptionValue
 
 
 public object PluginCliParser {
-
-    public val PLUGIN_ARGUMENT_PREFIX: String = "plugin:"
 
     [platformStatic]
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
@@ -99,24 +99,6 @@ public object PluginCliParser {
                 }
             }
         }
-    }
-
-    private class PluginOptionValue(
-            val pluginId: String,
-            val optionName: String,
-            val value: String
-    ) {
-        override fun toString() = "$pluginId:$optionName=$value"
-    }
-
-    private fun parsePluginOption(argumentValue: String): PluginOptionValue? {
-        val pattern = Pattern.compile("""^plugin:([^:]*):([^=]*)=(.*)$""")
-        val matcher = pattern.matcher(argumentValue)
-        if (matcher.matches()) {
-            return PluginOptionValue(matcher.group(1)!!, matcher.group(2)!!, matcher.group(3)!!)
-        }
-
-        return null
     }
 }
 
