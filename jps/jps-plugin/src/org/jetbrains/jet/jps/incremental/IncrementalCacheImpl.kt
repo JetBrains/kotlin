@@ -44,6 +44,7 @@ import java.util.Scanner
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+import kotlin.properties.Delegates
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -63,10 +64,10 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         val FORMAT_VERSION_TXT = "format-version.txt"
     }
 
-    private val protoMap = ProtoMap()
-    private val constantsMap = ConstantsMap()
-    private val inlineFunctionsMap = InlineFunctionsMap()
-    private val packagePartMap = PackagePartMap()
+    private val protoMap by Delegates.lazy { ProtoMap() }
+    private val constantsMap by Delegates.lazy { ConstantsMap() }
+    private val inlineFunctionsMap by Delegates.lazy { InlineFunctionsMap() }
+    private val packagePartMap by Delegates.lazy { PackagePartMap() }
 
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
