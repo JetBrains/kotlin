@@ -593,7 +593,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
                 }
                 if (usage instanceof OverriderUsageInfo) {
-                    PsiMethod overridingMethod = ((OverriderUsageInfo)usage).getElement();
+                    PsiMethod overridingMethod = ((OverriderUsageInfo)usage).getOverridingMethod();
                     if (overridingMethod != null) {
                         nullabilityPropagator.processMethod(overridingMethod);
                     }
