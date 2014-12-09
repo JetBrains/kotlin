@@ -254,7 +254,10 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
 
-        QuickFixes.factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
+        QuickFixFactoryForTypeMismatchError factoryForTypeMismatchError = new QuickFixFactoryForTypeMismatchError();
+        QuickFixes.factories.put(TYPE_MISMATCH, factoryForTypeMismatchError);
+        QuickFixes.factories.put(NULL_FOR_NONNULL_TYPE, factoryForTypeMismatchError);
+        QuickFixes.factories.put(CONSTANT_EXPECTED_TYPE_MISMATCH, factoryForTypeMismatchError);
 
         QuickFixes.factories.put(SMARTCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForSmartCastImpossible());
 

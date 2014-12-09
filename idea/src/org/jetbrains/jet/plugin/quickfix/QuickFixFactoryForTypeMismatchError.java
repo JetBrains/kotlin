@@ -17,36 +17,75 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.util.UtilPackage;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
 public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFactory {
+    private final static Logger LOG = Logger.getInstance(QuickFixFactoryForTypeMismatchError.class);
+
     @NotNull
     @Override
     protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
         List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-        DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);
-        JetExpression expression = diagnosticWithParameters.getPsiElement();
-        JetType expectedType = diagnosticWithParameters.getA();
-        JetType expressionType = diagnosticWithParameters.getB();
         BindingContext context = ResolvePackage.analyzeFully((JetFile) diagnostic.getPsiFile());
+
+        PsiElement diagnosticElement = diagnostic.getPsiElement();
+        if (!(diagnosticElement instanceof JetExpression)) {
+            LOG.error("Unexpected element: " + diagnosticElement.getText());
+            return Collections.emptyList();
+        }
+
+        JetExpression expression = (JetExpression) diagnosticElement;
+
+        JetType expectedType;
+        JetType expressionType;
+        if (diagnostic.getFactory() == Errors.TYPE_MISMATCH) {
+            DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);
+            expectedType = diagnosticWithParameters.getA();
+            expressionType = diagnosticWithParameters.getB();
+        }
+        else if (diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE) {
+            DiagnosticWithParameters1<JetConstantExpression, JetType> diagnosticWithParameters =
+                    Errors.NULL_FOR_NONNULL_TYPE.cast(diagnostic);
+            expectedType = diagnosticWithParameters.getA();
+            expressionType = UtilPackage.makeNullable(expectedType);
+        }
+        else if (diagnostic.getFactory() == Errors.CONSTANT_EXPECTED_TYPE_MISMATCH) {
+            DiagnosticWithParameters2<JetConstantExpression, String, JetType> diagnosticWithParameters =
+                    Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic);
+            expectedType = diagnosticWithParameters.getB();
+            expressionType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+            if (expressionType == null) {
+                LOG.error("No type inferred: " + expression.getText());
+                return Collections.emptyList();
+            }
+        }
+        else {
+            LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.RENDERER.render(diagnostic));
+            return Collections.emptyList();
+        }
 
         // We don't want to cast a cast or type-asserted expression:
         if (!(expression instanceof JetBinaryExpressionWithTypeRHS) && !(expression.getParent() instanceof  JetBinaryExpressionWithTypeRHS)) {
