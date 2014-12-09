@@ -38,7 +38,7 @@ import java.util.ServiceLoader
 import java.io.IOException
 import java.util.Enumeration
 import org.jetbrains.kotlin.compiler.plugin.parsePluginOption
-import org.jetbrains.kotlin.compiler.plugin.PluginOptionValue
+import org.jetbrains.kotlin.compiler.plugin.CliOptionValue
 
 
 public object PluginCliParser {
@@ -75,7 +75,7 @@ public object PluginCliParser {
 
         for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
-            val optionsToValues = MultiMap<CliOption, PluginOptionValue>()
+            val optionsToValues = MultiMap<CliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
                 val option = declaredOptions[optionValue!!.optionName]
