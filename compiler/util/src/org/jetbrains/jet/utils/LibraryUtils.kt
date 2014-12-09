@@ -14,222 +14,217 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.utils;
+package org.jetbrains.jet.utils
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.Processor
 
-import java.io.*;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.io.*
+import java.util.Enumeration
+import java.util.Properties
+import java.util.jar.Attributes
+import java.util.jar.JarFile
+import java.util.jar.Manifest
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import kotlin.platform.platformStatic
 
-public class LibraryUtils {
-    private static final Logger LOG = Logger.getInstance(LibraryUtils.class);
+public object LibraryUtils {
+    private val LOG = Logger.getInstance(javaClass<LibraryUtils>())
 
-    public static final String KOTLIN_JS_MODULE_NAME = "Kotlin-JS-Module-Name";
-    private static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB;
-    private static final String TITLE_KOTLIN_JAVASCRIPT_LIB;
-    private static final String JS_EXT = ".js";
-    private static final String METAINF = "META-INF/";
-    private static final String MANIFEST_PATH = METAINF + "MANIFEST.MF";
-    private static final String METAINF_RESOURCES = METAINF + "resources/";
-    private static final Attributes.Name KOTLIN_JS_MODULE_ATTRIBUTE_NAME = new Attributes.Name(KOTLIN_JS_MODULE_NAME);
+    public val KOTLIN_JS_MODULE_NAME: String = "Kotlin-JS-Module-Name"
+    private var TITLE_KOTLIN_JAVASCRIPT_STDLIB: String
+    private var TITLE_KOTLIN_JAVASCRIPT_LIB: String
+    private val JS_EXT = ".js"
+    private val METAINF = "META-INF/"
+    private val MANIFEST_PATH = "${METAINF}MANIFEST.MF"
+    private val METAINF_RESOURCES = "${METAINF}resources/"
+    private val KOTLIN_JS_MODULE_ATTRIBUTE_NAME = Attributes.Name(KOTLIN_JS_MODULE_NAME);
 
-    static {
-        String jsStdLib = "";
-        String jsLib = "";
+    {
+        var jsStdLib = ""
+        var jsLib = ""
 
-        InputStream manifestProperties = LibraryUtils.class.getResourceAsStream("/manifest.properties");
+        val manifestProperties = javaClass<LibraryUtils>().getResourceAsStream("/manifest.properties")
         if (manifestProperties != null) {
             try {
-                Properties properties = new Properties();
-                properties.load(manifestProperties);
-                jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib");
-                jsLib = properties.getProperty("manifest.spec.title.kotlin.javascript.lib");
+                val properties = Properties()
+                properties.load(manifestProperties)
+                jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib")
+                jsLib = properties.getProperty("manifest.spec.title.kotlin.javascript.lib")
             }
-            catch (IOException e) {
-                LOG.error(e);
+            catch (e: IOException) {
+                LOG.error(e)
             }
+
         }
         else {
-            LOG.error("Resource 'manifest.properties' not found.");
+            LOG.error("Resource 'manifest.properties' not found.")
         }
 
-        TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib;
-        TITLE_KOTLIN_JAVASCRIPT_LIB = jsLib;
+        TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib
+        TITLE_KOTLIN_JAVASCRIPT_LIB = jsLib
     }
 
-    private LibraryUtils() {}
-
-    public static VirtualFile getJarFile(@NotNull List<VirtualFile> classesRoots, @NotNull String jarName) {
-        for (VirtualFile root : classesRoots) {
-            if (root.getName().equals(jarName)) {
-                return root;
+    platformStatic
+    public fun getJarFile(classesRoots: List<VirtualFile>, jarName: String): VirtualFile? {
+        for (root in classesRoots) {
+            if (root.getName() == jarName) {
+                return root
             }
         }
 
-        return null;
+        return null
     }
 
-    @Nullable
-    public static String getKotlinJsModuleName(@NotNull File library) {
-        Attributes attributes = getManifestMainAttributesFromJarOrDirectory(library);
-        return attributes != null ? attributes.getValue(KOTLIN_JS_MODULE_ATTRIBUTE_NAME) : null;
+    platformStatic
+    public fun getKotlinJsModuleName(library: File): String? {
+        return getManifestMainAttributesFromJarOrDirectory(library)?.getValue(KOTLIN_JS_MODULE_ATTRIBUTE_NAME)
     }
 
-    public static boolean isKotlinJavascriptLibrary(@NotNull File library) {
-        return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE);
+    platformStatic
+    public fun isKotlinJavascriptLibrary(library: File): Boolean {
+        return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE)
     }
 
-    public static boolean isKotlinJavascriptStdLibrary(@NotNull File library) {
-        return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE);
+    platformStatic
+    public fun isKotlinJavascriptStdLibrary(library: File): Boolean {
+        return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)
     }
 
-    public static void copyJsFilesFromLibraries(@NotNull List<String> libraries, @NotNull String outputLibraryJsPath) {
-        for(String library : libraries) {
-            File file = new File(library);
-            assert file.exists() : "Library " + library + " not found";
+    platformStatic
+    public fun copyJsFilesFromLibraries(libraries: List<String>, outputLibraryJsPath: String) {
+        for (library in libraries) {
+            val file = File(library)
+            assert(file.exists()) { "Library " + library + " not found" }
 
             if (file.isDirectory()) {
-                copyJsFilesFromDirectory(file, outputLibraryJsPath);
+                copyJsFilesFromDirectory(file, outputLibraryJsPath)
             }
             else {
-                copyJsFilesFromZip(file, outputLibraryJsPath);
+                copyJsFilesFromZip(file, outputLibraryJsPath)
             }
         }
     }
 
-    private static void copyJsFilesFromDirectory(@NotNull final File dir, @NotNull final String outputLibraryJsPath) {
-        FileUtil.processFilesRecursively(dir, new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                String relativePath = FileUtil.getRelativePath(dir, file);
-                assert relativePath != null : "relativePath should not be null " + dir + " " + file;
-                if (file.isFile() && relativePath.endsWith(JS_EXT)) {
-                    relativePath = getSuggestedPath(relativePath);
-                    if (relativePath == null) return true;
+    private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
+        FileUtil.processFilesRecursively(dir, object : Processor<File> {
+            override fun process(file: File): Boolean {
+                var relativePath = FileUtil.getRelativePath(dir, file)
+                assert(relativePath != null) { "relativePath should not be null " + dir + " " + file }
+                if (file.isFile() && relativePath!!.endsWith(JS_EXT)) {
+                    relativePath = getSuggestedPath(relativePath)
+                    if (relativePath == null) return true
 
                     try {
-                        FileUtil.copy(file, new File(outputLibraryJsPath, relativePath));
+                        val copyFile = File(outputLibraryJsPath, relativePath)
+                        FileUtil.copy(file, copyFile)
                     }
-                    catch (IOException ex) {
-                        LOG.error("Could not copy " + relativePath + " from " + dir + ": " + ex.getMessage());
+                    catch (ex: IOException) {
+                        LOG.error("Could not copy " + relativePath + " from " + dir + ": " + ex.getMessage())
                     }
+
                 }
-                return true;
+                return true
             }
-        });
+        })
     }
 
-    private static void copyJsFilesFromZip(@NotNull File file, @NotNull String outputLibraryJsPath) {
+    private fun copyJsFilesFromZip(file: File, outputLibraryJsPath: String) {
         try {
-            ZipFile zipFile = new ZipFile(file.getPath());
-            try {
-                traverseArchive(zipFile, outputLibraryJsPath);
-            }
-            finally {
-                zipFile.close();
-            }
+            traverseArchive(file, outputLibraryJsPath)
         }
-        catch (IOException ex) {
-            LOG.error("Could extract javascript files from  " + file.getName() + ": " + ex.getMessage());
+        catch (ex: IOException) {
+            LOG.error("Could not extract javascript files from  " + file.getName() + ": " + ex.getMessage())
         }
+
     }
 
-    private static void traverseArchive(@NotNull ZipFile zipFile, @NotNull String outputLibraryJsPath) throws IOException {
-        Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-        while (zipEntries.hasMoreElements()) {
-            ZipEntry entry = zipEntries.nextElement();
-            String entryName = entry.getName();
-            if (!entry.isDirectory() && entryName.endsWith(JS_EXT)) {
-                String relativePath = getSuggestedPath(entryName);
-                if (relativePath == null) continue;
-
-                InputStream stream = zipFile.getInputStream(entry);
-                String content = FileUtil.loadTextAndClose(stream);
-                File outputFile = new File(outputLibraryJsPath, relativePath);
-                FileUtil.writeToFile(outputFile, content);
-            }
-        }
-    }
-
-    @Nullable
-    private static String getSuggestedPath(@NotNull String path) {
-        if (path.startsWith(METAINF)) {
-            if (path.startsWith(METAINF_RESOURCES)) {
-                return path.substring(METAINF_RESOURCES.length());
-            }
-            return null;
-        }
-
-        return path;
-    }
-
-    @Nullable
-    private static Manifest getManifestFromJar(@NotNull File library) {
-        if (!library.canRead()) return null;
-
+    throws(javaClass<IOException>())
+    private fun traverseArchive(file: File, outputLibraryJsPath: String) {
+        val zipFile = ZipFile(file.getPath())
         try {
-            JarFile jarFile = new JarFile(library);
-            try {
-                return jarFile.getManifest();
-            }
-            finally {
-                jarFile.close();
+            val zipEntries = zipFile.entries()
+            while (zipEntries.hasMoreElements()) {
+                val entry = zipEntries.nextElement()
+                val entryName = entry.getName()
+                if (!entry.isDirectory() && entryName.endsWith(JS_EXT)) {
+                    val relativePath = getSuggestedPath(entryName)
+                    if (relativePath == null) continue
+
+                    val stream = zipFile.getInputStream(entry)
+                    val content = FileUtil.loadTextAndClose(stream)
+                    val outputFile = File(outputLibraryJsPath, relativePath)
+                    FileUtil.writeToFile(outputFile, content)
+                }
             }
         }
-        catch (IOException ignored) {
-            return null;
+        finally {
+            zipFile.close()
         }
     }
 
-    @Nullable
-    private static Manifest getManifestFromDirectory(@NotNull File library) {
-        if (!library.canRead() || !library.isDirectory()) return null;
+    private fun getSuggestedPath(path: String): String? {
+        val systemIndependentPath = FileUtil.toSystemIndependentName(path)
+        if (systemIndependentPath.startsWith(METAINF)) {
+            if (systemIndependentPath.startsWith(METAINF_RESOURCES)) {
+                return path.substring(METAINF_RESOURCES.length())
+            }
+            return null
+        }
 
-        File manifestFile = new File(library, MANIFEST_PATH);
-        if (!manifestFile.exists()) return null;
+        return path
+    }
+
+    private fun getManifestFromJar(library: File): Manifest? {
+        if (!library.canRead()) return null
 
         try {
-            InputStream inputStream = new FileInputStream(manifestFile);
+            val jarFile = JarFile(library)
             try {
-                return new Manifest(inputStream);
+                return jarFile.getManifest()
             }
             finally {
-                inputStream.close();
+                jarFile.close()
             }
         }
-        catch (IOException ignored) {
-            LOG.warn("IOException " + ignored);
-            return null;
+        catch (ignored: IOException) {
+            return null
         }
     }
 
-    private static Manifest getManifestFromJarOrDirectory(@NotNull File library) {
-        return library.isDirectory() ? getManifestFromDirectory(library) : getManifestFromJar(library);
+    private fun getManifestFromDirectory(library: File): Manifest? {
+        if (!library.canRead() || !library.isDirectory()) return null
+
+        val manifestFile = File(library, MANIFEST_PATH)
+        if (!manifestFile.exists()) return null
+
+        try {
+            val inputStream = FileInputStream(manifestFile)
+            try {
+                return Manifest(inputStream)
+            }
+            finally {
+                inputStream.close()
+            }
+        }
+        catch (ignored: IOException) {
+            LOG.warn("IOException " + ignored)
+            return null
+        }
     }
 
-    @Nullable
-    private static Attributes getManifestMainAttributesFromJarOrDirectory(@NotNull File library) {
-        Manifest manifest = getManifestFromJarOrDirectory(library);
-        return manifest != null ? manifest.getMainAttributes() : null;
-    }
+    private fun getManifestFromJarOrDirectory(library: File): Manifest? =
+            if (library.isDirectory()) getManifestFromDirectory(library) else getManifestFromJar(library)
 
-    private static boolean checkAttributeValue(@NotNull File library, String expected, @NotNull Attributes.Name attributeName) {
-        Attributes attributes = getManifestMainAttributesFromJarOrDirectory(library);
-        if (attributes == null) return false;
+    private fun getManifestMainAttributesFromJarOrDirectory(library: File): Attributes? =
+            getManifestFromJarOrDirectory(library)?.getMainAttributes()
 
-        String value = attributes.getValue(attributeName);
-        return value != null && value.equals(expected);
+    private fun checkAttributeValue(library: File, expected: String, attributeName: Attributes.Name): Boolean {
+        val attributes = getManifestMainAttributesFromJarOrDirectory(library)
+        val value = attributes?.getValue(attributeName)
+        return value != null && value == expected
     }
 }
