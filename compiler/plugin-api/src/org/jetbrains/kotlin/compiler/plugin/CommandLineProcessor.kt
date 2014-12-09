@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import org.jetbrains.jet.config.CompilerConfiguration
+import java.util.regex.Pattern
 
 public class CliOption(
         public val name: String,
@@ -34,6 +35,24 @@ public trait CommandLineProcessor {
 
     [throws(javaClass<CliOptionProcessingException>())]
     public fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
+}
+
+public data class PluginOptionValue(
+        val pluginId: String,
+        val optionName: String,
+        val value: String
+) {
+    override fun toString() = "$pluginId:$optionName=$value"
+}
+
+public fun parsePluginOption(argumentValue: String): PluginOptionValue? {
+    val pattern = Pattern.compile("""^plugin:([^:]*):([^=]*)=(.*)$""")
+    val matcher = pattern.matcher(argumentValue)
+    if (matcher.matches()) {
+        return PluginOptionValue(matcher.group(1), matcher.group(2), matcher.group(3))
+    }
+
+    return null
 }
 
 public fun getPluginOptionString(pluginId: String, key: String, value: String): String {

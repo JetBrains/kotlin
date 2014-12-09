@@ -25,15 +25,17 @@ import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
 import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.compiler.plugin.getPluginOptionString
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     private val jarFileName = "android-compiler-plugin.jar"
 
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.getModule()
+        val pluginId = AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID
         return listOf(
-                makePluginOption(AndroidCommandLineProcessor.RESOURCE_PATH_OPTION, getAndroidResPath(module)),
-                makePluginOption(AndroidCommandLineProcessor.MANIFEST_FILE_OPTION, getAndroidManifest(module))
+                getPluginOptionString(pluginId, AndroidCommandLineProcessor.RESOURCE_PATH_OPTION.name, getAndroidResPath(module)),
+                getPluginOptionString(pluginId, AndroidCommandLineProcessor.MANIFEST_FILE_OPTION.name, getAndroidManifest(module))
         )
     }
 
@@ -49,10 +51,6 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
                 File(kotlinProjectDirectory, "dist/kotlinc/lib/$jarFileName").getAbsolutePath()
             }
         )
-    }
-
-    private fun makePluginOption(option: CliOption, value: String): String {
-        return "plugin:${AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID}:${option.name}=$value"
     }
 
     private fun getAndroidResPath(module: JpsModule): String {
