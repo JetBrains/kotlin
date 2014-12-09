@@ -493,6 +493,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("onlyTopLevelFunctionInFileRemoved")
+            public void testOnlyTopLevelFunctionInFileRemoved() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/onlyTopLevelFunctionInFileRemoved/");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyRenamed")
             public void testPropertyRenamed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed/");
