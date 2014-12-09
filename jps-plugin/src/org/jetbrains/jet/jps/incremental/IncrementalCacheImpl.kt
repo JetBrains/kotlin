@@ -146,7 +146,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         }
     }
 
-    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String>): Collection<String> {
+    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String?>): Collection<String> {
         return packagePartMap.getRemovedPackageParts(sourceFilesToCompileAndFqNames)
     }
 
@@ -451,7 +451,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             storage.remove(sourceFile.getAbsolutePath())
         }
 
-        public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
+        public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String?>): Collection<String> {
             val result = HashSet<String>()
 
             storage.processKeysWithExistingMapping { key ->
@@ -463,9 +463,10 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                 }
                 else {
                     val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
-                    val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
-                    if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
-                        result.add(packagePartClassName)
+                    if (sourceFile in compiledSourceFilesToFqName) {
+                        if (compiledSourceFilesToFqName[sourceFile] != previousPackageFqName.asString()) {
+                            result.add(packagePartClassName)
+                        }
                     }
                 }
 

@@ -94,13 +94,18 @@ public class PackagePartClassUtils {
         return ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
             @Override
             public boolean value(JetFile packageFile) {
-                for (JetDeclaration declaration : packageFile.getDeclarations()) {
-                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                        return true;
-                    }
-                }
-                return false;
+                return fileHasCallables(packageFile);
             }
         });
     }
+
+    public static boolean fileHasCallables(@NotNull JetFile file) {
+        for (JetDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

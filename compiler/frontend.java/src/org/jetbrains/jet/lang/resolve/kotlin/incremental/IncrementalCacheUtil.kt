@@ -22,15 +22,20 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.HashMap
 import java.io.File
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 
 public fun IncrementalCache.getPackagesWithRemovedFiles(sourceFilesToCompile: Collection<JetFile>): Collection<FqName> {
     return getRemovedPackageParts(sourceFilesToCompile).map { it.getPackageFqName() }
 }
 
 public fun IncrementalCache.getRemovedPackageParts(sourceFilesToCompile: Collection<JetFile>): Collection<JvmClassName> {
-    val sourceFilesToFqName = HashMap<File, String>()
+    val sourceFilesToFqName = HashMap<File, String?>()
     for (sourceFile in sourceFilesToCompile) {
-        sourceFilesToFqName[File(sourceFile.getVirtualFile()!!.getPath())] = sourceFile.getPackageFqName().asString()
+        sourceFilesToFqName[File(sourceFile.getVirtualFile()!!.getPath())] =
+                if (PackagePartClassUtils.fileHasCallables(sourceFile))
+                    sourceFile.getPackageFqName().asString()
+                else
+                    null
     }
 
     return getRemovedPackageParts(sourceFilesToFqName).map { JvmClassName.byInternalName(it) }
