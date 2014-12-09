@@ -2,10 +2,12 @@ LineBreakpoint created at syntheticMethods.kt:6
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! syntheticMethods.SyntheticMethodsPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 syntheticMethods.kt:6
+syntheticMethods.kt:17
 syntheticMethods.kt:19
 syntheticMethods.kt:20
 syntheticMethods.kt:17
 syntheticMethods.kt:7
+syntheticMethods.kt:34
 syntheticMethods.kt:0
 syntheticMethods.kt:7
 syntheticMethods.kt:25

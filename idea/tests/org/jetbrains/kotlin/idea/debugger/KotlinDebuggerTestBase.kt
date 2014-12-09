@@ -27,11 +27,60 @@ import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.debugger.SourcePosition
+import com.intellij.debugger.settings.DebuggerSettings
+import kotlin.properties.Delegates
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import kotlin.properties.Delegates
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
+    private var oldSettings: DebuggerSettings by Delegates.notNull()
+    private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
+    private var oldDisableKotlinInternalClasses: Boolean by Delegates.notNull()
+
+    override fun initApplication() {
+        super.initApplication()
+        saveDefaultSettings()
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        restoreDefaultSettings()
+    }
+
+    protected fun configureSettings(fileText: String) {
+        val kotlinSettings = KotlinDebuggerSettings.getInstance()
+        kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
+        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKotlinInternalClasses)
+
+        val debuggerSettings = DebuggerSettings.getInstance()!!
+        debuggerSettings.SKIP_SYNTHETIC_METHODS = fileText.getValueForSetting("SKIP_SYNTHETIC_METHODS", oldSettings.SKIP_SYNTHETIC_METHODS)
+        debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
+        debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings.SKIP_CLASSLOADERS)
+        debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings.TRACING_FILTERS_ENABLED)
+    }
+
+    private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
+        return findStringWithPrefixes(this, "// $name: ")?.toBoolean() ?: defaultValue
+    }
+
+    private fun saveDefaultSettings() {
+        oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
+        oldDisableKotlinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
+        oldSettings = DebuggerSettings.getInstance()!!.clone()
+    }
+
+    private fun restoreDefaultSettings() {
+        KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
+        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKotlinInternalClasses
+
+        val debuggerSettings = DebuggerSettings.getInstance()!!
+        debuggerSettings.SKIP_SYNTHETIC_METHODS = oldSettings.SKIP_SYNTHETIC_METHODS
+        debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
+        debuggerSettings.SKIP_CLASSLOADERS = oldSettings.SKIP_CLASSLOADERS
+        debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings.TRACING_FILTERS_ENABLED
+    }
 
     protected val dp: DebugProcessImpl
         get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
