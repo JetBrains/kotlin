@@ -380,7 +380,13 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constraintPosition: ConstraintPosition
     ) {
         val typeBounds = getTypeBounds(parameterType)
-        val capturedType = createCapturedType(constrainingTypeProjection)
+        val typeProjection = if (parameterType.isMarkedNullable()) {
+            TypeProjectionImpl(constrainingTypeProjection.getProjectionKind(), TypeUtils.makeNotNullable(constrainingTypeProjection.getType()))
+        }
+        else {
+            constrainingTypeProjection
+        }
+        val capturedType = createCapturedType(typeProjection)
         typeBounds.addBound(EXACT_BOUND, capturedType, constraintPosition)
     }
 

@@ -1,0 +1,5 @@
+package
+
+internal fun test1(/*0*/ a: kotlin.Array<out kotlin.Int?>): kotlin.Unit
+internal fun test2(/*0*/ vararg a: kotlin.Int? /*kotlin.Array<out kotlin.Int?>*/): kotlin.Unit
+internal fun </*0*/ T : kotlin.Any> kotlin.Array<T?>.filterNotNull(): kotlin.List<T>
