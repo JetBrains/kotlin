@@ -199,6 +199,10 @@ public class JetChangeInfo implements ChangeInfo {
         newParameters.add(parameterInfo);
     }
 
+    public void removeParameter(int index) {
+        newParameters.remove(index);
+    }
+
     @Override
     public boolean isParameterSetOrOrderChanged() {
         if (parameterNamesChanged == null)

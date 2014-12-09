@@ -216,8 +216,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         if (!changeInfo.isConstructor() && functionScope != null && !info.getNewName().isEmpty()) {
             for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
-                if (conflict != oldDescriptor && getFunctionParameterTypes(conflict).equals(getFunctionParameterTypes(oldDescriptor))) {
-                    PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict);
+                if (conflict == oldDescriptor) continue;
+
+                PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict);
+                if (conflictElement == changeInfo.getMethod()) continue;
+
+                if (getFunctionParameterTypes(conflict).equals(getFunctionParameterTypes(oldDescriptor))) {
                     result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'");
                     break;
                 }
