@@ -54,7 +54,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        if (!(ProjectRootsUtil.isInProjectOrLibSource(element) || element.getContainingFile() is JetCodeFragment)) return
+        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.getContainingFile() is JetCodeFragment)) return
 
         getBeforeAnalysisVisitors(holder).forEach { visitor -> element.accept(visitor) }
 
