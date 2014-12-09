@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/jsCodeWarning.kt
+-output
+$TEMP_DIR$/out.js

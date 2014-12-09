@@ -90,4 +90,19 @@ public class K2JsCliTest extends CliBaseTest {
 
         Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
     }
+
+    @Test
+    public void jsCodeError() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
+
+    @Test
+    public void jsCodeWarning() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
+
+    @Test
+    public void jsCodeNotLiteralError() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
 }
