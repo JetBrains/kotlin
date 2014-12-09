@@ -10,7 +10,7 @@ fun fool(vararg a : Long) : LongArray = a
 fun food(vararg a : Double) : DoubleArray = a
 fun foof(vararg a : Float) : FloatArray = a
 fun foob(vararg a : Boolean) : BooleanArray = a
-fun foos(vararg a : String) : Array<String> = a
+fun foos(vararg a : String) : Array<out String> = a
 
 fun test() {
     Arrays.asList(1, 2, 3)

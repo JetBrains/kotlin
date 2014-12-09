@@ -665,11 +665,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getArrayType(@NotNull JetType argument) {
-        return getArrayType(Variance.INVARIANT, argument);
-    }
-
-    @NotNull
     public JetType getEnumType(@NotNull JetType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));

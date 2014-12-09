@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.lang.types.Variance
 
 public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val builtIns: KotlinBuiltIns
@@ -97,7 +98,8 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                 val actualArrayType =
                         if (arrayElements.isNotEmpty()) {
                             val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
-                            builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(actualElementType) ?: builtIns.getArrayType(actualElementType)
+                            builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(actualElementType) ?:
+                            builtIns.getArrayType(Variance.INVARIANT, actualElementType)
                         }
                         else {
                             // In the case of empty array, no element has the element type, so we fall back to the expected type.

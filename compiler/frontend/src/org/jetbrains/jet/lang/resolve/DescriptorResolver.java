@@ -588,7 +588,7 @@ public class DescriptorResolver {
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
-        return builtIns.getArrayType(Variance.INVARIANT, elementType);
+        return builtIns.getArrayType(Variance.OUT_VARIANCE, elementType);
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(

@@ -215,7 +215,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
                 alternativeVarargElementType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParamVarargElementType,
                                                                                    originalToAltTypeParameters, MEMBER_SIGNATURE_CONTRAVARIANT);
-                alternativeType = KotlinBuiltIns.getInstance().getArrayType(alternativeVarargElementType);
+                alternativeType = KotlinBuiltIns.getInstance().getArrayType(Variance.OUT_VARIANCE, alternativeVarargElementType);
             }
 
             Name altName = annotationValueParameter.getNameAsName();

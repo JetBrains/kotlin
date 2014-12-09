@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
@@ -89,7 +90,7 @@ public class DescriptorFactory {
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
-                                 KotlinBuiltIns.getInstance().getArrayType(enumClass.getDefaultType()), Modality.FINAL,
+                                 KotlinBuiltIns.getInstance().getArrayType(Variance.INVARIANT, enumClass.getDefaultType()), Modality.FINAL,
                                  Visibilities.PUBLIC);
     }
 

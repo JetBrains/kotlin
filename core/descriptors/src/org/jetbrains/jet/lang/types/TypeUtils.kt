@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.types.Flexibility
 import org.jetbrains.jet.lang.types.TypeConstructor
 import org.jetbrains.jet.utils.toReadOnlyList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.types.isDynamic
 
 fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
@@ -61,5 +63,7 @@ public fun JetType.getContainedAndCapturedTypeParameterConstructors(): Collectio
 }
 
 public fun JetType.isSubtypeOf(superType: JetType): Boolean = JetTypeChecker.DEFAULT.isSubtypeOf(this, superType)
+
+public fun JetType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
 

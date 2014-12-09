@@ -2606,7 +2606,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Diagnostics.Functions.class})
+    @InnerTestClasses({Diagnostics.Functions.class, Diagnostics.Vararg.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Diagnostics extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDiagnostics() throws Exception {
@@ -2939,6 +2939,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/whenWithoutCondition.kt");
                     doTest(fileName);
                 }
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Vararg extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInVararg() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kt4172.kt")
+            public void testKt4172() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/vararg/kt4172.kt");
+                doTest(fileName);
             }
         }
     }

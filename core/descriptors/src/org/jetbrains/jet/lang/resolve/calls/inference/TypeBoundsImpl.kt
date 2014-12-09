@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.types.singleBestRepresentative
+import org.jetbrains.jet.lang.types.typeUtil.cannotBeReified
 
 public class TypeBoundsImpl(
         override val typeVariable: TypeParameterDescriptor,
@@ -158,6 +159,10 @@ public class TypeBoundsImpl(
         if (possibleAnswer == null) return false
         // a captured type might be an answer
         if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
+
+        // e.g. if T has a lower bound 'Nothing' and an upper bound 'String',
+        // by default 'Nothing' is inferred which can lead to an error for reified type variable
+        if (typeVariable.isReified() && possibleAnswer.cannotBeReified()) return false
 
         for (bound in bounds) {
             when (bound.kind) {

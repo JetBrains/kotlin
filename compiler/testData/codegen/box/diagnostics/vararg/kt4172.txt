@@ -1,0 +1,21 @@
+package
+
+kotlin.inline() internal fun </*0*/ reified T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+internal fun box(): kotlin.String
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+internal object D {
+    private constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(/*0*/ array: kotlin.Array<out kotlin.String>): kotlin.Array<out kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-D> : D {
+        private constructor <class-object-for-D>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ array: kotlin.Array<out kotlin.String>): kotlin.Array<out kotlin.String>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

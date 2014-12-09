@@ -1,5 +1,5 @@
 fun <T> Array<T>?.get(i : Int?) = this!!.get(i!!)
-fun <T> array(vararg t : T) : Array<T> = t
+fun <T> array(vararg t : T) : Array<T> = t as Array<T>
 
 fun box() : String {
     val a : Array<String>? = array<String>("Str", "Str2")

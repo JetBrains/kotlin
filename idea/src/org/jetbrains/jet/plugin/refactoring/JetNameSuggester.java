@@ -142,7 +142,8 @@ public class JetNameSuggester {
         else {
             if (jetType.getArguments().size() == 1) {
                 JetType argument = jetType.getArguments().get(0).getType();
-                if (typeChecker.equalTypes(builtIns.getArrayType(argument), jetType)) {
+                if ((KotlinBuiltIns.isArray(jetType) || KotlinBuiltIns.isPrimitiveArray(jetType)) &&
+                    typeChecker.equalTypes(argument, builtIns.getArrayElementType(jetType))) {
                     if (typeChecker.equalTypes(builtIns.getBooleanType(), argument)) {
                         addName(result, "booleans", validator);
                     }
