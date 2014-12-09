@@ -292,11 +292,26 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
+        @InnerTestClasses({CreateVariable.Parameter.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Parameter extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("platformType.before.Main.kt")
+                public void testPlatformType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/platformType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
             }
 
         }
