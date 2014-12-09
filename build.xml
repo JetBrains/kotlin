@@ -214,7 +214,7 @@
         </if>
     </target>
 
-    <target name="jslib">
+    <target name="compile-kotlin-js-stdlib">
         <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${kotlin-home}/lib/kotlin-ant.jar"/>
 
         <property name="compiled.builtins.js" value="builtins.js" />
@@ -290,7 +290,7 @@
         </jar>
     </target>
 
-    <target name="jslib_sources">
+    <target name="pack-kotlin-js-stdlib-sources">
         <jar destfile="${kotlin-home}/lib/kotlin-jslib-sources.jar">
             <resources refid="js.lib.files" />
             <fileset refid="kotlin.builtin.files" />
@@ -306,6 +306,8 @@
             </manifest>
         </jar>
     </target>
+
+    <target name="kotlin-js-stdlib" depends="compile-kotlin-js-stdlib,pack-kotlin-js-stdlib-sources"/>
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
@@ -748,12 +750,12 @@
     <target name="runtime" depends="builtins,stdlib,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib,jslib_sources"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
             description="Builds redistributables from sources"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib,jslib_sources"/>
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"/>
 
     <target name="dist-quick-compiler-only"
             depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
