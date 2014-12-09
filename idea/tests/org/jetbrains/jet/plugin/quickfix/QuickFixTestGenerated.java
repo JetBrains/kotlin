@@ -2416,6 +2416,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeWithPackageName.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("beforeWrongReceiver.kt")
+                public void testWrongReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeWrongReceiver.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/property")

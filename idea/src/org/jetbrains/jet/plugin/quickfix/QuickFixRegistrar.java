@@ -249,6 +249,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateLocalVariableActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateParameterActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateParameterActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateParameterActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
