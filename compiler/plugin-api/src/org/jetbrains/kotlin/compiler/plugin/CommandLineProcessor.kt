@@ -35,3 +35,7 @@ public trait CommandLineProcessor {
     [throws(javaClass<CliOptionProcessingException>())]
     public fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
 }
+
+public fun getPluginOptionString(pluginId: String, key: String, value: String): String {
+    return "plugin:$pluginId:$key=$value"
+}
