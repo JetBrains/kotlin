@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -42,6 +43,7 @@ public class JetParameterInfo implements ParameterInfo {
     private String defaultValueText = "";
     private JetValVar valOrVar;
     @Nullable private JetExpression defaultValue;
+    @Nullable JetModifierList modifierList;
 
     public JetParameterInfo(int oldIndex, String name, JetType type, @Nullable JetExpression defaultValue, @Nullable ASTNode valOrVar) {
         this.oldIndex = oldIndex;
@@ -174,6 +176,15 @@ public class JetParameterInfo implements ParameterInfo {
         return type;
     }
 
+    @Nullable
+    public JetModifierList getModifierList() {
+        return modifierList;
+    }
+
+    public void setModifierList(@Nullable JetModifierList modifierList) {
+        this.modifierList = modifierList;
+    }
+
     public boolean requiresExplicitType(@NotNull JetFunctionDefinitionUsage inheritedFunction) {
         FunctionDescriptor inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor();
         if (!(inheritedFunctionDescriptor instanceof AnonymousFunctionDescriptor)) return true;
@@ -189,8 +200,12 @@ public class JetParameterInfo implements ParameterInfo {
 
     public String getDeclarationSignature(int parameterIndex, @NotNull JetFunctionDefinitionUsage inheritedFunction) {
         StringBuilder buffer = new StringBuilder();
-        JetValVar valVar = getValOrVar();
 
+        if (modifierList != null) {
+            buffer.append(modifierList.getText()).append(' ');
+        }
+
+        JetValVar valVar = getValOrVar();
         if (valVar != JetValVar.None) {
             buffer.append(valVar.toString()).append(' ');
         }

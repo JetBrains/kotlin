@@ -73,13 +73,15 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
                     @Override
                     public JetParameterInfo fun(ValueParameterDescriptor param) {
                         JetParameter parameter = valueParameters != null ? valueParameters.get(param.getIndex()) : null;
-                        return new JetParameterInfo(
+                        JetParameterInfo parameterInfo = new JetParameterInfo(
                                 param.getIndex(),
                                 param.getName().asString(),
                                 param.getType(),
                                 parameter != null ? parameter.getDefaultValue() : null,
                                 parameter != null ? parameter.getValOrVarNode() : null
                         );
+                        parameterInfo.setModifierList(parameter != null ? parameter.getModifierList() : null);
+                        return parameterInfo;
                     }
                 }));
     }
