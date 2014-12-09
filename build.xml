@@ -13,6 +13,7 @@
     <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
+    <property name="bootstrap.runtime.minimal" value="${bootstrap.compiler.home}/lib/kotlin-runtime-minimal.jar"/>
 
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
@@ -402,6 +403,15 @@
                 </else>
             </if>
 
+            <!-- TODO: temporary, remove after bootstrap. Needed for proguard -->
+            <if>
+                <available file="${bootstrap.runtime.minimal}"/>
+                <then/>
+                <else>
+                    <copy file="${bootstrap.runtime}" tofile="${bootstrap.runtime.minimal}"/>
+                </else>
+            </if>
+
             <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
                 <zipfileset src="${bootstrap.runtime}">
                     <include name="**/*.class" if="${bootstrap.build.no.tests}"/>
@@ -526,7 +536,7 @@
 
                     -libraryjars '${rtjar}'
                     -libraryjars '${jssejar}'
-                    -libraryjars '${bootstrap.runtime}'
+                    -libraryjars '${bootstrap.runtime.minimal}'
 
                     -target 1.6
                     -dontoptimize
@@ -724,7 +734,6 @@
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
                 <include name="core/reflection/src"/>
-                <include name="core/reflection.jvm/src"/>
             </src>
             <class-path/>
         </new-kotlinc>
@@ -741,43 +750,97 @@
         </new-kotlinc>
     </target>
 
+    <target name="reflection">
+        <new-kotlinc output="${output}/classes/reflection">
+            <src>
+                <include name="core/reflection.jvm/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output.relative}/classes/builtins"/>
+                <pathelement path="${output.relative}/classes/stdlib"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
+    <target name="reflection-stub">
+        <new-kotlinc output="${output}/classes/reflection-stub">
+            <src>
+                <include name="core/reflection.stub.jvm/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output.relative}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
     <target name="pack-runtime">
-        <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
-            <fileset dir="${output}/classes/builtins"/>
-            <fileset dir="${output}/classes/stdlib"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        <macrodef name="do-pack-runtime">
+            <attribute name="reflection-module"/>
+            <attribute name="jar-name"/>
+            <attribute name="implementation-title"/>
 
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+            <sequential>
+                <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
+                    <fileset dir="${output}/classes/builtins"/>
+                    <fileset dir="${output}/classes/stdlib"/>
+                    <fileset dir="${output}/classes/@{reflection-module}"/>
+                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+                    <manifest>
+                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Title" value="@{implementation-title}"/>
+                        <attribute name="Implementation-Version" value="${build.number}"/>
+                    </manifest>
+                </jar>
+            </sequential>
+        </macrodef>
+
+        <do-pack-runtime reflection-module="reflection"
+                         jar-name="kotlin-runtime.jar"
+                         implementation-title="${manifest.impl.title.kotlin.jvm.runtime}"/>
+
+        <do-pack-runtime reflection-module="reflection-stub"
+                         jar-name="kotlin-runtime-minimal.jar"
+                         implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal}"/>
     </target>
 
     <target name="pack-runtime-sources">
-        <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar" duplicate="fail">
-            <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
-            <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
-            <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
-            <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
-            <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
-            <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        <macrodef name="do-pack-runtime-sources">
+            <attribute name="reflection-module"/>
+            <attribute name="jar-name"/>
+            <attribute name="implementation-title"/>
 
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+            <sequential>
+                <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
+                    <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
+                    <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
+                    <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
+                    <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
+                    <fileset dir="${basedir}/core/@{reflection-module}/src" includes="**/*"/>
+                    <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
+                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+                    <manifest>
+                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Title" value="@{implementation-title}"/>
+                        <attribute name="Implementation-Version" value="${build.number}"/>
+                    </manifest>
+                </jar>
+            </sequential>
+        </macrodef>
+
+        <do-pack-runtime-sources reflection-module="reflection.jvm"
+                                 jar-name="kotlin-runtime-sources.jar"
+                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
+
+        <do-pack-runtime-sources reflection-module="reflection.stub.jvm"
+                                 jar-name="kotlin-runtime-minimal-sources.jar"
+                                 implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal.sources}"/>
     </target>
 
-    <target name="runtime" depends="builtins,stdlib,pack-runtime,pack-runtime-sources"/>
+    <target name="runtime" depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
