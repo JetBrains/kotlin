@@ -752,8 +752,8 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
-        testClass(javaClass<AbstractCrossParserTest>()) {
-            model("android/crossParser", recursive = false, extension = null)
+        testClass(javaClass<AbstractParserResultEqualityTest>()) {
+            model("android/parserResultEquality", recursive = false, extension = null)
         }
 
         testClass(javaClass<AbstractAndroidCompletionTest>()) {

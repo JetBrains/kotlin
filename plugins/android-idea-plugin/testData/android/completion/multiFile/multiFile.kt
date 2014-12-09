@@ -4,7 +4,7 @@ import android.app.Activity
 
 
 class MyActivity: Activity() {
-    val button = this.log<caret>
+    val button = log<caret>
 }
 
 // EXIST: login, loginButton

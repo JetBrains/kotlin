@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
-public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
+public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
         val project = myFixture!!.getProject()
         project.putUserData(TestConst.TESTDATA_PATH, path)
@@ -51,6 +51,6 @@ public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
     }
 
     override fun getTestDataPath(): String? {
-        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/crossParser/" + getTestName(true) + "/"
+        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/parserResultEquality/" + getTestName(true) + "/"
     }
 }
