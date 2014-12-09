@@ -35,6 +35,18 @@ import com.google.dart.compiler.backend.js.ast.JsArrayAccess
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.k2js.PredefinedAnnotation
+import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
+import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.k2js.translate.operation.OperatorTable
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
+import org.jetbrains.jet.lang.psi.JetPrefixExpression
+import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
+import org.jetbrains.jet.lang.psi.JetPostfixExpression
+import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.JetOperationExpression
+import org.jetbrains.k2js.translate.utils.PsiUtils
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -230,6 +242,64 @@ object SuperCallCase : FunctionCallCase {
     }
 }
 
+object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase {
+    fun canApply(callInfo: FunctionCallInfo): Boolean =
+            callInfo.resolvedCall.getCall().getCallType() != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
+
+    override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
+        val arguments = argumentsInfo.getTranslateArguments()
+        val callType = resolvedCall.getCall().getCallType()
+        return when (callType) {
+            Call.CallType.INVOKE ->
+                JsInvocation(dispatchReceiver, arguments)
+            Call.CallType.ARRAY_GET_METHOD ->
+                JsArrayAccess(dispatchReceiver, arguments[0])
+            Call.CallType.ARRAY_SET_METHOD ->
+                JsAstUtils.assignment(JsArrayAccess(dispatchReceiver, arguments[0]), arguments[1])
+
+            else ->
+                unsupported("Unsupported call type: $callType, callInfo: $this")
+        }
+    }
+}
+
+object DynamicOperatorCallCase : FunctionCallCase {
+    fun canApply(callInfo: FunctionCallInfo): Boolean =
+            callInfo.callableDescriptor.isDynamic() &&
+            callInfo.resolvedCall.getCall().getCallElement() let {
+                it is JetOperationExpression &&
+                PsiUtils.getOperationToken(it) let { (it == JetTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
+            }
+
+    override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
+        val callElement = resolvedCall.getCall().getCallElement() as JetOperationExpression
+        val operationToken = PsiUtils.getOperationToken(callElement)
+
+        val arguments = argumentsInfo.getTranslateArguments()
+
+        return when (callElement) {
+            is JetBinaryExpression -> {
+                // `!in` translated as `in` and will be wrapped by negation operation in BinaryOperationTranslator#translateAsOverloadedBinaryOperation by mayBeWrapWithNegation
+                val operationTokenToFind = if (operationToken == JetTokens.NOT_IN) JetTokens.IN_KEYWORD else operationToken
+                val binaryOperator = OperatorTable.getBinaryOperator(operationTokenToFind)
+
+                if (operationTokenToFind == JetTokens.IN_KEYWORD)
+                    JsBinaryOperation(binaryOperator, arguments[0], dispatchReceiver)
+                else
+                    JsBinaryOperation(binaryOperator, dispatchReceiver, arguments[0])
+            }
+            is JetPrefixExpression -> {
+                JsPrefixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver)
+            }
+            is JetPostfixExpression -> {
+                // TODO drop hack with ":JsExpression" when KT-5569 will be fixed
+                JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver): JsExpression
+            }
+            else -> unsupported("Unsupported callElement type: ${callElement.javaClass}, callElement: $callElement, callInfo: $this")
+        }
+    }
+}
+
 fun FunctionCallInfo.translateFunctionCall(): JsExpression {
     val intrinsic = DelegateFunctionIntrinsic.intrinsic(this)
 
@@ -250,6 +320,12 @@ fun FunctionCallInfo.translateFunctionCall(): JsExpression {
             ConstructorCallCase.translate(this)
         SuperCallCase.canApply(this) ->
             SuperCallCase.translate(this)
+
+        DynamicInvokeAndBracketAccessCallCase.canApply(this) ->
+            DynamicInvokeAndBracketAccessCallCase.translate(this)
+        DynamicOperatorCallCase.canApply(this) ->
+            DynamicOperatorCallCase.translate(this)
+
         else ->
             DefaultFunctionCallCase.translate(this)
     }

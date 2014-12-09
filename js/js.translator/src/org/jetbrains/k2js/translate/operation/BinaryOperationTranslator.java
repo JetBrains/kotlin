@@ -209,6 +209,10 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (rightBlock.isEmpty()) {
             return new JsBinaryOperation(operator, leftExpression, rightExpression);
         }
+        else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationToken)) {
+            context().addStatementsToCurrentBlockFrom(rightBlock);
+            return new JsBinaryOperation(operator, leftExpression, rightExpression);
+        }
 
         assert operationToken.equals(JetTokens.ANDAND) || operationToken.equals(JetTokens.OROR) : "Unsupported binary operation: " + expression.getText();
         boolean isOror = operationToken.equals(JetTokens.OROR);

@@ -23,8 +23,10 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -34,8 +36,10 @@ import org.jetbrains.k2js.translate.reference.CachedAccessTranslator;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.AccessTranslationUtils.getCachedAccessTranslator;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newSequence;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isPrefix;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 
@@ -50,7 +54,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {
-        if (hasCorrespondingFunctionIntrinsic(context, expression)) {
+        if (hasCorrespondingFunctionIntrinsic(context, expression) || isDynamic(context, expression)) {
             return IntrinsicIncrementTranslator.doTranslate(expression, context);
         }
         return (new OverloadedIncrementTranslator(expression, context)).translateIncrementExpression();
@@ -121,4 +125,9 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     @NotNull
     abstract JsExpression operationExpression(@NotNull JsExpression receiver);
+
+    private static boolean isDynamic(TranslationContext context, JetUnaryExpression expression) {
+        CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+        return TasksPackage.isDynamic(operationDescriptor);
+    }
 }

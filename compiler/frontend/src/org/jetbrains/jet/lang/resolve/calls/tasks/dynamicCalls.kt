@@ -179,7 +179,7 @@ object DynamicCallableDescriptors {
             }
 }
 
-fun DeclarationDescriptor.isDynamic(): Boolean {
+public fun DeclarationDescriptor.isDynamic(): Boolean {
     if (this !is CallableDescriptor) return false
     val dispatchReceiverParameter = getDispatchReceiverParameter()
     return dispatchReceiverParameter != null && dispatchReceiverParameter.getType().isDynamic()
