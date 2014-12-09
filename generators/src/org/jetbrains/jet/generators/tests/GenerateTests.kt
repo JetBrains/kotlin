@@ -134,6 +134,7 @@ import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
+import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -680,6 +681,10 @@ fun main(args: Array<String>) {
     testGroup("js/js.tests/test", "js/js.translator/testData") {
         testClass(javaClass<AbstractReservedWordTest>()) {
             model("reservedWords/cases")
+        }
+
+        testClass(javaClass<AbstractDynamicTest>()) {
+            model("dynamic/cases")
         }
     }
 
