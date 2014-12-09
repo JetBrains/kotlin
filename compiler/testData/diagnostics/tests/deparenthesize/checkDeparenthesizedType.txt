@@ -3,5 +3,5 @@ package
 package m {
     internal fun foo(/*0*/ i: kotlin.Int): kotlin.Int
     internal fun test(/*0*/ i: kotlin.Int?): kotlin.Unit
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 }

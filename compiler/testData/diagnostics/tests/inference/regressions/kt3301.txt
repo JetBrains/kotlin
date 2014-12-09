@@ -1,7 +1,7 @@
 package
 
 package arrays {
-    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.Array<T>
+    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     internal fun m(/*0*/ args: kotlin.Array<arrays.A>): kotlin.Unit
     internal fun test122(): kotlin.Unit
 

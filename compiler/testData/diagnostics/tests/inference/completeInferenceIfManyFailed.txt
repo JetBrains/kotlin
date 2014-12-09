@@ -2,6 +2,6 @@ package
 
 package d {
     internal fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Any, /*1*/ y: T): T?
-    internal fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<T>*/): T?
+    internal fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): T?
     internal fun test(): kotlin.Unit
 }

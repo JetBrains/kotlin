@@ -9,7 +9,7 @@ internal fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
 public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun get(/*0*/ vararg attrs: Pair<kotlin.String, kotlin.String> /*kotlin.Array<Pair<kotlin.String, kotlin.String>>*/): A
+    public final fun get(/*0*/ vararg attrs: Pair<kotlin.String, kotlin.String> /*kotlin.Array<out Pair<kotlin.String, kotlin.String>>*/): A
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

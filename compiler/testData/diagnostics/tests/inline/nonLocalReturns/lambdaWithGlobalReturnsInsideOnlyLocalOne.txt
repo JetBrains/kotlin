@@ -1,4 +1,4 @@
 package
 
-kotlin.inline() internal fun </*0*/ R> doWork(/*0*/ kotlin.inlineOptions(value = {InlineOption.ONLY_LOCAL_RETURN}: kotlin.Array<kotlin.InlineOption>) job: () -> R): R
+kotlin.inline() internal fun </*0*/ R> doWork(/*0*/ kotlin.inlineOptions(value = {InlineOption.ONLY_LOCAL_RETURN}: kotlin.Array<out kotlin.InlineOption>) job: () -> R): R
 kotlin.inline() internal fun testSameCaptured(/*0*/ lambdaWithResultCaptured: () -> kotlin.Unit): kotlin.String

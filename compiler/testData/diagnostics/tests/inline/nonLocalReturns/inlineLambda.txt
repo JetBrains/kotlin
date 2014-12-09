@@ -2,4 +2,4 @@ package
 
 kotlin.inline() internal fun </*0*/ R> inlineFun(/*0*/ p: () -> R): kotlin.Unit
 kotlin.inline() internal fun </*0*/ R> inlineFun2(/*0*/ p: () -> R): kotlin.Unit
-kotlin.inline() internal fun </*0*/ R> inlineFunWithAnnotation(/*0*/ kotlin.inlineOptions(value = {InlineOption.ONLY_LOCAL_RETURN}: kotlin.Array<kotlin.InlineOption>) p: () -> R): kotlin.Unit
+kotlin.inline() internal fun </*0*/ R> inlineFunWithAnnotation(/*0*/ kotlin.inlineOptions(value = {InlineOption.ONLY_LOCAL_RETURN}: kotlin.Array<out kotlin.InlineOption>) p: () -> R): kotlin.Unit

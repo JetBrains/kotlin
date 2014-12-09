@@ -2,7 +2,7 @@ package
 
 package i {
     internal val kotlin.Collection<kotlin.Any?>.size: kotlin.Int
-    internal fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<T>*/): java.util.ArrayList<T>
+    internal fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): java.util.ArrayList<T>
     internal fun test(): kotlin.Unit
     internal fun </*0*/ T, /*1*/ R> kotlin.Collection<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
     internal fun </*0*/ T, /*1*/ R, /*2*/ C : kotlin.MutableCollection<in R>> kotlin.Collection<T>.mapTo(/*0*/ result: C, /*1*/ transform: (T) -> R): C

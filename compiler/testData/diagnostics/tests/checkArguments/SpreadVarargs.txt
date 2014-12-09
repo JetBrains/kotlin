@@ -1,7 +1,7 @@
 package
 
-internal fun </*0*/ T> array1(/*0*/ vararg a: T /*kotlin.Array<T>*/): kotlin.Array<T>
-internal fun join(/*0*/ x: kotlin.Int, /*1*/ vararg a: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.String
-internal fun </*0*/ T> joinG(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<T>*/): kotlin.String
-internal fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<T>*/): T?
+internal fun </*0*/ T> array1(/*0*/ vararg a: T /*kotlin.Array<out T>*/): kotlin.Array<out T>
+internal fun join(/*0*/ x: kotlin.Int, /*1*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.String
+internal fun </*0*/ T> joinG(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): kotlin.String
+internal fun </*0*/ T : kotlin.Any> joinT(/*0*/ x: kotlin.Int, /*1*/ vararg a: T /*kotlin.Array<out T>*/): T?
 internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

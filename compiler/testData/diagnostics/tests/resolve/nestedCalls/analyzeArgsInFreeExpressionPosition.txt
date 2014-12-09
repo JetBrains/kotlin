@@ -1,7 +1,7 @@
 package
 
 internal fun test(): kotlin.Unit
-internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
 internal final class A {
     public constructor A()

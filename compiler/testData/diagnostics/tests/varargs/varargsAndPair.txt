@@ -1,6 +1,6 @@
 package
 
-internal fun </*0*/ T : kotlin.Any> foo(/*0*/ vararg ts: T /*kotlin.Array<T>*/): T?
+internal fun </*0*/ T : kotlin.Any> foo(/*0*/ vararg ts: T /*kotlin.Array<out T>*/): T?
 internal fun test(): kotlin.Unit
 
 internal final class Pair</*0*/ A> {

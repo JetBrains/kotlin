@@ -7,6 +7,6 @@ internal fun food(/*0*/ vararg a: kotlin.Double /*kotlin.DoubleArray*/): kotlin.
 internal fun foof(/*0*/ vararg a: kotlin.Float /*kotlin.FloatArray*/): kotlin.FloatArray
 internal fun fooi(/*0*/ vararg a: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
 internal fun fool(/*0*/ vararg a: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
-internal fun foos(/*0*/ vararg a: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Array<kotlin.String>
+internal fun foos(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Array<out kotlin.String>
 internal fun foos(/*0*/ vararg a: kotlin.Short /*kotlin.ShortArray*/): kotlin.ShortArray
 internal fun test(): kotlin.Unit

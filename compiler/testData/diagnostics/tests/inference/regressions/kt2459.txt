@@ -1,7 +1,7 @@
 package
 
 package b {
-    internal fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<T>*/): java.util.ArrayList<T>
+    internal fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): java.util.ArrayList<T>
     internal fun </*0*/ T> f(/*0*/ x: T): b.B<T>
 
     internal final class B</*0*/ T> {

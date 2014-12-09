@@ -1,6 +1,6 @@
 package
 
 package n {
-    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.Array<T>
+    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 }

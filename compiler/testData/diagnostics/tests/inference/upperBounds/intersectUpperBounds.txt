@@ -5,7 +5,7 @@ package s {
     internal fun </*0*/ T> foo(/*0*/ in1: s.In<T>, /*1*/ in2: s.In<T>): T
     internal fun test(/*0*/ inA: s.In<s.A>): kotlin.Unit
     internal fun test(/*0*/ inA: s.In<s.A>, /*1*/ inB: s.In<s.B>, /*2*/ inC: s.In<s.C>): kotlin.Unit
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
     internal trait A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

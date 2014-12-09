@@ -1,8 +1,8 @@
 package
 
-internal fun </*0*/ T> array(/*0*/ vararg elements: T /*kotlin.Array<T>*/): kotlin.Array<T>
+internal fun </*0*/ T> array(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<out T>
 internal fun array(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
-internal fun </*0*/ T> foo(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.Array<T>
+internal fun </*0*/ T> foo(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<out T>
 internal fun foo(/*0*/ vararg a: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
 internal fun foo(/*0*/ vararg a: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
 internal fun test(): kotlin.Unit

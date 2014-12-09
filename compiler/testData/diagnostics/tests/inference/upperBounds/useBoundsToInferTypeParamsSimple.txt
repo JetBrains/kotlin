@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun </*0*/ T> arrayListOf(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.MutableList<T>
+    internal fun </*0*/ T> arrayListOf(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
     internal fun </*0*/ U, /*1*/ V : U> bar(/*0*/ v: V, /*1*/ u: U): U
     internal fun </*0*/ V : U, /*1*/ U> baz(/*0*/ v: V, /*1*/ u: kotlin.MutableSet<U>): kotlin.MutableSet<U>
     internal fun </*0*/ T> checkItIsExactlyAny(/*0*/ t: T, /*1*/ l: kotlin.MutableList<T>): kotlin.Unit

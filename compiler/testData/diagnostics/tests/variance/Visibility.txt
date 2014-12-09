@@ -1,4 +1,4 @@
-package 
+package
 
 internal trait Test</*0*/ in I, /*1*/ out O> {
     internal abstract var interlan_private_set: O

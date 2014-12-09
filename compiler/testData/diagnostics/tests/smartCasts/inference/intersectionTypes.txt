@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<T>*/): kotlin.MutableList<T>
+    internal fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
     internal fun </*0*/ T> foo(/*0*/ t: T, /*1*/ l: kotlin.MutableList<T>): T
     internal fun </*0*/ T> id(/*0*/ t: T): T
     internal fun rr(/*0*/ s: kotlin.String?): kotlin.Unit
@@ -9,7 +9,7 @@ package a {
     internal fun testErrorMessages(/*0*/ a: a.A, /*1*/ ml: kotlin.MutableList<kotlin.String>): kotlin.Unit
     internal fun </*0*/ T> three(/*0*/ a: T, /*1*/ b: T, /*2*/ c: T): T
     internal fun </*0*/ T> two(/*0*/ u: T, /*1*/ v: T): T
-    internal fun use(/*0*/ vararg a: kotlin.Any /*kotlin.Array<kotlin.Any>*/): kotlin.Array<kotlin.Any>
+    internal fun use(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Array<out kotlin.Any>
 
     internal trait A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

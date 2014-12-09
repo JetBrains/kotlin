@@ -1,6 +1,6 @@
 package
 
-kotlin.suppress(names = {"REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION"}: kotlin.Array<kotlin.String>) internal final class C {
+kotlin.suppress(names = {"REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION"}: kotlin.Array<out kotlin.String>) internal final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal final fun foo(): kotlin.String?

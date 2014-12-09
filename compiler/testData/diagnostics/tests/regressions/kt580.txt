@@ -7,7 +7,7 @@ package whats {
         package whats.the.difference {
             internal val </*0*/ T> kotlin.Array<T>.indices: kotlin.IntRange
             internal val </*0*/ T> kotlin.Array<T>.lastIndex: kotlin.Int
-            internal fun iarray(/*0*/ vararg a: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Array<kotlin.String>
+            internal fun iarray(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Array<out kotlin.String>
             internal fun main(): kotlin.Unit
             internal fun </*0*/ T> kotlin.Array<T>.lastIndex(): kotlin.Int
         }
