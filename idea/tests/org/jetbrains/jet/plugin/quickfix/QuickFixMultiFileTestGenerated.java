@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/quickfix")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({QuickFixMultiFileTestGenerated.AddStarProjections.class, QuickFixMultiFileTestGenerated.AutoImports.class, QuickFixMultiFileTestGenerated.CreateFromUsage.class, QuickFixMultiFileTestGenerated.Modifiers.class, QuickFixMultiFileTestGenerated.Nullables.class, QuickFixMultiFileTestGenerated.Override.class, QuickFixMultiFileTestGenerated.Suppress.class, QuickFixMultiFileTestGenerated.TypeImports.class, QuickFixMultiFileTestGenerated.TypeMismatch.class, QuickFixMultiFileTestGenerated.Variables.class})
+@InnerTestClasses({QuickFixMultiFileTestGenerated.AddStarProjections.class, QuickFixMultiFileTestGenerated.AutoImports.class, QuickFixMultiFileTestGenerated.ChangeSignature.class, QuickFixMultiFileTestGenerated.CreateFromUsage.class, QuickFixMultiFileTestGenerated.Modifiers.class, QuickFixMultiFileTestGenerated.Nullables.class, QuickFixMultiFileTestGenerated.Override.class, QuickFixMultiFileTestGenerated.Suppress.class, QuickFixMultiFileTestGenerated.TypeImports.class, QuickFixMultiFileTestGenerated.TypeMismatch.class, QuickFixMultiFileTestGenerated.Variables.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
@@ -221,6 +221,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("withSmartCastQualifier.before.Main.kt")
         public void testWithSmartCastQualifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/changeSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeSignature extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInChangeSignature() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("matchFunctionLiteralWithSAMType.before.Main.kt")
+        public void testMatchFunctionLiteralWithSAMType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/matchFunctionLiteralWithSAMType.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
     }
