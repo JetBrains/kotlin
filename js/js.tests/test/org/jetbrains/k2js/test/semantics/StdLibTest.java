@@ -42,13 +42,13 @@ public final class StdLibTest extends SingleFileTranslationTest {
     }
 
     @Override
-    protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
+    protected void generateJavaScriptFiles(@NotNull String kotlinFilePath,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
-        List<String> files = Arrays.asList(getInputFilePath(kotlinFilename));
+        List<String> files = Arrays.asList(getInputFilePath(kotlinFilePath));
 
-        generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
-        runRhinoTests(kotlinFilename, ecmaVersions,
+        generateJavaScriptFiles(files, kotlinFilePath, mainCallParameters, ecmaVersions);
+        runRhinoTests(kotlinFilePath, ecmaVersions,
                       new RhinoFunctionNativeObjectResultChecker(TEST_MODULE, "test.browser", TEST_FUNCTION, "Some Dynamically Created Content!!!"));
     }
 

@@ -31,6 +31,11 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
         super(main);
     }
 
+    @Override
+    protected void checkFooBoxIsOkByPath(String filePath) throws Exception {
+        throw new UnsupportedOperationException("checkFooBoxIsOkByPath not supported yet in MultipleFilesTranslationTest");
+    }
+
     protected void generateJsFromDir(@NotNull String dirName, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
         generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), ecmaVersions);

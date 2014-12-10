@@ -31,8 +31,12 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         super(main);
     }
 
-    public void runFunctionOutputTest(@NotNull String kotlinFilename, @NotNull String packageName,
-            @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
+    protected void runFunctionOutputTest(
+            @NotNull String kotlinFilename,
+            @NotNull String packageName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult
+    ) throws Exception {
         runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, kotlinFilename, packageName, functionName, expectedResult);
     }
 
@@ -41,21 +45,28 @@ public abstract class SingleFileTranslationTest extends BasicTest {
             @NotNull String kotlinFilename,
             @NotNull String packageName,
             @NotNull String functionName,
-            @NotNull Object expectedResult) throws Exception {
-        generateJavaScriptFiles(kotlinFilename, MainCallParameters.noCall(), ecmaVersions);
-        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
+            @NotNull Object expectedResult
+    ) throws Exception {
+        runFunctionOutputTestByPath(ecmaVersions, getInputFilePath(kotlinFilename), packageName, functionName, expectedResult);
     }
 
-    public void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
+    protected void runFunctionOutputTestByPath(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String kotlinFilePath,
+            @NotNull String packageName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult
+    ) throws Exception {
+        generateJavaScriptFiles(kotlinFilePath, MainCallParameters.noCall(), ecmaVersions);
+        runRhinoTests(getBaseName(kotlinFilePath), ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
+    }
+
+    private void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         runFunctionOutputTest(ecmaVersions, filename, TEST_PACKAGE, TEST_FUNCTION, true);
     }
 
-    public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
+    protected void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
         runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, filename, TEST_PACKAGE, TEST_FUNCTION, true);
-    }
-
-    public void checkFooBoxIsValue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions, Object expected) throws Exception {
-        runFunctionOutputTest(ecmaVersions, filename, TEST_PACKAGE, TEST_FUNCTION, expected);
     }
 
     protected void fooBoxTest() throws Exception {
@@ -63,7 +74,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     }
 
     protected void fooBoxIsValue(Object expected) throws Exception {
-        checkFooBoxIsValue(getTestName(true) + ".kt", DEFAULT_ECMA_VERSIONS, expected);
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", TEST_PACKAGE, TEST_FUNCTION, expected);
     }
 
     protected void fooBoxTest(@NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
@@ -75,19 +86,16 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     }
 
     protected void checkFooBoxIsOk(@NotNull String filename) throws Exception {
-        checkFooBoxIsOk(DEFAULT_ECMA_VERSIONS, filename);
+        checkFooBoxIsOkByPath(getInputFilePath(filename));
     }
 
-    protected void checkFooBoxIsOk(@NotNull Iterable<EcmaVersion> versions, @NotNull String filename) throws Exception {
-        runFunctionOutputTest(versions, filename, TEST_PACKAGE, TEST_FUNCTION, "OK");
+    @Override
+    protected void checkFooBoxIsOkByPath(@NotNull String filePath) throws Exception {
+        runFunctionOutputTestByPath(DEFAULT_ECMA_VERSIONS, filePath, TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 
-    protected void checkBlackBoxIsOk(@NotNull String filename) throws Exception {
-        checkBlackBoxIsOk(DEFAULT_ECMA_VERSIONS, filename);
-    }
-
-    protected void checkBlackBoxIsOk(@NotNull Iterable<EcmaVersion> versions, @NotNull String filename) throws Exception {
-        runFunctionOutputTest(versions, filename, getPackageName(filename), TEST_FUNCTION, "OK");
+    protected void checkBlackBoxIsOkByPath(@NotNull String filePath) throws Exception {
+        runFunctionOutputTestByPath(DEFAULT_ECMA_VERSIONS, filePath, getPackageName(filePath), TEST_FUNCTION, "OK");
     }
 
     protected void checkOutput(@NotNull String kotlinFilename,
@@ -96,22 +104,17 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         checkOutput(kotlinFilename, expectedResult, DEFAULT_ECMA_VERSIONS, args);
     }
 
-    protected void checkOutput(@NotNull String kotlinFilename,
+    private void checkOutput(
+            @NotNull String kotlinFilename,
             @NotNull String expectedResult,
             @NotNull Iterable<EcmaVersion> ecmaVersions,
-            String... args) throws Exception {
-        generateJavaScriptFiles(kotlinFilename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)), ecmaVersions);
-        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoSystemOutputChecker(expectedResult));
-    }
-
-    protected void performTestWithMain(@NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull String testName,
-            @NotNull String testId,
-            @NotNull String... args) throws Exception {
-        checkOutput(testName + ".kt", readFile(expectedFilePath(testName + testId)), ecmaVersions, args);
+            String... args
+    ) throws Exception {
+        generateJavaScriptFiles(getInputFilePath(kotlinFilename), MainCallParameters.mainWithArguments(Lists.newArrayList(args)), ecmaVersions);
+        runRhinoTests(getBaseName(kotlinFilename), ecmaVersions, new RhinoSystemOutputChecker(expectedResult));
     }
 
     protected void performTestWithMain(@NotNull String testName, @NotNull String testId, @NotNull String... args) throws Exception {
-        performTestWithMain(DEFAULT_ECMA_VERSIONS, testName, testId, args);
+        checkOutput(testName + ".kt", readFile(expectedFilePath(testName + testId)), DEFAULT_ECMA_VERSIONS, args);
     }
 }

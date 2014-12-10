@@ -73,7 +73,7 @@ public final class StringTest extends AbstractExpressionTest {
 
     private void checkHasNoToStringCalls() throws IOException {
         for (EcmaVersion ecmaVersion : DEFAULT_ECMA_VERSIONS) {
-            String filePath = getOutputFilePath(getTestName(true) + ".kt", ecmaVersion);
+            String filePath = getOutputFilePath(getTestName(true), ecmaVersion);
             String text = FileUtil.loadFile(new File(filePath), /*convertLineSeparators = */ true);
             assertFalse(filePath + " should not contain toString calls", text.contains("toString"));
         }

@@ -18,6 +18,4 @@ package org.jetbrains.k2js.test.semantics
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest
 
-public abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/") {
-    fun doTest(fileName: String) = checkFooBoxIsOk()
-}
+public abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")

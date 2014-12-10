@@ -20,7 +20,5 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest
 
 public abstract class AbstractBridgeTest : SingleFileTranslationTest("bridges/") {
 
-    override fun getInputPath(): String = ""
-
-    fun doTest(filename: String) = checkBlackBoxIsOk(filename)
+    override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
 }

@@ -34,7 +34,7 @@ public final class SimpleTest extends SingleFileTranslationTest {
 
     @Override
     public void runTest() throws Exception {
-        checkFooBoxIsTrue(filename, DEFAULT_ECMA_VERSIONS);
+        checkFooBoxIsTrue(filename);
     }
 
     public static Test suite() throws Exception {

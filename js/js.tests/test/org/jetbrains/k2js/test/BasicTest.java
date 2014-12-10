@@ -83,6 +83,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         this.relativePathToTestDir = relativePathToTestDir;
     }
 
+    protected abstract void checkFooBoxIsOkByPath(String filePath) throws Exception;
+
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES);
@@ -116,13 +118,21 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         assert success;
     }
 
+    public void doTest(@NotNull String filePath) {
+        try {
+            checkFooBoxIsOkByPath(filePath);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected void generateJavaScriptFiles(
-            @NotNull String kotlinFilename,
+            @NotNull String kotlinFilePath,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions
     ) throws Exception {
-        generateJavaScriptFiles(Collections.singletonList(getInputFilePath(kotlinFilename)),
-                                kotlinFilename, mainCallParameters, ecmaVersions);
+        generateJavaScriptFiles(Collections.singletonList(kotlinFilePath), getBaseName(kotlinFilePath), mainCallParameters, ecmaVersions);
     }
 
     protected void generateJavaScriptFiles(
@@ -182,12 +192,12 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     protected void runRhinoTests(
-            @NotNull String filename, 
+            @NotNull String testName,
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull RhinoResultChecker checker
     ) throws Exception {
         for (EcmaVersion ecmaVersion : ecmaVersions) {
-            runRhinoTest(withAdditionalJsFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion),
+            runRhinoTest(withAdditionalJsFiles(getOutputFilePath(testName, ecmaVersion), ecmaVersion),
                          checker,
                          getRhinoTestVariables(),
                          ecmaVersion);
@@ -219,8 +229,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    protected final String getOutputFilePath(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
-        return getOutputPath() + convertFileNameToDotJsFile(filename, ecmaVersion);
+    protected final String getOutputFilePath(@NotNull String testName, @NotNull EcmaVersion ecmaVersion) {
+        return getOutputPath() + convertFileNameToDotJsFile(testName, ecmaVersion);
     }
 
     @NotNull
@@ -294,4 +304,21 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         String packageName = jetFile.getPackageFqName().asString();
         return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }
+
+    protected static String getBaseName(String path) {
+        String systemIndependentPath = FileUtil.toSystemIndependentName(path);
+
+        int start = systemIndependentPath.lastIndexOf("/");
+        if (start == -1) {
+            start = 0;
+        }
+
+        int end = systemIndependentPath.lastIndexOf(".");
+        if (end == -1) {
+            end = path.length();
+        }
+
+        return path.substring(start, end);
+    }
+
 }
