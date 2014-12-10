@@ -18,6 +18,7 @@ package org.jetbrains.k2js.config;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -103,7 +104,7 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         JetFile jetFile;
         try {
-            String text = new String(file.contentsToByteArray(false), file.getCharset());
+            String text = StringUtil.convertLineSeparators(new String(file.contentsToByteArray(false), file.getCharset()));
             jetFile = new JetPsiFactory(getProject()).createPhysicalFile(file.getName(), text);
         }
         catch (IOException e) {
