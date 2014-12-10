@@ -462,8 +462,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                     result.add(packagePartClassName)
                 }
                 else {
-                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
                     if (sourceFile in compiledSourceFilesToFqName) {
+                        val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
                         if (compiledSourceFilesToFqName[sourceFile] != previousPackageFqName.asString()) {
                             result.add(packagePartClassName)
                         }
