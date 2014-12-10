@@ -8,4 +8,4 @@ fun foo<T>(a: Contr<T>) {}
 
 // T captures 'out Int'
 // lower: Contr<Int>
-// upper: Contr<out Any?>
+// upper: Contr<Nothing>
