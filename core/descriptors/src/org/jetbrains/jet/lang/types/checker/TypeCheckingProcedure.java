@@ -183,12 +183,19 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (TypesPackage.isFlexible(subtype)) {
-            return isSubtypeOf(TypesPackage.flexibility(subtype).getLowerBound(), supertype);
+        if (TypesPackage.sameTypeConstructors(subtype, supertype)) {
+            return !subtype.isMarkedNullable() || supertype.isMarkedNullable();
         }
-        if (TypesPackage.isFlexible(supertype)) {
-            return isSubtypeOf(subtype, TypesPackage.flexibility(supertype).getUpperBound());
+        JetType subtypeRepresentative = TypesPackage.getSubtypeRepresentative(subtype);
+        JetType supertypeRepresentative = TypesPackage.getSupertypeRepresentative(supertype);
+        if (subtypeRepresentative != subtype || supertypeRepresentative != supertype) {
+            // recursive invocation for possible chain of representatives
+            return isSubtypeOf(subtypeRepresentative, supertypeRepresentative);
         }
+        return isSubtypeOfForRepresentatives(subtype, supertype);
+    }
+
+    private boolean isSubtypeOfForRepresentatives(JetType subtype, JetType supertype) {
         if (subtype.isError() || supertype.isError()) {
             return true;
         }

@@ -22,9 +22,14 @@ import org.jetbrains.jet.lang.types.TypeConstructor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.types.SubtypingRepresentatives
+import org.jetbrains.jet.lang.types.AbstractJetType
+import org.jetbrains.jet.lang.types.DelegatingType
+import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.types.TypeUtils
 
 public class CapturedTypeConstructor(
         public val typeProjection: TypeProjection
@@ -56,10 +61,30 @@ public class CapturedTypeConstructor(
     override fun toString() = "Captured($typeProjection)"
 }
 
-public fun createCapturedType(typeProjection: TypeProjection): JetType {
-    val scope = ErrorUtils.createErrorScope("No member resolution should be done on captured type, " +
-                                            "it used only during constraint system resolution", true)
-    return JetTypeImpl(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
+public class CapturedType(
+        private val typeProjection: TypeProjection
+): DelegatingType(), SubtypingRepresentatives {
+
+    private val delegateType = run {
+        val scope = ErrorUtils.createErrorScope(
+                "No member resolution should be done on captured type, it used only during constraint system resolution", true)
+        JetTypeImpl(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
+    }
+
+    override fun getDelegate(): JetType = delegateType
+
+    override val subTypeRepresentative: JetType
+        get() = representative(OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType())
+
+    override val superTypeRepresentative: JetType
+        get() = representative(IN_VARIANCE, KotlinBuiltIns.getInstance().getNothingType())
+
+    private fun representative(variance: Variance, default: JetType) =
+        if (typeProjection.getProjectionKind() == variance) typeProjection.getType() else default
+
+    override fun sameTypeConstructor(type: JetType) = delegateType.getConstructor() === type.getConstructor()
 }
+
+public fun createCapturedType(typeProjection: TypeProjection): JetType = CapturedType(typeProjection)
 
 public fun JetType.isCaptured(): Boolean = getConstructor() is CapturedTypeConstructor
