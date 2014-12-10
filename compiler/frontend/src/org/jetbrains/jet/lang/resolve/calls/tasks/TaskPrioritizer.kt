@@ -67,7 +67,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
             callableDescriptorCollectors: CallableDescriptorCollectors<D>
     ): List<ResolutionTask<D, F>> {
         val explicitReceiver = context.call.getExplicitReceiver()
-        val result = ResolutionTaskHolder<D, F>(storageManager, context, MyPriorityProvider<D>(context), tracing)
+        val result = ResolutionTaskHolder<D, F>(storageManager, context, PriorityProviderImpl<D>(context), tracing)
         val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope, callableDescriptorCollectors)
 
         if (explicitReceiver is QualifierReceiver) {
@@ -387,14 +387,14 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
             candidates: Collection<ResolutionCandidate<D>>,
             tracing: TracingStrategy
     ): List<ResolutionTask<D, F>> {
-        val result = ResolutionTaskHolder<D, F>(storageManager, context, MyPriorityProvider<D>(context), tracing)
+        val result = ResolutionTaskHolder<D, F>(storageManager, context, PriorityProviderImpl<D>(context), tracing)
         result.addCandidates {
             candidates
         }
         return result.getTasks()
     }
 
-    private class MyPriorityProvider<D : CallableDescriptor>(private val context: BasicCallResolutionContext) :
+    private class PriorityProviderImpl<D : CallableDescriptor>(private val context: BasicCallResolutionContext) :
             ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> {
 
         override fun getPriority(candidate: ResolutionCandidate<D>)
