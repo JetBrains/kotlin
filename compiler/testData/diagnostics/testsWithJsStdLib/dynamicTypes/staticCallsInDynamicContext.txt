@@ -1,0 +1,31 @@
+package
+
+internal var baz: kotlin.Int
+internal val kotlin.Any.extExtVal: kotlin.Any.() -> kotlin.Unit
+internal val kotlin.Any.extVal: () -> kotlin.Unit
+internal val kotlin.Any.extValFun: () -> kotlin.Unit
+internal fun bar(): kotlin.Unit
+internal fun kotlin.Any.ext(): kotlin.Unit
+internal fun kotlin.Any.invoke(): kotlin.Unit
+internal fun kotlin.Any.plus(/*0*/ a: kotlin.Any): kotlin.Unit
+internal fun dynamic.test(): kotlin.Unit
+
+internal final class C {
+    public constructor C()
+    internal final val foo: kotlin.String.() -> kotlin.Unit
+    internal final val s: kotlin.String = ""
+    internal final val withInvoke: WithInvoke
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun kotlin.String.invoke(): kotlin.Unit
+    internal final fun dynamic.test(): kotlin.Unit
+}
+
+internal final class WithInvoke {
+    public constructor WithInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

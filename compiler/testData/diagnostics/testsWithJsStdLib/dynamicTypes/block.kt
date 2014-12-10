@@ -1,6 +1,6 @@
 // !MARK_DYNAMIC_CALLS
 
-fun foo() {
+fun test() {
     dynamic {
         <!DEBUG_INFO_DYNAMIC!>foo<!>()
         <!DEBUG_INFO_DYNAMIC!>bar<!>.<!DEBUG_INFO_DYNAMIC!>baz<!>(0)

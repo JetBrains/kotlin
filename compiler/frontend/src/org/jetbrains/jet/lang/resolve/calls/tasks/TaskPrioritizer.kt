@@ -19,12 +19,8 @@ package org.jetbrains.jet.lang.resolve.calls.tasks
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.intellij.openapi.progress.ProgressIndicatorProvider
-import kotlin.Function0
-import kotlin.Function1
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.Call
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollector
@@ -32,11 +28,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorC
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
@@ -405,21 +398,27 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
             ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> {
 
         override fun getPriority(candidate: ResolutionCandidate<D>)
-                = (if (isVisible(candidate)) 2 else 0) + (if (isSynthesized(candidate)) 0 else 1)
+                = if (hasImplicitDynamicReceiver(candidate)) 0
+                  else (if (isVisible(candidate)) 2 else 0) + (if (isSynthesized(candidate)) 0 else 1)
 
         override fun getMaxPriority() = 3
 
-        private fun isVisible(call: ResolutionCandidate<D>?): Boolean {
-            if (call == null) return false
-            val candidateDescriptor = call.getDescriptor()
+        private fun isVisible(candidate: ResolutionCandidate<D>?): Boolean {
+            if (candidate == null) return false
+            val candidateDescriptor = candidate.getDescriptor()
             if (ErrorUtils.isError(candidateDescriptor)) return true
-            val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(call.getDispatchReceiver(), context.trace.getBindingContext())
+            val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), context.trace.getBindingContext())
             return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.getContainingDeclaration())
         }
 
-        private fun isSynthesized(call: ResolutionCandidate<D>): Boolean {
-            val descriptor = call.getDescriptor()
+        private fun isSynthesized(candidate: ResolutionCandidate<D>): Boolean {
+            val descriptor = candidate.getDescriptor()
             return descriptor is CallableMemberDescriptor && isOrOverridesSynthesized(descriptor : CallableMemberDescriptor)
+        }
+
+        fun hasImplicitDynamicReceiver(candidate: ResolutionCandidate<D>): Boolean {
+            return (!candidate.getExplicitReceiverKind().isDispatchReceiver() || !candidate.getCall().getExplicitReceiver().exists())
+                   && candidate.getDescriptor().isDynamic()
         }
     }
 

@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -129,6 +131,13 @@ public class DebugInfoUtil {
             }
 
             @Override
+            public void visitThisExpression(@NotNull JetThisExpression expression) {
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
+                reportIfDynamic(expression, resolvedCall.getResultingDescriptor(), debugInfoReporter);
+                super.visitThisExpression(expression);
+            }
+
+            @Override
             public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
                 super.visitReferenceExpression(expression);
                 if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
@@ -218,8 +227,8 @@ public class DebugInfoUtil {
         });
     }
 
-    private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
-        if (TasksPackage.isDynamic(declarationDescriptor)) {
+    private static boolean reportIfDynamic(JetElement element, @Nullable DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
+        if (declarationDescriptor != null && TasksPackage.isDynamic(declarationDescriptor)) {
             debugInfoReporter.reportDynamicCall(element);
             return true;
         }
