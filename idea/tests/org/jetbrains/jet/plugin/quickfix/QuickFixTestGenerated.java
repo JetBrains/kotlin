@@ -2399,6 +2399,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeNamedArgInConstructorCall.kt")
+                public void testNamedArgInConstructorCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNamedArgInConstructorCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeNamedArgInFunctionCall.kt")
+                public void testNamedArgInFunctionCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNamedArgInFunctionCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeNullableType.kt")
                 public void testNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNullableType.kt");

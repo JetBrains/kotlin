@@ -28,9 +28,7 @@ import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
 import org.jetbrains.jet.plugin.quickfix.DelegatingIntentionAction
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.jet.plugin.refactoring.canRefactor
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
 
@@ -92,17 +90,6 @@ private fun JetExpression.getInheritableTypeInfo(
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             else -> canHaveSubtypes
         }
-    }
-}
-
-private fun PsiElement.canRefactor(): Boolean {
-    return when (this) {
-        is PsiPackage ->
-            getDirectories().any { it.canRefactor() }
-        is JetElement, is PsiDirectory ->
-            isWritable() && ProjectRootsUtil.isInSource(element = this, includeLibrarySources = false)
-        else ->
-            false
     }
 }
 

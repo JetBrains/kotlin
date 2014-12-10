@@ -72,6 +72,8 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import com.intellij.psi.PsiPackage
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -381,4 +383,15 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
     }
 
     return false
+}
+
+public fun PsiElement.canRefactor(): Boolean {
+    return when (this) {
+        is PsiPackage ->
+            getDirectories().any { it.canRefactor() }
+        is JetElement, is PsiDirectory ->
+            isWritable() && ProjectRootsUtil.isInSource(element = this, includeLibrarySources = false)
+        else ->
+            false
+    }
 }
