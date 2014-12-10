@@ -236,9 +236,7 @@ public final class StaticContext {
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     if (TasksPackage.isDynamic(descriptor)) {
                         String name = descriptor.getName().asString();
-                        JsScope scope = getEnclosingScope(descriptor);
-                        assert scope instanceof JsFunctionScope;
-                        return ((JsFunctionScope) scope).declareNameUnsafe(name);
+                        return JsDynamicScope.INSTANCE$.declareName(name);
                     }
 
                     return null;
