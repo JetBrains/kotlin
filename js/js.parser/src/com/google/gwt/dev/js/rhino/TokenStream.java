@@ -637,6 +637,8 @@ public class TokenStream {
         this.pushbackToken = EOF;
         this.sourceName = sourceName;
         flags = 0;
+        secondToLastPosition = new CodePosition(lineno, 0);
+        lastPosition = new CodePosition(lineno, 0);
     }
 
     /* return and pop the token from the stream if it matches...
@@ -761,6 +763,8 @@ public class TokenStream {
       do {
         c = getTokenHelper();
       } while (c == RETRY_TOKEN);
+
+      updatePosition();
       return c;
     }
 
@@ -1594,17 +1598,35 @@ public class TokenStream {
         stringBuffer[stringBufferTop++] = (char)c;
     }
 
+    /**
+     * Positions hold offset of an corresponding token's end.
+     * So lastPosition holds an offset of char that is next to last token.
+     *
+     * Use secondToLastPosition for error reporting outside of TokenStream, because
+     * usually we want to report beginning of erroneous token,
+     * which is end of second to last read token.
+     */
     public void reportSyntaxError(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
+        Context.reportError(message, getSourceName(), secondToLastPosition.getLine(), getLine(), secondToLastPosition.getOffset());
+    }
 
-        Context.reportError(message, getSourceName(),
-                            getLineno(), getLine(), getOffset());
     }
 
     private void reportSyntaxWarning(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
         Context.reportWarning(message, getSourceName(),
                               getLineno(), getLine(), getOffset());
+
+    /**
+     * Updates last two known positions (for error reporting).
+     */
+    private void updatePosition() {
+        CodePosition currentPosition = new CodePosition(getLineno(), getOffset());
+        if (currentPosition.compareTo(lastPosition) > 0) {
+            secondToLastPosition = lastPosition;
+            lastPosition = currentPosition;
+        }
     }
 
     public String getSourceName() { return sourceName; }
@@ -1631,6 +1653,9 @@ public class TokenStream {
     private String sourceName;
     private int pushbackToken;
     private int tokenno;
+
+    CodePosition secondToLastPosition;
+    CodePosition lastPosition;
 
     private int op;
 
