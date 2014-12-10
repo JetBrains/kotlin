@@ -20,36 +20,29 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
-public class JavaElementFinderMultiFileTest extends KotlinAsJavaTestBase {
-    private static final String PREFIX = "compiler/testData/asJava/findClasses/multiFile/";
-
-    @Override
-    protected List<File> getKotlinSourceRoots() {
-        return Arrays.asList(
-                new File(PREFIX + getTestName(false) + "1.kt"),
-                new File(PREFIX + getTestName(false) + "2.kt")
-        );
-    }
+public class FakeLightClassForPackageTest extends JetLightCodeInsightFixtureTestCase {
+    private static final String TEST_DATA_PATH = "idea/testData/fakeLightClassForPackage/";
 
     public void testMultiFile() {
+        myFixture.configureByFiles(TEST_DATA_PATH + "1.kt", TEST_DATA_PATH + "2.kt");
         GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-        PsiClass[] classes = finder.findClasses("test.TestPackage", searchScope);
+        PsiClass[] classes = JavaElementFinder.getInstance(getProject()).findClasses("test.TestPackage", searchScope);
 
         assertEquals(3, classes.length);
 
         assertInstanceOf(classes[0], KotlinLightClassForPackage.class);
 
         Set<JetFile> expectedFiles = Sets.newHashSet(
-                CliLightClassGenerationSupport.getInstanceForCli(getProject()).findFilesForPackage(new FqName("test"), searchScope)
+                LightClassGenerationSupport.getInstance(getProject()).findFilesForPackage(new FqName("test"), searchScope)
         );
 
         Set<PsiFile> actualFiles = Sets.newHashSet();
@@ -59,5 +52,11 @@ public class JavaElementFinderMultiFileTest extends KotlinAsJavaTestBase {
         }
 
         assertEquals(expectedFiles, actualFiles);
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
     }
 }
