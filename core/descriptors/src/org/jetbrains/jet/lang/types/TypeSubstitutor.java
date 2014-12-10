@@ -286,8 +286,8 @@ public class TypeSubstitutor {
         if (typeParameterVariance == Variance.INVARIANT) return projectionKind;
         if (projectionKind == Variance.INVARIANT) return typeParameterVariance;
         if (typeParameterVariance == projectionKind) return projectionKind;
-        //todo ask why?
-        return Variance.IN_VARIANCE;
+        throw new AssertionError("Variance conflict: type parameter variance '" + typeParameterVariance + "' and " +
+                                 "projection kind '" + projectionKind + "' cannot be combined");
     }
 
     private enum VarianceConflictType {
