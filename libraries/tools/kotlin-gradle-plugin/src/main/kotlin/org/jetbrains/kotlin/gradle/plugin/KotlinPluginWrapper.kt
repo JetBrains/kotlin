@@ -4,21 +4,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.specs.Spec
-import java.io.File
 import java.net.URL
 import org.gradle.api.logging.Logging
 import java.util.Properties
 import java.io.FileNotFoundException
 import org.gradle.api.initialization.dsl.ScriptHandler
-import java.lang.reflect.Method
+import org.gradle.api.invocation.Gradle
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
-
-    class object {
-        val pluginVersionsMap: MutableMap<String, Class<Plugin<Project>>> = hashMapOf()
-    }
-
     val log = Logging.getLogger(this.javaClass)
 
     public override fun apply(project: Project) {
@@ -33,7 +26,10 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val kotlinPluginVersion = loadKotlinVersionFromResource()
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        val cls = pluginVersionsMap.getOrElse("$kotlinPluginVersion:${getPluginClassName()}", { loadPluginInIsolatedClassloader(kotlinPluginVersion, sourceBuildScript) })
+        val pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
+
+        val cls = Class.forName(getPluginClassName(), true, pluginClassLoader)
+        log.debug("Plugin class loaded")
 
         val constructor = cls.getConstructor(javaClass<ScriptHandler>())
         val method = cls.getMethod("apply", javaClass<Project>())
@@ -44,9 +40,12 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
         method?.invoke(plugin, project)
         log.debug("'apply' method invoked successfully")
+
+        val gradle = project.javaClass.getMethod("getGradle").invoke(project) as Gradle
+        gradle.addBuildListener(FinishBuildListener(pluginClassLoader))
     }
 
-    private fun loadPluginInIsolatedClassloader(projectVersion: String, sourceBuildScript: ScriptHandler): Class<Plugin<Project>> {
+    private fun createPluginIsolatedClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): ParentLastURLClassLoader {
         val dependencyHandler: DependencyHandler = sourceBuildScript.getDependencies()
         val configurationsContainer: ConfigurationContainer = sourceBuildScript.getConfigurations()
 
@@ -61,9 +60,8 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         log.debug("Load plugin in parent-last URL classloader")
         val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
         log.debug("Class loader created")
-        val cls = Class.forName(getPluginClassName(), true, kotlinPluginClassloader) as Class<Plugin<Project>>
-        log.debug("Plugin class loaded")
-        return cls
+
+        return kotlinPluginClassloader
     }
 
     private fun loadKotlinVersionFromResource(): String {

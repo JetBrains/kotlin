@@ -19,7 +19,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.WeakList;
+import org.jetbrains.annotations.NotNull;
 
+import javax.management.ListenerNotFoundException;
 import javax.management.Notification;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationListener;
@@ -33,9 +35,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Eugene Zhuravlev
- *         Date: Aug 24, 2010
+ * PATCHED VERSION of com.intellij.openapi.util.LowMemoryWatcher
+ * shutdown() method added to stop background thread.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class LowMemoryWatcher {
     private static final long MEM_THRESHOLD = 5 /*MB*/ * 1024 * 1024;
 
@@ -68,6 +71,8 @@ public class LowMemoryWatcher {
 
     private final Runnable myRunnable;
 
+    private static final NotificationListener lowMemoryListener;
+
     static {
         for (MemoryPoolMXBean bean : ManagementFactory.getMemoryPoolMXBeans()) {
             if (bean.getType() == MemoryType.HEAP && bean.isUsageThresholdSupported()) {
@@ -78,10 +83,12 @@ public class LowMemoryWatcher {
                 }
             }
         }
-        ((NotificationEmitter)ManagementFactory.getMemoryMXBean()).addNotificationListener(new NotificationListener() {
+
+        lowMemoryListener = new NotificationListener() {
             @Override
-            public void handleNotification(Notification n, Object hb) {
-                if (MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(n.getType()) || MemoryNotificationInfo.MEMORY_COLLECTION_THRESHOLD_EXCEEDED.equals(n.getType())) {
+            public void handleNotification(@NotNull Notification n, Object hb) {
+                if (MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(n.getType()) ||
+                    MemoryNotificationInfo.MEMORY_COLLECTION_THRESHOLD_EXCEEDED.equals(n.getType())) {
                     synchronized (ourJanitor) {
                         if (!ourSubmitted) {
                             //noinspection AssignmentToStaticFieldFromInstanceMethod
@@ -91,7 +98,9 @@ public class LowMemoryWatcher {
                     }
                 }
             }
-        }, null, null);
+        };
+
+        ((NotificationEmitter)ManagementFactory.getMemoryMXBean()).addNotificationListener(lowMemoryListener, null, null);
     }
 
     /**
@@ -126,4 +135,15 @@ public class LowMemoryWatcher {
         ourInstances.remove(this);
     }
 
+    public static void shutdown() throws InterruptedException, ListenerNotFoundException {
+        ourInstances.clear();
+        ((NotificationEmitter)ManagementFactory.getMemoryMXBean()).removeNotificationListener(lowMemoryListener);
+
+        ourExecutor.shutdown();
+
+        boolean terminated = ourExecutor.awaitTermination(1000, TimeUnit.MICROSECONDS);
+        if (!terminated) {
+            ourExecutor.shutdownNow();
+        }
+    }
 }

@@ -27,30 +27,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
 
 /**
- * <p>Utility class which tries to keep frequently requested .zip files open
- * to avoid time loss on closing/reopening ZipFile instances.</p>
- *
- * <p>Clients obtain a file by calling {@link #acquire(String)}
- * and indicate the loss of interest to it via {@link #release(ZipFile)}.
- * Released files are closed after some period of time (about 30 seconds),
- * unless requested again within the period.</p>
- *
- * <p>Since ZipFiles are read-only objects allowing concurrent access,
- * a same instance may be returned to a different threads requesting a same path.
- * A file may be closed only after being released by all applicants.</p>
- *
- * <p>The class does not expect .zip files on a disk to be changed,
- * so it may return an outdated instance of ZipFile (reading from it
- * may return inaccurate data or even cause an exceptions to happen).
- * It's a clients' responsibility to keep a track of .zip files
- * and call the {@link #reset(Collection)} method for a paths
- * which are possibly changed. Reset paths are removed from the cache
- * and are closed immediately after being released.</p>
+ * PATCHED VERSION of com.intellij.openapi.util.io.ZipFileCache
+ * shutdown() method added to stop background thread.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ZipFileCache {
     private static final int PERIOD = 10000;   // disposer schedule, ms
     private static final int TIMEOUT = 30000;  // released file close delay, ms
@@ -72,8 +57,12 @@ public class ZipFileCache {
     private static final Map<ZipFile, CacheRecord> ourFileCache = ContainerUtil.newHashMap();
     private static final Map<ZipFile, Integer> ourQueue = ContainerUtil.newHashMap();
 
+    private static final ScheduledThreadPoolExecutor scheduledCloseExecutor;
+
     static {
-        ConcurrencyUtil.newSingleScheduledThreadExecutor("ZipFileCache Dispose", Thread.MIN_PRIORITY).scheduleWithFixedDelay(new Runnable() {
+        scheduledCloseExecutor =
+                ConcurrencyUtil.newSingleScheduledThreadExecutor("ZipFileCache Dispose", Thread.MIN_PRIORITY);
+        scheduledCloseExecutor.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
                 List<ZipFile> toClose = getFilesToClose(0, System.currentTimeMillis() - TIMEOUT);
@@ -235,5 +224,14 @@ public class ZipFileCache {
 
     private static void debug(@NotNull String format, Object... args) {
         LogUtil.debug(logger(), format, args);
+    }
+
+    public static void shutdown() throws InterruptedException {
+        scheduledCloseExecutor.shutdown();
+
+        boolean terminated = scheduledCloseExecutor.awaitTermination(TIMEOUT, TimeUnit.MICROSECONDS);
+        if (!terminated) {
+            scheduledCloseExecutor.shutdownNow();
+        }
     }
 }
