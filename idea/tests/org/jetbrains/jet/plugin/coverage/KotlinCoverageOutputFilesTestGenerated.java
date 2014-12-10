@@ -36,9 +36,9 @@ public class KotlinCoverageOutputFilesTestGenerated extends AbstractKotlinCovera
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/coverage/outputFiles"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("lambda.kt")
-    public void testLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/coverage/outputFiles/lambda.kt");
+    @TestMetadata("NotInlinedLambda.kt")
+    public void testNotInlinedLambda() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/coverage/outputFiles/NotInlinedLambda.kt");
         doTest(fileName);
     }
 }
