@@ -5,10 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/Kotlin.iml" filepath="$PROJECT_DIR$/Kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/ant/ant.iml" filepath="$PROJECT_DIR$/ant/ant.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/compiler/backend/backend.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend-common/backend-common.iml" filepath="$PROJECT_DIR$/compiler/backend-common/backend-common.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/bare-plugin/bare-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/bare-plugin/bare-plugin.iml" group="ide/jps" />
-      <module fileurl="file://$PROJECT_DIR$/build-tools/build-tools.iml" filepath="$PROJECT_DIR$/build-tools/build-tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/builtins/builtins.iml" filepath="$PROJECT_DIR$/core/builtins/builtins.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" filepath="$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/compiler/cli/cli.iml" group="compiler/cli" />

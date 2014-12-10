@@ -560,14 +560,13 @@
     </target>
 
     <target name="ant-tools">
-        <cleandir dir="${output}/classes/buildTools"/>
-        <javac2 destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+        <cleandir dir="${output}/classes/ant"/>
+        <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
-                <dirset dir="${basedir}/build-tools">
-                    <include name="core/src"/>
-                    <include name="ant/src"/>
+                <dirset dir="${basedir}/ant">
+                    <include name="src"/>
                 </dirset>
             </src>
             <compilerarg value="-Xlint:all"/>
@@ -579,8 +578,8 @@
         </javac2>
 
         <jar destfile="${kotlin-home}/lib/kotlin-ant.jar">
-            <fileset dir="${output}/classes/buildTools"/>
-            <fileset dir="${basedir}/build-tools/ant/src" includes="**/*.xml"/>
+            <fileset dir="${output}/classes/ant"/>
+            <fileset dir="${basedir}/ant/src" includes="**/*.xml"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
