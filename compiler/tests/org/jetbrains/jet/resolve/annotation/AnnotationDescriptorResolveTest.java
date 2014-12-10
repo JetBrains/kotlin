@@ -63,7 +63,7 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
 
     public void testStringArrayVarargAnnotation() throws IOException {
         String content = getContent("AnnStringVararg(\"a\", \"b\")");
-        String expectedAnnotation = "AnnStringVararg(a = {\"a\", \"b\"}: Array<String>)";
+        String expectedAnnotation = "AnnStringVararg(a = {\"a\", \"b\"}: Array<out String>)";
         doTest(content, expectedAnnotation);
     }
 

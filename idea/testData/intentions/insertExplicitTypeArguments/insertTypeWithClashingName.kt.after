@@ -2,7 +2,7 @@
 class Array
 
 fun test() {
-    bar<kotlin.Array<String>>(foo(""))
+    bar<kotlin.Array<out String>>(foo(""))
 }
 
 fun foo(vararg x: String) = x
