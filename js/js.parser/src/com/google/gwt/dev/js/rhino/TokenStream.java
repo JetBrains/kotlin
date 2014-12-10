@@ -844,7 +844,7 @@ public class TokenStream {
                         if (escapeVal < 0) { break; }
                     }
                     if (escapeVal < 0) {
-                        reportSyntaxError("msg.invalid.escape", null);
+                        reportTokenError("msg.invalid.escape", null);
                         return ERROR;
                     }
                     addToString(escapeVal);
@@ -857,7 +857,7 @@ public class TokenStream {
                             isUnicodeEscapeStart = true;
                             containsEscape = true;
                         } else {
-                            reportSyntaxError("msg.illegal.character", null);
+                            reportTokenError("msg.illegal.character", null);
                             return ERROR;
                         }
                     } else {
@@ -931,7 +931,7 @@ public class TokenStream {
                      */
                     if (base == 8 && c >= '8') {
                         Object[] errArgs = { c == '8' ? "8" : "9" };
-                        reportSyntaxWarning("msg.bad.octal.literal", errArgs);
+                        reportTokenWarning("msg.bad.octal.literal", errArgs);
                         base = 10;
                     }
                     addToString(c);
@@ -957,7 +957,7 @@ public class TokenStream {
                         c = in.read();
                     }
                     if (!isDigit(c)) {
-                        reportSyntaxError("msg.missing.exponent", null);
+                        reportTokenError("msg.missing.exponent", null);
                         return ERROR;
                     }
                     do {
@@ -977,7 +977,7 @@ public class TokenStream {
                 }
                 catch (NumberFormatException ex) {
                     Object[] errArgs = { ex.getMessage() };
-                    reportSyntaxError("msg.caught.nfe", errArgs);
+                    reportTokenError("msg.caught.nfe", errArgs);
                     return ERROR;
                 }
             } else {
@@ -1008,7 +1008,7 @@ public class TokenStream {
         strLoop: while (c != quoteChar) {
                 if (c == '\n' || c == EOF_CHAR) {
                     in.unread();
-                    reportSyntaxError("msg.unterminated.string.lit", null);
+                    reportTokenError("msg.unterminated.string.lit", null);
                     return ERROR;
                 }
 
@@ -1251,7 +1251,7 @@ public class TokenStream {
                     ; // empty loop body
                 }
                 if (c == EOF_CHAR) {
-                    reportSyntaxError("msg.unterminated.comment", null);
+                    reportTokenError("msg.unterminated.comment", null);
                     return ERROR;
                 }
                 return RETRY_TOKEN;  // `goto retry'
@@ -1263,7 +1263,7 @@ public class TokenStream {
                 while ((c = in.read()) != '/') {
                     if (c == '\n' || c == EOF_CHAR) {
                         in.unread();
-                        reportSyntaxError("msg.unterminated.re.lit", null);
+                        reportTokenError("msg.unterminated.re.lit", null);
                         return ERROR;
                     }
                     if (c == '\\') {
@@ -1287,7 +1287,7 @@ public class TokenStream {
                 }
 
                 if (isAlpha(in.peek())) {
-                    reportSyntaxError("msg.invalid.re.flag", null);
+                    reportTokenError("msg.invalid.re.flag", null);
                     return ERROR;
                 }
 
@@ -1348,7 +1348,7 @@ public class TokenStream {
             return c;
 
         default:
-            reportSyntaxError("msg.illegal.character", null);
+            reportTokenError("msg.illegal.character", null);
             return ERROR;
         }
     }
@@ -1374,7 +1374,7 @@ public class TokenStream {
       int c = in.read();
       if (c != ':') {
           in.unread();
-          reportSyntaxError("msg.jsni.expected.char", new String[] { ":" });
+          reportTokenError("msg.jsni.expected.char", new String[] {":"});
           return ERROR;
       }
       addToString(c);
@@ -1402,7 +1402,7 @@ public class TokenStream {
       if (in.peek() == '*') {
         addToString(in.read());
         if (in.peek() != ')') {
-          reportSyntaxError("msg.jsni.expected.char", new String[] { ")" });
+          reportTokenError("msg.jsni.expected.char", new String[] {")"});
         }
         addToString(in.read());
         return true;
@@ -1456,7 +1456,7 @@ public class TokenStream {
           return jsniMatchParamArrayTypeSignature();
         default:
           in.unread();
-          reportSyntaxError("msg.jsni.expected.param.type", null);
+          reportTokenError("msg.jsni.expected.param.type", null);
           return false;
       }
     }
@@ -1476,7 +1476,7 @@ public class TokenStream {
       //
       if (!Character.isJavaIdentifierStart((char)c)) {
         in.unread();
-        reportSyntaxError("msg.jsni.expected.identifier", null);
+        reportTokenError("msg.jsni.expected.identifier", null);
         return false;
       }
       
@@ -1527,7 +1527,7 @@ public class TokenStream {
       //
       if (!Character.isJavaIdentifierStart((char)c)) {
         in.unread();
-        reportSyntaxError("msg.jsni.expected.identifier", null);
+        reportTokenError("msg.jsni.expected.identifier", null);
         return false;
       }
       
@@ -1611,12 +1611,20 @@ public class TokenStream {
         Context.reportError(message, getSourceName(), secondToLastPosition.getLine(), getLine(), secondToLastPosition.getOffset());
     }
 
+    /**
+     * Token errors are reported before tokes is read,
+     * so use lastPosition for reporting.
+     * @see #reportSyntaxError
+     */
+    private void reportTokenError(String messageProperty, Object[] args) {
+        String message = Context.getMessage(messageProperty, args);
+        Context.reportError(message, getSourceName(), lastPosition.getLine(), getLine(), lastPosition.getOffset());
     }
 
-    private void reportSyntaxWarning(String messageProperty, Object[] args) {
+    private void reportTokenWarning(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
-        Context.reportWarning(message, getSourceName(),
-                              getLineno(), getLine(), getOffset());
+        Context.reportWarning(message, getSourceName(), lastPosition.getLine(), getLine(), lastPosition.getOffset());
+    }
 
     /**
      * Updates last two known positions (for error reporting).
