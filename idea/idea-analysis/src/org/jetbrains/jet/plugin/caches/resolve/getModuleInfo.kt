@@ -26,6 +26,7 @@ import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.roots.ModuleRootManager
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {
@@ -66,13 +67,19 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
     if (module != null) {
-        if (isDecompiledFile) {
-            LOG.error("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+        fun warnIfDecompiled() {
+            if (isDecompiledFile) {
+                LOG.warn("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+            }
         }
-        if (projectFileIndex.isInTestSourceContent(virtualFile)) {
+
+        val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+        if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
+            warnIfDecompiled()
             return module.testSourceInfo()
         }
-        else {
+        else if (moduleFileIndex.isInSourceContent(virtualFile)) {
+            warnIfDecompiled()
             return module.productionSourceInfo()
         }
     }
