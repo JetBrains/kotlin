@@ -24,11 +24,11 @@ import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public final class JsTestUtils {
 
@@ -67,28 +67,17 @@ public final class JsTestUtils {
     }
 
     @NotNull
-    public static List<String> kotlinFilesInDirectory(@NotNull String directory) {
+    public static List<String> getFilesInDirectoryByExtension(@NotNull String directory, String extension) {
         File dir = new File(directory);
 
-        if (!dir.isDirectory()) {
-            return ContainerUtil.emptyList();
-        }
+        if (!dir.isDirectory()) return ContainerUtil.emptyList();
 
-        File[] kotlinFiles = dir.listFiles(new FilenameFilter() {
+        List<File> files = FileUtil.findFilesByMask(Pattern.compile(".*\\." + extension + "$"), dir);
+
+        return ContainerUtil.map2List(files, new Function<File, String>() {
             @Override
-            public boolean accept(@NotNull File dir, @NotNull String name) {
-                return name.endsWith(".kt");
-            }
-        });
-
-        if (kotlinFiles == null) {
-            return ContainerUtil.emptyList();
-        }
-
-        return ContainerUtil.map2List(kotlinFiles, new Function<File, String>() {
-            @Override
-            public String fun(File kotlinFile) {
-                return kotlinFile.getAbsolutePath();
+            public String fun(File file) {
+                return file.getAbsolutePath();
             }
         });
     }

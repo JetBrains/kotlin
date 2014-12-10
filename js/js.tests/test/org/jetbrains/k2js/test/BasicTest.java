@@ -38,10 +38,12 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -211,14 +213,32 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     protected List<String> additionalKotlinFiles() {
         List<String> additionalFiles = Lists.newArrayList();
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(TEST_DATA_DIR_PATH + COMMON_FILES_DIR));
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestDir() + COMMON_FILES_DIR));
+
+        // add all kotlin files from testData/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JetFileType.EXTENSION));
+        // add all kotlin files from <testDir>/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, JetFileType.EXTENSION));
+
         return additionalFiles;
     }
 
     @NotNull
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
-        return Lists.newArrayList();
+        List<String> additionalFiles = Lists.newArrayList();
+
+        // add all js files from testData/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION));
+        // add all js files from <testDir>/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, JavaScript.EXTENSION));
+
+        // add <testDir>/cases/<testName>.js if it exists
+        String jsFilePath = getInputFilePath(getTestName(true) + JavaScript.DOT_EXTENSION);
+        File jsFile = new File(jsFilePath);
+        if (jsFile.exists() && jsFile.isFile()) {
+            additionalFiles.add(jsFilePath);
+        }
+
+        return additionalFiles;
     }
 
     // helpers
