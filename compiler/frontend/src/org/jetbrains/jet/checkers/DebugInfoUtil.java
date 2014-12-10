@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -133,7 +132,9 @@ public class DebugInfoUtil {
             @Override
             public void visitThisExpression(@NotNull JetThisExpression expression) {
                 ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
-                reportIfDynamic(expression, resolvedCall.getResultingDescriptor(), debugInfoReporter);
+                if (resolvedCall != null) {
+                    reportIfDynamic(expression, resolvedCall.getResultingDescriptor(), debugInfoReporter);
+                }
                 super.visitThisExpression(expression);
             }
 
@@ -227,7 +228,7 @@ public class DebugInfoUtil {
         });
     }
 
-    private static boolean reportIfDynamic(JetElement element, @Nullable DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
+    private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
         if (declarationDescriptor != null && TasksPackage.isDynamic(declarationDescriptor)) {
             debugInfoReporter.reportDynamicCall(element);
             return true;
