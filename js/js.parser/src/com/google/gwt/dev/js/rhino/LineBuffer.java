@@ -39,6 +39,8 @@ package com.google.gwt.dev.js.rhino;
 import java.io.Reader;
 import java.io.IOException;
 
+import static com.google.gwt.dev.js.rhino.Utils.isEndOfLine;
+
 /**
  * An input buffer that combines fast character-based access with
  * (slower) support for retrieving the text of the current line.  It
@@ -118,7 +120,7 @@ final class LineBuffer {
             return;
         offset--;
         int c = buffer[offset];
-        if ((c & EOL_HINT_MASK) == 0 && eolChar(c)) {
+        if ((c & EOL_HINT_MASK) == 0 && isEndOfLine(c)) {
             lineStart = prevStart;
             lineno--;
         }
@@ -153,7 +155,7 @@ final class LineBuffer {
             }
 
             int c = buffer[offset];
-            if ((c & EOL_HINT_MASK) == 0 && eolChar(c)) {
+            if ((c & EOL_HINT_MASK) == 0 && isEndOfLine(c)) {
                 return '\n';
             }
             if (c < 128 || !formatChar(c)) {
@@ -166,7 +168,7 @@ final class LineBuffer {
 
     boolean match(int test) throws IOException {
         // TokenStream never looks ahead for '\n', which allows simple code
-        if ((test & EOL_HINT_MASK) == 0 && eolChar(test))
+        if ((test & EOL_HINT_MASK) == 0 && isEndOfLine(test))
             Context.codeBug();
         // Format chars are not allowed either
         if (test >= 128 && formatChar(test))
@@ -214,7 +216,7 @@ final class LineBuffer {
                 end += charsRead;
             }
             int c = buffer[i];
-            if ((c & EOL_HINT_MASK) == 0 && eolChar(c))
+            if ((c & EOL_HINT_MASK) == 0 && isEndOfLine(c))
                 break;
             i++;
         }
@@ -308,10 +310,6 @@ final class LineBuffer {
 
     private static boolean formatChar(int c) {
         return Character.getType((char)c) == Character.FORMAT;
-    }
-
-    private static boolean eolChar(int c) {
-        return c == '\r' || c == '\n' || c == '\u2028' || c == '\u2029';
     }
 
     // Optimization for faster check for eol character: eolChar(c) returns
