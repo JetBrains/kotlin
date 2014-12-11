@@ -195,6 +195,12 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             doTest(fileName);
         }
 
+        @TestMetadata("spreadOperator.kt")
+        public void testSpreadOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/spreadOperator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("staticCallsInDynamicContext.kt")
         public void testStaticCallsInDynamicContext() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/staticCallsInDynamicContext.kt");

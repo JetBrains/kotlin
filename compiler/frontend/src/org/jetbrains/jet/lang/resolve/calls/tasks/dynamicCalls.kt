@@ -49,10 +49,10 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.psi.ValueArgument
+import java.util.ArrayList
 
 object DynamicCallableDescriptors {
 
@@ -165,36 +165,71 @@ object DynamicCallableDescriptors {
         )
     }
 
-    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> =
-            call.getValueArguments().withIndices().map { p ->
-                val (index, arg) = p
+    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
 
-                val type =
-                        when (arg) {
-                            is JetFunctionLiteralArgument -> {
-                                val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
+        val parameters = ArrayList<ValueParameterDescriptor>()
 
-                                val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
-                                val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+        fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
+            val index = parameters.size()
 
-                                KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
-                            }
+            parameters.add(ValueParameterDescriptorImpl(
+                    owner,
+                    null,
+                    index,
+                    Annotations.EMPTY,
+                    arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
+                    outType,
+                    false,
+                    varargElementType,
+                    SourceElement.NO_SOURCE
+            ))
+        }
 
-                            else -> DynamicType
-                        }
+        fun getFunctionType(arg: JetFunctionLiteralArgument): JetType {
+            val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
 
-                ValueParameterDescriptorImpl(
-                        owner,
-                        null,
-                        index,
-                        Annotations.EMPTY,
-                        arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
-                        type,
-                        false,
-                        null,
-                        SourceElement.NO_SOURCE
-                )
+            val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
+            val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+
+            return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
+        }
+
+        for (arg in call.getValueArguments()) {
+            val outType: JetType
+            val varargElementType: JetType?
+            var hasSpreadOperator = false
+
+            when {
+                arg is JetFunctionLiteralArgument -> {
+                    outType = getFunctionType(arg)
+                    varargElementType = null
+                }
+
+                arg.getSpreadElement() != null -> {
+                    hasSpreadOperator = true
+                    outType = KotlinBuiltIns.getInstance().getArrayType(Variance.OUT_VARIANCE, DynamicType)
+                    varargElementType = DynamicType
+                }
+
+                else -> {
+                    outType = DynamicType
+                    varargElementType = null
+                }
             }
+
+            addParameter(arg, outType, varargElementType)
+
+            if (hasSpreadOperator) {
+                for (funLiteralArg in call.getFunctionLiteralArguments()) {
+                    addParameter(funLiteralArg, getFunctionType(funLiteralArg), null)
+                }
+
+                break
+            }
+        }
+
+        return parameters
+    }
 }
 
 public fun DeclarationDescriptor.isDynamic(): Boolean {
