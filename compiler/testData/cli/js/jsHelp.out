@@ -13,4 +13,6 @@ where possible options include:
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
   -X                         Print a synopsis of advanced options
+  -P plugin:<pluginId>:<optionName>=<value>
+                             Pass an option to a plugin
 OK

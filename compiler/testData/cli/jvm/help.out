@@ -10,11 +10,11 @@ where possible options include:
   -module <path>             Path to the module file to compile
   -script                    Evaluate the script file
   -kotlin-home <path>        Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
-  -androidRes <path>         Android resources path
-  -androidManifest <path>    Android manifest file
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version
   -help (-h)                 Print a synopsis of standard options
   -X                         Print a synopsis of advanced options
+  -P plugin:<pluginId>:<optionName>=<value>
+                             Pass an option to a plugin
 OK
