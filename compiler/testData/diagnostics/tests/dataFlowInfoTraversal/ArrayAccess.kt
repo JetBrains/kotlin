@@ -1,3 +1,6 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+public inline fun <reified T> Array(n: Int, block: (Int) -> T): Array<T> = null!!
+
 fun bar(x: Int): Int = x + 1
 
 fun foo() {

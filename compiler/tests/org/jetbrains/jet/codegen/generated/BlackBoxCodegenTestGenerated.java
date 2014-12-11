@@ -45,18 +45,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("arrayGetAssignMultiIndex.kt")
-        public void testArrayGetAssignMultiIndex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayGetAssignMultiIndex.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("arrayGetMultiIndex.kt")
-        public void testArrayGetMultiIndex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("arrayPlusAssign.kt")
         public void testArrayPlusAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
@@ -126,12 +114,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/hashMap.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("iterator.kt")
-        public void testIterator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/iterator.kt");
             doTest(fileName);
         }
 
@@ -252,12 +234,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("longAsIndex.kt")
         public void testLongAsIndex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/longAsIndex.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nonNullArray.kt")
-        public void testNonNullArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/nonNullArray.kt");
             doTest(fileName);
         }
     }
@@ -1340,12 +1316,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt471.kt")
-        public void testKt471() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt471.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt48.kt")
         public void testKt48() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt48.kt");
@@ -1379,12 +1349,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt508.kt")
         public void testKt508() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt508.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt633.kt")
-        public void testKt633() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt633.kt");
             doTest(fileName);
         }
 
@@ -3236,12 +3200,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt4118.kt")
-        public void testKt4118() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt4118.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt475.kt")
         public void testKt475() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt475.kt");
@@ -3609,12 +3567,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt1199.kt")
         public void testKt1199() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/kt1199.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt1291.kt")
-        public void testKt1291() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/kt1291.kt");
             doTest(fileName);
         }
 
@@ -4376,7 +4328,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({MultiDecl.ForArray.class, MultiDecl.ForIterator.class, MultiDecl.ForRange.class})
+    @InnerTestClasses({MultiDecl.ForIterator.class, MultiDecl.ForRange.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiDecl extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInMultiDecl() throws Exception {
@@ -4447,112 +4399,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testVarCapturedInObjectLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInObjectLiteral.kt");
             doTest(fileName);
-        }
-
-        @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ForArray.Int.class, ForArray.Long.class})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ForArray extends AbstractBlackBoxCodegenTest {
-            public void testAllFilesPresentInForArray() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forArray"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("MultiDeclFor.kt")
-            public void testMultiDeclFor() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclFor.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("MultiDeclForComponentExtensions.kt")
-            public void testMultiDeclForComponentExtensions() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentExtensions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
-            public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
-            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("MultiDeclForValCaptured.kt")
-            public void testMultiDeclForValCaptured() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForValCaptured.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray/int")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Int extends AbstractBlackBoxCodegenTest {
-                public void testAllFilesPresentInInt() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forArray/int"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("MultiDeclForComponentExtensions.kt")
-                public void testMultiDeclForComponentExtensions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
-                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensionsValCaptured.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
-                public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
-                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
-                    doTest(fileName);
-                }
-            }
-
-            @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray/long")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Long extends AbstractBlackBoxCodegenTest {
-                public void testAllFilesPresentInLong() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forArray/long"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-
-                @TestMetadata("MultiDeclForComponentExtensions.kt")
-                public void testMultiDeclForComponentExtensions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
-                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensionsValCaptured.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
-                public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
-                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
-                    doTest(fileName);
-                }
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
@@ -5755,12 +5601,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt945.kt")
-        public void testKt945() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/kt945.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("nullAsNullableIntIsNull.kt")
         public void testNullAsNullableIntIsNull() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/nullAsNullableIntIsNull.kt");
@@ -6686,12 +6526,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("stdlib.kt")
-        public void testStdlib() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/stdlib.kt");
             doTest(fileName);
         }
 

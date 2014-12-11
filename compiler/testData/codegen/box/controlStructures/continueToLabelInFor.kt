@@ -90,7 +90,7 @@ fun for_object_list(): Int {
 }
 
 fun for_str_array(): Int {
-    val a = Array<String>(10) {i -> "$i"}
+    val a = arrayOfNulls<String>(10)
     var c = 0
     @loop for (i in a) {
         if (c >= 5) continue @loop
