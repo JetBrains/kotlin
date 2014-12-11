@@ -5619,6 +5619,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("substituteIntForGeneric.kt")
+        public void testSubstituteIntForGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/substituteIntForGeneric.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unboxComparable.kt")
         public void testUnboxComparable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
