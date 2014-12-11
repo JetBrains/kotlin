@@ -29,6 +29,31 @@
 
     <property name="dependencies.dir" value="${basedir}/dependencies"/>
 
+    <condition property="bootstrap.or.local.build" value="true">
+        <or>
+            <istrue value="${bootstrap.build.no.tests}"/>
+            <not>
+                <isset property="teamcity.version"/>
+            </not>
+        </or>
+    </condition>
+
+    <!--
+    The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
+    located in dependencies/bootstrap-compiler/.../kotlin-runtime.jar, because the newly built compiler is just a Kotlin application,
+    compiled by the old compiler with the old runtime in classpath. If you advance the ABI version, the newly built compiler will NOT work
+    against the runtime it will produce on its own because they have different ABI versions.
+    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar and change the compiler classpath
+    accordingly. On the second step this is believed to be not required, because there are little to no differences between
+    the new and the newest runtime.
+    Also see target 'copy-bootstrap-runtime'
+    -->
+    <condition property="compiler.manifest.class.path"
+               value="kotlin-runtime-internal-bootstrap.jar"
+               else="kotlin-runtime.jar">
+        <istrue value="${bootstrap.or.local.build}"/>
+    </condition>
+
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
@@ -383,26 +408,6 @@
         <attribute name="compress" default="true"/>
 
         <sequential>
-            <!--
-            For "Compiler and Plugin - Bootstrap - No Tests" configuration the compiler will contain the runtime it was built against, and
-            will NOT contain the new runtime in its "Class-Path" attribute. This is done because the new compiler is guaranteed to work
-            against the OLD runtime (because the new compiler is just a Kotlin application, compiled by the old compiler with the old
-            runtime), but _will not necessarily_ work against the new one.
-            However we don't do this on the second run of our distribution, i.e. we do not include the new runtime in the NEWEST compiler.
-            This is because there are little to no differences between the new and the newest runtime, and so we assume that our newest
-            compiler will work with any of them. Also distributing two runtimes (inside the compiler and a separate one) could cause all
-            kinds of problems and confusion for users who include both our compiler and runtime in their classpath
-            -->
-            <if>
-                <istrue value="${bootstrap.build.no.tests}"/>
-                <then>
-                    <property name="compiler.manifest.class.path" value="."/>
-                </then>
-                <else>
-                    <property name="compiler.manifest.class.path" value="kotlin-runtime.jar"/>
-                </else>
-            </if>
-
             <!-- TODO: temporary, remove after bootstrap. Needed for proguard -->
             <if>
                 <available file="${bootstrap.runtime.minimal}"/>
@@ -413,9 +418,6 @@
             </if>
 
             <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
-                <zipfileset src="${bootstrap.runtime}">
-                    <include name="**/*.class" if="${bootstrap.build.no.tests}"/>
-                </zipfileset>
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
@@ -565,10 +567,6 @@
                         public protected *;
                     }
 
-                    -keep class kotlin.** {
-                        public protected *;
-                    }
-
                     -keep class com.intellij.psi.** {
                         public protected *;
                     }
@@ -606,7 +604,15 @@
             </else>
         </if>
 
+        <if>
+            <istrue value="${bootstrap.or.local.build}"/>
+            <then>
+                <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
+            </then>
+        </if>
+
         <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
+            <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
             <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
 
@@ -634,7 +640,7 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <file file="${bootstrap.runtime}"/>
+                <file file="${kotlin-home}/lib/${compiler.manifest.class.path}"/>
                 <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
             </classpath>
         </javac2>
@@ -651,7 +657,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.ant.task}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Class-Path" value="kotlin-runtime.jar"/>
+                <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
             </manifest>
         </jar>
     </target>
@@ -697,7 +703,7 @@
 
             <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
                 <classpath>
-                    <path refid="classpath"/>
+                    <file file="${bootstrap.runtime}"/>
                     <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 </classpath>
                 <assertions>
@@ -840,15 +846,16 @@
                                  implementation-title="${manifest.impl.title.kotlin.jvm.runtime.minimal.sources}"/>
     </target>
 
-    <target name="runtime" depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
+    <target name="runtime"
+            depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
             description="Builds redistributables from sources"/>
 
-    <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"/>
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
             depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
