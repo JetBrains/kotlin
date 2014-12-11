@@ -62,6 +62,7 @@ import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
+import com.intellij.debugger.engine.SourcePositionProvider
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -252,9 +253,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
-                is FieldDescriptorImpl ->     logDescriptor(descriptor, "$curIndent field    = $label"
-                                                    + " (sp = ${render(descriptor.getSourcePosition(myProject, debuggerContext))})\n")
-                is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label\n")
+                is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label"
+                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
 

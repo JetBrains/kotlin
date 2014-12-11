@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger.render
 
+import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.sun.jdi.Type as JdiType
 import com.sun.jdi.Value
 import com.intellij.debugger.ui.tree.render.ChildrenBuilder
@@ -36,9 +37,8 @@ import com.sun.jdi.InvocationException
 import com.sun.jdi.Method
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
-import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 
-public class KotlinClassWithDelegatedPropertyRenderer : KotlinObjectRenderer() {
+public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
@@ -68,7 +68,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : KotlinObjectRenderer() {
                 continue
             }
 
-            val fieldDescriptor = createFieldDescriptor(builder.getParentDescriptor() as ValueDescriptorImpl, nodeDescriptorFactory, value, field, context)
+            val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.getParentDescriptor(), value, field)
             children.add(nodeManager.createNode(fieldDescriptor, context))
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
