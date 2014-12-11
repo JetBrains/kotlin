@@ -31,17 +31,24 @@ public class K2JsCliTest extends CliBaseTest {
     }
 
     @Test
+    public void outputIsDirectory() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
+    }
+
+    @Test
     public void outputPrefixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
 
-        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
     }
 
     @Test
     public void outputPostfixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
 
-        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
     }
 
     @Test

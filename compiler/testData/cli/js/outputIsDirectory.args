@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/simple2js.kt
+-no-stdlib
+-output
+$TESTDATA_DIR$

@@ -143,6 +143,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         OutputFileCollection outputFiles = translate(mainCallParameters, config, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile);
 
+        if (outputFile.isDirectory()) {
+            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                    "Cannot open output file '" + outputFile.getPath() + "': is a directory",
+                                    CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.COMPILATION_ERROR;
+        }
+
         File outputDir = outputFile.getParentFile();
         if (outputDir == null) {
             outputDir = outputFile.getAbsoluteFile().getParentFile();
