@@ -624,7 +624,6 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
                 <file file="${bootstrap.runtime}"/>
                 <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
             </classpath>
@@ -642,7 +641,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.ant.task}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Class-Path" value="kotlin-compiler.jar"/>
+                <attribute name="Class-Path" value="kotlin-runtime.jar"/>
             </manifest>
         </jar>
     </target>

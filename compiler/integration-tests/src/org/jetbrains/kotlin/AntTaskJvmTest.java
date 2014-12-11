@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class AntTaskJvmTest extends AntTaskBaseTest {
     private static final String JVM_OUT_FILE = "hello.jar";
@@ -44,7 +46,11 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     private static String getClassPathForAnt() {
-        return getCompilerLib() + File.separator + "kotlin-ant.jar" + File.pathSeparator + getKotlinRuntimePath();
+        return UtilsPackage.join(Arrays.asList(
+                getCompilerLib() + File.separator + "kotlin-ant.jar",
+                getCompilerLib() + File.separator + "kotlin-compiler.jar",
+                getKotlinRuntimePath()
+        ), File.pathSeparator);
     }
 
     private static String getIdeaSdkHome() {
@@ -59,11 +65,6 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     @Test
     public void additionalArguments() throws Exception {
         doJvmAntTest();
-    }
-
-    @Test
-    public void wrongArguments() throws Exception {
-        doAntTest(FAILED);
     }
 
     @Test

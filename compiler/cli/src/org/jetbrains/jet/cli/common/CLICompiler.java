@@ -58,6 +58,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return exec(errStream, services, MessageRenderer.TAGS, args);
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Used via reflection in KotlinCompilerBaseTask
+    @NotNull
+    public ExitCode execFullPathsInMessages(@NotNull PrintStream errStream, @NotNull String[] args) {
+        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN, args);
+    }
+
     @Nullable
     private A parseArguments(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, @NotNull String[] args) {
         try {

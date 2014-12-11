@@ -18,14 +18,11 @@ package org.jetbrains.jet.buildtools.ant
 
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
 import java.io.File
 import java.io.File.pathSeparator
 
-public class Kotlin2JvmTask : KotlinCompilerBaseTask<K2JVMCompilerArguments>() {
-    override val arguments = K2JVMCompilerArguments()
-    override val compiler = K2JVMCompiler()
+public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
+    override val compilerFqName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler"
 
     public var externalAnnotations: Path? = null
     public var includeRuntime: Boolean = true
@@ -60,21 +57,27 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask<K2JVMCompilerArguments>() {
     }
 
     override fun fillSpecificArguments() {
-        arguments.destination = output!!.canonicalPath
+        args.add("-d")
+        args.add(output!!.canonicalPath)
 
         val classpath = arrayListOf<String>()
         compileClasspath?.let { classpath.addAll(it.list()) }
-        arguments.freeArgs?.forEach {
+        src!!.list().forEach {
             val file = File(it)
             if (file.isDirectory() || file.extension != "kt") {
                 classpath.add(it)
             }
         }
 
-        arguments.classpath = classpath.join(pathSeparator)
+        args.add("-classpath")
+        args.add(classpath.join(pathSeparator))
 
-        arguments.annotations = externalAnnotations?.list()?.join(pathSeparator)
-        arguments.noStdlib = noStdlib
-        arguments.includeRuntime = includeRuntime
+        externalAnnotations?.let {
+            args.add("-annotations")
+            args.add(it.list().join(pathSeparator))
+        }
+
+        if (noStdlib) args.add("-no-stdlib")
+        if (includeRuntime) args.add("-include-runtime")
     }
 }
