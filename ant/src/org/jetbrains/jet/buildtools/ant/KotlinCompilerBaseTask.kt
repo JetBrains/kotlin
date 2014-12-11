@@ -19,7 +19,6 @@ package org.jetbrains.jet.buildtools.ant
 import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
-import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
 import java.io.File
 import org.apache.tools.ant.BuildException
 import org.jetbrains.jet.cli.common.ExitCode
@@ -27,25 +26,9 @@ import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jet.cli.common.CLICompiler
 import org.apache.tools.ant.types.Commandline
 import com.sampullara.cli.Args
-import java.io.IOException
-import org.jetbrains.jet.config
 import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.jet.cli.common.messages.MessageRenderer
-
-/**
- * {@code file.getCanonicalPath()} convenience wrapper.
- *
- * @param file - file to get its canonical path.
- * @return file's canonical path
- */
-fun getPath(file: File): String {
-    try {
-        return file.getCanonicalPath()
-    }
-    catch (e: IOException) {
-        throw RuntimeException("Failed to resolve canonical file of [$file]: $e", e)
-    }
-}
+import org.jetbrains.jet.config.Services
 
 /**
  * Base class for Kotlin compiler Ant tasks.
@@ -90,7 +73,7 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
 
     private fun fillArguments() {
         val sourcePaths = src ?: throw BuildException("\"src\" should be specified")
-        arguments.freeArgs = sourcePaths.list().map { getPath(File(it)) }
+        arguments.freeArgs = sourcePaths.list().map { File(it).canonicalPath }
 
         output ?: throw BuildException("\"output\" should be specified")
 
@@ -98,7 +81,7 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
         arguments.verbose = verbose
         arguments.version = printVersion
 
-        val args = additionalArguments.flatMap { it.getParts()!!.toList() }
+        val args = additionalArguments.flatMap { it.getParts().toList() }
         try {
             Args.parse(arguments, args.copyToArray())
         }
@@ -109,15 +92,13 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
         fillSpecificArguments()
     }
 
-    final override fun execute(): Unit {
+    final override fun execute() {
         fillArguments()
 
-        val outputPath = getPath(output!!)
-
-        log("Compiling ${arguments.freeArgs} => [${outputPath}]");
+        log("Compiling ${arguments.freeArgs} => [${output!!.canonicalPath}]");
 
         val collector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN, arguments.verbose)
-        val exitCode = compiler.exec(collector, config.Services.EMPTY, arguments)
+        val exitCode = compiler.exec(collector, Services.EMPTY, arguments)
 
         if (exitCode != ExitCode.OK) {
             throw BuildException("Compilation finished with exit code $exitCode")
