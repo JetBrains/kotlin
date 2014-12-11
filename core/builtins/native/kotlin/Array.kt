@@ -16,7 +16,7 @@
 
 package kotlin
 
-public class Array<reified T>(size: Int, init: (Int) -> T) : Cloneable {
+public class Array<reified T> private (): Cloneable {
     public fun get(index: Int): T
     public fun set(index: Int, value: T): Unit
 
