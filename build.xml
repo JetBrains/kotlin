@@ -217,40 +217,68 @@
         </if>
     </target>
 
+    <macrodef name="new-kotlin2js">
+        <attribute name="output"/>
+        <element name="src"/>
+
+        <sequential>
+            <local name="src.line"/>
+
+            <path id="src.path">
+                <src/>
+            </path>
+
+            <pathconvert property="src.line" refid="src.path" pathsep=" "/>
+
+            <java classname="org.jetbrains.jet.cli.js.K2JSCompiler" failonerror="true" fork="true">
+                <classpath>
+                    <file file="${bootstrap.runtime}"/>
+                    <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                </classpath>
+                <assertions>
+                    <enable/>
+                </assertions>
+                <arg line="${src.line}"/>
+                <arg value="-output"/>
+                <arg value="@{output}"/>
+                <arg value="-no-stdlib"/>
+                <arg line="-main noCall"/>
+            </java>
+        </sequential>
+    </macrodef>
+
     <target name="compile-kotlin-js-stdlib">
-        <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${kotlin-home}/lib/kotlin-ant.jar"/>
+        <property name="compiled.builtins.js" value="builtins.js"/>
+        <property name="compiled.stdlib.js" value="stdlib.js"/>
+        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
 
-        <property name="compiled.builtins.js" value="builtins.js" />
-        <property name="compiled.stdlib.js" value="stdlib.js" />
-        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
-
-        <kotlin2js output="${output}/${compiled.builtins.js}" noStdlib="true" main="noCall">
+        <new-kotlin2js output="${output}/${compiled.builtins.js}">
             <src>
-                <fileset refid="kotlin.builtin.files" />
+                <fileset refid="kotlin.builtin.files"/>
             </src>
-        </kotlin2js>
+        </new-kotlin2js>
 
-        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+        <new-kotlin2js output="${output}/${compiled.stdlib.js}">
             <src>
-                <resources refid="js.lib.files" />
+                <resources refid="js.lib.files"/>
             </src>
-        </kotlin2js>
+        </new-kotlin2js>
 
         <taskdef name="closure-compiler"
                  classname="com.google.javascript.jscomp.ant.CompileTask"
                  classpath="${dependencies.dir}/closure-compiler.jar"/>
 
         <!-- value should be one of: whitespace, simple, advanced -->
-        <property name="compilationLevel" value="simple" />
+        <property name="compilationLevel" value="simple"/>
         <!-- value should be one of: default, quiet, verbose -->
-        <property name="warningLevel" value="default" />
+        <property name="warningLevel" value="default"/>
 
         <closure-compiler
             compilationLevel="${compilationLevel}"
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${output}/kotlin.js" >
+            output="${output}/kotlin.js">
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
