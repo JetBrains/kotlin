@@ -173,7 +173,7 @@ public class AsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                JetTypeMapper.isAccessor(functionDescriptor) ||
-               AnnotationsPackage.isPlatformStaticInObject(functionDescriptor);
+               AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {

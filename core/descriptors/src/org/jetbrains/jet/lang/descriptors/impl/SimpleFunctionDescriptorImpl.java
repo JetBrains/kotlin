@@ -92,7 +92,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 getAnnotations(),
                 getName(),
                 kind,
-                SourceElement.NO_SOURCE
+                getSource()
                 );
     }
 

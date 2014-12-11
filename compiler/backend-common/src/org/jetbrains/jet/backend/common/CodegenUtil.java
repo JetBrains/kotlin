@@ -143,19 +143,32 @@ public class CodegenUtil {
 
             // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
             // with traitMember's modality
-            CallableMemberDescriptor copy =
-                    inheritedMember.copy(inheritedMember.getContainingDeclaration(), traitMember.getModality(), Visibilities.PUBLIC,
-                                         CallableMemberDescriptor.Kind.DECLARATION, true);
+            result.putAll(copyFunctions(inheritedMember, traitMember, inheritedMember.getContainingDeclaration(), traitMember.getModality(), Visibilities.PUBLIC,
+                                                     CallableMemberDescriptor.Kind.DECLARATION, true));
+        }
+        return result;
+    }
 
-            if (traitMember instanceof SimpleFunctionDescriptor) {
-                result.put((FunctionDescriptor) traitMember, (FunctionDescriptor) copy);
-            }
-            else if (traitMember instanceof PropertyDescriptor) {
-                for (PropertyAccessorDescriptor traitAccessor : ((PropertyDescriptor) traitMember).getAccessors()) {
-                    for (PropertyAccessorDescriptor inheritedAccessor : ((PropertyDescriptor) copy).getAccessors()) {
-                        if (inheritedAccessor.getClass() == traitAccessor.getClass()) { // same accessor kind
-                            result.put(traitAccessor, inheritedAccessor);
-                        }
+    @NotNull
+    public static Map<FunctionDescriptor, FunctionDescriptor> copyFunctions(
+            @NotNull CallableMemberDescriptor inheritedMember,
+            @NotNull CallableMemberDescriptor traitMember,
+            DeclarationDescriptor newOwner,
+            Modality modality,
+            Visibility visibility,
+            CallableMemberDescriptor.Kind kind,
+            boolean copyOverrides
+    ) {
+        CallableMemberDescriptor copy = inheritedMember.copy(newOwner, modality, visibility, kind, copyOverrides);
+        Map<FunctionDescriptor, FunctionDescriptor> result = new LinkedHashMap<FunctionDescriptor, FunctionDescriptor>(0);
+        if (traitMember instanceof SimpleFunctionDescriptor) {
+            result.put((FunctionDescriptor) traitMember, (FunctionDescriptor) copy);
+        }
+        else if (traitMember instanceof PropertyDescriptor) {
+            for (PropertyAccessorDescriptor traitAccessor : ((PropertyDescriptor) traitMember).getAccessors()) {
+                for (PropertyAccessorDescriptor inheritedAccessor : ((PropertyDescriptor) copy).getAccessors()) {
+                    if (inheritedAccessor.getClass() == traitAccessor.getClass()) { // same accessor kind
+                        result.put(traitAccessor, inheritedAccessor);
                     }
                 }
             }

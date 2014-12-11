@@ -17,5 +17,10 @@
 package org.jetbrains.jet.lang.descriptors;
 
 public interface SourceElement {
-    SourceElement NO_SOURCE = new SourceElement() { };
+    SourceElement NO_SOURCE = new SourceElement() {
+        @Override
+        public String toString() {
+            return "NO_SOURCE";
+        }
+    };
 }

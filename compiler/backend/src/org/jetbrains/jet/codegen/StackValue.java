@@ -480,7 +480,7 @@ public abstract class StackValue {
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
-        if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
+        if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
             if (resultReceiver.canHaveSideEffects()) {
                 return coercion(resultReceiver, Type.VOID_TYPE);
             }
@@ -1414,7 +1414,7 @@ public abstract class StackValue {
                 return callableMethod != null ? callableMethod.getReceiverClass() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
-                if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
+                if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
                 else {

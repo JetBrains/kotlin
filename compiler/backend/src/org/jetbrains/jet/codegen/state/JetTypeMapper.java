@@ -488,7 +488,7 @@ public class JetTypeMapper {
             else {
                 if (isStaticDeclaration(functionDescriptor) ||
                     isAccessor(functionDescriptor) ||
-                    AnnotationsPackage.isPlatformStaticInObject(functionDescriptor)) {
+                    AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {
