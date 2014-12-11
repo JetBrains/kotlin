@@ -14,7 +14,7 @@ public open class Any {
 }
 
 public final class Array</*0*/ reified T> : kotlin.Cloneable {
-    /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>)
+    /*primary*/ private constructor Array</*0*/ reified T>()
     public open override /*1*/ fun clone(): kotlin.Array<T>
     public final fun get(/*0*/ index: kotlin.Int): T
     public final fun iterator(): kotlin.Iterator<T>
