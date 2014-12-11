@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.framework;
 
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -23,19 +25,31 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.LibraryUtils;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Attributes;
 
 public class JsLibraryStdDetectionUtil {
+
     public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
+        return getJsLibraryStdVersion(classesRoots, true);
+    }
+
+    public static boolean hasJsStdlibJar(@NotNull Library library) {
+        List<VirtualFile> classes = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
+        return getJsLibraryStdVersion(classes, false) != null;
+    }
+
+    private static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots, boolean fixedJarName) {
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
             // Prevent clashing with java runtime, in case when library collects all roots.
             return null;
         }
 
-        VirtualFile jar = getJsStdLibJar(classesRoots);
+        VirtualFile jar = fixedJarName ? LibraryUtils.getJarFile(classesRoots, PathUtil.JS_LIB_JAR_NAME) : getJsStdLibJar(classesRoots);
         if (jar == null) return null;
 
         assert JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) : "StdLib should also be detected as headers library";
@@ -44,7 +58,7 @@ public class JsLibraryStdDetectionUtil {
     }
 
     @Nullable
-    public static VirtualFile getJsStdLibJar(@NotNull List<VirtualFile> classesRoots) {
+    private static VirtualFile getJsStdLibJar(@NotNull List<VirtualFile> classesRoots) {
         for (VirtualFile root : classesRoots) {
             if (root.getFileSystem().getProtocol() != StandardFileSystems.JAR_PROTOCOL) continue;
 

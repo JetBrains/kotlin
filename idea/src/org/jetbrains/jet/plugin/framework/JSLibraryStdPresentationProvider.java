@@ -70,7 +70,7 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
 
     @Nullable
     public static VirtualFile getJsStdLibJar(@NotNull Library library) {
-        return JsLibraryStdDetectionUtil.getJsStdLibJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.JS_LIB_JAR_NAME);
     }
 
     @Nullable
