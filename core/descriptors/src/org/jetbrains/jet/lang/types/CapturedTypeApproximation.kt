@@ -76,6 +76,8 @@ public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?):
     if (typeProjection == null) return null
 
     val type = typeProjection.getType()
+    //todo temporary hack to compile 'kotlin'
+    if (type is LazyType) return typeProjection
     if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {
         return typeProjection
     }
