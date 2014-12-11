@@ -379,7 +379,12 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constrainingTypeProjection: TypeProjection,
             constraintPosition: ConstraintPosition
     ) {
-        val typeBounds = getTypeBounds(parameterType)
+        val typeVariable = getMyTypeVariable(parameterType)!!
+        if (!KotlinBuiltIns.isNullableAny(typeVariable.getUpperBoundsAsType())
+            && constrainingTypeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
+            cannotCaptureTypesError = true
+        }
+        val typeBounds = getTypeBounds(typeVariable)
         val typeProjection = if (parameterType.isMarkedNullable()) {
             TypeProjectionImpl(constrainingTypeProjection.getProjectionKind(), TypeUtils.makeNotNullable(constrainingTypeProjection.getType()))
         }

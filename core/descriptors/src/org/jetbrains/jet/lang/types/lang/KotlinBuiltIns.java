@@ -878,6 +878,10 @@ public class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FQ_NAMES.any);
     }
 
+    public static boolean isNullableAny(@NotNull JetType type) {
+        return isAnyOrNullableAny(type) && type.isMarkedNullable();
+    }
+
     public static boolean isUnit(@NotNull JetType type) {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }

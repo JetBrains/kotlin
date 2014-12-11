@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
@@ -412,10 +413,20 @@ public class Renderers {
             return result;
         }
 
+        String explanation;
+        JetType upperBound = typeParameterWithCapturedConstraint.getUpperBoundsAsType();
+        if (!KotlinBuiltIns.isNullableAny(upperBound)
+            && capturedTypeConstructor.getTypeProjection().getProjectionKind() == Variance.IN_VARIANCE) {
+            explanation = "Type parameter has an upper bound '" + result.getTypeRenderer().render(upperBound) + "'" +
+                           " that cannot be satisfied capturing 'in' projection";
+        }
+        else {
+            explanation = "Only top level type projections can be captured";
+        }
         result.text(newText().normal("'" + typeParameterWithCapturedConstraint.getName() + "'" +
                                      " cannot capture " +
                                      "'" + capturedTypeConstructor.getTypeProjection() + "'. " +
-                                     "Only top level type projections can be captured"));
+                                     explanation));
         return result;
     }
 
