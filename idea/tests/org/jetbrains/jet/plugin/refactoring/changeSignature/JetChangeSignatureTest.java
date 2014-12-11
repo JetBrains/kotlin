@@ -318,8 +318,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testFunctionJavaUsagesAndOverridesAddParam() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"abc\"", null, null));
-        changeInfo.addParameter(new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null,
-                                                     null));
+        changeInfo.addParameter(new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null, null));
         doTest(changeInfo);
     }
 
@@ -560,6 +559,26 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testObjectMember() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.removeParameter(0);
+        doTest(changeInfo);
+    }
+
+    public void testParameterListAddParam() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.addParameter(new JetParameterInfo(-1, "l", KotlinBuiltIns.getInstance().getLongType(), null, "", null, null));
+        doTest(changeInfo);
+    }
+
+    public void testParameterListRemoveParam() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(changeInfo.getNewParametersCount() - 1);
+        doTest(changeInfo);
+    }
+
+    public void testParameterListRemoveAllParams() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
+            changeInfo.removeParameter(i);
+        }
         doTest(changeInfo);
     }
 
