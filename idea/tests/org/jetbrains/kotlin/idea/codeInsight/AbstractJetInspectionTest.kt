@@ -53,11 +53,15 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
             setTestDataPath("${JetTestUtils.getHomeDirectory()}/$srcDir")
 
             val psiFiles = srcDir
-                    .listFiles { it.getName().endsWith(".kt") }!!
+                    .listFiles { it.getName().endsWith(".kt") || it.getName().endsWith(".txt") }!!
                     .map {
                         file ->
                         val text = FileUtil.loadFile(file, true)
-                        val fileText = if (text.startsWith("package")) text else "package ${file.getName().trimTrailing(".kt")};$text"
+                        val fileText =
+                                if (text.startsWith("package") || !file.getName().endsWith(".kt"))
+                                    text
+                                else
+                                    "package ${file.getName().trimTrailing(".kt")};$text"
                         configureByText(file.getName(), fileText)!!
                     }
 
