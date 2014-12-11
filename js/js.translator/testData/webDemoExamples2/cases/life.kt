@@ -16,7 +16,10 @@ class Field(
         // if init(i, j) is true, the cell (i, j) is alive
         init: (Int, Int) -> Boolean
 ) {
-    private val live: Array<Array<Boolean>> = Array(height) { i -> Array(width) { j -> init(i, j) } }
+    private val live: Array<Array<Boolean>>
+    {
+        live = Array(height) { i -> Array(width) { j -> init(i, j) } }
+    }
 
     private fun liveCount(i: Int, j: Int)
             = if (i in 0..height - 1 &&
