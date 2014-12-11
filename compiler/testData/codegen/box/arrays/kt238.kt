@@ -5,7 +5,7 @@ fun t1 () {
 }
 
 fun t2 () {
-    val a2 = Array<Int>(1,{0})
+    val a2 = arrayOfNulls<Int>(1) as Array<Int>
     a2[0] = 0 //ok
     var i = a2[0] //ok
 }

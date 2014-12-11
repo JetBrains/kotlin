@@ -7,4 +7,8 @@ fun f(x: Any?): String {
     return "FAIL"
 }
 
-fun box(): String = f(Array<String>(1, {"OK"}))
+fun box(): String {
+    val a = arrayOfNulls<String>(1) as Array<String>
+    a[0] = "OK"
+    return f(a)
+}

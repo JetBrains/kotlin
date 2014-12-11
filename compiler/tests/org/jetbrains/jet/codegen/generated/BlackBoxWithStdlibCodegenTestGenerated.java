@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithStdlib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.Classes.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.MultiDeclForArray.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
@@ -108,6 +108,24 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("arrayConstructorsSimple.kt")
+        public void testArrayConstructorsSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/arrayConstructorsSimple.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("arrayGetAssignMultiIndex.kt")
+        public void testArrayGetAssignMultiIndex() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/arrayGetAssignMultiIndex.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("arrayGetMultiIndex.kt")
+        public void testArrayGetMultiIndex() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/arrayGetMultiIndex.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/cloneArray.kt");
@@ -132,15 +150,57 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("iterator.kt")
+        public void testIterator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/iterator.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt1291.kt")
+        public void testKt1291() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt1291.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt3771.kt")
         public void testKt3771() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt3771.kt");
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt4118.kt")
+        public void testKt4118() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt4118.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt4357.kt")
         public void testKt4357() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt4357.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt945.kt")
+        public void testKt945() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt945.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multiArrayConstructors.kt")
+        public void testMultiArrayConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/multiArrayConstructors.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("nonNullArray.kt")
+        public void testNonNullArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/nonNullArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("stdlib.kt")
+        public void testStdlib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/stdlib.kt");
             doTestWithStdlib(fileName);
         }
     }
@@ -749,6 +809,27 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("asWithGeneric.kt")
         public void testAsWithGeneric() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/asWithGeneric.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Classes extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInClasses() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("kt471.kt")
+        public void testKt471() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/kt471.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt633.kt")
+        public void testKt633() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/kt633.kt");
             doTestWithStdlib(fileName);
         }
     }
@@ -1621,6 +1702,112 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/localFunInLambda/simple.kt");
             doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({MultiDeclForArray.Int.class, MultiDeclForArray.Long.class})
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultiDeclForArray extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInMultiDeclForArray() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/multiDeclForArray"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("MultiDeclFor.kt")
+        public void testMultiDeclFor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclFor.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("MultiDeclForComponentExtensions.kt")
+        public void testMultiDeclForComponentExtensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclForComponentExtensions.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+        public void testMultiDeclForComponentMemberExtensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclForComponentMemberExtensions.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+        public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("MultiDeclForValCaptured.kt")
+        public void testMultiDeclForValCaptured() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclForValCaptured.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Int extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInInt() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int/MultiDeclForComponentExtensions.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int/MultiDeclForComponentMemberExtensions.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Long extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLong() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long/MultiDeclForComponentExtensions.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long/MultiDeclForComponentMemberExtensions.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                doTestWithStdlib(fileName);
+            }
         }
     }
 

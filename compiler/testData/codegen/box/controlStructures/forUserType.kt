@@ -44,7 +44,7 @@ fun box() : String {
     }
     if(sum != 15) return "c4 failed"
 
-    val a : Array<Int> = Array<Int> (5, {0})
+    val a : Array<Int> = arrayOfNulls<Int>(5) as Array<Int>
     for(el in 0..4) {
        a[i] = i++
     }

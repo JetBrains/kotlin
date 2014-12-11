@@ -470,4 +470,13 @@ public class DescriptorUtils {
 
         return false;
     }
+
+    public static boolean containsReifiedTypeParameters(@NotNull CallableDescriptor descriptor) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            if (typeParameterDescriptor.isReified()) return true;
+        }
+
+        return false;
+    }
+
 }

@@ -16,7 +16,12 @@ class Field(
         // if init(i, j) is true, the cell (i, j) is alive
         init: (Int, Int) -> Boolean
 ) {
-    private val live: Array<Array<Boolean>> = Array(height) { i -> Array(width) { j -> init(i, j) } }
+    private val live: Array<Array<Boolean>>
+    // workaround for problem described in KT-6437
+    // when it will be fixed it will be possible to move property initialization to it's declaration
+    {
+        live = Array(height) { i -> Array(width) { j -> init(i, j) } }
+    }
 
     private fun liveCount(i: Int, j: Int)
             = if (i in 0..height - 1 &&

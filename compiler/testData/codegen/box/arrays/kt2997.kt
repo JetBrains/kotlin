@@ -67,10 +67,10 @@ fun box(): String {
     if (foo(boolA) != 1) return "fail boolean[]"
     val cA = CharArray(1)
     if (foo(cA) != 1) return "fail char[]"
-    val oA = Array<Any>(1) { 1 }
+    val oA = arrayOfNulls<Int>(1)
     if (foo(oA) != 1) return "fail Any[]"
 
-    val sArray = Array<String>(0) { "" }
+    val sArray = arrayOfNulls<String>(0)
     if (foo(sArray) != 0) return "fail String[]"
 
     return "OK"
