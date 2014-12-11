@@ -3,11 +3,15 @@ fun test(d: dynamic) {
 
     d.foo { <!UNRESOLVED_REFERENCE!>it<!> }
 
-    d.foo { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }
+    d.foo { x -> }
 
     d.foo { (x: Int) -> "" }
 
-    d.foo { <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> "" }
+    d.foo { x, y -> "" }
 
     d.foo { (x: String, y: Int) -> "" }
+
+    d.foo { (x: String, y: Int): Int -> <!TYPE_MISMATCH!>""<!> }
+
+    d.foo { String.(x: String, y: Int): Int -> length() }
 }

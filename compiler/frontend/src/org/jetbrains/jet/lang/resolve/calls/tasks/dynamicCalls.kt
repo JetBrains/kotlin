@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.JetType
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver
@@ -50,6 +49,10 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.types.TypeUtils
 
 object DynamicCallableDescriptors {
 
@@ -165,13 +168,28 @@ object DynamicCallableDescriptors {
     private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> =
             call.getValueArguments().withIndices().map { p ->
                 val (index, arg) = p
+
+                val type =
+                        when (arg) {
+                            is JetFunctionLiteralArgument -> {
+                                val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
+
+                                val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
+                                val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+
+                                KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
+                            }
+
+                            else -> DynamicType
+                        }
+
                 ValueParameterDescriptorImpl(
                         owner,
                         null,
                         index,
                         Annotations.EMPTY,
                         arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
-                        DynamicType,
+                        type,
                         false,
                         null,
                         SourceElement.NO_SOURCE
