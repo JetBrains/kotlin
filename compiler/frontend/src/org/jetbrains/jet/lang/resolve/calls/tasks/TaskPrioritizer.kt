@@ -191,17 +191,11 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         c.result.addCandidates {
             val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.getContainingDeclaration())
 
-            val dynamicDescriptors = ArrayList<D>()
-            for (collector in c.callableDescriptorCollectors) {
-                dynamicDescriptors.addAll(collector.getNonExtensionsByName(dynamicScope, c.name, c.context.trace))
+            val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
+                it.getNonExtensionsByName(dynamicScope, c.name, c.context.trace)
             }
 
-            dynamicDescriptors.map {
-                val dynamicCandidate = ResolutionCandidate.create<D>(c.context.call, it)
-                dynamicCandidate.setDispatchReceiver(explicitReceiver)
-                dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER)
-                dynamicCandidate
-            }
+            convertWithReceivers(dynamicDescriptors, explicitReceiver, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
         }
     }
 

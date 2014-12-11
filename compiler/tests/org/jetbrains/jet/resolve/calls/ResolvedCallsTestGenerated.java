@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolvedCalls")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ResolvedCallsTestGenerated.Arguments.class, ResolvedCallsTestGenerated.DifferentCallElements.class, ResolvedCallsTestGenerated.FunctionTypes.class, ResolvedCallsTestGenerated.Invoke.class, ResolvedCallsTestGenerated.ObjectsAndClassObjects.class, ResolvedCallsTestGenerated.RealExamples.class, ResolvedCallsTestGenerated.Resolve.class, ResolvedCallsTestGenerated.ThisOrSuper.class})
+@InnerTestClasses({ResolvedCallsTestGenerated.Arguments.class, ResolvedCallsTestGenerated.DifferentCallElements.class, ResolvedCallsTestGenerated.Dynamic.class, ResolvedCallsTestGenerated.FunctionTypes.class, ResolvedCallsTestGenerated.Invoke.class, ResolvedCallsTestGenerated.ObjectsAndClassObjects.class, ResolvedCallsTestGenerated.RealExamples.class, ResolvedCallsTestGenerated.Resolve.class, ResolvedCallsTestGenerated.ThisOrSuper.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     public void testAllFilesPresentInResolvedCalls() throws Exception {
@@ -286,6 +286,51 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestMetadata("simpleArrayAccess.kt")
         public void testSimpleArrayAccess() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/differentCallElements/simpleArrayAccess.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/resolvedCalls/dynamic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Dynamic extends AbstractResolvedCallsTest {
+        public void testAllFilesPresentInDynamic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/dynamic"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
+        public void testExplicitReceiverIsDispatchReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsDispatchReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitReceiverIsExtensionReceiver.kt")
+        public void testExplicitReceiverIsExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsExtensionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasBothDispatchAndExtensionReceivers.kt")
+        public void testHasBothDispatchAndExtensionReceivers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceivers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt")
+        public void testHasBothDispatchAndExtensionReceiversWithoutExplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitReceiverIsDispatchReceiver.kt")
+        public void testImplicitReceiverIsDispatchReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsDispatchReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitReceiverIsExtensionReceiver.kt")
+        public void testImplicitReceiverIsExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsExtensionReceiver.kt");
             doTest(fileName);
         }
     }
