@@ -83,7 +83,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                     return;
                 }
 
-                final Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
+                Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
 
                 String message;
                 if (versionedOutdatedLibraries.size() == 1) {
@@ -124,6 +124,8 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                     public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                             if ("update".equals(event.getDescription())) {
+                                Collection<VersionedLibrary> versionedOutdatedLibraries = findOutdatedKotlinLibraries(myProject, pluginVersion);
+                                Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
                                 KotlinRuntimeLibraryUtil.updateLibraries(myProject, outdatedLibraries);
                             }
                             else if ("ignore".equals(event.getDescription())) {
