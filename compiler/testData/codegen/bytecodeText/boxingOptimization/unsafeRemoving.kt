@@ -10,7 +10,7 @@ fun foo() {
     val a = A()
     a.x = 3
 
-    val b = Array<Int?>(4, { null })
+    val b = arrayOfNulls<Int>(4)
     b[100] = 5
 
     val x = 6 : Int?
@@ -24,5 +24,5 @@ fun foo() {
     val c2: Any = if (1 != 1) 0 else "abc"
 }
 
-// 10 java/lang/Integer.valueOf
-// 1 intValue
+// 9 java/lang/Integer.valueOf
+// 0 intValue

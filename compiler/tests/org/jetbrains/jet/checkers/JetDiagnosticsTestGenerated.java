@@ -4906,12 +4906,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
-            @TestMetadata("arrayConstructor.kt")
-            public void testArrayConstructor() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/arrayConstructor.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("cannotCompleteResolveAmbiguity.kt")
             public void testCannotCompleteResolveAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveAmbiguity.kt");
@@ -5253,12 +5247,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt1410.kt")
                 public void testKt1410() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt1410.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("kt1558.kt")
-                public void testKt1558() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt1558.kt");
                     doTest(fileName);
                 }
 

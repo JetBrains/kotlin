@@ -1,5 +1,6 @@
 package
 
+kotlin.inline() public fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
 internal fun foo(/*0*/ a: A, /*1*/ c: kotlin.Int): kotlin.Unit
 
 internal final class A {

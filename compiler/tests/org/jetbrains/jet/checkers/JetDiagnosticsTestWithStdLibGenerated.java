@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class, JetDiagnosticsTestWithStdLibGenerated.Resolve.class})
+@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.Inference.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class, JetDiagnosticsTestWithStdLibGenerated.Resolve.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
@@ -602,6 +602,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("pseudocodeMemoryOverhead.kt")
         public void testPseudocodeMemoryOverhead() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals/pseudocodeMemoryOverhead.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inference extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInInference() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arrayConstructor.kt")
+        public void testArrayConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/arrayConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt1558.kt")
+        public void testKt1558() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt1558.kt");
             doTest(fileName);
         }
     }

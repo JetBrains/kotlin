@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
     val l: Inv<List<String>> = inv(list())
     val l1: Inv<MutableList<String>?> = inv(list())
 
-    val a = array(Array<Int>(1){0})
+    val a = array(arrayOfNulls<Int>(1) as Array<Int>)
     a[0] = 1
     val a1: Inv<Array<Int>> = inv(a)
     val a2: Inv<Array<out Int>?> = inv(a)

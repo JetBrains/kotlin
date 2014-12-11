@@ -27,30 +27,6 @@ public class ArrayGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testCreateMultiInt() throws Exception {
-        loadText("fun foo() = Array<Array<Int>> (5, { Array<Int>(it, {239}) })");
-        Method foo = generateFunction();
-        Integer[][] invoke = (Integer[][]) foo.invoke(null);
-        assertEquals(invoke[2].length, 2);
-        assertEquals(invoke[4].length, 4);
-        assertEquals(invoke[4][2].intValue(), 239);
-    }
-
-    public void testCreateMultiIntNullable() throws Exception {
-        loadText("fun foo() = Array<Array<Int?>> (5, { arrayOfNulls<Int>(it) })");
-        Method foo = generateFunction();
-        Integer[][] invoke = (Integer[][]) foo.invoke(null);
-        assertEquals(invoke[2].length, 2);
-        assertEquals(invoke[4].length, 4);
-    }
-
-    public void testCreateMultiString() throws Exception {
-        loadText("fun foo() = Array<Array<String>> (5, { Array<String>(0,{\"\"}) })");
-        Method foo = generateFunction();
-        Object invoke = foo.invoke(null);
-        assertTrue(invoke instanceof Object[]);
-    }
-
     public void testIntGenerics() throws Exception {
         loadText("class L<T>(var a : T) {} fun foo() = L<Int>(5).a");
         Method foo = generateFunction();
