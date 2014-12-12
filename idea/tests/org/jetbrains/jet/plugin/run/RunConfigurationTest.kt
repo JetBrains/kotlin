@@ -40,6 +40,22 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import java.util.ArrayList
+import com.intellij.psi.PsiComment
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.psi.PsiManager
+import org.jetbrains.jet.testing.ConfigLibraryUtil
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+
+private val RUN_PREFIX = "// RUN: "
 
 class RunConfigurationTest: CodeInsightTestCase() {
     fun getTestProject() = myProject!!
@@ -51,12 +67,12 @@ class RunConfigurationTest: CodeInsightTestCase() {
         val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
 
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.src))
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.test))
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.srcOutputDir))
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.testOutputDir))
     }
 
     fun testDependencyModuleClasspath() {
-        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!).src
+        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!).srcOutputDir
 
         val moduleWithDependencyDir = runWriteAction { getTestProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency") }
 
@@ -64,7 +80,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, getTestProjectJdk())
 
         val moduleWithDependencySrcDir = configureModule(
-                moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).src
+                moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).srcOutputDir
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, getModule())
 
@@ -75,6 +91,39 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(dependencyModuleSrcDir))
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(moduleWithDependencySrcDir))
+    }
+
+    fun testClassesAndObjects() {
+        val baseDir = getTestProject().getBaseDir()!!
+        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
+        val srcDir = createModuleResult.srcDir
+
+        ConfigLibraryUtil.configureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
+
+        val expectedClasses = ArrayList<String>()
+        val actualClasses = ArrayList<String>()
+
+        val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt"))
+        testFile.accept(
+                object: JetTreeVisitorVoid() {
+                    override fun visitComment(comment: PsiComment) {
+                        val declaration = comment.getStrictParentOfType<JetNamedDeclaration>()!!
+                        val text = comment.getText() ?: return
+                        if (!text.startsWith(RUN_PREFIX)) return
+
+                        expectedClasses.add(text.substring(RUN_PREFIX.length()).trim())
+
+                        val dataContext = MapDataContext()
+                        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
+                        val context = ConfigurationContext.getFromContext(dataContext)
+                        val actualClass = (context?.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
+                        if (actualClass != null) {
+                            actualClasses.add(actualClass)
+                        }
+                    }
+                }
+        )
+        Assert.assertEquals(expectedClasses, actualClasses);
     }
 
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
@@ -88,7 +137,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        PsiTestUtil.createTestProjectStructure(getProject(), configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
+        val srcDir = PsiTestUtil.createTestProjectStructure(getProject(), configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
         if (File(testPath).exists()) {
@@ -109,7 +158,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
         PsiDocumentManager.getInstance(getTestProject()).commitAllDocuments()
 
-        return CreateModuleResult(configModule, srcOutDir, testOutDir)
+        return CreateModuleResult(configModule, srcDir, srcOutDir, testOutDir)
     }
 
     private fun moduleDirPath(moduleName: String) = "${getTestDataPath()}${getTestName(false)}/$moduleName"
@@ -127,7 +176,12 @@ class RunConfigurationTest: CodeInsightTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
     override fun getTestProjectJdk() = PluginTestCaseBase.jdkFromIdeaHome()
 
-    private class CreateModuleResult(val module: Module, val src: VirtualFile, val test: VirtualFile)
+    private class CreateModuleResult(
+            val module: Module,
+            val srcDir: VirtualFile,
+            val srcOutputDir: VirtualFile,
+            val testOutputDir: VirtualFile
+    )
 
     private object MockExecutor : DefaultRunExecutor() {
         override fun getId() = DefaultRunExecutor.EXECUTOR_ID

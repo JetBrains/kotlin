@@ -19,13 +19,13 @@ package org.jetbrains.jet.plugin;
 import com.intellij.util.NotNullFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -61,25 +61,29 @@ public class MainFunctionDetector {
     }
 
     public boolean isMain(@NotNull JetNamedFunction function) {
-        if ("main".equals(function.getName())) {
-            FunctionDescriptor functionDescriptor = getFunctionDescriptor.fun(function);
-            List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-            if (parameters.size() == 1) {
-                ValueParameterDescriptor parameter = parameters.get(0);
-                JetType parameterType = parameter.getType();
-                KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
-                if (KotlinBuiltIns.isArray(parameterType)) {
-                    List<TypeProjection> typeArguments = parameterType.getArguments();
-                    if (typeArguments.size() == 1) {
-                        JetType typeArgument = typeArguments.get(0).getType();
-                        if (JetTypeChecker.DEFAULT.equalTypes(typeArgument, kotlinBuiltIns.getStringType())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        if (!"main".equals(function.getName())) return false;
+
+        FunctionDescriptor functionDescriptor = getFunctionDescriptor.fun(function);
+        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+        if (parameters.size() != 1) return false;
+
+        ValueParameterDescriptor parameter = parameters.get(0);
+        JetType parameterType = parameter.getType();
+        KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
+        if (!KotlinBuiltIns.isArray(parameterType)) return false;
+
+        List<TypeProjection> typeArguments = parameterType.getArguments();
+        if (typeArguments.size() != 1) return false;
+
+        JetType typeArgument = typeArguments.get(0).getType();
+        if (!JetTypeChecker.DEFAULT.equalTypes(typeArgument, kotlinBuiltIns.getStringType())) return false;
+
+        if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return true;
+
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        return containingDeclaration instanceof ClassDescriptor
+               && ((ClassDescriptor) containingDeclaration).getKind().isSingleton()
+               && AnnotationsPackage.hasPlatformStaticAnnotation(functionDescriptor);
     }
 
     @Nullable
