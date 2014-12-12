@@ -1,5 +1,7 @@
+fun <T> array(vararg t : T) : Array<T> = t as Array<T>
+
 fun a() {
-    <selection>Array(2) {"text"}</selection>
+    <selection>array("a", "b")</selection>
 }
 /*
 array

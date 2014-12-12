@@ -1,7 +1,9 @@
 class A() {}
 
+fun <T> array(vararg t : T) : Array<T> = t as Array<T>
+
 fun a() {
-    <selection>Array(2) {A()}</selection>
+    <selection>array(A(), A())</selection>
 }
 /*
 array
