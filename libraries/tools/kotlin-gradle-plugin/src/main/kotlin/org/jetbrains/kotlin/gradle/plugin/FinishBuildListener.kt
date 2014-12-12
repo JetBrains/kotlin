@@ -20,22 +20,9 @@ import org.gradle.BuildAdapter
 import org.gradle.api.logging.Logging
 import org.gradle.BuildResult
 import java.lang.ref.Reference
-import java.lang.reflect.Array
-import kotlin.platform.platformStatic
 
 class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : BuildAdapter() {
     val log = Logging.getLogger(this.javaClass)
-
-    class object {
-        platformStatic
-        fun isRequestedClass(fqName: String): Boolean {
-            return when (fqName) {
-                "com.intellij.openapi.util.io.ZipFileCache",
-                "com.intellij.openapi.util.LowMemoryWatcher" -> true
-                else -> false
-            }
-        }
-    }
 
     override fun buildFinished(result: BuildResult?) {
         log.debug("Build finished listener")
@@ -66,7 +53,7 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
             val referentField = javaClass<Reference<Any>>().getDeclaredField("referent")
             referentField.setAccessible(true)
 
-            val table = tableField[threadLocalsField[thread]] as kotlin.Array<*>
+            val table = tableField[threadLocalsField[thread]] as Array<*>
 
             for (entry in table) {
                 if (entry != null) {

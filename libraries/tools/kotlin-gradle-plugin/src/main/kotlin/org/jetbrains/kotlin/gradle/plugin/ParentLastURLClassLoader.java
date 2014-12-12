@@ -1,13 +1,10 @@
 package org.jetbrains.kotlin.gradle.plugin;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A parent-last classloader that will try the child classloader first and then the parent.
@@ -57,8 +54,6 @@ public class ParentLastURLClassLoader extends ClassLoader {
      * We need this because findClass is protected in URLClassLoader
      */
     public static class ChildURLClassLoader extends URLClassLoader {
-        private final Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
-
         private FindClassClassLoader realParent;
 
         public ChildURLClassLoader(URL[] urls, FindClassClassLoader realParent) {
@@ -71,18 +66,12 @@ public class ParentLastURLClassLoader extends ClassLoader {
         @NotNull
         @Override
         public Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
+            Class<?> loaded = findLoadedClass(name);
+            if (loaded != null) {
+                return loaded;
+            }
+
             try {
-                // Replace with FinishBuildListener.isRequestedClass(name) after rewriting this class on Kotlin
-                if (name.equals("com.intellij.openapi.util.io.ZipFileCache") ||
-                        name.equals("com.intellij.openapi.util.LowMemoryWatcher")) {
-                    if (cache.containsKey(name)) return cache.get(name);
-
-                    Class<?> aClass = super.findClass(name);
-                    cache.put(name, aClass);
-
-                    return aClass;
-                }
-
                 return super.findClass(name);
             } catch (ClassNotFoundException e) {
                 // if that fails, we ask our real parent classloader to load the class (we give up)
