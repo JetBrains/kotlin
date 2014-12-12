@@ -69,7 +69,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
     private val inlineFunctionsMap by Delegates.lazy { InlineFunctionsMap() }
     private val packagePartMap by Delegates.lazy { PackagePartMap() }
 
-    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
+    private val maps by Delegates.lazy { listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap) }
 
     private fun getFormatVersionFile(): File {
         return File(baseDir, FORMAT_VERSION_TXT)
