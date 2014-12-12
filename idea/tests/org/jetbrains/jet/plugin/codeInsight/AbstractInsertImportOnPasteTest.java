@@ -101,7 +101,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 List<TextRange> textRanges = diagnostic.getTextRanges();
-                String diagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
+                String diagnosticText = DefaultErrorMessages.render(diagnostic);
                 if (diagnostic.getPsiFile() == file) {
                     fail(diagnostic.getFactory().getName() + ": " + diagnosticText + " "
                          + DiagnosticUtils.atLocation(file, textRanges.get(0)));

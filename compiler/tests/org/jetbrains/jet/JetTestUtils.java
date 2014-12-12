@@ -233,7 +233,7 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(DefaultErrorMessages.RENDERER.render(diagnostic));
+                throw new IllegalStateException(DefaultErrorMessages.render(diagnostic));
             }
         }
     };

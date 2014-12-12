@@ -83,7 +83,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             }
         }
         else {
-            LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.RENDERER.render(diagnostic));
+            LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.render(diagnostic));
             return Collections.emptyList();
         }
 

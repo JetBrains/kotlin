@@ -148,7 +148,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                     new Function<Diagnostic, String>() {
                         @Override
                         public String fun(Diagnostic diagnostic) {
-                            return DefaultErrorMessages.RENDERER.render(diagnostic);
+                            return DefaultErrorMessages.render(diagnostic);
                         }
                     },
                     "\n"));

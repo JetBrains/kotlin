@@ -183,7 +183,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         }
 
         private fun getMessage(diagnostic: Diagnostic): String {
-            var message = IdeErrorMessages.RENDERER.render(diagnostic)
+            var message = IdeErrorMessages.render(diagnostic)
             if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode()) {
                 val factoryName = diagnostic.getFactory().getName()
                 if (message.startsWith("<html>")) {
@@ -200,7 +200,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         }
 
         private fun getDefaultMessage(diagnostic: Diagnostic): String {
-            val message = DefaultErrorMessages.RENDERER.render(diagnostic)
+            val message = DefaultErrorMessages.render(diagnostic)
             if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode()) {
                 return "[${diagnostic.getFactory().getName()}] $message"
             }

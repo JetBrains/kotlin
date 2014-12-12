@@ -22,9 +22,10 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import java.util.List;
 
 public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
+    @NotNull
     private final List<DiagnosticFactoryToRendererMap> maps;
 
-    public DispatchingDiagnosticRenderer(List<DiagnosticFactoryToRendererMap> maps) {
+    public DispatchingDiagnosticRenderer(@NotNull List<DiagnosticFactoryToRendererMap> maps) {
         this.maps = maps;
     }
 

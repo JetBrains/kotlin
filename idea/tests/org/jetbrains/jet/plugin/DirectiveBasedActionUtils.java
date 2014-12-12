@@ -58,7 +58,7 @@ public class DirectiveBasedActionUtils {
             @Override
             public String apply(@Nullable Diagnostic diagnostic) {
                 assert (diagnostic != null);
-                return IdeErrorMessages.RENDERER.render(diagnostic);
+                return IdeErrorMessages.render(diagnostic);
             }
         });
 

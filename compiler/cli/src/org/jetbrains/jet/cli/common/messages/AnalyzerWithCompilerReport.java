@@ -90,7 +90,7 @@ public final class AnalyzerWithCompilerReport {
             render = ((MyDiagnostic)diagnostic).message;
         }
         else {
-            render = DefaultErrorMessages.RENDERER.render(diagnostic);
+            render = DefaultErrorMessages.render(diagnostic);
         }
         PsiFile file = diagnostic.getPsiFile();
         messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,

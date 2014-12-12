@@ -288,7 +288,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                 val bindingContext = analysisResult.bindingContext
                 bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
-                    throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(it))
+                    throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.render(it))
                 }
 
                 analysisResult
