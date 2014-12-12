@@ -292,7 +292,7 @@ private object KotlinResolveDataProvider {
         else {
             if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-            val contextForElement = contextElement.analyzeFully()
+            val contextForElement = contextElement.getResolutionFacade().analyzeWithPartialBodyResolve(contextElement)
 
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
             dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)

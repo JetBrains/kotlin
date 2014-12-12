@@ -75,6 +75,12 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest(fileName);
         }
 
+        @TestMetadata("localVariables.kt")
+        public void testLocalVariables() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/localVariables.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateFunArgumentsResolve.kt")
         public void testPrivateFunArgumentsResolve() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
