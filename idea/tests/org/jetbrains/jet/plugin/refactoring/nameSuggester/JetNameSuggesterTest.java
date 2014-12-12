@@ -47,6 +47,10 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testNamePrimitiveArray() {
+        doTest();
+    }
+
     public void testNameCallExpression() {
         doTest();
     }
