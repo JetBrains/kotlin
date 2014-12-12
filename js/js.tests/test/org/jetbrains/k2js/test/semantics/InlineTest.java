@@ -159,9 +159,11 @@ public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
     public void testMutualRecursion() throws Exception {
         try {
             checkFooBoxIsOkWithDirectives();
-        } catch (Exception e) {
-            assert e.getCause() instanceof InlineRecursionException;
+        } catch (InlineRecursionException e) {
+            return;
         }
+
+        throw new AssertionError("No exception was thrown for mutual recursion of inline functions");
     }
 
     public void testInlineOrder() throws Exception {
