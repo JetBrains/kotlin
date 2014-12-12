@@ -24,7 +24,6 @@ import com.intellij.util.io.IOUtil
 import java.io.DataInput
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import java.util.Arrays
 import org.jetbrains.org.objectweb.asm.*
@@ -40,13 +39,47 @@ import java.security.MessageDigest
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.builders.storage.StorageProvider
 import java.io.IOException
-import java.util.Scanner
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
-import kotlin.properties.Delegates
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
+
+public class CacheFormatVersion(val baseDir: File) {
+    class object {
+        // Change this when incremental cache format changes
+        private val INCREMENTAL_CACHE_OWN_VERSION = 1
+        val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
+        val FORMAT_VERSION_TXT: String = "format-version.txt"
+    }
+
+    private fun getFile(): File {
+        return File(baseDir, "format-version.txt")
+    }
+
+    public fun isIncompatible(): Boolean {
+        val version = load()
+        return version != -1 && version != CACHE_FORMAT_VERSION
+    }
+
+    private fun load(): Int {
+        val versionFile = getFile()
+        if (!versionFile.exists()) return -1
+
+        return versionFile.readText().toInt()
+    }
+
+    fun saveIfNeeded() {
+        val versionFile = getFile()
+        if (!versionFile.exists()) {
+            versionFile.writeText(CACHE_FORMAT_VERSION.toString())
+        }
+    }
+
+    fun clean() {
+        getFile().delete()
+    }
+}
 
 public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalCache {
     class object {
@@ -56,48 +89,21 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         val CONSTANTS_MAP = "constants.tab"
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
-
-        // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 1
-        public val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
-
-        val FORMAT_VERSION_TXT = "format-version.txt"
     }
 
-    private val protoMap by Delegates.lazy { ProtoMap() }
-    private val constantsMap by Delegates.lazy { ConstantsMap() }
-    private val inlineFunctionsMap by Delegates.lazy { InlineFunctionsMap() }
-    private val packagePartMap by Delegates.lazy { PackagePartMap() }
+    private val protoMap =  ProtoMap()
+    private val constantsMap =  ConstantsMap()
+    private val inlineFunctionsMap =  InlineFunctionsMap()
+    private val packagePartMap =  PackagePartMap()
 
-    private val maps by Delegates.lazy { listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap) }
+    private val maps =  listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
-    private fun getFormatVersionFile(): File {
-        return File(baseDir, FORMAT_VERSION_TXT)
-    }
-
-    public fun isCacheVersionIncompatible(): Boolean {
-        val version = loadCacheFormatVersion()
-        return version != -1 && version != CACHE_FORMAT_VERSION
-    }
-
-    private fun loadCacheFormatVersion(): Int {
-        val versionFile = getFormatVersionFile()
-        if (!versionFile.exists()) return -1
-
-        return versionFile.readText().toInt()
-    }
-
-    private fun saveCacheFormatVersionIfNeeded() {
-        val versionFile = getFormatVersionFile()
-        if (!versionFile.exists()) {
-            versionFile.writeText(CACHE_FORMAT_VERSION.toString())
-        }
-    }
+    private val cacheFormatVersion = CacheFormatVersion(baseDir)
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
         
-        saveCacheFormatVersionIfNeeded()
+        cacheFormatVersion.saveIfNeeded()
 
         val kotlinClass = LocalFileKotlinClass.create(classFile)
         if (kotlinClass == null) return DO_NOTHING
@@ -160,7 +166,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
 
     public override fun clean() {
         maps.forEach { it.clean() }
-        getFormatVersionFile().delete()
+        cacheFormatVersion.clean()
     }
 
     public override fun close() {
