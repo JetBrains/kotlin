@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure
-import org.jetbrains.jet.lang.types.checker.TypingConstraints
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.jet.lang.types.TypeConstructor
 import java.util.LinkedHashMap
 import java.util.HashSet
@@ -214,7 +214,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun addConstraint(constraintKind: ConstraintKind, subType: JetType?, superType: JetType?, constraintPosition: ConstraintPosition) {
-        val typeCheckingProcedure = TypeCheckingProcedure(object : TypingConstraints {
+        val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var isTopLevel = true
 
             override fun assertEqualTypes(a: JetType, b: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {

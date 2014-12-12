@@ -32,19 +32,19 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-        return findCorrespondingSupertype(subtype, supertype, new TypeCheckerTypingConstraints());
+        return findCorrespondingSupertype(subtype, supertype, new TypeCheckerProcedureCallbacksImpl());
     }
 
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypingConstraints typingConstraints) {
+    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
         TypeConstructor constructor = subtype.getConstructor();
-        if (typingConstraints.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
+        if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
             return subtype;
         }
         for (JetType immediateSupertype : constructor.getSupertypes()) {
-            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typingConstraints);
+            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typeCheckingProcedureCallbacks);
             if (correspondingSupertype != null) {
                 return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
             }
@@ -62,9 +62,9 @@ public class TypeCheckingProcedure {
         return isOutProjected ? KotlinBuiltIns.getInstance().getNothingType() : argument.getType();
     }
 
-    private final TypingConstraints constraints;
+    private final TypeCheckingProcedureCallbacks constraints;
 
-    public TypeCheckingProcedure(TypingConstraints constraints) {
+    public TypeCheckingProcedure(TypeCheckingProcedureCallbacks constraints) {
         this.constraints = constraints;
     }
 

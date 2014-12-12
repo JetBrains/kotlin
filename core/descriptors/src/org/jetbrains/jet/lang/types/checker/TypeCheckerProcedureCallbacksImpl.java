@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 
-class TypeCheckerTypingConstraints implements TypingConstraints {
+class TypeCheckerProcedureCallbacksImpl implements TypeCheckingProcedureCallbacks {
     @Override
     public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
         return typeCheckingProcedure.equalTypes(a, b);

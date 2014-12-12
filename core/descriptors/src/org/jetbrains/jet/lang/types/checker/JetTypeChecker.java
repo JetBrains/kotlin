@@ -26,9 +26,9 @@ public class JetTypeChecker {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }
 
-    public static final JetTypeChecker DEFAULT = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints()));
+    public static final JetTypeChecker DEFAULT = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()));
 
-    public static final JetTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints()) {
+    public static final JetTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
         @Override
         protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
             return false;
@@ -37,7 +37,7 @@ public class JetTypeChecker {
 
     @NotNull
     public static JetTypeChecker withAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
-        return new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {
+        return new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
             @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor constructor1, @NotNull TypeConstructor constructor2) {
                 return constructor1.equals(constructor2) || equalityAxioms.equals(constructor1, constructor2);
