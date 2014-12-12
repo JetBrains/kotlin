@@ -92,7 +92,7 @@ public class InlineCodegenUtil {
                 }
                 return null;
             }
-        }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+        }, ClassReader.SKIP_FRAMES);
 
         return methodNode[0];
     }
