@@ -53,6 +53,8 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.ValueArgument
 import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.psi.JetPsiUtil
 
 object DynamicCallableDescriptors {
 
@@ -185,8 +187,8 @@ object DynamicCallableDescriptors {
             ))
         }
 
-        fun getFunctionType(arg: JetFunctionLiteralArgument): JetType {
-            val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
+        fun getFunctionType(funLiteralExpr: JetFunctionLiteralExpression): JetType {
+            val funLiteral = funLiteralExpr.getFunctionLiteral()
 
             val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
             val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
@@ -199,9 +201,11 @@ object DynamicCallableDescriptors {
             val varargElementType: JetType?
             var hasSpreadOperator = false
 
+            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression(), false)
+
             when {
-                arg is JetFunctionLiteralArgument -> {
-                    outType = getFunctionType(arg)
+                argExpression is JetFunctionLiteralExpression -> {
+                    outType = getFunctionType(argExpression)
                     varargElementType = null
                 }
 
@@ -221,7 +225,7 @@ object DynamicCallableDescriptors {
 
             if (hasSpreadOperator) {
                 for (funLiteralArg in call.getFunctionLiteralArguments()) {
-                    addParameter(funLiteralArg, getFunctionType(funLiteralArg), null)
+                    addParameter(funLiteralArg, getFunctionType(funLiteralArg.getFunctionLiteral()), null)
                 }
 
                 break
