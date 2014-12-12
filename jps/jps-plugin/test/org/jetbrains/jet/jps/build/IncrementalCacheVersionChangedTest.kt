@@ -21,6 +21,7 @@ import java.io.File
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl
 import kotlin.test.assertTrue
+import org.jetbrains.jet.jps.incremental.CacheFormatVersion
 
 public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
     fun testCacheVersionChanged() {
@@ -36,7 +37,7 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
 
     override fun performAdditionalModifications() {
         val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)
-        val relativePath = "module/${File.separator}${IncrementalCacheImpl.DIRECTORY_NAME}/${IncrementalCacheImpl.FORMAT_VERSION_TXT}"
+        val relativePath = "module/${File.separator}${IncrementalCacheImpl.DIRECTORY_NAME}/${CacheFormatVersion.FORMAT_VERSION_TXT}"
         val cacheVersionFile = File(storageForTargetType, relativePath)
 
         assertTrue(cacheVersionFile.exists())
