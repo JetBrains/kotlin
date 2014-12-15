@@ -142,7 +142,8 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
         val file = fixture.configureByFile(mainFile.getName()) as JetFile
 
-        if (InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null) {
+        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
+        if (addKotlinRuntime) {
             ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
         }
 
@@ -155,6 +156,11 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         catch(e: Exception) {
             val message = if (e is ConflictsInTestsException) e.getMessages().sort().joinToString(" ") else e.getMessage()
             JetTestUtils.assertEqualsToFile(conflictFile, message?.replace("\n", " ") ?: e.javaClass.getName())
+        }
+        finally {
+            if (addKotlinRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+            }
         }
     }
 }

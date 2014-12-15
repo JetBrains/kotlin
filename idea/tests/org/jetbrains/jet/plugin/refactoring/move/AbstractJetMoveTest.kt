@@ -80,9 +80,6 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
 
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
 
-        if (config["withRuntime"]?.getAsBoolean() ?: false) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
-        }
 
         val action = MoveAction.valueOf(config.getString("type"))
 
@@ -90,6 +87,12 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         val mainFilePath = config.getNullableString("mainFile")!!
 
         val conflictFile = File(testDir + "/conflicts.txt")
+
+        val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
+        if (withRuntime) {
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+        }
+
         doTest({ rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
@@ -119,6 +122,10 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
                 FileDocumentManager.getInstance().saveAllDocuments()
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
+
+                if (withRuntime) {
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+                }
             }
         },
         getTestDirName(true))

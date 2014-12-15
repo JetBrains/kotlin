@@ -75,71 +75,79 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         File mainFile = new File(testDataPath + beforeFileName);
         final String originalFileText = FileUtil.loadFile(mainFile, true);
 
-        if (InTextDirectivesUtils.findStringWithPrefixes(originalFileText, "// WITH_RUNTIME") != null) {
+        boolean withRuntime = InTextDirectivesUtils.isDirectiveDefined(originalFileText, "// WITH_RUNTIME");
+        if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
         }
 
-        if (withExtraFile) {
-            File mainFileDir = mainFile.getParentFile();
-            assert mainFileDir != null;
+        try {
+            if (withExtraFile) {
+                File mainFileDir = mainFile.getParentFile();
+                assert mainFileDir != null;
 
-            final String mainFileName = mainFile.getName();
-            final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".data.Sample.");
-            File[] extraFiles = mainFileDir.listFiles(
-                    new FilenameFilter() {
-                        @Override
-                        public boolean accept(@NotNull File dir, @NotNull String name) {
-                            return name.startsWith(extraFileNamePrefix);
+                final String mainFileName = mainFile.getName();
+                final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".data.Sample.");
+                File[] extraFiles = mainFileDir.listFiles(
+                        new FilenameFilter() {
+                            @Override
+                            public boolean accept(@NotNull File dir, @NotNull String name) {
+                                return name.startsWith(extraFileNamePrefix);
+                            }
                         }
-                    }
-            );
-            assert extraFiles != null;
+                );
+                assert extraFiles != null;
 
-            List<String> testFiles = new ArrayList<String>();
-            testFiles.add(beforeFileName);
-            KotlinPackage.mapTo(
-                    extraFiles,
-                    testFiles,
-                    new Function1<File, String>() {
-                        @Override
-                        public String invoke(File file) {
-                            return beforeFileName.replace(mainFileName, file.getName());
+                List<String> testFiles = new ArrayList<String>();
+                testFiles.add(beforeFileName);
+                KotlinPackage.mapTo(
+                        extraFiles,
+                        testFiles,
+                        new Function1<File, String>() {
+                            @Override
+                            public String invoke(File file) {
+                                return beforeFileName.replace(mainFileName, file.getName());
+                            }
                         }
-                    }
-            );
+                );
 
-            configureByFiles(null, ArrayUtil.toStringArray(testFiles));
-        }
-        else {
-            configureByFiles(null, beforeFileName);
-        }
-
-        CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PsiFile psiFile = getFile();
-
-                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, originalFileText);
-                    String text = pair.getFirst();
-
-                    boolean actionShouldBeAvailable = pair.getSecond();
-
-                    if (psiFile instanceof JetFile) {
-                        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) psiFile);
-                    }
-
-                    doAction(text, actionShouldBeAvailable, beforeFileName);
-                }
-                catch (ComparisonFailure e) {
-                    throw e;
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                    fail(getTestName(true));
-                }
+                configureByFiles(null, ArrayUtil.toStringArray(testFiles));
             }
-        }, "", "");
+            else {
+                configureByFiles(null, beforeFileName);
+            }
+
+            CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        PsiFile psiFile = getFile();
+
+                        Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, originalFileText);
+                        String text = pair.getFirst();
+
+                        boolean actionShouldBeAvailable = pair.getSecond();
+
+                        if (psiFile instanceof JetFile) {
+                            DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) psiFile);
+                        }
+
+                        doAction(text, actionShouldBeAvailable, beforeFileName);
+                    }
+                    catch (ComparisonFailure e) {
+                        throw e;
+                    }
+                    catch (Throwable e) {
+                        e.printStackTrace();
+                        fail(getTestName(true));
+                    }
+                }
+            }, "", "");
+        }
+        finally {
+            if (withRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
+            }
+        }
     }
 
     @SuppressWarnings({"HardCodedStringLiteral"})

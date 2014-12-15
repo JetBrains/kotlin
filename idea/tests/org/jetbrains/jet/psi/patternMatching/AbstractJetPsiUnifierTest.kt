@@ -52,19 +52,27 @@ public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestC
         myFixture.configureByFile(filePath)
         val file = myFixture.getFile() as JetFile
 
-        if (InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null) {
+        val withRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
+        if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
         }
 
-        DirectiveBasedActionUtils.checkForUnexpectedErrors(file)
+        try {
+            DirectiveBasedActionUtils.checkForUnexpectedErrors(file)
 
-        val actualText =
-                findPattern(file)
-                        .toRange()
-                        .match(file, JetPsiUnifier.DEFAULT)
-                        .map { it.range.getTextRange().substring(file.getText()!!) }
-                        .joinToString("\n\n")
-        JetTestUtils.assertEqualsToFile(File("$filePath.match"), actualText)
+            val actualText =
+                    findPattern(file)
+                            .toRange()
+                            .match(file, JetPsiUnifier.DEFAULT)
+                            .map { it.range.getTextRange().substring(file.getText()!!) }
+                            .joinToString("\n\n")
+            JetTestUtils.assertEqualsToFile(File("$filePath.match"), actualText)
+        }
+        finally {
+            if (withRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+            }
+        }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE

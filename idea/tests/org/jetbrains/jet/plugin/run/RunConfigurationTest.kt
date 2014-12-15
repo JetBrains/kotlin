@@ -100,30 +100,35 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
         ConfigLibraryUtil.configureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
 
-        val expectedClasses = ArrayList<String>()
-        val actualClasses = ArrayList<String>()
+        try {
+            val expectedClasses = ArrayList<String>()
+            val actualClasses = ArrayList<String>()
 
-        val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt"))
-        testFile.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitComment(comment: PsiComment) {
-                        val declaration = comment.getStrictParentOfType<JetNamedDeclaration>()!!
-                        val text = comment.getText() ?: return
-                        if (!text.startsWith(RUN_PREFIX)) return
+            val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt"))
+            testFile.accept(
+                    object: JetTreeVisitorVoid() {
+                        override fun visitComment(comment: PsiComment) {
+                            val declaration = comment.getStrictParentOfType<JetNamedDeclaration>()!!
+                            val text = comment.getText() ?: return
+                            if (!text.startsWith(RUN_PREFIX)) return
 
-                        expectedClasses.add(text.substring(RUN_PREFIX.length()).trim())
+                            expectedClasses.add(text.substring(RUN_PREFIX.length()).trim())
 
-                        val dataContext = MapDataContext()
-                        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
-                        val context = ConfigurationContext.getFromContext(dataContext)
-                        val actualClass = (context?.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
-                        if (actualClass != null) {
-                            actualClasses.add(actualClass)
+                            val dataContext = MapDataContext()
+                            dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
+                            val context = ConfigurationContext.getFromContext(dataContext)
+                            val actualClass = (context?.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
+                            if (actualClass != null) {
+                                actualClasses.add(actualClass)
+                            }
                         }
                     }
-                }
-        )
-        Assert.assertEquals(expectedClasses, actualClasses);
+            )
+            Assert.assertEquals(expectedClasses, actualClasses)
+        }
+        finally {
+            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
+        }
     }
 
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
