@@ -1003,10 +1003,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             //   {(a, b) -> ...}
 
             {
-                boolean preferParamsToExpressions = isConfirmedParametersByComma();
-
                 PsiBuilder.Marker rollbackMarker = mark();
-                parseFunctionLiteralParametersAndType();
+                boolean preferParamsToExpressions = parseFunctionLiteralParametersAndType();
 
                 paramsFound = preferParamsToExpressions ?
                               rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
@@ -1129,17 +1127,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         parameterList.done(VALUE_PARAMETER_LIST);
     }
 
-    // Check that position is followed by top level comma. It can't be expression and we want it be
-    // parsed as parameters in function literal
-    private boolean isConfirmedParametersByComma() {
-        assert _at(LPAR);
-        PsiBuilder.Marker lparMarker = mark();
-        advance(); // LPAR
-        int comma = matchTokenStreamPredicate(new FirstBefore(new At(COMMA), new AtSet(ARROW, RPAR)));
-        lparMarker.rollbackTo();
-        return comma > 0;
-    }
-
     private boolean parseFunctionTypeDotParametersAndType() {
         PsiBuilder.Marker rollbackMarker = mark();
 
@@ -1152,12 +1139,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             createTruncatedBuilder(lastDot).parseTypeRef();
             if (at(DOT)) {
                 advance(); // DOT
-
-                if (at(LPAR)) {
-                    preferParamsToExpressions = isConfirmedParametersByComma();
-                }
-
-                parseFunctionLiteralParametersAndType();
+                preferParamsToExpressions = parseFunctionLiteralParametersAndType();
             }
         }
 
@@ -1166,9 +1148,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
                rollbackOrDropAt(rollbackMarker, ARROW);
     }
 
-    private void parseFunctionLiteralParametersAndType() {
-        parseFunctionLiteralParameterList();
+    private boolean parseFunctionLiteralParametersAndType() {
+        boolean hasCommaInParametersList = parseFunctionLiteralParameterList();
         parseOptionalFunctionLiteralType();
+        return hasCommaInParametersList;
     }
 
     /*
@@ -1186,12 +1169,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
-    /*
+    /**
      * "(" (modifiers SimpleName (":" type)?){","} ")"
+     *
+     * @return true if at least one comma was found
      */
-    private void parseFunctionLiteralParameterList() {
+    private boolean parseFunctionLiteralParameterList() {
         PsiBuilder.Marker list = mark();
         expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(ARROW, COLON));
+
+        boolean hasComma = false;
 
         myBuilder.disableNewlines();
 
@@ -1213,6 +1200,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 if (!at(COMMA)) break;
                 advance(); // COMMA
 
+                hasComma = true;
+
                 if (at(RPAR)) {
                     error("Expecting a parameter declaration");
                     break;
@@ -1224,6 +1213,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         expect(RPAR, "Expecting ')'", TokenSet.create(ARROW, COLON));
         list.done(VALUE_PARAMETER_LIST);
+
+        return hasComma;
     }
 
     /*

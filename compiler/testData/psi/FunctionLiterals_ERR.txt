@@ -374,6 +374,30 @@ JetFile: FunctionLiterals_ERR.kt
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting a parameter declaration
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(RPAR)(')')
+          PsiErrorElement:An -> is expected
+            <empty list>
+          BLOCK
+            <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
             VALUE_PARAMETER
               PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
