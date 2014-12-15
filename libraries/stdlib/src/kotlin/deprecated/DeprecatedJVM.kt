@@ -42,3 +42,7 @@ deprecated("Use length() instead")
 public val String.size: Int
     get() = length()
 
+deprecated("Use length() instead")
+public val CharSequence.size: Int
+    get() = length()
+

@@ -64,9 +64,6 @@ public fun String?.orEmpty(): String = this ?: ""
 public val String.indices: IntRange
     get() = 0..length() - 1
 
-public val CharSequence.length: Int
-    get() = length()
-
 public fun CharSequence.get(index: Int): Char = this.charAt(index)
 
 /**

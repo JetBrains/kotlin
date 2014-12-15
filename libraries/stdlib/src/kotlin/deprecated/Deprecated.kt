@@ -175,3 +175,8 @@ public val Map<*, *>.empty: Boolean
 deprecated("Use isNotEmpty() function call instead")
 public val Collection<*>.notEmpty: Boolean
     get() = isNotEmpty()
+
+deprecated("Use length() instead")
+public val CharSequence.length: Int
+    get() = length()
+

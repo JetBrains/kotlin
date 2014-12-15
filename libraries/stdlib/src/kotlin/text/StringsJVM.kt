@@ -119,9 +119,6 @@ public fun String.toLowerCase(locale: java.util.Locale): String = (this as java.
 
 public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
 
-public val CharSequence.size: Int
-    get() = this.length
-
 public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 public fun String.toShort(): Short = java.lang.Short.parseShort(this)
 public fun String.toInt(): Int = java.lang.Integer.parseInt(this)
