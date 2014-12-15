@@ -118,10 +118,12 @@ object DynamicCallableDescriptors {
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
                 null: JetType?
         )
-        propertyDescriptor.initialize(
-                DescriptorFactory.createDefaultGetter(propertyDescriptor),
-                DescriptorFactory.createDefaultSetter(propertyDescriptor)
-        )
+
+        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor)
+        getter.initialize(propertyDescriptor.getType())
+        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor)
+
+        propertyDescriptor.initialize(getter, setter)
 
         return propertyDescriptor
     }
