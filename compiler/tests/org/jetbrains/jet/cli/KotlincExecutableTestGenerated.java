@@ -198,15 +198,15 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJsTest(fileName);
         }
 
-        @TestMetadata("outputIsDirectory.args")
-        public void testOutputIsDirectory() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/outputIsDirectory.args");
-            doJsTest(fileName);
-        }
-
         @TestMetadata("notValidLibraryDir.args")
         public void testNotValidLibraryDir() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/notValidLibraryDir.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("outputIsDirectory.args")
+        public void testOutputIsDirectory() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/outputIsDirectory.args");
             doJsTest(fileName);
         }
 
