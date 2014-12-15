@@ -2,17 +2,50 @@ package kotlin
 
 import java.io.Serializable
 
+/**
+ * Represents a generic pair of two values.
+ *
+ * There is no meaning attached to values in this class, it can be used for any purpose.
+ * Pair exhibits value semantics, i.e. two pairs are equal if both components are equal.
+ *
+ * An example of decomposing it into values:
+ * ${code test.tuples.PairTest.pairMultiAssignment}
+ *
+ * $constructor: Creates new instance of [Pair]
+ * $first: First value
+ * $second: Second value
+ */
 public data class Pair<out A, out B>(
         public val first: A,
         public val second: B
-) : Serializable {
-    override fun toString(): String = "($first, $second)"
+                                    ) : Serializable {
+
+    /**
+     * Returns string representation of the [Pair] including its [first] and [second] values.
+     */
+    public override fun toString(): String = "($first, $second)"
 }
 
+/**
+ * Represents a triad of values
+ *
+ * There is no meaning attached to values in this class, it can be used for any purpose.
+ * Triple exhibits value semantics, i.e. two triples are equal if all three components are equal.
+ * An example of decomposing it into values:
+ * {code test.tuples.PairTest.pairMultiAssignment}
+ *
+ * $first: First value
+ * $second: Second value
+ * $third: Third value
+ */
 public data class Triple<out A, out B, out C>(
         public val first: A,
         public val second: B,
         public val third: C
-) : Serializable {
-    override fun toString(): String = "($first, $second, $third)"
+                                             ) : Serializable {
+
+    /**
+     * Returns string representation of the [Triple] including its [first] and [second] values.
+     */
+    public override fun toString(): String = "($first, $second, $third)"
 }
