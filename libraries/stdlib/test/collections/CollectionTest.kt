@@ -435,6 +435,7 @@ class CollectionTest {
         expect(3.0) { arrayListOf(1.0, 2.0).sum() }
         expect(3000000000000) { arrayListOf<Long>(1000000000000, 2000000000000).sum() }
         expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
+        expect(3.0.toFloat()) { streamOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
     test fun takeReturnsFirstNElements() {

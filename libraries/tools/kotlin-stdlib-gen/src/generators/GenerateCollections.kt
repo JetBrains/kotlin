@@ -25,6 +25,7 @@ fun generateCollectionsAPI(outDir: File) {
         // TODO: decide if sum for byte and short is needed and how to make it work
         for (numeric in listOf(Int, Long, /*Byte, Short, */ Double, Float)) {
             build(builder, Iterables, numeric)
+            build(builder, Streams, numeric)
         }
 
         for (numeric in listOf(Int, Long, Byte, Short, Double, Float)) {
