@@ -87,7 +87,7 @@ public final class StaticContext {
     @NotNull
     private final Generator<JsScope> scopes = new ScopeGenerator();
     @NotNull
-    private final Generator<JsNameRef> qualifiers = new QualifierGenerator();
+    private final Generator<JsExpression> qualifiers = new QualifierGenerator();
     @NotNull
     private final Generator<Boolean> qualifierIsNull = new QualifierIsNullGenerator();
 
@@ -437,18 +437,18 @@ public final class StaticContext {
     }
 
     @Nullable
-    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    public JsExpression getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (qualifierIsNull.get(descriptor.getOriginal()) != null) {
             return null;
         }
         return qualifiers.get(descriptor.getOriginal());
     }
 
-    private final class QualifierGenerator extends Generator<JsNameRef> {
+    private final class QualifierGenerator extends Generator<JsExpression> {
         public QualifierGenerator() {
-            Rule<JsNameRef> standardObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
+            Rule<JsExpression> standardObjectsHaveKotlinQualifier = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (!standardClasses.isStandardObject(descriptor)) {
                         return null;
                     }
@@ -456,9 +456,9 @@ public final class StaticContext {
                 }
             };
             //TODO: review and refactor
-            Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsNameRef>() {
+            Rule<JsExpression> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (isNativeObject(descriptor)) return null;
 
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
@@ -477,9 +477,8 @@ public final class StaticContext {
                         return null;
                     }
 
-                    JsAstUtils.replaceRootReference(
+                    return JsAstUtils.replaceRootReference(
                             result, new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
-                    return result;
                 }
 
                 private String getExternalModuleName(DeclarationDescriptor descriptor) {
@@ -496,9 +495,9 @@ public final class StaticContext {
                     return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
                 }
             };
-            Rule<JsNameRef> constructorOrClassObjectHasTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
+            Rule<JsExpression> constructorOrClassObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (descriptor instanceof ConstructorDescriptor || DescriptorUtils.isClassObject(descriptor)) {
                         //noinspection ConstantConditions
                         return getQualifierForDescriptor(descriptor.getContainingDeclaration());
@@ -506,18 +505,18 @@ public final class StaticContext {
                     return null;
                 }
             };
-            Rule<JsNameRef> libraryObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
+            Rule<JsExpression> libraryObjectsHaveKotlinQualifier = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (isLibraryObject(descriptor)) {
                         return namer.kotlinObject();
                     }
                     return null;
                 }
             };
-            Rule<JsNameRef> nativeObjectsHaveNativePartOfFullQualifier = new Rule<JsNameRef>() {
+            Rule<JsExpression> nativeObjectsHaveNativePartOfFullQualifier = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (descriptor instanceof ConstructorDescriptor || !isNativeObject(descriptor)) return null;
 
                     DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -528,9 +527,9 @@ public final class StaticContext {
                     return null;
                 }
             };
-            Rule<JsNameRef> staticMembersHaveContainerQualifier = new Rule<JsNameRef>() {
+            Rule<JsExpression> staticMembersHaveContainerQualifier = new Rule<JsExpression>() {
                 @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
                     if (descriptor instanceof CallableDescriptor && !isNativeObject(descriptor)) {
                         CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
                         if (DescriptorUtils.isStaticDeclaration(callableDescriptor)) {
