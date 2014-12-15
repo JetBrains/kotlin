@@ -89,7 +89,7 @@ fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
 
     targetDir.checkCreateFile(fileName)
     val file = PsiFileFactory.getInstance(targetDir.getProject()).createFileFromText(
-            fileName, JetFileType.INSTANCE, if (packageName != null) "package $packageName \n\n" else ""
+            fileName, JetFileType.INSTANCE, if (packageName != null && packageName.isNotEmpty()) "package $packageName \n\n" else ""
     )
 
     return targetDir.add(file) as JetFile

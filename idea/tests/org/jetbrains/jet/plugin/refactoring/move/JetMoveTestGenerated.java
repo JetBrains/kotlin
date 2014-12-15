@@ -246,6 +246,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveClassToDefaultPackage/moveClassToDefaultPackage.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_moveClassToDefaultPackage_MoveClassToDefaultPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveClassToDefaultPackage/moveClassToDefaultPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveClassWithImportsRetained/moveClassWithImportsRetained.test")
     public void testKotlin_moveTopLevelDeclarations_misc_moveClassWithImportsRetained_MoveClassWithImportsRetained() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveClassWithImportsRetained/moveClassWithImportsRetained.test");
