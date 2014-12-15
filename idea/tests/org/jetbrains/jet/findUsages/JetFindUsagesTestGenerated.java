@@ -141,6 +141,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findClassUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("classUsedInTextAsRef.0.kt")
+            public void testClassUsedInTextAsRef() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/classUsedInTextAsRef.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaClassAllUsages.0.kt")
             public void testJavaClassAllUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/javaClassAllUsages.0.kt");
