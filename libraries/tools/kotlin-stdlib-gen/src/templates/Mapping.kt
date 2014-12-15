@@ -44,6 +44,24 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
+    templates add f("mapIndexed(transform: (Int, T) -> R)") {
+        inline(true)
+
+        doc { "Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection" }
+        typeParam("R")
+        returns("List<R>")
+        body {
+            "return mapIndexedTo(ArrayList<R>(), transform)"
+        }
+
+        inline(false, Streams)
+        returns(Streams) { "Stream<R>" }
+        doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream" }
+        body(Streams) {
+            "return TransformingIndexedStream(this, transform)"
+        }
+    }
+
     templates add f("map(transform: (T) -> R)") {
         inline(true)
 
@@ -92,7 +110,7 @@ fun mapping(): List<GenericFunction> {
 
         doc {
             """
-            Appends transformed elements of original collection using the given *transform* function
+            Appends transformed elements of the original collection using the given *transform* function
             to the given *destination*
             """
         }
@@ -104,6 +122,30 @@ fun mapping(): List<GenericFunction> {
             """
                 for (item in this)
                     destination.add(transform(item))
+                return destination
+            """
+        }
+        include(Maps)
+    }
+
+    templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
+        inline(true)
+
+        doc {
+            """
+            Appends transformed elements and their indices of the original collection using the given *transform* function
+            to the given *destination*
+            """
+        }
+        typeParam("R")
+        typeParam("C : MutableCollection<in R>")
+        returns("C")
+
+        body {
+            """
+                var index = 0
+                for (item in this)
+                    destination.add(transform(index++, item))
                 return destination
             """
         }

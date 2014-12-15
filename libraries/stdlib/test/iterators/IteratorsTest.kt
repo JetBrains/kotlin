@@ -30,6 +30,10 @@ class IteratorsTest {
         assertEquals(arrayListOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { (i: Int) -> i < 20 }.toList())
     }
 
+    test fun mapIndexed() {
+        assertEquals(arrayListOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile {(i: Int) -> i < 20 }.toList())
+    }
+
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
     }
