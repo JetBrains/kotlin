@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LineNumberTest extends TestCaseWithTmpdir {
+public class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     private static final String LINE_NUMBER_FUN = "lineNumber";
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
@@ -76,7 +76,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private JetFile createPsiFile(@NotNull String filename) {
-        File file = new File(getTestDataPath() + "/" + filename);
+        File file = new File(filename);
         JetCoreEnvironment environment = createEnvironment();
 
         String text;
@@ -132,12 +132,12 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         return actualLineNumbers;
     }
 
-    private void doTest() {
-        doTest(getTestName(true) + ".kt", false);
+    protected void doTest(String path) {
+        doTest(path, false);
     }
 
-    private void doTestCustom() {
-        doTest("custom/" + getTestName(true) + ".kt", true);
+    protected void doTestCustom(String path) {
+        doTest(path, true);
     }
 
     @NotNull
@@ -236,106 +236,9 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         return result;
     }
 
-
-    public void testAnonymousFunction() {
-        doTest();
-    }
-
-    public void testClass() {
-        doTest();
-    }
-
-    public void testClassObject() {
-        doTest();
-    }
-
-    public void testDefaultParameter() {
-        doTest();
-    }
-
-    public void testEnum() {
-        doTest();
-    }
-
-    public void testFor() {
-        doTest();
-    }
-
-    public void testIf() {
-        doTest();
-    }
-
-    public void testLocalFunction() {
-        doTest();
-    }
-
-    public void testObject() {
-        doTest();
-    }
-
-    public void testPropertyAccessor() {
-        doTest();
-    }
-
-    public void testPsvm() {
-        doTest();
-    }
-
-    public void testTopLevel() {
-        doTest();
-    }
-
-    public void testTrait() {
-        doTest();
-    }
-
-    public void testTryCatch() {
-        doTest();
-    }
-
-    public void testWhile() {
-        doTest();
-    }
-
-    public void testInlineSimpleCall() {
-        doTest();
-    }
-
-    public void testCompileTimeConstant() {
-        doTestCustom();
-    }
-
-    public void testIfThen() {
-        doTestCustom();
-    }
-
-    public void testIfThenElse() {
-        doTestCustom();
-    }
-
-    public void testTryCatchExpression() {
-        doTestCustom();
-    }
-
-    public void testTryCatchFinally() {
-        doTestCustom();
-    }
-
-    public void testTryFinally() {
-        doTestCustom();
-    }
-
-    public void testWhen() {
-        doTestCustom();
-    }
-
-    public void testWhenSubject() {
-        doTestCustom();
-    }
-
     public void testStaticDelegate() {
-        JetFile foo = createPsiFile("staticDelegate/foo.kt");
-        JetFile bar = createPsiFile("staticDelegate/bar.kt");
+        JetFile foo = createPsiFile(getTestDataPath() + "/staticDelegate/foo.kt");
+        JetFile bar = createPsiFile(getTestDataPath() + "/staticDelegate/bar.kt");
         GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
         OutputFile file = state.getFactory().get(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class");
         assertNotNull(file);

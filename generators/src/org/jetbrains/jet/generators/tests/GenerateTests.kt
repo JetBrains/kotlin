@@ -139,6 +139,7 @@ import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
 import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
 import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
+import org.jetbrains.jet.codegen.AbstractLineNumberTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -304,6 +305,11 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetTypeBindingTest>()) {
             model("type/binding")
+        }
+
+        testClass(javaClass<AbstractLineNumberTest>()) {
+            model("lineNumber", recursive = false)
+            model("lineNumber/custom", testMethod = "doTestCustom")
         }
     }
 
