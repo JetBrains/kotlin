@@ -64,7 +64,7 @@ open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
         return this
     }
 
-    private fun Project.createCommand(params: Array<String>): List<String> {
+    private fun Project.createCommand(params: Array<out String>): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
         val tailParameters = params + listOf(pathToKotlinPlugin, "--no-daemon", "--${minLogLevel.name().toLowerCase()}")
 
