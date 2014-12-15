@@ -79,9 +79,6 @@ public class JsParser {
             popScope();
             return stmts;
         }
-        catch (UncheckedJsParserException e) {
-            throw e.getParserException();
-        }
         finally {
             Context.exit();
         }

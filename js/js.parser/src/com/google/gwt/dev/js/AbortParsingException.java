@@ -15,16 +15,9 @@
  */
 package com.google.gwt.dev.js;
 
-// An unchecked wrapper exception to interop with Rhino.
-class UncheckedJsParserException extends RuntimeException {
-
-  private final JsParserException parserException;
-
-  public UncheckedJsParserException(JsParserException parserException) {
-    this.parserException = parserException;
-  }
-
-  public JsParserException getParserException() {
-    return parserException;
-  }
+/**
+ * Used only to exit parser on error
+ */
+public class AbortParsingException extends RuntimeException {
+  public AbortParsingException() {}
 }

@@ -21,30 +21,37 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.google.dart.compiler.common.SourceInfoImpl;
 import com.google.gwt.dev.js.JsParser;
 import com.google.gwt.dev.js.JsParserException;
+import com.google.gwt.dev.js.AbortParsingException;
+import com.google.gwt.dev.js.rhino.ErrorReporter;
+import com.google.gwt.dev.js.rhino.EvaluatorException;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory2;
+import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
-import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
+import org.jetbrains.k2js.resolve.diagnostics.ErrorsJs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static com.google.gwt.dev.js.rhino.Utils.isEndOfLine;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 
@@ -126,13 +133,17 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     private JsNode translateJsCode() {
         List<? extends ValueArgument> arguments = expression.getValueArguments();
         JetExpression argumentExpression = arguments.get(0).getArgumentExpression();
-        assert argumentExpression != null;
+
+        if (!(argumentExpression instanceof JetStringTemplateExpression)) {
+            context().getTrace().report(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_LITERAL.on(expression));
+            return program().getEmptyExpression();
+        }
 
         List<JsStatement> statements = parseJsCode(argumentExpression);
         int size = statements.size();
 
         if (size == 0) {
-            return program().getEmptyStatement();
+            return program().getEmptyExpression();
         } else if (size > 1) {
             return new JsBlock(statements);
         } else {
@@ -158,6 +169,9 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             JsScope scope = context().scope();
             StringReader reader = new StringReader((String) jsCode);
             statements.addAll(JsParser.parse(info, scope, reader, errorReporter, /* insideFunction= */ true));
+        } catch (AbortParsingException e) {
+            /** @see JsCodeErrorReporter#error */
+            return Collections.emptyList();
         } catch (JsParserException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -170,12 +184,22 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     private class JsCodeErrorReporter implements ErrorReporter {
         @NotNull
         private final JetExpression jsCodeExpression;
+
         private JsCodeErrorReporter(@NotNull JetExpression expression) {
             jsCodeExpression = expression;
         }
 
         @Override
         public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+            ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_ERROR, message, line, lineOffset);
+            context().getTrace().report(diagnostic);
+            throw new AbortParsingException();
+        }
+
+        @Override
+        public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+            ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_WARNING, message, line, lineOffset);
+            context().getTrace().report(diagnostic);
         }
 
         /**
@@ -188,11 +212,50 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             throw new RuntimeException(message);
         }
 
+        private ParametrizedDiagnostic<JetExpression> getDiagnostic(
+                @NotNull DiagnosticFactory2<JetExpression, String, List<TextRange>> diagnosticFactory,
+                String message,
+                int line,
+                int lineOffset
+        ) {
+            String text = (String) getCompileTimeValue(bindingContext(), jsCodeExpression);
+            int offset = jsCodeExpression.getTextOffset() + offsetFromStart(text, line, lineOffset);
+
+            assert jsCodeExpression instanceof JetStringTemplateExpression: "js argument is expected to be compile-time string literal";
+            int quotesLength = jsCodeExpression.getFirstChild().getTextLength();
+            offset += quotesLength;
+
+            TextRange textRange = new TextRange(offset, offset + 1);
+            return diagnosticFactory.on(jsCodeExpression, message, Collections.singletonList(textRange));
+        }
+
         /**
-         * Do not report warnings
+         * Calculates an offset from the start of a text for a position,
+         * defined by line and offset in that line.
          */
-        @Override
-        public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        private int offsetFromStart(String text, int line, int offset) {
+            int i = 0;
+            int lineCount = 0;
+            int offsetInLine = 0;
+
+            while (i < text.length()) {
+                char c = text.charAt(i);
+
+                if (lineCount == line && offsetInLine == offset) {
+                    return i;
+                }
+
+                if (isEndOfLine(c)) {
+                    offsetInLine = 0;
+                    lineCount++;
+                    assert lineCount <= line;
+                }
+
+                i++;
+                offsetInLine++;
+            }
+
+            return text.length();
         }
     }
 }
