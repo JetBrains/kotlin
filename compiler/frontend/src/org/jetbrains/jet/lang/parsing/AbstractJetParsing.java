@@ -23,6 +23,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -493,4 +494,19 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @TestOnly
+    public String currentContext() {
+        String marker = "~!!!~";
+        int range = 50;
+
+        CharSequence text = myBuilder.getOriginalText();
+
+        int start = Math.max(0, myBuilder.getCurrentOffset() - range);
+        int end = Math.min(text.length() - 1, myBuilder.getCurrentOffset() + 50 + marker.length());
+
+        return new StringBuilder(text)
+                .insert(myBuilder.getCurrentOffset(), marker)
+                .substring(start, end);
+    }
 }
