@@ -26,13 +26,11 @@ import org.jetbrains.jet.utils.KotlinPaths;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
@@ -42,100 +40,103 @@ public class CompilerRunnerUtil {
 
     private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
-    public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
+    @Nullable
+    private static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
         File libs = paths.getLibPath();
+        if (libs.exists() && !libs.isFile()) return libs;
 
-        if (!libs.exists() || libs.isFile()) {
-            messageCollector.report(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", NO_LOCATION);
-            return Collections.emptyList();
-        }
+        messageCollector.report(
+                ERROR,
+                "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed",
+                NO_LOCATION
+        );
 
-        ArrayList<File> answer = new ArrayList<File>();
-        answer.add(new File(libs, "kotlin-compiler.jar"));
-        answer.add(new File(libs, "kotlin-runtime.jar"));
-        return answer;
+        return null;
     }
 
     @NotNull
-    public static ClassLoader getOrCreatePreloader(
-            @NotNull KotlinPaths paths,
+    private static List<File> compilerClasspath(@NotNull File libs) {
+        return Arrays.asList(
+                new File(libs, "kotlin-compiler.jar"),
+                new File(libs, "kotlin-runtime.jar")
+        );
+    }
+
+    @NotNull
+    private static ClassLoader createPreloader(
+            @NotNull File libPath,
             @Nullable ClassLoader parentClassLoader,
-            @Nullable ClassCondition classToLoadByParent,
-            @NotNull MessageCollector messageCollector
-    ) {
-        ClassLoader answer = ourClassLoaderRef.get();
-        if (answer == null) {
-            try {
-                int estimatedClassNumber = 4096;
-                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentClassLoader, classToLoadByParent);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
-        }
-        return answer;
+            @Nullable ClassCondition classToLoadByParent
+    ) throws IOException {
+        return ClassPreloadingUtils.preloadClasses(
+                compilerClasspath(libPath), /* estimatedClassNumber = */ 4096, parentClassLoader, classToLoadByParent
+        );
     }
 
-    public static ClassLoader getOrCreateClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
-        ClassLoader answer = ourClassLoaderRef.get();
-        if (answer == null) {
-            answer = createClassLoader(paths, messageCollector);
-            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
-        }
-        return answer;
-    }
-
-    private static URLClassLoader createClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
-        List<File> jars = kompilerClasspath(paths, messageCollector);
+    @NotNull
+    private static URLClassLoader createClassLoader(@NotNull File libPath) throws MalformedURLException {
+        List<File> jars = compilerClasspath(libPath);
         URL[] urls = new URL[jars.size()];
         for (int i = 0; i < urls.length; i++) {
-            try {
-                urls[i] = jars.get(i).toURI().toURL();
-            }
-            catch (MalformedURLException e) {
-                throw new RuntimeException(e); // Checked exceptions are great! I love them, and I love brilliant library designers too!
-            }
+            urls[i] = jars.get(i).toURI().toURL();
         }
         return new URLClassLoader(urls, null);
     }
 
-    static void handleProcessTermination(int exitCode, MessageCollector messageCollector) {
+    private static void handleProcessTermination(int exitCode, @NotNull MessageCollector messageCollector) {
         if (exitCode != 0 && exitCode != 1) {
             messageCollector.report(ERROR, "Compiler terminated with exit code: " + exitCode, NO_LOCATION);
         }
     }
 
-    public static int getReturnCodeFromObject(Object rc) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if ("org.jetbrains.jet.cli.common.ExitCode".equals(rc.getClass().getCanonicalName())) {
-            return (Integer)rc.getClass().getMethod("getCode").invoke(rc);
+    public static int getReturnCodeFromObject(@Nullable Object rc) throws Exception {
+        if (rc == null) {
+            return /* ExitCode.INTERNAL_ERROR */ 2;
+        }
+        else if ("org.jetbrains.jet.cli.common.ExitCode".equals(rc.getClass().getCanonicalName())) {
+            return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
         }
         else {
             throw new IllegalStateException("Unexpected return: " + rc);
         }
     }
 
+    @Nullable
     public static Object invokeExecMethod(
-            String compilerClassName, String[] arguments, CompilerEnvironment environment,
-            MessageCollector messageCollector, PrintStream out, boolean usePreloader
+            @NotNull String compilerClassName,
+            @NotNull String[] arguments,
+            @NotNull CompilerEnvironment environment,
+            @NotNull MessageCollector messageCollector,
+            @NotNull PrintStream out,
+            boolean usePreloader
     ) throws Exception {
-        ClassLoader loader = usePreloader
-                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentClassLoader(),
-                                                    environment.getClassesToLoadByParent(), messageCollector)
-                             : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
+        File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
+        if (libPath == null) return null;
 
-        Class<?> kompiler = Class.forName(compilerClassName, true, loader);
+        ClassLoader classLoader = ourClassLoaderRef.get();
+        if (classLoader == null) {
+            classLoader = usePreloader
+                          ? createPreloader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent())
+                          : createClassLoader(libPath);
+            ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
+        }
+
+        Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
         Method exec = kompiler.getMethod(
-                "execAndOutputHtml",
+                "execAndOutputXml",
                 PrintStream.class,
-                Class.forName("org.jetbrains.jet.config.Services", true, loader), String[].class);
+                Class.forName("org.jetbrains.jet.config.Services", true, classLoader),
+                String[].class
+        );
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
     }
 
-    public static void outputCompilerMessagesAndHandleExitCode(@NotNull MessageCollector messageCollector,
+    public static void outputCompilerMessagesAndHandleExitCode(
+            @NotNull MessageCollector messageCollector,
             @NotNull OutputItemsCollector outputItemsCollector,
-            @NotNull Function<PrintStream, Integer> compilerRun) {
+            @NotNull Function<PrintStream, Integer> compilerRun
+    ) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(outputStream);
 
