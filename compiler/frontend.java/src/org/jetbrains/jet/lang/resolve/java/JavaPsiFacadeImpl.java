@@ -59,6 +59,8 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Copy idea version of JavaPsiFacadeImpl
+ * TODO Temporary class until {@link com.intellij.psi.impl.JavaPsiFacadeImpl} hacked.
+ * @see com.intellij.psi.impl.JavaPsiFacadeImpl
  */
 @SuppressWarnings({"UnnecessaryFinalOnLocalVariableOrParameter", "UnusedDeclaration", "NullableProblems"})
 public class JavaPsiFacadeImpl extends JavaPsiFacadeEx {
@@ -69,7 +71,7 @@ public class JavaPsiFacadeImpl extends JavaPsiFacadeEx {
     private final JavaFileManager myFileManager;
 
     public JavaPsiFacadeImpl(Project project,
-            PsiManagerImpl psiManager,
+            PsiManager psiManager,
             JavaFileManager javaFileManager,
             MessageBus bus) {
         myProject = project;
@@ -165,7 +167,7 @@ public class JavaPsiFacadeImpl extends JavaPsiFacadeEx {
     }
 
     @NotNull
-    private PsiElementFinder[] calcFinders() {
+    protected PsiElementFinder[] calcFinders() {
         List<PsiElementFinder> elementFinders = new ArrayList<PsiElementFinder>();
         elementFinders.add(new PsiElementFinderImpl());
         ContainerUtil.addAll(elementFinders, myProject.getExtensions(PsiElementFinder.EP_NAME));

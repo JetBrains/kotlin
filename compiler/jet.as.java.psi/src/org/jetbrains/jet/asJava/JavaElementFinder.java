@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
+import org.jetbrains.jet.lang.resolve.java.KotlinFinderMarker;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
+public class JavaElementFinder extends PsiElementFinder implements KotlinFinderMarker {
 
     @NotNull
     public static JavaElementFinder getInstance(@NotNull Project project) {

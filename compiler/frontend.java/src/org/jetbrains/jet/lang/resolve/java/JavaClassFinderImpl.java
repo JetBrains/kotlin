@@ -41,7 +41,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     private GlobalSearchScope baseScope;
 
     private GlobalSearchScope javaSearchScope;
-    private JavaPsiFacadeKotlinHacks javaFacade;
+    private KotlinJavaPsiFacade javaFacade;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -63,7 +63,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
         javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {
             @Override
             public boolean contains(@NotNull VirtualFile file) {
-                return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
+                return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != JetFileType.INSTANCE);
             }
 
             //NOTE: expected by class finder to be not null
@@ -73,7 +73,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
                 return project;
             }
         };
-        javaFacade = new JavaPsiFacadeKotlinHacks(project);
+        javaFacade = new KotlinJavaPsiFacade(project, javaSearchScope);
     }
 
     @Nullable
