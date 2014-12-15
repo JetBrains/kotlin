@@ -1,0 +1,1 @@
+public final fun foo(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic

@@ -147,7 +147,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
                     (JetFile) psiFile)
                     .getBindingContext();
 
-            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false)).toString();
+            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null)).toString();
 
             List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
@@ -155,7 +155,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
                 diagnosedRange.setFile(psiFile);
             }
 
-            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false);
+            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
             Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
 
             makeTestData(diagnostics, diagnosedRanges);

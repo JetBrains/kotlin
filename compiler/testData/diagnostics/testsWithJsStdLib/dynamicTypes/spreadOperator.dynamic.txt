@@ -1,0 +1,10 @@
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ vararg p2: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ p0: dynamic, /*1*/ vararg p1: dynamic /*kotlin.Array<out dynamic>*/, /*2*/ p2: () -> dynamic): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/, /*1*/ p1: () -> dynamic): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/, /*1*/ p1: () -> dynamic): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic
+public final fun foo(/*0*/ vararg p0: dynamic /*kotlin.Array<out dynamic>*/): dynamic

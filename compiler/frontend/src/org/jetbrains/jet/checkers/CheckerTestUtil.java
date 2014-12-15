@@ -17,7 +17,9 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -30,12 +32,12 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.AbstractDiagnosticWithParametersRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -87,7 +89,8 @@ public class CheckerTestUtil {
     public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(
             @NotNull BindingContext bindingContext,
             @NotNull final PsiElement root,
-            boolean markDynamicCalls
+            boolean markDynamicCalls,
+            @Nullable List<DeclarationDescriptor> dynamicCallDescriptors
     ) {
         List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics().all(),
@@ -100,16 +103,17 @@ public class CheckerTestUtil {
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
-        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls);
+        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls, dynamicCallDescriptors);
         diagnostics.addAll(debugAnnotations);
         return diagnostics;
     }
 
     @NotNull
-    public static List<Diagnostic> getDebugInfoDiagnostics(
+    private static List<Diagnostic> getDebugInfoDiagnostics(
             @NotNull PsiElement root,
             @NotNull BindingContext bindingContext,
-            final boolean markDynamicCalls
+            final boolean markDynamicCalls,
+            @Nullable final List<DeclarationDescriptor> dynamicCallDescriptors
     ) {
         final List<Diagnostic> debugAnnotations = Lists.newArrayList();
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
@@ -129,7 +133,11 @@ public class CheckerTestUtil {
             }
 
             @Override
-            public void reportDynamicCall(@NotNull JetElement element) {
+            public void reportDynamicCall(@NotNull JetElement element, DeclarationDescriptor declarationDescriptor) {
+                if (dynamicCallDescriptors != null) {
+                    dynamicCallDescriptors.add(declarationDescriptor);
+                }
+
                 if (markDynamicCalls) {
                     newDiagnostic(element, DebugInfoDiagnosticFactory.DYNAMIC);
                 }

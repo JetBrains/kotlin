@@ -1,0 +1,72 @@
+public final fun plus(): dynamic
+public final fun minus(): dynamic
+public final fun not(): dynamic
+public final fun plus(/*0*/ p0: dynamic): dynamic
+public final fun plus(/*0*/ p0: dynamic): dynamic
+public final fun minus(/*0*/ p0: dynamic): dynamic
+public final fun times(/*0*/ p0: dynamic): dynamic
+public final fun div(/*0*/ p0: dynamic): dynamic
+public final fun mod(/*0*/ p0: dynamic): dynamic
+public final fun rangeTo(/*0*/ p0: dynamic): dynamic
+public final fun and(/*0*/ p0: dynamic): dynamic
+public final fun contains(/*0*/ p0: dynamic): dynamic
+public final fun contains(/*0*/ p0: dynamic): dynamic
+public final fun contains(/*0*/ p0: dynamic): dynamic
+public final fun contains(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public final fun set(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public final fun set(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ p2: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun inc(): dynamic
+public final fun inc(): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun dec(): dynamic
+public final fun dec(): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun invoke(): dynamic
+public final fun invoke(/*0*/ p0: dynamic): dynamic
+public final fun invoke(/*0*/ name: dynamic): dynamic
+public final fun invoke(/*0*/ p0: () -> dynamic): dynamic
+public final fun invoke(/*0*/ p0: dynamic): dynamic
+public final fun compareTo(/*0*/ p0: dynamic): dynamic
+public final fun compareTo(/*0*/ p0: dynamic): dynamic
+public final fun compareTo(/*0*/ p0: dynamic): dynamic
+public final fun compareTo(/*0*/ p0: dynamic): dynamic
+public final fun foo(): dynamic
+public final fun component1(): dynamic
+public final fun component2(): dynamic
+public final fun component3(): dynamic
+public final fun foo(): dynamic
+public final fun foo(): dynamic
+public final fun foo(): dynamic
+public final fun inc(): dynamic
+public final fun inc(): dynamic
+public final fun dec(): dynamic
+public final fun dec(): dynamic
+public final fun plusAssign(/*0*/ p0: dynamic): dynamic
+public final fun minusAssign(/*0*/ p0: dynamic): dynamic
+public final fun timesAssign(/*0*/ p0: dynamic): dynamic
+public final fun divAssign(/*0*/ p0: dynamic): dynamic
+public final fun modAssign(/*0*/ p0: dynamic): dynamic
+public final fun plusAssign(/*0*/ p0: dynamic): dynamic
+public final fun minusAssign(/*0*/ p0: dynamic): dynamic
+public final fun timesAssign(/*0*/ p0: dynamic): dynamic
+public final fun divAssign(/*0*/ p0: dynamic): dynamic
+public final fun modAssign(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun plusAssign(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun minusAssign(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun timesAssign(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun divAssign(/*0*/ p0: dynamic): dynamic
+public final fun get(/*0*/ p0: dynamic): dynamic
+public final fun modAssign(/*0*/ p0: dynamic): dynamic
+public fun get(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public fun propertyDelegated(/*0*/ p0: dynamic): dynamic
+public fun get(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public fun set(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ p2: dynamic): dynamic
+public fun propertyDelegated(/*0*/ p0: dynamic): dynamic

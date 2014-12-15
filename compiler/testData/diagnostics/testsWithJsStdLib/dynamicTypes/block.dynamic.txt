@@ -1,0 +1,5 @@
+public final fun foo(): dynamic
+public final var bar: dynamic
+    public final fun <get-bar>(): dynamic
+    public final fun <set-bar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final fun baz(/*0*/ p0: dynamic): dynamic
