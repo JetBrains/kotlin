@@ -19,6 +19,7 @@ package org.jetbrains.jet.jps.build;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import kotlin.KotlinPackage;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.builders.BuildResult;
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -430,6 +432,15 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
                                    }), true
         );
         makeAll().assertSuccessful();
+    }
+
+    public void testDoNotCreateUselessKotlinIncrementalCaches() throws InterruptedException {
+        initProject();
+        makeAll().assertSuccessful();
+
+        File storageRoot = new BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot();
+        assertTrue(new File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists());
+        assertFalse(new File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists());
     }
 
     @NotNull
