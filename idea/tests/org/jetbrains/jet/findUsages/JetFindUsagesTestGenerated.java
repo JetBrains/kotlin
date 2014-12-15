@@ -141,6 +141,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findClassUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("classUsedInPlainText.0.kt")
+            public void testClassUsedInPlainText() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/classUsedInPlainText.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classUsedInTextAsRef.0.kt")
             public void testClassUsedInTextAsRef() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/classUsedInTextAsRef.0.kt");
@@ -453,6 +459,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("enumFunctionUsages.0.kt")
             public void testEnumFunctionUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/enumFunctionUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionUsedInPlainText.0.kt")
+            public void testFunctionUsedInPlainText() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/functionUsedInPlainText.0.kt");
                 doTest(fileName);
             }
 
