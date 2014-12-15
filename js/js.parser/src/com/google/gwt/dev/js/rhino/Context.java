@@ -76,10 +76,7 @@ import java.util.MissingResourceException;
  * Some aspects of script execution, such as type conversions and
  * object creation, may be accessed directly through methods of
  * Context.
- *
- * @see Scriptable
  */
-
 public class Context {
 
     /**
@@ -87,8 +84,6 @@ public class Context {
      *
      * Note that the Context must be associated with a thread before
      * it can be used to execute a script.
-     *
-     * @see org.mozilla.javascript.Context#enter
      */
     public Context() {
         setLanguageVersion(VERSION_DEFAULT);
@@ -118,8 +113,6 @@ public class Context {
      *      finally { Context.exit(); }
      * </pre>
      * @return a Context associated with the current thread
-     * @see org.mozilla.javascript.Context#getCurrentContext
-     * @see org.mozilla.javascript.Context#exit
      */
     public static Context enter() {
         return enter(null);
@@ -179,8 +172,6 @@ public class Context {
      * Once the current thread no longer has an associated Context,
      * it cannot be used to execute JavaScript until it is again associated
      * with a Context.
-     *
-     * @see org.mozilla.javascript.Context#enter
      */
     public static void exit() {
         boolean released = false;
@@ -206,8 +197,6 @@ public class Context {
      * @return the Context associated with the current thread, or
      *         null if no context is associated with the current
      *         thread.
-     * @see org.mozilla.javascript.Context#enter
-     * @see org.mozilla.javascript.Context#exit
      */
     public static Context getCurrentContext() {
         if (threadLocalCx != null) {
@@ -308,8 +297,6 @@ public class Context {
 
     /**
      * Get the current error reporter.
-     *
-     * @see org.mozilla.javascript.ErrorReporter
      */
     public ErrorReporter getErrorReporter() {
         return errorReporter;
@@ -319,7 +306,6 @@ public class Context {
      * Change the current error reporter.
      *
      * @return the previous error reporter
-     * @see org.mozilla.javascript.ErrorReporter
      */
     public ErrorReporter setErrorReporter(ErrorReporter reporter) {
         errorReporter = reporter;
@@ -347,7 +333,6 @@ public class Context {
      * @param lineno the starting line number
      * @param lineSource the text of the line (may be null)
      * @param lineOffset the offset into lineSource where problem was detected
-     * @see org.mozilla.javascript.ErrorReporter
      */
     public static void reportWarning(String message, String sourceName,
                                      int lineno, String lineSource,
@@ -366,7 +351,6 @@ public class Context {
      * @param lineno the starting line number
      * @param lineSource the text of the line (may be null)
      * @param lineOffset the offset into lineSource where problem was detected
-     * @see org.mozilla.javascript.ErrorReporter
      */
     public static void reportError(String message, String sourceName,
                                    int lineno, String lineSource,

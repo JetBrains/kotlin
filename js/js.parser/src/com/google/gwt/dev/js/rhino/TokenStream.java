@@ -46,8 +46,6 @@ import java.util.Map;
  *
  * It is based on the C source files jsscan.c and jsscan.h
  * in the jsref package.
- *
- * @see org.mozilla.javascript.Parser
  */
 
 public class TokenStream {
