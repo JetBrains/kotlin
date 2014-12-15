@@ -17,12 +17,15 @@
 package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.util.Function;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
@@ -30,8 +33,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -55,32 +60,45 @@ public class CompilerRunnerUtil {
     }
 
     @NotNull
-    private static List<File> compilerClasspath(@NotNull File libs) {
-        return Arrays.asList(
-                new File(libs, "kotlin-compiler.jar"),
-                new File(libs, "kotlin-runtime.jar")
-        );
+    private static File compilerJar(@NotNull File libPath) {
+        return new File(libPath, "kotlin-compiler.jar");
     }
 
     @NotNull
-    private static ClassLoader createPreloader(
-            @NotNull File libPath,
+    private static String loadCompilerClasspathSpaceSeparated(@NotNull File libPath) throws IOException {
+        JarFile jar = new JarFile(compilerJar(libPath));
+        try {
+            return (String) jar.getManifest().getMainAttributes().get(Attributes.Name.CLASS_PATH);
+        }
+        finally {
+            jar.close();
+        }
+    }
+
+    @NotNull
+    private static ClassLoader createClassLoader(
+            @NotNull final File libPath,
             @Nullable ClassLoader parentClassLoader,
             @Nullable ClassCondition classToLoadByParent
     ) throws IOException {
-        return ClassPreloadingUtils.preloadClasses(
-                compilerClasspath(libPath), /* estimatedClassNumber = */ 4096, parentClassLoader, classToLoadByParent
-        );
-    }
+        List<URL> classpath = KotlinPackage.map(loadCompilerClasspathSpaceSeparated(libPath).split(" "), new Function1<String, URL>() {
+            @Override
+            public URL invoke(String dependency) {
+                try {
+                    return new File(libPath, dependency).toURI().toURL();
+                }
+                catch (MalformedURLException e) {
+                    throw UtilsPackage.rethrow(e);
+                }
+            }
+        });
 
-    @NotNull
-    private static URLClassLoader createClassLoader(@NotNull File libPath) throws MalformedURLException {
-        List<File> jars = compilerClasspath(libPath);
-        URL[] urls = new URL[jars.size()];
-        for (int i = 0; i < urls.length; i++) {
-            urls[i] = jars.get(i).toURI().toURL();
-        }
-        return new URLClassLoader(urls, null);
+        return ClassPreloadingUtils.preloadClasses(
+                Collections.singletonList(compilerJar(libPath)),
+                /* estimatedClassNumber = */ 4096,
+                new URLClassLoader(classpath.toArray(new URL[classpath.size()]), parentClassLoader),
+                classToLoadByParent
+        );
     }
 
     private static void handleProcessTermination(int exitCode, @NotNull MessageCollector messageCollector) {
@@ -107,17 +125,14 @@ public class CompilerRunnerUtil {
             @NotNull String[] arguments,
             @NotNull CompilerEnvironment environment,
             @NotNull MessageCollector messageCollector,
-            @NotNull PrintStream out,
-            boolean usePreloader
+            @NotNull PrintStream out
     ) throws Exception {
         File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
         if (libPath == null) return null;
 
         ClassLoader classLoader = ourClassLoaderRef.get();
         if (classLoader == null) {
-            classLoader = usePreloader
-                          ? createPreloader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent())
-                          : createClassLoader(libPath);
+            classLoader = createClassLoader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent());
             ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
         }
 

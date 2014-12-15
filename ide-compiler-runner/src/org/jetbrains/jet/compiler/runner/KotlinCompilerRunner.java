@@ -108,8 +108,7 @@ public class KotlinCompilerRunner {
                                     "Using kotlin-home = " + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
 
-            Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment,
-                                                            messageCollector, out, /*usePreloader=*/true);
+            Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment, messageCollector, out);
             // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
             return CompilerRunnerUtil.getReturnCodeFromObject(rc);
