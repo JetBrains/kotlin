@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.plugin.editor.wordSelection
 
-import com.intellij.codeInsight.editorActions.wordSelection.BasicSelectioner
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.LineTokenizer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -31,13 +29,14 @@ import org.jetbrains.jet.lexer.JetTokens
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import com.intellij.psi.PsiComment
 
 /**
  * Originally from IDEA platform: StatementGroupSelectioner
  */
 public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
-            = e is JetExpression || e is JetWhenEntry
+            = e is JetExpression || e is JetWhenEntry || e is PsiComment
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val parent = e.getParent()
