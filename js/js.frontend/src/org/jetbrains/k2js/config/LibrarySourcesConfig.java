@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptLibrary;
+import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull
@@ -139,7 +140,10 @@ public class LibrarySourcesConfig extends Config {
                 return true;
             }
             else {
-                if (isKotlinJavascriptLibrary(filePath)) {
+                if (isKotlinJavascriptStdLibrary(filePath)) {
+                    actualModuleName = STDLIB_JS_MODULE_NAME;
+                }
+                else if (isKotlinJavascriptLibrary(filePath)) {
                     actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
                 else if (actualModuleName == null) {
