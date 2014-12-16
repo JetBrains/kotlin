@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun foo() {
     when {
         true -> <selection>{

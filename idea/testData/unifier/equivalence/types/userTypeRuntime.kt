@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 import java.util.HashMap
 
 val a: <selection>Map<String, MutableList<Any>></selection> = HashMap()

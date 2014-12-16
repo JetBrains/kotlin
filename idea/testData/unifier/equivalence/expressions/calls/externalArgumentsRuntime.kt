@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun Int.contains(n: Int): Boolean = n < this
 
 fun foo(n: Int): Int {

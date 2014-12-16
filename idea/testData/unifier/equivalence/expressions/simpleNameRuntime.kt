@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 var a = 1
 val b = <selection>a</selection> + 1
 

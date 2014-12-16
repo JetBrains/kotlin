@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun foo(f: (Int) -> Unit) {
     { (m: Int, n: Int, s: String) ->
         val a = n + m

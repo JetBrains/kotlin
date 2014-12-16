@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun foo(a: Int, b: Int) {
     <selection>for (i in a - b..a + b) {
         println(i*i)

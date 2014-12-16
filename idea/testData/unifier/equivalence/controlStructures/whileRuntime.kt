@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun foo(a: Int, b: Int) {
     var t = a
     <selection>while (t != (a + b)) {

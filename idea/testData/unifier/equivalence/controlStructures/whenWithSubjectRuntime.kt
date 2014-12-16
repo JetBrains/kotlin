@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 fun foo(a: Int, b: Int) {
     <selection>when((a)) {
         1 -> println(b)

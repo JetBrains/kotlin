@@ -1,4 +1,3 @@
-// WITH_RUNTIME
 class A {
     fun bar() {
 
