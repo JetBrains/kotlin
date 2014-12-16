@@ -153,12 +153,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("filesExchangePackages")
-        public void testFilesExchangePackages() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/filesExchangePackages/");
-            doTest(fileName);
-        }
-
         @TestMetadata("funRedeclaration")
         public void testFunRedeclaration() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/funRedeclaration/");
@@ -189,12 +183,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("multiplePackagesModified")
-        public void testMultiplePackagesModified() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multiplePackagesModified/");
-            doTest(fileName);
-        }
-
         @TestMetadata("objectConstantChanged")
         public void testObjectConstantChanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
@@ -210,12 +198,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("packageConstantChanged")
         public void testPackageConstantChanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageConstantChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageFileAdded")
-        public void testPackageFileAdded() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageFileAdded/");
             doTest(fileName);
         }
 
@@ -356,146 +338,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("kotlinToJava")
             public void testKotlinToJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava/");
-                doTest(fileName);
-            }
-
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({JavaUsedInKotlin.SamConversions.class})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class JavaUsedInKotlin extends AbstractIncrementalJpsTest {
-            public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), true);
-            }
-
-            @TestMetadata("changeNotUsedSignature")
-            public void testChangeNotUsedSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeNotUsedSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("changeSignature")
-            public void testChangeSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constantChanged")
-            public void testConstantChanged() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constantUnchanged")
-            public void testConstantUnchanged() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("methodAddedInSuper")
-            public void testMethodAddedInSuper() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("methodRenamed")
-            public void testMethodRenamed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodRenamed/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("notChangeSignature")
-            public void testNotChangeSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions")
-            @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({})
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class SamConversions extends AbstractIncrementalJpsTest {
-                public void testAllFilesPresentInSamConversions() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), true);
-                }
-
-                @TestMetadata("methodAdded")
-                public void testMethodAdded() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded/");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("methodSignatureChanged")
-                public void testMethodSignatureChanged() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged/");
-                    doTest(fileName);
-                }
-
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class KotlinUsedInJava extends AbstractIncrementalJpsTest {
-            public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), true);
-            }
-
-            @TestMetadata("changeNotUsedSignature")
-            public void testChangeNotUsedSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeNotUsedSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("changeSignature")
-            public void testChangeSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constantChanged")
-            public void testConstantChanged() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantChanged/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constantUnchanged")
-            public void testConstantUnchanged() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantUnchanged/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("funRenamed")
-            public void testFunRenamed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("methodAddedInSuper")
-            public void testMethodAddedInSuper() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/methodAddedInSuper/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("notChangeSignature")
-            public void testNotChangeSignature() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/notChangeSignature/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("onlyTopLevelFunctionInFileRemoved")
-            public void testOnlyTopLevelFunctionInFileRemoved() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/onlyTopLevelFunctionInFileRemoved/");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyRenamed")
-            public void testPropertyRenamed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed/");
                 doTest(fileName);
             }
 
