@@ -18,10 +18,23 @@ package org.jetbrains.jet.plugin.editor.wordSelection
 
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.JetNodeTypes.*
 import org.jetbrains.jet.lang.psi.JetContainerNode
+import org.jetbrains.jet.lang.psi.JetElement
 
 public class KotlinWordSelectionFilter : Condition<PsiElement>{
-    override fun value(e: PsiElement)
-            = !KotlinListSelectioner.canSelect(e) && e !is JetBlockExpression && e !is JetContainerNode
+    override fun value(e: PsiElement): Boolean {
+
+        if (KotlinListSelectioner.canSelect(e)) return false
+        if (e is JetContainerNode) return false
+
+        val parent = e.getParent()
+        if (parent !is JetElement) return true
+        if (parent.getFirstChild().getNextSibling() == null) return false // skip nodes with the same range as their parent
+
+        return when (e.getNode().getElementType()) {
+            BLOCK, LITERAL_STRING_TEMPLATE_ENTRY -> false
+            else -> true
+        }
+    }
 }
