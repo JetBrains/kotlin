@@ -300,12 +300,11 @@ public class JetPsiFactory(private val project: Project) {
         return createExpression("$" + fieldName)
     }
 
-    public fun createBinaryExpression(lhs: String, op: String, rhs: String): JetBinaryExpression {
-        return createExpression(lhs + " " + op + " " + rhs) as JetBinaryExpression
-    }
-
-    public fun createBinaryExpression(lhs: JetExpression?, op: String, rhs: JetExpression?): JetBinaryExpression {
-        return createBinaryExpression(JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs))
+    public fun createBinaryExpression(lhs: JetExpression, op: String, rhs: JetExpression): JetBinaryExpression {
+        val expression = createExpression("a $op b") as JetBinaryExpression
+        expression.getLeft().replace(lhs)
+        expression.getRight().replace(rhs)
+        return expression
     }
 
     public fun createTypeCodeFragment(text: String, context: PsiElement?): JetTypeCodeFragment {

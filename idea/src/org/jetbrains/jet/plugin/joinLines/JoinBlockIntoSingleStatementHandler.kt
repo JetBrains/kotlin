@@ -24,6 +24,8 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetWhenEntry
+import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
@@ -41,6 +43,20 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
         val parent = block.getParent()
         if (parent !is JetContainerNode && parent !is JetWhenEntry) return -1
         if (block.getNode().getChildren(JetTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
+
+        // handle nested if's
+        val pparent = parent.getParent()
+        if (pparent is JetIfExpression && block == pparent.getThen() && statement is JetIfExpression && statement.getElse() == null) {
+            val condition1 = pparent.getCondition()
+            val condition2 = statement.getCondition()
+            val body = statement.getThen()
+            if (condition1 != null && condition2 != null && body != null) {
+                val newCondition = JetPsiFactory(pparent).createBinaryExpression(condition1, "&&", condition2)
+                condition1.replace(newCondition)
+                val newBody = block.replace(body)
+                return newBody.getTextRange()!!.getStartOffset()
+            }
+        }
 
         val newStatement = block.replace(statement)
         return newStatement.getTextRange()!!.getStartOffset()
