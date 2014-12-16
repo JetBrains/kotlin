@@ -30,7 +30,10 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
         if (file !is JetFile) return -1
 
         if (start == 0) return -1
-        val brace = file.findElementAt(start - 1)!!
+        val c = document.getCharsSequence()[start]
+        val index = if (c == '\n') start - 1 else start
+
+        val brace = file.findElementAt(index)!!
         if (brace.getNode()!!.getElementType() != JetTokens.LBRACE) return -1
 
         val block = brace.getParent() as? JetBlockExpression ?: return -1
