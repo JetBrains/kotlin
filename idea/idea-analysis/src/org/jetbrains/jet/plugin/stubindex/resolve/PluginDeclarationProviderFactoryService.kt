@@ -23,8 +23,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
-import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil
+import org.jetbrains.jet.plugin.caches.resolve.JsProjectDetector
 
 public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
@@ -34,7 +33,7 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             syntheticFiles: Collection<JetFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory {
-        val scope = if (isJsProject(project)) {
+        val scope = if (JsProjectDetector.isJsProject(project)) {
             //NOTE: we include libraries here to support analyzing JavaScript libraries which are kotlin sources in classes root
             JetSourceFilterScope.kotlinSourcesAndLibraries(filesScope, project)
         }
@@ -42,10 +41,5 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             JetSourceFilterScope.kotlinSources(filesScope, project)
         }
         return PluginDeclarationProviderFactory(project, scope, storageManager, syntheticFiles)
-    }
-
-    //TODO: (module refactoring) get rid of this when there is no single module resolve in plugin
-    private fun isJsProject(project: Project): Boolean {
-        return ModuleManager.getInstance(project).getModules().any { ProjectStructureUtil.isJsKotlinModule(it) }
     }
 }

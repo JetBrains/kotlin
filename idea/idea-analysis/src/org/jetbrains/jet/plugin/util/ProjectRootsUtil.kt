@@ -25,17 +25,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.ide.highlighter.JavaClassFileType
+import org.jetbrains.jet.plugin.caches.resolve.JsProjectDetector
 
 public object ProjectRootsUtil {
     platformStatic
     public fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                            includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
-                           fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
+                           fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
+                           isJsProject: Boolean? = null): Boolean {
         if (includeProjectSource && fileIndex.isInSourceContent(file)) {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
+        //NOTE: avoid computing isJsProject if redundant
+        if (isJsProject ?: JsProjectDetector.isJsProject(project)) {
+            return (includeLibrarySource && fileIndex.isInLibrarySource(file))
+                   || (includeLibraryClasses && fileIndex.isLibraryClassFile(file))
+        }
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
         val isClassFile = file.getFileType() == JavaClassFileType.INSTANCE
         return (includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file))

@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.caches.resolve.JsProjectDetector;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
@@ -54,6 +55,7 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     private final Project project;
     private final boolean includeLibrarySourceFiles;
     private final boolean includeClassFiles;
+    private final boolean isJsProject;
 
     private JetSourceFilterScope(
             @NotNull GlobalSearchScope delegate,
@@ -62,10 +64,12 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             @NotNull Project project
     ) {
         super(delegate);
-        this.index = ProjectRootManager.getInstance(project).getFileIndex();
         this.project = project;
         this.includeLibrarySourceFiles = includeLibrarySourceFiles;
         this.includeClassFiles = includeClassFiles;
+        //NOTE: avoid recomputing in potentially bottleneck 'contains' method
+        this.index = ProjectRootManager.getInstance(project).getFileIndex();
+        this.isJsProject = JsProjectDetector.isJsProject(project);
     }
 
     @Override
@@ -74,6 +78,6 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        return ProjectRootsUtil.isInContent(project, file, true, includeLibrarySourceFiles, includeClassFiles, index);
+        return ProjectRootsUtil.isInContent(project, file, true, includeLibrarySourceFiles, includeClassFiles, index, isJsProject);
     }
 }
