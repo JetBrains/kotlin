@@ -48,7 +48,10 @@ import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.*;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -363,16 +366,50 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
 
         @Nullable
+        public PsiAnnotation getNullableAnnotation(@NotNull PsiModifierListOwner owner, boolean checkBases) {
+            return findNullabilityAnnotation(nullManager, owner, checkBases, true);
+        }
+
+        @Nullable
+        public PsiAnnotation getNotNullAnnotation(@NotNull PsiModifierListOwner owner, boolean checkBases) {
+            return findNullabilityAnnotation(nullManager, owner, checkBases, false);
+        }
+
+        @Nullable
+        private static PsiAnnotation findNullabilityAnnotation(
+                @NotNull NullableNotNullManager manager,
+                @NotNull PsiModifierListOwner owner,
+                boolean checkBases,
+                boolean nullable
+        ) {
+            try {
+                Method findNullabilityAnnotationMethod = NullableNotNullManager.class.getDeclaredMethod(
+                        "findNullabilityAnnotation", PsiModifierListOwner.class, boolean.class, boolean.class);
+                findNullabilityAnnotationMethod.setAccessible(true);
+                return (PsiAnnotation) findNullabilityAnnotationMethod.invoke(manager, owner, checkBases, nullable);
+            }
+            catch (NoSuchMethodException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+            catch (IllegalAccessException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+            catch (InvocationTargetException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+        }
+
+        @Nullable
         private PsiAnnotation getNullabilityAnnotation(@NotNull PsiModifierListOwner element) {
-            PsiAnnotation nullAnnotation = nullManager.getNullableAnnotation(element, false);
-            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
+            PsiAnnotation nullAnnotation = getNullableAnnotation(element, false);
+            PsiAnnotation notNullAnnotation = getNotNullAnnotation(element, false);
             if ((nullAnnotation == null) == (notNullAnnotation == null)) return null;
             return nullAnnotation != null ? nullAnnotation : notNullAnnotation;
         }
 
         private void addNullabilityAnnotationIfApplicable(@NotNull PsiModifierListOwner element, @Nullable PsiAnnotation annotation) {
-            PsiAnnotation nullableAnnotation = nullManager.getNullableAnnotation(element, false);
-            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
+            PsiAnnotation nullableAnnotation = getNullableAnnotation(element, false);
+            PsiAnnotation notNullAnnotation = getNotNullAnnotation(element, false);
 
             if (notNullAnnotation != null && nullableAnnotation == null && element instanceof PsiMethod) return;
 

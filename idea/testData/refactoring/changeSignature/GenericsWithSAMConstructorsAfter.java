@@ -6,7 +6,7 @@ class X<A> {
 }
 
 interface Foo<A, B> {
-    X<List<A>> foo(List<X<B>> a, X<Set<A>> b);
+    X<java.util.List<A>> foo(List<X<B>> a, X<Set<A>> b);
 }
 
 class SamTest {

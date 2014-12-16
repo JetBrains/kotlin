@@ -145,7 +145,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
 
         Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
         if (rightMargin != null) {
-            codeStyleSettings.setRightMargin(JetLanguage.INSTANCE, rightMargin);
+            codeStyleSettings.RIGHT_MARGIN = rightMargin;
         }
 
         SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);

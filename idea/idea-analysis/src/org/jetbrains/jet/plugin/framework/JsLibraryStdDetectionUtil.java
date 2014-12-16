@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.framework;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,11 +28,15 @@ import org.jetbrains.jet.utils.LibraryUtils;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class JsLibraryStdDetectionUtil {
+    private static final Logger LOG = Logger.getInstance(JsLibraryStdDetectionUtil.class);
 
     public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
         return getJsLibraryStdVersion(classesRoots, true);
@@ -54,7 +58,7 @@ public class JsLibraryStdDetectionUtil {
 
         assert JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) : "StdLib should also be detected as headers library";
 
-        return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
+        return getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
     }
 
     @Nullable
@@ -67,6 +71,43 @@ public class JsLibraryStdDetectionUtil {
 
             if (LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()))) {
                 return jar;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns attribute value from a manifest main section,
+     * or null if missing or a file does not contain a manifest.
+     *
+     * Copied from Idea 14 JarUtil.java
+     */
+    @Nullable
+    public static String getJarAttribute(@NotNull File file, @NotNull Attributes.Name attribute) {
+        return getJarAttributeImpl(file, null, attribute);
+    }
+
+    /**
+     * Copied from Idea 14 JarUtil.java
+     */
+    private static String getJarAttributeImpl(@NotNull File file, @Nullable String entryName, @NotNull Attributes.Name attribute) {
+        if (file.canRead()) {
+            try {
+                JarFile jarFile = new JarFile(file);
+                try {
+                    Manifest manifest = jarFile.getManifest();
+                    if (manifest != null) {
+                        Attributes attributes = entryName != null ? manifest.getAttributes(entryName) : manifest.getMainAttributes();
+                        return attributes.getValue(attribute);
+                    }
+                }
+                finally {
+                    jarFile.close();
+                }
+            }
+            catch (IOException e) {
+                LOG.debug(e);
             }
         }
 
