@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 
-public class KotlinDeclarationSelectioner : BasicSelectioner() {
+public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is JetDeclaration
 

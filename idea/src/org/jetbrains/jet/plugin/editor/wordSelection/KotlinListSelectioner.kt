@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.editor.wordSelection
 
-import com.intellij.codeInsight.editorActions.wordSelection.BasicSelectioner
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -27,10 +25,9 @@ import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import org.jetbrains.jet.lang.psi.JetTypeParameterList
 import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
-import java.util.Arrays
-
-public class KotlinListSelectioner : BasicSelectioner() {
+public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
 

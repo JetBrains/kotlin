@@ -33,7 +33,7 @@ import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 /**
  * Originally from IDEA platform: CodeBlockOrInitializerSelectioner
  */
-public class KotlinCodeBlockSelectioner : BasicSelectioner() {
+public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is JetBlockExpression || e is JetWhenExpression
 

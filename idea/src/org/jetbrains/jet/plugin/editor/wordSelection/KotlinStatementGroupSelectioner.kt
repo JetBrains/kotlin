@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.siblings
 /**
  * Originally from IDEA platform: StatementGroupSelectioner
  */
-public class KotlinStatementGroupSelectioner : BasicSelectioner() {
+public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is JetExpression || e is JetWhenEntry
 

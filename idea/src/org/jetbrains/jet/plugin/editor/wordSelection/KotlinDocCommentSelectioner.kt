@@ -28,7 +28,7 @@ import java.util.ArrayList
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import org.jetbrains.jet.kdoc.psi.api.KDoc
 
-public class KotlinDocCommentSelectioner : BasicSelectioner() {
+public class KotlinDocCommentSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is KDoc
 
