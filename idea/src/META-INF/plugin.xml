@@ -321,6 +321,7 @@
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDocCommentSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDeclarationSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinListSelectioner"/>
+    <basicWordSelectionFilter implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinWordSelectionFilter"/>
 
     <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinEnterHandler"

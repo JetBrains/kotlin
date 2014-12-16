@@ -28,8 +28,12 @@ import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
-    override fun canSelect(e: PsiElement)
+    class object {
+        fun canSelect(e: PsiElement)
             = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
+    }
+
+    override fun canSelect(e: PsiElement) = KotlinListSelectioner.canSelect(e)
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val node = e.getNode()!!
