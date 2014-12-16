@@ -144,9 +144,45 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("callWithCallInArguments.kt")
+        public void testCallWithCallInArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/callWithCallInArguments.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("callWithReceiver.kt")
+        public void testCallWithReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/callWithReceiver.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("chainCall.kt")
+        public void testChainCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/chainCall.kt");
+            doTestCustom(fileName);
+        }
+
         @TestMetadata("compileTimeConstant.kt")
         public void testCompileTimeConstant() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/compileTimeConstant.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("functionCallWithDefault.kt")
+        public void testFunctionCallWithDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithDefault.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("functionCallWithInlinedLambdaParam.kt")
+        public void testFunctionCallWithInlinedLambdaParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithInlinedLambdaParam.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("functionCallWithLambdaParam.kt")
+        public void testFunctionCallWithLambdaParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithLambdaParam.kt");
             doTestCustom(fileName);
         }
 
@@ -159,6 +195,18 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
         @TestMetadata("ifThenElse.kt")
         public void testIfThenElse() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/ifThenElse.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("multilineFunctionCall.kt")
+        public void testMultilineFunctionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/multilineFunctionCall.kt");
+            doTestCustom(fileName);
+        }
+
+        @TestMetadata("multilineInfixCall.kt")
+        public void testMultilineInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/multilineInfixCall.kt");
             doTestCustom(fileName);
         }
 

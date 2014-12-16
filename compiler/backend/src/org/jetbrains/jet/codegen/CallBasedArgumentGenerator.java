@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -48,6 +49,16 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
         assert valueParameters.size() == valueParameterTypes.size() :
                 "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
+    }
+
+    @NotNull
+    @Override
+    public List<Integer> generate(@NotNull List<ResolvedValueArgument> valueArguments) {
+        boolean shouldMarkLineNumbers = codegen.isShouldMarkLineNumbers();
+        codegen.setShouldMarkLineNumbers(false);
+        List<Integer> masks = super.generate(valueArguments);
+        codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
+        return masks;
     }
 
     @Override

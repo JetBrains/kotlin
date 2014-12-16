@@ -123,6 +123,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
 
     private int myLastLineNumber = -1;
+    private boolean shouldMarkLineNumbers = true;
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -1636,11 +1637,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
+    public boolean isShouldMarkLineNumbers() {
+        return shouldMarkLineNumbers;
+    }
+
+    public void setShouldMarkLineNumbers(boolean shouldMarkLineNumbers) {
+        this.shouldMarkLineNumbers = shouldMarkLineNumbers;
+    }
+
     public void markStartLineNumber(@NotNull JetElement element) {
         markLineNumber(element, false);
     }
 
     public void markLineNumber(@NotNull JetElement statement, boolean markEndOffset) {
+        if (!shouldMarkLineNumbers) return;
+
         Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
         if (lineNumber == null || lineNumber == myLastLineNumber) {
             return;
