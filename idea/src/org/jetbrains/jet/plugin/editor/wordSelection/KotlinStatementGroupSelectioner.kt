@@ -35,12 +35,14 @@ import com.intellij.psi.PsiComment
  * Originally from IDEA platform: StatementGroupSelectioner
  */
 public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
-    override fun canSelect(e: PsiElement)
-            = e is JetExpression || e is JetWhenEntry || e is PsiComment
+    override fun canSelect(e: PsiElement): Boolean {
+        if (e !is JetExpression && e !is JetWhenEntry && e !is PsiComment) return false
+        val parent = e.getParent()
+        return parent is JetBlockExpression || parent is JetWhenExpression
+    }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val parent = e.getParent()
-        if (parent !is JetBlockExpression && parent !is JetWhenExpression) return null
 
         val startElement = e.siblings(forward = false, withItself = false)
                 .firstOrNull { // find preceding '{' or blank line
