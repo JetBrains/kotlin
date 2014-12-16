@@ -223,6 +223,8 @@
     <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
     <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
     <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.jet.plugin.structureView.JetStructureViewFactory"/>
+    <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.jet.plugin.structureView.JetClsStructureViewBuilderProvider"/>
+
     <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
     <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
