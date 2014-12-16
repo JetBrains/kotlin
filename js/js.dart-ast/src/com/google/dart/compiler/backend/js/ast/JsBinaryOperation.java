@@ -15,10 +15,6 @@ public final class JsBinaryOperation extends JsExpressionImpl {
     @NotNull
     private final JsBinaryOperator op;
 
-    public JsBinaryOperation(@NotNull JsBinaryOperator op) {
-        this(op, null, null);
-    }
-
     public JsBinaryOperation(@NotNull JsBinaryOperator op, @Nullable JsExpression arg1, @Nullable JsExpression arg2) {
         this.op = op;
         this.arg1 = arg1;

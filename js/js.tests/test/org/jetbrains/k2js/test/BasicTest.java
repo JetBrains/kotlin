@@ -38,10 +38,13 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.k2js.facade.Status;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -83,6 +86,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         this.relativePathToTestDir = relativePathToTestDir;
     }
 
+    protected abstract void checkFooBoxIsOkByPath(String filePath) throws Exception;
+
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES);
@@ -116,13 +121,21 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         assert success;
     }
 
+    public void doTest(@NotNull String filePath) {
+        try {
+            checkFooBoxIsOkByPath(filePath);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected void generateJavaScriptFiles(
-            @NotNull String kotlinFilename,
+            @NotNull String kotlinFilePath,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions
     ) throws Exception {
-        generateJavaScriptFiles(Collections.singletonList(getInputFilePath(kotlinFilename)),
-                                kotlinFilename, mainCallParameters, ecmaVersions);
+        generateJavaScriptFiles(Collections.singletonList(kotlinFilePath), getBaseName(kotlinFilePath), mainCallParameters, ecmaVersions);
     }
 
     protected void generateJavaScriptFiles(
@@ -149,15 +162,15 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config
     ) throws Exception {
-        //noinspection unchecked
-        OutputFileCollection outputFiles =
-                translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
-                                                getOutputPrefixFile(), getOutputPostfixFile(),
-                                                config, getConsumer());
+        Status<OutputFileCollection> status = translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
+                                                                              getOutputPrefixFile(), getOutputPostfixFile(),
+                                                                              config, getConsumer());
+
+        if (status.isFail()) return;
 
         File outputDir = outputFile.getParentFile();
         assert outputDir != null : "Parent file for output file should not be null, outputFilePath: " + outputFile.getPath();
-        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+        OutputUtilsPackage.writeAllTo(status.getResult(), outputDir);
     }
 
     protected File getOutputPostfixFile() {
@@ -182,12 +195,12 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     protected void runRhinoTests(
-            @NotNull String filename, 
+            @NotNull String testName,
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull RhinoResultChecker checker
     ) throws Exception {
         for (EcmaVersion ecmaVersion : ecmaVersions) {
-            runRhinoTest(withAdditionalJsFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion),
+            runRhinoTest(withAdditionalJsFiles(getOutputFilePath(testName, ecmaVersion), ecmaVersion),
                          checker,
                          getRhinoTestVariables(),
                          ecmaVersion);
@@ -201,14 +214,32 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     protected List<String> additionalKotlinFiles() {
         List<String> additionalFiles = Lists.newArrayList();
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(TEST_DATA_DIR_PATH + COMMON_FILES_DIR));
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestDir() + COMMON_FILES_DIR));
+
+        // add all kotlin files from testData/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JetFileType.EXTENSION));
+        // add all kotlin files from <testDir>/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, JetFileType.EXTENSION));
+
         return additionalFiles;
     }
 
     @NotNull
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
-        return Lists.newArrayList();
+        List<String> additionalFiles = Lists.newArrayList();
+
+        // add all js files from testData/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION));
+        // add all js files from <testDir>/_commonFiles
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, JavaScript.EXTENSION));
+
+        // add <testDir>/cases/<testName>.js if it exists
+        String jsFilePath = getInputFilePath(getTestName(true) + JavaScript.DOT_EXTENSION);
+        File jsFile = new File(jsFilePath);
+        if (jsFile.exists() && jsFile.isFile()) {
+            additionalFiles.add(jsFilePath);
+        }
+
+        return additionalFiles;
     }
 
     // helpers
@@ -219,8 +250,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    protected final String getOutputFilePath(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
-        return getOutputPath() + convertFileNameToDotJsFile(filename, ecmaVersion);
+    protected final String getOutputFilePath(@NotNull String testName, @NotNull EcmaVersion ecmaVersion) {
+        return getOutputPath() + convertFileNameToDotJsFile(testName, ecmaVersion);
     }
 
     @NotNull
@@ -294,4 +325,21 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         String packageName = jetFile.getPackageFqName().asString();
         return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }
+
+    protected static String getBaseName(String path) {
+        String systemIndependentPath = FileUtil.toSystemIndependentName(path);
+
+        int start = systemIndependentPath.lastIndexOf("/");
+        if (start == -1) {
+            start = 0;
+        }
+
+        int end = systemIndependentPath.lastIndexOf(".");
+        if (end == -1) {
+            end = path.length();
+        }
+
+        return path.substring(start, end);
+    }
+
 }

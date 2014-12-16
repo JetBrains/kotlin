@@ -28,7 +28,7 @@ internal final class Test {
 internal final class Test2 {
     public constructor Test2()
     private final val a: Test2.<init>.<no name provided>
-    internal final val b: [ERROR : Type for b]
+    internal final val b: [ERROR : <ERROR PROPERTY TYPE>]
     internal final val c: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

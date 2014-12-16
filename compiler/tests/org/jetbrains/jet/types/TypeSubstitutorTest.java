@@ -148,7 +148,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                     new Function<Diagnostic, String>() {
                         @Override
                         public String fun(Diagnostic diagnostic) {
-                            return DefaultErrorMessages.RENDERER.render(diagnostic);
+                            return DefaultErrorMessages.render(diagnostic);
                         }
                     },
                     "\n"));
@@ -235,7 +235,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testOutInProjection() throws Exception {
         doTest(
-                "C<out Any>",
+                "C<out Any?>",
                 "C<out T>",
                 map("T", "in String")
         );

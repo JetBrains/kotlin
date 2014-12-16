@@ -238,7 +238,7 @@ public abstract class ElementResolver {
             if (!(contextElement instanceof JetExpression)) return;
 
             JetExpression contextExpression = (JetExpression) contextElement;
-            BindingContext contextForElement = resolveToElement((JetElement) contextElement);
+            BindingContext contextForElement = resolveToElement((JetElement) contextElement, true);
 
             scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
             dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, contextExpression);

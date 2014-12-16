@@ -8,10 +8,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
 public final class JsPostfixOperation extends JsUnaryOperation {
-  public JsPostfixOperation(JsUnaryOperator op) {
-    this(op, null);
-  }
-
   public JsPostfixOperation(JsUnaryOperator op, JsExpression arg) {
     super(op, arg);
   }

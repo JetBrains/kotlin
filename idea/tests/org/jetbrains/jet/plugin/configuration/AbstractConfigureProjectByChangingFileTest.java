@@ -30,7 +30,12 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
 
     public void doTestWithMaven(@NotNull String path) throws Exception {
         String pathWithFile = path + "/" + MavenConstants.POM_XML;
-        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinMavenConfigurator());
+        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavaMavenConfigurator());
+    }
+
+    public void doTestWithJSMaven(@NotNull String path) throws Exception {
+        String pathWithFile = path + "/" + MavenConstants.POM_XML;
+        doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavascriptMavenConfigurator());
     }
 
     public void doTestAndroidGradle(@NotNull String path) throws Exception {
@@ -51,7 +56,7 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
             ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), version);
         }
         else if (configurator instanceof KotlinMavenConfigurator) {
-            KotlinMavenConfigurator.changePomFile(getModule(), getFile(), version);
+            ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version);
         }
 
         JetTestUtils.assertEqualsToFile(new File(afterFile), getFile().getText().replace(version, "$VERSION$"));

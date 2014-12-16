@@ -93,7 +93,7 @@ public class ConfigureKotlinInProjectUtils {
     public static Collection<KotlinProjectConfigurator> getAbleToRunConfigurators(@NotNull Project project) {
         Collection<Module> modules = getModulesWithKotlinFiles(project);
 
-        Set<KotlinProjectConfigurator> canRunConfigurators = Sets.newHashSet();
+        Set<KotlinProjectConfigurator> canRunConfigurators = Sets.newLinkedHashSet();
         for (KotlinProjectConfigurator configurator : Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)) {
             for (Module module : modules) {
                 if (configurator.isApplicable(module) && !configurator.isConfigured(module)) {

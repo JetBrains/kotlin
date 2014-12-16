@@ -17,109 +17,32 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Sets;
-import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
-import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
 
-import javax.swing.*;
-import java.io.File;
 import java.util.Set;
 
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.getConfiguratorByName;
 import static org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator.NAME;
-import static org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator.isJsFilePresent;
-import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
-import static org.jetbrains.jet.plugin.framework.ui.FileUIUtils.createRelativePath;
 
 public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferConfig {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
     public static final String LIBRARY_NAME = "KotlinJavaScript";
 
     public static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
+    public static final String DIALOG_TITLE = "Create Kotlin JavaScript Library";
+    public static final String LIBRARY_CAPTION = "Kotlin JavaScript Library";
     public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
 
-    private static final String DEFAULT_LIB_DIR_NAME = "lib";
-    private static final String DEFAULT_SCRIPT_DIR_NAME = "script";
-
-    private final boolean useRelativePaths;
-    private DeferredCopyFileRequests deferredCopyFileRequests;
-
+    /**
+     * @param project null when project doesn't exist yet (called from project wizard)
+     */
     public JSLibraryStdDescription(@Nullable Project project) {
-        useRelativePaths = project == null;
-    }
-
-    @NotNull
-    @Override
-    public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return SUITABLE_LIBRARY_KINDS;
-    }
-
-    @NotNull
-    @Override
-    public LibraryKind getLibraryKind() {
-        return KOTLIN_JAVASCRIPT_KIND;
-    }
-
-    @Nullable
-    @Override
-    public DeferredCopyFileRequests getCopyFileRequests() {
-        return deferredCopyFileRequests;
-    }
-
-    @Nullable
-    @Override
-    public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        KotlinJsModuleConfigurator jsConfigurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
-        assert jsConfigurator != null : "Cannot find configurator with name " + NAME;
-
-        deferredCopyFileRequests = new DeferredCopyFileRequests(jsConfigurator);
-
-        String defaultPathToJsFileDir =
-                useRelativePaths ? DEFAULT_SCRIPT_DIR_NAME : createRelativePath(null, contextDirectory, DEFAULT_SCRIPT_DIR_NAME);
-        String defaultPathToJarFileDir =
-                useRelativePaths ? DEFAULT_LIB_DIR_NAME : createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
-
-        boolean jsFilePresent = !useRelativePaths && isJsFilePresent(defaultPathToJsFileDir);
-        boolean jarFilePresent = !useRelativePaths && getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir).exists();
-
-        if (jarFilePresent && jsFilePresent) {
-            return createConfiguration(getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir));
-        }
-
-        CreateJavaScriptLibraryDialog dialog =
-                new CreateJavaScriptLibraryDialog(defaultPathToJarFileDir, defaultPathToJsFileDir, !jarFilePresent, !jsFilePresent);
-        dialog.show();
-
-        if (!dialog.isOK()) return null;
-
-        String copyJsFileIntoPath = dialog.getCopyJsIntoPath();
-        if (!jsFilePresent && copyJsFileIntoPath != null) {
-            deferredCopyFileRequests.addCopyRequest(jsConfigurator.getJsFile(), copyJsFileIntoPath);
-        }
-
-        if (jarFilePresent) {
-            return createConfiguration(getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir));
-        }
-        else {
-            String copyIntoPath = dialog.getCopyLibraryIntoPath();
-            File existedJarFile = jsConfigurator.getExistedJarFile();
-
-            if (copyIntoPath != null) {
-                deferredCopyFileRequests.addCopyWithReplaceRequest(existedJarFile, copyIntoPath);
-            }
-
-            return createConfiguration(existedJarFile);
-        }
+        super(project, KotlinJsModuleConfigurator.NAME, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVASCRIPT_KIND, SUITABLE_LIBRARY_KINDS);
     }
 
     @TestOnly
@@ -127,17 +50,6 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;
 
-        return createConfiguration(configurator.getExistedJarFile());
-    }
-
-    private NewLibraryConfiguration createConfiguration(@NotNull File libraryFile) {
-        final String libraryRoot = VfsUtil.getUrlForLibraryRoot(libraryFile);
-        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
-            @Override
-            public void addRoots(@NotNull LibraryEditor editor) {
-                editor.addRoot(libraryRoot, OrderRootType.CLASSES);
-                editor.addRoot(libraryRoot, OrderRootType.SOURCES);
-            }
-        };
+        return createConfiguration(configurator.getExistedJarFile(), configurator.getExistedSourcesJarFile());
     }
 }

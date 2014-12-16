@@ -1,0 +1,24 @@
+package
+
+internal fun </*0*/ T> getT(): T
+internal fun </*0*/ I> test(/*0*/ t: Test<I>): kotlin.Unit
+internal fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
+
+internal final class Test</*0*/ in I> {
+    public constructor Test</*0*/ in I>()
+    internal final fun apply(/*0*/ i: I): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private/*private to this*/ final fun foo(): I
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(): kotlin.Unit
+    internal final fun </*0*/ I> test(/*0*/ t: Test<I>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal class object <class-object-for-Test> {
+        private constructor <class-object-for-Test>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun </*0*/ I> test(/*0*/ t: Test<I>): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -209,5 +210,13 @@ public class DiagnosticUtils {
             }
             return "(" + line + "," + column + ")";
         }
+    }
+
+    public static boolean hasError(Diagnostics diagnostics) {
+        for (Diagnostic diagnostic : diagnostics.all()) {
+            if (diagnostic.getSeverity() == Severity.ERROR) return true;
+        }
+
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun </*0*/ T> _arrayList(/*0*/ vararg values: T /*kotlin.Array<T>*/): kotlin.List<T>
+    internal fun </*0*/ T> _arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
     internal fun test(): kotlin.Unit
     internal fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.Iterable<T>._sortBy(/*0*/ f: (T) -> R): kotlin.List<T>
 

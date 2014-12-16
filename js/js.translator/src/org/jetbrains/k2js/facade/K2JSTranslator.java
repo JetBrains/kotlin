@@ -38,6 +38,7 @@ import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
 import org.jetbrains.js.compiler.sourcemap.SourceMap3Builder;
@@ -45,6 +46,7 @@ import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
+import org.jetbrains.k2js.inline.JsInliner;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.io.File;
@@ -52,6 +54,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.hasError;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
 
@@ -63,7 +66,7 @@ public final class K2JSTranslator {
     public static final String FLUSH_SYSTEM_OUT = "Kotlin.out.flush();\n";
     public static final String GET_SYSTEM_OUT = "Kotlin.out.buffer;\n";
 
-    public static OutputFileCollection translateWithMainCallParameters(
+    public static Status<OutputFileCollection> translateWithMainCallParameters(
             @NotNull MainCallParameters mainCall,
             @NotNull List<JetFile> files,
             @NotNull File outputFile,
@@ -75,8 +78,11 @@ public final class K2JSTranslator {
         K2JSTranslator translator = new K2JSTranslator(config);
         TextOutputImpl output = new TextOutputImpl();
         SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outputFile, output, new SourceMapBuilderConsumer()) : null;
-        String programCode = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder, astConsumer);
+        Status<String> codeStatus = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder, astConsumer);
 
+        if (codeStatus.isFail()) return Status.fail();
+
+        String programCode = codeStatus.getResult();
         String prefix = FileUtilsPackage.readTextOrEmpty(outputPrefixFile);
         String postfix = FileUtilsPackage.readTextOrEmpty(outputPostfixFile);
 
@@ -101,7 +107,8 @@ public final class K2JSTranslator {
             outputFiles.add(sourcemapFile);
         }
 
-        return new SimpleOutputFileCollection(outputFiles);
+        OutputFileCollection outputFileCollection = new SimpleOutputFileCollection(outputFiles);
+        return Status.success(outputFileCollection);
     }
 
     @NotNull
@@ -114,26 +121,30 @@ public final class K2JSTranslator {
     //NOTE: web demo related method
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
-    public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
+    public Status<String> translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
         JetFile file = JetPsiFactory(getProject()).createFile("test", programText);
-        String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString))) + "\n";
-        return FLUSH_SYSTEM_OUT + programCode + GET_SYSTEM_OUT;
+        Status<String> status = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString)));
+
+        if (status.isFail()) return status;
+
+        String code = FLUSH_SYSTEM_OUT + status.getResult() + "\n" + GET_SYSTEM_OUT;
+        return Status.success(code);
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
+    public Status<String> generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
         return generateProgramCode(Collections.singletonList(file), mainCallParameters);
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters)
+    public Status<String> generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
         //noinspection unchecked
         return generateProgramCode(files, mainCallParameters, new TextOutputImpl(), null, Consumer.EMPTY_CONSUMER);
     }
 
     @NotNull
-    public String generateProgramCode(
+    public Status<String> generateProgramCode(
             @NotNull List<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull TextOutputImpl output,
@@ -141,13 +152,15 @@ public final class K2JSTranslator {
             @NotNull Consumer<JsNode> astConsumer
     ) throws TranslationException {
         JsProgram program = generateProgram(files, mainCallParameters);
+        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
 
-        JsSourceGenerationVisitor sourceGenerator = new JsSourceGenerationVisitor(output, sourceMapBuilder);
-        program.accept(sourceGenerator);
+        if (hasError(diagnostics)) return Status.fail();
 
+        program = JsInliner.process(program);
+        program.accept(new JsSourceGenerationVisitor(output, sourceMapBuilder));
         astConsumer.consume(program);
 
-        return output.toString();
+        return Status.success(output.toString());
     }
 
     @NotNull

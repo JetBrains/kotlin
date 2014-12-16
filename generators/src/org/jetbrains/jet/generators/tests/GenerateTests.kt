@@ -116,6 +116,7 @@ import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.jet.resolve.typeApproximation.AbstractCapturedTypeApproximationTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
@@ -132,6 +133,8 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
+import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
+import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -162,6 +165,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractConstraintSystemTest>()) {
             model("constraintSystem", extension = "bounds")
+        }
+
+        testClass(javaClass<AbstractCapturedTypeApproximationTest>()) {
+            model("capturedTypeApproximation")
         }
 
         testClass(javaClass<AbstractJetParsingTest>()) {
@@ -524,6 +531,7 @@ fun main(args: Array<String>) {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
             model("configuration/maven", extension = null, recursive = false, testMethod = "doTestWithMaven")
+            model("configuration/js-maven", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
         }
 
         testClass(javaClass<AbstractJetFormatterTest>()) {
@@ -637,6 +645,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
             model("debugger/selectExpression")
         }
+
+        testClass(javaClass<AbstractKotlinCoverageOutputFilesTest>()) {
+            model("coverage/outputFiles")
+        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
@@ -669,6 +681,10 @@ fun main(args: Array<String>) {
     testGroup("js/js.tests/test", "js/js.translator/testData") {
         testClass(javaClass<AbstractReservedWordTest>()) {
             model("reservedWords/cases")
+        }
+
+        testClass(javaClass<AbstractDynamicTest>()) {
+            model("dynamic/cases")
         }
     }
 

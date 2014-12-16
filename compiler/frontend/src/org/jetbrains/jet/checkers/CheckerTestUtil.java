@@ -611,7 +611,7 @@ public class CheckerTestUtil {
 
         @NotNull
         public static TextDiagnostic asTextDiagnostic(@NotNull Diagnostic diagnostic) {
-            DiagnosticRenderer renderer = getRenderer(diagnostic);
+            DiagnosticRenderer renderer = DefaultErrorMessages.getRendererForDiagnostic(diagnostic);
             String diagnosticName = diagnostic.getFactory().getName();
             if (renderer instanceof AbstractDiagnosticWithParametersRenderer) {
                 //noinspection unchecked
@@ -626,17 +626,6 @@ public class CheckerTestUtil {
             }
             return new TextDiagnostic(diagnosticName, null);
         }
-
-        @Nullable
-        private static DiagnosticRenderer getRenderer(@NotNull Diagnostic diagnostic) {
-            for (DiagnosticFactoryToRendererMap map : DefaultErrorMessages.MAPS) {
-                DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-                if (renderer != null)
-                    return renderer;
-            }
-            return null;
-        }
-
 
         @NotNull
         private final String name;

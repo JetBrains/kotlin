@@ -1,9 +1,9 @@
-package 
+package
 
 package test {
 
     internal final class CompositeIterator</*0*/ T> {
-        public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators: java.util.Iterator<T> /*kotlin.Array<java.util.Iterator<T>>*/)
+        public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators: java.util.Iterator<T> /*kotlin.Array<out java.util.Iterator<T>>*/)
         internal final val iteratorsIter: kotlin.Iterator<java.util.Iterator<T>>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

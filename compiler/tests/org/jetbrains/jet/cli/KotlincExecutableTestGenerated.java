@@ -156,6 +156,24 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
         }
 
+        @TestMetadata("jsCodeError.args")
+        public void testJsCodeError() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeError.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("jsCodeNotLiteralError.args")
+        public void testJsCodeNotLiteralError() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeNotLiteralError.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("jsCodeWarning.args")
+        public void testJsCodeWarning() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeWarning.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("jsExtraHelp.args")
         public void testJsExtraHelp() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsExtraHelp.args");
@@ -168,9 +186,27 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJsTest(fileName);
         }
 
+        @TestMetadata("libraryDirNotFound.args")
+        public void testLibraryDirNotFound() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/libraryDirNotFound.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("nativeDeclarations.args")
         public void testNativeDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/nativeDeclarations.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("notValidLibraryDir.args")
+        public void testNotValidLibraryDir() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/notValidLibraryDir.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("outputIsDirectory.args")
+        public void testOutputIsDirectory() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/outputIsDirectory.args");
             doJsTest(fileName);
         }
 
@@ -195,6 +231,18 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("suppressAllWarningsJS.args")
         public void testSuppressAllWarningsJS() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/suppressAllWarningsJS.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("withFolderAsLib.args")
+        public void testWithFolderAsLib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/withFolderAsLib.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("withLib.args")
+        public void testWithLib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/withLib.args");
             doJsTest(fileName);
         }
     }

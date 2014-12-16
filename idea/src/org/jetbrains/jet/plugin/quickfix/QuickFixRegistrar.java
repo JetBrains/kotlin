@@ -249,11 +249,17 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateLocalVariableActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateParameterActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateParameterActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateParameterActionFactory.INSTANCE$);
+
+        QuickFixes.factories.put(NAMED_PARAMETER_NOT_FOUND, CreateParameterByNamedArgumentActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
 
-        QuickFixes.factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
+        QuickFixFactoryForTypeMismatchError factoryForTypeMismatchError = new QuickFixFactoryForTypeMismatchError();
+        QuickFixes.factories.put(TYPE_MISMATCH, factoryForTypeMismatchError);
+        QuickFixes.factories.put(NULL_FOR_NONNULL_TYPE, factoryForTypeMismatchError);
+        QuickFixes.factories.put(CONSTANT_EXPECTED_TYPE_MISMATCH, factoryForTypeMismatchError);
 
         QuickFixes.factories.put(SMARTCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForSmartCastImpossible());
 

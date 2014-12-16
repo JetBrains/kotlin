@@ -233,7 +233,7 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(DefaultErrorMessages.RENDERER.render(diagnostic));
+                throw new IllegalStateException(DefaultErrorMessages.render(diagnostic));
             }
         }
     };
@@ -298,7 +298,7 @@ public class JetTestUtils {
 
     @NotNull
     public static File getJdkAnnotationsJar() {
-        File jdkAnnotations = new File("dependencies/annotations/kotlin-jdk-annotations.jar");
+        File jdkAnnotations = new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/annotations/kotlin-jdk-annotations.jar");
         if (!jdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
         }
@@ -307,7 +307,7 @@ public class JetTestUtils {
 
     @NotNull
     public static File getAndroidSdkAnnotationsJar() {
-        File androidSdkAnnotations = new File("dependencies/annotations/kotlin-android-sdk-annotations.jar");
+        File androidSdkAnnotations = new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/annotations/kotlin-android-sdk-annotations.jar");
         if (!androidSdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin Android SDK annotations jar not found; please run 'ant dist' to build it");
         }

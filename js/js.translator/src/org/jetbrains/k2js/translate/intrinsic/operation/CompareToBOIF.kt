@@ -28,6 +28,7 @@ import org.jetbrains.k2js.translate.operation.OperatorTable
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
 import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
 
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
@@ -67,17 +68,19 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
-        if (JsDescriptorUtils.isBuiltin(descriptor))
-            when {
-                COMPARE_TO_CHAR.apply(descriptor) ->
-                    return CompareToCharIntrinsic
-                CHAR_COMPARE_TO.apply(descriptor) ->
-                    return CompareCharToPrimitiveIntrinsic
-                PRIMITIVE_COMPARE_TO.apply(descriptor) ->
-                    return CompareToIntrinsic
-                else ->
-                    return CompareToFunctionIntrinsic
-            }
-        return null
+        if (descriptor.isDynamic()) return CompareToIntrinsic
+
+        if (!JsDescriptorUtils.isBuiltin(descriptor)) return null
+
+        return when {
+            COMPARE_TO_CHAR.apply(descriptor) ->
+                CompareToCharIntrinsic
+            CHAR_COMPARE_TO.apply(descriptor) ->
+                CompareCharToPrimitiveIntrinsic
+            PRIMITIVE_COMPARE_TO.apply(descriptor) ->
+                CompareToIntrinsic
+            else ->
+                CompareToFunctionIntrinsic
+        }
     }
 }

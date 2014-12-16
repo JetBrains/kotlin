@@ -312,6 +312,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest(fileName);
         }
 
+        @TestMetadata("kotlinFunctionNonCallUsages")
+        public void testKotlinFunctionNonCallUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinFunctionNonCallUsages/");
+            doCallerHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinLocalClass/");

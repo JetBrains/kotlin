@@ -1,6 +1,6 @@
 package
 
 internal fun foo(/*0*/ x: kotlin.Array<kotlin.Int>): kotlin.Unit
-internal fun foo(/*0*/ vararg x: kotlin.Int? /*kotlin.Array<kotlin.Int?>*/): kotlin.Unit
+internal fun foo(/*0*/ vararg x: kotlin.Int? /*kotlin.Array<out kotlin.Int?>*/): kotlin.Unit
 internal fun foo(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 internal fun foo(/*0*/ x: kotlin.IntArray): kotlin.Unit

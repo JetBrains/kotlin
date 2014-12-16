@@ -22,6 +22,10 @@ public fun JsObjectScope(parent: JsScope, description: String): JsObjectScope = 
 
 public class JsObjectScope(parent: JsScope, description: String, scopeId: String?) : JsScope(parent, description, scopeId)
 
+public object JsDynamicScope : JsScope(null, "Scope for dynamic declarations", null) {
+    override fun doCreateName(name: String) = JsName(this, name)
+}
+
 public class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
 
     private val labelScopes = Stack<LabelScope>()

@@ -19,14 +19,12 @@ package org.jetbrains.jet.plugin.completion.smart
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
@@ -35,6 +33,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.plugin.completion.isVisible
 
 // adds java static members, enum members and members from class object
 class StaticMembers(
@@ -44,15 +44,13 @@ class StaticMembers(
 ) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
-                               context: JetExpression,
+                               context: JetSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
-
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
 
         val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.type) }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
-                addToCollection(collection, classDescriptor, expectedInfosForClass, scope, enumEntriesToSkip)
+                addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)
             }
         }
     }
@@ -61,11 +59,13 @@ class StaticMembers(
             collection: MutableCollection<LookupElement>,
             classDescriptor: ClassDescriptor,
             expectedInfos: Collection<ExpectedInfo>,
-            scope: JetScope,
+            context: JetSimpleNameExpression,
             enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
+        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
+
         fun processMember(descriptor: DeclarationDescriptor) {
-            if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
+            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(scope.getContainingDeclaration(), bindingContext, context)) return
 
             val classifier: (ExpectedInfo) -> ExpectedInfoClassification
             if (descriptor is CallableDescriptor) {

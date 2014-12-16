@@ -18,7 +18,7 @@ fun foo(): Int = 1
 
 annotation class AnnJC(vararg val i: Class<*>)
 AnnJC(*array(javaClass<Test>()))
-AnnJC(*array(iJC))
+AnnJC(*array(<!ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL!>iJC<!>))
 class TestJC
 val iJC = javaClass<Test>()
 

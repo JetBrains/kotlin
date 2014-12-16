@@ -1,4 +1,4 @@
 package
 
 internal fun </*0*/ T> dynamic(/*0*/ body: dynamic.() -> T): T
-internal fun foo(): kotlin.Unit
+internal fun test(): kotlin.Unit

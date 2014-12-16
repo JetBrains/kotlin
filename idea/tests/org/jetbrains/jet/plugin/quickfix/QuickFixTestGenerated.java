@@ -2399,6 +2399,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeNamedArgInConstructorCall.kt")
+                public void testNamedArgInConstructorCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNamedArgInConstructorCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeNamedArgInFunctionCall.kt")
+                public void testNamedArgInFunctionCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNamedArgInFunctionCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeNullableType.kt")
                 public void testNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNullableType.kt");
@@ -2414,6 +2426,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeWithPackageName.kt")
                 public void testWithPackageName() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeWithPackageName.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeWrongReceiver.kt")
+                public void testWrongReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeWrongReceiver.kt");
                     doTest(fileName);
                 }
             }
@@ -4160,6 +4178,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeChangeReturnTypeToSpecificNullable.kt")
+        public void testChangeReturnTypeToSpecificNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeToSpecificNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeChangeReturnTypeWhenFunctionNameIsMissing.kt")
         public void testChangeReturnTypeWhenFunctionNameIsMissing() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeWhenFunctionNameIsMissing.kt");
@@ -4175,6 +4199,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeCompareToTypeMismatch.kt")
         public void testCompareToTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeCompareToTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeConstantTypeMismatch.kt")
+        public void testConstantTypeMismatch() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeConstantTypeMismatch.kt");
             doTest(fileName);
         }
 
@@ -4205,6 +4235,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeHasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeHasNextFunctionReturnTypeMismatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeMakeReturnTypeNullable.kt")
+        public void testMakeReturnTypeNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeMakeReturnTypeNullable.kt");
             doTest(fileName);
         }
 

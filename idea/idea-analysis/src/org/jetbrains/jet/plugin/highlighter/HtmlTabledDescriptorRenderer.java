@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -34,6 +34,8 @@ import org.jetbrains.jet.renderer.Renderer;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
@@ -126,7 +128,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         String receiver = "";
         if (hasReceiver) {
             boolean error = false;
-            if (isErrorPosition.apply(ConstraintPosition.RECEIVER_POSITION)) {
+            if (isErrorPosition.apply(RECEIVER_POSITION.position())) {
                 error = true;
             }
             receiver = "receiver: " + strong(getTypeRenderer().render(receiverType), error);
@@ -143,7 +145,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             JetType argumentType = iterator.next();
             boolean error = false;
-            if (isErrorPosition.apply(ConstraintPosition.getValueParameterPosition(i))) {
+            if (isErrorPosition.apply(VALUE_PARAMETER_POSITION.position(i))) {
                 error = true;
             }
             String renderedArgument = getTypeRenderer().render(argumentType);

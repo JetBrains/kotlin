@@ -41,6 +41,7 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.ide.util.DirectoryChooserUtil
 import java.util.HashMap
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.plugin.refactoring.canRefactor
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")

@@ -1,4 +1,4 @@
 package
 
 internal fun test(): kotlin.Unit
-internal fun v(/*0*/ vararg d: dynamic /*kotlin.Array<dynamic>*/): kotlin.Unit
+internal fun v(/*0*/ vararg d: dynamic /*kotlin.Array<out dynamic>*/): kotlin.Unit

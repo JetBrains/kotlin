@@ -23,7 +23,10 @@ import java.util.HashMap
 import java.io.File
 
 public trait IncrementalCache {
-    public fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String>): Collection<String>
+    public fun getRemovedPackageParts(
+            // null value means source file has no top-level callables (won't produce package part)
+            sourceFilesToCompileAndFqNames: Map<File, String?>
+    ): Collection<String>
 
     public fun getPackageData(fqName: String): ByteArray?
 

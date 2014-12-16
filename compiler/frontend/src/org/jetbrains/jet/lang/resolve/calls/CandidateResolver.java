@@ -28,9 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
@@ -38,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -58,6 +55,8 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
@@ -92,8 +91,9 @@ public class CandidateResolver {
         }
 
 
+        ReceiverValue receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidateCall.getDispatchReceiver(), context.trace.getBindingContext());
         DeclarationDescriptorWithVisibility invisibleMember =
-                Visibilities.findInvisibleMember(ReceiverValue.IRRELEVANT_RECEIVER, candidate, context.scope.getContainingDeclaration());
+                Visibilities.findInvisibleMember(receiverValue, candidate, context.scope.getContainingDeclaration());
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);
@@ -163,7 +163,7 @@ public class CandidateResolver {
 
         // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
         // See TaskPrioritizer for more
-        JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getExtensionReceiver());
+        JetSuperExpression superExpression = getReceiverSuper(candidateCall.getExtensionReceiver());
         if (superExpression != null) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
             candidateCall.addStatus(OTHER_ERROR);
@@ -203,6 +203,18 @@ public class CandidateResolver {
         if (candidateThis == null || candidateThis.getKind().isSingleton()) return true;
 
         return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
+    }
+
+    @Nullable
+    private static JetSuperExpression getReceiverSuper(@NotNull ReceiverValue receiver) {
+        if (receiver instanceof ExpressionReceiver) {
+            ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
+            JetExpression expression = expressionReceiver.getExpression();
+            if (expression instanceof JetSuperExpression) {
+                return (JetSuperExpression) expression;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -276,7 +288,7 @@ public class CandidateResolver {
                     argumentExpression, functionLiteralExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
                 constraintSystem.addSubtypeConstraint(
-                        type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
+                        type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
                 temporaryToResolveFunctionLiteral.commit();
                 return;
             }
@@ -288,7 +300,7 @@ public class CandidateResolver {
         JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteralExpression, newContext,
                                                                        RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(
-                type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
+                type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
     }
 
     private <D extends CallableDescriptor> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D> context) {
@@ -344,7 +356,7 @@ public class CandidateResolver {
                 receiverType = updateResultTypeForSmartCasts(receiverType, ((ExpressionReceiver) receiverArgument).getExpression(),
                                                              context.dataFlowInfo, context.trace);
             }
-            constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
+            constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position());
         }
 
         // Restore type variables before alpha-conversion
@@ -387,8 +399,8 @@ public class CandidateResolver {
         context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.getDataFlowInfo());
 
         JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, dataFlowInfoForArgument, context.trace);
-        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
-                valueParameterDescriptor.getIndex()));
+        constraintSystem.addSubtypeConstraint(
+                type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
     }
 
     @Nullable

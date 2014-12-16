@@ -1,0 +1,12 @@
+fun bar(a: dynamic ) {
+    a.<caret>foo()
+}
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(): dynamic defined in bar
+
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = a {('Nothing'..'Any?')}
+Extension receiver = NO_RECEIVER

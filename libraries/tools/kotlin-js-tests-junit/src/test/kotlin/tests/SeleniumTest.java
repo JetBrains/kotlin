@@ -28,6 +28,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +40,17 @@ public class SeleniumTest {
     protected static String testQueryString = "";
     //protected static String testQueryString = "?testNumber=6";
 
+    protected static class HtmlUnitDriverWithExceptionOnFailingStatusCode extends HtmlUnitDriver {
+        HtmlUnitDriverWithExceptionOnFailingStatusCode() {
+            super(BrowserVersion.FIREFOX_17);
+            getWebClient().getOptions().setThrowExceptionOnFailingStatusCode(true);
+        }
+    }
+
     protected static WebDriver driver = createDriver();
 
     public static WebDriver createDriver() {
-        HtmlUnitDriver answer = new HtmlUnitDriver(BrowserVersion.FIREFOX_17);
+        HtmlUnitDriver answer = new HtmlUnitDriverWithExceptionOnFailingStatusCode();
         answer.setJavascriptEnabled(true);
         return answer;
     }

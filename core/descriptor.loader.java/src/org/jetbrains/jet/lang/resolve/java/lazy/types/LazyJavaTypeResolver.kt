@@ -73,20 +73,17 @@ class LazyJavaTypeResolver(
             }
         }
 
-        val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
+        val componentType = transformJavaType(javaComponentType, TYPE_ARGUMENT.toAttributes(attr.allowFlexible))
 
-        val howArgumentTypeIsUsed = if (isVararg) MEMBER_SIGNATURE_CONTRAVARIANT else TYPE_ARGUMENT
-        val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes(attr.allowFlexible))
+        if (PLATFORM_TYPES && attr.allowFlexible) {
+            return FlexibleJavaClassifierTypeCapabilities.create(
+                    KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
+                    TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)))
+        }
+
+        val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
         val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
-        return if (PLATFORM_TYPES && attr.allowFlexible)
-            FlexibleJavaClassifierTypeCapabilities.create(
-                           KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
-                           TypeUtils.makeNullable(
-                                   KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)
-                           )
-                   )
-               else
-                   TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
+        return TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
     }
 
     private class LazyStarProjection(

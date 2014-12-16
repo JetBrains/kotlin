@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.configuration;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -34,10 +35,13 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibraryDialogWithModules;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
@@ -48,24 +52,63 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected abstract String getLibraryName();
 
     @NotNull
-    protected abstract String getJarName();
+    public abstract String getJarName();
 
     @NotNull
-    protected abstract String getSourcesJarName();
+    public abstract String getSourcesJarName();
 
     @NotNull
     protected abstract String getMessageForOverrideDialog();
 
     @NotNull
-    protected abstract File getExistedJarFile();
+    protected abstract String getDialogTitle();
 
-    protected abstract File getExistedSourcesJarFile();
+    @NotNull
+    protected abstract String getLibraryCaption();
+
+    @NotNull
+    public abstract File getExistedJarFile();
+
+    public abstract File getExistedSourcesJarFile();
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
         return !JetPluginUtil.isAndroidGradleModule(module) &&
                !JetPluginUtil.isMavenModule(module) &&
                !JetPluginUtil.isGradleModule(module);
+    }
+
+    @Override
+    public void configure(@NotNull Project project) {
+        String defaultPathToJar = getDefaultPathToJarFile(project);
+        boolean showPathToJarPanel = needToChooseJarPath(project);
+
+        List<Module> nonConfiguredModules =
+                !ApplicationManager.getApplication().isUnitTestMode() ?
+                ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this) :
+                Arrays.asList(ModuleManager.getInstance(project).getModules());
+
+        List<Module> modulesToConfigure = nonConfiguredModules;
+        String copyLibraryIntoPath = null;
+
+        if (nonConfiguredModules.size() > 1 || showPathToJarPanel) {
+            CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
+                    project, nonConfiguredModules, defaultPathToJar, showPathToJarPanel,
+                    getDialogTitle(),
+                    getLibraryCaption());
+
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                dialog.show();
+                if (!dialog.isOK()) return;
+            }
+
+            modulesToConfigure = dialog.getModulesToConfigure();
+            copyLibraryIntoPath = dialog.getCopyIntoPath();
+        }
+
+        for (Module module : modulesToConfigure) {
+            configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath);
+        }
     }
 
     protected void configureModuleWithLibrary(

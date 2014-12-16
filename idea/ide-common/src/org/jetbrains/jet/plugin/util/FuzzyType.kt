@@ -24,10 +24,11 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
 fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {
     val returnType = getReturnType() ?: return null
@@ -97,8 +98,8 @@ class FuzzyType(
         constraintSystem.registerTypeVariables(typeVariables)
 
         when (matchKind) {
-            MatchKind.IS_SUBTYPE -> constraintSystem.addSubtypeConstraint(type, otherType, ConstraintPosition.SPECIAL)
-            MatchKind.IS_SUPERTYPE -> constraintSystem.addSubtypeConstraint(otherType, type, ConstraintPosition.SPECIAL)
+            MatchKind.IS_SUBTYPE -> constraintSystem.addSubtypeConstraint(type, otherType, ConstraintPositionKind.SPECIAL.position())
+            MatchKind.IS_SUPERTYPE -> constraintSystem.addSubtypeConstraint(otherType, type, ConstraintPositionKind.SPECIAL.position())
         }
 
         if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {

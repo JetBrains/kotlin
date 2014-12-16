@@ -18,24 +18,33 @@ package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 
 public class TargetPlatformImpl implements TargetPlatform {
     @NotNull private final String platformName;
     @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull private final DynamicTypesSettings dynamicTypesSettings;
 
-    public TargetPlatformImpl(@NotNull String platformName) {
-        this(platformName, AdditionalCheckerProvider.Empty.INSTANCE$);
-    }
-
-    public TargetPlatformImpl(@NotNull String platformName, @NotNull AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
+    public TargetPlatformImpl(
+            @NotNull String platformName,
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+            @NotNull DynamicTypesSettings dynamicTypesSettings
+    ) {
         this.platformName = platformName;
+        this.additionalCheckerProvider = additionalCheckerProvider;
+        this.dynamicTypesSettings = dynamicTypesSettings;
     }
 
     @NotNull
     @Override
     public AdditionalCheckerProvider getAdditionalCheckerProvider() {
         return additionalCheckerProvider;
+    }
+
+    @NotNull
+    @Override
+    public DynamicTypesSettings getDynamicTypesSettings() {
+        return dynamicTypesSettings;
     }
 
     @Override

@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -49,6 +48,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getCalleeExpressionIfAny;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
@@ -184,7 +184,7 @@ public class DelegatedPropertyResolver {
         if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
 
         OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
-                propertyDescriptor, delegateExpression, delegateType, trace, scope, isGet);
+                propertyDescriptor, delegateExpression, delegateType, trace, scope, isGet, true);
         Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
         assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
 
@@ -218,14 +218,18 @@ public class DelegatedPropertyResolver {
             @NotNull JetType delegateType,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
-            boolean isGet
+            boolean isGet,
+            boolean isComplete
     ) {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
 
+        JetType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
+                               ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
+
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, trace, scope,
-                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+                DataFlowInfo.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
@@ -318,13 +322,15 @@ public class DelegatedPropertyResolver {
                         TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
                 OverloadResolutionResults<FunctionDescriptor>
                         getMethodResults = getDelegatedPropertyConventionMethod(
-                        propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope, true);
+                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope,
+                                true, false
+                        );
 
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
                     JetType returnTypeOfGetMethod = descriptor.getReturnType();
                     if (returnTypeOfGetMethod != null) {
-                        constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, ConstraintPosition.FROM_COMPLETER);
+                        constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
                     }
                     addConstraintForThisValue(constraintSystem, descriptor);
                 }
@@ -335,9 +341,11 @@ public class DelegatedPropertyResolver {
                 // But if the type isn't known yet, the constraint shouldn't be added (we try to infer the type of 'v' here as well).
                 if (propertyDescriptor.getReturnType() instanceof DeferredType) return;
 
-                OverloadResolutionResults<FunctionDescriptor> setMethodResults =
-                        getDelegatedPropertyConventionMethod(
-                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope, false);
+                OverloadResolutionResults<FunctionDescriptor>
+                        setMethodResults = getDelegatedPropertyConventionMethod(
+                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope,
+                                false, false
+                        );
 
                 if (conventionMethodFound(setMethodResults)) {
                     FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
@@ -347,7 +355,7 @@ public class DelegatedPropertyResolver {
 
                         if (!noExpectedType(expectedType)) {
                             constraintSystem.addSubtypeConstraint(
-                                    expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                                    expectedType, valueParameterForThis.getType(), FROM_COMPLETER.position());
                         }
                         addConstraintForThisValue(constraintSystem, descriptor);
                     }
@@ -372,7 +380,7 @@ public class DelegatedPropertyResolver {
                 if (valueParameters.isEmpty()) return;
                 ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
 
-                constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), FROM_COMPLETER.position());
             }
         };
     }

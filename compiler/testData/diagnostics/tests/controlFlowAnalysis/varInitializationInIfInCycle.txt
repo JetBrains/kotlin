@@ -1,4 +1,4 @@
 package
 
 internal fun foo(/*0*/ numbers: kotlin.Collection<kotlin.Int>): kotlin.Unit
-internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>

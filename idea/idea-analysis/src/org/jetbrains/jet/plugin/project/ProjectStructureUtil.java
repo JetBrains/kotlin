@@ -22,13 +22,11 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
@@ -42,9 +40,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ProjectStructureUtil {
@@ -146,11 +142,7 @@ public class ProjectStructureUtil {
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
-                        List<VirtualFile> classes = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
-
-                        boolean detected = JsLibraryStdDetectionUtil.getJsLibraryStdVersion(classes) != null;
-
-                        if (detected) {
+                        if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library)) {
                             jsLibrary.set(library);
                             return false;
                         }

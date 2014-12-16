@@ -3,9 +3,11 @@ class A {
     fun component2() = 42
 }
 
+fun arrayA(): Array<A> = null!!
+
 fun foo(a: A, <warning>c</warning>: Int) {
     val (<warning descr="[NAME_SHADOWING] Name shadowed: a"><warning descr="[UNUSED_VARIABLE] Variable 'a' is never used">a</warning></warning>, <warning>b</warning>) = a
-    val arr = Array(2) { A() }
+    val arr = arrayA()
     for ((<warning descr="[NAME_SHADOWING] Name shadowed: c">c</warning>, d) in arr) {
     }
 }

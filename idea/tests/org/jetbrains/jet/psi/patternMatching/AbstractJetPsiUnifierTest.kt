@@ -52,10 +52,6 @@ public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestC
         myFixture.configureByFile(filePath)
         val file = myFixture.getFile() as JetFile
 
-        if (InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null) {
-            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
-        }
-
         DirectiveBasedActionUtils.checkForUnexpectedErrors(file)
 
         val actualText =
@@ -67,5 +63,5 @@ public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestC
         JetTestUtils.assertEqualsToFile(File("$filePath.match"), actualText)
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromTestName()
 }

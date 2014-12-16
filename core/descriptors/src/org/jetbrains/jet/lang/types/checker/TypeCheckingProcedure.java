@@ -32,19 +32,19 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-        return findCorrespondingSupertype(subtype, supertype, new TypeCheckerTypingConstraints());
+        return findCorrespondingSupertype(subtype, supertype, new TypeCheckerProcedureCallbacksImpl());
     }
 
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypingConstraints typingConstraints) {
+    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
         TypeConstructor constructor = subtype.getConstructor();
-        if (typingConstraints.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
+        if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
             return subtype;
         }
         for (JetType immediateSupertype : constructor.getSupertypes()) {
-            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typingConstraints);
+            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typeCheckingProcedureCallbacks);
             if (correspondingSupertype != null) {
                 return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
             }
@@ -62,9 +62,9 @@ public class TypeCheckingProcedure {
         return isOutProjected ? KotlinBuiltIns.getInstance().getNothingType() : argument.getType();
     }
 
-    private final TypingConstraints constraints;
+    private final TypeCheckingProcedureCallbacks constraints;
 
-    public TypeCheckingProcedure(TypingConstraints constraints) {
+    public TypeCheckingProcedure(TypeCheckingProcedureCallbacks constraints) {
         this.constraints = constraints;
     }
 
@@ -106,6 +106,9 @@ public class TypeCheckingProcedure {
             TypeProjection typeProjection1 = type1Arguments.get(i);
             TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
             TypeProjection typeProjection2 = type2Arguments.get(i);
+            if (capture(typeProjection1, typeProjection2, typeParameter1)) {
+                continue;
+            }
             if (getEffectiveProjectionKind(typeParameter1, typeProjection1) != getEffectiveProjectionKind(typeParameter2, typeProjection2)) {
                 return false;
             }
@@ -180,12 +183,19 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (TypesPackage.isFlexible(subtype)) {
-            return isSubtypeOf(TypesPackage.flexibility(subtype).getLowerBound(), supertype);
+        if (TypesPackage.sameTypeConstructors(subtype, supertype)) {
+            return !subtype.isMarkedNullable() || supertype.isMarkedNullable();
         }
-        if (TypesPackage.isFlexible(supertype)) {
-            return isSubtypeOf(subtype, TypesPackage.flexibility(supertype).getUpperBound());
+        JetType subtypeRepresentative = TypesPackage.getSubtypeRepresentative(subtype);
+        JetType supertypeRepresentative = TypesPackage.getSupertypeRepresentative(supertype);
+        if (subtypeRepresentative != subtype || supertypeRepresentative != supertype) {
+            // recursive invocation for possible chain of representatives
+            return isSubtypeOf(subtypeRepresentative, supertypeRepresentative);
         }
+        return isSubtypeOfForRepresentatives(subtype, supertype);
+    }
+
+    private boolean isSubtypeOfForRepresentatives(JetType subtype, JetType supertype) {
         if (subtype.isError() || supertype.isError()) {
             return true;
         }
@@ -225,6 +235,8 @@ public class TypeCheckingProcedure {
             JetType superIn = getInType(parameter, superArgument);
             JetType superOut = getOutType(parameter, superArgument);
 
+            if (capture(subArgument, superArgument, parameter)) continue;
+
             boolean argumentIsErrorType = subArgument.getType().isError() || superArgument.getType().isError();
             if (!argumentIsErrorType && parameter.getVariance() == INVARIANT
                     && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
@@ -236,5 +248,26 @@ public class TypeCheckingProcedure {
             }
         }
         return true;
+    }
+
+    private boolean capture(
+            @NotNull TypeProjection firstProjection,
+            @NotNull TypeProjection secondProjection,
+            @NotNull TypeParameterDescriptor parameter
+    ) {
+        // Capturing makes sense only for invariant classes
+        if (parameter.getVariance() != INVARIANT) return false;
+
+        // Now, both subtype and supertype relations transform to equality constraints on type arguments:
+        // Array<T> is a subtype, supertype or equal to Array<out Int> then T captures a type that extends Int: 'Captured(out Int)'
+        // Array<T> is a subtype, supertype or equal to Array<in Int> then T captures a type that extends Int: 'Captured(in Int)'
+
+        if (firstProjection.getProjectionKind() == INVARIANT && secondProjection.getProjectionKind() != INVARIANT) {
+            return constraints.capture(firstProjection.getType(), secondProjection);
+        }
+        if (firstProjection.getProjectionKind() != INVARIANT && secondProjection.getProjectionKind() == INVARIANT) {
+            return constraints.capture(secondProjection.getType(), firstProjection);
+        }
+        return false;
     }
 }

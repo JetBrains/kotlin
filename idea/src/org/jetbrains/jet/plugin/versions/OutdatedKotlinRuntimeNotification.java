@@ -32,20 +32,26 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 
 import javax.swing.event.HyperlinkEvent;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static com.intellij.util.PathUtil.getLocalFile;
+
 public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent {
     private static final String SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version";
+    private static final String OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime";
 
     public OutdatedKotlinRuntimeNotification(Project project) {
         super(project);
@@ -83,7 +89,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                     return;
                 }
 
-                final Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
+                Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
 
                 String message;
                 if (versionedOutdatedLibraries.size() == 1) {
@@ -118,13 +124,16 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                 }
 
 
-                Notifications.Bus.notify(new Notification("Outdated Kotlin Runtime", "Outdated Kotlin Runtime", message,
+                Notifications.Bus.notify(new Notification(OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
                                                           NotificationType.WARNING, new NotificationListener() {
                     @Override
                     public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                             if ("update".equals(event.getDescription())) {
+                                Collection<VersionedLibrary> versionedOutdatedLibraries = findOutdatedKotlinLibraries(myProject, pluginVersion);
+                                Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
                                 KotlinRuntimeLibraryUtil.updateLibraries(myProject, outdatedLibraries);
+                                suggestDeleteKotlinJsIfNeeded(outdatedLibraries);
                             }
                             else if ("ignore".equals(event.getDescription())) {
                                 PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
@@ -138,6 +147,75 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                 }), myProject);
             }
         });
+    }
+
+    private void deleteKotlinJs() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        VirtualFile kotlinJsFile = myProject.getBaseDir().findFileByRelativePath("script/kotlin.js");
+                        if (kotlinJsFile == null) return;
+
+                        VirtualFile fileToDelete = getLocalFile(kotlinJsFile);
+                        try {
+                            VirtualFile parent = fileToDelete.getParent();
+                            fileToDelete.delete(this);
+                            parent.refresh(false, true);
+                        }
+                        catch (IOException ex) {
+                            Notifications.Bus.notify(
+                                new Notification(OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Error", "Could not delete 'script/kotlin.js': " + ex.getMessage(), NotificationType.ERROR));
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void suggestDeleteKotlinJsIfNeeded(Collection<Library> outdatedLibraries) {
+        VirtualFile kotlinJsFile = myProject.getBaseDir().findFileByRelativePath("script/kotlin.js");
+        if (kotlinJsFile == null) return;
+
+        boolean addNotification = false;
+        for(Library library : outdatedLibraries) {
+            if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+                VirtualFile jsStdlibJar = JSLibraryStdPresentationProvider.getJsStdLibJar(library);
+                assert jsStdlibJar != null : "jslibFile should not be null";
+
+                if (jsStdlibJar.findFileByRelativePath("kotlin.js") == null) {
+                    addNotification = true;
+                    break;
+                }
+            }
+        }
+        if (!addNotification) return;
+
+        String message = String.format(
+                "<p>File 'script/kotlin.js' was probably created by an older version of the Kotlin plugin.</p>" +
+                "<p>The new Kotlin plugin copies an up-to-date version of this file to the output directory automatically, so the old version of it can be deleted.</p>" +
+                "<p><a href=\"delete\">Delete this file</a> <a href=\"ignore\">Ignore</a></p>");
+
+        Notifications.Bus.notify(new Notification(OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
+                                                  NotificationType.WARNING, new NotificationListener() {
+            @Override
+            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    if ("delete".equals(event.getDescription())) {
+                        deleteKotlinJs();
+                    }
+                    else if ("ignore".equals(event.getDescription())) {
+                        // pass
+                    }
+                    else {
+                        throw new AssertionError();
+                    }
+                    notification.expire();
+                }
+            }
+        }), myProject);
     }
 
     private static Collection<Library> extractLibraries(Collection<VersionedLibrary> libraries) {
@@ -155,12 +233,16 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         List<VersionedLibrary> outdatedLibraries = Lists.newArrayList();
 
         for (Library library : KotlinRuntimeLibraryUtil.findKotlinLibraries(project)) {
-            LibraryVersionProperties javaRuntimeProperties =
+            LibraryVersionProperties libraryVersionProperties =
                     LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library);
-            if (javaRuntimeProperties == null) {
+            if (libraryVersionProperties == null) {
+                libraryVersionProperties =
+                        LibraryPresentationProviderUtil.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library);
+            }
+            if (libraryVersionProperties == null) {
                 continue;
             }
-            String libraryVersion = javaRuntimeProperties.getVersionString();
+            String libraryVersion = libraryVersionProperties.getVersionString();
 
             boolean isOutdated = "snapshot".equals(libraryVersion)
                                  || libraryVersion == null

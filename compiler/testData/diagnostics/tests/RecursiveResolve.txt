@@ -16,3 +16,71 @@ internal final class Test {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+internal final class Test2</*0*/ A, /*1*/ B, /*2*/ C> {
+    public constructor Test2</*0*/ A, /*1*/ B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
+    private final val bar: kotlin.Any
+    private final val bas: kotlin.Int
+    internal final val bas2: kotlin.Int
+    internal final val foo: kotlin.Any
+    internal final fun bar(): kotlin.Int
+    internal final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bar2(): kotlin.Int
+    private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bas(): kotlin.Int
+    private final fun bas2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Test3</*0*/ in A, /*1*/ B, /*2*/ C> {
+    public constructor Test3</*0*/ in A, /*1*/ B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
+    private final val bar: kotlin.Any
+    private final val bas: [ERROR : Type for bas()]
+    internal final val bas2: kotlin.Int
+    internal final val foo: kotlin.Any
+    internal final fun bar(): kotlin.Int
+    internal final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bar2(): [ERROR : Error function type]
+    private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bas(): kotlin.Int
+    private final fun bas2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Test4</*0*/ A, /*1*/ out B, /*2*/ C> {
+    public constructor Test4</*0*/ A, /*1*/ out B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
+    private final val bar: kotlin.Any
+    private final val bas: [ERROR : Type for bas()]
+    internal final val bas2: kotlin.Int
+    internal final val foo: kotlin.Any
+    internal final fun bar(): kotlin.Int
+    internal final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bar2(): [ERROR : Error function type]
+    private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bas(): kotlin.Int
+    private final fun bas2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Test5</*0*/ A, /*1*/ out B, /*2*/ C> {
+    public constructor Test5</*0*/ A, /*1*/ out B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
+    private final val bar: kotlin.Any
+    private final val bas: kotlin.Int
+    internal final val bas2: kotlin.Int
+    internal final val foo: kotlin.Any
+    internal final fun bar(): kotlin.Int
+    internal final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bar2(): kotlin.Int
+    private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
+    private final fun bas(): kotlin.Int
+    private final fun bas2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

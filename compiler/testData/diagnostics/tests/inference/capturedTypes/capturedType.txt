@@ -1,0 +1,5 @@
+package
+
+internal fun </*0*/ T> foo(/*0*/ array: kotlin.Array<T>): kotlin.Array<T>
+internal fun test1(/*0*/ a1: kotlin.Array<out kotlin.Int>): kotlin.Unit
+internal fun test2(/*0*/ a2: kotlin.Array<in kotlin.Int>): kotlin.Unit

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -229,6 +230,19 @@ public final class StaticContext {
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
+            Rule<JsName> namesForDynamic = new Rule<JsName>() {
+                @Override
+                @Nullable
+                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (TasksPackage.isDynamic(descriptor)) {
+                        String name = descriptor.getName().asString();
+                        return JsDynamicScope.INSTANCE$.declareName(name);
+                    }
+
+                    return null;
+                }
+            };
+
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
                 @Nullable
@@ -332,6 +346,8 @@ public final class StaticContext {
                     return result;
                 }
             };
+
+            addRule(namesForDynamic);
             addRule(namesForStandardClasses);
             addRule(constructorOrClassObjectHasTheSameNameAsTheClass);
             addRule(propertyOrPropertyAccessor);

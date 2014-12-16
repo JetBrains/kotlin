@@ -75,6 +75,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
             public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
                 KotlinClassFindUsagesOptions options = new KotlinClassFindUsagesOptions(project);
                 options.isUsages = false;
+                options.isSearchForTextOccurrences = false;
                 options.setSearchConstructorUsages(false);
                 for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
                     if (parseCommonOptions(options, s)) continue;
@@ -303,7 +304,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                         if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
 
                         String ext = name.substring(name.lastIndexOf('.') + 1);
-                        return ext.equals("kt") || ext.equals("java");
+                        return ext.equals("kt") || ext.equals("java") || ext.equals("xml");
                     }
                 }
         );

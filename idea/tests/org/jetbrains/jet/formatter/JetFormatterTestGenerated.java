@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @TestMetadata("idea/testData/formatter")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Formatter.ModifierList.class})
+    @InnerTestClasses({Formatter.ModifierList.class, Formatter.ParameterList.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Formatter extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatter() throws Exception {
@@ -609,6 +609,63 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             @TestMetadata("secondMemberVarTheOnlyModifier.after.kt")
             public void testSecondMemberVarTheOnlyModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberVarTheOnlyModifier.after.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/parameterList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ParameterList extends AbstractJetFormatterTest {
+            public void testAllFilesPresentInParameterList() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/parameterList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            }
+
+            @TestMetadata("ArgumentListChopAsNeeded.after.kt")
+            public void testArgumentListChopAsNeeded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListChopAsNeeded.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArgumentListDoNotWrap.after.kt")
+            public void testArgumentListDoNotWrap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListDoNotWrap.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArgumentListWrapAlways.after.kt")
+            public void testArgumentListWrapAlways() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapAlways.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ArgumentListWrapAsNeeded.after.kt")
+            public void testArgumentListWrapAsNeeded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapAsNeeded.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListChopAsNeeded.after.kt")
+            public void testParameterListChopAsNeeded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListChopAsNeeded.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListDoNotWrap.after.kt")
+            public void testParameterListDoNotWrap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListDoNotWrap.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListWrapAlways.after.kt")
+            public void testParameterListWrapAlways() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListWrapAlways.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterListWrapAsNeeded.after.kt")
+            public void testParameterListWrapAsNeeded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListWrapAsNeeded.after.kt");
                 doTest(fileName);
             }
         }

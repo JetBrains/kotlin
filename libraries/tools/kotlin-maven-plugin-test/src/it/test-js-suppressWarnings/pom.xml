@@ -13,6 +13,14 @@
 
     <artifactId>test-js-suppressWarningsAndVersion</artifactId>
 
+    <dependencies>
+    	<dependency>
+        	<groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-js-library</artifactId>
+                <version>${project.version}</version>
+        </dependency>
+   </dependencies>
+   
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
@@ -20,13 +28,6 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-js-library</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>compile</id>

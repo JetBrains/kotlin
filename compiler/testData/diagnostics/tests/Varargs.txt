@@ -2,4 +2,4 @@ package
 
 internal fun test(): kotlin.Unit
 internal fun v(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String, /*2*/ vararg f: kotlin.Long /*kotlin.LongArray*/): kotlin.Unit
-internal fun v1(/*0*/ vararg f: (kotlin.Int) -> kotlin.Unit /*kotlin.Array<(kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit
+internal fun v1(/*0*/ vararg f: (kotlin.Int) -> kotlin.Unit /*kotlin.Array<out (kotlin.Int) -> kotlin.Unit>*/): kotlin.Unit

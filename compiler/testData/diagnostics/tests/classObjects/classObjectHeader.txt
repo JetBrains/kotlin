@@ -1,4 +1,4 @@
-package 
+package
 
 package test {
     internal fun testFun(/*0*/ a: kotlin.Int): kotlin.Int

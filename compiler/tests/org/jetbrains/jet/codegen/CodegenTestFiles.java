@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.IOException;
@@ -138,7 +139,7 @@ public class CodegenTestFiles {
                 }
                 else if (type.equals("kotlin.Array<kotlin.String>")) {
                     value = valueString.split(" ");
-                    jetType = builtIns.getArrayType(builtIns.getStringType());
+                    jetType = builtIns.getArrayType(Variance.INVARIANT, builtIns.getStringType());
                 }
                 else {
                     throw new AssertionError("TODO: " + type);

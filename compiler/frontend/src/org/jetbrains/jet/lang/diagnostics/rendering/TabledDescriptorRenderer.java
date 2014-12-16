@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.Tab
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;

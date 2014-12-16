@@ -40,8 +40,6 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import java.io.File
-import java.io.IOException
-import java.lang.reflect.Modifier
 import java.util.*
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*
@@ -51,15 +49,13 @@ import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.jet.compiler.CompilerSettings
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jet.compiler.runner.OutputItemsCollector
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem
+import org.jetbrains.jet.utils.LibraryUtils
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -85,16 +81,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val messageCollector = MessageCollectorAdapter(context)
         // Workaround for Android Studio
-        if (!isJavaPluginEnabled(context)) {
+        if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", NO_LOCATION)
             return NOTHING_DONE
         }
 
         val dataManager = context.getProjectDescriptor().dataManager
-        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
 
-        if (incrementalCaches.values().any { it -> it.isCacheVersionIncompatible() }) {
-            incrementalCaches.values().forEach { it.clean() }
+        if (chunk.getTargets().any { CacheFormatVersion(File(dataManager.getDataPaths().getTargetDataRoot(it), IncrementalCacheImpl.DIRECTORY_NAME)).isIncompatible() }) {
+            chunk.getTargets().forEach { dataManager.getStorage(it, IncrementalCacheStorageProvider).clean() }
             return CHUNK_REBUILD_REQUIRED
         }
 
@@ -105,6 +100,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
 
+        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
         val environment = createCompileEnvironment(incrementalCaches)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -279,6 +275,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
 
         runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        if (compilerSettings.copyJsLibraryFiles) {
+            val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).getAbsolutePath()
+            val libraryFilesToCopy = arrayListOf<String>()
+            JpsJsModuleUtils.getLibraryFiles(representativeTarget, libraryFilesToCopy)
+            LibraryUtils.copyJsFilesFromLibraries(libraryFilesToCopy, outputLibraryRuntimeDirectory)
+        }
         return outputItemCollector
     }
 
@@ -401,16 +403,3 @@ private fun hasKotlinDirtyOrRemovedFiles(
 
     return chunk.getTargets().any { !KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isEmpty() }
 }
-
-private fun isJavaPluginEnabled(context: CompileContext): Boolean {
-    try {
-        // Using reflection for backward compatibility with IDEA 12
-        val javaPluginIsEnabledField = javaClass<JavaBuilder>().getDeclaredField("IS_ENABLED")
-        return if (Modifier.isPublic(javaPluginIsEnabledField.getModifiers())) JavaBuilder.IS_ENABLED[context, true] else true
-    }
-    catch (e: NoSuchFieldException) {
-        throw IllegalArgumentException("Cannot check if Java Jps Plugin is enabled", e)
-    }
-
-}
-

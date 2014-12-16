@@ -24,7 +24,6 @@ import org.jetbrains.jet.di.InjectorForTests
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.jet.lang.types.Variance
 import java.io.File
@@ -34,6 +33,7 @@ import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.M
 import java.util.ArrayList
 import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
@@ -44,9 +44,9 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typeResolver: TypeResolver
         get() = _typeResolver!!
 
-    private var _myDeclarations: MyDeclarations? = null
-    private val myDeclarations: MyDeclarations
-        get() = _myDeclarations!!
+    private var _testDeclarations: ConstraintSystemTestData? = null
+    private val testDeclarations: ConstraintSystemTestData
+        get() = _testDeclarations!!
 
     override fun createEnvironment(): JetCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
@@ -57,12 +57,12 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
         val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule())
         _typeResolver = injector.getTypeResolver()!!
-        _myDeclarations = analyzeDeclarations()
+        _testDeclarations = analyzeDeclarations()
     }
 
     override fun tearDown() {
         _typeResolver = null
-        _myDeclarations = null
+        _testDeclarations = null
         super<JetLiteFixture>.tearDown()
     }
 
@@ -70,12 +70,12 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         return super.getTestDataPath() + "/constraintSystem/"
     }
 
-    private fun analyzeDeclarations(): MyDeclarations {
+    private fun analyzeDeclarations(): ConstraintSystemTestData {
         val fileName = "declarations/declarations.kt"
 
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
-        return MyDeclarations(bindingContext, getProject(), typeResolver)
+        return ConstraintSystemTestData(bindingContext, getProject(), typeResolver)
     }
 
     public fun doTest(filePath: String) {
@@ -87,15 +87,15 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val typeParameterDescriptors = LinkedHashMap<TypeParameterDescriptor, Variance>()
         val variables = parseVariables(fileText)
         for (variable in variables) {
-            typeParameterDescriptors.put(myDeclarations.getParameterDescriptor(variable), Variance.INVARIANT)
+            typeParameterDescriptors.put(testDeclarations.getParameterDescriptor(variable), Variance.INVARIANT)
         }
         constraintSystem.registerTypeVariables(typeParameterDescriptors)
 
         val constraints = parseConstraints(fileText)
         for (constraint in constraints) {
-            val firstType = myDeclarations.getType(constraint.firstType)
-            val secondType = myDeclarations.getType(constraint.secondType)
-            val position = if (constraint.isWeak) ConstraintPosition.getTypeBoundPosition(0)!! else ConstraintPosition.SPECIAL
+            val firstType = testDeclarations.getType(constraint.firstType)
+            val secondType = testDeclarations.getType(constraint.secondType)
+            val position = if (constraint.isWeak) TYPE_BOUND_POSITION.position(0) else SPECIAL.position()
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
@@ -108,7 +108,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
         val result = StringBuilder() append "result:\n"
         for ((typeParameter, variance) in typeParameterDescriptors) {
-            val parameterType = myDeclarations.getType(typeParameter.getName().asString())
+            val parameterType = testDeclarations.getType(typeParameter.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, variance)
             result append "${typeParameter.getName()}=${resultType?.let{ Renderers.RENDER_TYPE.render(it) }}\n"
         }

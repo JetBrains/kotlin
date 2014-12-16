@@ -31,17 +31,24 @@ public class K2JsCliTest extends CliBaseTest {
     }
 
     @Test
+    public void outputIsDirectory() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
+    }
+
+    @Test
     public void outputPrefixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
 
-        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
     }
 
     @Test
     public void outputPostfixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
 
-        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
     }
 
     @Test
@@ -54,5 +61,48 @@ public class K2JsCliTest extends CliBaseTest {
         executeCompilerCompareOutputJS();
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void withLib() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void withFolderAsLib() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void libraryDirNotFound() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void notValidLibraryDir() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").isFile());
+    }
+
+    @Test
+    public void jsCodeError() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
+
+    @Test
+    public void jsCodeWarning() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
+
+    @Test
+    public void jsCodeNotLiteralError() throws Exception {
+        executeCompilerCompareOutputJS();
     }
 }

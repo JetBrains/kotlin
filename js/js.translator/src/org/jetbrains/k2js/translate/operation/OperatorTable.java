@@ -46,6 +46,9 @@ public final class OperatorTable {
             .put(JetTokens.DIVEQ, JsBinaryOperator.ASG_DIV)
             .put(JetTokens.MULTEQ, JsBinaryOperator.ASG_MUL)
             .put(JetTokens.PERCEQ, JsBinaryOperator.ASG_MOD)
+            .put(JetTokens.IN_KEYWORD, JsBinaryOperator.INOP)
+            .put(JetTokens.EQEQEQ, JsBinaryOperator.REF_EQ)
+            .put(JetTokens.EXCLEQEQEQ, JsBinaryOperator.REF_NEQ)
             .build();
 
     private static final ImmutableBiMap<JetToken, JsUnaryOperator> unaryOperatorsMap = ImmutableBiMap.<JetToken, JsUnaryOperator>builder()
@@ -59,6 +62,9 @@ public final class OperatorTable {
     private OperatorTable() {
     }
 
+    public static boolean hasCorrespondingOperator(@NotNull JetToken token) {
+        return binaryOperatorsMap.containsKey(token) || unaryOperatorsMap.containsKey(token);
+    }
 
     public static boolean hasCorrespondingBinaryOperator(@NotNull JetToken token) {
         return binaryOperatorsMap.containsKey(token);

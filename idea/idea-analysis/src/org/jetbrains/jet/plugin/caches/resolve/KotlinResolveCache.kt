@@ -239,12 +239,14 @@ private object KotlinResolveDataProvider {
 
             val trace = DelegatingBindingTrace(resolveSession.getBindingContext(), "Trace for resolution of " + analyzableElement)
 
+            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile())
             val lazyTopDownAnalyzer = InjectorForLazyBodyResolve(
                     project,
                     SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker()),
                     resolveSession,
                     trace,
-                    TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile()).getAdditionalCheckerProvider()
+                    targetPlatform.getAdditionalCheckerProvider(),
+                    targetPlatform.getDynamicTypesSettings()
             ).getLazyTopDownAnalyzer()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(
@@ -290,7 +292,7 @@ private object KotlinResolveDataProvider {
         else {
             if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-            val contextForElement = contextElement.analyzeFully()
+            val contextForElement = contextElement.getResolutionFacade().analyzeWithPartialBodyResolve(contextElement)
 
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
             dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)

@@ -29,6 +29,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by Delegates.lazy {
         put(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER, "Native {0}''s first parameter type should be ''kotlin.String'' or subtype of ''kotlin.Number''", Renderers.STRING)
         put(ErrorsJs.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, "Native getter''s return type should be nullable")
         put(ErrorsJs.NATIVE_INDEXER_WRONG_PARAMETER_COUNT, "Expected {0} parameters for native {1}", Renderers.TO_STRING, Renderers.STRING)
+        put(ErrorsJs.JSCODE_ERROR, "JavaScript: {0}", Renderers.TO_STRING, Renderers.TO_STRING)
+        put(ErrorsJs.JSCODE_WARNING, "JavaScript: {0}", Renderers.TO_STRING, Renderers.TO_STRING)
+        put(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_LITERAL, "Argument must be string literal")
 
         this
     }

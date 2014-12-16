@@ -8,10 +8,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
 public final class JsPrefixOperation extends JsUnaryOperation {
-    public JsPrefixOperation(JsUnaryOperator op) {
-        this(op, null);
-    }
-
     public JsPrefixOperation(JsUnaryOperator op, JsExpression arg) {
         super(op, arg);
     }

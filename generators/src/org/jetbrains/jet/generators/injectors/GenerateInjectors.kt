@@ -113,6 +113,7 @@ private fun generatorForLazyBodyResolve() =
             parameter<KotlinCodeAnalyzer>(name = "analyzer")
             parameter<BindingTrace>()
             parameter<AdditionalCheckerProvider>()
+            parameter<DynamicTypesSettings>()
 
             field<ModuleDescriptor>(init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
 
@@ -253,6 +254,7 @@ private fun generatorForLazyResolve() =
             parameter<DeclarationProviderFactory>()
             parameter<BindingTrace>()
             parameter<AdditionalCheckerProvider>()
+            parameter<DynamicTypesSettings>()
 
             publicField<ResolveSession>()
 

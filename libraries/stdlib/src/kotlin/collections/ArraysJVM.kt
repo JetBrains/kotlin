@@ -6,7 +6,7 @@ import java.util.Arrays
 import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
-[Intrinsic("kotlin.arrays.array")] public fun <reified T> array(vararg t : T) : Array<T> = t
+[Intrinsic("kotlin.arrays.array")] public fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>
 
 // "constructors" for primitive types array
 [Intrinsic("kotlin.arrays.array")] public fun doubleArray(vararg content : Double) : DoubleArray    = content

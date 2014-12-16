@@ -1,5 +1,6 @@
 package
 
+kotlin.inline() public fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
 internal fun test(): kotlin.Unit
 internal fun use(/*0*/ a: kotlin.Any?): kotlin.Any?
 internal fun </*0*/ T> kotlin.Array<out T>.forEach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit

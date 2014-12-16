@@ -1,0 +1,34 @@
+package
+
+internal fun </*0*/ T> getT(): T
+
+internal trait In</*0*/ in I> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Inv</*0*/ P> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Out</*0*/ out O> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Test</*0*/ in I : kotlin.Any, /*1*/ out O : kotlin.Any, /*2*/ P : kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun neOk(/*0*/ i: Out<O?>?): In<O?>?
+    internal abstract fun neOk1(/*0*/ i: O?): I?
+    internal abstract fun neOk3(/*0*/ i: Inv<in I?>): kotlin.Unit
+    internal open fun neOk4(): Inv<in O?>?
+    internal abstract fun ok1(/*0*/ i: I?): O?
+    internal abstract fun ok2(/*0*/ i: In<O?>?): Out<O?>?
+    internal open fun ok3(/*0*/ i: Inv<in O?>): Inv<in I?>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

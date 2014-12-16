@@ -10,7 +10,7 @@ fun checkLess(x: Array<Int>, y: Array<Int>) = when {
 fun Array<Int>.compareTo(other: Array<Int>) = size() - other.size()
 
 fun box(): String {
-    val a = Array<Int>(0, {0})
-    val b = Array<Int>(1, {0})
+    val a = arrayOfNulls<Int>(0) as Array<Int>
+    val b = arrayOfNulls<Int>(1) as Array<Int>
     return checkLess(a, b)
 }

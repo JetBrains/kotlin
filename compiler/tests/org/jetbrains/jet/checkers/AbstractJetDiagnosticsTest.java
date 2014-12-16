@@ -84,7 +84,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 }
         );
 
-        List<JetFile> allJetFiles = new ArrayList<JetFile>();
         Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule);
         Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
 
@@ -95,7 +94,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             List<? extends TestFile> testFilesInModule = entry.getValue();
 
             List<JetFile> jetFiles = getJetFiles(testFilesInModule, true);
-            allJetFiles.addAll(jetFiles);
 
             ModuleDescriptorImpl module = modules.get(testModule);
             BindingTrace moduleTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();

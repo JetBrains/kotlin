@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.context.LazyResolveToken;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -33,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
-import org.jetbrains.jet.lang.types.DynamicTypesSettings;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
@@ -68,6 +68,7 @@ public class InjectorForLazyResolve {
     private final DeclarationProviderFactory declarationProviderFactory;
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final DynamicTypesSettings dynamicTypesSettings;
     private final ResolveSession resolveSession;
     private final LazyResolveToken lazyResolveToken;
     private final AnnotationResolver annotationResolver;
@@ -76,7 +77,6 @@ public class InjectorForLazyResolve {
     private final ExpressionTypingServices expressionTypingServices;
     private final ExpressionTypingComponents expressionTypingComponents;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
-    private final DynamicTypesSettings dynamicTypesSettings;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final ReflectionTypes reflectionTypes;
@@ -102,7 +102,8 @@ public class InjectorForLazyResolve {
         @NotNull ModuleDescriptorImpl moduleDescriptor,
         @NotNull DeclarationProviderFactory declarationProviderFactory,
         @NotNull BindingTrace bindingTrace,
-        @NotNull AdditionalCheckerProvider additionalCheckerProvider
+        @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+        @NotNull DynamicTypesSettings dynamicTypesSettings
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -113,6 +114,7 @@ public class InjectorForLazyResolve {
         this.declarationProviderFactory = declarationProviderFactory;
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
+        this.dynamicTypesSettings = dynamicTypesSettings;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.lazyResolveToken = new LazyResolveToken();
         this.annotationResolver = new AnnotationResolver();
@@ -121,7 +123,6 @@ public class InjectorForLazyResolve {
         this.expressionTypingComponents = new ExpressionTypingComponents();
         this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
-        this.dynamicTypesSettings = new DynamicTypesSettings();
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);

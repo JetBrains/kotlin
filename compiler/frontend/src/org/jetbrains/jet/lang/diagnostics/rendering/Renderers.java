@@ -31,13 +31,12 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
@@ -49,6 +48,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 
 public class Renderers {
     private static final Logger LOG = Logger.getInstance(Renderers.class);
@@ -211,6 +212,15 @@ public class Renderers {
                 }
             };
 
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER =
+            new Renderer<InferenceErrorData>() {
+                @NotNull
+                @Override
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                    return renderCannotCaptureTypeParameterError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
+                }
+            };
+
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
         LOG.assertTrue(inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints(), renderDebugMessage(
@@ -250,13 +260,13 @@ public class Renderers {
                 if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue;
                 JetType actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex());
                 if (!JetTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
-                    errorPositions.add(ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
+                    errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
                 }
             }
 
             if (receiverType != null && inferenceErrorData.receiverArgumentType != null &&
                     !JetTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
-                errorPositions.add(ConstraintPosition.RECEIVER_POSITION);
+                errorPositions.add(RECEIVER_POSITION.position());
             }
 
             Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
@@ -274,8 +284,11 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
-            TabledDescriptorRenderer renderer) {
+    @NotNull
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(
+            final @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer renderer
+    ) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
             public boolean apply(ConstraintPosition constraintPosition) {
@@ -291,8 +304,11 @@ public class Renderers {
                                               isErrorPosition));
     }
 
-    public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
-            TabledDescriptorRenderer result) {
+    @NotNull
+    public static TabledDescriptorRenderer renderNoInformationForParameterError(
+            @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer result
+    ) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
             if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
@@ -373,6 +389,47 @@ public class Renderers {
         return result;
     }
 
+    @NotNull
+    public static TabledDescriptorRenderer renderCannotCaptureTypeParameterError(
+            @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer result
+    ) {
+        ConstraintSystem constraintSystem = inferenceErrorData.constraintSystem;
+        TypeParameterDescriptor typeParameterWithCapturedConstraint = null;
+        CapturedTypeConstructor capturedTypeConstructor = null;
+        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
+            TypeBounds typeBounds = constraintSystem.getTypeBounds(typeParameter);
+            for (TypeBounds.Bound bound : typeBounds.getBounds()) {
+                TypeConstructor constructor = bound.getConstrainingType().getConstructor();
+                if (constructor instanceof CapturedTypeConstructor) {
+                    typeParameterWithCapturedConstraint = typeParameter;
+                    capturedTypeConstructor = (CapturedTypeConstructor) constructor;
+                }
+            }
+        }
+        if (capturedTypeConstructor == null) {
+            LOG.error(renderDebugMessage("There is no captured type in bounds, but there is an error 'cannot capture type parameter'",
+                                         inferenceErrorData));
+            return result;
+        }
+
+        String explanation;
+        JetType upperBound = typeParameterWithCapturedConstraint.getUpperBoundsAsType();
+        if (!KotlinBuiltIns.isNullableAny(upperBound)
+            && capturedTypeConstructor.getTypeProjection().getProjectionKind() == Variance.IN_VARIANCE) {
+            explanation = "Type parameter has an upper bound '" + result.getTypeRenderer().render(upperBound) + "'" +
+                           " that cannot be satisfied capturing 'in' projection";
+        }
+        else {
+            explanation = "Only top level type projections can be captured";
+        }
+        result.text(newText().normal("'" + typeParameterWithCapturedConstraint.getName() + "'" +
+                                     " cannot capture " +
+                                     "'" + capturedTypeConstructor.getTypeProjection() + "'. " +
+                                     explanation));
+        return result;
+    }
+
     public static final Renderer<Collection<ClassDescriptor>> CLASSES_OR_SEPARATED = new Renderer<Collection<ClassDescriptor>>() {
         @NotNull
         @Override
@@ -428,8 +485,8 @@ public class Renderers {
             Function<TypeBoundsImpl.Bound, String> renderBound = new Function<TypeBoundsImpl.Bound, String>() {
                 @Override
                 public String fun(TypeBoundsImpl.Bound bound) {
-                    String arrow = bound.kind == LOWER_BOUND ? ">: " : bound.kind == UPPER_BOUND ? "<: " : ":= ";
-                    return arrow + RENDER_TYPE.render(bound.type) + '(' + bound.position + ')';
+                    String arrow = bound.getKind() == LOWER_BOUND ? ">: " : bound.getKind() == UPPER_BOUND ? "<: " : ":= ";
+                    return arrow + RENDER_TYPE.render(bound.getConstrainingType()) + '(' + bound.getPosition() + ')';
                 }
             };
             Name typeVariableName = typeBounds.getTypeVariable().getName();

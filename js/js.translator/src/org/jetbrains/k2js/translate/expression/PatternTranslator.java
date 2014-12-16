@@ -93,6 +93,9 @@ public final class PatternTranslator extends AbstractTranslator {
         if (NamePredicate.STRING.apply(typeName)) {
             jsSTypeName = "string";
         }
+        else if (NamePredicate.BOOLEAN.apply(typeName)) {
+            jsSTypeName = "boolean";
+        }
         else if (NamePredicate.LONG.apply(typeName)) {
             return JsAstUtils.isLong(expressionToMatch);
         }

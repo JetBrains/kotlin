@@ -50,6 +50,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
+import static org.jetbrains.jet.lang.types.Variance.OUT_VARIANCE;
 
 public class SignaturesPropagationData {
 
@@ -368,6 +369,7 @@ public class SignaturesPropagationData {
         }
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        // todo simplify (with respect to platform types)
         if (someSupersVararg && originalVarargElementType == null) {
             // convert to vararg
 
@@ -393,10 +395,8 @@ public class SignaturesPropagationData {
             }
 
             // replace Array<Foo> with Array<out Foo>?
-            return new VarargCheckResult(TypeUtils.makeNullable(builtIns.getArrayType(Variance.OUT_VARIANCE, originalVarargElementType)),
-                                         false);
+            return new VarargCheckResult(TypeUtils.makeNullable(builtIns.getArrayType(OUT_VARIANCE, originalVarargElementType)), false);
         }
-
         return new VarargCheckResult(originalType, originalVarargElementType != null);
     }
 

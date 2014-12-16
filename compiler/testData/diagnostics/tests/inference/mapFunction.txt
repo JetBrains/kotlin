@@ -1,7 +1,7 @@
 package
 
 package a {
-    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.Array<T>
+    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     internal fun foo(): kotlin.Unit
     internal fun </*0*/ T, /*1*/ R> kotlin.Array<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
     internal fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>

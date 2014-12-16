@@ -101,7 +101,9 @@
 
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
+        <module>examples/kotlin-js-library-example</module>
         <module>examples/browser-example</module>
+        <module>examples/browser-example-with-library</module>
     </modules>
 
     <dependencies>

@@ -1,3 +1,3 @@
-package 
+package
 
 internal fun f(/*0*/ c: kotlin.LongRange): kotlin.Int

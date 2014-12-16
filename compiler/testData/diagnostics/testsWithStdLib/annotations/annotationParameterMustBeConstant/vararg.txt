@@ -16,16 +16,16 @@ internal final annotation class Ann : kotlin.Annotation {
 }
 
 internal final annotation class AnnAnn : kotlin.Annotation {
-    public constructor AnnAnn(/*0*/ vararg i: Ann /*kotlin.Array<Ann>*/)
-    internal final val i: kotlin.Array<Ann>
+    public constructor AnnAnn(/*0*/ vararg i: Ann /*kotlin.Array<out Ann>*/)
+    internal final val i: kotlin.Array<out Ann>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 internal final annotation class AnnJC : kotlin.Annotation {
-    public constructor AnnJC(/*0*/ vararg i: java.lang.Class<out kotlin.Any?> /*kotlin.Array<java.lang.Class<out kotlin.Any?>>*/)
-    internal final val i: kotlin.Array<java.lang.Class<out kotlin.Any?>>
+    public constructor AnnJC(/*0*/ vararg i: java.lang.Class<out kotlin.Any?> /*kotlin.Array<out java.lang.Class<out kotlin.Any?>>*/)
+    internal final val i: kotlin.Array<out java.lang.Class<out kotlin.Any?>>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -45,7 +45,7 @@ AnnAnn(i = {Ann(i = {IntegerValueType(1)}: kotlin.IntArray)}: kotlin.Array<Ann>)
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnJC(i = {Test.class}: kotlin.Array<java.lang.Class<out kotlin.Any?>>) AnnJC(i = {}: kotlin.Array<java.lang.Class<out kotlin.Any?>>) internal final class TestJC {
+AnnJC(i = {Test.class}: kotlin.Array<java.lang.Class<Test>>) AnnJC(i = {}: kotlin.Array<java.lang.Class<Test>>) internal final class TestJC {
     public constructor TestJC()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

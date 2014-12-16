@@ -14,6 +14,6 @@
     <orderEntry type="module" module-name="js.dart-ast" exported="" />
     <orderEntry type="module" module-name="js.frontend" exported="" />
     <orderEntry type="module" module-name="js.inliner" exported="" />
+    <orderEntry type="module" module-name="js.parser" />
   </component>
 </module>
-

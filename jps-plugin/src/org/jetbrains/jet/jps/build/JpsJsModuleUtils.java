@@ -18,7 +18,6 @@ package org.jetbrains.jet.jps.build;
 
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.LibraryUtils;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.java.JpsJavaModuleType;
@@ -29,7 +28,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -49,11 +47,7 @@ class JpsJsModuleUtils {
         Set<JpsLibrary> libraries = JpsUtils.getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                String path = JpsPathUtil.urlToPath(root.getUrl());
-                // TODO: Do we need to add to dependency all libraries?
-                if (LibraryUtils.isJsRuntimeLibrary(new File(path))) {
-                    result.add(path);
-                }
+                result.add(JpsPathUtil.urlToPath(root.getUrl()));
             }
         }
     }

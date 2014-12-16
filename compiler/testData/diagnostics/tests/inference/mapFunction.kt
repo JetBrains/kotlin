@@ -25,7 +25,7 @@ fun foo() {
 // ---------------------
 // copy from kotlin util
 
-fun <T> array(vararg t : T) : Array<T> = t
+fun <T> array(vararg t : T) : Array<T> = t as Array<T>
 
 fun <T, R> Array<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 

@@ -34,7 +34,7 @@ The IDE plugin requires the latest EAP build of [IntelliJ IDEA 11.1|http://eap.j
 
 h3. Kontributions
 * [stdlib|https://github.com/JetBrains/kotlin/tree/master/stdlib] by James Strachan
-* [Ant, Maven etc integration|https://github.com/JetBrains/kotlin/tree/master/build-tools] by Evgeny Goldin
+* [Ant, Maven etc integration|https://github.com/JetBrains/kotlin/tree/master/ant] by Evgeny Goldin
 * [Aztec|https://github.com/kondratovich/aztec] by Andrew Kondratovich
 * [Be the next Kontributor!|http://blog.jetbrains.com/kotlin/2012/03/contributing-to-kotlin/]
 {column}

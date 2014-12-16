@@ -3,7 +3,7 @@ package
 package a {
     internal fun hello(): kotlin.Unit
     internal fun </*0*/ T> inferenceTest(/*0*/ a: T): T
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
     internal final enum class TestEnum : kotlin.Enum<a.TestEnum> {
         public enum entry FIRST : a.TestEnum {

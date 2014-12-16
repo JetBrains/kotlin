@@ -1,0 +1,12 @@
+fun dynamic.bar() {
+    <caret>foo()
+}
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(): dynamic defined in bar
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = ('Nothing'..'Any?')Ext{fun dynamic.bar(): Unit defined in root package}
+Extension receiver = NO_RECEIVER

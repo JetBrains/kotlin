@@ -25,11 +25,9 @@ import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition.EXPECTED_TYPE_POSITION
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
@@ -46,15 +44,14 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
-import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
@@ -134,7 +131,7 @@ public class CallCompleter(
             trace: BindingTrace
     ) {
         fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
-            val copy = getConstraintSystem()!!.copy()
+            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy()
             if (update(copy)) {
                 setConstraintSystem(copy)
             }
@@ -142,12 +139,12 @@ public class CallCompleter(
 
         val returnType = getCandidateDescriptor().getReturnType()
         if (returnType != null) {
-            getConstraintSystem()!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION)
+            getConstraintSystem()!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
 
             if (expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
                 updateSystemIfSuccessful {
                     system ->
-                    system.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, EXPECTED_TYPE_POSITION)
+                    system.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
                     system.getStatus().isSuccessful()
                 }
             }
@@ -159,7 +156,7 @@ public class CallCompleter(
             updateSystemIfSuccessful {
                 system ->
                 constraintSystemCompleter.completeConstraintSystem(system, this)
-                !system.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.FROM_COMPLETER)
+                !system.getStatus().hasOnlyErrorsFromPosition(FROM_COMPLETER.position())
             }
         }
 

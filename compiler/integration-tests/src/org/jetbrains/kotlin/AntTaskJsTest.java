@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
@@ -27,7 +29,9 @@ import org.junit.rules.TestName;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -43,12 +47,20 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "js"), name.getMethodName());
     }
 
-    private void doJsAntTest() throws Exception {
+    private void doJsAntTest(String... jsFiles) throws Exception {
         doAntTest(SUCCESSFUL);
 
-        String outputFilePath = getOutputFileByName(JS_OUT_FILE).getAbsolutePath();
-        RhinoUtils.runRhinoTest(Collections.singletonList(outputFilePath),
-                                new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
+        List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
+        fileNames.add(JS_OUT_FILE);
+
+        List<String> filePaths = ContainerUtil.map(fileNames, new Function<String, String>() {
+            @Override
+            public String fun(String s) {
+                return getOutputFileByName(s).getAbsolutePath();
+            }
+        });
+
+        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
@@ -88,6 +100,16 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     @Test
     public void simpleWithStdlib() throws Exception {
         doJsAntTest();
+    }
+
+    @Test
+    public void simpleWithStdlibAndAnotherLib() throws Exception {
+        doJsAntTest("jslib-example.js");
+    }
+
+    @Test
+    public void simpleWithStdlibAndFolderAsAnotherLib() throws Exception {
+        doJsAntTest("jslib-example.js");
     }
 
     @Test

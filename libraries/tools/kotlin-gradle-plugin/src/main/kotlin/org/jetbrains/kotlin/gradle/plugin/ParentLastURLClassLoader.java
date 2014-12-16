@@ -1,9 +1,13 @@
 package org.jetbrains.kotlin.gradle.plugin;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A parent-last classloader that will try the child classloader first and then the parent.
@@ -23,7 +27,7 @@ public class ParentLastURLClassLoader extends ClassLoader {
     }
 
     @Override
-    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    protected synchronized Class<?> loadClass(@NotNull String name, boolean resolve) throws ClassNotFoundException {
         try {
             // first we try to find a class inside the child classloader
             return childClassLoader.findClass(name);
@@ -41,8 +45,9 @@ public class ParentLastURLClassLoader extends ClassLoader {
             super(parent);
         }
 
+        @NotNull
         @Override
-        public Class<?> findClass(String name) throws ClassNotFoundException {
+        public Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
             return super.findClass(name);
         }
     }
@@ -51,7 +56,9 @@ public class ParentLastURLClassLoader extends ClassLoader {
      * This class delegates (child then parent) for the findClass method for a URLClassLoader.
      * We need this because findClass is protected in URLClassLoader
      */
-    private static class ChildURLClassLoader extends URLClassLoader {
+    public static class ChildURLClassLoader extends URLClassLoader {
+        private final Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
+
         private FindClassClassLoader realParent;
 
         public ChildURLClassLoader(URL[] urls, FindClassClassLoader realParent) {
@@ -60,10 +67,22 @@ public class ParentLastURLClassLoader extends ClassLoader {
             this.realParent = realParent;
         }
 
+
+        @NotNull
         @Override
-        public Class<?> findClass(String name) throws ClassNotFoundException {
+        public Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
             try {
-                // first try to use the URLClassLoader findClass
+                // Replace with FinishBuildListener.isRequestedClass(name) after rewriting this class on Kotlin
+                if (name.equals("com.intellij.openapi.util.io.ZipFileCache") ||
+                        name.equals("com.intellij.openapi.util.LowMemoryWatcher")) {
+                    if (cache.containsKey(name)) return cache.get(name);
+
+                    Class<?> aClass = super.findClass(name);
+                    cache.put(name, aClass);
+
+                    return aClass;
+                }
+
                 return super.findClass(name);
             } catch (ClassNotFoundException e) {
                 // if that fails, we ask our real parent classloader to load the class (we give up)

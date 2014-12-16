@@ -55,7 +55,7 @@ public data class UsagesSearchLocation(
         val inCode: Boolean = true,
         val inComments: Boolean = false,
         val inStrings: Boolean = false,
-        val inPlainText: Boolean = false
+        val inPlainText: Boolean = true
 ) {
     class object {
         public val DEFAULT: UsagesSearchLocation = UsagesSearchLocation()
@@ -156,7 +156,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
     public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {
         return item.words.all { word ->
             val textProcessor = ResultTextProcessorImpl(item, consumer)
-            processElementsWithWord(textProcessor, item.target.effectiveScope, word, UsageSearchContext.IN_CODE, true)
+            processElementsWithWord(textProcessor, item.target.effectiveScope, word, item.target.location.searchContext, true)
         }
     }
 }

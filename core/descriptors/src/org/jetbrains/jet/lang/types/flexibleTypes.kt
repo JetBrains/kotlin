@@ -34,7 +34,7 @@ public trait FlexibleTypeCapabilities {
     }
 }
 
-public trait Flexibility : TypeCapability {
+public trait Flexibility : TypeCapability, SubtypingRepresentatives {
     class object {
         // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
         // it creates a flexible type, e.g. (Foo..Foo?).
@@ -48,6 +48,14 @@ public trait Flexibility : TypeCapability {
     public val upperBound: JetType
 
     public val extraCapabilities: FlexibleTypeCapabilities
+
+    override val subTypeRepresentative: JetType
+        get() = lowerBound
+
+    override val superTypeRepresentative: JetType
+        get() = upperBound
+
+    override fun sameTypeConstructor(type: JetType) = false
 }
 
 public fun JetType.isFlexible(): Boolean = this.getCapability(javaClass<Flexibility>()) != null

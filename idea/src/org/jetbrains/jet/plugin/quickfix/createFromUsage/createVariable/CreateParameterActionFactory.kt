@@ -1,9 +1,5 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.jet.plugin.JetBundle
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
@@ -16,9 +12,6 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTy
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.plugin.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
@@ -43,28 +36,6 @@ import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
-    private fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
-        val typeParametersToAdd = LinkedHashSet(getTypeParameters())
-        typeParametersToAdd.removeAll(functionDescriptor.getTypeParameters())
-        if (typeParametersToAdd.isEmpty()) return false
-
-        val scope = when(functionDescriptor) {
-            is ConstructorDescriptor -> {
-                val classDescriptor = (functionDescriptor as? ConstructorDescriptor)?.getContainingDeclaration()
-                (classDescriptor as? ClassDescriptorWithResolutionScopes)?.getScopeForClassHeaderResolution()
-            }
-
-            is FunctionDescriptor -> {
-                val function = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunction
-                function?.let { context[BindingContext.RESOLUTION_SCOPE, it.getBodyExpression()] }
-            }
-
-            else -> null
-        } ?: return true
-
-        return typeParametersToAdd.any { scope.getClassifier(it.getName()) != it }
-    }
-
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val result = (diagnostic.getPsiFile() as? JetFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
@@ -75,7 +46,7 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
         val varExpected = refExpr.getAssignmentByLHS() != null
 
         val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context, result.moduleDescriptor).let {
-            when (it.size) {
+            when (it.size()) {
                 0 -> KotlinBuiltIns.getInstance().getAnyType()
                 1 -> it.first()
                 else -> return null
@@ -116,22 +87,28 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
-        return object: CreateFromUsageFixBase(refExpr) {
-            override fun getText(): String {
-                return JetBundle.message("create.parameter.from.usage", refExpr.getReferencedName())
-            }
+        return CreateParameterFromUsageFix(functionDescriptor, context, parameterInfo, refExpr)
+    }
+}
 
-            override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-                val config = object : JetChangeSignatureConfiguration {
-                    override fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext) {
-                        changeSignatureData.addParameter(parameterInfo)
+fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
+    val typeParametersToAdd = LinkedHashSet(getTypeParameters())
+    typeParametersToAdd.removeAll(functionDescriptor.getTypeParameters())
+    if (typeParametersToAdd.isEmpty()) return false
+
+    val scope = when(functionDescriptor) {
+                    is ConstructorDescriptor -> {
+                        val classDescriptor = functionDescriptor.getContainingDeclaration() as? ClassDescriptorWithResolutionScopes
+                        classDescriptor?.getScopeForClassHeaderResolution()
                     }
 
-                    override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
-                }
+                    is FunctionDescriptor -> {
+                        val function = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunction
+                        function?.let { context[BindingContext.RESOLUTION_SCOPE, it.getBodyExpression()] }
+                    }
 
-                runChangeSignature(project, functionDescriptor, config, context, refExpr, getText())
-            }
-        }
-    }
+                    else -> null
+                } ?: return true
+
+    return typeParametersToAdd.any { scope.getClassifier(it.getName()) != it }
 }

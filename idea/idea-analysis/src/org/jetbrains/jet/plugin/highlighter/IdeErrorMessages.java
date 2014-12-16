@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -38,8 +38,24 @@ import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
  * @see DefaultErrorMessages
  */
 public class IdeErrorMessages {
-    public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(ContainerUtil.concat(false, DefaultErrorMessages.MAPS, MAP));
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+
+    @NotNull
+    public static String render(@NotNull Diagnostic diagnostic) {
+        DiagnosticRenderer renderer = MAP.get(diagnostic.getFactory());
+
+        if (renderer != null) {
+            //noinspection unchecked
+            return renderer.render(diagnostic);
+        }
+
+        return DefaultErrorMessages.render(diagnostic);
+    }
+
+    @TestOnly
+    public static boolean hasIdeSpecificMessage(@NotNull Diagnostic diagnostic) {
+        return MAP.get(diagnostic.getFactory()) != null;
+    }
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",

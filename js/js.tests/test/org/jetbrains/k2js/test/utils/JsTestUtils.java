@@ -16,20 +16,19 @@
 
 package org.jetbrains.k2js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public final class JsTestUtils {
 
@@ -43,7 +42,7 @@ public final class JsTestUtils {
 
     @NotNull
     public static String convertFileNameToDotJsFile(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
-        String postFix = "_" + ecmaVersion.toString() + ".js";
+        String postFix = "_" + ecmaVersion.toString() + JavaScript.DOT_EXTENSION;
         int index = filename.lastIndexOf('.');
         if (index < 0) {
             return filename + postFix;
@@ -68,28 +67,17 @@ public final class JsTestUtils {
     }
 
     @NotNull
-    public static List<String> kotlinFilesInDirectory(@NotNull String directory) {
+    public static List<String> getFilesInDirectoryByExtension(@NotNull String directory, String extension) {
         File dir = new File(directory);
 
-        if (!dir.isDirectory()) {
-            return ContainerUtil.emptyList();
-        }
+        if (!dir.isDirectory()) return ContainerUtil.emptyList();
 
-        File[] kotlinFiles = dir.listFiles(new FilenameFilter() {
+        List<File> files = FileUtil.findFilesByMask(Pattern.compile(".*\\." + extension + "$"), dir);
+
+        return ContainerUtil.map2List(files, new Function<File, String>() {
             @Override
-            public boolean accept(@NotNull File dir, @NotNull String name) {
-                return name.endsWith(".kt");
-            }
-        });
-
-        if (kotlinFiles == null) {
-            return ContainerUtil.emptyList();
-        }
-
-        return ContainerUtil.map2List(kotlinFiles, new Function<File, String>() {
-            @Override
-            public String fun(File kotlinFile) {
-                return kotlinFile.getAbsolutePath();
+            public String fun(File file) {
+                return file.getAbsolutePath();
             }
         });
     }

@@ -2,7 +2,7 @@ package
 
 package b {
     internal fun </*0*/ T> foo(/*0*/ t: T): T
-    internal fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg values: b.Pair<K, V> /*kotlin.Array<b.Pair<K, V>>*/): kotlin.Map<K, V>
+    internal fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg values: b.Pair<K, V> /*kotlin.Array<out b.Pair<K, V>>*/): kotlin.Map<K, V>
     internal fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
     public fun </*0*/ T> query(/*0*/ t: T, /*1*/ args: kotlin.Map<kotlin.String, kotlin.Any>): kotlin.List<T>
     internal fun test(/*0*/ pair: b.Pair<kotlin.String, kotlin.Int>): kotlin.Unit

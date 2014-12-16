@@ -35,8 +35,11 @@ import com.intellij.util.containers.HashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 import org.jetbrains.jet.plugin.references.JetReference;
@@ -205,14 +208,17 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     }
                 }
 
-                PsiElement element = HierarchyUtils.getCallHierarchyElement(ref.getElement());
+                PsiElement refElement = ref.getElement();
+                if (PsiTreeUtil.getParentOfType(refElement, JetImportDirective.class, true) != null) return true;
+
+                PsiElement element = HierarchyUtils.getCallHierarchyElement(refElement);
 
                 if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
 
                 // If reference belongs to property initializer, show enclosing declaration instead
                 if (element instanceof JetProperty) {
                     JetProperty property = (JetProperty) element;
-                    if (PsiTreeUtil.isAncestor(property.getInitializer(), ref.getElement(), false)) {
+                    if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
                         element = HierarchyUtils.getCallHierarchyElement(element.getParent());
                     }
                 }

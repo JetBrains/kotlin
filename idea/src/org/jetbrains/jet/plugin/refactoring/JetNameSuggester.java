@@ -139,55 +139,46 @@ public class JetNameSuggester {
         else if (typeChecker.equalTypes(builtIns.getStringType(), jetType)) {
             addName(result, "s", validator);
         }
-        else {
-            if (jetType.getArguments().size() == 1) {
-                JetType argument = jetType.getArguments().get(0).getType();
-                if (typeChecker.equalTypes(builtIns.getArrayType(argument), jetType)) {
-                    if (typeChecker.equalTypes(builtIns.getBooleanType(), argument)) {
-                        addName(result, "booleans", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getIntType(), argument)) {
-                        addName(result, "ints", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getByteType(), argument)) {
-                        addName(result, "bytes", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getLongType(), argument)) {
-                        addName(result, "longs", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getFloatType(), argument)) {
-                        addName(result, "floats", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getDoubleType(), argument)) {
-                        addName(result, "doubles", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getShortType(), argument)) {
-                        addName(result, "shorts", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getCharType(), argument)) {
-                        addName(result, "chars", validator);
-                    }
-                    else if (typeChecker.equalTypes(builtIns.getStringType(), argument)) {
-                        addName(result, "strings", validator);
-                    }
-                    else {
-                        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(argument);
-                        if (classDescriptor != null) {
-                            Name className = classDescriptor.getName();
-                            addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator);
-                        }
-                    }
-                }
-                else {
-                    addForClassType(result, jetType, validator);
-                }
+        else if (KotlinBuiltIns.isArray(jetType) || KotlinBuiltIns.isPrimitiveArray(jetType)) {
+            JetType elementType = KotlinBuiltIns.getInstance().getArrayElementType(jetType);
+            if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
+                addName(result, "booleans", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getIntType(), elementType)) {
+                addName(result, "ints", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getByteType(), elementType)) {
+                addName(result, "bytes", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getLongType(), elementType)) {
+                addName(result, "longs", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getFloatType(), elementType)) {
+                addName(result, "floats", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getDoubleType(), elementType)) {
+                addName(result, "doubles", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getShortType(), elementType)) {
+                addName(result, "shorts", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getCharType(), elementType)) {
+                addName(result, "chars", validator);
+            }
+            else if (typeChecker.equalTypes(builtIns.getStringType(), elementType)) {
+                addName(result, "strings", validator);
             }
             else {
-                addForClassType(result, jetType, validator);
+                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(elementType);
+                if (classDescriptor != null) {
+                    Name className = classDescriptor.getName();
+                    addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator);
+                }
             }
         }
-
-
+        else {
+            addForClassType(result, jetType, validator);
+        }
     }
 
     private static void addForClassType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {

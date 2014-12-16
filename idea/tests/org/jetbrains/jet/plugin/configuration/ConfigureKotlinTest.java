@@ -51,12 +51,6 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         protected String getDefaultPathToJarFile(@NotNull Project project) {
             return getPathRelativeToTemp("default_js_lib");
         }
-
-        @NotNull
-        @Override
-        protected String getDefaultPathToJsFile(@NotNull Project project) {
-            return getPathRelativeToTemp("default_script");
-        }
     };
 
     @Override
@@ -180,7 +174,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     }
 
     private void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
-        assertNoFilesInDefaultPaths(true);
+        assertNoFilesInDefaultPaths();
 
         Module[] modules = getModules();
         for (Module module : modules) {
@@ -189,7 +183,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
 
         configurator.configure(myProject);
 
-        assertNoFilesInDefaultPaths(false);
+        assertNoFilesInDefaultPaths();
 
         for (Module module : modules) {
             assertProperlyConfigured(module, configurator);
@@ -270,7 +264,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     }
 
     private static String getPathToExistentJsJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getParent();
+        return PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getParent();
     }
 
     @Override
@@ -310,13 +304,9 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     protected void setUpModule() {
     }
 
-    private void assertNoFilesInDefaultPaths(boolean checkJsFiles) {
+    private void assertNoFilesInDefaultPaths() {
         assertDoesntExist(new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
         assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJarFile(getProject())));
-
-        if (checkJsFiles) {
-            assertDoesntExist(new File(JS_CONFIGURATOR.getDefaultPathToJsFile(getProject())));
-        }
     }
 
     private static void assertNotConfigured(Module module, KotlinWithLibraryConfigurator configurator) {

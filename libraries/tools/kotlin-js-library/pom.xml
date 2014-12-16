@@ -20,15 +20,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>copy-sources</id>
-                        <phase>process-sources</phase>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
                         <configuration>
-                            <target>
-                                <ant antfile="${basedir}/build.xml" dir="${project-root}"/>
-                            </target>
+                            <tasks>
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
+                                      overwrite="true" verbose="true"/>
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib-sources.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}-sources.jar"
+                                      overwrite="true" verbose="true"/>
+                            </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -36,25 +40,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <librarySourceDir>${basedir}/target/generated-js-library</librarySourceDir>
-                    <definitionSourceDir>${basedir}/target/generated-js-definitions</definitionSourceDir>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jslib</id>
-                        <goals>
-                            <goal>jslib</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>

@@ -32,6 +32,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings;
+import org.jetbrains.k2js.JavaScript;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -45,7 +46,7 @@ public class JetCompilerManager implements ProjectComponent {
 
     // Comes from external make
     private static final String PREFIX_WITH_COMPILER_NAME = KOTLIN_COMPILER_NAME + ": " + INTERNAL_ERROR_PREFIX;
-    private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(".js", ".map");
+    private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(JavaScript.DOT_EXTENSION, ".map");
 
     private final Project project;
 

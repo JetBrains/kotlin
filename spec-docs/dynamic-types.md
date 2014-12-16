@@ -81,6 +81,8 @@ If a receiver of a call is dynamic, the following resolution rules apply:
     this permits calling them on vals (e.g. those holding collection-like objects)
   - The invoke convention is limited so that for calls like `dyn.foo()` we do not look for property `foo` that has `invoke` defined on it
     (same for other cases like `+dyn` etc)
+- dynamic candidates with no explicit dispatch receiver are discriminated against all other candidate, i.e. for a call `foo()`, we first try
+  to match static candidates, and only then dynamic ones.
 
 NOTE: we do not even try to resolve extensions declared for static types if the receiver is dynamic. As a workaround, one may use an upcast
 to a static type: `(dyn as Foo).extensionForFoo()`.

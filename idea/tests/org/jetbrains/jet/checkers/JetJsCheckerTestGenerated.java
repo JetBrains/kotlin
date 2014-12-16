@@ -42,6 +42,12 @@ public class JetJsCheckerTestGenerated extends AbstractJetJsCheckerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("dynamic.kt")
+    public void testDynamic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/dynamic.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/helloWorld.kt");

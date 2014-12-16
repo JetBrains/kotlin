@@ -28,6 +28,8 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
@@ -48,10 +50,12 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.Status;
 
 import java.io.File;
 import java.util.List;
@@ -79,7 +83,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services,
-            @NotNull MessageCollector messageCollector,
+            @NotNull final MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
         if (arguments.freeArgs.isEmpty()) {
@@ -97,10 +101,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         Project project = environmentForJS.getProject();
         List<JetFile> sourcesFiles = environmentForJS.getSourceFiles();
 
-        ClassPathLibrarySourcesLoader sourceLoader = new ClassPathLibrarySourcesLoader(project);
-        List<JetFile> additionalSourceFiles = sourceLoader.findSourceFiles();
-        sourcesFiles.addAll(additionalSourceFiles);
-
         if (arguments.verbose) {
             reportCompiledSourcesList(messageCollector, sourcesFiles);
         }
@@ -113,6 +113,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         File outputFile = new File(arguments.outputFile);
 
         Config config = getConfig(arguments, project);
+        if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
+            @Override
+            public Unit invoke(String message) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+                return Unit.INSTANCE$;
+            }
+        })) {
+            return COMPILATION_ERROR;
+        }
+
         if (analyzeAndReportErrors(messageCollector, sourcesFiles, config)) {
             return COMPILATION_ERROR;
         }
@@ -140,8 +150,28 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
+        Status<OutputFileCollection> status;
 
-        OutputFileCollection outputFiles = translate(mainCallParameters, config, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile);
+        try {
+            //noinspection unchecked
+            status = translateWithMainCallParameters(mainCallParameters, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile,
+                                                    config, Consumer.EMPTY_CONSUMER);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
+        AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector);
+
+        if (status.isFail()) return ExitCode.COMPILATION_ERROR;
+
+        OutputFileCollection outputFiles = status.getResult();
+        if (outputFile.isDirectory()) {
+            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                    "Cannot open output file '" + outputFile.getPath() + "': is a directory",
+                                    CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.COMPILATION_ERROR;
+        }
 
         File outputDir = outputFile.getParentFile();
         if (outputDir == null) {
@@ -168,23 +198,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                                 CompilerMessageLocation.NO_LOCATION);
     }
 
-    private static OutputFileCollection translate(
-            @NotNull MainCallParameters mainCall,
-            @NotNull Config config,
-            @NotNull List<JetFile> sourceFiles,
-            @NotNull File outputFile,
-            @Nullable File outputPrefix,
-            @Nullable File outputPostfix
-    ) {
-        try {
-            //noinspection unchecked
-            return translateWithMainCallParameters(mainCall, sourceFiles, outputFile, outputPrefix, outputPostfix, config, Consumer.EMPTY_CONSUMER);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
@@ -208,20 +221,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         List<String> libraryFiles = new SmartList<String>();
         if (!arguments.noStdlib) {
-            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsLibJarPath().getAbsolutePath());
+            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
         }
 
         if (arguments.libraryFiles != null) {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        if (!libraryFiles.isEmpty()) {
-            return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
-        }
-        else {
-            // lets discover the JS library definitions on the classpath
-            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourceMap, inlineEnabled);
-        }
+        return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
     }
 
     public static MainCallParameters createMainCallParameters(String main) {

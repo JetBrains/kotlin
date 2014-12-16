@@ -40,6 +40,7 @@ fun modality(modality: ProtoBuf.Modality) = when (modality) {
 fun visibility(visibility: ProtoBuf.Visibility) = when (visibility) {
     ProtoBuf.Visibility.INTERNAL -> Visibilities.INTERNAL
     ProtoBuf.Visibility.PRIVATE -> Visibilities.PRIVATE
+    ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
     ProtoBuf.Visibility.PROTECTED -> Visibilities.PROTECTED
     ProtoBuf.Visibility.PUBLIC -> Visibilities.PUBLIC
     ProtoBuf.Visibility.EXTRA -> throw UnsupportedOperationException("Extra visibilities are not supported yet")

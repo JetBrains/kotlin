@@ -396,6 +396,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetExpression, JetType, JetType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
@@ -473,12 +474,7 @@ public interface Errors {
     // Control flow / Data flow
 
     DiagnosticFactory1<JetElement, List<TextRange>> UNREACHABLE_CODE = DiagnosticFactory1.create(
-            WARNING, PositioningStrategies.markTextRangesFromDiagnostic(new Function1<Diagnostic, List<TextRange>>() {
-                @Override
-                public List<TextRange> invoke(Diagnostic diagnostic) {
-                    return UNREACHABLE_CODE.cast(diagnostic).getA();
-                }
-            }));
+            WARNING, PositioningStrategies.UNREACHABLE_CODE);
 
     DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
@@ -535,8 +531,8 @@ public interface Errors {
     DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory0.create(WARNING, AS_TYPE);
+    DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> USELESS_CAST = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
@@ -635,7 +631,8 @@ public interface Errors {
     ImmutableSet<? extends DiagnosticFactory<?>> INVISIBLE_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
             INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
-            UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE);
+            UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
+            UNUSED_FUNCTION_LITERAL, USELESS_CAST, USELESS_CAST_STATIC_ASSERT_IS_FINE);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);

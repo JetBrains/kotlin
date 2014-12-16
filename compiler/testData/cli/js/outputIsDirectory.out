@@ -1,0 +1,2 @@
+ERROR: Cannot open output file 'compiler/testData/cli/js': is a directory
+COMPILATION_ERROR

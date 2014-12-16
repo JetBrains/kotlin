@@ -2283,7 +2283,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         if (callElement == null) return defaultCallGenerator;
 
-        boolean isInline = state.isInlineEnabled() &&
+        // We should inline callable containing reified type parameters even if inline is disabled
+        // because they may contain something to reify and straight call will probably fail at runtime
+        boolean isInline = (state.isInlineEnabled() || DescriptorUtils.containsReifiedTypeParameters(descriptor)) &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
 
@@ -3432,60 +3434,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateNewArray(@NotNull JetCallExpression expression, @NotNull final JetType arrayType) {
+        assert expression.getValueArguments().size() == 1 : "Size argument expected";
 
-        final List<JetExpression> args = new ArrayList<JetExpression>();
-        for (ValueArgument va : expression.getValueArguments()) {
-            args.add(va.getArgumentExpression());
-        }
-
-        boolean isArray = KotlinBuiltIns.isArray(arrayType);
-        if (!isArray && args.size() != 1) {
-            throw new CompilationException("primitive array constructor requires one argument", null, expression);
-        }
+        final JetExpression sizeExpression = expression.getValueArguments().get(0).getArgumentExpression();
         Type type = typeMapper.mapType(arrayType);
 
         return StackValue.operation(type, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                gen(args.get(0), Type.INT_TYPE);
+                gen(sizeExpression, Type.INT_TYPE);
                 newArrayInstruction(arrayType);
-
-                if (args.size() == 2) {
-                    int sizeIndex = myFrameMap.enterTemp(Type.INT_TYPE);
-                    int indexIndex = myFrameMap.enterTemp(Type.INT_TYPE);
-
-                    v.dup();
-                    v.arraylength();
-                    v.store(sizeIndex, Type.INT_TYPE);
-
-                    v.iconst(0);
-                    v.store(indexIndex, Type.INT_TYPE);
-
-                    gen(args.get(1), FUNCTION1_TYPE);
-
-                    Label begin = new Label();
-                    Label end = new Label();
-                    v.visitLabel(begin);
-                    v.load(indexIndex, Type.INT_TYPE);
-                    v.load(sizeIndex, Type.INT_TYPE);
-                    v.ificmpge(end);
-
-                    v.dup2();
-                    v.load(indexIndex, Type.INT_TYPE);
-                    v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
-                    v.invokeinterface(FUNCTION1_TYPE.getInternalName(), "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                    v.load(indexIndex, Type.INT_TYPE);
-                    v.iinc(indexIndex, 1);
-                    v.swap();
-                    v.astore(OBJECT_TYPE);
-
-                    v.goTo(begin);
-                    v.visitLabel(end);
-                    v.pop();
-
-                    myFrameMap.leaveTemp(Type.INT_TYPE);
-                    myFrameMap.leaveTemp(Type.INT_TYPE);
-                }
                 return Unit.INSTANCE$;
             }
         });

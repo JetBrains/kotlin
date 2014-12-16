@@ -1,0 +1,3 @@
+ERROR: compiler/testData/cli/js/jsCodeError.kt: (1, 25) JavaScript: missing variable name
+ERROR: compiler/testData/cli/js/jsCodeError.kt: (2, 27) JavaScript: missing variable name
+COMPILATION_ERROR

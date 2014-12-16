@@ -7,7 +7,7 @@ java.lang.annotation.Retention(value = RetentionPolicy.CLASS: java.lang.annotati
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR}: kotlin.Array<java.lang.annotation.ElementType>) internal final annotation class my1 : kotlin.Annotation {
+java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR}: kotlin.Array<out java.lang.annotation.ElementType>) internal final annotation class my1 : kotlin.Annotation {
     public constructor my1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -29,13 +29,11 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
-    private final PsiElement function;
-    private final boolean isInherited;
+    private final JetFunctionDefinitionUsage callee;
 
-    public JetFunctionCallUsage(@NotNull JetCallElement element, @NotNull PsiElement function, boolean isInherited) {
+    public JetFunctionCallUsage(@NotNull JetCallElement element, JetFunctionDefinitionUsage callee) {
         super(element);
-        this.function = function;
-        this.isInherited = isInherited;
+        this.callee = callee;
     }
 
     @Override
@@ -75,7 +73,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             String defaultValueText = parameterInfo.getDefaultValueText();
 
             if (isNamedCall) {
-                String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+                String newName = parameterInfo.getInheritedName(callee);
                 parametersBuilder.append(newName).append('=');
             }
 
@@ -95,7 +93,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             if (oldArgument != null) {
                 JetValueArgumentName argumentName = oldArgument.getArgumentName();
                 JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
-                changeArgumentName(changeInfo, argumentNameExpression, parameterInfo);
+                changeArgumentName(argumentNameExpression, parameterInfo);
                 newArgument.replace(oldArgument);
             }
             else if (parameterInfo.getDefaultValueText().isEmpty())
@@ -137,17 +135,17 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
                 if (oldParameterIndex != null) {
                     JetParameterInfo parameterInfo = changeInfo.getNewParameters()[oldParameterIndex];
-                    changeArgumentName(changeInfo, argumentNameExpression, parameterInfo);
+                    changeArgumentName(argumentNameExpression, parameterInfo);
                 }
             }
         }
     }
 
-    private void changeArgumentName(JetChangeInfo changeInfo, JetSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
+    private void changeArgumentName(JetSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
         PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
 
         if (identifier != null) {
-            String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+            String newName = parameterInfo.getInheritedName(callee);
             identifier.replace(JetPsiFactory(getProject()).createIdentifier(newName));
         }
     }

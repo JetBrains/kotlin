@@ -66,7 +66,7 @@ public class OperatorConventions {
             .build();
 
     public static final ImmutableSet<JetToken> NOT_OVERLOADABLE = 
-            ImmutableSet.<JetToken>of(JetTokens.ANDAND, JetTokens.OROR, JetTokens.ELVIS);
+            ImmutableSet.<JetToken>of(JetTokens.ANDAND, JetTokens.OROR, JetTokens.ELVIS, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
     
     public static final ImmutableSet<JetToken> INCREMENT_OPERATIONS =
             ImmutableSet.<JetToken>of(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);

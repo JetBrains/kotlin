@@ -36,12 +36,12 @@ public abstract class SingleFileTranslationWithDirectivesTest extends SingleFile
         nodeConsumer.consume(null);
     }
 
-    protected void checkFooBoxIsOkWithInlineDirectives() throws Exception {
+    protected void checkFooBoxIsOkWithDirectives() throws Exception {
         checkFooBoxIsOk();
-        processInlineDirectives();
+        processDirectives();
     }
 
-    protected void processInlineDirectives() throws Exception {
+    protected void processDirectives() throws Exception {
         String fileName = getInputFilePath(getTestName(true) + ".kt");
         String fileText = JsTestUtils.readFile(fileName);
 

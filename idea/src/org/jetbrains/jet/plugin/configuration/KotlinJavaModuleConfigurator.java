@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.configuration;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
@@ -27,14 +26,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialogWithModules;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
@@ -50,6 +46,18 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     protected String getLibraryName() {
         return JavaRuntimeLibraryDescription.LIBRARY_NAME;
+    }
+
+    @NotNull
+    @Override
+    protected String getDialogTitle() {
+        return JavaRuntimeLibraryDescription.DIALOG_TITLE;
+    }
+
+    @NotNull
+    @Override
+    protected String getLibraryCaption() {
+        return JavaRuntimeLibraryDescription.LIBRARY_CAPTION;
     }
 
     @NotNull
@@ -80,36 +88,6 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void configure(@NotNull Project project) {
-        String defaultPath = getDefaultPathToJarFile(project);
-        boolean showPathPanelForJava = needToChooseJarPath(project);
-
-        List<Module> nonConfiguredModules = !ApplicationManager.getApplication().isUnitTestMode() ?
-                ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this):
-                Arrays.asList(ModuleManager.getInstance(project).getModules());
-
-        List<Module> modulesToConfigure = nonConfiguredModules;
-        String copyLibIntoPath = null;
-
-        if (nonConfiguredModules.size() > 1 || showPathPanelForJava) {
-            CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
-                    project, nonConfiguredModules, defaultPath, showPathPanelForJava);
-
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                dialog.show();
-                if (!dialog.isOK()) return;
-            }
-
-            modulesToConfigure = dialog.getModulesToConfigure();
-            copyLibIntoPath = dialog.getCopyIntoPath();
-        }
-
-        for (Module module : modulesToConfigure) {
-            configureModuleWithLibrary(module, defaultPath, copyLibIntoPath);
-        }
     }
 
     @Override

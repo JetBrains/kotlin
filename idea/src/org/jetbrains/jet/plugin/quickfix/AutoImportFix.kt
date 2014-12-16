@@ -51,10 +51,10 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.jet.utils.CachedValueProperty
+import org.jetbrains.jet.plugin.completion.isVisible
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -130,7 +130,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is DeclarationDescriptorWithVisibility && containingDescriptor != null) {
-                return Visibilities.isVisible(descriptor, containingDescriptor)
+                return descriptor.isVisible(containingDescriptor, bindingContext, element)
             }
 
             return true

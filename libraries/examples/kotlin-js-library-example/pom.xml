@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>kotlin-js-library-example</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-js-library</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>src/main/kotlin</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>../../../resources/manifest.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>js</id>
+                        <goals>
+                            <goal>js</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.outputDirectory}/${project.artifactId}.js</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <includes>
+                        <include>${project.artifactId}.js</include>
+                        <include>**/*.kt</include>
+                    </includes>
+                    <archive>
+                        <forced/>
+                        <manifestEntries>
+                            <Built-By>${manifest.impl.vendor}</Built-By>
+
+                            <Implementation-Vendor>${manifest.impl.vendor}</Implementation-Vendor>
+                            <Implementation-Version>${build.number}</Implementation-Version>
+                            <Specification-Title>${manifest.spec.title.kotlin.javascript.lib}</Specification-Title>
+                            <Kotlin-JS-Module-Name>${project.artifactId}</Kotlin-JS-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                  <artifactId>maven-deploy-plugin</artifactId>
+                  <configuration>
+                    <skip>true</skip>
+                  </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

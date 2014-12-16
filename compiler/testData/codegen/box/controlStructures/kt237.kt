@@ -5,7 +5,7 @@ fun main(args: Array<String>?) {
         //do not compile
     System.out?.println(fff<Unit>(Unit))  //do not compile
     System.out?.println(id<Unit>(y))  //do not compile
-    System.out?.println(fff<Unit>(id<Unit>(y)) == id<Unit>(foreach(Array<Int>(0,{0}),{(e : Int) : Unit -> })))  //do not compile
+    System.out?.println(fff<Unit>(id<Unit>(y)) == id<Unit>(foreach(arrayOfNulls<Int>(0) as Array<Int>,{(e : Int) : Unit -> })))  //do not compile
 }
 class A<T>()
 
@@ -30,7 +30,7 @@ fun almostFilter(array: Array<Int>, action: (Int)-> Int) {
 }
 
 fun box() : String {
-    val a = Array<Int> (3,{-1})
+    val a = arrayOfNulls<Int>(3) as Array<Int>
     a[0] = 0
     a[1] = 1
     a[2] = 2

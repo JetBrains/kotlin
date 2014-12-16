@@ -257,6 +257,7 @@ public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelecto
 public fun JetElement.getQualifiedElementSelector(): JetElement? {
     return when (this) {
         is JetSimpleNameExpression -> this
+        is JetCallExpression -> getCalleeExpression()
         is JetQualifiedExpression -> {
             val selector = getSelectorExpression()
             if (selector is JetCallExpression) selector.getCalleeExpression() else selector

@@ -50,9 +50,6 @@ public final class ArrayFIF extends CompositeFIF {
     private static final NamePredicate LONG_ARRAY;
 
     @NotNull
-    private static final NamePredicate ARRAY;
-
-    @NotNull
     private static final NamePredicate ARRAYS;
 
     @NotNull
@@ -78,7 +75,6 @@ public final class ArrayFIF extends CompositeFIF {
         CHAR_ARRAY = new NamePredicate(charArrayName);
         BOOLEAN_ARRAY = new NamePredicate(booleanArrayName);
         LONG_ARRAY = new NamePredicate(longArrayName);
-        ARRAY = new NamePredicate(arrayName);
 
         arrayTypeNames.add(charArrayName);
         arrayTypeNames.add(booleanArrayName);
@@ -139,7 +135,6 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
         add(pattern(ARRAYS, "size"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
-        add(pattern(ARRAY, "<init>"), new KotlinFunctionIntrinsic("arrayFromFun"));
         add(pattern(NUMBER_ARRAY, "<init>"),new KotlinFunctionIntrinsic("numberArrayOfSize"));
         add(pattern(CHAR_ARRAY, "<init>"), new KotlinFunctionIntrinsic("charArrayOfSize"));
         add(pattern(BOOLEAN_ARRAY, "<init>"), new KotlinFunctionIntrinsic("booleanArrayOfSize"));

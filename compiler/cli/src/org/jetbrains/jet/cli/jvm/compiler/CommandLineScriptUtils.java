@@ -19,10 +19,13 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class CommandLineScriptUtils {
     private static final Name ARGS_NAME = Name.identifier("args");
@@ -31,7 +34,7 @@ public class CommandLineScriptUtils {
     }
 
     public static List<AnalyzerScriptParameter> scriptParameters() {
-        JetType arrayOfStrings = KotlinBuiltIns.getInstance().getArrayType(KotlinBuiltIns.getInstance().getStringType());
+        JetType arrayOfStrings = KotlinBuiltIns.getInstance().getArrayType(INVARIANT, KotlinBuiltIns.getInstance().getStringType());
         AnalyzerScriptParameter argsParameter = new AnalyzerScriptParameter(ARGS_NAME, arrayOfStrings);
         return Collections.singletonList(argsParameter);
     }

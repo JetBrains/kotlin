@@ -12,7 +12,7 @@ package a {
     internal fun testLowerBound(/*0*/ cov: a.Cov<kotlin.String>, /*1*/ covN: a.Cov<kotlin.Number>): kotlin.Unit
     internal fun testUpperBound(/*0*/ contrS: a.Contr<kotlin.String>, /*1*/ contrB: a.Contr<kotlin.Byte>, /*2*/ contrN: a.Contr<kotlin.Number>): kotlin.Unit
     internal fun </*0*/ T> upperBound(/*0*/ t: T, /*1*/ l: a.Contr<T>): T
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
     internal trait Contr</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

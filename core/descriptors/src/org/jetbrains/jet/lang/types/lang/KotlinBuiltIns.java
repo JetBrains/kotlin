@@ -665,11 +665,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getArrayType(@NotNull JetType argument) {
-        return getArrayType(Variance.INVARIANT, argument);
-    }
-
-    @NotNull
     public JetType getEnumType(@NotNull JetType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
@@ -881,6 +876,10 @@ public class KotlinBuiltIns {
 
     public static boolean isAnyOrNullableAny(@NotNull JetType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.any);
+    }
+
+    public static boolean isNullableAny(@NotNull JetType type) {
+        return isAnyOrNullableAny(type) && type.isMarkedNullable();
     }
 
     public static boolean isUnit(@NotNull JetType type) {

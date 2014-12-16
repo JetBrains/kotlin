@@ -36,6 +36,6 @@ for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } u
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
-    <v0>: {<: Array<Any?>}   NEW: magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>
-a   <v1>: {<: Array<Any?>}   NEW: r(a) -> <v1>                                   
+    <v0>: {<: Array<out Any?>}   NEW: magic[FAKE_INITIALIZER](vararg a: Any?) -> <v0>
+a   <v1>: {<: Array<out Any?>}   NEW: r(a) -> <v1>
 =====================

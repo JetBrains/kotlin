@@ -18,11 +18,15 @@ package org.jetbrains.k2js.config;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +48,9 @@ public abstract class Config {
     private final String moduleId;
 
     private final boolean sourcemap;
+
+    @NotNull
+    private final BindingTrace trace = new BindingTraceContext();
 
     public Config(
             @NotNull Project project,
@@ -82,6 +89,8 @@ public abstract class Config {
         return moduleId;
     }
 
+    public abstract  boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
+
     @NotNull
     protected abstract List<JetFile> generateLibFiles();
 
@@ -96,6 +105,11 @@ public abstract class Config {
     @Nullable
     public BindingContext getLibraryContext() {
         return null;
+    }
+
+    @NotNull
+    public BindingTrace getTrace() {
+        return trace;
     }
 
     @Nullable

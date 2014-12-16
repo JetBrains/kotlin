@@ -63,6 +63,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
+import org.jetbrains.jet.asJava.KotlinLightMethod
+import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
@@ -70,6 +72,8 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import com.intellij.psi.PsiPackage
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -85,7 +89,7 @@ fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
 
     targetDir.checkCreateFile(fileName)
     val file = PsiFileFactory.getInstance(targetDir.getProject()).createFileFromText(
-            fileName, JetFileType.INSTANCE, if (packageName != null) "package $packageName \n\n" else ""
+            fileName, JetFileType.INSTANCE, if (packageName != null && packageName.isNotEmpty()) "package $packageName \n\n" else ""
     )
 
     return targetDir.add(file) as JetFile
@@ -364,6 +368,8 @@ public fun chooseContainerElementIfNecessary<T>(
     }
 }
 
+public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KotlinLightMethod
+
 fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
     return d1 == d2 ||
            (d1 != null && d2 != null &&
@@ -377,4 +383,15 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
     }
 
     return false
+}
+
+public fun PsiElement.canRefactor(): Boolean {
+    return when (this) {
+        is PsiPackage ->
+            getDirectories().any { it.canRefactor() }
+        is JetElement, is PsiDirectory ->
+            isWritable() && ProjectRootsUtil.isInSource(element = this, includeLibrarySources = false)
+        else ->
+            false
+    }
 }

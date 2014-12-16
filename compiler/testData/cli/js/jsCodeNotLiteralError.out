@@ -1,0 +1,3 @@
+ERROR: compiler/testData/cli/js/jsCodeNotLiteralError.kt: (2, 18) Argument must be string literal
+ERROR: compiler/testData/cli/js/jsCodeNotLiteralError.kt: (3, 20) Argument must be string literal
+COMPILATION_ERROR

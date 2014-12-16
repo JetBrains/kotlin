@@ -10,7 +10,7 @@ package h {
     internal fun test4(/*0*/ collection: kotlin.Collection<h.A<out kotlin.Any?>>): kotlin.Unit
     internal fun test5(): kotlin.Unit
     internal fun </*0*/ T> toBeOrNot(): kotlin.Boolean
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
     internal fun </*0*/ T> h.Z.compareTo(/*0*/ a: h.A<T>): kotlin.Int
     internal fun h.Z.equals(/*0*/ any: kotlin.Any): kotlin.Int
     internal fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>

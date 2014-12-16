@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
@@ -50,6 +51,8 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     private final List<JetParameterInfo> parameters;
     @NotNull
     private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
+    private JetFunctionDefinitionUsage<PsiElement> originalPrimaryFunction;
+    private Collection<JetFunctionDefinitionUsage<PsiElement>> primaryFunctions = null;
     private Collection<UsageInfo> affectedFunctions = null;
 
     public JetChangeSignatureData(
@@ -70,13 +73,15 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
                     @Override
                     public JetParameterInfo fun(ValueParameterDescriptor param) {
                         JetParameter parameter = valueParameters != null ? valueParameters.get(param.getIndex()) : null;
-                        return new JetParameterInfo(
+                        JetParameterInfo parameterInfo = new JetParameterInfo(
                                 param.getIndex(),
                                 param.getName().asString(),
                                 param.getType(),
                                 parameter != null ? parameter.getDefaultValue() : null,
                                 parameter != null ? parameter.getValOrVarNode() : null
                         );
+                        parameterInfo.setModifierList(parameter != null ? parameter.getModifierList() : null);
+                        return parameterInfo;
                     }
                 }));
     }
@@ -99,26 +104,61 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
         parameters.clear();
     }
 
+    @NotNull
+    @Override
+    public JetFunctionDefinitionUsage<PsiElement> getOriginalPrimaryFunction() {
+        if (originalPrimaryFunction == null) {
+            originalPrimaryFunction = KotlinPackage.first(
+                    getPrimaryFunctions(),
+                    new Function1<JetFunctionDefinitionUsage<PsiElement>, Boolean>() {
+                        @Override
+                        public Boolean invoke(JetFunctionDefinitionUsage<PsiElement> usage) {
+                            return usage.getDeclaration() == baseDeclaration;
+                        }
+                    }
+            );
+        }
+        return originalPrimaryFunction;
+    }
+
+    @Override
+    @NotNull
+    public Collection<JetFunctionDefinitionUsage<PsiElement>> getPrimaryFunctions() {
+        if (primaryFunctions == null) {
+            primaryFunctions = KotlinPackage.map(
+                    descriptorsForSignatureChange,
+                    new Function1<FunctionDescriptor, JetFunctionDefinitionUsage<PsiElement>>() {
+                        @Override
+                        public JetFunctionDefinitionUsage<PsiElement> invoke(FunctionDescriptor descriptor) {
+                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
+                                                                                                          descriptor);
+                            assert declaration != null : "No declaration found for " + descriptor;
+                            return new JetFunctionDefinitionUsage<PsiElement>(declaration, descriptor, null, null);
+                        }
+                    }
+            );
+        }
+
+        return primaryFunctions;
+    }
+
     @Override
     @NotNull
     public Collection<UsageInfo> getAffectedFunctions() {
         if (affectedFunctions == null) {
             affectedFunctions = KotlinPackage.flatMapTo(
-                    descriptorsForSignatureChange,
+                    getPrimaryFunctions(),
                     new HashSet<UsageInfo>(),
-                    new Function1<FunctionDescriptor, Iterable<? extends UsageInfo>>() {
+                    new Function1<JetFunctionDefinitionUsage<PsiElement>, Iterable<? extends UsageInfo>>() {
                         @Override
-                        public Iterable<? extends UsageInfo> invoke(FunctionDescriptor descriptor) {
-                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
-                                                                                                          descriptor);
-                            assert declaration != null : "No declaration found for " + descriptor;
-
+                        public Iterable<? extends UsageInfo> invoke(final JetFunctionDefinitionUsage<PsiElement> primaryFunction) {
                             Set<UsageInfo> result = Sets.newHashSet();
-                            result.add(new JetFunctionDefinitionUsage(declaration, false));
+                            result.add(primaryFunction);
 
-                            if (!(declaration instanceof JetNamedFunction)) return result;
+                            PsiElement primaryDeclaration = primaryFunction.getDeclaration();
+                            if (!(primaryDeclaration instanceof JetNamedFunction)) return result;
 
-                            final PsiMethod baseLightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) declaration);
+                            final PsiMethod baseLightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) primaryDeclaration);
                             // there are valid situations when light method is null: local functions and literals
                             if (baseLightMethod == null) return result;
 
@@ -130,7 +170,15 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
                                                 public UsageInfo invoke(PsiMethod method) {
                                                     if (method instanceof KotlinLightMethod) {
                                                         JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-                                                        return declaration != null ? new JetFunctionDefinitionUsage(declaration, true) : null;
+                                                        if (declaration == null) return null;
+
+                                                        FunctionDescriptor currentDescriptor =
+                                                                (FunctionDescriptor) ResolvePackage.resolveToDescriptor(declaration);
+
+                                                        return new JetFunctionDefinitionUsage<PsiElement>(declaration,
+                                                                                              currentDescriptor,
+                                                                                              primaryFunction,
+                                                                                              null);
                                                     }
 
                                                     return new OverriderUsageInfo(method, baseLightMethod, true, true, true);

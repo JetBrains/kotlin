@@ -263,7 +263,7 @@ public class CallResolver {
                         return checkArgumentTypesAndFail(context);
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                            TaskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
+                            taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
                                     context.scope, constructors, context.call);
                     prioritizedTasks = taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
                             context, candidates, TracingStrategyImpl.create(functionReference, context.call));

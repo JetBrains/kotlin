@@ -6,6 +6,7 @@ SUBTYPE T String weak
 type parameter bounds:
 T <: kotlin.Int(SPECIAL), <: kotlin.String(TYPE_BOUND_POSITION(0))
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: true
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false

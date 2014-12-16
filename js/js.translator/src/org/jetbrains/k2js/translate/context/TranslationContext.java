@@ -24,9 +24,11 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
@@ -162,6 +164,9 @@ public class TranslationContext {
     public BindingContext bindingContext() {
         return staticContext.getBindingContext();
     }
+
+    @NotNull
+    public DiagnosticSink getTrace() { return staticContext.getConfig().getTrace(); }
 
     @NotNull
     public JsScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {

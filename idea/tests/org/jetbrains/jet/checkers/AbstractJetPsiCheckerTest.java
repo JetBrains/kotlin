@@ -21,7 +21,6 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
 import java.io.File;
@@ -39,11 +38,11 @@ public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtu
             //noinspection unchecked
             myFixture.enableInspections(SpellCheckingInspection.class);
 
-            JetPsiChecker.setNamesHighlightingEnabled(false);
+            JetPsiChecker.OBJECT$.setNamesHighlightingEnabled(false);
             checkHighlighting(true, true, false);
         }
         finally {
-            JetPsiChecker.setNamesHighlightingEnabled(true);
+            JetPsiChecker.OBJECT$.setNamesHighlightingEnabled(true);
         }
     }
 

@@ -234,6 +234,10 @@ public class JetPsiFactory(private val project: Project) {
         return createFunction("fun foo$text{}").getValueParameterList()!!
     }
 
+    public fun createFunctionLiteralParameterList(text: String): JetParameterList {
+        return (createExpression("{ $text -> 0}") as JetFunctionLiteralExpression).getFunctionLiteral().getValueParameterList()
+    }
+
     public fun createEnumEntry(text: String): JetEnumEntry {
         return createDeclaration<JetClass>("enum class E {$text}").getDeclarations()[0] as JetEnumEntry
     }

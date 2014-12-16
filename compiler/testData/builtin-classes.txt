@@ -14,7 +14,7 @@ public open class Any {
 }
 
 public final class Array</*0*/ reified T> : kotlin.Cloneable {
-    /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>)
+    /*primary*/ private constructor Array</*0*/ reified T>()
     public open override /*1*/ fun clone(): kotlin.Array<T>
     public final fun get(/*0*/ index: kotlin.Int): T
     public final fun iterator(): kotlin.Iterator<T>
@@ -1470,8 +1470,8 @@ public final annotation class inline : kotlin.Annotation {
 
 public final annotation class inlineOptions : kotlin.Annotation {
     /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<kotlin.InlineOption>*/)
-    internal final val value: kotlin.Array<kotlin.InlineOption>
-        internal final fun <get-value>(): kotlin.Array<kotlin.InlineOption>
+    internal final val value: kotlin.Array<out kotlin.InlineOption>
+        internal final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
 
 public final annotation class noinline : kotlin.Annotation {
@@ -1480,8 +1480,8 @@ public final annotation class noinline : kotlin.Annotation {
 
 public final annotation class suppress : kotlin.Annotation {
     /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<kotlin.String>*/)
-    internal final val names: kotlin.Array<kotlin.String>
-        internal final fun <get-names>(): kotlin.Array<kotlin.String>
+    internal final val names: kotlin.Array<out kotlin.String>
+        internal final fun <get-names>(): kotlin.Array<out kotlin.String>
 }
 
 public final annotation class tailRecursive : kotlin.Annotation {

@@ -46,11 +46,11 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +58,7 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.Variance.OUT_VARIANCE;
 
 public class AnnotationResolver {
 
@@ -244,9 +245,8 @@ public class AnnotationResolver {
     ) {
         JetType varargElementType = parameterDescriptor.getVarargElementType();
         boolean argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument);
-        List<CompileTimeConstant<?>> constants = resolveValueArguments(resolvedArgument,
-                                                                       argumentsAsVararg ? varargElementType : parameterDescriptor.getType(),
-                                                                       trace);
+        List<CompileTimeConstant<?>> constants = resolveValueArguments(
+                resolvedArgument, argumentsAsVararg ? varargElementType : parameterDescriptor.getType(), trace);
 
         if (argumentsAsVararg) {
 
@@ -259,9 +259,10 @@ public class AnnotationResolver {
 
             JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
             if (arrayType == null) {
-                arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
+                arrayType = KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, varargElementType);
             }
 
+            //todo use parameterDescriptor.getType() instead of arrayType
             return new ArrayValue(constants, arrayType, true, usesVariableAsConstant);
         }
         else {
@@ -277,7 +278,7 @@ public class AnnotationResolver {
     ) {
         JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
 
-        if (expressionType == null || !expressionType.equals(expectedType)) {
+        if (expressionType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
             // TYPE_MISMATCH should be reported otherwise
             return;
         }

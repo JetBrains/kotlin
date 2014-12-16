@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/quickfix")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({QuickFixMultiFileTestGenerated.AddStarProjections.class, QuickFixMultiFileTestGenerated.AutoImports.class, QuickFixMultiFileTestGenerated.CreateFromUsage.class, QuickFixMultiFileTestGenerated.Modifiers.class, QuickFixMultiFileTestGenerated.Nullables.class, QuickFixMultiFileTestGenerated.Override.class, QuickFixMultiFileTestGenerated.Suppress.class, QuickFixMultiFileTestGenerated.TypeImports.class, QuickFixMultiFileTestGenerated.TypeMismatch.class, QuickFixMultiFileTestGenerated.Variables.class})
+@InnerTestClasses({QuickFixMultiFileTestGenerated.AddStarProjections.class, QuickFixMultiFileTestGenerated.AutoImports.class, QuickFixMultiFileTestGenerated.ChangeSignature.class, QuickFixMultiFileTestGenerated.CreateFromUsage.class, QuickFixMultiFileTestGenerated.Modifiers.class, QuickFixMultiFileTestGenerated.Nullables.class, QuickFixMultiFileTestGenerated.Override.class, QuickFixMultiFileTestGenerated.Suppress.class, QuickFixMultiFileTestGenerated.TypeImports.class, QuickFixMultiFileTestGenerated.TypeMismatch.class, QuickFixMultiFileTestGenerated.Variables.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
@@ -225,6 +225,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/changeSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeSignature extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInChangeSignature() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("matchFunctionLiteralWithSAMType.before.Main.kt")
+        public void testMatchFunctionLiteralWithSAMType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/matchFunctionLiteralWithSAMType.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({CreateFromUsage.CreateClass.class, CreateFromUsage.CreateFunction.class, CreateFromUsage.CreateVariable.class})
@@ -292,11 +307,26 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
+        @InnerTestClasses({CreateVariable.Parameter.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Parameter extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("platformType.before.Main.kt")
+                public void testPlatformType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/platformType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
             }
 
         }

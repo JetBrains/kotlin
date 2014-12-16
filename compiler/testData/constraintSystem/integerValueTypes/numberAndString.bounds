@@ -6,6 +6,7 @@ SUPERTYPE T String
 type parameter bounds:
 T >: IntegerValueType(1)(SPECIAL), >: kotlin.String(SPECIAL)
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

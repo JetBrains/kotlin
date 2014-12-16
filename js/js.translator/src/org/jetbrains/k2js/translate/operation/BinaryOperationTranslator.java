@@ -69,6 +69,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private final JetExpression rightJetExpression;
 
+    @NotNull
+    private final JetToken operationToken;
+
     @Nullable
     private final CallableDescriptor operationDescriptor;
 
@@ -83,6 +86,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         assert expression.getRight() != null : "Binary expression should have a right expression: " + expression.getText();
         rightJetExpression = expression.getRight();
 
+        this.operationToken = getOperationToken(expression);
         this.operationDescriptor = getCallableDescriptorForOperationExpression(bindingContext(), expression);
     }
 
@@ -92,16 +96,16 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (intrinsic.exists()) {
             return applyIntrinsic(intrinsic);
         }
-        if (getOperationToken(expression).equals(JetTokens.ELVIS)) {
+        if (operationToken == JetTokens.ELVIS) {
             return translateElvis();
         }
-        if (isAssignmentOperator(expression)) {
+        if (isAssignmentOperator(operationToken)) {
             return AssignmentTranslator.translate(expression, context());
         }
         if (isNotOverloadable()) {
             return translateAsUnOverloadableBinaryOperation();
         }
-        if (isCompareToCall(expression, context())) {
+        if (isCompareToCall(operationToken, operationDescriptor)) {
             return CompareToTranslator.translate(expression, context());
         }
         assert operationDescriptor != null :
@@ -187,14 +191,13 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     }
 
     private boolean isNotOverloadable() {
-        return operationDescriptor == null;
+        return OperatorConventions.NOT_OVERLOADABLE.contains(operationToken);
     }
 
     @NotNull
     private JsExpression translateAsUnOverloadableBinaryOperation() {
-        JetToken token = getOperationToken(expression);
-        assert OperatorConventions.NOT_OVERLOADABLE.contains(token);
-        JsBinaryOperator operator = OperatorTable.getBinaryOperator(token);
+        assert OperatorConventions.NOT_OVERLOADABLE.contains(operationToken);
+        JsBinaryOperator operator = OperatorTable.getBinaryOperator(operationToken);
         JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
         if (JsAstUtils.isEmptyExpression(leftExpression)) {
             return leftExpression;
@@ -206,9 +209,13 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (rightBlock.isEmpty()) {
             return new JsBinaryOperation(operator, leftExpression, rightExpression);
         }
+        else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationToken)) {
+            context().addStatementsToCurrentBlockFrom(rightBlock);
+            return new JsBinaryOperation(operator, leftExpression, rightExpression);
+        }
 
-        assert token.equals(JetTokens.ANDAND) || token.equals(JetTokens.OROR) : "Unsupported binary operation: " + expression.getText();
-        boolean isOror = token.equals(JetTokens.OROR);
+        assert operationToken.equals(JetTokens.ANDAND) || operationToken.equals(JetTokens.OROR) : "Unsupported binary operation: " + expression.getText();
+        boolean isOror = operationToken.equals(JetTokens.OROR);
         JsExpression literalResult = isOror ? JsLiteral.TRUE : JsLiteral.FALSE;
         leftExpression = isOror ? not(leftExpression) : leftExpression;
 

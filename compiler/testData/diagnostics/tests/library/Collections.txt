@@ -1,7 +1,7 @@
 package
 
 package collections {
-    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<T>*/): kotlin.Array<T>
+    internal fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     internal fun </*0*/ T> testCollection(/*0*/ c: kotlin.Collection<T>, /*1*/ t: T): kotlin.Unit
     internal fun </*0*/ T> testList(/*0*/ l: kotlin.List<T>, /*1*/ t: T): kotlin.Unit
     internal fun </*0*/ K, /*1*/ V> testMap(/*0*/ m: kotlin.Map<K, V>): kotlin.Unit

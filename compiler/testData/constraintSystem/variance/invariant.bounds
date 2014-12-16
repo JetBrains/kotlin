@@ -5,6 +5,7 @@ SUBTYPE My<T> My<A>
 type parameter bounds:
 T := A(SPECIAL)
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

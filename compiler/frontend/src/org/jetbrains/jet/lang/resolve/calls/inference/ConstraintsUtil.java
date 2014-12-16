@@ -47,7 +47,7 @@ public class ConstraintsUtil {
 
         Collection<JetType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
 
-        ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
+        List<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
             Map<TypeConstructor, TypeProjection> context = Maps.newLinkedHashMap();
             context.put(firstConflictingParameter.getTypeConstructor(), new TypeProjectionImpl(type));

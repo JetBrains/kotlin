@@ -223,14 +223,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
         if (actualType.equals(targetType)) {
             // cast to itself: String as String
-            context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
+            context.trace.report(USELESS_CAST.on(expression));
             return;
         }
         Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context.trace.getBindingContext());
         for (JetType possibleType : possibleTypes) {
             if (typeChecker.isSubtypeOf(possibleType, targetType)) {
-                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
+                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression));
                 return;
             }
         }

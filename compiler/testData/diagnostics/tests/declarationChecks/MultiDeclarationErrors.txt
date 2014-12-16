@@ -2,7 +2,7 @@ package
 
 package a {
     internal fun test(/*0*/ mc1: a.MyClass, /*1*/ mc2: a.MyClass2): kotlin.Unit
-    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
     internal fun a.MyClass2.component1(): kotlin.Double
     internal fun a.MyClass2.component1(): kotlin.Double
 

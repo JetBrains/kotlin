@@ -75,10 +75,10 @@ package illegal_modifiers {
 
     internal abstract class IllegalModifiers5 {
         public constructor IllegalModifiers5()
-        internal abstract fun bar(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
+        internal abstract fun bar(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
         internal abstract fun baz(/*0*/ illegal_modifiers.annotated(text = "a text": kotlin.String) a: kotlin.Int): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal abstract fun foo(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
+        internal abstract fun foo(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         private final fun qux(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

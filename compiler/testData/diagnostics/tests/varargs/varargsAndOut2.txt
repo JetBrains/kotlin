@@ -1,0 +1,4 @@
+package
+
+internal fun bar(/*0*/ vararg a: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+internal fun test2(/*0*/ a: kotlin.Array<kotlin.String>, /*1*/ b: kotlin.Array<out kotlin.String>): kotlin.Unit

@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignat
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -78,6 +79,7 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
@@ -460,12 +462,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
-            JetType arrayType = KotlinBuiltIns.getInstance().getArrayType(function.getTypeParameters().get(0).getDefaultType());
             JetType returnType = function.getReturnType();
             assert returnType != null : function.toString();
             JetType paramType = function.getValueParameters().get(0).getType();
-            if (JetTypeChecker.DEFAULT.equalTypes(arrayType, returnType) && JetTypeChecker.DEFAULT.equalTypes(arrayType, paramType)) {
-                return true;
+            if (KotlinBuiltIns.isArray(returnType) && KotlinBuiltIns.isArray(paramType)) {
+                JetType elementType = function.getTypeParameters().get(0).getDefaultType();
+                if (JetTypeChecker.DEFAULT.equalTypes(elementType, KotlinBuiltIns.getInstance().getArrayElementType(returnType))
+                        && JetTypeChecker.DEFAULT.equalTypes(elementType, KotlinBuiltIns.getInstance().getArrayElementType(paramType))) {
+                    return true;
+                }
             }
         }
         return false;
@@ -818,7 +823,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateEnumValuesMethod() {
-        Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
+        Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         FunctionDescriptor valuesFunction =
                 KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES), new Function1<FunctionDescriptor, Boolean>() {
@@ -1554,7 +1559,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         InstructionAdapter iv = codegen.v;
 
-        Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
+        Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(INVARIANT, descriptor.getDefaultType()));
         v.newField(OtherOrigin(myClass), ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, ENUM_VALUES_FIELD_NAME,
                    arrayAsmType.getDescriptor(), null, null);
 

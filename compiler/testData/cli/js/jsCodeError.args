@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/jsCodeError.kt
+-output
+$TEMP_DIR$/out.js

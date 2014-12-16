@@ -138,8 +138,8 @@ class NoInternalVisibilityInStdLibTest {
             val configuration = CompilerConfiguration()
             val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val project = environment.getProject()
-            val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().path
-            val config = LibrarySourcesConfig(project, "testModule", listOf("@", pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
+            val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().path
+            val config = LibrarySourcesConfig(project, "testModule", listOf(pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
 
             TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), { true }, config).moduleDescriptor
         }

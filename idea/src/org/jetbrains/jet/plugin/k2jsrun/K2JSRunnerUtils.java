@@ -31,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.JavaScript;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public final class K2JSRunnerUtils {
 
     @NotNull
     public static String constructPathToGeneratedFile(@NotNull Project project, @NotNull String outputDirPath) {
-        return outputDirPath + "/" + project.getName() + ".js";
+        return outputDirPath + "/" + project.getName() + JavaScript.DOT_EXTENSION;
     }
 
     public static void copyJSFileFromOutputToDestination(@NotNull Project project,

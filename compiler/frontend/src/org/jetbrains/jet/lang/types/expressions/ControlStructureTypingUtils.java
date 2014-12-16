@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -51,6 +52,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
+import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
@@ -363,7 +365,7 @@ public class ControlStructureTypingUtils {
                     return;
                 }
                 JetExpression expression = (JetExpression) call.getCallElement();
-                if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
+                if (status.hasOnlyErrorsFromPosition(EXPECTED_TYPE_POSITION.position()) || status.hasConflictingConstraints()) {
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }

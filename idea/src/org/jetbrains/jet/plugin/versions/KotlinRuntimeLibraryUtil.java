@@ -41,7 +41,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -153,20 +155,30 @@ public class KotlinRuntimeLibraryUtil {
                 assert configurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
 
                 for (Library library : libraries) {
-                    updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
+                    if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
+                        updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
 
-                    if (configurator.changeOldSourcesPathIfNeeded(library)) {
-                        configurator.copySourcesToPathFromLibrary(library);
+                        if (configurator.changeOldSourcesPathIfNeeded(library)) {
+                            configurator.copySourcesToPathFromLibrary(library);
+                        }
+                        else {
+                            updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
+                        }
                     }
-                    else {
-                        updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
+                    else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+                        updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR);
+                        updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
                     }
                 }
             }
         });
     }
 
-    private static void updateJar(@NotNull Project project, @Nullable VirtualFile fileToReplace, @NotNull LibraryJarDescriptor libraryJarDescriptor) {
+    private static void updateJar(
+            @NotNull Project project,
+            @Nullable VirtualFile fileToReplace,
+            @NotNull LibraryJarDescriptor libraryJarDescriptor
+    ) {
         if (fileToReplace == null && !libraryJarDescriptor.shouldExists) {
             return;
         }
@@ -176,6 +188,8 @@ public class KotlinRuntimeLibraryUtil {
         switch (libraryJarDescriptor) {
             case RUNTIME_JAR: runtimePath = paths.getRuntimePath(); break;
             case RUNTIME_SRC_JAR: runtimePath = paths.getRuntimeSourcesPath(); break;
+            case JS_STDLIB_JAR: runtimePath = paths.getJsStdLibJarPath(); break;
+            case JS_STDLIB_SRC_JAR: runtimePath = paths.getJsStdLibSrcJarPath(); break;
         }
 
         if (!runtimePath.exists()) {
@@ -217,7 +231,9 @@ public class KotlinRuntimeLibraryUtil {
 
     private enum LibraryJarDescriptor {
         RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
-        RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false);
+        RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
+        JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
+        JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false);
 
         @NotNull public final String jarName;
         private final boolean shouldExists;

@@ -20,7 +20,6 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.plugin.util.application.runReadAction
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -28,10 +27,12 @@ import com.intellij.psi.PsiDirectory
 
 public object ProjectRootsUtil {
     platformStatic
-    public fun isInSources(project: Project, file: VirtualFile,
-                           includeTestSources: Boolean, includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
+    public fun isInSources(project: Project,
+                           file: VirtualFile,
+                           includeLibrarySources: Boolean,
+                           withLibraryClassesRoots: Boolean,
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
-        if (fileIndex.isInSourceContent(file) || (includeTestSources && fileIndex.isInTestSourceContent(file))) {
+        if (fileIndex.isInSourceContent(file)) {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
 
@@ -44,7 +45,6 @@ public object ProjectRootsUtil {
     public fun isInSource(
             element: PsiElement,
             includeLibrarySources: Boolean,
-            includeTestSources: Boolean = false,
             withLibraryClassesRoots: Boolean = false
     ): Boolean {
         return runReadAction { (): Boolean ->
@@ -54,7 +54,7 @@ public object ProjectRootsUtil {
                               } ?: return@runReadAction false
 
             val project = element.getProject()
-            return@runReadAction isInSources(project, virtualFile, includeTestSources, includeLibrarySources, withLibraryClassesRoots)
+            return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
         }
     }
 

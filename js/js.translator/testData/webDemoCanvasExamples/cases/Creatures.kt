@@ -288,7 +288,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 }
 
 class RadialGradientGenerator(val context: CanvasContext) {
-    val gradients = ArrayList<Array<Pair<Double, String>>>()
+    val gradients = ArrayList<Array<out Pair<Double, String>>>()
     var current = 0
 
     fun newColorStops(vararg colorStops: Pair<Double, String>) {
@@ -304,7 +304,7 @@ class RadialGradientGenerator(val context: CanvasContext) {
         newColorStops(Pair(0.0, "rgb(250,147,250)"), Pair(0.5, "rgb(255,80,255)"), Pair(1.0, "rgb(250,0,217)"))
     }
 
-    fun getNext(): Array<Pair<Double, String>> {
+    fun getNext(): Array<out Pair<Double, String>> {
         val result = gradients.get(current)
         current = (current + 1) % gradients.size()
         return result

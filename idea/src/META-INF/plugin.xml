@@ -15,6 +15,7 @@
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
+  <depends optional="true" config-file="coverage.xml">Coverage</depends>
 
   <project-components>
     <component>
@@ -261,6 +262,8 @@
                          id="project.kotlinCompiler"
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
+
+    <qualifiedNameProvider implementation="org.jetbrains.jet.plugin.actions.KotlinQualifiedNameProvider"/>
 
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 

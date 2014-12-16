@@ -34,6 +34,8 @@ import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.lexer.JetTokens
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.lang.types.isDynamic
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
@@ -55,6 +57,17 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             }
             else if (canUseSimpleEquals(expression, context)) {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ, left, right)
+            }
+
+            val resolvedCall = expression.getResolvedCall(context.bindingContext())
+            val appliedToDynamic =
+                    resolvedCall != null &&
+                    with(resolvedCall.getDispatchReceiver()) {
+                        if (exists()) getType().isDynamic() else false
+                    }
+
+            if (appliedToDynamic) {
+                return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
             }
 
             val result = TopLevelFIF.KOTLIN_EQUALS.apply(left, Arrays.asList<JsExpression>(right), context)

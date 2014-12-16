@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -457,7 +458,7 @@ public class QualifiedExpressionResolver {
             @NotNull JetSimpleNameExpression referenceExpression,
             @NotNull JetScope scopeToCheckVisibility
     ) {
-        if (!Visibilities.isVisible(descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
+        if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
             //noinspection ConstantConditions
             trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getVisibility(),
                                                 descriptor.getContainingDeclaration()));

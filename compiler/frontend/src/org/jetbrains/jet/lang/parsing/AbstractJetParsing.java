@@ -17,10 +17,13 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -31,7 +34,11 @@ import java.util.Map;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /*package*/ abstract class AbstractJetParsing {
+    private static final Logger LOGGER = Logger.getInstance(AbstractJetParsing.class);
+    private static final int LOOK_AHEAD_SIZE_WARN = 1000;
+
     private static final Map<String, JetKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, JetKeywordToken>();
+
     static {
         for (IElementType type : JetTokens.SOFT_KEYWORDS.getTypes()) {
             JetKeywordToken keywordToken = (JetKeywordToken) type;
@@ -309,6 +316,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
+        int beginOffset = myBuilder.getCurrentOffset();
         Stack<IElementType> opens = new Stack<IElementType>();
         int openAngleBrackets = 0;
         int openBraces = 0;
@@ -355,7 +363,19 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             }
             advance(); // skip token
         }
+        int endOffset = myBuilder.getCurrentOffset();
+
         currentPosition.rollbackTo();
+
+        if (endOffset - beginOffset > LOOK_AHEAD_SIZE_WARN && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
+            String text = new StringBuilder(myBuilder.getOriginalText())
+                    .insert(endOffset, "<~~!END!~~>")
+                    .insert(beginOffset, "<~~!BEGIN!~~>")
+                    .toString();
+
+            LOGGER.warn("Suspicious big range: \n" + text);
+        }
+
         return pattern.result();
     }
 
@@ -474,4 +494,19 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @TestOnly
+    public String currentContext() {
+        String marker = "~!!!~";
+        int range = 50;
+
+        CharSequence text = myBuilder.getOriginalText();
+
+        int start = Math.max(0, myBuilder.getCurrentOffset() - range);
+        int end = Math.min(text.length() - 1, myBuilder.getCurrentOffset() + 50 + marker.length());
+
+        return new StringBuilder(text)
+                .insert(myBuilder.getCurrentOffset(), marker)
+                .substring(start, end);
+    }
 }
