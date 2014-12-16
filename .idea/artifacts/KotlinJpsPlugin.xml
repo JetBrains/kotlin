@@ -1,6 +1,12 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="KotlinJpsPlugin">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinJpsPlugin</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/idea-runner/runner.xml</file>
+        <target>copy-runtime-for-jps-plugin</target>
+      </options>
+    </properties>
     <root id="archive" name="kotlin-jps-plugin.jar">
       <element id="directory" name="META-INF">
         <element id="dir-copy" path="$PROJECT_DIR$/jps-plugin/src/META-INF" />
