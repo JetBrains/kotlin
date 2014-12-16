@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.kotlin
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.descriptors.MemberDescriptor
 import org.jetbrains.jet.lang.resolve.annotations.hasPlatformStaticAnnotation
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -31,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -40,16 +38,13 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.annotations.hasIntrinsicAnnotation
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.NativeFunChecker
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
     override val annotationCheckers: List<AnnotationChecker> = listOf(
-            PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker()
+            PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()
     )
 }
 

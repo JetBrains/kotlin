@@ -36,18 +36,18 @@ class MapTest {
 
     test fun sizeAndEmpty() {
         val data = hashMapOf<String, Int>()
-        assertTrue { data.empty }
-        assertEquals(data.size, 0)
+        assertTrue { data.none() }
+        assertEquals(data.size(), 0)
     }
 
     test fun setViaIndexOperators() {
         val map = hashMapOf<String, String>()
-        assertTrue { map.empty }
-        assertEquals(map.size, 0)
+        assertTrue { map.none() }
+        assertEquals(map.size(), 0)
 
         map["name"] = "James"
 
-        assertTrue { !map.empty }
+        assertTrue { map.any() }
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
@@ -119,21 +119,21 @@ class MapTest {
 
     test fun createUsingPairs() {
         val map = mapOf(Pair("a", 1), Pair("b", 2))
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
     }
 
     test fun createFromIterable() {
         val map = listOf(Pair("a", 1), Pair("b", 2)).toMap()
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }
 
     test fun createWithSelector() {
         val map = listOf("a", "bb", "ccc").toMap { it.length }
-        assertEquals(3, map.size)
+        assertEquals(3, map.size())
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))
@@ -141,14 +141,14 @@ class MapTest {
 
     test fun createWithSelectorAndOverwrite() {
         val map = listOf("aa", "bb", "ccc").toMap { it.length }
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))
     }
 
     test fun createUsingTo() {
         val map = mapOf("a" to 1, "b" to 2)
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
     }
@@ -164,21 +164,21 @@ class MapTest {
     test fun filter() {
         val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
         val filteredByKey = map.filter { it.key == "b" }
-        assertEquals(1, filteredByKey.size)
+        assertEquals(1, filteredByKey.size())
         assertEquals(3, filteredByKey["b"])
 
         val filteredByKey2 = map.filterKeys { it == "b" }
-        assertEquals(1, filteredByKey2.size)
+        assertEquals(1, filteredByKey2.size())
         assertEquals(3, filteredByKey2["b"])
 
         val filteredByValue = map.filter { it.value == 2 }
-        assertEquals(2, filteredByValue.size)
+        assertEquals(2, filteredByValue.size())
         assertEquals(null, filteredByValue["b"])
         assertEquals(2, filteredByValue["c"])
         assertEquals(2, filteredByValue["a"])
 
         val filteredByValue2 = map.filterValues { it == 2 }
-        assertEquals(2, filteredByValue2.size)
+        assertEquals(2, filteredByValue2.size())
         assertEquals(null, filteredByValue2["b"])
         assertEquals(2, filteredByValue2["c"])
         assertEquals(2, filteredByValue2["a"])
@@ -187,20 +187,20 @@ class MapTest {
     test fun filterNot() {
         val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
         val filteredByKey = map.filterNot { it.key == "b" }
-        assertEquals(2, filteredByKey.size)
+        assertEquals(2, filteredByKey.size())
         assertEquals(null, filteredByKey["b"])
         assertEquals(2, filteredByKey["c"])
         assertEquals(2, filteredByKey["a"])
 
         val filteredByValue = map.filterNot { it.value == 2 }
-        assertEquals(1, filteredByValue.size)
+        assertEquals(1, filteredByValue.size())
         assertEquals(3, filteredByValue["b"])
     }
 
     test fun plusAssign() {
         val extended = hashMapOf(Pair("b", 3))
         extended += ("c" to 2)
-        assertEquals(2, extended.size)
+        assertEquals(2, extended.size())
         assertEquals(2, extended["c"])
         assertEquals(3, extended["b"])
     }

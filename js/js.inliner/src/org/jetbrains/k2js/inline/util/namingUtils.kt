@@ -34,7 +34,7 @@ public fun aliasArgumentsIfNeeded(
         arguments: List<JsExpression>,
         parameters: List<JsParameter>
 ) {
-    assertTrue { arguments.size <= parameters.size }
+    assertTrue { arguments.size() <= parameters.size() }
 
     for ((arg, param) in arguments zip parameters) {
         val paramName = param.getName()
@@ -50,7 +50,7 @@ public fun aliasArgumentsIfNeeded(
         context.replaceName(paramName, replacement)
     }
 
-    val defaultParams = parameters.subList(arguments.size, parameters.size)
+    val defaultParams = parameters.subList(arguments.size(), parameters.size())
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.getName()
         val freshName = context.getFreshName(paramName)

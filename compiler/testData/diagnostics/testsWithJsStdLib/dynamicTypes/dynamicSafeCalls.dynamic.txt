@@ -1,0 +1,4 @@
+public final fun foo(): dynamic
+public final fun isDynamic(): dynamic
+public final fun foo(/*0*/ p0: dynamic): dynamic
+public final fun isDynamic(): dynamic

@@ -6,16 +6,16 @@ private fun PsiElement.getTextChildRelativeOffset() =
     getTextRange()!!.getStartOffset() - getParent()!!.getTextRange()!!.getStartOffset()
 
 private fun PsiElement.getAllChildren(): List<PsiElement> {
-    val r = listBuilder<PsiElement>()
+    val r = arrayListOf<PsiElement>()
     var child = getFirstChild()
     while (child != null) {
         r.add(child!!)
         child = child!!.getNextSibling()
     }
-    return r.build()
+    return r
 }
 
-private fun splitPsiImpl(psi: PsiElement, listBuilder: ImmutableArrayListBuilder<Pair<String, PsiElement>>) {
+private fun splitPsiImpl(psi: PsiElement, listBuilder: MutableList<Pair<String, PsiElement>>) {
     var lastPos = 0
     for (child in psi.getAllChildren()) {
         if (child.getTextChildRelativeOffset() > lastPos) {
@@ -32,9 +32,9 @@ private fun splitPsiImpl(psi: PsiElement, listBuilder: ImmutableArrayListBuilder
 }
 
 fun splitPsi(psi: PsiElement): List<Pair<String, PsiElement>> {
-    val listBuilder = listBuilder<Pair<String, PsiElement>>()
+    val listBuilder = arrayListOf<Pair<String, PsiElement>>()
     splitPsiImpl(psi, listBuilder)
-    return listBuilder.build()
+    return listBuilder
 }
 
 

@@ -60,7 +60,7 @@ fun test(d: dynamic) {
     d <!DEBUG_INFO_DYNAMIC!>>=<!> d
     d <!DEBUG_INFO_DYNAMIC!>><!> d
 
-    for (i in <!DEBUG_INFO_DYNAMIC!>d<!>) {
+    for (i in d) {
         i.<!DEBUG_INFO_DYNAMIC!>foo<!>()
     }
 
@@ -96,5 +96,5 @@ fun test(d: dynamic) {
 }
 
 val dyn: dynamic = null
-val foo : Int <!DEBUG_INFO_DYNAMIC!>by dyn<!>
-var bar : Int <!DEBUG_INFO_DYNAMIC!>by dyn<!>
+val foo : Int <!DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC!>by dyn<!>
+var bar : Int <!DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC!>by dyn<!>

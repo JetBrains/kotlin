@@ -207,7 +207,7 @@ class LazyJavaTypeResolver(
             return javaType.getTypeArguments().withIndices().map {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
-                val parameter = if (i >= typeParameters.size)
+                val parameter = if (i >= typeParameters.size())
                                     ErrorUtils.createErrorTypeParameter(i, "#$i for ${typeConstructor}")
                                 else typeParameters[i]
                 transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), parameter)

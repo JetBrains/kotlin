@@ -120,7 +120,7 @@ private class StoredStackValuesDescriptor(
         alreadyStoredValuesCount: Int
 ) {
     val nextFreeVarIndex : Int get() = firstVariableIndex + storedStackSize
-    val storedValuesCount: Int get() = values.size
+    val storedValuesCount: Int get() = values.size()
     val isStored: Boolean get() = storedValuesCount > 0
     val totalValuesCountOnStackBeforeInline = alreadyStoredValuesCount + storedValuesCount
 }

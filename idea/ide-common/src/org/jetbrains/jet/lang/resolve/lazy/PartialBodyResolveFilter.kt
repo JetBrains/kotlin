@@ -156,7 +156,7 @@ class PartialBodyResolveFilter(
 
         fun addPlaces(name: SmartCastName, places: Collection<JetExpression>) {
             assert(!places.isEmpty())
-            map.getOrPut(name, { ArrayList(places.size) }).addAll(places)
+            map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
         }
 
         fun addIfCanBeSmartCast(expression: JetExpression) {

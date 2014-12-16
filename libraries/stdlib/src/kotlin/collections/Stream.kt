@@ -65,6 +65,33 @@ public class TransformingStream<T, R>(private val stream: Stream<T>, private val
     }
 }
 
+public class TransformingIndexedStream<T, R>(private val stream: Stream<T>, private val transformer: (Int, T) -> R) : Stream<R> {
+    override fun iterator(): Iterator<R> = object : Iterator<R> {
+        val iterator = stream.iterator()
+        var index = 0
+        override fun next(): R {
+            return transformer(index++, iterator.next())
+        }
+        override fun hasNext(): Boolean {
+            return iterator.hasNext()
+        }
+    }
+}
+
+public class IndexingStream<T>(private val stream: Stream<T>) : Stream<IndexedValue<T>> {
+    override fun iterator(): Iterator<IndexedValue<T>> = object : Iterator<IndexedValue<T>> {
+        val iterator = stream.iterator()
+        var index = 0
+        override fun next(): IndexedValue<T> {
+            return IndexedValue(index++, iterator.next())
+        }
+
+        override fun hasNext(): Boolean {
+            return iterator.hasNext()
+        }
+    }
+}
+
 public class MergingStream<T1, T2, V>(private val stream1: Stream<T1>,
                                       private val stream2: Stream<T2>,
                                       private val transform: (T1, T2) -> V

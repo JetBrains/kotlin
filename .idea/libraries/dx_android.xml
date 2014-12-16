@@ -4,11 +4,11 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/dx.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/android-5.0/lib/dx.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/dx-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/dependencies/dx-src/src" />
     </SOURCES>
   </library>
 </component>

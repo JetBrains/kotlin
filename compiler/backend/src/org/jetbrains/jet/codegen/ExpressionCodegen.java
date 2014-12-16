@@ -2419,7 +2419,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (isSingleton) {
             if (context.hasThisDescriptor() &&
                 context.getThisDescriptor().equals(calleeContainingClass) &&
-                !AnnotationsPackage.isPlatformStaticInObject(context.getContextDescriptor())) {
+                !AnnotationsPackage.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else {

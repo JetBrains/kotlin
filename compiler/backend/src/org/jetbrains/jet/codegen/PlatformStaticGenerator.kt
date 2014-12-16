@@ -17,12 +17,19 @@
 package org.jetbrains.jet.codegen
 
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.jet.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.jet.lang.resolve.java.diagnostics.Synthetic
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
+import org.jetbrains.jet.codegen.context.MethodContext
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.backend.common.CodegenUtil
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import kotlin.platform.platformStatic
 
 class PlatformStaticGenerator(
         val descriptor: FunctionDescriptor,
@@ -31,38 +38,62 @@ class PlatformStaticGenerator(
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
 
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
-        val typeMapper = state.getTypeMapper()
-        val asmMethod = typeMapper.mapSignature(descriptor).getAsmMethod()
-        val methodVisitor = classBuilder.newMethod(
-                Synthetic(declarationOrigin.element, descriptor),
-                Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION),
-                asmMethod.getName()!!,
-                asmMethod.getDescriptor()!!,
-                typeMapper.mapSignature(descriptor).getGenericsSignature(),
-                FunctionCodegen.getThrownExceptions(descriptor, typeMapper))
+        val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
 
-        AnnotationCodegen.forMethod(methodVisitor, typeMapper)!!.genAnnotations(descriptor, asmMethod.getReturnType())
+        val jvmMethodSignature = state.getTypeMapper().mapSignature(staticFunctionDescriptor)
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            methodVisitor.visitCode();
-            val iv = InstructionAdapter(methodVisitor)
-            val classDescriptor = descriptor.getContainingDeclaration() as ClassDescriptor
-            val singletonValue = StackValue.singleton(classDescriptor, typeMapper)!!
-            singletonValue.put(singletonValue.type, iv);
-            var index = 0;
-            for (paramType in asmMethod.getArgumentTypes()) {
-                iv.load(index, paramType);
-                index += paramType.getSize();
-            }
+        codegen.functionCodegen.generateMethod(
+                Synthetic(declarationOrigin.element, staticFunctionDescriptor),
+                jvmMethodSignature,
+                staticFunctionDescriptor,
+                object: FunctionGenerationStrategy() {
+                    override fun generateBody(
+                            mv: MethodVisitor,
+                            frameMap: FrameMap,
+                            signature: JvmMethodSignature,
+                            context: MethodContext,
+                            parentCodegen: MemberCodegen<out JetElement>
+                    ) {
+                        val typeMapper = parentCodegen.typeMapper
 
-            val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
-                    codegen.getContext().accessibleFunctionDescriptor(descriptor),
-                    false,
-                    codegen.getContext()
+                        val iv = InstructionAdapter(mv)
+                        val classDescriptor = descriptor.getContainingDeclaration() as ClassDescriptor
+                        val singletonValue = StackValue.singleton(classDescriptor, typeMapper)
+                        singletonValue.put(singletonValue.type, iv);
+                        var index = 0;
+                        val asmMethod = signature.getAsmMethod()
+                        for (paramType in asmMethod.getArgumentTypes()) {
+                            iv.load(index, paramType);
+                            index += paramType.getSize();
+                        }
+
+                        val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
+                                codegen.getContext().accessibleFunctionDescriptor(descriptor),
+                                false,
+                                codegen.getContext()
+                        )
+                        syntheticOrOriginalMethod.invokeWithoutAssertions(iv)
+                        iv.areturn(asmMethod.getReturnType());
+                    }
+                }
+        )
+    }
+
+    class object {
+        [platformStatic]
+        public fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
+            val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor
+            val copies = CodegenUtil.copyFunctions(
+                    memberDescriptor,
+                    memberDescriptor,
+                    descriptor.getContainingDeclaration()?.getContainingDeclaration(),
+                    descriptor.getModality(),
+                    descriptor.getVisibility(),
+                    CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    false
             )
-            syntheticOrOriginalMethod.invokeWithoutAssertions(iv)
-            iv.areturn(asmMethod.getReturnType());
-            methodVisitor.visitEnd();
+            val staticFunctionDescriptor = copies[descriptor]!!
+            return staticFunctionDescriptor
         }
     }
 }

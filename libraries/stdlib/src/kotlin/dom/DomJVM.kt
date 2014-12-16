@@ -123,7 +123,7 @@ public var Element.classSet: MutableSet<String>
         val answer = LinkedHashSet<String>()
         val array = this.classes.split("""\s""")
         for (s in array) {
-            if (s.size > 0) {
+            if (s.length() > 0) {
                 answer.add(s)
             }
         }

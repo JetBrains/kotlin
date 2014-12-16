@@ -13,7 +13,7 @@ class ListSpecificTest {
 
     Test fun tail() {
         val data = arrayListOf("foo", "bar", "whatnot")
-        val actual = data.tail
+        val actual = data.drop(1)
         val expected = arrayListOf("bar", "whatnot")
         assertEquals(expected, actual)
     }
@@ -30,14 +30,7 @@ class ListSpecificTest {
     }
 
     Test fun utils() {
-        assertNull(empty.head)
-        assertNull(empty.first)
-        assertNull(empty.last)
         assertEquals(-1, empty.lastIndex)
-
-        assertEquals("foo", data.head)
-        assertEquals("foo", data.first)
-        assertEquals("bar", data.last)
         assertEquals(1, data.lastIndex)
     }
 

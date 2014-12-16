@@ -48,14 +48,14 @@ class StringJVMTest {
     test fun testSplitByChar() {
         val s = "ab\n[|^$&\\]^cd"
         var list = s.split('b');
-        assertEquals(2, list.size)
+        assertEquals(2, list.size())
         assertEquals("a", list[0])
         assertEquals("\n[|^$&\\]^cd", list[1])
         list = s.split('^')
-        assertEquals(3, list.size)
+        assertEquals(3, list.size())
         assertEquals("cd", list[2])
         list = s.split('.')
-        assertEquals(1, list.size)
+        assertEquals(1, list.size())
         assertEquals(s, list[0])
     }
 
@@ -113,14 +113,14 @@ class StringJVMTest {
 
     test fun find() {
         val data = "a1b2c3"
-        assertEquals('1', data.find { it.isDigit() })
-        assertNull(data.find { it.isUpperCase() })
+        assertEquals('1', data.first { it.isDigit() })
+        assertNull(data.firstOrNull { it.isUpperCase() })
     }
 
     test fun findNot() {
         val data = "1a2b3c"
-        assertEquals('a', data.findNot { it.isDigit() })
-        assertNull(data.findNot { it.isJavaLetterOrDigit() })
+        assertEquals('a', data.filterNot { it.isDigit() }.firstOrNull())
+        assertNull(data.filterNot { it.isJavaLetterOrDigit() }.firstOrNull())
     }
 
     test fun partition() {
@@ -165,7 +165,7 @@ class StringJVMTest {
     test fun flatMap() {
         val data = "abcd"
         val result = data.flatMap { listOf(it) }
-        assertEquals(data.size, result.count())
+        assertEquals(data.length(), result.count())
         assertEquals(data.toCharList(), result)
     }
 
@@ -217,7 +217,7 @@ class StringJVMTest {
         // group characters by their case
         val data = "abAbaABcD"
         val result = data.groupBy { it.isLowerCase() }
-        assertEquals(2, result.size)
+        assertEquals(2, result.size())
         assertEquals(listOf('a','b','b','a','c'), result.get(true))
     }
 

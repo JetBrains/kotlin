@@ -561,6 +561,233 @@ public inline fun <R> String.map(transform: (Char) -> R): List<R> {
 }
 
 /**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream
+ */
+public fun <T, R> Stream<T>.mapIndexed(transform: (Int, T) -> R): Stream<R> {
+    return TransformingIndexedStream(this, transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
+ */
+public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (Int, Boolean) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (Int, Byte) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (Int, Double) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (Int, Float) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (Int, Int) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (Int, Long) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (Int, Short) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(destination: C, transform: (Int, Map.Entry<K, V>) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
+ * Appends transformed elements and their indices of the original collection using the given *transform* function
+ * to the given *destination*
+ */
+public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
+    var index = 0
+    for (item in this)
+        destination.add(transform(index++, item))
+    return destination
+}
+
+/**
  * Returns a list containing the results of applying the given *transform* function to each non-null element of the original collection
  */
 public inline fun <T : Any, R> Array<T?>.mapNotNull(transform: (T) -> R): List<R> {
@@ -621,7 +848,7 @@ public inline fun <T : Any, R, C : MutableCollection<in R>> Stream<T?>.mapNotNul
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
@@ -631,7 +858,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destina
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
@@ -641,7 +868,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destinatio
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
@@ -651,7 +878,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
@@ -661,7 +888,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
@@ -671,7 +898,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
@@ -681,7 +908,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination:
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
@@ -691,7 +918,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
@@ -701,7 +928,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
@@ -711,7 +938,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination:
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C {
@@ -721,7 +948,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
@@ -731,7 +958,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destina
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapTo(destination: C, transform: (T) -> R): C {
@@ -741,7 +968,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapTo(destinatio
 }
 
 /**
- * Appends transformed elements of original collection using the given *transform* function
+ * Appends transformed elements of the original collection using the given *transform* function
  * to the given *destination*
  */
 public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, transform: (Char) -> R): C {
@@ -751,8 +978,93 @@ public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, 
 }
 
 /**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun <T> Array<out T>.withIndex(): Iterable<IndexedValue<T>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun BooleanArray.withIndex(): Iterable<IndexedValue<Boolean>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun ByteArray.withIndex(): Iterable<IndexedValue<Byte>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun DoubleArray.withIndex(): Iterable<IndexedValue<Double>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun FloatArray.withIndex(): Iterable<IndexedValue<Float>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun IntArray.withIndex(): Iterable<IndexedValue<Int>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun LongArray.withIndex(): Iterable<IndexedValue<Long>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun ShortArray.withIndex(): Iterable<IndexedValue<Short>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a stream of [IndexedValue] for each element of the original stream
+ */
+public fun <T> Stream<T>.withIndex(): Stream<IndexedValue<T>> {
+    return IndexingStream(this)
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun String.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Array<out T>.withIndices(): List<Pair<Int, T>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
@@ -761,6 +1073,7 @@ public fun <T> Array<out T>.withIndices(): List<Pair<Int, T>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun BooleanArray.withIndices(): List<Pair<Int, Boolean>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Boolean>>(), { index++ to it })
@@ -769,6 +1082,7 @@ public fun BooleanArray.withIndices(): List<Pair<Int, Boolean>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun ByteArray.withIndices(): List<Pair<Int, Byte>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Byte>>(), { index++ to it })
@@ -777,6 +1091,7 @@ public fun ByteArray.withIndices(): List<Pair<Int, Byte>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun CharArray.withIndices(): List<Pair<Int, Char>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
@@ -785,6 +1100,7 @@ public fun CharArray.withIndices(): List<Pair<Int, Char>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun DoubleArray.withIndices(): List<Pair<Int, Double>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Double>>(), { index++ to it })
@@ -793,6 +1109,7 @@ public fun DoubleArray.withIndices(): List<Pair<Int, Double>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun FloatArray.withIndices(): List<Pair<Int, Float>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Float>>(), { index++ to it })
@@ -801,6 +1118,7 @@ public fun FloatArray.withIndices(): List<Pair<Int, Float>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun IntArray.withIndices(): List<Pair<Int, Int>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Int>>(), { index++ to it })
@@ -809,6 +1127,7 @@ public fun IntArray.withIndices(): List<Pair<Int, Int>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun LongArray.withIndices(): List<Pair<Int, Long>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Long>>(), { index++ to it })
@@ -817,6 +1136,7 @@ public fun LongArray.withIndices(): List<Pair<Int, Long>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun ShortArray.withIndices(): List<Pair<Int, Short>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Short>>(), { index++ to it })
@@ -825,6 +1145,7 @@ public fun ShortArray.withIndices(): List<Pair<Int, Short>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
@@ -833,6 +1154,7 @@ public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
 /**
  * Returns a stream containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Stream<T>.withIndices(): Stream<Pair<Int, T>> {
     var index = 0
     return TransformingStream(this, { index++ to it })
@@ -841,6 +1163,7 @@ public fun <T> Stream<T>.withIndices(): Stream<Pair<Int, T>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun String.withIndices(): List<Pair<Int, Char>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })

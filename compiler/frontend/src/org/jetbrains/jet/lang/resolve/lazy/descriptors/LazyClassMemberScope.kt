@@ -211,7 +211,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
         val valueParameterDescriptors = primaryConstructor.getValueParameters()
         val primaryConstructorParameters = classInfo.getPrimaryConstructorParameters()
         assert(valueParameterDescriptors.size() == primaryConstructorParameters.size()) {
-            "From descriptor: ${valueParameterDescriptors.size} but from PSI: ${primaryConstructorParameters.size}"
+            "From descriptor: ${valueParameterDescriptors.size()} but from PSI: ${primaryConstructorParameters.size()}"
         }
 
         for (valueParameterDescriptor in valueParameterDescriptors) {

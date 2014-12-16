@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -45,7 +46,9 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
         this.calleeDescriptor = descriptor;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getDispatchReceiverParameter(),
+                   descriptor instanceof ConstructorDescriptor || AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)
+                        ? NO_RECEIVER_PARAMETER
+                        : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),
                    copyValueParameters(descriptor),
                    descriptor.getReturnType(),

@@ -27,16 +27,16 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        body(Strings) { "return substring(Math.min(n, size))" }
+        body(Strings) { "return substring(Math.min(n, length()))" }
         returns(Strings) { "String" }
 
         body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (n >= size)
+            if (n >= size())
                 return ArrayList<T>()
 
             var count = 0
-            val list = ArrayList<T>(size - n)
+            val list = ArrayList<T>(size() - n)
             for (item in this) {
                 if (count++ >= n) list.add(item)
             }
@@ -61,7 +61,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        body(Strings) { "return substring(0, Math.min(n, size))" }
+        body(Strings) { "return substring(0, Math.min(n, length()))" }
         returns(Strings) { "String" }
 
         doc(Streams) { "Returns a stream containing first *n* elements" }
@@ -76,7 +76,7 @@ fun filtering(): List<GenericFunction> {
         body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
             """
             var count = 0
-            val realN = if (n > size) size else n
+            val realN = if (n > size()) size() else n
             val list = ArrayList<T>(realN)
             for (item in this) {
                 if (count++ == realN)

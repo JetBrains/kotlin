@@ -136,7 +136,7 @@ public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -146,7 +146,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(inlineOptions(Inlin
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -156,8 +156,7 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(inlineOptions(Inline
  */
 public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> y.compareTo(x) }
-    java.util.Collections.sort(sortedList, sortBy)
+    java.util.Collections.sort(sortedList, comparator { x, y -> y.compareTo(x) })
     return sortedList
 }
 
@@ -166,7 +165,7 @@ public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(y).compareTo(order(x)) }
+    val sortBy: Comparator<T> = compareByDescending(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -176,7 +175,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(inlineOpt
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(y).compareTo(order(x)) }
+    val sortBy: Comparator<T> = compareByDescending(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -285,7 +284,7 @@ public fun <T : Comparable<T>> Stream<T>.toSortedList(): List<T> {
  */
 public fun <T, V : Comparable<V>> Array<out T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -295,7 +294,7 @@ public fun <T, V : Comparable<V>> Array<out T>.toSortedListBy(order: (T) -> V): 
  */
 public fun <V : Comparable<V>> BooleanArray.toSortedListBy(order: (Boolean) -> V): List<Boolean> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Boolean> = comparator<Boolean> {(x: Boolean, y: Boolean) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Boolean> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -305,7 +304,7 @@ public fun <V : Comparable<V>> BooleanArray.toSortedListBy(order: (Boolean) -> V
  */
 public fun <V : Comparable<V>> ByteArray.toSortedListBy(order: (Byte) -> V): List<Byte> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Byte> = comparator<Byte> {(x: Byte, y: Byte) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Byte> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -315,7 +314,7 @@ public fun <V : Comparable<V>> ByteArray.toSortedListBy(order: (Byte) -> V): Lis
  */
 public fun <V : Comparable<V>> CharArray.toSortedListBy(order: (Char) -> V): List<Char> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Char> = comparator<Char> {(x: Char, y: Char) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Char> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -325,7 +324,7 @@ public fun <V : Comparable<V>> CharArray.toSortedListBy(order: (Char) -> V): Lis
  */
 public fun <V : Comparable<V>> DoubleArray.toSortedListBy(order: (Double) -> V): List<Double> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Double> = comparator<Double> {(x: Double, y: Double) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Double> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -335,7 +334,7 @@ public fun <V : Comparable<V>> DoubleArray.toSortedListBy(order: (Double) -> V):
  */
 public fun <V : Comparable<V>> FloatArray.toSortedListBy(order: (Float) -> V): List<Float> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Float> = comparator<Float> {(x: Float, y: Float) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Float> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -345,7 +344,7 @@ public fun <V : Comparable<V>> FloatArray.toSortedListBy(order: (Float) -> V): L
  */
 public fun <V : Comparable<V>> IntArray.toSortedListBy(order: (Int) -> V): List<Int> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Int> = comparator<Int> {(x: Int, y: Int) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Int> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -355,7 +354,7 @@ public fun <V : Comparable<V>> IntArray.toSortedListBy(order: (Int) -> V): List<
  */
 public fun <V : Comparable<V>> LongArray.toSortedListBy(order: (Long) -> V): List<Long> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Long> = comparator<Long> {(x: Long, y: Long) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Long> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -365,7 +364,7 @@ public fun <V : Comparable<V>> LongArray.toSortedListBy(order: (Long) -> V): Lis
  */
 public fun <V : Comparable<V>> ShortArray.toSortedListBy(order: (Short) -> V): List<Short> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<Short> = comparator<Short> {(x: Short, y: Short) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<Short> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -375,7 +374,7 @@ public fun <V : Comparable<V>> ShortArray.toSortedListBy(order: (Short) -> V): L
  */
 public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
@@ -385,7 +384,7 @@ public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): L
  */
 public fun <T, V : Comparable<V>> Stream<T>.toSortedListBy(order: (T) -> V): List<T> {
     val sortedList = toArrayList()
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+    val sortBy: Comparator<T> = compareBy(order)
     java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }

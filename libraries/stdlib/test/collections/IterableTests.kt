@@ -15,7 +15,7 @@ class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
 }
 
 class IterableTest : IterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
-class SetTest : IterableTests<Set<String>>(hashSetOf("foo", "bar"), hashSetOf<String>())
+class SetTest : IterableTests<Set<String>>(setOf("foo", "bar"), setOf<String>())
 class ListTest : OrderedIterableTests<List<String>>(listOf("foo", "bar"), listOf<String>())
 class ArrayListTest : OrderedIterableTests<ArrayList<String>>(arrayListOf("foo", "bar"), arrayListOf<String>())
 
@@ -107,7 +107,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val foo = data.filter { it.startsWith("f") }
         expect(true) { foo is List<String> }
         expect(true) { foo.all { it.startsWith("f") } }
-        expect(1) { foo.size }
+        expect(1) { foo.size() }
         assertEquals(listOf("foo"), foo)
     }
 
@@ -115,7 +115,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val notFoo = data.filterNot { it.startsWith("f") }
         expect(true) { notFoo is List<String> }
         expect(true) { notFoo.none { it.startsWith("f") } }
-        expect(1) { notFoo.size }
+        expect(1) { notFoo.size() }
         assertEquals(listOf("bar"), notFoo)
     }
 
@@ -159,8 +159,22 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertTrue {
             lengths.all { it == 3 }
         }
-        assertEquals(2, lengths.size)
+        assertEquals(2, lengths.size())
         assertEquals(arrayListOf(3, 3), lengths)
+    }
+
+    Test
+    fun mapIndexed() {
+        val shortened = data.mapIndexed { (index, value)-> value.substring(0..index) }
+        assertEquals(2, shortened.size())
+        assertEquals(arrayListOf("f", "ba"), shortened)
+    }
+
+    Test
+    fun withIndex() {
+        val indexed = data.withIndex().map { it.value.substring(0..it.index) }
+        assertEquals(2, indexed.size())
+        assertEquals(arrayListOf("f", "ba"), indexed)
     }
 
     Test
@@ -206,7 +220,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     Test
     fun reduce() {
         val reduced = data.reduce {a, b -> a + b }
-        assertEquals(6, reduced.size)
+        assertEquals(6, reduced.length())
         assertTrue(reduced == "foobar" || reduced == "barfoo")
     }
 }

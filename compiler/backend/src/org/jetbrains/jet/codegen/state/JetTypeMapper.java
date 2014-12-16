@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignat
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
@@ -110,10 +111,11 @@ public class JetTypeMapper {
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
+            boolean effectiveInsideModule = isInsideModule && !NativeDeclarationsPackage.hasNativeAnnotation(descriptor);
             return Type.getObjectType(internalNameForPackage(
                     (PackageFragmentDescriptor) container,
                     (CallableMemberDescriptor) descriptor,
-                    isInsideModule
+                    effectiveInsideModule
             ));
         }
         else if (container instanceof ClassDescriptor) {
@@ -486,7 +488,7 @@ public class JetTypeMapper {
             else {
                 if (isStaticDeclaration(functionDescriptor) ||
                     isAccessor(functionDescriptor) ||
-                    AnnotationsPackage.isPlatformStaticInObject(functionDescriptor)) {
+                    AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {

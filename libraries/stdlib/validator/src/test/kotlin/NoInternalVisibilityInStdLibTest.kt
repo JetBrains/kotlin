@@ -85,7 +85,7 @@ class NoInternalVisibilityInStdLibTest {
             val byPackage = byFile.keySet().groupBy { it.getPackageFqName() }
 
             val message = StringBuilder {
-                appendln("There are ${internalDescriptors.size} descriptors that have internal visibility:")
+                appendln("There are ${internalDescriptors.size()} descriptors that have internal visibility:")
                 for ((packageFqName, files) in byPackage) {
 
                     appendln("In package ${packageFqName}:")

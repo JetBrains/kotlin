@@ -61,6 +61,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
@@ -146,6 +147,15 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText, shouldSkipJvmSignatureDiagnostics(groupedByModule));
         }
 
+        Throwable exceptionFromDynamicCallDescriptorsValidation = null;
+        try {
+            File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".dynamic.txt");
+            checkDynamicCallDescriptors(expectedFile, testFiles);
+        }
+        catch (Throwable e) {
+            exceptionFromDynamicCallDescriptorsValidation = e;
+        }
+
         JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
@@ -156,6 +166,28 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         }
         if (exceptionFromLazyResolveLogValidation != null) {
             throw UtilsPackage.rethrow(exceptionFromLazyResolveLogValidation);
+        }
+        if (exceptionFromDynamicCallDescriptorsValidation != null) {
+            throw UtilsPackage.rethrow(exceptionFromDynamicCallDescriptorsValidation);
+        }
+    }
+
+    private void checkDynamicCallDescriptors(File expectedFile, List<TestFile> testFiles) {
+        RecursiveDescriptorComparator serializer = new RecursiveDescriptorComparator(RECURSIVE_ALL);
+
+        StringBuilder actualText = new StringBuilder();
+
+        for (TestFile testFile : testFiles) {
+            List<DeclarationDescriptor> dynamicCallDescriptors = testFile.getDynamicCallDescriptors();
+
+            for (DeclarationDescriptor descriptor : dynamicCallDescriptors) {
+                String actualSerialized = serializer.serializeRecursively(descriptor);
+                actualText.append(actualSerialized);
+            }
+        }
+
+        if (actualText.length() != 0 || expectedFile.exists()) {
+            JetTestUtils.assertEqualsToFile(expectedFile, actualText.toString());
         }
     }
 

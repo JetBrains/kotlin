@@ -2,19 +2,59 @@ package kotlin
 
 import java.util.*
 
-// Map APIs
+private object EmptyMap : Map<Any, Any> {
+    private val map = HashMap<Any, Any>()
 
-/** Returns the size of the map */
-public val Map<*, *>.size: Int
-    get() = size()
+    override fun containsKey(key: Any?): Boolean = map.containsKey(key)
+    override fun containsValue(value: Any?): Boolean = map.containsValue(value)
+    override fun entrySet(): Set<Map.Entry<Any, Any>> = map.entrySet()
+    override fun get(key: Any?): Any? = map.get(key)
+    override fun keySet(): Set<Any> = map.keySet()
+    override fun values(): Collection<Any> = map.values()
+    override fun isEmpty(): Boolean = map.isEmpty()
+    override fun size(): Int = map.size()
+    override fun equals(other: Any?): Boolean = map.equals(other)
+    override fun hashCode(): Int = map.hashCode()
+    override fun toString(): String = map.toString()
+}
 
-/** Returns true if this map is empty */
-public val Map<*, *>.empty: Boolean
-    get() = isEmpty()
+/** Returns an empty read-only map of specified type */
+public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
+
+/** Returns a new read-only map of given pairs, where the first value is the key, and the second is value */
+public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() == 0) emptyMap() else linkedMapOf(*values)
+
+/** Returns an empty read-only map */
+public fun mapOf<K, V>(): Map<K, V> = emptyMap()
+
+/**
+ * Returns a new [[HashMap]] populated with the given pairs where the first value in each pair
+ * is the key and the second value is the value
+ *
+ * @includeFunctionBody ../../test/collections/MapTest.kt createUsingPairs
+ */
+public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
+    val answer = HashMap<K, V>(values.size())
+    answer.putAll(*values)
+    return answer
+}
+
+/**
+ * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
+ * is the key and the second value is the value. This map preserves insertion order so iterating through
+ * the map's entries will be in the same order
+ *
+ * @includeFunctionBody ../../test/collections/MapTest.kt createLinkedMap
+ */
+public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
+    val answer = LinkedHashMap<K, V>(values.size())
+    answer.putAll(*values)
+    return answer
+}
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
-       = if (this != null) this else stdlib_emptyMap()
+       = if (this != null) this else emptyMap()
 
 public fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 
@@ -47,8 +87,8 @@ public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
  * @includeFunctionBody ../../test/collections/MapTest.kt getOrElse
  */
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
-    if (this.containsKey(key)) {
-        return this.get(key) as V
+    if (containsKey(key)) {
+        return get(key) as V
     } else {
         return defaultValue()
     }
@@ -60,11 +100,11 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
  * @includeFunctionBody ../../test/collections/MapTest.kt getOrPut
  */
 public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    if (this.containsKey(key)) {
-        return this.get(key) as V
+    if (containsKey(key)) {
+        return get(key) as V
     } else {
         val answer = defaultValue()
-        this.put(key, answer)
+        put(key, answer)
         return answer
     }
 }
@@ -75,7 +115,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
  * @includeFunctionBody ../../test/collections/MapTest.kt iterateWithProperties
  */
 public fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
-    val entrySet = this.entrySet()
+    val entrySet = entrySet()
     return entrySet.iterator()
 }
 
@@ -125,7 +165,7 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
  * @includeFunctionBody ../../test/collections/MapTest.kt mapValues
  */
 public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
-    return mapValuesTo(LinkedHashMap<K, R>(this.size), transform)
+    return mapValuesTo(LinkedHashMap<K, R>(size()), transform)
 }
 
 /**
@@ -134,7 +174,7 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
  * @includeFunctionBody ../../test/collections/MapTest.kt mapKeys
  */
 public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
-    return mapKeysTo(LinkedHashMap<R, V>(this.size), transform)
+    return mapKeysTo(LinkedHashMap<R, V>(size()), transform)
 }
 
 /**
@@ -219,3 +259,8 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
     }
     return result
 }
+
+/**
+ * Converts this [Map] to a [LinkedHashMap] so future insertion orders are maintained
+ */
+public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)

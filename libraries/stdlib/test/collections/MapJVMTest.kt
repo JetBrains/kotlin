@@ -23,11 +23,7 @@ class MapJVMTest {
 
     test fun toSortedMapWithComparator() {
         val map = mapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
-        val c = comparator<String>{ a, b ->
-            val answer = a.length() - b.length()
-            if (answer == 0) a.compareTo(b) else answer
-        }
-        val sorted = map.toSortedMap(c)
+        val sorted = map.toSortedMap(compareBy<String> { it.length() } thenBy { it })
         assertEquals(arrayListOf("c", "bc", "bd", "abc"), sorted.keySet().toList())
         assertEquals(1, sorted["abc"])
         assertEquals(2, sorted["bc"])
@@ -37,7 +33,7 @@ class MapJVMTest {
     test fun toProperties() {
         val map = mapOf("a" to "A", "b" to "B")
         val prop = map.toProperties()
-        assertEquals(2, prop.size)
+        assertEquals(2, prop.size())
         assertEquals("A", prop.getProperty("a", "fail"))
         assertEquals("B", prop.getProperty("b", "fail"))
     }

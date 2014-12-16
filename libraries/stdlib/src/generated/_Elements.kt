@@ -549,7 +549,7 @@ public fun String.elementAt(index: Int): Char {
  * Returns first element
  */
 public fun <T> Array<out T>.first(): T {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -558,7 +558,7 @@ public fun <T> Array<out T>.first(): T {
  * Returns first element
  */
 public fun BooleanArray.first(): Boolean {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -567,7 +567,7 @@ public fun BooleanArray.first(): Boolean {
  * Returns first element
  */
 public fun ByteArray.first(): Byte {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -576,7 +576,7 @@ public fun ByteArray.first(): Byte {
  * Returns first element
  */
 public fun CharArray.first(): Char {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -585,7 +585,7 @@ public fun CharArray.first(): Char {
  * Returns first element
  */
 public fun DoubleArray.first(): Double {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -594,7 +594,7 @@ public fun DoubleArray.first(): Double {
  * Returns first element
  */
 public fun FloatArray.first(): Float {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -603,7 +603,7 @@ public fun FloatArray.first(): Float {
  * Returns first element
  */
 public fun IntArray.first(): Int {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -612,7 +612,7 @@ public fun IntArray.first(): Int {
  * Returns first element
  */
 public fun LongArray.first(): Long {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -621,7 +621,7 @@ public fun LongArray.first(): Long {
  * Returns first element
  */
 public fun ShortArray.first(): Short {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -632,7 +632,7 @@ public fun ShortArray.first(): Short {
 public fun <T> Iterable<T>.first(): T {
     when (this) {
         is List<*> -> {
-            if (size == 0)
+            if (isEmpty())
                 throw NoSuchElementException("Collection is empty")
             else
                 return this[0] as T
@@ -650,7 +650,7 @@ public fun <T> Iterable<T>.first(): T {
  * Returns first element
  */
 public fun <T> List<T>.first(): T {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -661,7 +661,7 @@ public fun <T> List<T>.first(): T {
 public fun <T> Stream<T>.first(): T {
     when (this) {
         is List<*> -> {
-            if (size == 0)
+            if (isEmpty())
                 throw NoSuchElementException("Collection is empty")
             else
                 return this[0] as T
@@ -679,7 +679,7 @@ public fun <T> Stream<T>.first(): T {
  * Returns first element
  */
 public fun String.first(): Char {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
     return this[0]
 }
@@ -784,63 +784,63 @@ public inline fun String.first(predicate: (Char) -> Boolean): Char {
  * Returns first element, or null if collection is empty
  */
 public fun <T> Array<out T>.firstOrNull(): T? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun BooleanArray.firstOrNull(): Boolean? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun ByteArray.firstOrNull(): Byte? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun CharArray.firstOrNull(): Char? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun DoubleArray.firstOrNull(): Double? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun FloatArray.firstOrNull(): Float? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun IntArray.firstOrNull(): Int? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun LongArray.firstOrNull(): Long? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
  * Returns first element, or null if collection is empty
  */
 public fun ShortArray.firstOrNull(): Short? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
@@ -849,7 +849,7 @@ public fun ShortArray.firstOrNull(): Short? {
 public fun <T> Iterable<T>.firstOrNull(): T? {
     when (this) {
         is List<*> -> {
-            if (size == 0)
+            if (isEmpty())
                 return null
             else
                 return this[0] as T
@@ -867,7 +867,7 @@ public fun <T> Iterable<T>.firstOrNull(): T? {
  * Returns first element, or null if collection is empty
  */
 public fun <T> List<T>.firstOrNull(): T? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
@@ -876,7 +876,7 @@ public fun <T> List<T>.firstOrNull(): T? {
 public fun <T> Stream<T>.firstOrNull(): T? {
     when (this) {
         is List<*> -> {
-            if (size == 0)
+            if (isEmpty())
                 return null
             else
                 return this[0] as T
@@ -894,7 +894,7 @@ public fun <T> Stream<T>.firstOrNull(): T? {
  * Returns first element, or null if collection is empty
  */
 public fun String.firstOrNull(): Char? {
-    return if (size > 0) this[0] else null
+    return if (isEmpty()) null else this[0]
 }
 
 /**
@@ -1139,81 +1139,81 @@ public fun <T> Stream<T>.indexOf(element: T): Int {
  * Returns last element
  */
 public fun <T> Array<out T>.last(): T {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun BooleanArray.last(): Boolean {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun ByteArray.last(): Byte {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun CharArray.last(): Char {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun DoubleArray.last(): Double {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun FloatArray.last(): Float {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun IntArray.last(): Int {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun LongArray.last(): Long {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun ShortArray.last(): Short {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
@@ -1222,10 +1222,10 @@ public fun ShortArray.last(): Short {
 public fun <T> Iterable<T>.last(): T {
     when (this) {
         is List<*> -> {
-            if (size == 0)
+            if (isEmpty())
                 throw NoSuchElementException("Collection is empty")
             else
-                return this[size - 1] as T
+                return this[this.lastIndex] as T
         }
         else -> {
             val iterator = iterator()
@@ -1243,41 +1243,31 @@ public fun <T> Iterable<T>.last(): T {
  * Returns last element
  */
 public fun <T> List<T>.last(): T {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
  * Returns last element
  */
 public fun <T> Stream<T>.last(): T {
-    when (this) {
-        is List<*> -> {
-            if (size == 0)
-                throw NoSuchElementException("Collection is empty")
-            else
-                return this[size - 1] as T
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
-            var last = iterator.next()
-            while (iterator.hasNext())
-                last = iterator.next()
-            return last
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        throw NoSuchElementException("Collection is empty")
+    var last = iterator.next()
+    while (iterator.hasNext())
+        last = iterator.next()
+    return last
 }
 
 /**
  * Returns last element
  */
 public fun String.last(): Char {
-    if (size == 0)
+    if (isEmpty())
         throw NoSuchElementException("Collection is empty")
-    return this[size - 1]
+    return this[lastIndex]
 }
 
 /**
@@ -1640,63 +1630,63 @@ public fun <T> Stream<T>.lastIndexOf(element: T): Int {
  * Returns last element, or null if collection is empty
  */
 public fun <T> Array<out T>.lastOrNull(): T? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun BooleanArray.lastOrNull(): Boolean? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun ByteArray.lastOrNull(): Byte? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun CharArray.lastOrNull(): Char? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun DoubleArray.lastOrNull(): Double? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun FloatArray.lastOrNull(): Float? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun IntArray.lastOrNull(): Int? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun LongArray.lastOrNull(): Long? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun ShortArray.lastOrNull(): Short? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
@@ -1704,7 +1694,7 @@ public fun ShortArray.lastOrNull(): Short? {
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
-        is List<*> -> return if (size > 0) this[size - 1] as T else null
+        is List<*> -> return if (isEmpty()) null else this[size() - 1] as T
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -1721,32 +1711,27 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
  * Returns last element, or null if collection is empty
  */
 public fun <T> List<T>.lastOrNull(): T? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun <T> Stream<T>.lastOrNull(): T? {
-    when (this) {
-        is List<*> -> return if (size > 0) this[size - 1] as T else null
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                return null
-            var last = iterator.next()
-            while (iterator.hasNext())
-                last = iterator.next()
-            return last
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        return null
+    var last = iterator.next()
+    while (iterator.hasNext())
+        last = iterator.next()
+    return last
 }
 
 /**
  * Returns last element, or null if collection is empty
  */
 public fun String.lastOrNull(): Char? {
-    return if (size > 0) this[size - 1] else null
+    return if (isEmpty()) null else this[length() - 1]
 }
 
 /**
@@ -1909,7 +1894,7 @@ public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun <T> Array<out T>.single(): T {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1920,7 +1905,7 @@ public fun <T> Array<out T>.single(): T {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun BooleanArray.single(): Boolean {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1931,7 +1916,7 @@ public fun BooleanArray.single(): Boolean {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun ByteArray.single(): Byte {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1942,7 +1927,7 @@ public fun ByteArray.single(): Byte {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun CharArray.single(): Char {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1953,7 +1938,7 @@ public fun CharArray.single(): Char {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun DoubleArray.single(): Double {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1964,7 +1949,7 @@ public fun DoubleArray.single(): Double {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun FloatArray.single(): Float {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1975,7 +1960,7 @@ public fun FloatArray.single(): Float {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun IntArray.single(): Int {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1986,7 +1971,7 @@ public fun IntArray.single(): Int {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun LongArray.single(): Long {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -1997,7 +1982,7 @@ public fun LongArray.single(): Long {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun ShortArray.single(): Short {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -2009,7 +1994,7 @@ public fun ShortArray.single(): Short {
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
-        is List<*> -> return when (size) {
+        is List<*> -> return when (size()) {
             0 -> throw NoSuchElementException("Collection is empty")
             1 -> this[0] as T
             else -> throw IllegalArgumentException("Collection has more than one element")
@@ -2030,7 +2015,7 @@ public fun <T> Iterable<T>.single(): T {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun <T> List<T>.single(): T {
-    return when (size) {
+    return when (size()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -2042,7 +2027,7 @@ public fun <T> List<T>.single(): T {
  */
 public fun <T> Stream<T>.single(): T {
     when (this) {
-        is List<*> -> return when (size) {
+        is List<*> -> return when (size()) {
             0 -> throw NoSuchElementException("Collection is empty")
             1 -> this[0] as T
             else -> throw IllegalArgumentException("Collection has more than one element")
@@ -2063,7 +2048,7 @@ public fun <T> Stream<T>.single(): T {
  * Returns single element, or throws exception if there is no or more than one element
  */
 public fun String.single(): Char {
-    return when (size) {
+    return when (length()) {
         0 -> throw NoSuchElementException("Collection is empty")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element")
@@ -2278,63 +2263,63 @@ public inline fun String.single(predicate: (Char) -> Boolean): Char {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun <T> Array<out T>.singleOrNull(): T? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun BooleanArray.singleOrNull(): Boolean? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun ByteArray.singleOrNull(): Byte? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun CharArray.singleOrNull(): Char? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun DoubleArray.singleOrNull(): Double? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun FloatArray.singleOrNull(): Float? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun IntArray.singleOrNull(): Int? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun LongArray.singleOrNull(): Long? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun ShortArray.singleOrNull(): Short? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
@@ -2342,7 +2327,7 @@ public fun ShortArray.singleOrNull(): Short? {
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
-        is List<*> -> return if (size == 1) this[0] as T else null
+        is List<*> -> return if (size() == 1) this[0] as T else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -2359,7 +2344,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun <T> List<T>.singleOrNull(): T? {
-    return if (size == 1) this[0] else null
+    return if (size() == 1) this[0] else null
 }
 
 /**
@@ -2367,7 +2352,7 @@ public fun <T> List<T>.singleOrNull(): T? {
  */
 public fun <T> Stream<T>.singleOrNull(): T? {
     when (this) {
-        is List<*> -> return if (size == 1) this[0] as T else null
+        is List<*> -> return if (size() == 1) this[0] as T else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -2384,7 +2369,7 @@ public fun <T> Stream<T>.singleOrNull(): T? {
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
 public fun String.singleOrNull(): Char? {
-    return if (size == 1) this[0] else null
+    return if (length() == 1) this[0] else null
 }
 
 /**

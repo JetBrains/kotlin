@@ -52,7 +52,7 @@ fun snapshots(): List<GenericFunction> {
         */
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val list = ArrayList<T>(size)
+            val list = ArrayList<T>(size())
             for (item in this) list.add(item)
             return list
             """
@@ -65,7 +65,7 @@ fun snapshots(): List<GenericFunction> {
         returns("List<Pair<K, V>>")
         body {
             """
-            val result = ArrayList<Pair<K, V>>(size)
+            val result = ArrayList<Pair<K, V>>(size())
             for (item in this)
                 result.add(item.key to item.value)
             return result
@@ -93,7 +93,7 @@ fun snapshots(): List<GenericFunction> {
         */
         body(ArraysOfPrimitives) {
             """
-            val list = ArrayList<T>(size)
+            val list = ArrayList<T>(size())
             for (item in this) list.add(item)
             return list
             """

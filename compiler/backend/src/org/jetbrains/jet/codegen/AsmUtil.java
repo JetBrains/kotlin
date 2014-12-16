@@ -173,7 +173,7 @@ public class AsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                JetTypeMapper.isAccessor(functionDescriptor) ||
-               AnnotationsPackage.isPlatformStaticInObject(functionDescriptor);
+               AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
@@ -187,6 +187,11 @@ public class AsmUtil {
             if (flagAnnotation.hasAnnotation(functionDescriptor.getOriginal())) {
                 flags |= flagAnnotation.getJvmFlag();
             }
+        }
+
+        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
+            // Native method will be a member of the class, the class object method will be delegated to it
+            flags &= ~Opcodes.ACC_NATIVE;
         }
 
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {

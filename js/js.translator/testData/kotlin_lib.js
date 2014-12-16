@@ -831,29 +831,6 @@
         compare: throwAbstractFunctionInvocationError("Comparator#compare")
     });
 
-    /**
-     * @class
-     * @implements {Kotlin.Comparator.<T>}
-     *
-     * @constructor
-     * @param {function(T,T): Boolean} comparator
-     * @template T
-     */
-    var ComparatorImpl = Kotlin.createClassNow(Kotlin.Comparator,
-        function (comparator) {
-            this.compare = comparator;
-        }
-    );
-
-    /**
-     * @param {function(T,T): Boolean} f
-     * @returns {Kotlin.Comparator.<T>}
-     * @template T
-     */
-    Kotlin.comparator = function (f) {
-        return new ComparatorImpl(f);
-    };
-
     Kotlin.collectionsMax = function (c, comp) {
         if (c.isEmpty()) {
             //TODO: which exception?

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.Inference.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class, JetDiagnosticsTestWithStdLibGenerated.Resolve.class, JetDiagnosticsTestWithStdLibGenerated.Varargs.class})
+@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.Inference.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Native.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class, JetDiagnosticsTestWithStdLibGenerated.Resolve.class, JetDiagnosticsTestWithStdLibGenerated.Varargs.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
@@ -644,6 +644,57 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("parameterNames.kt")
         public void testParameterNames() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/native")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Native extends AbstractJetDiagnosticsTestWithStdLib {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInNative() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/native"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("body.kt")
+        public void testBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/body.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/inline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBody.kt")
+        public void testNoBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/noBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/override.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reified.kt")
+        public void testReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/reified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trait.kt")
+        public void testTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/trait.kt");
             doTest(fileName);
         }
     }

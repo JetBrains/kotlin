@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.annotations
 
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -36,18 +35,18 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.internal.Intrinsic")) != null
 }
 
-public fun CallableDescriptor.isPlatformStaticInObject(): Boolean =
-        isPlatformStaticIn(ClassKind.OBJECT)
+public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
+        isPlatformStaticIn(ClassKind.OBJECT, ClassKind.CLASS)
 
 public fun CallableDescriptor.isPlatformStaticInClassObject(): Boolean =
         isPlatformStaticIn(ClassKind.CLASS_OBJECT)
 
-private fun CallableDescriptor.isPlatformStaticIn(kind: ClassKind): Boolean =
+private fun CallableDescriptor.isPlatformStaticIn(vararg kinds: ClassKind): Boolean =
         when (this) {
             is PropertyAccessorDescriptor -> {
                 val propertyDescriptor = getCorrespondingProperty()
-                DescriptorUtils.isKindOf(propertyDescriptor.getContainingDeclaration(), kind) &&
+                kinds.any { DescriptorUtils.isKindOf(propertyDescriptor.getContainingDeclaration(), it) } &&
                 (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
             }
-            else -> DescriptorUtils.isKindOf(getContainingDeclaration(), kind) && hasPlatformStaticAnnotation()
+            else -> kinds.any { DescriptorUtils.isKindOf(getContainingDeclaration(), it) } && hasPlatformStaticAnnotation()
         }

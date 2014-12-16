@@ -3,5 +3,7 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <defaultErrorMessages implementation="org.jetbrains.jet.lang.resolve.java.diagnostics.DefaultErrorMessagesJvm"/>
+
+        <suppressStringProvider implementation="org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.SuppressNoBodyErrorsForNativeDeclarations"/>
     </extensions>
 </idea-plugin>

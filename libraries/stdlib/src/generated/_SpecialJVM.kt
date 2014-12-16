@@ -10,56 +10,56 @@ import java.util.*
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
-public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size()): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -67,63 +67,63 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * Returns new array which is a copy of the original array
  */
 public fun <T> Array<out T>.copyOf(): Array<T> {
-    return Arrays.copyOf(this, size) as Array<T>
+    return Arrays.copyOf(this, size()) as Array<T>
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun BooleanArray.copyOf(): BooleanArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun ByteArray.copyOf(): ByteArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun CharArray.copyOf(): CharArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun DoubleArray.copyOf(): DoubleArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun FloatArray.copyOf(): FloatArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun IntArray.copyOf(): IntArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun LongArray.copyOf(): LongArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
  * Returns new array which is a copy of the original array
  */
 public fun ShortArray.copyOf(): ShortArray {
-    return Arrays.copyOf(this, size)
+    return Arrays.copyOf(this, size())
 }
 
 /**
@@ -417,56 +417,56 @@ public fun <T, C : MutableCollection<in R>, R : T> Stream<T>.filterIsInstanceTo(
 /**
  * Sorts array or range in array inplace
  */
-public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
  * Sorts array or range in array inplace
  */
-public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 

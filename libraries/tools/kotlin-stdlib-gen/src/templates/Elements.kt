@@ -159,7 +159,7 @@ fun elements(): List<GenericFunction> {
             """
             when (this) {
                 is List<*> -> {
-                    if (size == 0)
+                    if (isEmpty())
                         throw NoSuchElementException("Collection is empty")
                     else
                         return this[0] as T
@@ -175,7 +175,7 @@ fun elements(): List<GenericFunction> {
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size == 0)
+            if (isEmpty())
                 throw NoSuchElementException("Collection is empty")
             return this[0]
             """
@@ -188,7 +188,7 @@ fun elements(): List<GenericFunction> {
             """
             when (this) {
                 is List<*> -> {
-                    if (size == 0)
+                    if (isEmpty())
                         return null
                     else
                         return this[0] as T
@@ -204,7 +204,7 @@ fun elements(): List<GenericFunction> {
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (size > 0) this[0] else null
+            return if (isEmpty()) null else this[0]
             """
         }
     }
@@ -242,10 +242,10 @@ fun elements(): List<GenericFunction> {
             """
             when (this) {
                 is List<*> -> {
-                    if (size == 0)
+                    if (isEmpty())
                         throw NoSuchElementException("Collection is empty")
                     else
-                        return this[size - 1] as T
+                        return this[this.lastIndex] as T
                 }
                 else -> {
                     val iterator = iterator()
@@ -259,11 +259,22 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
+        body(Streams) {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                throw NoSuchElementException("Collection is empty")
+            var last = iterator.next()
+            while (iterator.hasNext())
+                last = iterator.next()
+            return last
+            """
+        }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size == 0)
+            if (isEmpty())
                 throw NoSuchElementException("Collection is empty")
-            return this[size - 1]
+            return this[lastIndex]
             """
         }
     }
@@ -274,7 +285,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (size > 0) this[size - 1] as T else null
+                is List<*> -> return if (isEmpty()) null else this[size() - 1] as T
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -287,9 +298,25 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Streams) {
             """
-            return if (size > 0) this[size - 1] else null
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                return null
+            var last = iterator.next()
+            while (iterator.hasNext())
+                last = iterator.next()
+            return last
+            """
+        }
+        body(Strings) {
+            """
+            return if (isEmpty()) null else this[length() - 1]
+            """
+        }
+        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return if (isEmpty()) null else this[size() - 1]
             """
         }
     }
@@ -331,14 +358,13 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    val bucks = '$'
     templates add f("single()") {
         doc { "Returns single element, or throws exception if there is no or more than one element" }
         returns("T")
         body {
             """
             when (this) {
-                is List<*> -> return when (size) {
+                is List<*> -> return when (size()) {
                     0 -> throw NoSuchElementException("Collection is empty")
                     1 -> this[0] as T
                     else -> throw IllegalArgumentException("Collection has more than one element")
@@ -355,9 +381,18 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Strings) {
             """
-            return when (size) {
+            return when (length()) {
+                0 -> throw NoSuchElementException("Collection is empty")
+                1 -> this[0]
+                else -> throw IllegalArgumentException("Collection has more than one element")
+            }
+            """
+        }
+        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return when (size()) {
                 0 -> throw NoSuchElementException("Collection is empty")
                 1 -> this[0]
                 else -> throw IllegalArgumentException("Collection has more than one element")
@@ -372,7 +407,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (size == 1) this[0] as T else null
+                is List<*> -> return if (size() == 1) this[0] as T else null
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -385,9 +420,14 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Strings) {
             """
-            return if (size == 1) this[0] else null
+            return if (length() == 1) this[0] else null
+            """
+        }
+        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return if (size() == 1) this[0] else null
             """
         }
     }

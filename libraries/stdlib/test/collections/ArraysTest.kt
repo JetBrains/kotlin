@@ -37,7 +37,7 @@ class ArraysTest {
         val arr = ByteArray(2)
 
         val expected: Byte = 0
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -46,7 +46,7 @@ class ArraysTest {
         val arr = ShortArray(2)
 
         val expected: Short = 0
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -54,7 +54,7 @@ class ArraysTest {
     test fun intArray() {
         val arr = IntArray(2)
 
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
@@ -63,7 +63,7 @@ class ArraysTest {
         val arr = LongArray(2)
 
         val expected: Long = 0
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -72,7 +72,7 @@ class ArraysTest {
         val arr = FloatArray(2)
 
         val expected: Float = 0.0.toFloat()
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -80,7 +80,7 @@ class ArraysTest {
     test fun doubleArray() {
         val arr = DoubleArray(2)
 
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(0.0, arr[0])
         assertEquals(0.0, arr[1])
     }
@@ -89,14 +89,14 @@ class ArraysTest {
         val arr = CharArray(2)
 
         val expected: Char = '\u0000'
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
 
     test fun booleanArray() {
         val arr = BooleanArray(2)
-        assertEquals(arr.size, 2)
+        assertEquals(arr.size(), 2)
         assertEquals(false, arr[0])
         assertEquals(false, arr[1])
     }
@@ -192,8 +192,8 @@ class ArraysTest {
         assertEquals(listOf("B"), array("A", "B", "C").slice(1..1))
         assertEquals(listOf('E', 'B', 'C'), array('A', 'B', 'C', 'E').slice(iter))
 
-        assertTrue(array<Int>().slice(5..4).none())
-        assertTrue(array(1, 2, 3).slice(5..1).none())
+        assertEquals(listOf<Int>(), array<Int>().slice(5..4))
+        assertEquals(listOf<Int>(), array(1, 2, 3).slice(5..1))
         assertEquals(listOf(2, 3, 9), array(2, 3, 9, 2, 3, 9).slice(iter))
         assertEquals(listOf(2.0, 3.0), array(2.0, 3.0, 9.0).slice(0..1))
         assertEquals(listOf(2f, 3f), array(2f, 3f, 9f).slice(0..1))

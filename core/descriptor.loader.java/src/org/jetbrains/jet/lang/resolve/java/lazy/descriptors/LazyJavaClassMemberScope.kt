@@ -53,7 +53,7 @@ public class LazyJavaClassMemberScope(
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.getConstructors()
-        val result = ArrayList<JavaConstructorDescriptor>(constructors.size)
+        val result = ArrayList<JavaConstructorDescriptor>(constructors.size())
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)

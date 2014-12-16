@@ -8,7 +8,7 @@ private val DEFAULT_LOAD_FACTOR = 0.75f
 
 library
 public trait Comparator<T> {
-    fun compare(obj1: T, obj2: T): Int;
+    public fun compare(obj1: T, obj2: T): Int;
 }
 
 library

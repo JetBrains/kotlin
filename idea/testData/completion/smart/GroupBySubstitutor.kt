@@ -1,5 +1,3 @@
-fun<T> emptyList(): List<T> = listOf()
-
 fun foo(list: List<String>){}
 fun foo(list: List<String>, i: Int){}
 fun foo(list: List<Int>, b: Boolean){}

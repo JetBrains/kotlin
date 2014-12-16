@@ -183,7 +183,7 @@ class CollectionStubMethodGenerator(
     private fun Collection<JetType>.findMostSpecificTypeForClass(klass: ClassDescriptor): JetType {
         val types = this.filter { it.getConstructor().getDeclarationDescriptor() == klass }
         if (types.isEmpty()) error("No supertype of $klass in $this")
-        if (types.size == 1) return types.first()
+        if (types.size() == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
             types.all { other -> JetTypeChecker.DEFAULT.isSubtypeOf(type, other) }

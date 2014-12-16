@@ -58,7 +58,7 @@ public class CapturedTypeConstructor(
 
     override fun getAnnotations() = Annotations.EMPTY
 
-    override fun toString() = "Captured($typeProjection)"
+    override fun toString() = "CapturedTypeConstructor($typeProjection)"
 }
 
 public class CapturedType(
@@ -83,6 +83,8 @@ public class CapturedType(
         if (typeProjection.getProjectionKind() == variance) typeProjection.getType() else default
 
     override fun sameTypeConstructor(type: JetType) = delegateType.getConstructor() === type.getConstructor()
+
+    override fun toString() = "Captured($typeProjection)"
 }
 
 public fun createCapturedType(typeProjection: TypeProjection): JetType = CapturedType(typeProjection)

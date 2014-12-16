@@ -16,18 +16,19 @@
 
 package kotlin
 
+import java.util.Comparator
+
 /**
- * Helper method for implementing [[Comparable]] methods using a list of functions
- * to calculate the values to compare
+ * Compares two values using the sequence of functions to calculate a result of comparison.
  */
-public fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
-    require(functions.size > 0)
+public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
+    require(functions.size() > 0)
     if (a identityEquals b) return 0
-    if (a == null) return - 1
+    if (a == null) return -1
     if (b == null) return 1
     for (fn in functions) {
-        val v1 = a.fn()
-        val v2 = b.fn()
+        val v1 = fn(a)
+        val v2 = fn(b)
         val diff = compareValues(v1, v2)
         if (diff != 0) return diff
     }
@@ -35,14 +36,92 @@ public fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparabl
 }
 
 /**
- * Compares the two values which may be [[Comparable]] otherwise
- * they are compared via [[#equals()]] and if they are not the same then
- * the [[#hashCode()]] method is used as the difference
+ * Compares two [Comparable] nullable values, null is considered less than any value.
  */
 public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a identityEquals b) return 0
-    if (a == null) return - 1
+    if (a == null) return -1
     if (b == null) return 1
 
     return (a as Comparable<Any?>).compareTo(b)
+}
+
+/**
+ * Creates a comparator using the sequence of functions to calculate a result of comparison.
+ */
+public fun <T> compareBy(vararg functions: (T) -> Comparable<*>?): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, *functions)
+    }
+}
+
+/**
+ * Creates a comparator using the sequence of functions to calculate a result of comparison.
+ */
+deprecated("Use compareBy() instead")
+public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T> = compareBy(*functions)
+
+/**
+ * Creates a comparator using the function to transform value to a [Comparable] instance for comparison
+ */
+inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int = compareValues(comparable(a), comparable(b))
+    }
+}
+
+/**
+ * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison
+ */
+inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int = compareValues(comparable(b), comparable(a))
+    }
+}
+
+/**
+ * Creates a comparator using the primary comparator and
+ * the function to transform value to a [Comparable] instance for comparison
+ */
+inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int {
+            val previousCompare = this@thenBy.compare(a, b)
+            return if (previousCompare != 0) previousCompare else compareValues(comparable(a), comparable(b))
+        }
+    }
+}
+
+/**
+ * Creates a descending comparator using the primary comparator and
+ * the function to transform value to a [Comparable] instance for comparison
+ */
+inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int {
+            val previousCompare = this@thenByDescending.compare(a, b)
+            return if (previousCompare != 0) previousCompare else compareValues(comparable(b), comparable(a))
+        }
+    }
+}
+
+/**
+ * Creates a comparator using the function to calculate a result of comparison.
+ */
+inline public fun <T> comparator(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparison: (T, T) -> Int): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int = comparison(a, b)
+    }
+}
+
+/**
+ * Creates a comparator using the primary comparator and function to calculate a result of comparison.
+ */
+inline public fun <T> Comparator<T>.thenComparator(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparison: (T, T) -> Int): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int {
+            val previousCompare = this@thenComparator.compare(a, b)
+            return if (previousCompare != 0) previousCompare else comparison(a, b)
+        }
+    }
 }

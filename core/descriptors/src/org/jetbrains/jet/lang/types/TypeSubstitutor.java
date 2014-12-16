@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.inference.InferencePackage;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.typeUtil.TypeUtilPackage;
@@ -186,28 +187,36 @@ public class TypeSubstitutor {
         TypeProjection replacement = substitution.get(type.getConstructor());
 
         if (replacement != null) {
-            switch (conflictType(originalProjectionKind, replacement.getProjectionKind())) {
-                case OUT_IN_IN_POSITION:
-                    throw new SubstitutionException("Out-projection in in-position");
-                case IN_IN_OUT_POSITION:
-                    // todo use the right type parameter variance and upper bound
-                    return new TypeProjectionImpl(Variance.OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType());
-                case NO_CONFLICT:
-                    JetType substitutedType;
-                    CustomTypeVariable typeVariable = TypesPackage.getCustomTypeVariable(type);
-                    if (typeVariable != null) {
-                        substitutedType = typeVariable.substitutionResult(replacement.getType());
-                    }
-                    else {
-                        // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
-                        substitutedType = TypeUtils.makeNullableIfNeeded(replacement.getType(), type.isMarkedNullable());
-                    }
+            VarianceConflictType varianceConflict = conflictType(originalProjectionKind, replacement.getProjectionKind());
 
-                    Variance resultingProjectionKind = combine(originalProjectionKind, replacement.getProjectionKind());
-                    return new TypeProjectionImpl(resultingProjectionKind, substitutedType);
-                default:
-                    throw new IllegalStateException();
+            // Captured type might be substituted in an opposite projection:
+            // out 'Captured (in Int)' = out Int
+            // in 'Captured (out Int)' = in Int
+            boolean allowVarianceConflict = InferencePackage.isCaptured(type);
+            if (!allowVarianceConflict) {
+                //noinspection EnumSwitchStatementWhichMissesCases
+                switch (varianceConflict) {
+                    case OUT_IN_IN_POSITION:
+                        throw new SubstitutionException("Out-projection in in-position");
+                    case IN_IN_OUT_POSITION:
+                        // todo use the right type parameter variance and upper bound
+                        return new TypeProjectionImpl(Variance.OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType());
+                }
             }
+            JetType substitutedType;
+            CustomTypeVariable typeVariable = TypesPackage.getCustomTypeVariable(type);
+            if (typeVariable != null) {
+                substitutedType = typeVariable.substitutionResult(replacement.getType());
+            }
+            else {
+                // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
+                substitutedType = TypeUtils.makeNullableIfNeeded(replacement.getType(), type.isMarkedNullable());
+            }
+
+            Variance resultingProjectionKind = varianceConflict == VarianceConflictType.NO_CONFLICT
+                                               ? combine(originalProjectionKind, replacement.getProjectionKind())
+                                               : originalProjectionKind;
+            return new TypeProjectionImpl(resultingProjectionKind, substitutedType);
         }
         // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
         return substituteCompoundType(originalProjection, recursionDepth);

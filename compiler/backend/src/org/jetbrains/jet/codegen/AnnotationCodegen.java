@@ -77,7 +77,8 @@ public abstract class AnnotationCodegen {
 
     public static final List<JvmFlagAnnotation> METHOD_FLAGS = Arrays.asList(
             new JvmFlagAnnotation("kotlin.jvm.strictfp", Opcodes.ACC_STRICT),
-            new JvmFlagAnnotation("kotlin.jvm.synchronized", Opcodes.ACC_SYNCHRONIZED)
+            new JvmFlagAnnotation("kotlin.jvm.synchronized", Opcodes.ACC_SYNCHRONIZED),
+            new JvmFlagAnnotation("kotlin.jvm.native", Opcodes.ACC_NATIVE)
     );
 
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};

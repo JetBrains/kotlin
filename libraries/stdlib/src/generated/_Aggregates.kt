@@ -323,70 +323,70 @@ public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
  * Returns the number of elements
  */
 public fun <T> Array<out T>.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun BooleanArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun ByteArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun CharArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun DoubleArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun FloatArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun IntArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun LongArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun ShortArray.count(): Int {
-    return size
+    return size()
 }
 
 /**
  * Returns the number of elements
  */
 public fun <T> Collection<T>.count(): Int {
-    return size
+    return size()
 }
 
 /**
@@ -402,7 +402,7 @@ public fun <T> Iterable<T>.count(): Int {
  * Returns the number of elements
  */
 public fun <K, V> Map<K, V>.count(): Int {
-    return size
+    return size()
 }
 
 /**
@@ -418,7 +418,7 @@ public fun <T> Stream<T>.count(): Int {
  * Returns the number of elements
  */
 public fun String.count(): Int {
-    return size
+    return length()
 }
 
 /**
@@ -650,7 +650,7 @@ public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -662,7 +662,7 @@ public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) ->
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -674,7 +674,7 @@ public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R)
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -686,7 +686,7 @@ public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R)
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -698,7 +698,7 @@ public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R)
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -710,7 +710,7 @@ public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -722,7 +722,7 @@ public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> 
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -734,7 +734,7 @@ public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): 
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -746,7 +746,7 @@ public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R)
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -758,7 +758,7 @@ public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> 
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -770,7 +770,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R {
-    var index = size - 1
+    var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -867,6 +867,102 @@ public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit): Unit {
  */
 public inline fun String.forEach(operation: (Char) -> Unit): Unit {
     for (element in this) operation(element)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Array<out T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun BooleanArray.forEachIndexed(operation: (Int, Boolean) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun ByteArray.forEachIndexed(operation: (Int, Byte) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun CharArray.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun DoubleArray.forEachIndexed(operation: (Int, Double) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun FloatArray.forEachIndexed(operation: (Int, Float) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun IntArray.forEachIndexed(operation: (Int, Int) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun LongArray.forEachIndexed(operation: (Int, Long) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun ShortArray.forEachIndexed(operation: (Int, Short) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Stream<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
 }
 
 /**
@@ -1403,7 +1499,7 @@ public fun String.min(): Char? {
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): T? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1421,7 +1517,7 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): 
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boolean? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1439,7 +1535,7 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boo
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1457,7 +1553,7 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1475,7 +1571,7 @@ public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Double? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1493,7 +1589,7 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Doubl
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1511,7 +1607,7 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? 
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1529,7 +1625,7 @@ public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -1547,7 +1643,7 @@ public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
 public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? {
-    if (size == 0) return null
+    if (size() == 0) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -2005,7 +2101,7 @@ public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T): T {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2018,7 +2114,7 @@ public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T): T {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Boolean): Boolean {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2031,7 +2127,7 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2044,7 +2140,7 @@ public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2057,7 +2153,7 @@ public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double): Double {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2070,7 +2166,7 @@ public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double)
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Float {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2083,7 +2179,7 @@ public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Fl
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2096,7 +2192,7 @@ public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2109,7 +2205,7 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Short {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2122,7 +2218,7 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Sh
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T): T {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {
@@ -2135,7 +2231,7 @@ public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T): T {
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
-    var index = size - 1
+    var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     var accumulator = get(index--)
     while (index >= 0) {

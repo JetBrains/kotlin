@@ -95,8 +95,11 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        body(Strings, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
-            "return size"
+        body(Strings) {
+            "return length()"
+        }
+        body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
+            "return size()"
         }
     }
 
@@ -158,7 +161,7 @@ fun aggregates(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size == 0) return null
+            if (size() == 0) return null
 
             var minElem = this[0]
             var minValue = f(minElem)
@@ -330,7 +333,7 @@ fun aggregates(): List<GenericFunction> {
         returns("R")
         body {
             """
-            var index = size - 1
+            var index = lastIndex
             var accumulator = initial
             while (index >= 0) {
                 accumulator = operation(get(index--), accumulator)
@@ -368,7 +371,7 @@ fun aggregates(): List<GenericFunction> {
         returns("T")
         body {
             """
-            var index = size - 1
+            var index = lastIndex
             if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
 
             var accumulator = get(index--)
@@ -393,6 +396,18 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         include(Maps)
+    }
+
+    templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
+        inline(true)
+        doc { "Performs the given *operation* on each element, providing sequential index with the element" }
+        returns("Unit")
+        body {
+            """
+            var index = 0
+            for (item in this) operation(index++, item)
+            """
+        }
     }
 
     return templates

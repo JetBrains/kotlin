@@ -64,7 +64,7 @@ public class DebugInfoUtil {
 
         public abstract void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
 
-        public void reportDynamicCall(@NotNull JetElement element) { }
+        public void reportDynamicCall(@NotNull JetElement element, DeclarationDescriptor declarationDescriptor) { }
     }
 
     public static void markDebugAnnotations(
@@ -99,11 +99,9 @@ public class DebugInfoUtil {
             @Override
             public void visitForExpression(@NotNull JetForExpression expression) {
                 JetExpression range = expression.getLoopRange();
-                if (reportIfDynamicCall(range, range, LOOP_RANGE_ITERATOR_RESOLVED_CALL) ||
-                    reportIfDynamicCall(range, range, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL) ||
-                    reportIfDynamicCall(range, range, LOOP_RANGE_NEXT_RESOLVED_CALL)) {
-                    // for side-effect of the condition only
-                }
+                reportIfDynamicCall(range, range, LOOP_RANGE_ITERATOR_RESOLVED_CALL);
+                reportIfDynamicCall(range, range, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
+                reportIfDynamicCall(range, range, LOOP_RANGE_NEXT_RESOLVED_CALL);
                 super.visitForExpression(expression);
             }
 
@@ -120,11 +118,9 @@ public class DebugInfoUtil {
                 VariableDescriptor descriptor = bindingContext.get(VARIABLE, property);
                 if (descriptor instanceof PropertyDescriptor && property.getDelegate() != null) {
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                    if (reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
-                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
-                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor, DELEGATED_PROPERTY_PD_RESOLVED_CALL)) {
-                        // for side-effect of the condition only
-                    }
+                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
+                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
+                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor, DELEGATED_PROPERTY_PD_RESOLVED_CALL);
                 }
                 super.visitProperty(property);
             }
@@ -230,7 +226,7 @@ public class DebugInfoUtil {
 
     private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
         if (declarationDescriptor != null && TasksPackage.isDynamic(declarationDescriptor)) {
-            debugInfoReporter.reportDynamicCall(element);
+            debugInfoReporter.reportDynamicCall(element, declarationDescriptor);
             return true;
         }
         return false;

@@ -42,6 +42,15 @@ class A {
         }
 
         class C {
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get(a: String): Int?<!> = 1
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get2(a: Number): String?<!> = "OK"
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get3(a: Int): String?<!> = "OK"
+
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeGetter
             fun get(): Any?<!> = null
 
@@ -53,9 +62,21 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Number = 1.1<!>): Int? = 0
         }
 
         object obj {
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get(a: String): Int?<!> = 1
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get2(a: Number): String?<!> = "OK"
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get3(a: Int): String?<!> = "OK"
+
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeGetter
             fun get(): Any?<!> = null
 
@@ -67,9 +88,21 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
         }
 
         val anonymous = object {
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get(a: String): Int?<!> = 1
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get2(a: Number): String?<!> = "OK"
+
+            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
+            fun Int.get3(a: Int): String?<!> = "OK"
+
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeGetter
             fun get(): Any?<!> = null
 
@@ -81,6 +114,9 @@ class A {
 
             nativeGetter
             fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+
+            nativeGetter
+            fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
         }
     }
 }

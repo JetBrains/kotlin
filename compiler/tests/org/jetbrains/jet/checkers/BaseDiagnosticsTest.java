@@ -33,6 +33,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -243,6 +244,7 @@ public abstract class BaseDiagnosticsTest extends
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
         private final boolean markDynamicCalls;
+        private final List<DeclarationDescriptor> dynamicCallDescriptors = new ArrayList<DeclarationDescriptor>();
 
         public TestFile(
                 @Nullable TestModule module,
@@ -325,6 +327,11 @@ public abstract class BaseDiagnosticsTest extends
             return jetFile;
         }
 
+        @NotNull
+        public List<DeclarationDescriptor> getDynamicCallDescriptors() {
+            return dynamicCallDescriptors;
+        }
+
         public boolean getActualText(BindingContext bindingContext, StringBuilder actualText, boolean skipJvmSignatureDiagnostics) {
             if (this.jetFile == null) {
                 // TODO: check java files too
@@ -338,7 +345,7 @@ public abstract class BaseDiagnosticsTest extends
 
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
-                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls),
+                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls, dynamicCallDescriptors),
                                        jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );

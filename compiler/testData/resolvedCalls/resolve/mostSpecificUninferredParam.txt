@@ -1,10 +1,10 @@
-fun <T> emptyList(): List<T> = throw Exception()
+fun <T> someList(): List<T> = throw Exception()
 
 fun <T> doSmth(l: List<T>) {}
 fun doSmth(a: Any) {}
 
 fun bar() {
-    <caret>doSmth(emptyList())
+    <caret>doSmth(someList())
 }
 
 
@@ -19,4 +19,4 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-MATCH_MODULO_UNINFERRED_TYPES  l : List<???> = emptyList()
+MATCH_MODULO_UNINFERRED_TYPES  l : List<???> = someList()

@@ -48,13 +48,11 @@ private abstract class AbstractNativeAnnotationsChecker(private val requiredAnno
             return
         }
 
-        val isTopLevel = DescriptorUtils.isTopLevelDeclaration(descriptor)
-        val hasLocalVisibility = descriptor.getVisibility() == Visibilities.LOCAL
+        val isMember = !DescriptorUtils.isTopLevelDeclaration(descriptor) && descriptor.getVisibility() != Visibilities.LOCAL
         val isExtension = DescriptorUtils.isExtension(descriptor)
 
-        if (!isTopLevel && !hasLocalVisibility && isExtension ||
-            (isTopLevel || hasLocalVisibility) && !isExtension ||
-            !((isTopLevel || hasLocalVisibility) && isExtension) && !AnnotationsUtils.isNativeObject(descriptor)
+        if (isMember && (isExtension || !AnnotationsUtils.isNativeObject(descriptor)) ||
+            !isMember && !isExtension
         ) {
             diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(declaration, annotationDescriptor.getType()))
         }
@@ -84,6 +82,12 @@ private abstract class AbstractNativeIndexerChecker(
 
         if (parameters.size() != requiredParametersCount) {
             diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_WRONG_PARAMETER_COUNT.on(declaration, requiredParametersCount, indexerKind))
+        }
+
+        for (parameter in declaration.getValueParameters()) {
+            if (parameter.hasDefaultValue()) {
+                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS.on(parameter, indexerKind))
+            }
         }
     }
 }

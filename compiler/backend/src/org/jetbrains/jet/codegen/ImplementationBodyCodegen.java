@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
@@ -58,7 +59,6 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignat
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -982,7 +982,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             reg = 0;
         }
         else if (callFromAccessor) {
-            iv.load(0, OBJECT_TYPE);
+            if (!AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
+                iv.load(0, OBJECT_TYPE);
+            }
         }
 
         for (Type argType : callableMethod.getAsmMethod().getArgumentTypes()) {

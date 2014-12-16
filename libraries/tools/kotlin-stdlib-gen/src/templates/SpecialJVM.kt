@@ -19,10 +19,10 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Returns new array which is a copy of the original array" }
         returns("SELF")
         body {
-            "return Arrays.copyOf(this, size)"
+            "return Arrays.copyOf(this, size())"
         }
         body(ArraysOfObjects) {
-            "return Arrays.copyOf(this, size) as Array<T>"
+            "return Arrays.copyOf(this, size()) as Array<T>"
         }
     }
 
@@ -53,7 +53,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
+    templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size())") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted." }
@@ -63,7 +63,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size)") {
+    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size())") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc { "Sorts array or range in array inplace" }

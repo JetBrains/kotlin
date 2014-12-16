@@ -37,6 +37,10 @@ import org.jetbrains.jet.plugin.findUsages.toClassHelper
 import org.jetbrains.jet.plugin.findUsages.toClassDeclarationsHelper
 import org.jetbrains.jet.plugin.search.usagesSearch.search
 import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.jet.asJava.namedUnwrappedElement
+import java.util.Collections
+import com.intellij.find.findUsages.JavaFindUsagesHandler
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -84,11 +88,26 @@ public class KotlinFindClassUsagesHandler(
         }
     }
 
-    protected override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
-        if (isSingleFile)
-            return false
+    protected override fun getStringsToSearch(element: PsiElement): Collection<String> {
+        val psiClass = when (element) {
+                           is PsiClass -> element
+                           is JetClassOrObject -> LightClassUtil.getPsiClass(getElement())
+                           else -> null
+                       } ?: return Collections.emptyList()
 
-        return psiElement is JetClassOrObject
+        // Work around the protected method in JavaFindUsagesHandler
+        // todo: Use JavaFindUsagesHelper.getElementNames() when it becomes public in IDEA
+        var stringsToSearch: Collection<String>
+        object: JavaFindUsagesHandler(psiClass, JavaFindUsagesHandlerFactory.getInstance(element.getProject())) {
+            {
+                stringsToSearch = getStringsToSearch(psiClass)
+            }
+        }
+        return stringsToSearch
+    }
+
+    protected override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
+        return !isSingleFile
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {

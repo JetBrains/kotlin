@@ -67,9 +67,9 @@ class CatchTranslator(
      *  }
      */
     public fun translate(): JsCatch? {
-        if (catches.empty) return null
+        if (catches.isEmpty()) return null
 
-        val firstCatch = catches.first!!
+        val firstCatch = catches.first()
         val catchParameter = firstCatch.getCatchParameter()
         val parameterName = context().getNameForElement(catchParameter!!)
         val parameterRef = parameterName.makeRef()

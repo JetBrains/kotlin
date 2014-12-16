@@ -23,8 +23,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE;
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT;
+import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 
 public interface ErrorsJvm {
@@ -37,6 +36,11 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> PLATFORM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> PLATFORM_STATIC_ILLEGAL_USAGE = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
+
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_HAVE_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

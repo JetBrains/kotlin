@@ -15,7 +15,7 @@ class FilesTest {
         File.createTempFile("temp3", ".kt", dir)
 
         val result = dir.listFiles { it.getName().endsWith(".kt") }
-        assertEquals(2, result!!.size)
+        assertEquals(2, result!!.size())
     }
 
     test fun recurse() {

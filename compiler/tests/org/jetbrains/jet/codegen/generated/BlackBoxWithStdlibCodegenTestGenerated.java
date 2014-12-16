@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithStdlib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.Classes.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.MultiDeclForArray.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.Classes.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.MultiDeclForArray.class, BlackBoxWithStdlibCodegenTestGenerated.Native.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
@@ -1811,6 +1811,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/native")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Native extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInNative() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/native"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/default.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("nativePropertyAccessors.kt")
+        public void testNativePropertyAccessors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/nativePropertyAccessors.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("privateStatic.kt")
+        public void testPrivateStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/privateStatic.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("simpleNative.kt")
+        public void testSimpleNative() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/simpleNative.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("staticNative.kt")
+        public void testStaticNative() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/staticNative.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/native/topLevel.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1930,6 +1975,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("prefixInc.kt")
         public void testPrefixInc() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/prefixInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("privateMethod.kt")
+        public void testPrivateMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/privateMethod.kt");
             doTestWithStdlib(fileName);
         }
 

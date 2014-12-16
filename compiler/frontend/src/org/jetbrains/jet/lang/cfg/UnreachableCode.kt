@@ -59,7 +59,7 @@ class UnreachableCodeImpl(
         acceptChildren(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 val isReachable = element is JetElement && reachableElements.contains(element) && !element.hasChildrenInSet(unreachableElements)
-                if (isReachable || element.getChildren().size == 0) {
+                if (isReachable || element.getChildren().size() == 0) {
                     children.add(element)
                 }
                 else {

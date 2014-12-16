@@ -24,7 +24,7 @@ public trait OutputFileCollection {
 }
 
 public class SimpleOutputFileCollection(private val outputFiles: List<OutputFile>) : OutputFileCollection {
-    override fun get(relativePath: String): OutputFile? = outputFiles.find { it.relativePath == relativePath }
+    override fun get(relativePath: String): OutputFile? = outputFiles.firstOrNull { it.relativePath == relativePath }
     override fun asList(): List<OutputFile> = outputFiles
 }
 

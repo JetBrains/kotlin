@@ -126,20 +126,19 @@ abstract class MapJsTest {
         val data = emptyMap()
 
         assertTrue(data.isEmpty())
-        assertTrue(data.empty)
+        assertTrue(data.none())
 
         assertEquals(0, data.size())
-        assertEquals(0, data.size)
+        assertEquals(0, data.size())
     }
 
     test fun sizeAndEmpty() {
         val data = createTestMap()
 
         assertFalse(data.isEmpty())
-        assertFalse(data.empty)
+        assertFalse(data.none())
 
-        assertEquals(KEYS.size, data.size())
-        assertEquals(KEYS.size, data.size)
+        assertEquals(KEYS.size(), data.size())
     }
 
     // #KT-3035
@@ -200,7 +199,7 @@ abstract class MapJsTest {
         val map = createTestMap()
         val newMap = emptyMutableMap()
         newMap.putAll(map)
-        assertEquals(KEYS.size, newMap.size)
+        assertEquals(KEYS.size(), newMap.size())
     }
 
     test fun mapRemove() {
@@ -271,14 +270,14 @@ abstract class MapJsTest {
 
     test fun createUsingPairs() {
         val map = mapOf(Pair("a", 1), Pair("b", 2))
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }
 
     test fun createUsingTo() {
         val map = mapOf("a" to 1, "b" to 2)
-        assertEquals(2, map.size)
+        assertEquals(2, map.size())
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }

@@ -8,17 +8,13 @@ abstract class HtmlTemplate() : TextTemplate() {
             className: String? = null,
             attributes: List<Pair<String, String>> = listOf(),
             content: () -> Unit) {
-        val allAttributesBuilder = listBuilder<Pair<String, String>>()
+        val allAttributes = arrayListOf<Pair<String, String>>()
         if (style != null)
-            allAttributesBuilder.add(Pair<String, String>("style", style))
+            allAttributes.add(Pair("style", style))
         if (className != null)
-            allAttributesBuilder.add(Pair<String, String>("class", className))
+            allAttributes.add(Pair("class", className))
 
-        // TODO: add addAll to ListBuilder
-        for (attribute in attributes)
-            allAttributesBuilder.add(attribute)
-
-        val allAttributes = allAttributesBuilder.build()
+        allAttributes.addAll(attributes)
 
         print(
                 if (allAttributes.isEmpty()) {
@@ -77,12 +73,12 @@ abstract class HtmlTemplate() : TextTemplate() {
         tag(tagName = "span", style = style, className = className, content = content)
 
     fun a(href: String? = null, name: String? = null, content: () -> Unit) {
-        val attributes = listBuilder<Pair<String, String>>()
+        val attributes = arrayListOf<Pair<String, String>>()
         if (href != null)
-            attributes.add(Pair<String, String>("href", href))
+            attributes.add(Pair("href", href))
         if (name != null)
-            attributes.add(Pair<String, String>("name", name))
-        tag(tagName = "a", attributes = attributes.build(), content = content)
+            attributes.add(Pair("name", name))
+        tag(tagName = "a", attributes = attributes, content = content)
     }
 }
 

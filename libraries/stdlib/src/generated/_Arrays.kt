@@ -11,63 +11,63 @@ import java.util.*
  * Returns true if the array is empty
  */
 public fun <T> Array<out T>.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun BooleanArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun ByteArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun CharArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun DoubleArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun FloatArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun IntArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun LongArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**
  * Returns true if the array is empty
  */
 public fun ShortArray.isEmpty(): Boolean {
-    return size == 0
+    return size() == 0
 }
 
 /**

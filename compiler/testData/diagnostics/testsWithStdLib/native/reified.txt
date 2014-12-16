@@ -1,0 +1,4 @@
+package
+
+kotlin.inline() kotlin.jvm.native() internal fun </*0*/ reified T> bar(): kotlin.Unit
+kotlin.jvm.native() internal fun </*0*/ reified T> foo(): kotlin.Unit

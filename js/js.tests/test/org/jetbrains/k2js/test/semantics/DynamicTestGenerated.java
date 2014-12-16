@@ -120,6 +120,12 @@ public class DynamicTestGenerated extends AbstractDynamicTest {
         doTest(fileName);
     }
 
+    @TestMetadata("iterator.kt")
+    public void testIterator() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/iterator.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("nameClashing.kt")
     public void testNameClashing() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/nameClashing.kt");

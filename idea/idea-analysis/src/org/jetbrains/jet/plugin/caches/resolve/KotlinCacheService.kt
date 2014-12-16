@@ -217,7 +217,7 @@ public class KotlinCacheService(val project: Project) {
     }
 
     private fun assertAreInSameModule(elements: Collection<JetElement>) {
-        if (elements.size <= 1) {
+        if (elements.size() <= 1) {
             return
         }
         val thisInfo = elements.first().getModuleInfo()

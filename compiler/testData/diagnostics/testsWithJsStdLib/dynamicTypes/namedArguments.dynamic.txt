@@ -1,0 +1,3 @@
+public final fun foo(/*0*/ name: dynamic): dynamic
+public final fun foo(/*0*/ p0: dynamic, /*1*/ name: dynamic): dynamic
+public final fun foo(/*0*/ p0: dynamic, /*1*/ duplicate: dynamic, /*2*/ duplicate: dynamic): dynamic

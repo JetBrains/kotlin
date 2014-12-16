@@ -6,6 +6,7 @@ fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndices()") {
+        deprecate { "Use withIndex() instead." }
         doc { "Returns a list containing pairs of each element of the original collection and their index" }
         returns("List<Pair<Int, T>>")
         body {
@@ -22,6 +23,42 @@ fun mapping(): List<GenericFunction> {
             var index = 0
             return TransformingStream(this, { index++ to it })
             """
+        }
+    }
+
+    templates add f("withIndex()") {
+        doc { "Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection" }
+        returns("Iterable<IndexedValue<T>>")
+        body {
+            """
+            return IndexingIterable { iterator() }
+            """
+        }
+
+        returns(Streams) { "Stream<IndexedValue<T>>" }
+        doc(Streams) { "Returns a stream of [IndexedValue] for each element of the original stream" }
+        body(Streams) {
+            """
+            return IndexingStream(this)
+            """
+        }
+    }
+
+    templates add f("mapIndexed(transform: (Int, T) -> R)") {
+        inline(true)
+
+        doc { "Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection" }
+        typeParam("R")
+        returns("List<R>")
+        body {
+            "return mapIndexedTo(ArrayList<R>(), transform)"
+        }
+
+        inline(false, Streams)
+        returns(Streams) { "Stream<R>" }
+        doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream" }
+        body(Streams) {
+            "return TransformingIndexedStream(this, transform)"
         }
     }
 
@@ -73,7 +110,7 @@ fun mapping(): List<GenericFunction> {
 
         doc {
             """
-            Appends transformed elements of original collection using the given *transform* function
+            Appends transformed elements of the original collection using the given *transform* function
             to the given *destination*
             """
         }
@@ -85,6 +122,30 @@ fun mapping(): List<GenericFunction> {
             """
                 for (item in this)
                     destination.add(transform(item))
+                return destination
+            """
+        }
+        include(Maps)
+    }
+
+    templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
+        inline(true)
+
+        doc {
+            """
+            Appends transformed elements and their indices of the original collection using the given *transform* function
+            to the given *destination*
+            """
+        }
+        typeParam("R")
+        typeParam("C : MutableCollection<in R>")
+        returns("C")
+
+        body {
+            """
+                var index = 0
+                for (item in this)
+                    destination.add(transform(index++, item))
                 return destination
             """
         }

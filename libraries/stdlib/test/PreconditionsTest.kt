@@ -117,6 +117,17 @@ class PreconditionsTest() {
         }
     }
 
+    test fun error() {
+        val error = fails {
+            error("There was a problem")
+        }
+        if (error is IllegalStateException) {
+            assertEquals("There was a problem", error.getMessage())
+        } else {
+            fail("Invalid exception type: " + error)
+        }
+    }
+
     test fun passingAssertWithMessage() {
         assert(true, "Hello")
     }

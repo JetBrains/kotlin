@@ -27,7 +27,7 @@ class CollectionTest {
         val data = arrayListOf(null, "foo", null, "bar")
         val foo = data.filterNotNull()
 
-        assertEquals(2, foo.size)
+        assertEquals(2, foo.size())
         assertEquals(arrayListOf("foo", "bar"), foo)
 
         assertTrue {
@@ -38,7 +38,7 @@ class CollectionTest {
     test fun mapNotNull() {
         val data = arrayListOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length }
-        assertEquals(2, foo.size)
+        assertEquals(2, foo.size())
         assertEquals(arrayListOf(3, 3), foo)
 
         assertTrue {
@@ -53,7 +53,7 @@ class CollectionTest {
         assertTrue {
             foo.all { it.startsWith("f") }
         }
-        assertEquals(1, foo.size)
+        assertEquals(1, foo.size())
         assertEquals(hashSetOf("foo"), foo)
 
         assertTrue {
@@ -83,7 +83,7 @@ class CollectionTest {
     test fun foldWithDifferentTypes() {
         expect(7) {
             val numbers = arrayListOf("a", "ab", "abc")
-            numbers.fold(1) { a, b -> a + b.size }
+            numbers.fold(1) { a, b -> a + b.length() }
         }
 
         expect("1234") {
@@ -136,7 +136,7 @@ class CollectionTest {
 
     test fun partition() {
         val data = arrayListOf("foo", "bar", "something", "xyz")
-        val pair = data.partition { it.size == 3 }
+        val pair = data.partition { it.length() == 3 }
 
         assertEquals(arrayListOf("foo", "bar", "xyz"), pair.first, "pair.first")
         assertEquals(arrayListOf("something"), pair.second, "pair.second")
@@ -181,7 +181,7 @@ class CollectionTest {
         assertEquals(4, listOfPairs[3].first)
 
         val l3 = byLength.getOrElse(3, { ArrayList<String>() })
-        assertEquals(2, l3.size)
+        assertEquals(2, l3.size())
     }
 
     test fun plusRanges() {
@@ -281,14 +281,14 @@ class CollectionTest {
     test fun takeWhile() {
         val coll = arrayListOf("foo", "bar", "abc")
         assertEquals(arrayListOf("foo"), coll.takeWhile { it.startsWith("f") })
-        assertEquals(arrayListOf("foo", "bar", "abc"), coll.takeWhile { it.size == 3 })
+        assertEquals(arrayListOf("foo", "bar", "abc"), coll.takeWhile { it.length() == 3 })
     }
 
     test fun copyToArray() {
         val data = arrayListOf("foo", "bar")
         val arr = data.copyToArray()
         println("Got array ${arr}")
-        assertEquals(2, arr.size)
+        assertEquals(2, arr.size())
         todo {
             assertTrue {
                 arr is Array<String>
@@ -347,7 +347,7 @@ class CollectionTest {
         val indices = data.indices
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
-        assertEquals(indices, data.size.indices)
+        assertEquals(indices, data.size().indices)
     }
 
     test fun contains() {
@@ -435,6 +435,7 @@ class CollectionTest {
         expect(3.0) { arrayListOf(1.0, 2.0).sum() }
         expect(3000000000000) { arrayListOf<Long>(1000000000000, 2000000000000).sum() }
         expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
+        expect(3.0.toFloat()) { streamOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
     test fun takeReturnsFirstNElements() {
