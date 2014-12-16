@@ -32,4 +32,9 @@ public class JetLanguage extends Language {
     public String getDisplayName() {
         return NAME;
     }
+
+    @Override
+    public boolean isCaseSensitive() {
+        return true;
+    }
 }
