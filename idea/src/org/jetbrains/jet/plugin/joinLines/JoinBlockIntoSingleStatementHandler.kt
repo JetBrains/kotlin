@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetContainerNode
+import org.jetbrains.jet.lang.psi.JetWhenEntry
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
@@ -34,7 +35,8 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
 
         val block = brace.getParent() as? JetBlockExpression ?: return -1
         val statement = block.getStatements().singleOrNull() ?: return -1
-        if (block.getParent() !is JetContainerNode) return -1
+        val parent = block.getParent()
+        if (parent !is JetContainerNode && parent !is JetWhenEntry) return -1
         if (block.getNode().getChildren(JetTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
 
         val newStatement = block.replace(statement)

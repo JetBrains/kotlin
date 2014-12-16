@@ -234,6 +234,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("WhenEntry.kt")
+        public void testWhenEntry() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/WhenEntry.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("While.kt")
         public void testWhile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/While.kt");
