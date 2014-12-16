@@ -44,8 +44,8 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
         val start = findBlockContentStart(node)
         val end = findBlockContentEnd(node, start)
 
-        result.add(e.getTextRange()!!)
         result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
+        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.getTextRange()!!))
 
         return result
     }

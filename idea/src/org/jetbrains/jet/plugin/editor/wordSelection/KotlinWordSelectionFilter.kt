@@ -18,7 +18,10 @@ package org.jetbrains.jet.plugin.editor.wordSelection
 
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetContainerNode
 
 public class KotlinWordSelectionFilter : Condition<PsiElement>{
-    override fun value(e: PsiElement) = !KotlinListSelectioner.canSelect(e)
+    override fun value(e: PsiElement)
+            = !KotlinListSelectioner.canSelect(e) && e !is JetBlockExpression && e !is JetContainerNode
 }

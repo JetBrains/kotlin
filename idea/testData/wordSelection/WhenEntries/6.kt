@@ -1,13 +1,13 @@
 fun main(args : Array<String>) {
     for (i in 1..100) {
-        <selection>when {
+<selection>        when {
             i%3 == 0 -> {print("Fizz"); continue;}
             i%5 == 0 -> {print("Buzz"); continue;}
 
             (i%3 != 0 && i%5 != 0) -> {print(i); continue;}<caret>
             else -> println()
-        }</selection>
-    }
+        }
+</selection>    }
 }
 
 fun foo() : Unit {
