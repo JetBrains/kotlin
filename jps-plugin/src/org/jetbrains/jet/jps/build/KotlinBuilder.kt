@@ -142,7 +142,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         if (compilationErrors) {
             return ABORT
         }
-        
+
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            copyJsLibraryFilesIfNeeded(chunk, project)
+        }
+
         if (IncrementalCompilation.ENABLED) {
             if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
                 allCompiledFiles.clear()
@@ -304,13 +308,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
 
         runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        return outputItemCollector
+    }
+
+    private fun copyJsLibraryFilesIfNeeded(chunk: ModuleChunk, project: JpsProject) {
+        val representativeTarget = chunk.representativeTarget()
+        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         if (compilerSettings.copyJsLibraryFiles) {
             val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).getAbsolutePath()
             val libraryFilesToCopy = arrayListOf<String>()
             JpsJsModuleUtils.getLibraryFiles(representativeTarget, libraryFilesToCopy)
             LibraryUtils.copyJsFilesFromLibraries(libraryFilesToCopy, outputLibraryRuntimeDirectory)
         }
-        return outputItemCollector
     }
 
     // if null is returned, nothing was done

@@ -185,6 +185,16 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
     }
 
+    public void testKotlinJavaScriptProjectWithLibraryAndErrors() {
+        initProject();
+        addKotlinJavaScriptStdlibDependency();
+        createKotlinJavaScriptLibraryArchive();
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY_JAR));
+        makeAll().assertFailed();
+
+        assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME));
+    }
+
     public void testExcludeFolderInSourceRoot() {
         doTest();
 
