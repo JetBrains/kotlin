@@ -1469,7 +1469,7 @@ public final annotation class inline : kotlin.Annotation {
 }
 
 public final annotation class inlineOptions : kotlin.Annotation {
-    /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<kotlin.InlineOption>*/)
+    /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
     internal final val value: kotlin.Array<out kotlin.InlineOption>
         internal final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
@@ -1479,7 +1479,7 @@ public final annotation class noinline : kotlin.Annotation {
 }
 
 public final annotation class suppress : kotlin.Annotation {
-    /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<kotlin.String>*/)
+    /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val names: kotlin.Array<out kotlin.String>
         internal final fun <get-names>(): kotlin.Array<out kotlin.String>
 }
