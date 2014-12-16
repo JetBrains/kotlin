@@ -564,6 +564,10 @@
                         public protected *;
                     }
 
+                    -keep class org.jetbrains.kotlin.compiler.plugin.** {
+                        public protected *;
+                    }
+
                     -keep class jet.** {
                         public protected *;
                     }
