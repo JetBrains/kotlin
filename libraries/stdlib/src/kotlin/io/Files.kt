@@ -196,14 +196,42 @@ public fun File.relativePath(descendant: File): String {
 }
 
 /**
- * Copies this file to the given output file, returning the number of bytes copied
+ * Copies this file to the given output file, returning the number of bytes copied.
+ * If some directories on a way to the destination are missing, then they will be created.
+ * If the destination file already exists, then this function will fail unless 'rewrite' argument is set to true and
+ * the destination file is not a non-empty directory.
+ *
+ * Note: this function fails if you call it on a directory.
+ * If you want to copy directories, use 'copyRecursively' function instead.
+ *
+ * Throws:
+ * NoSuchFileException if the source file doesn't exist
+ * FileIsDirectoryException if the source file is a directory
+ * FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to false
+ * DirectoryNotEmptyException if 'rewrite' argument is set to true, but the destination file exists and it is a
+ * non-empty directory
+ * IOException if any errors occur while copying
  */
-public fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
-    file.directory.mkdirs()
+public fun File.copyTo(dst: File, rewrite: Boolean = false, bufferSize: Int = defaultBufferSize): Long {
+    if (!exists()) {
+        throw NoSuchFileException(file = this.toString(), reason = "The source file doesn't exist")
+    } else if (isDirectory()) {
+        throw FileIsDirectoryException(file = this.toString(), reason = "Cannot copy a directory")
+    } else if (dst.exists()) {
+        if (!rewrite) {
+            throw FileAlreadyExistsException(file = this.toString(),
+                    other = dst.toString(), reason = "The destination file already exists")
+        } else if (dst.isDirectory() && dst.listFiles().any()) {
+            throw DirectoryNotEmptyException(file = this.toString(),
+                    other = dst.toString(), reason = "The destination file is a non-empty directory")
+        }
+    }
+    dst.getParentFile().mkdirs()
+    dst.delete()
     val input = FileInputStream(this)
-    return input.use<FileInputStream, Long>{
-        val output = FileOutputStream(file)
-        output.use<FileOutputStream, Long>{
+    return input.use<FileInputStream, Long> {
+        val output = FileOutputStream(dst)
+        output.use<FileOutputStream, Long> {
             input.copyTo(output, bufferSize)
         }
     }

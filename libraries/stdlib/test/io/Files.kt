@@ -129,4 +129,47 @@ class FilesTest {
 
         assertEquals("test", "test".allSeparatorsToSystem())
     }
+
+    test fun testCopyTo() {
+        val srcFile = createTempFile()
+        val dstFile = createTempFile()
+        srcFile.writeText("Hello, World!")
+        try {
+            srcFile.copyTo(dstFile)
+            assert(false)
+        } catch (e: FileAlreadyExistsException) {}
+
+        var len = srcFile.copyTo(dstFile, rewrite = true)
+        assertEquals(13L, len)
+        assertEquals(srcFile.readText(), dstFile.readText())
+
+        assert(dstFile.delete())
+        len = srcFile.copyTo(dstFile)
+        assertEquals(13L, len)
+        assertEquals(srcFile.readText(), dstFile.readText())
+
+        assert(dstFile.delete())
+        dstFile.mkdir()
+        val child = File(dstFile, "child")
+        child.createNewFile()
+        try {
+            srcFile.copyTo(dstFile, rewrite = true)
+            assert(false)
+        } catch (e: DirectoryNotEmptyException) {}
+
+        assert(srcFile.delete())
+        assert(child.delete() && dstFile.delete())
+
+        try {
+            srcFile.copyTo(dstFile)
+            assert(false)
+        } catch (e: NoSuchFileException) {}
+
+        srcFile.mkdir()
+        try {
+            srcFile.copyTo(dstFile)
+            assert(false)
+        } catch (e: FileIsDirectoryException) {}
+        srcFile.delete()
+    }
 }
