@@ -147,7 +147,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
             @NotNull GlobalSearchScope searchScope,
             @NotNull Collection<JetFile> files
     ) {
-        super(manager, JetLanguage.INSTANCE);
+        super(manager);
         this.modifierList = new LightModifierList(manager, JetLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL);
         this.implementsList = new LightEmptyImplementsList(manager);
         this.packageFqName = packageFqName;
@@ -375,11 +375,6 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     @Override
     public boolean isEquivalentTo(PsiElement another) {
         return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
-    }
-
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
     }
 
     @Override
