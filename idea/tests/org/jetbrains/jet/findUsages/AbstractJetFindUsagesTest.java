@@ -28,6 +28,7 @@ import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.PsiPackage;
@@ -308,8 +309,11 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                     public boolean accept(@NotNull File dir, @NotNull String name) {
                         if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
 
-                        String ext = name.substring(name.lastIndexOf('.') + 1);
-                        return ext.equals("kt") || ext.equals("java") || ext.equals("xml") || ext.equals("text");
+                        String ext = FileUtilRt.getExtension(name);
+                        return ext.equals("kt")
+                               || ext.equals("java")
+                               || ext.equals("xml")
+                               || (ext.equals("txt") && !name.endsWith(".results.txt"));
                     }
                 }
         );
