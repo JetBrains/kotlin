@@ -309,7 +309,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                         if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
 
                         String ext = name.substring(name.lastIndexOf('.') + 1);
-                        return ext.equals("kt") || ext.equals("java") || ext.equals("xml") || ext.equals("text");
+                        return ext.equals("kt") || ext.equals("java") || ext.equals("xml") || (ext.equals("txt") && !name.endsWith("results.txt"));
                     }
                 }
         );

@@ -144,7 +144,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("classUsedInPlainText.0.kt")
             public void testClassUsedInPlainText() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/classUsedInPlainText.0.kt");
-                // doTest(fileName);
+                doTest(fileName);
             }
 
             @TestMetadata("classUsedInTextAsRef.0.kt")
@@ -465,7 +465,7 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("functionUsedInPlainText.0.kt")
             public void testFunctionUsedInPlainText() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/functionUsedInPlainText.0.kt");
-                // doTest(fileName);
+                doTest(fileName);
             }
 
             @TestMetadata("javaAndKotlinOverrides.0.kt")
