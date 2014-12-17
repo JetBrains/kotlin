@@ -61,13 +61,9 @@ public native trait CanvasContext {
     public native fun strokeText(text: String, x: Number, y: Number, maxWidth: Number): Unit
     public native fun strokeText(text: String, x: Number, y: Number): Unit
     public native fun measureText(text: String): TextMetrics?
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number, dw: Number, dh: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number): Unit
-    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number, dw: Number): Unit
+    public native fun drawImage(image: HTMLElement, dx: Number, dy: Number): Unit
+    public native fun drawImage(image: HTMLElement, dx: Number, dy: Number, dw: Number, dh: Number): Unit
+    public native fun drawImage(image: HTMLElement, sx: Number, sy: Number, sw: Number, sh: Number, dx: Number, dy: Number, dw: Number, dh: Number): Unit
     public native fun createImageData(imagedata: ImageData, sh: Number): ImageData?
     public native fun createImageData(imagedata: ImageData): ImageData?
     public native fun createImageData(sw: Number, sh: Number): ImageData?
