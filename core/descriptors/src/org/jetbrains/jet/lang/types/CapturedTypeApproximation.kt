@@ -51,17 +51,15 @@ private val NULLABLE_ANY = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private val NOTHING = KotlinBuiltIns.getInstance().getNothingType()
 
-private val NULLABLE_NOTHING = KotlinBuiltIns.getInstance().getNullableNothingType()
-
 private fun TypeArgument.toTypeProjection(): TypeProjection {
     assert(isConsistent) { "Only consistent enhanced type propection can be converted to type projection" }
     fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.getVariance()) Variance.INVARIANT else variance
     return when {
         inProjection == outProjection -> TypeProjectionImpl(inProjection)
-        (inProjection == NOTHING || inProjection == NULLABLE_NOTHING) && typeParameter.getVariance() != Variance.IN_VARIANCE ->
+        inProjection == NOTHING && typeParameter.getVariance() != Variance.IN_VARIANCE ->
             TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
         outProjection == NULLABLE_ANY -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
-        else -> throw AssertionError("Enhanced type projection can't be converted to type projection: $this")
+        else -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
     }
 }
 
