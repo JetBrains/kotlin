@@ -145,7 +145,7 @@ public class JetChangeInfo(
             buffer.append(JetTokens.FUN_KEYWORD).append(' ').append(name)
         }
 
-        buffer.append(getNewParametersSignature(inheritedFunction, buffer.length()))
+        buffer.append(getNewParametersSignature(inheritedFunction))
 
         if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && !isConstructor)
             buffer.append(": ").append(newReturnTypeText)
@@ -158,16 +158,15 @@ public class JetChangeInfo(
                && getMethod() == DescriptorToSourceUtils.descriptorToDeclaration(inheritedFunctionDescriptor)
     }
 
-    public fun getNewParametersSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>, indentLength: Int): String {
+    public fun getNewParametersSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
         val isLambda = inheritedFunction.getDeclaration() is JetFunctionLiteral
         if (isLambda && newParameters.size() == 1 && !newParameters.get(0).requiresExplicitType(inheritedFunction)) {
             return newParameters.get(0).getDeclarationSignature(0, inheritedFunction)
         }
 
-        val indent = StringUtil.repeatSymbol(' ', indentLength + 1)
         return newParameters.indices
                 .map { i -> newParameters[i].getDeclarationSignature(i, inheritedFunction) }
-                .joinToString(prefix = "(", separator = ",$indent", postfix = ")")
+                .joinToString(prefix = "(", separator = ", ", postfix = ")")
     }
 
     public fun renderReturnType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {

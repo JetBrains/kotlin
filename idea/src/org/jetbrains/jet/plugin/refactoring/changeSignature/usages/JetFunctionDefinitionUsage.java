@@ -239,14 +239,14 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             }
             else {
                 newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(
-                        (JetFunctionDefinitionUsage<PsiElement>) this, 0)
+                        (JetFunctionDefinitionUsage<PsiElement>) this)
                 );
                 canReplaceEntireList = true;
             }
         }
         else {
             newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(
-                    (JetFunctionDefinitionUsage<PsiElement>) this, 0)
+                    (JetFunctionDefinitionUsage<PsiElement>) this)
             );
         }
 
