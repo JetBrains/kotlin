@@ -59,7 +59,7 @@ class SiteGeneratorMain(projectRoot: File) {
                 var relativePath = sourceDir.relativePath(it)
                 val outFile = File(outDir, relativePath)
                 outFile.directory.mkdirs()
-                it.copyTo(outFile)
+                it.copyTo(outFile, rewrite = true)
             }
         }
     }

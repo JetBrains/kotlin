@@ -32,7 +32,7 @@ class SiteGenerator(val sourceDir: File, val outputDir: File) : Runnable {
                     val text = layout(relativePath, it, output!!)
                     outFile.writeText(text)
                 } else {
-                    it.copyTo(outFile)
+                    it.copyTo(outFile, rewrite = true)
                 }
             }
         }
