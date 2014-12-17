@@ -30,7 +30,6 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
         platformStatic
         fun isRequestedClass(fqName: String): Boolean {
             return when (fqName) {
-                "com.intellij.openapi.util.io.ZipFileCache",
                 "com.intellij.openapi.util.LowMemoryWatcher" -> true
                 else -> false
             }
@@ -40,7 +39,6 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
     override fun buildFinished(result: BuildResult?) {
         log.debug("Build finished listener")
 
-        stopZipFileCache()
         stopLowMemoryWatcher()
 
 		// TODO: Try to clean up thread locals without this ugly hack
@@ -82,11 +80,6 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
         } catch (e: Throwable) {
             log.debug("Exception during thread locals remove: " + e)
         }
-    }
-
-    private fun stopZipFileCache() {
-        callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "shutdown")
-        log.debug("ZipFileCache finished successfully")
     }
 
     private fun stopLowMemoryWatcher() {

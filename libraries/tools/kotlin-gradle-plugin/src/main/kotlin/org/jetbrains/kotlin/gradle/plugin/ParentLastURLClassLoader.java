@@ -73,8 +73,7 @@ public class ParentLastURLClassLoader extends ClassLoader {
         public Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
             try {
                 // Replace with FinishBuildListener.isRequestedClass(name) after rewriting this class on Kotlin
-                if (name.equals("com.intellij.openapi.util.io.ZipFileCache") ||
-                        name.equals("com.intellij.openapi.util.LowMemoryWatcher")) {
+                if (name.equals("com.intellij.openapi.util.LowMemoryWatcher")) {
                     if (cache.containsKey(name)) return cache.get(name);
 
                     Class<?> aClass = super.findClass(name);
