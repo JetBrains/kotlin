@@ -5195,6 +5195,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/kt2872.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("overApproximationForInCaptured.kt")
+                public void testOverApproximationForInCaptured() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForInCaptured.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overApproximationForOutCaptured.kt")
+                public void testOverApproximationForOutCaptured() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForOutCaptured.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/constraints")
