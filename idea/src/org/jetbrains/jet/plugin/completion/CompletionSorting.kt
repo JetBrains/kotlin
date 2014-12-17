@@ -46,16 +46,13 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
-    sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)
+    sorter = sorter.weighBefore("stats", PriorityWeigher, DeprecatedWeigher, KindWeigher)
 
     if (parameters.getCompletionType() == CompletionType.SMART) {
         sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 
-    sorter = sorter.weighAfter(
-            "stats",
-            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
-            DeprecatedWeigher)
+    sorter = sorter.weighAfter("stats", JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile))
 
     sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
