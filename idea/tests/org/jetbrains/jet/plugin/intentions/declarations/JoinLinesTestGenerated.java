@@ -174,6 +174,18 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InnerWithElse.kt")
+        public void testInnerWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/InnerWithElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OuterWithElse.kt")
+        public void testOuterWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/OuterWithElse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/Simple.kt");

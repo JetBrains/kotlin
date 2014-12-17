@@ -47,6 +47,9 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
         // handle nested if's
         val pparent = parent.getParent()
         if (pparent is JetIfExpression && block == pparent.getThen() && statement is JetIfExpression && statement.getElse() == null) {
+            // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
+            if (pparent.getElse() != null) return -1
+
             val condition1 = pparent.getCondition()
             val condition2 = statement.getCondition()
             val body = statement.getThen()
