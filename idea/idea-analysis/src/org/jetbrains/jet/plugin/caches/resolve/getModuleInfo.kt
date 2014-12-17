@@ -100,6 +100,9 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 }
 
 private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
+    if (this is KotlinLightClassForDecompiledDeclaration) {
+        return getModuleInfoByVirtualFile(getProject(), getContainingFile().getVirtualFile(), false)
+    }
     val element = origin ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KotlinLightClassForPackage -> this.getFiles().first()
