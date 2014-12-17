@@ -496,7 +496,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, false, continueLabel);
+            conditionValue = generateBlock(statements, false, continueLabel, null);
         }
         else {
             if (body != null) {
@@ -1505,11 +1505,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     /* package */ StackValue generateBlock(@NotNull JetBlockExpression expression, boolean isStatement) {
-        return generateBlock(expression.getStatements(), isStatement, null);
+        if (expression.getParent() instanceof JetNamedFunction) {
+            // For functions end of block should be end of function label
+            return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
+        }
+        return generateBlock(expression.getStatements(), isStatement, null, null);
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean isStatement, Label labelBeforeLastExpression) {
-        final Label blockEnd = new Label();
+    private StackValue generateBlock(
+            List<JetElement> statements,
+            boolean isStatement,
+            Label labelBeforeLastExpression,
+            @Nullable final Label labelBlockEnd
+    ) {
+        final Label blockEnd = labelBlockEnd != null ? labelBlockEnd : new Label();
 
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
@@ -1563,7 +1572,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return new StackValueWithLeaveTask(answer, new ExtensionFunction0<StackValueWithLeaveTask, Unit>() {
             @Override
             public Unit invoke(StackValueWithLeaveTask wrapper) {
-                v.mark(blockEnd);
+                if (labelBlockEnd == null) {
+                    v.mark(blockEnd);
+                }
                 for (Function<StackValue, Void> task : Lists.reverse(leaveTasks)) {
                     task.fun(wrapper.getStackValue());
                 }

@@ -32,6 +32,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     private final boolean isInliningLambda;
     private Label methodStartLabel;
+    private Label methodEndLabel;
 
     protected MethodContext(
             @NotNull FunctionDescriptor contextDescriptor,
@@ -94,6 +95,15 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
 
     public void setMethodStartLabel(@NotNull Label methodStartLabel) {
         this.methodStartLabel = methodStartLabel;
+    }
+
+    @Nullable
+    public Label getMethodEndLabel() {
+        return methodEndLabel;
+    }
+
+    public void setMethodEndLabel(@NotNull Label methodEndLabel) {
+        this.methodEndLabel = methodEndLabel;
     }
 
     @Override

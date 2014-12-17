@@ -320,8 +320,10 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
+        Label methodEnd;
         if (context.getParentContext() instanceof PackageFacadeContext) {
             generatePackageDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
+            methodEnd = new Label();
         }
         else {
             FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
@@ -334,11 +336,11 @@ public class FunctionCodegen extends ParentCodegenAware {
             if (!JetTypeMapper.isAccessor(functionDescriptor)) {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
-
+            methodEnd = new Label();
+            context.setMethodEndLabel(methodEnd);
             strategy.generateBody(mv, frameMap, signature, context, parentCodegen);
         }
 
-        Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
