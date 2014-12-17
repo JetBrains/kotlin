@@ -5178,6 +5178,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("expectedTypeMismatchWithInVariance.kt")
+                public void testExpectedTypeMismatchWithInVariance() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt2570.kt")
                 public void testKt2570() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/kt2570.kt");

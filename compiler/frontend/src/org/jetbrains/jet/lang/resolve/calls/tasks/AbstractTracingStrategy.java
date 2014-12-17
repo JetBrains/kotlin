@@ -225,7 +225,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
                     ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION.position());
-            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
+                    declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
