@@ -229,6 +229,80 @@ public fun File.copyTo(dst: File, rewrite: Boolean = false, bufferSize: Int = de
 }
 
 /**
+ * Enum that can be used to specify behaviour of the `copyRecursively()` function
+ * in exceptional conditions.
+ */
+public enum class OnErrorAction {
+    /** Skip this file and go to the next. */
+    SKIP
+
+    /** Terminate the evaluation of the function. */
+    TERMINATE
+}
+
+/**
+ * Copies this file with all its children to the specified destination path.
+ * If some directories on the way to the destination are missing, then they will be created.
+ *
+ * If any errors occur during the copying, then further actions will depend on the result of the call
+ * to `onError(File, IOException)` function, that will be called with arguments,
+ * specifying the file that caused the error and the exception itself.
+ * By default this function rethrows exceptions.
+ * Exceptions that can be passed to the `onError` function:
+ * NoSuchFileException - if there was an attempt to copy a non-existent file
+ * FileAlreadyExistsException - if there is a conflict
+ * AccessDeniedException - if there was an attempt to open a directory that didn't succeed.
+ * IOException - if some problems occur when copying.
+ *
+ * Returns false if the copying was terminated, true otherwise.
+ *
+ * Note that if this function fails, then partial copying may have taken place.
+ */
+public fun File.copyRecursively(dst: File,
+                                onError: (File, IOException) -> OnErrorAction =
+                                {(file: File, e: IOException) -> throw e}
+): Boolean {
+    fun copy(src: File): OnErrorAction? {
+        if (!src.exists()) {
+            return onError(this, NoSuchFileException(file = toString(), reason = "The source file doesn't exist"))
+        }
+        val relPath = src.relativeTo(this@copyRecursively)
+        val dstFile = File(dst, relPath)
+        if (dstFile.exists() && !(src.isDirectory() && dstFile.isDirectory())) {
+            return onError(dstFile, FileAlreadyExistsException(src.toString(), other = dstFile.toString(),
+                    reason = "The destination file already exists"))
+        }
+        try {
+            if (src.isDirectory()) {
+                dstFile.mkdirs()
+                val children = src.listFiles()
+                if (children == null) {
+                    return onError(src, AccessDeniedException(file = src.toString(),
+                            reason = "Cannot list files in a directory"))
+                }
+                for (child in children) {
+                    val result = copy(child)
+                    if (result == OnErrorAction.TERMINATE) {
+                        return result
+                    }
+                }
+            } else {
+                if (src.copyTo(dstFile, true) != src.length()) {
+                    return onError(src, IOException("src.length() != dst.length()"))
+                }
+            }
+        } catch (e: IOException) {
+            return onError(src, e)
+        }
+        return null
+    }
+
+    val result = copy(this)
+
+    return result != OnErrorAction.TERMINATE
+}
+
+/**
  * Delete a file with all its children.
  *
  * Returns true if the file or directory is successfully deleted, false otherwise.

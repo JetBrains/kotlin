@@ -428,4 +428,87 @@ class FilesTest {
         assert(!dir.exists())
         assert(!dir.deleteRecursively())
     }
+
+    test fun copyRecursively() {
+        val src = createTempDir()
+        val dst = createTempDir()
+        dst.delete()
+        fun check() {
+            src.walkFileTree {
+                val dstFile = File(dst, it.relativeTo(src))
+                assert(dstFile.exists())
+                if (dstFile.isFile()) {
+                    assertEquals(it.readText(), dstFile.readText())
+                }
+            }
+        }
+
+        try {
+            val subDir1 = createTempDir(prefix = "d1_", directory = src)
+            val subDir2 = createTempDir(prefix = "d2_", directory = src)
+            createTempDir(prefix = "d1_", directory = subDir1)
+            val file1 = createTempFile(prefix = "f1_", directory = src)
+            val file2 = createTempFile(prefix = "f2_", directory = subDir1)
+            file1.writeText("hello")
+            file2.writeText("wazzup")
+            createTempDir(prefix = "d1_", directory = subDir2)
+
+            assert(src.copyRecursively(dst))
+            check()
+
+            try {
+                src.copyRecursively(dst)
+                assert(false)
+            } catch (e: FileAlreadyExistsException) {
+            }
+
+            var conflicts = 0
+            src.copyRecursively(dst) {
+                (file: File, e: IOException) ->
+                if (e is FileAlreadyExistsException) {
+                    conflicts++
+                    OnErrorAction.SKIP
+                } else {
+                    throw e
+                }
+            }
+            assert(conflicts == 2)
+
+            if (subDir1.setReadable(false)) {
+                try {
+                    dst.deleteRecursively()
+                    var caught = false
+                    assert(src.copyRecursively(dst) {
+                        (file: File, e: IOException) ->
+                        if (e is AccessDeniedException) {
+                            caught = true
+                            OnErrorAction.SKIP
+                        } else {
+                            throw e
+                        }
+                    })
+                    assert(caught)
+                    check()
+                } finally {
+                    subDir1.setReadable(true)
+                }
+            }
+
+            src.deleteRecursively()
+            dst.deleteRecursively()
+            try {
+                src.copyRecursively(dst)
+                assert(false)
+            } catch (e: NoSuchFileException) {
+            }
+
+            assert(!src.copyRecursively(dst) {
+                (file: File, e: IOException) ->
+                OnErrorAction.TERMINATE
+            })
+        } finally {
+            src.deleteRecursively()
+            dst.deleteRecursively()
+        }
+    }
 }
