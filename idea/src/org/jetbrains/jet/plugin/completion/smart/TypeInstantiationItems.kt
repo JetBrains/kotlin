@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
@@ -281,7 +282,7 @@ class TypeInstantiationItems(
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
-                val descriptor = if (inheritor is KotlinLightClass) {
+                val descriptor = if (inheritor is KotlinLightClass && inheritor !is KotlinLightClassForDecompiledDeclaration) {
                     val origin = inheritor.origin ?: continue
                     val declaration = toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
                     resolutionFacade.resolveToDescriptor(declaration)
