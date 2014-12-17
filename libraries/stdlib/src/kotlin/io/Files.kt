@@ -238,6 +238,20 @@ public fun File.copyTo(dst: File, rewrite: Boolean = false, bufferSize: Int = de
 }
 
 /**
+ * Delete a file with all its children.
+ *
+ * Returns true if the file or directory is successfully deleted, false otherwise.
+ *
+ * Note that if this operation fails then partial deletion may have taken place.
+ */
+public fun File.deleteRecursively(): Boolean {
+    if (isDirectory()) {
+        listFiles()?.forEach { it.deleteRecursively() }
+    }
+    return delete()
+}
+
+/**
  * Returns an array of files and directories in the directory that satisfy the specified filter
  * or null if this file does not denote a directory.
  */

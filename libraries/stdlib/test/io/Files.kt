@@ -172,4 +172,18 @@ class FilesTest {
         } catch (e: FileIsDirectoryException) {}
         srcFile.delete()
     }
+
+    test fun deleteRecursively() {
+        val dir = createTempDir()
+        dir.delete()
+        dir.mkdir()
+        val subDir = File(dir, "subdir");
+        subDir.mkdir()
+        File(dir, "test1.txt").createNewFile()
+        File(subDir, "test2.txt").createNewFile()
+
+        assert(dir.deleteRecursively())
+        assert(!dir.exists())
+        assert(!dir.deleteRecursively())
+    }
 }
