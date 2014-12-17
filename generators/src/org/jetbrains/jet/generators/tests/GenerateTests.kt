@@ -136,6 +136,7 @@ import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
+import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -691,6 +692,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDynamicTest>()) {
             model("dynamic/cases")
+        }
+
+        testClass(javaClass<AbstractMultiModuleTest>()) {
+            model("multiModule/cases", extension = null, recursive=false)
         }
     }
 
