@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.inline.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.when.SwitchCodegen;
@@ -2311,10 +2312,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(entry.getValue());
             if (parameterDescriptor == null) {
                 // type is not generic
-                // boxType call needed because inlined method is compiled for T as java/lang/Object
+                BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
+                Type type = typeMapper.mapTypeParameter(entry.getValue(), signatureWriter);
+
                 mappings.addParameterMappingToType(
                         key.getName().getIdentifier(),
-                        boxType(asmType(entry.getValue()))
+                        type,
+                        signatureWriter.toString()
                 );
             }
             else {

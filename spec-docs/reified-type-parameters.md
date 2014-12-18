@@ -56,5 +56,5 @@ inline fun <reified T> typeLiteral(): TypeLiteral<T> = object : TypeLiteral<T>()
 
 typeLiteral<String>().type // returns 'class java.lang.String'
 typeLiteral<Array<String>>().type // returns '[Ljava.lang.String;'
-typeLiteral<List<*>>().type // returns 'java.util.List<? extends java.lang.Object>'
+typeLiteral<List<*>>().type // returns 'java.util.List<?>'
 ```
