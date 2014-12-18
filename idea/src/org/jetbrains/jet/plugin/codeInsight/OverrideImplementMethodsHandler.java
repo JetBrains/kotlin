@@ -203,9 +203,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         newDescriptor.addOverriddenDescriptor(descriptor);
 
         StringBuilder body = new StringBuilder();
-        String initializer = " = throw UnsupportedOperationException()";
         body.append("\nget()");
-        body.append(initializer);
+        body.append(" = ");
+        body.append(generateUnsupportedOrSuperCall(classOrObject, descriptor));
         if (descriptor.isVar()) {
             body.append("\nset(value) {}");
         }
@@ -222,36 +222,48 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 /* copyOverrides = */ true);
         newDescriptor.addOverriddenDescriptor(descriptor);
 
-        boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
-        StringBuilder delegationBuilder = new StringBuilder();
-        if (isAbstractFun) {
-            delegationBuilder.append("throw UnsupportedOperationException()");
-        }
-        else {
-            delegationBuilder.append("super");
-            if (classOrObject.getDelegationSpecifiers().size() > 1) {
-                delegationBuilder.append("<").append(descriptor.getContainingDeclaration().getName()).append(">");
-            }
-            delegationBuilder.append(".").append(descriptor.getName()).append("(");
-        }
-        boolean first = true;
-        if (!isAbstractFun) {
-            for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
-                if (!first) {
-                    delegationBuilder.append(", ");
-                }
-                first = false;
-                delegationBuilder.append(parameterDescriptor.getName());
-            }
-            delegationBuilder.append(")");
-        }
+
         JetType returnType = descriptor.getReturnType();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
-        String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
+        boolean isAbstract = descriptor.getModality() == Modality.ABSTRACT;
+
+        String delegation = generateUnsupportedOrSuperCall(classOrObject, descriptor);
+
+        String body = "{" + (returnsNotUnit && !isAbstract ? "return " : "") + delegation + "}";
 
         return JetPsiFactory(classOrObject.getProject()).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
+    }
+
+    private static String generateUnsupportedOrSuperCall(@NotNull JetClassOrObject classOrObject, @NotNull CallableMemberDescriptor descriptor) {
+        boolean isAbstract = descriptor.getModality() == Modality.ABSTRACT;
+        if (isAbstract) {
+            return "throw UnsupportedOperationException()";
+        }
+        else {
+            StringBuilder builder = new StringBuilder();
+            builder.append("super");
+            if (classOrObject.getDelegationSpecifiers().size() > 1) {
+                builder.append("<").append(descriptor.getContainingDeclaration().getName()).append(">");
+            }
+            builder.append(".").append(descriptor.getName());
+
+            if (descriptor instanceof FunctionDescriptor) {
+                builder.append("(");
+                boolean first = true;
+                for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
+                    if (!first) {
+                        builder.append(", ");
+                    }
+                    first = false;
+                    builder.append(parameterDescriptor.getName());
+                }
+                builder.append(")");
+            }
+
+            return builder.toString();
+        }
     }
 
     @NotNull
