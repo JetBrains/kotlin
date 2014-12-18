@@ -135,8 +135,7 @@ public class LookupElementFactory(
     ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
-            declaration !is KotlinLightClass &&
-            !JavaResolverUtils.isCompiledKotlinClass(declaration)) {
+            declaration !is KotlinLightClass) {
             // for java classes we create special lookup elements
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates

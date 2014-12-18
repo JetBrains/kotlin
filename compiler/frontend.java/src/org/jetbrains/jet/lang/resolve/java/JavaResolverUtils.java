@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -24,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
@@ -32,25 +30,8 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
-
 public class JavaResolverUtils {
     private JavaResolverUtils() {
-    }
-
-    public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        JavaClass javaClass = new JavaClassImpl(psiClass);
-        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_CLASS) != null;
-    }
-
-    public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        JavaClass javaClass = new JavaClassImpl(psiClass);
-        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_PACKAGE) != null;
-    }
-
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {
-        return isCompiledKotlinClass(psiClass) || isCompiledKotlinPackageClass(psiClass);
     }
 
     /**
