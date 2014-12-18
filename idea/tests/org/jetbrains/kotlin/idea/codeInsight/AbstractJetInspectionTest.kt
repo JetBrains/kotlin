@@ -53,7 +53,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
             setTestDataPath("${JetTestUtils.getHomeDirectory()}/$srcDir")
 
             val psiFiles = srcDir
-                    .listFiles { it.getName().endsWith(".kt") || it.getName().endsWith(".txt") }!!
+                    .listFiles { it.getName().endsWith(".kt") || it.getName().endsWith(".txt") || it.getName().endsWith(".xml") }!!
                     .map {
                         file ->
                         val text = FileUtil.loadFile(file, true)
