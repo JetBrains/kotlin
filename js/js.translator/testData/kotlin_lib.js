@@ -955,16 +955,6 @@
         return new Kotlin.ArrayIterator(array);
     };
 
-    Kotlin.jsonFromTuples = function (pairArr) {
-        var i = pairArr.length;
-        var res = {};
-        while (i > 0) {
-            --i;
-            res[pairArr[i][0]] = pairArr[i][1];
-        }
-        return res;
-    };
-
     Kotlin.jsonAddProperties = function (obj1, obj2) {
         for (var p in obj2) {
             if (obj2.hasOwnProperty(p)) {
