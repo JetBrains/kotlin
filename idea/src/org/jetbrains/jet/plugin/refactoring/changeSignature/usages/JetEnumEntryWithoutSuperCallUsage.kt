@@ -35,7 +35,7 @@ public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsa
             ) as JetDelegatorToSuperCall
             element.addBefore(psiFactory.createColon(), delegatorToSuperCall)
 
-            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.getFunctionDescriptor().originalPrimaryFunction)
+            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryFunction)
                     .processUsage(changeInfo, delegatorToSuperCall)
         }
 

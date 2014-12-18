@@ -175,7 +175,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                                          || function.getTypeReference() != null;
             if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
                 function.setTypeReference(null);
-                String returnTypeText = changeInfo.renderReturnType(this);
+                String returnTypeText = changeInfo.renderReturnType((JetFunctionDefinitionUsage<PsiElement>) this);
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
@@ -203,11 +203,15 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                     }
                 }
                 else {
-                    newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(this, 0));
+                    newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(
+                            (JetFunctionDefinitionUsage<PsiElement>) this, 0)
+                    );
                 }
             }
             else {
-                newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(this, 0));
+                newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(
+                        (JetFunctionDefinitionUsage<PsiElement>) this, 0)
+                );
             }
 
             if (newParameterList != null) {

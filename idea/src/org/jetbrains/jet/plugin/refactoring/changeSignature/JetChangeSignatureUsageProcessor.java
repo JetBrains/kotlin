@@ -69,7 +69,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        for (UsageInfo functionUsageInfo : changeInfo.getAffectedFunctions()) {
+        for (UsageInfo functionUsageInfo : ChangeSignaturePackage.getAffectedFunctions(changeInfo)) {
             if (functionUsageInfo instanceof JetFunctionDefinitionUsage) {
                 findOneMethodUsages((JetFunctionDefinitionUsage) functionUsageInfo, changeInfo, result);
             }
@@ -111,7 +111,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
         }
 
-        String oldName = changeInfo.getOldName();
+        String oldName = ChangeSignaturePackage.getOldName(changeInfo);
 
         if (oldName != null)
             TextOccurrencesUtil.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.getNewName(), result);
@@ -203,7 +203,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
         BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
-        FunctionDescriptor oldDescriptor = changeInfo.getOldDescriptor();
+        FunctionDescriptor oldDescriptor = ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo);
         JetScope parametersScope = null;
         DeclarationDescriptor containingDeclaration = oldDescriptor != null ? oldDescriptor.getContainingDeclaration() : null;
 
@@ -214,7 +214,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         JetScope functionScope = getFunctionScope(bindingContext, containingDeclaration);
 
-        if (!changeInfo.isConstructor() && functionScope != null && !info.getNewName().isEmpty()) {
+        if (!ChangeSignaturePackage.getIsConstructor(changeInfo) && functionScope != null && !info.getNewName().isEmpty()) {
             for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
                 if (conflict == oldDescriptor) continue;
 
@@ -236,7 +236,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 result.putValue(element, "Duplicating parameter '" + parameterName + "'");
             }
             if (parametersScope != null) {
-                if (changeInfo.isConstructor() && valOrVar != JetValVar.None) {
+                if (ChangeSignaturePackage.getIsConstructor(changeInfo) && valOrVar != JetValVar.None) {
                     for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName))) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
@@ -320,7 +320,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 private final JetFunctionDefinitionUsage<JetFunction> delegateUsage = new JetFunctionDefinitionUsage<JetFunction>(
                         samUsage.getFunctionLiteral(),
                         samUsage.getFunctionDescriptor(),
-                        javaMethodChangeInfo.getFunctionDescriptor().getOriginalPrimaryFunction(),
+                        javaMethodChangeInfo.getMethodDescriptor().getOriginalPrimaryFunction(),
                         samUsage.getSamCallType()
                 );
 
@@ -453,7 +453,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (element == null) return false;
 
         if (isJavaMethodUsage && originalJavaMethodDescriptor != null) {
-            JetChangeInfo javaMethodChangeInfo = JetChangeInfo.fromJavaChangeInfo(changeInfo, originalJavaMethodDescriptor);
+            JetChangeInfo javaMethodChangeInfo = ChangeSignaturePackage.toJetChangeInfo(changeInfo, originalJavaMethodDescriptor);
             originalJavaMethodDescriptor = null;
 
             for (int i = 0; i < usages.length; i++) {
@@ -493,7 +493,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!(changeInfo instanceof JetChangeInfo)) return false;
 
         JetChangeInfo jetChangeInfo = (JetChangeInfo) changeInfo;
-        for (JetFunctionDefinitionUsage primaryFunction : jetChangeInfo.getFunctionDescriptor().getPrimaryFunctions()) {
+        for (JetFunctionDefinitionUsage primaryFunction : jetChangeInfo.getMethodDescriptor().getPrimaryFunctions()) {
             primaryFunction.processUsage(jetChangeInfo, primaryFunction.getDeclaration());
         }
         jetChangeInfo.primaryMethodUpdated();

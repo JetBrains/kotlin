@@ -48,7 +48,7 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     @NotNull
     @Override
     protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
-        String subject = getChangeInfo().isConstructor() ? "constructor" : "function";
+        String subject = ChangeSignaturePackage.getIsConstructor(getChangeInfo()) ? "constructor" : "function";
         return new JetUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject));
     }
 

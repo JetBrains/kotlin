@@ -241,7 +241,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             BindingContext context = ResolvePackage.analyze(method);
 
             ChangeSignaturePackage
-                    .runChangeSignature(getProject(), changeInfo.getOldDescriptor(), empty, context, method, "test");
+                    .runChangeSignature(getProject(), ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo), empty, context, method, "test");
         }
         catch (RuntimeException e) {
             assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
@@ -318,7 +318,8 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testFunctionJavaUsagesAndOverridesAddParam() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.addParameter(new JetParameterInfo(-1, "s", KotlinBuiltIns.getInstance().getStringType(), null, "\"abc\"", null, null));
-        changeInfo.addParameter(new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null, null));
+        changeInfo.addParameter(new JetParameterInfo(-1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, "\"def\"", null,
+                                                     null));
         doTest(changeInfo);
     }
 
