@@ -4,7 +4,7 @@ trait A {
 
 class B : A {
     override var Int.foo: Double
-        get() = <selection><caret>0.0</selection>
+        get() = <selection><caret>throw UnsupportedOperationException()</selection>
         set(value) {
         }
 }

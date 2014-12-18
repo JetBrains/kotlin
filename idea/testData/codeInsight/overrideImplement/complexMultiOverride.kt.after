@@ -22,7 +22,7 @@ class C : Base<String, C, Unit>() {
     }
 
     override val method: (String?) -> String
-        get() = ?
+        get() = throw UnsupportedOperationException()
 
     override fun toString(): String {
         return super.toString()

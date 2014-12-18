@@ -11,19 +11,19 @@ trait T {
 
 class C : T {
     override val a1: Byte
-        get() = <selection><caret>0</selection>
+        get() = <selection><caret>throw UnsupportedOperationException()</selection>
     override val a2: Short
-        get() = 0
+        get() = throw UnsupportedOperationException()
     override val a3: Int
-        get() = 0
+        get() = throw UnsupportedOperationException()
     override val a4: Long
-        get() = 0
+        get() = throw UnsupportedOperationException()
     override val a5: Float
-        get() = 0.0f
+        get() = throw UnsupportedOperationException()
     override val a6: Double
-        get() = 0.0
+        get() = throw UnsupportedOperationException()
     override val a7: Char
-        get() = '\u0000'
+        get() = throw UnsupportedOperationException()
     override val a8: Boolean
-        get() = false
+        get() = throw UnsupportedOperationException()
 }

@@ -203,8 +203,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         newDescriptor.addOverriddenDescriptor(descriptor);
 
         StringBuilder body = new StringBuilder();
-        String defaultInitializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
-        String initializer = defaultInitializer != null ? " = " + defaultInitializer : " = ?";
+        String initializer = " = throw UnsupportedOperationException()";
         body.append("\nget()");
         body.append(initializer);
         if (descriptor.isVar()) {

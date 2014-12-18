@@ -24,21 +24,21 @@ class C : A(), B {
     }
 
     override val internalProperty: Int
-        get() = 0
+        get() = throw UnsupportedOperationException()
 
     override fun protectedFun() {
         super<A>.protectedFun()
     }
 
     override val protectedProperty: Int
-        get() = 0
+        get() = throw UnsupportedOperationException()
 
     override fun publicFun() {
         super<A>.publicFun()
     }
 
     override val publicProperty: Int
-        get() = 0
+        get() = throw UnsupportedOperationException()
 
     override fun toString(): String {
         return super<A>.toString()

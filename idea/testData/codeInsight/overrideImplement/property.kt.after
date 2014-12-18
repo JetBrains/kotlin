@@ -4,5 +4,5 @@ trait T {
 
 class GC() : T {
     override val v: Int
-        get() = <selection><caret>0</selection>
+        get() = <selection><caret>throw UnsupportedOperationException()</selection>
 }

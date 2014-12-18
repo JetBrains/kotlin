@@ -10,7 +10,7 @@ class SomeTest : Test {
     }
 
     override val testProp: Int
-        get() = 0
+        get() = throw UnsupportedOperationException()
 
     /**
      * test
