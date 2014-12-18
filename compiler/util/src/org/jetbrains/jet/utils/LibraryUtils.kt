@@ -22,12 +22,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
 
 import java.io.*
-import java.util.Enumeration
 import java.util.Properties
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.jar.Manifest
-import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.platform.platformStatic
 
@@ -52,8 +50,8 @@ public object LibraryUtils {
             try {
                 val properties = Properties()
                 properties.load(manifestProperties)
-                jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib")
-                jsLib = properties.getProperty("manifest.spec.title.kotlin.javascript.lib")
+                jsStdLib = properties.getPropertyOrFail("manifest.impl.title.kotlin.javascript.stdlib")
+                jsLib = properties.getPropertyOrFail("manifest.spec.title.kotlin.javascript.lib")
             }
             catch (e: IOException) {
                 LOG.error(e)
@@ -226,5 +224,17 @@ public object LibraryUtils {
         val attributes = getManifestMainAttributesFromJarOrDirectory(library)
         val value = attributes?.getValue(attributeName)
         return value != null && value == expected
+    }
+
+    private fun Properties.getPropertyOrFail(propName: String): String {
+        val value = getProperty(propName)
+
+        if (value == null) {
+            val bytes = ByteArrayOutputStream()
+            list(PrintStream(bytes))
+            LOG.error("$propName not found.\n $bytes")
+        }
+
+        return value
     }
 }
