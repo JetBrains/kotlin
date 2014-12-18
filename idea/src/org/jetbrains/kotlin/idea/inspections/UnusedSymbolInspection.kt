@@ -33,7 +33,9 @@ import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -45,45 +47,65 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
 
-                val lightClass = LightClassUtil.getPsiClass(klass)
-                if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return
+                if (classIsEntryPoint(klass)) return
+                if (hasNonTrivialUsages(klass)) return
+                if (classHasTextUsages(klass)) return
 
-                val classUseScope = klass.getUseScope()
-
-                val usagesSearchHelper = KotlinClassFindUsagesOptions(holder.getProject()).toClassHelper()
-                val request = usagesSearchHelper.newRequest(UsagesSearchTarget(klass, classUseScope))
-                val query = UsagesSearch.search(request)
-
-                var foundNonTrivialUsage = false
-                query.forEach(Processor {
-                    usage ->
-                    if (klass.isAncestor(usage.getElement())) {
-                        true
-                    }
-                    else {
-                        foundNonTrivialUsage = true
-                        false
-                    }
-                })
-
-                // Finding text usages
-                if (classUseScope is GlobalSearchScope) {
-                    val findClassUsagesHandler = KotlinFindClassUsagesHandler(klass, KotlinFindUsagesHandlerFactory(klass.getProject()))
-                    findClassUsagesHandler.processUsagesInText(
-                            klass,
-                            { foundNonTrivialUsage = true; false },
-                            classUseScope
-                    )
-                }
-
-                if (!foundNonTrivialUsage) {
-                    holder.registerProblem(
-                            klass.getNameIdentifier(),
-                            JetBundle.message("unused.class", klass.getName()),
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                    ) // TODO add quick fix to delete it
-                }
+                holder.registerProblem(
+                        klass.getNameIdentifier(),
+                        JetBundle.message("unused.class", klass.getName()),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                ) // TODO add quick fix to delete it
             }
         }
+    }
+
+    private fun classIsEntryPoint(klass: JetClass): Boolean {
+        val lightClass = LightClassUtil.getPsiClass(klass)
+        if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return true
+        return false
+    }
+
+    private fun classHasTextUsages(klass: JetClass): Boolean {
+        var hasTextUsages = false
+
+        val classUseScope = klass.getUseScope()
+        // Finding text usages
+        if (classUseScope is GlobalSearchScope) {
+            val findClassUsagesHandler = KotlinFindClassUsagesHandler(klass, KotlinFindUsagesHandlerFactory(klass.getProject()))
+            findClassUsagesHandler.processUsagesInText(
+                    klass,
+                    { hasTextUsages = true; false },
+                    classUseScope
+            )
+        }
+
+        return hasTextUsages
+    }
+
+    private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
+        val project = declaration.getProject()
+
+        val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
+            is JetClass -> KotlinClassFindUsagesOptions(project).toClassHelper()
+            else -> return false
+        }
+
+        val useScope = declaration.getUseScope()
+        val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
+        val query = UsagesSearch.search(request)
+
+        var foundNonTrivialUsage = false
+        query.forEach(Processor {
+            usage ->
+            if (declaration.isAncestor(usage.getElement())) {
+                true
+            } else {
+                foundNonTrivialUsage = true
+                false
+            }
+        })
+
+        return foundNonTrivialUsage
     }
 }
