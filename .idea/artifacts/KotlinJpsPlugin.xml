@@ -12,7 +12,7 @@
       <element id="module-output" name="preloader" />
       <element id="module-output" name="util" />
       <element id="module-output" name="util.runtime" />
-      <element id="file-copy" path="$PROJECT_DIR$/resources/manifest.properties" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
     </root>
   </artifact>
 </component>

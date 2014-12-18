@@ -47,7 +47,7 @@ public object LibraryUtils {
         var jsStdLib = ""
         var jsLib = ""
 
-        val manifestProperties = javaClass<LibraryUtils>().getResourceAsStream("/manifest.properties")
+        val manifestProperties = javaClass<LibraryUtils>().getResourceAsStream("/kotlinManifest.properties")
         if (manifestProperties != null) {
             try {
                 val properties = Properties()
@@ -61,7 +61,7 @@ public object LibraryUtils {
 
         }
         else {
-            LOG.error("Resource 'manifest.properties' not found.")
+            LOG.error("Resource 'kotlinManifest.properties' not found.")
         }
 
         TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib

@@ -1,7 +1,7 @@
 <project name="Kotlin" default="dist">
     <include file="jslib_files.xml" />
 
-    <property file="resources/manifest.properties"/>
+    <property file="resources/kotlinManifest.properties"/>
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
@@ -385,7 +385,7 @@
                 </fileset>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
-                <fileset dir="${basedir}/resources" includes="manifest.properties"/>
+                <fileset dir="${basedir}/resources" includes="kotlinManifest.properties"/>
 
                 <fileset dir="idea/src">
                     <include name="META-INF/extensions/common.xml"/>
