@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 package org.jetbrains.kotlin.js.translate.reference;
+
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
@@ -32,11 +33,11 @@ import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic;
+import org.jetbrains.kotlin.js.descriptors.DescriptorPredicate;
+import org.jetbrains.kotlin.js.descriptors.PatternBuilder;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.DescriptorPredicate;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder;
 import org.jetbrains.kotlin.psi.JetCallExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
@@ -52,13 +53,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.gwt.dev.js.rhino.Utils.isEndOfLine;
+import static org.jetbrains.kotlin.js.descriptors.DescriptorsPackage.getJS_PATTERN;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
-
-    @NotNull
-    private final static DescriptorPredicate JSCODE_PATTERN = PatternBuilder.pattern("kotlin.js.js(String)");
 
     @NotNull
     public static JsNode translate(
@@ -115,7 +114,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         FunctionDescriptor descriptor = getFunctionResolvedCallWithAssert(expression, context.bindingContext())
                                             .getResultingDescriptor();
 
-        return JSCODE_PATTERN.apply(descriptor) && expression.getValueArguments().size() == 1;
+        return getJS_PATTERN().apply(descriptor);
     }
 
     private CallExpressionTranslator(
