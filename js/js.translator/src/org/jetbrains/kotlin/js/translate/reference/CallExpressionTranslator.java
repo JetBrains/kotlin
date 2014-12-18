@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.reference;
 
-
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.google.dart.compiler.common.SourceInfoImpl;
@@ -32,9 +31,8 @@ import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic;
-import org.jetbrains.kotlin.js.descriptors.DescriptorPredicate;
-import org.jetbrains.kotlin.js.descriptors.PatternBuilder;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -140,7 +138,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             return program().getEmptyExpression();
         }
 
-        List<JsStatement> statements = parseJsCode(argumentExpression);
+        List<JsStatement> statements = parseJsCode((JetStringTemplateExpression) argumentExpression);
         int size = statements.size();
 
         if (size == 0) {
@@ -158,12 +156,12 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     @NotNull
-    private List<JsStatement> parseJsCode(@NotNull JetExpression jsCodeExpression) {
+    private List<JsStatement> parseJsCode(@NotNull JetStringTemplateExpression jsCodeExpression) {
         Object jsCode = getCompileTimeValue(bindingContext(), jsCodeExpression);
         assert jsCode instanceof String: "jsCode must be compile time string";
 
         List<JsStatement> statements = new ArrayList<JsStatement>();
-        ErrorReporter errorReporter = new JsCodeErrorReporter(jsCodeExpression);
+        ErrorReporter errorReporter = new JsCodeErrorReporter(jsCodeExpression, (String) jsCode, context().getTrace());
 
         try {
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
@@ -182,25 +180,37 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         return statements;
     }
 
-    private class JsCodeErrorReporter implements ErrorReporter {
+    private static class JsCodeErrorReporter implements ErrorReporter {
+
         @NotNull
         private final JetExpression jsCodeExpression;
 
-        private JsCodeErrorReporter(@NotNull JetExpression expression) {
-            jsCodeExpression = expression;
+        @NotNull
+        private final String code;
+
+        @NotNull
+        private final DiagnosticSink trace;
+
+        JsCodeErrorReporter(@NotNull JetStringTemplateExpression jsCodeExpression,
+                            @NotNull String code,
+                            @NotNull DiagnosticSink trace
+        ) {
+            this.jsCodeExpression = jsCodeExpression;
+            this.code = code;
+            this.trace = trace;
         }
 
         @Override
         public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
             ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_ERROR, message, line, lineOffset);
-            context().getTrace().report(diagnostic);
+            trace.report(diagnostic);
             throw new AbortParsingException();
         }
 
         @Override
         public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
             ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_WARNING, message, line, lineOffset);
-            context().getTrace().report(diagnostic);
+            trace.report(diagnostic);
         }
 
         /**
@@ -219,8 +229,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
                 int line,
                 int lineOffset
         ) {
-            String text = (String) getCompileTimeValue(bindingContext(), jsCodeExpression);
-            int offset = jsCodeExpression.getTextOffset() + offsetFromStart(text, line, lineOffset);
+            int offset = jsCodeExpression.getTextOffset() + offsetFromStart(code, line, lineOffset);
 
             assert jsCodeExpression instanceof JetStringTemplateExpression: "js argument is expected to be compile-time string literal";
             int quotesLength = jsCodeExpression.getFirstChild().getTextLength();
@@ -234,7 +243,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
          * Calculates an offset from the start of a text for a position,
          * defined by line and offset in that line.
          */
-        private int offsetFromStart(String text, int line, int offset) {
+        private static int offsetFromStart(String text, int line, int offset) {
             int i = 0;
             int lineCount = 0;
             int offsetInLine = 0;
