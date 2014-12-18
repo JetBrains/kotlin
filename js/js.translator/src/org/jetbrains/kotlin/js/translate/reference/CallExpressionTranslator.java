@@ -213,16 +213,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             trace.report(diagnostic);
         }
 
-        /**
-         * TODO: seems not called anywhere, so remove
-         */
-        @Override
-        public EvaluatorException runtimeError(
-                String message, String sourceName, int line, String lineSource, int lineOffset
-        ) {
-            throw new RuntimeException(message);
-        }
-
         private ParametrizedDiagnostic<JetExpression> getDiagnostic(
                 @NotNull DiagnosticFactory2<JetExpression, String, List<TextRange>> diagnosticFactory,
                 String message,
