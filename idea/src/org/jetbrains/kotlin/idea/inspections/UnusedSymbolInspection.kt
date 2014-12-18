@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
@@ -49,7 +50,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
 
-                if (classIsEntryPoint(klass)) return
+                if (isEntryPoint(klass)) return
                 if (hasNonTrivialUsages(klass)) return
                 if (classHasTextUsages(klass)) return
 
@@ -59,13 +60,30 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                 ) // TODO add quick fix to delete it
             }
+
+            override fun visitNamedFunction(function: JetNamedFunction) {
+                if (function.getName() == null) return
+
+                if (function.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+                if (isEntryPoint(function)) return
+                if (hasNonTrivialUsages(function)) return
+
+                holder.registerProblem(
+                        function.getNameIdentifier(),
+                        JetBundle.message("unused.function", function.getName()),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                ) // TODO add quick fix to delete it
+            }
         }
     }
 
-    private fun classIsEntryPoint(klass: JetClass): Boolean {
-        val lightClass = klass.toLightClass()
-        if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return true
-        return false
+    private fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
+        val lightElement: PsiElement? = when (declaration) {
+            is JetClass ->  declaration.toLightClass()
+            is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
+            else -> null
+        }
+        return lightElement != null && javaInspection.isEntryPoint(lightElement)
     }
 
     private fun classHasTextUsages(klass: JetClass): Boolean {
@@ -88,6 +106,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
             is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
+            is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
             else -> return false
         }
 

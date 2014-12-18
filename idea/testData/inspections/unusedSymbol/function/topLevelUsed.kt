@@ -1,4 +1,7 @@
+fun used() {
+
+}
+
 fun main(args: Array<String>) {
-    class Local {
-    }
+    used()
 }

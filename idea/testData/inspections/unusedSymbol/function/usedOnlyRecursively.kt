@@ -1,0 +1,3 @@
+fun usedOnlyRecursively() {
+    usedOnlyRecursively()
+}

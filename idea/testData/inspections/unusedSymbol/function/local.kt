@@ -1,0 +1,5 @@
+fun outer() {
+    fun local() {
+
+    }
+}
