@@ -45,11 +45,8 @@ public object BuiltInsSerializationUtil {
     platformStatic public fun getPackageFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + PACKAGE_FILE_NAME
 
-    platformStatic public fun getStringTableFilePath(fqName: FqName): List<String> =
-            listOf(
-                    packageFqNameToPath(fqName) + "/" + STRING_TABLE_FILE_NAME,
-                    packageFqNameToPath(fqName) + "/.kotlin_name_table" // TODO: drop
-            )
+    platformStatic public fun getStringTableFilePath(fqName: FqName): String =
+            packageFqNameToPath(fqName) + "/" + STRING_TABLE_FILE_NAME
 
     platformStatic public fun getClassNamesFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME
