@@ -45,6 +45,7 @@ Notes:
 ## Implementation notes for the JVM
 
 In inline functions, occurrences of a `reified` type parameter `T` are replaced with the actual type argument.
+If actual type argument is a primitive type, it's wrapper will be used within reified bytecode.
 
 ``` kotlin
 open class TypeLiteral<T> {
@@ -55,6 +56,7 @@ open class TypeLiteral<T> {
 inline fun <reified T> typeLiteral(): TypeLiteral<T> = object : TypeLiteral<T>() {} // here T is replaced with the actual type
 
 typeLiteral<String>().type // returns 'class java.lang.String'
+typeLiteral<Int>().type // returns 'class java.lang.Integer'
 typeLiteral<Array<String>>().type // returns '[Ljava.lang.String;'
 typeLiteral<List<*>>().type // returns 'java.util.List<?>'
 ```
