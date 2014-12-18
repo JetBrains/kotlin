@@ -21,16 +21,15 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes.*
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.JetLanguage
 
 public class KotlinWordSelectionFilter : Condition<PsiElement>{
     override fun value(e: PsiElement): Boolean {
+        if (e.getLanguage() != JetLanguage.INSTANCE) return true
 
         if (KotlinListSelectioner.canSelect(e)) return false
         if (e is JetContainerNode) return false
-
-        val parent = e.getParent()
-        if (parent !is JetElement) return true
-        if (parent.getFirstChild().getNextSibling() == null) return false // skip nodes with the same range as their parent
+        if (e.getParent().getFirstChild().getNextSibling() == null) return false // skip nodes with the same range as their parent
 
         return when (e.getNode().getElementType()) {
             BLOCK, LITERAL_STRING_TEMPLATE_ENTRY -> false

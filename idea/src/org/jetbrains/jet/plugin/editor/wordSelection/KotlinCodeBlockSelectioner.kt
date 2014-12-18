@@ -42,32 +42,34 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
 
         val node = e.getNode()!!
         val start = findBlockContentStart(node)
-        val end = findBlockContentEnd(node, start)
+        val end = findBlockContentEnd(node)
+        if (end > start) {
+            result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
+        }
 
-        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
         result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.getTextRange()!!))
 
         return result
     }
 
-    private fun findBlockContentStart(parentNode: ASTNode): Int {
-        val node = parentNode.getChildren(null)
+    private fun findBlockContentStart(blockNode: ASTNode): Int {
+        val node = blockNode.getChildren(null)
                 .stream()
                 .dropWhile { it.getElementType() != JetTokens.LBRACE } // search for '{'
                 .drop(1) // skip it
                 .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
-                .firstOrNull() ?: parentNode
+                .firstOrNull() ?: blockNode
         return node.getTextRange()!!.getStartOffset()
     }
 
-    private fun findBlockContentEnd(parentNode: ASTNode, startOffset: Int): Int {
-        val node = parentNode.getChildren(null)
+    private fun findBlockContentEnd(blockNode: ASTNode): Int {
+        val node = blockNode.getChildren(null)
                            .reverse()
                            .stream()
                            .dropWhile { it.getElementType() != JetTokens.RBRACE } // search for '}'
                            .drop(1) // skip it
-                           .dropWhile { it is PsiWhiteSpace && (it: PsiWhiteSpace).getTextRange()!!.getStartOffset() > startOffset } // and skip all whitespaces
-                           .firstOrNull() ?: parentNode.getLastChildNode()!!
+                           .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
+                           .firstOrNull() ?: blockNode.getLastChildNode()!!
         return node.getTextRange()!!.getEndOffset()
     }
 }
