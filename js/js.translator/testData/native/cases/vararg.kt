@@ -6,6 +6,9 @@ fun paramCount(vararg a: Int): Int = noImpl
 native("paramCount")
 fun anotherParamCount(vararg a: Int): Int = noImpl
 
+native("paramCount")
+fun genericParamCount<T>(vararg a: T): Int = noImpl
+
 // test spread operator
 fun count(vararg a: Int) = paramCount(*a)
 
@@ -55,6 +58,15 @@ fun testCallOrder(vararg args: Int) =
         Bar.startNewTest() &&
         Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
+
+native
+fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
+
+native
+fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
+
+native
+fun idArrayVarArg<T>(vararg a: Array<T>): Array<T> = noImpl
 
 fun box(): String {
     if (paramCount() != 0)
@@ -114,6 +126,24 @@ fun box(): String {
     val baz: Bar? = Bar(1)
     if (!(baz!!)?.test(0, 1, 1))
         return "failed when combined SureCall and SafeCall, maybe we lost cached expression"
+
+    val a = array(1, 2)
+    assertEquals(2, genericParamCount(*a))
+    assertEquals(7, genericParamCount(1, *a, *a, 1, 2))
+
+    assertEquals(45, sumOfParameters(1, 2, 3, 4, 5, 6, 7, 8, 9))
+    assertEquals(45, sumOfParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)))
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7), 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5), *intArray(6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4), 5, 6, *intArray(7, 8, 9)) { 2*it })
+
+    assertEquals(2, idArrayVarArg(array(1), *array(array(2, 3, 4))).size())
+    assertEquals(3, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6))).size())
+    assertEquals(6, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6)), array(7), *array(array(8, 9), array(10, 11))).size())
 
     return "OK"
 }

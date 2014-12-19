@@ -42,3 +42,28 @@ function testNativeVarargWithFunLit(/* args, f */) {
     var f = arguments[arguments.length - 1];
     return typeof f === "function" && f(args);
 }
+
+function sumOfParameters() {
+    var size = arguments.length;
+    var result = 0;
+    for (var i = 0; i < size; i++) {
+        result += arguments[i];
+    }
+    return result;
+}
+
+function sumFunValuesOnParameters() {
+    var size = arguments.length - 1;
+    var f = arguments[arguments.length - 1];
+    var result = 0;
+    for (var i = 0; i < size; i++) {
+        var u = arguments[i];
+        result += f(u);
+    }
+    return result;
+}
+
+function idArrayVarArg() {
+    var args = Array.prototype.slice.call(arguments, 0, arguments.length);
+    return args;
+}
