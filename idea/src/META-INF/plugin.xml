@@ -25,9 +25,6 @@
       <implementation-class>org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
