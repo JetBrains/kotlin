@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility
     val originalPrimaryFunction: JetFunctionDefinitionUsage<PsiElement>
     val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>>
     val affectedFunctions: Collection<UsageInfo>
+
+    val receiver: JetParameterInfo?
 }
 
 val JetMethodDescriptor.isConstructor: Boolean
@@ -39,3 +41,6 @@ val JetMethodDescriptor.isConstructor: Boolean
 
 fun JetMethodDescriptor.renderOriginalReturnType(): String =
         baseDescriptor.getReturnType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
+
+fun JetMethodDescriptor.renderOriginalReceiverType(): String? =
+        baseDescriptor.getExtensionReceiverParameter()?.getType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }

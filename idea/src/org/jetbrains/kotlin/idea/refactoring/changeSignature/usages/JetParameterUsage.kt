@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,51 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetThisExpression
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+
+// Explicit reference to function parameter or outer this
+public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : JetUsageInfo<T>(element) {
+    protected abstract fun getReplacementText(changeInfo: JetChangeInfo): String
+
+    protected open fun processReplacedElement(element: JetElement) {
+
+    }
+
+    override fun processUsage(changeInfo: JetChangeInfo, element: T): Boolean {
+        val newElement = JetPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
+        processReplacedElement(element.replace(newElement) as JetElement)
+        return false
+    }
+}
 
 public class JetParameterUsage(
         element: JetSimpleNameExpression,
         private val parameterInfo: JetParameterInfo,
         private val containingFunction: JetFunctionDefinitionUsage<*>
-) : JetUsageInfo<JetSimpleNameExpression>(element) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetSimpleNameExpression): Boolean {
-        val newName = parameterInfo.getInheritedName(containingFunction)
-        element.replace(JetPsiFactory(element.getProject()).createSimpleName(newName))
-        return false
+) : JetExplicitReferenceUsage<JetSimpleNameExpression>(element) {
+    override fun processReplacedElement(element: JetElement) {
+        val qualifiedExpression = element.getParent() as? JetQualifiedExpression
+        if (qualifiedExpression?.getReceiverExpression() == element) {
+            qualifiedExpression!!.addToShorteningWaitSet(Options(removeThis = true))
+        }
     }
+
+    override fun getReplacementText(changeInfo: JetChangeInfo): String =
+            if (changeInfo.receiverParameterInfo != parameterInfo) parameterInfo.getInheritedName(containingFunction) else "this"
+}
+
+public class JetNonQualifiedOuterThisUsage(
+        element: JetThisExpression,
+        val targetDescriptor: DeclarationDescriptor
+) : JetExplicitReferenceUsage<JetThisExpression>(element) {
+    override fun processReplacedElement(element: JetElement) {
+        element.addToShorteningWaitSet(Options(removeThisLabels = true))
+    }
+
+    override fun getReplacementText(changeInfo: JetChangeInfo): String = "this@${targetDescriptor.getName().asString()}"
 }

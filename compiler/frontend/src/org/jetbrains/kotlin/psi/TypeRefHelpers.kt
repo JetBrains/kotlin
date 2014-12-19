@@ -54,3 +54,25 @@ fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?,
         return null
     }
 }
+
+fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?): JetTypeReference? {
+    val oldTypeRef = getReceiverTypeReference()
+    if (typeRef != null) {
+        if (oldTypeRef != null) {
+            return oldTypeRef.replace(typeRef) as JetTypeReference
+        }
+        else {
+            val anchor = getNameIdentifier()
+            val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
+            addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
+            return newTypeRef
+        }
+    }
+    else {
+        if (oldTypeRef != null) {
+            val dot = oldTypeRef.siblings(forward = true).firstOrNull { it.getNode().getElementType() == JetTokens.DOT }
+            deleteChildRange(oldTypeRef, dot ?: oldTypeRef)
+        }
+        return null
+    }
+}

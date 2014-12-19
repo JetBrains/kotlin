@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 
 public abstract class JetUsageInfo<T extends PsiElement> extends UsageInfo {
@@ -29,6 +30,13 @@ public abstract class JetUsageInfo<T extends PsiElement> extends UsageInfo {
 
     public JetUsageInfo(@NotNull PsiReference reference) {
         super(reference);
+    }
+
+    @Nullable
+    @Override
+    public T getElement() {
+        //noinspection unchecked
+        return (T) super.getElement();
     }
 
     public abstract boolean processUsage(JetChangeInfo changeInfo, T element);

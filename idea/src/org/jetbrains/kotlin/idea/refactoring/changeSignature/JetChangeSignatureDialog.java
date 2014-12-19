@@ -420,7 +420,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
         return new JetChangeInfo(myMethod, getMethodName(), getReturnType(), returnTypeText,
-                                 getVisibility(), parameters, myDefaultValueContext
+                                 getVisibility(), parameters, null, myDefaultValueContext
         );
     }
 
