@@ -205,7 +205,11 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         }
         contextElement is JetDeclarationWithBody && contextElement.hasBlockBody()-> {
             val block = contextElement.getBodyExpression() as JetBlockExpression
-            block.getStatements().firstOrNull() ?: block.getLastChild()
+            val last = block.getStatements().lastOrNull()
+            if (last is JetReturnExpression)
+                last
+            else
+                block.getRBrace()
         }
         contextElement is JetWhenEntry -> {
             val entryExpression = contextElement.getExpression()
