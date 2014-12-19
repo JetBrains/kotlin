@@ -400,6 +400,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InClassObject.kt")
+        public void testInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InClassObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InClassPropertyAccessor.kt")
         public void testInClassPropertyAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InClassPropertyAccessor.kt");
@@ -472,6 +478,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InInnerClass.kt")
+        public void testInInnerClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InInnerClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InLocalObjectDeclaration.kt")
         public void testInLocalObjectDeclaration() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InLocalObjectDeclaration.kt");
@@ -493,6 +505,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("InMiddleOfPackageDirective.kt")
         public void testInMiddleOfPackageDirective() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InMiddleOfPackageDirective.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InNestedClass.kt")
+        public void testInNestedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InNestedClass.kt");
             doTest(fileName);
         }
 
@@ -724,6 +742,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ObjectMembersFromNested.kt")
+        public void testObjectMembersFromNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ObjectMembersFromNested.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ObjectRedeclaration1.kt")
         public void testObjectRedeclaration1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ObjectRedeclaration1.kt");
@@ -918,9 +942,21 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("MemberExtensionFromWith.kt")
+            public void testMemberExtensionFromWith() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/MemberExtensionFromWith.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoDuplicatedMethodForSmartCast.kt")
             public void testNoDuplicatedMethodForSmartCast() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoDuplicatedMethodForSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoExtensionFromOuter.kt")
+            public void testNoExtensionFromOuter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoExtensionFromOuter.kt");
                 doTest(fileName);
             }
 

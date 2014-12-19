@@ -56,7 +56,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collectio
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Collection<CallableDescriptor>
-        = substituteExtensionIfCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, CallType.NORMAL)
+        = substituteExtensionIfCallable(scope.getImplicitReceiversWithInstance().map { it.getValue() }, context, dataFlowInfo, CallType.NORMAL)
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
         receiver: ReceiverValue,

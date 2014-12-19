@@ -372,6 +372,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("InClassObject.kt")
+    public void testInClassObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InClassObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InElvisOperator1.kt")
     public void testInElvisOperator1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InElvisOperator1.kt");
@@ -405,6 +411,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("InElvisOperator6.kt")
     public void testInElvisOperator6() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InElvisOperator6.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InNestedClass.kt")
+    public void testInNestedClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InNestedClass.kt");
         doTest(fileName);
     }
 

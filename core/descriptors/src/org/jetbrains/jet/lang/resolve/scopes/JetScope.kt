@@ -91,6 +91,7 @@ public fun JetScope.getDescriptorsFiltered(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
 ): Collection<DeclarationDescriptor> {
+    if (kindFilter.kindMask == 0) return listOf()
     return getDescriptors(kindFilter, nameFilter).filter { kindFilter.accepts(it) && nameFilter(it.getName()) }
 }
 
@@ -113,7 +114,10 @@ public class DescriptorKindFilter(
     public fun withKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask or kinds, excludes)
 
-    public fun restrictedToKinds(kinds: Int): DescriptorKindFilter? {
+    public fun restrictedToKinds(kinds: Int): DescriptorKindFilter
+            = DescriptorKindFilter(kindMask and kinds, excludes)
+
+    public fun restrictedToKindsOrNull(kinds: Int): DescriptorKindFilter? {
         val mask = kindMask and kinds
         if (mask == 0) return null
         return DescriptorKindFilter(mask, excludes)

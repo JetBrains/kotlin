@@ -37,6 +37,7 @@ import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
 import org.jetbrains.jet.plugin.util.CallType
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
 
 public class KotlinIndicesHelper(
         private val project: Project,
@@ -123,7 +124,7 @@ public class KotlinIndicesHelper(
         else {
             val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return
 
-            for (receiver in resolutionScope.getImplicitReceiversHierarchy()) {
+            for (receiver in resolutionScope.getImplicitReceiversWithInstance()) {
                 matchingNames.flatMapTo(this) {
                     findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, resolutionScope, moduleDescriptor, bindingContext)
                 }

@@ -120,6 +120,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("NoExtForOuterFromNested")
+    public void testNoExtForOuterFromNested() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoExtForOuterFromNested/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoExtensionMethodDuplication")
     public void testNoExtensionMethodDuplication() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoExtensionMethodDuplication/");
