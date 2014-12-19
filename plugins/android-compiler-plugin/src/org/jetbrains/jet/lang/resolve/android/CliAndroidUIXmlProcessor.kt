@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.android
 import java.util.ArrayList
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import java.io.ByteArrayInputStream
 
 public class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String?, val manifestPath: String?) : org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor(project) {
 
@@ -31,7 +32,8 @@ public class CliAndroidUIXmlProcessor(project: Project, override val searchPath:
         val ids: MutableCollection<AndroidWidget> = ArrayList()
         val handler = org.jetbrains.jet.lang.resolve.android.AndroidXmlHandler(resourceManager, { id, wClass -> ids.add(AndroidWidget(id, wClass)) })
         try {
-            resourceManager.saxParser.parse(file.getVirtualFile()?.getInputStream()!!, handler)
+            val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
+            resourceManager.saxParser.parse(inputStream, handler)
             return produceKotlinProperties(KotlinStringWriter(), ids).toString()
         }
         catch (e: Throwable) {
