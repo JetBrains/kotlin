@@ -276,12 +276,30 @@ public class JetPsiUnifier(
                 }
             }
 
+            fun checkTypeArguments(): Status? {
+                val typeArgs1 = rc1.getTypeArguments().toList()
+                val typeArgs2 = rc2.getTypeArguments().toList()
+                if (typeArgs1.size() != typeArgs2.size()) return UNMATCHED
+
+                for ((typeArg1, typeArg2) in (typeArgs1 zip typeArgs2)) {
+                    if (!matchDescriptors(typeArg1.first, typeArg2.first)) return UNMATCHED
+
+                    val s = matchTypes(typeArg1.second, typeArg2.second)
+                    if (s != MATCHED) return s
+                }
+
+                return MATCHED
+            }
+
             return when {
                 !checkSpecialOperations() -> UNMATCHED
                 !matchDescriptors(rc1.getCandidateDescriptor(), rc2.getCandidateDescriptor()) -> UNMATCHED
                 !checkReceivers() -> UNMATCHED
                 rc1.isSafeCall() != rc2.isSafeCall() -> UNMATCHED
-                else -> checkArguments()
+                else -> {
+                    val s = checkTypeArguments()
+                    if (s != MATCHED) s else checkArguments()
+                }
             }
         }
 
@@ -337,6 +355,7 @@ public class JetPsiUnifier(
 
         private fun matchTypes(type1: JetType?, type2: JetType?): Status? {
             if (type1 != null && type2 != null) {
+                if (type1.isError() || type2.isError()) return null
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
 
                 if (type1.isMarkedNullable() != type2.isMarkedNullable()) return UNMATCHED
