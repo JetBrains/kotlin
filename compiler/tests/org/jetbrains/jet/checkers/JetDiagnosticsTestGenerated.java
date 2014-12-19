@@ -5181,6 +5181,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
+                public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt6320.kt")
                 public void testKt6320() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/kt6320.kt");

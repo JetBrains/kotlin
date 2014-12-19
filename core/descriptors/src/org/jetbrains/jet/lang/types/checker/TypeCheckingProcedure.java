@@ -244,7 +244,12 @@ public class TypeCheckingProcedure {
             }
             else {
                 if (!constraints.assertSubtype(subOut, superOut, this)) return false;
-                if (!constraints.assertSubtype(superIn, subIn, this)) return false;
+                if (superArgument.getProjectionKind() != Variance.OUT_VARIANCE) {
+                    if (!constraints.assertSubtype(superIn, subIn, this)) return false;
+                }
+                else {
+                    assert KotlinBuiltIns.isNothing(superIn) : "In component must be Nothing for out-projection";
+                }
             }
         }
         return true;
