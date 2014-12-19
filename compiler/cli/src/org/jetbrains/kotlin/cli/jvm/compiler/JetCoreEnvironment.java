@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.collect.Sets;
+import com.intellij.codeInsight.ContainerProvider;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
+import com.intellij.codeInsight.runner.JavaMainMethodProvider;
 import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.core.JavaCoreApplicationEnvironment;
@@ -30,13 +32,24 @@ import com.intellij.mock.MockProject;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.extensions.ExtensionsArea;
+import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor;
+import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileContextProvider;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.augment.PsiAugmentProvider;
+import com.intellij.psi.compiled.ClassFileDecompilers;
+import com.intellij.psi.impl.PsiTreeChangePreprocessor;
+import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
+import com.intellij.psi.impl.compiled.ClsStubBuilderFactory;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
+import com.intellij.psi.meta.MetaDataContributor;
+import com.intellij.psi.stubs.BinaryFileStubBuilders;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.Unit;
@@ -152,6 +165,8 @@ public class JetCoreEnvironment {
             @NotNull CompilerConfiguration configuration,
             @NotNull List<String> configFilePaths
     ) {
+        Extensions.cleanRootArea(parentDisposable);
+        registerAppExtensionPoints();
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
         for (String configPath : configFilePaths) {
@@ -162,6 +177,22 @@ public class JetCoreEnvironment {
         registerApplicationServices(applicationEnvironment);
 
         return applicationEnvironment;
+    }
+
+    private static void registerAppExtensionPoints() {
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContentBasedFileSubstitutor.EP_NAME, ContentBasedFileSubstitutor.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, FileContextProvider.class);
+        //
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, MetaDataContributor.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsStubBuilderFactory.EP_NAME, ClsStubBuilderFactory.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, PsiAugmentProvider.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider.class);
+        //
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, ContainerProvider.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy.class);
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME,
+                                                          ClassFileDecompilers.Decompiler.class);
     }
 
     private static void registerApplicationExtensionPointsAndExtensionsFrom(@NotNull CompilerConfiguration configuration, @NotNull String configFilePath) {
@@ -215,7 +246,12 @@ public class JetCoreEnvironment {
         this.configuration = configuration.copy();
         this.configuration.setReadOnly(true);
 
-        projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
+        projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment){
+            @Override
+            protected void preregisterServices() {
+                registerProjectExtensionPoints(Extensions.getArea(getProject()));
+            }
+        };
 
         MockProject project = projectEnvironment.getProject();
         annotationsManager = new CoreExternalAnnotationsManager(project.getComponent(PsiManager.class));
@@ -257,6 +293,11 @@ public class JetCoreEnvironment {
         );
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
+    }
+
+    private static void registerProjectExtensionPoints(ExtensionsArea area) {
+        CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor.class);
+        CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, PsiElementFinder.class);
     }
 
     // made public for Upsource
