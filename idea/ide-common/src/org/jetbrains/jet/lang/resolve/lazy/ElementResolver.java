@@ -22,6 +22,7 @@ import com.google.common.base.Predicates;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
@@ -244,6 +245,16 @@ public abstract class ElementResolver {
 
             scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution();
             dataFlowInfoForContextElement = DataFlowInfo.EMPTY;
+        }
+        else if (contextElement instanceof JetBlockExpression) {
+            JetElement newContextElement = KotlinPackage.lastOrNull(((JetBlockExpression) contextElement).getStatements());
+
+            if (!(newContextElement instanceof JetExpression)) return;
+
+            BindingContext contextForElement = resolveToElement((JetElement) contextElement, BodyResolveMode.FULL);
+
+            scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, ((JetExpression) newContextElement));
+            dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, (JetExpression) newContextElement);
         }
         else {
             if (!(contextElement instanceof JetExpression)) return;
