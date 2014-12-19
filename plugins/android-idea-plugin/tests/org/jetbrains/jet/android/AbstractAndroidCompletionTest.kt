@@ -37,23 +37,20 @@ import com.intellij.codeInsight.CodeInsightSettings
 public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
 
+    private var codeCompletionOldValue: Boolean = false
+    private var smartTypeCompletionOldValue: Boolean = false
+
     override fun setUp() {
         super.setUp()
-        setAutoCompleteSetting(false)
-    }
 
-    private fun setAutoCompleteSetting(value: Boolean): Boolean {
         val settings = CodeInsightSettings.getInstance()
-        val oldValue: Boolean
-        if (completionType() == CompletionType.SMART) {
-            oldValue = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION
-            settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value
+        codeCompletionOldValue = settings.AUTOCOMPLETE_ON_CODE_COMPLETION
+        smartTypeCompletionOldValue = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION
+
+        when (completionType()) {
+            CompletionType.SMART -> settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = false
+            CompletionType.BASIC -> settings.AUTOCOMPLETE_ON_CODE_COMPLETION = false
         }
-        else {
-            oldValue = settings.AUTOCOMPLETE_COMMON_PREFIX
-            settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value
-        }
-        return oldValue
     }
 
     private fun completionType() = CompletionType.BASIC
@@ -72,4 +69,11 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
         return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/completion/" + getTestName(true) + "/"
     }
 
+    override fun tearDown() {
+        val settings = CodeInsightSettings.getInstance()
+        settings.AUTOCOMPLETE_ON_CODE_COMPLETION = codeCompletionOldValue
+        settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = smartTypeCompletionOldValue
+
+        super<KotlinAndroidTestCase>.tearDown()
+    }
 }
