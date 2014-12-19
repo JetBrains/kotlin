@@ -27,6 +27,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.strings.StringsPackage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -368,12 +369,8 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         currentPosition.rollbackTo();
 
         if (endOffset - beginOffset > LOOK_AHEAD_SIZE_WARN && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
-            String text = new StringBuilder(myBuilder.getOriginalText())
-                    .insert(endOffset, "<~~!END!~~>")
-                    .insert(beginOffset, "<~~!BEGIN!~~>")
-                    .toString();
-
-            LOGGER.warn("Suspicious big range: \n" + text);
+            String rangeWithContext = StringsPackage.substringWithContext(myBuilder.getOriginalText(), beginOffset, endOffset, 100);
+            LOGGER.warn("Suspicious big range: \n" + rangeWithContext);
         }
 
         return pattern.result();
@@ -497,16 +494,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     @SuppressWarnings("UnusedDeclaration")
     @TestOnly
     public String currentContext() {
-        String marker = "~!!!~";
-        int range = 50;
-
-        CharSequence text = myBuilder.getOriginalText();
-
-        int start = Math.max(0, myBuilder.getCurrentOffset() - range);
-        int end = Math.min(text.length() - 1, myBuilder.getCurrentOffset() + 50 + marker.length());
-
-        return new StringBuilder(text)
-                .insert(myBuilder.getCurrentOffset(), marker)
-                .substring(start, end);
+        return StringsPackage.substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20);
     }
 }
