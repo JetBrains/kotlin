@@ -35,7 +35,6 @@ import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.jet.lang.diagnostics.Errors
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -228,6 +227,10 @@ public class TypeResolver(
                 if (!dynamicTypesSettings.dynamicTypesAllowed) {
                     c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
                 }
+            }
+
+            override fun visitSelfType(type: JetSelfType) {
+                c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 
             override fun visitJetElement(element: JetElement) {

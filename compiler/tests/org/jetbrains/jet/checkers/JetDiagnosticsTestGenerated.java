@@ -442,6 +442,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SelfTypesUnsupported.kt")
+        public void testSelfTypesUnsupported() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SelfTypesUnsupported.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShiftFunctionTypes.kt")
         public void testShiftFunctionTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ShiftFunctionTypes.kt");
