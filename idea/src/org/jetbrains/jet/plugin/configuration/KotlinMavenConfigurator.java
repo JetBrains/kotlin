@@ -102,6 +102,8 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         }
 
         MavenDomProjectModel domProjectModel = getMavenDomProjectModel(module);
+        if (domProjectModel == null) return false;
+
         return hasKotlinMavenPlugin(domProjectModel) && hasDependencyOnLibrary(domProjectModel);
     }
 
@@ -198,10 +200,10 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         }
     }
 
-    @NotNull
+    @Nullable
     private static MavenDomProjectModel getMavenDomProjectModel(@NotNull Module module) {
         PsiFile pomFile = findModulePomFile(module);
-        assert pomFile != null : "pom file should not be null";
+        if (pomFile == null) return null;
 
         VirtualFile virtualFile = pomFile.getVirtualFile();
         assert virtualFile != null : "Virtual file should exists for psi file " + pomFile.getName();
