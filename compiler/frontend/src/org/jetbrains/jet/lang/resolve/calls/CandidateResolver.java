@@ -125,6 +125,7 @@ public class CandidateResolver {
             for (JetTypeProjection projection : jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                    ModifiersChecker.checkIncompatibleVarianceModifiers(projection.getModifierList(), context.trace);
                 }
                 JetType type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), context.scope, context.trace,

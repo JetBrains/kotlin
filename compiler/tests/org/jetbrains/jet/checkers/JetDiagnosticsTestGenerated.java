@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.DynamicTypes.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.PlatformTypes.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.Variance.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.DynamicTypes.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Modifiers.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.PlatformTypes.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.Variance.class, Tests.When.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
@@ -235,12 +235,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("GenericFunctionIsLessSpecific.kt")
         public void testGenericFunctionIsLessSpecific() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/GenericFunctionIsLessSpecific.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("IllegalModifiers.kt")
-        public void testIllegalModifiers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IllegalModifiers.kt");
             doTest(fileName);
         }
 
@@ -6793,6 +6787,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt828.kt")
             public void testKt828() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/library/kt828.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/modifiers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Modifiers extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInModifiers() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("IllegalModifiers.kt")
+            public void testIllegalModifiers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/IllegalModifiers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incompatibleVarianceModifiers.kt")
+            public void testIncompatibleVarianceModifiers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/incompatibleVarianceModifiers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("repeatedModifiers.kt")
+            public void testRepeatedModifiers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/repeatedModifiers.kt");
                 doTest(fileName);
             }
         }
