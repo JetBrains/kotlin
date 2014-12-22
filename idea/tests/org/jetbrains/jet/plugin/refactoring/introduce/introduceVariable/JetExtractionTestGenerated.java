@@ -201,6 +201,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("PropertyAccessorAddBlock.kt")
+        public void testPropertyAccessorAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/PropertyAccessorAddBlock.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("PropertyAccessorAddBlockInner.kt")
+        public void testPropertyAccessorAddBlockInner() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/PropertyAccessorAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ReplaceOccurence.kt")
         public void testReplaceOccurence() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");

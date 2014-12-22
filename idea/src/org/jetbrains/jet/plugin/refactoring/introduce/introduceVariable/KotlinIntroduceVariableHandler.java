@@ -257,7 +257,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         return new Runnable() {
             @Override
             public void run() {
-                if (commonContainer instanceof JetNamedFunction) {
+                if (commonContainer instanceof JetDeclarationWithBody) {
                     JetDeclarationWithBody originalDeclaration = (JetDeclarationWithBody) commonContainer;
                     final JetExpression originalBody = originalDeclaration.getBodyExpression();
                     assert originalBody != null : "Original body is not found: " + originalDeclaration;
@@ -510,11 +510,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
                 return parent;
             }
-            else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction)parent;
-                if (function.getBodyExpression() == place) {
-                    return parent;
-                }
+            if (parent instanceof JetDeclarationWithBody && ((JetDeclarationWithBody) parent).getBodyExpression() == place) {
+                return parent;
             }
             place = parent;
         }
@@ -562,8 +559,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     result = parent;
                 }
             }
-            else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction)parent;
+            else if (parent instanceof JetDeclarationWithBody) {
+                JetDeclarationWithBody function = (JetDeclarationWithBody)parent;
                 if (function.getBodyExpression() == place) {
                     if (!(place instanceof JetBlockExpression)) {
                         result = parent;
