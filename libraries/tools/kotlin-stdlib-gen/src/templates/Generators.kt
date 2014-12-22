@@ -39,7 +39,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("plus(array: Array<T>)") {
+    templates add f("plus(array: Array<out T>)") {
         exclude(Strings, Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
@@ -142,7 +142,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("merge(array: Array<R>, transform: (T, R) -> V)") {
+    templates add f("merge(array: Array<out R>, transform: (T, R) -> V)") {
         exclude(Streams)
         doc {
             """
@@ -222,7 +222,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(array: Array<R>)") {
+    templates add f("zip(array: Array<out R>)") {
         exclude(Streams)
         doc {
             """

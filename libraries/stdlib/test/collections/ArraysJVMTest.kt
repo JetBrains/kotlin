@@ -200,13 +200,16 @@ class ArraysJVMTest {
 
     test fun orEmptyNull() {
         val x: Array<String>? = null
-        val xArray: Array<String> = x.orEmpty()
+        val y: Array<out String>? = null
+        val xArray = x.orEmpty()
+        val yArray = y.orEmpty()
         expect(0) { xArray.size() }
+        expect(0) { yArray.size() }
     }
 
     test fun orEmptyNotNull() {
         val x: Array<String>? = array("1", "2")
-        val xArray: Array<String> = x.orEmpty()
+        val xArray = x.orEmpty()
         expect(2) { xArray.size() }
         expect("1") { xArray[0] }
         expect("2") { xArray[1] }

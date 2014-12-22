@@ -790,7 +790,7 @@ public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destinati
 /**
  * Returns a list containing the results of applying the given *transform* function to each non-null element of the original collection
  */
-public inline fun <T : Any, R> Array<T?>.mapNotNull(transform: (T) -> R): List<R> {
+public inline fun <T : Any, R> Array<out T?>.mapNotNull(transform: (T) -> R): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -812,7 +812,7 @@ public fun <T : Any, R> Stream<T?>.mapNotNull(transform: (T) -> R): Stream<R> {
  * Appends transformed non-null elements of original collection using the given *transform* function
  * to the given *destination*
  */
-public inline fun <T : Any, R, C : MutableCollection<in R>> Array<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
+public inline fun <T : Any, R, C : MutableCollection<in R>> Array<out T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
             destination.add(transform(element))

@@ -9,6 +9,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array" }
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         body {
             "return Arrays.copyOfRange(this, from, to)"
         }
@@ -18,6 +19,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array" }
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         body {
             "return Arrays.copyOf(this, size())"
         }

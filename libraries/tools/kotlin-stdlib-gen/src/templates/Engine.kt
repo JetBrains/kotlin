@@ -39,8 +39,8 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
     var receiverAsterisk = false
     val inlineFamilies = HashMap<Family, Boolean>()
 
-    val buildFamilies = HashSet<Family>(defaultFamilies.toList())
-    private val buildPrimitives = HashSet<PrimitiveType>(PrimitiveType.values().toList())
+    val buildFamilies = HashSet(defaultFamilies.toList())
+    private val buildPrimitives = HashSet(PrimitiveType.values().toList())
 
     var deprecate: String = ""
     val deprecates = HashMap<Family, String>()
@@ -106,7 +106,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
     }
 
     fun receiverAsterisk(v: Boolean) {
-        receiverAsterisk = true
+        receiverAsterisk = v
     }
 
     fun inline(value: Boolean, vararg families: Family) {
@@ -183,7 +183,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
             while (t.hasMoreTokens()) {
                 val token = t.nextToken()
                 answer.append(when (token) {
-                                  "SELF" -> receiver
+                                  "SELF" -> if (receiver == "Array<T>") "Array<out T>" else receiver
                                   "PRIMITIVE" -> primitive?.name() ?: token
                                   "SUM" -> {
                                       when (primitive) {
@@ -257,17 +257,12 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
-            builder.append(types.makeString(separator = ", ", prefix = "<", postfix = "> ").renderType())
+            builder.append(types.join(separator = ", ", prefix = "<", postfix = "> ").renderType())
         }
 
-        val receiverType = (
-        if (toNullableT) {
-            receiver.replace("T>", "T?>")
-        } else {
-            if (receiver == "Array<T>")
-                "Array<out T>"
-            else
-                receiver
+        val receiverType = (when (receiver) {
+            "Array<T>" -> if (toNullableT) "Array<out T?>" else "Array<out T>"
+            else -> if (toNullableT) receiver.replace("T>", "T?>") else receiver
         }).renderType()
 
 
@@ -275,7 +270,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         builder.append(".${signature.renderType()}: ${returnType.renderType()} {")
 
         val body = (bodies[f] ?: defaultBody).trim("\n")
-        val indent: Int = body.takeWhile { it == ' ' }.length
+        val indent: Int = body.takeWhile { it == ' ' }.length()
 
         builder.append('\n')
         StringReader(body).forEachLine {

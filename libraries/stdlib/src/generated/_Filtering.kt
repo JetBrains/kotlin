@@ -522,7 +522,7 @@ public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
 /**
  * Returns a list containing all elements that are not null
  */
-public fun <T : Any> Array<T?>.filterNotNull(): List<T> {
+public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
     return filterNotNullTo(ArrayList<T>())
 }
 
@@ -543,7 +543,7 @@ public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
 /**
  * Appends all elements that are not null to the given *destination*
  */
-public fun <C : MutableCollection<in T>, T : Any> Array<T?>.filterNotNullTo(destination: C): C {
+public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
 }
