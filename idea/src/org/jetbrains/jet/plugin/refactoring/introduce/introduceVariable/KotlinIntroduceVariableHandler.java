@@ -177,7 +177,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             @Override
             public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
                 boolean replaceOccurrence =
-                        container != expression.getParent() || container instanceof JetNamedFunction;
+                        container != expression.getParent() || BindingContextUtilPackage.isUsedAsExpression(expression, bindingContext);
                 List<JetExpression> allReplaces;
                 if (OccurrencesChooser.ReplaceChoice.ALL == replaceChoice) {
                     if (allOccurrences.size() > 1) replaceOccurrence = true;

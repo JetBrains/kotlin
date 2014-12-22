@@ -129,6 +129,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("IfThenValuedAddBlock.kt")
+        public void testIfThenValuedAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfThenValuedAddBlock.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("It.kt")
         public void testIt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/It.kt");
@@ -246,6 +252,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("WhenParts.kt")
         public void testWhenParts() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenParts.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("WhenValuedAddBlock.kt")
+        public void testWhenValuedAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenValuedAddBlock.kt");
             doIntroduceVariableTest(fileName);
         }
 
