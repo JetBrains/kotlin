@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -247,10 +248,14 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         }
     }
 
-    private static boolean isEffectivelyPublicApi(DeclarationDescriptorWithVisibility descriptor) {
-        DeclarationDescriptorWithVisibility parent = descriptor;
+    private boolean isEffectivelyPublicApi(@NotNull DeclarationDescriptorWithVisibility startDescriptor) {
+        DeclarationDescriptorWithVisibility parent = startDescriptor;
         while (parent != null) {
             if (!parent.getVisibility().isPublicAPI()) {
+                if (parent.getContainingDeclaration() == descriptor) {
+                    //skip all defined in inline function
+                    return true;
+                }
                 return false;
             }
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
