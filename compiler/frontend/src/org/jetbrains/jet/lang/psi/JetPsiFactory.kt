@@ -214,8 +214,8 @@ public class JetPsiFactory(private val project: Project) {
         return aClass.getPrimaryConstructorModifierList()!!
     }
 
-    public fun createEmptyBody(): JetExpression {
-        return createFunction("fun foo() {}").getBodyExpression()!!
+    public fun createEmptyBody(): JetBlockExpression {
+        return createFunction("fun foo() {}").getBodyExpression() as JetBlockExpression
     }
 
     public fun createAnonymousInitializer(): JetClassInitializer {
@@ -633,8 +633,8 @@ public class JetPsiFactory(private val project: Project) {
         }
     }
 
-    public fun createFunctionBody(bodyText: String): JetExpression {
-        return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression()!!
+    public fun createFunctionBody(bodyText: String): JetBlockExpression {
+        return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression() as JetBlockExpression
     }
 
     public fun createEmptyClassObject(): JetClassObject {

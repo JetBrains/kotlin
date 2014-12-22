@@ -37,61 +37,57 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
         convert(findDeclaration(element)!!)
     }
 
-    fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
-        val body = declaration.getBodyExpression()!!
+    class object {
+        fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
+            val body = declaration.getBodyExpression()!!
 
-        fun generateBody(returnsValue: Boolean): JetExpression {
-            val bodyType = expressionType(body)
-            val needReturn = returnsValue &&
-                             (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
+            fun generateBody(returnsValue: Boolean): JetExpression {
+                val bodyType = expressionType(body)
+                val needReturn = returnsValue &&
+                                 (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
-            val oldBodyText = body.getText()!!
-            val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
-            return JetPsiFactory(declaration).createFunctionBody(newBodyText)
-        }
+                val oldBodyText = body.getText()!!
+                val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
+                return JetPsiFactory(declaration).createFunctionBody(newBodyText)
+            }
 
-        val newBody = when (declaration) {
-            is JetNamedFunction -> {
-                val returnType = functionReturnType(declaration)!!
-                if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
-                    specifyTypeExplicitly(declaration, returnType)
+            val newBody = when (declaration) {
+                is JetNamedFunction -> {
+                    val returnType = functionReturnType(declaration)!!
+                    if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
+                        specifyTypeExplicitly(declaration, returnType)
+                    }
+                    generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
                 }
 
-                val newBody = generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
+                is JetPropertyAccessor -> generateBody(declaration.isGetter())
 
-                declaration.getEqualsToken()!!.delete()
-                body.replace(newBody)
+                else -> throw RuntimeException("Unknown declaration type: $declaration")
             }
 
-            is JetPropertyAccessor -> {
-                val newBody = generateBody(declaration.isGetter())
-                declaration.getEqualsToken()!!.delete()
-                body.replace(newBody)
-            }
-
-            else -> throw RuntimeException("Unknown declaration type: $declaration")
+            declaration.getEqualsToken()!!.delete()
+            body.replace(newBody)
+            return declaration
         }
 
-        return newBody.getParent() as JetDeclarationWithBody
-    }
+        private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
+            val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
+            if (declaration == null || declaration is JetFunctionLiteral || declaration.hasBlockBody()) return null
+            val body = declaration.getBodyExpression()
+            if (body == null) return null
 
-    private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
-        val declaration = element.getStrictParentOfType<JetDeclarationWithBody>()
-        if (declaration == null || declaration is JetFunctionLiteral || declaration.hasBlockBody()) return null
-        val body = declaration.getBodyExpression()
-        if (body == null) return null
+            return when (declaration) {
+                is JetNamedFunction -> {
+                    val returnType = functionReturnType(declaration)
+                    if (returnType == null) return null
+                    if (!declaration.hasDeclaredReturnType() && returnType.isError()) return null // do not convert when type is implicit and unknown
+                    declaration
+                }
 
-        return when (declaration) {
-            is JetNamedFunction -> {
-                val returnType = functionReturnType(declaration)
-                if (returnType == null) return null
-                if (!declaration.hasDeclaredReturnType() && returnType.isError()) return null // do not convert when type is implicit and unknown
-                declaration
+                is JetPropertyAccessor -> declaration
+
+                else -> throw RuntimeException("Unknown declaration type: $declaration")
             }
-
-            is JetPropertyAccessor -> declaration
-
-            else -> throw RuntimeException("Unknown declaration type: $declaration")
         }
     }
 }

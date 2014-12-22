@@ -1,1 +1,6 @@
-fun x(): Int = println(<selection>1</selection>)
+fun foo(a: Int) =
+        if (a > 1) {
+            (<selection>a + 1</selection>) * (a - 1)
+        } else {
+            a * (a + 1)
+        }

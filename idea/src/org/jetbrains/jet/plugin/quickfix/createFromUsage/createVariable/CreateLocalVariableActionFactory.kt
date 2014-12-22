@@ -54,7 +54,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), assignment ?: refExpr, file!!, editor!!).createBuilder()) {
                     val actualContainer = when (container) {
                         is JetBlockExpression -> container
-                        else -> ConvertToBlockBodyAction().convert(container as JetDeclarationWithBody).getBodyExpression()!!
+                        else -> ConvertToBlockBodyAction.convert(container as JetDeclarationWithBody).getBodyExpression()!!
                     }
                     placement = CallablePlacement.NoReceiver(actualContainer)
                     CommandProcessor.getInstance().executeCommand(project, { build() }, getText(), null)
