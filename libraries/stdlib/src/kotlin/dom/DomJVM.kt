@@ -112,10 +112,10 @@ public val NodeList.outerHTML: String
     get() = toList().map { it.innerHTML }.join("")
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
-public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
+public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance(javaClass<Element>())
 
 /** Returns an [[Iterator]] of all the previous [[Element]] siblings */
-public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
+public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance(javaClass<Element>())
 
 
 public var Element.classSet: MutableSet<String>

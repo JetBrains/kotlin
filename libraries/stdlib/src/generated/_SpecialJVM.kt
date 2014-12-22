@@ -348,21 +348,21 @@ public inline fun <reified R> Stream<*>.filterIsInstance(): Stream<R> {
 /**
  * Returns a list containing all elements that are instances of specified class
  */
-public fun <T, R : T> Array<out T>.filterIsInstance(klass: Class<R>): List<R> {
+public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
 
 /**
  * Returns a list containing all elements that are instances of specified class
  */
-public fun <T, R : T> Iterable<T>.filterIsInstance(klass: Class<R>): List<R> {
+public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
 
 /**
  * Returns a stream containing all elements that are instances of specified class
  */
-public fun <T, R : T> Stream<T>.filterIsInstance(klass: Class<R>): Stream<R> {
+public fun <R> Stream<*>.filterIsInstance(klass: Class<R>): Stream<R> {
     return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
 }
 
@@ -393,7 +393,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Stream<*>.filterIsIns
 /**
  * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Array<out T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
@@ -401,7 +401,7 @@ public fun <T, C : MutableCollection<in R>, R : T> Array<out T>.filterIsInstance
 /**
  * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Iterable<T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
@@ -409,7 +409,7 @@ public fun <T, C : MutableCollection<in R>, R : T> Iterable<T>.filterIsInstanceT
 /**
  * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Stream<T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+public fun <C : MutableCollection<in R>, R> Stream<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }

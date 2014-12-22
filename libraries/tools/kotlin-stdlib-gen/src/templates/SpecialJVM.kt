@@ -75,8 +75,9 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstanceTo(destination: C, klass: Class<R>)") {
         doc { "Appends all elements that are instances of specified class to the given *destination*" }
+        receiverAsterisk(true)
         typeParam("C : MutableCollection<in R>")
-        typeParam("R : T")
+        typeParam("R")
         returns("C")
         exclude(ArraysOfPrimitives, Strings)
         body {
@@ -89,7 +90,8 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstance(klass: Class<R>)") {
         doc { "Returns a list containing all elements that are instances of specified class" }
-        typeParam("R : T")
+        receiverAsterisk(true)
+        typeParam("R")
         returns("List<R>")
         body {
             """
