@@ -544,6 +544,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
+            @TestMetadata("samePriorityForFunctionsAndProperties.kt")
+            public void testSamePriorityForFunctionsAndProperties() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/samePriorityForFunctionsAndProperties.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("topLevelFromTopLevel.kt")
             public void testTopLevelFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/topLevelFromTopLevel.kt");

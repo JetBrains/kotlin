@@ -1,0 +1,12 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun kotlin.Int.baz(): kotlin.Unit
+
+internal final class C {
+    public constructor C()
+    internal final val baz: kotlin.Int = 12
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

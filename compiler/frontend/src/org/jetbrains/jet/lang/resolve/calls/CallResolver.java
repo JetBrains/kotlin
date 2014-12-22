@@ -119,10 +119,19 @@ public class CallResolver {
         else {
             callableDescriptorCollectors = CallableDescriptorCollectors.VARIABLES;
         }
-        TracingStrategy tracing = TracingStrategyImpl.create(nameExpression, context.call);
-        List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks =
-                taskPrioritizer.<VariableDescriptor, VariableDescriptor>computePrioritizedTasks(context, referencedName, tracing, callableDescriptorCollectors);
-        return doResolveCallOrGetCachedResults(context, prioritizedTasks, CallTransformer.PROPERTY_CALL_TRANSFORMER, tracing);
+        return computeTasksAndResolveCall(
+                context, referencedName, nameExpression,
+                callableDescriptorCollectors, CallTransformer.VARIABLE_CALL_TRANSFORMER);
+    }
+
+    @NotNull
+    public OverloadResolutionResults<CallableDescriptor> resolveCallForMember(
+            @NotNull JetSimpleNameExpression nameExpression,
+            @NotNull BasicCallResolutionContext context
+    ) {
+        return computeTasksAndResolveCall(
+                context, nameExpression.getReferencedNameAsName(), nameExpression,
+                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.MEMBER_CALL_TRANSFORMER);
     }
 
     @NotNull
@@ -132,21 +141,10 @@ public class CallResolver {
             @NotNull JetReferenceExpression functionReference,
             @NotNull Name name
     ) {
-        return resolveCallWithGivenName(
-                BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED),
-                functionReference,
-                name
-        );
-    }
-
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
-            @NotNull BasicCallResolutionContext context,
-            @NotNull JetReferenceExpression functionReference,
-            @NotNull Name name
-    ) {
-        TracingStrategy tracing = TracingStrategyImpl.create(functionReference, context.call);
-        return resolveCallWithGivenName(context, name, tracing, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED);
+        return computeTasksAndResolveCall(
+                callResolutionContext, name, functionReference,
+                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
     @NotNull
@@ -154,19 +152,33 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull TracingStrategy tracing
     ) {
-        return resolveCallWithGivenName(context, Name.identifier("invoke"), tracing, CallableDescriptorCollectors.FUNCTIONS);
+        return computeTasksAndResolveCall(
+                context, Name.identifier("invoke"), tracing,
+                CallableDescriptorCollectors.FUNCTIONS, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksAndResolveCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Name name,
+            @NotNull JetReferenceExpression referenceExpression,
+            @NotNull CallableDescriptorCollectors<D> collectors,
+            @NotNull CallTransformer<D, F> callTransformer
+    ) {
+        TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
+        return computeTasksAndResolveCall(context, name, tracing, collectors, callTransformer);
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
-            @NotNull CallableDescriptorCollectors<CallableDescriptor> collectors
+            @NotNull CallableDescriptorCollectors<D> collectors,
+            @NotNull CallTransformer<D, F> callTransformer
     ) {
-        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, tracing, collectors);
-        return doResolveCallOrGetCachedResults(context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+        List<ResolutionTask<D, F>> tasks = taskPrioritizer.<D, F>computePrioritizedTasks(context, name, tracing, collectors);
+        return doResolveCallOrGetCachedResults(context, tasks, callTransformer, tracing);
     }
 
     @NotNull
