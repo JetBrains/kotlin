@@ -118,6 +118,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("extractThisInTrait.kt")
+        public void testExtractThisInTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extractThisInTrait.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("extractVariablesFromCall.kt")
         public void testExtractVariablesFromCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extractVariablesFromCall.kt");
