@@ -108,6 +108,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("PrivateToThis")
+    public void testPrivateToThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/PrivateToThis/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMembersAnnotatedPackage")
     public void testTopLevelMembersAnnotatedPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersAnnotatedPackage/");

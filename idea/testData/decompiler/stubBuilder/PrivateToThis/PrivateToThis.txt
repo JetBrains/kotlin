@@ -1,0 +1,36 @@
+PsiJetFileStubImpl[package=p]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=p]
+  CLASS:[fqName=p.PrivateToThis, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=PrivateToThis, superNames=[]]
+    MODIFIER_LIST:[internal final]
+    TYPE_PARAMETER_LIST:
+      TYPE_PARAMETER:[fqName=null, isInVariance=true, isOutVariance=false, name=I]
+        MODIFIER_LIST:[in]
+    VALUE_PARAMETER_LIST:
+    CLASS_BODY:
+      PROPERTY:[fqName=p.PrivateToThis.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=bar]
+        MODIFIER_LIST:[private final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=I]
+      PROPERTY:[fqName=p.PrivateToThis.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=foo]
+        MODIFIER_LIST:[private final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=I]
+      PROPERTY:[fqName=p.PrivateToThis.val_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=val_with_accessors]
+        MODIFIER_LIST:[private final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=I]
+      PROPERTY:[fqName=p.PrivateToThis.var_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=var_with_accessors]
+        MODIFIER_LIST:[private final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=I]
+      FUN:[fqName=p.PrivateToThis.bas, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=bas]
+        MODIFIER_LIST:[private final]
+        VALUE_PARAMETER_LIST:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=I]

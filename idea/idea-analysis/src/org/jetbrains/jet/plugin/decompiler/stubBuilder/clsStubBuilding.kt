@@ -132,7 +132,7 @@ enum class FlagsToModifiers {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
             val visibility = Flags.VISIBILITY.get(flags)
             return when (visibility) {
-                ProtoBuf.Visibility.PRIVATE -> JetTokens.PRIVATE_KEYWORD
+                ProtoBuf.Visibility.PRIVATE, ProtoBuf.Visibility.PRIVATE_TO_THIS -> JetTokens.PRIVATE_KEYWORD
                 ProtoBuf.Visibility.INTERNAL -> JetTokens.INTERNAL_KEYWORD
                 ProtoBuf.Visibility.PROTECTED -> JetTokens.PROTECTED_KEYWORD
                 ProtoBuf.Visibility.PUBLIC -> JetTokens.PUBLIC_KEYWORD
