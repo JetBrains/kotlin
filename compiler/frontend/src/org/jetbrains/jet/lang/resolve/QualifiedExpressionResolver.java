@@ -46,7 +46,7 @@ public class QualifiedExpressionResolver {
 
     public enum LookupMode {
         // Only classifier and packages are resolved
-        ONLY_CLASSES,
+        ONLY_CLASSES_AND_PACKAGES,
 
         // Resolve all descriptors
         EVERYTHING
@@ -115,7 +115,7 @@ public class QualifiedExpressionResolver {
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
+        if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
             return true;
         }
 
@@ -169,11 +169,11 @@ public class QualifiedExpressionResolver {
         }
         JetUserType qualifier = userType.getQualifier();
         if (qualifier == null) {
-            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, trace, LookupMode.ONLY_CLASSES,
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, trace, LookupMode.ONLY_CLASSES_AND_PACKAGES,
                                                            false, true);
         }
         Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace);
-        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, outerScope, LookupMode.ONLY_CLASSES, true);
+        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, outerScope, LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
     }
 
     @NotNull
@@ -241,7 +241,7 @@ public class QualifiedExpressionResolver {
             @NotNull LookupMode lookupMode,
             @NotNull ClassDescriptor descriptor
     ) {
-        JetScope scope = lookupMode == LookupMode.ONLY_CLASSES
+        JetScope scope = lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES
                          ? descriptor.getUnsubstitutedInnerClassesScope()
                          : descriptor.getDefaultType().getMemberScope();
         results.add(lookupSimpleNameReference(selector, scope, lookupMode, false));
@@ -335,7 +335,7 @@ public class QualifiedExpressionResolver {
         }
 
         Collection<DeclarationDescriptor> filteredDescriptors;
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
+        if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
             filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_PACKAGE_VIEWS);
         }
         else {

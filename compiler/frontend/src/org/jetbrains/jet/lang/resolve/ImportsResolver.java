@@ -67,7 +67,7 @@ public class ImportsResolver {
     }
 
     public void processTypeImports(@NotNull TopDownAnalysisContext c) {
-        processImports(c, LookupMode.ONLY_CLASSES);
+        processImports(c, LookupMode.ONLY_CLASSES_AND_PACKAGES);
     }
 
     public void processMembersImports(@NotNull TopDownAnalysisContext c) {
@@ -129,7 +129,7 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors);
             }
 
-            if (lookupMode != LookupMode.ONLY_CLASSES) {
+            if (lookupMode != LookupMode.ONLY_CLASSES_AND_PACKAGES) {
                 checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }
