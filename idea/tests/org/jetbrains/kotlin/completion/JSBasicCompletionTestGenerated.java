@@ -900,6 +900,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("NoParameterAnnotationAutoPopup1.kt")
+            public void testNoParameterAnnotationAutoPopup1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/NoParameterAnnotationAutoPopup1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoParameterAnnotationAutoPopup2.kt")
+            public void testNoParameterAnnotationAutoPopup2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/NoParameterAnnotationAutoPopup2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterAnnotation1.kt")
             public void testParameterAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation1.kt");
@@ -951,6 +963,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("ParameterAnnotationArgs.kt")
             public void testParameterAnnotationArgs() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotationArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotationAutoPopup1.kt")
+            public void testParameterAnnotationAutoPopup1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotationAutoPopup1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotationAutoPopup2.kt")
+            public void testParameterAnnotationAutoPopup2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotationAutoPopup2.kt");
                 doTest(fileName);
             }
         }

@@ -1,4 +1,5 @@
-fun foo(koltin.<caret>) { }
+fun foo(kotlin.<caret>) { }
 
+// INVOCATION_COUNT: 1
 // EXIST: inlineOptions
 // ABSENT: String

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PatternCondition
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -216,17 +216,60 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
+    public enum class CompletionKind {
+        KEYWORDS_ONLY
+        NAMED_PARAMETERS_ONLY
+        ALL
+        TYPES
+        ANNOTATION_TYPES
+        ANNOTATION_TYPES_OR_PARAMETER_NAME
+    }
+
+    public val completionKind: CompletionKind = calcCompletionKind()
+
+    private fun calcCompletionKind(): CompletionKind {
+        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
+            return CompletionKind.NAMED_PARAMETERS_ONLY
+        }
+
+        if (reference == null) {
+            return CompletionKind.KEYWORDS_ONLY
+        }
+
+        val annotationEntry = position.getStrictParentOfType<JetAnnotationEntry>()
+        if (annotationEntry != null) {
+            val valueArgList = position.getStrictParentOfType<JetValueArgumentList>()
+            if (valueArgList == null || !annotationEntry.isAncestor(valueArgList)) {
+                val parent = annotationEntry.getParent()
+                if (parent is JetDeclarationModifierList && parent.getParent() is JetParameter) {
+                    return CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME
+                }
+                return CompletionKind.ANNOTATION_TYPES
+            }
+        }
+
+        // Check that completion in the type annotation context and if there's a qualified
+        // expression we are at first of it
+        val typeReference = position.getStrictParentOfType<JetTypeReference>()
+        if (typeReference != null) {
+            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
+            if (firstPartReference == reference.expression) {
+                return CompletionKind.TYPES
+            }
+        }
+
+        return CompletionKind.ALL
+    }
+
     override fun doComplete() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
-
-        val completionKind = completionKind()
 
         if (completionKind != CompletionKind.NAMED_PARAMETERS_ONLY) {
             val kindFilter = when (completionKind) {
                 CompletionKind.TYPES ->
                     DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
 
-                CompletionKind.ANNOTATION_TYPES ->
+                CompletionKind.ANNOTATION_TYPES,  CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME ->
                     DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
 
                 else ->
@@ -296,7 +339,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private fun addNonImported(completionKind: CompletionKind) {
         if (shouldRunTopLevelCompletion()) {
             addAllClasses {
-                if (completionKind != CompletionKind.ANNOTATION_TYPES)
+                if (completionKind != CompletionKind.ANNOTATION_TYPES && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
                     it != ClassKind.ENUM_ENTRY
                 else
                     it == ClassKind.ANNOTATION_CLASS
@@ -310,40 +353,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         if (completionKind == CompletionKind.ALL && shouldRunExtensionsCompletion()) {
             collector.addDescriptorElements(getKotlinExtensions(), suppressAutoInsertion = true)
         }
-    }
-
-    private enum class CompletionKind {
-        KEYWORDS_ONLY
-        NAMED_PARAMETERS_ONLY
-        ALL
-        TYPES
-        ANNOTATION_TYPES
-    }
-
-    private fun completionKind(): CompletionKind {
-        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) return CompletionKind.NAMED_PARAMETERS_ONLY
-
-        if (reference == null) return CompletionKind.KEYWORDS_ONLY
-
-        val modifierList = position.getStrictParentOfType<JetModifierList>()
-        if (modifierList != null) {
-            val valueArgList = position.getStrictParentOfType<JetValueArgumentList>()
-            if (valueArgList == null || !modifierList.isAncestor(valueArgList)) {
-                return CompletionKind.ANNOTATION_TYPES
-            }
-        }
-
-        // Check that completion in the type annotation context and if there's a qualified
-        // expression we are at first of it
-        val typeReference = position.getStrictParentOfType<JetTypeReference>()
-        if (typeReference != null) {
-            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
-            if (firstPartReference == reference.expression) {
-                return CompletionKind.TYPES
-            }
-        }
-
-        return CompletionKind.ALL
     }
 
     private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean) {

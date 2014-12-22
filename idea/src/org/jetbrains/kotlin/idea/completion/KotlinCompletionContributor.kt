@@ -207,7 +207,14 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             val configuration = CompletionSessionConfiguration(parameters)
             if (parameters.getCompletionType() == CompletionType.BASIC) {
-                val somethingAdded = BasicCompletionSession(configuration, parameters, result).complete()
+                val session = BasicCompletionSession(configuration, parameters, result)
+
+                if (session.completionKind == BasicCompletionSession.CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME && parameters.isAutoPopup()) {
+                    result.stopHere()
+                    return
+                }
+
+                val somethingAdded = session.complete()
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true,
