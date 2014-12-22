@@ -37,6 +37,7 @@ import com.sun.jdi.InvocationException
 import com.sun.jdi.Method
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
+import com.intellij.debugger.engine.evaluation.EvaluateException
 
 public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
@@ -76,10 +77,10 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 val threadReference = context.getSuspendContext().getThread()?.getThreadReference()
                 if (method != null && threadReference != null) {
                     val propValue = try {
-                        value.invokeMethod(threadReference, method, listOf(), context.getSuspendContext().getSuspendPolicy())
+                        context.getDebugProcess().invokeInstanceMethod(context, value, method, listOf(), context.getSuspendContext().getSuspendPolicy())
                     }
-                    catch(e: InvocationException) {
-                        e.exception()
+                    catch(e: EvaluateException) {
+                        e.getExceptionFromTargetVM()
                     }
                     if (propValue != null) {
                         val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
