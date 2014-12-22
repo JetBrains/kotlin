@@ -19,7 +19,10 @@ package org.jetbrains.jet.plugin.structureView;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.Queryable;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -126,12 +129,21 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
             return null;
         }
 
-        JetDeclaration declaration = (JetDeclaration) element;
+        final JetDeclaration declaration = (JetDeclaration) element;
         if (declaration instanceof JetClassInitializer) {
             return null;
         }
 
-        return ResolvePackage.resolveToDescriptor(declaration);
+        return ApplicationManager.getApplication().runReadAction(new Computable<DeclarationDescriptor>() {
+            @Override
+            public DeclarationDescriptor compute() {
+                if (!DumbService.isDumb(element.getProject())) {
+                    return ResolvePackage.resolveToDescriptor(declaration);
+                }
+
+                return null;
+            }
+        });
     }
 
     @NotNull
