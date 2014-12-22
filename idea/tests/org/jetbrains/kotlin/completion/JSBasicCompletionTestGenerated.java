@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTest {
     @TestMetadata("idea/testData/completion/basic/common")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class, Common.TypeArgsOrNot.class, Common.Visibility.class})
+    @InnerTestClasses({Common.Annotations.class, Common.Extensions.class, Common.NamedParameters.class, Common.TypeArgsOrNot.class, Common.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Common extends AbstractJSBasicCompletionTest {
         @TestMetadata("AfterFloatOnNewLine.kt")
@@ -890,6 +890,69 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         public void testVariableClassName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/VariableClassName.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/completion/basic/common/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotations extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ParameterAnnotation1.kt")
+            public void testParameterAnnotation1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation2.kt")
+            public void testParameterAnnotation2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation3.kt")
+            public void testParameterAnnotation3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation4.kt")
+            public void testParameterAnnotation4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation5.kt")
+            public void testParameterAnnotation5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation6.kt")
+            public void testParameterAnnotation6() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation6.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation8.kt")
+            public void testParameterAnnotation8() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation8.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotation9.kt")
+            public void testParameterAnnotation9() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation9.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterAnnotationArgs.kt")
+            public void testParameterAnnotationArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotationArgs.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/completion/basic/common/extensions")

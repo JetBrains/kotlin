@@ -1,0 +1,4 @@
+fun foo(koltin.<caret>) { }
+
+// EXIST: inlineOptions
+// ABSENT: String

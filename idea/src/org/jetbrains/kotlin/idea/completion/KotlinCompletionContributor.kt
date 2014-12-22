@@ -59,6 +59,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.psi.JetTypeElement
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -93,6 +95,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
+                    ?: specialInParameterListDummyIdentifier(tokenBefore)
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
@@ -342,5 +345,35 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             current = current.prevLeaf(skipEmptyElements = true) ?: return null
         }
+    }
+
+    private fun specialInParameterListDummyIdentifier(tokenBefore: PsiElement?): String? {
+        if (tokenBefore == null) return null
+        var parent = tokenBefore.getParent()
+        while (parent != null) {
+            if (parent is JetParameterList) {
+                val balance = countParenthesisBalance(tokenBefore, parent)
+                val count = if (balance > 1) balance - 1 else 0
+                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B$"
+            }
+            if (parent is JetTypeElement) return null
+            if (parent is JetAnnotationEntry) return null
+            parent = parent.getParent()
+        }
+        return null
+    }
+
+    private fun countParenthesisBalance(at: PsiElement, container: PsiElement): Int {
+        val stopAt = container.prevLeaf()
+        var current: PsiElement? = at
+        var balance = 0
+        while (current != stopAt) {
+            when (current!!.getNode().getElementType()) {
+                JetTokens.LPAR -> balance++
+                JetTokens.RPAR -> balance--
+            }
+            current = current!!.prevLeaf()
+        }
+        return balance
     }
 }
