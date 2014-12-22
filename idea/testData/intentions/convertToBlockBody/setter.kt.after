@@ -1,6 +1,6 @@
 var foo: String
     get() = "abc"
-    set(value)  {
+    set(value) {
         doSet(value)
     }
 

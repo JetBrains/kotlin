@@ -44,6 +44,20 @@ var
         .
         extVar     :    Int     =    1
 //-----------------------
+public    var     varWithAccessors1:Int
+    get()    { return  1 }
+    set  (value    :  Int)  { /**/ }
+
+public       var         varWithAccessors2:    Int
+    get()  {
+    1
+}
+    set(value: Int)
+    {
+        /**/
+    }
+}
+//-----------------------
 annotation class A1
 annotation class A2
 

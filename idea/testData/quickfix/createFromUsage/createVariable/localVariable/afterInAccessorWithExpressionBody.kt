@@ -3,7 +3,7 @@
 // ERROR: Variable 'foo' must be initialized
 
 class A {
-    val t: Int get()  {
+    val t: Int get() {
         val foo: Int
         return foo
     }
