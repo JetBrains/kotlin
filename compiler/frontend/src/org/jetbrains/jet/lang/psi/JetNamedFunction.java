@@ -77,6 +77,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
         return getEqualsToken() == null;
     }
 
+    @Override
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(JetTokens.EQ);

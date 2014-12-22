@@ -52,6 +52,12 @@ public class JetFunctionLiteral extends JetFunctionNotStubbed {
         return (JetBlockExpression) super.getBodyExpression();
     }
 
+    @Nullable
+    @Override
+    public PsiElement getEqualsToken() {
+        return null;
+    }
+
     @NotNull
     public PsiElement getLBrace() {
         return findChildByType(JetTokens.LBRACE);
