@@ -1,0 +1,32 @@
+buildscript {
+  ext.kotlin_version = "0.1-SNAPSHOT"
+  repositories {
+    mavenCentral()
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin-core:$kotlin_version"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-subplugin-example:$kotlin_version"
+  }
+}
+
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+
+apply plugin: KotlinPlugin
+
+repositories {
+  maven {
+     url 'file://' + pathToKotlinPlugin
+  }
+  mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion="1.4"
+}
