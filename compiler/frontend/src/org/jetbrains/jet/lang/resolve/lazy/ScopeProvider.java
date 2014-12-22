@@ -54,6 +54,8 @@ public class ScopeProvider {
 
     private final NotNullLazyValue<JetScope> defaultImportsScope;
 
+    private final MemoizedFunctionToNotNull<JetFile, JetScope> fileScopes;
+
     @SuppressWarnings("ConstantConditions") @NotNull
     private AdditionalFileScopeProvider additionalFileScopeProvider = null;
 
@@ -78,6 +80,13 @@ public class ScopeProvider {
                 return createScopeWithDefaultImports();
             }
         });
+
+        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, JetScope>() {
+            @Override
+            public JetScope invoke(JetFile file) {
+                return createFileScope(file);
+            }
+        });
     }
 
     private LazyImportScope createExplicitImportScope(@NotNull JetFile file) {
@@ -91,12 +100,17 @@ public class ScopeProvider {
 
     @NotNull
     public JetScope getFileScope(@NotNull JetFile file) {
+        return fileScopes.invoke(file);
+    }
+
+    private JetScope createFileScope(@NotNull JetFile file) {
         return new ChainedScope(resolveSession.getPackageFragment(file.getPackageFqName()),
                                 "File scope: " + file.getName(),
                                 collectFileScopes(file));
     }
 
-    public JetScope[] collectFileScopes(@NotNull JetFile file) {
+    @NotNull
+    private JetScope[] collectFileScopes(@NotNull JetFile file) {
         List<JetScope> list = new ArrayList<JetScope>();
         list.add(new NoSubpackagesInPackageScope(getFilePackageDescriptor(file)));
         list.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()));
