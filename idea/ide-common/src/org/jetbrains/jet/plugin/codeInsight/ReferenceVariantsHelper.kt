@@ -173,7 +173,7 @@ public class ReferenceVariantsHelper(
 
     private fun getQualifierRuntimeType(receiver: JetExpression): JetType? {
         val type = context[BindingContext.EXPRESSION_TYPE, receiver]
-        if (TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
+        if (type != null && TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
             val evaluator = receiver.getContainingFile().getCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR)
             return evaluator?.invoke(receiver)
         }
