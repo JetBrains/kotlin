@@ -169,6 +169,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         label.set(answer.createActionLabel(labelText, action));
     }
 
+    @NotNull
     @Override
     public Key<EditorNotificationPanel> getKey() {
         return KEY;
@@ -176,7 +177,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @Nullable
     @Override
-    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
+    public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor) {
         try {
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 
