@@ -29,7 +29,6 @@
             <exclude name="kotlin/io/**" />
             <exclude name="kotlin/math/**" />
             <exclude name="kotlin/template/**" />
-            <exclude name="kotlin/util/**" />
 
             <!-- Temporary disabled -->
             <!--TODO fix: (84, 27) Unresolved reference: copyOf (_SpecialJVM.kt)-->
