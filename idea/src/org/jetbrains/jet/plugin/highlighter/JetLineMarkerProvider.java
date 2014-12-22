@@ -159,6 +159,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         Set<JetProperty> properties = Sets.newHashSet();
 
         for (PsiElement element : elements) {
+            ProgressManager.checkCanceled();
+
             if (element instanceof JetClass) {
                 collectInheritedClassMarker((JetClass) element, result);
             }
