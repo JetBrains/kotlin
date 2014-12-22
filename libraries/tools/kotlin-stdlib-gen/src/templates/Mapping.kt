@@ -51,9 +51,14 @@ fun mapping(): List<GenericFunction> {
         typeParam("R")
         returns("List<R>")
         body {
-            "return mapIndexedTo(ArrayList<R>(), transform)"
+            "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
-
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            "return mapIndexedTo(ArrayList<R>(size()), transform)"
+        }
+        body(Strings) {
+            "return mapIndexedTo(ArrayList<R>(length()), transform)"
+        }
         inline(false, Streams)
         returns(Streams) { "Stream<R>" }
         doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element and its index of the original stream" }

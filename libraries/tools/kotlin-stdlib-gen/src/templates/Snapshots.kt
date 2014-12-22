@@ -40,16 +40,9 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toArrayList()") {
         doc { "Returns an ArrayList of all elements" }
         returns("ArrayList<T>")
-        body { "return toCollection(ArrayList<T>())" }
-
-        // ISSUE: JavaScript can't perform this operation
-        /*
-                body(Collections) {
-                    """
-                    return ArrayList<T>(this)
-                    """
-                }
-        */
+        body { "return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))" }
+        body(Streams) { "return toCollection(ArrayList<T>())" }
+        body(Strings) { "return toCollection(ArrayList<T>(length()))" }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size())
@@ -76,22 +69,10 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toList()") {
         doc { "Returns a List containing all elements" }
         returns("List<T>")
-        body { "return toCollection(ArrayList<T>())" }
-
-        // ISSUE: JavaScript can't perform this operations
-        /*
-                body(Collections) {
-                    """
-                    return ArrayList<T>(this)
-                    """
-                }
-                body(ArraysOfObjects) {
-                    """
-                    return ArrayList<T>(Arrays.asList(*this))
-                    """
-                }
-        */
-        body(ArraysOfPrimitives) {
+        body { "return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))" }
+        body(Streams) { "return toCollection(ArrayList<T>())" }
+        body(Strings) { "return toCollection(ArrayList<T>(length()))" }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size())
             for (item in this) list.add(item)

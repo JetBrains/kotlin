@@ -92,7 +92,7 @@ public fun ShortArray.toArrayList(): ArrayList<Short> {
  * Returns an ArrayList of all elements
  */
 public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
-    return toCollection(ArrayList<T>())
+    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
 /**
@@ -106,7 +106,7 @@ public fun <T> Stream<T>.toArrayList(): ArrayList<T> {
  * Returns an ArrayList of all elements
  */
 public fun String.toArrayList(): ArrayList<Char> {
-    return toCollection(ArrayList<Char>())
+    return toCollection(ArrayList<Char>(length()))
 }
 
 /**
@@ -411,7 +411,9 @@ public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
  * Returns a List containing all elements
  */
 public fun <T> Array<out T>.toList(): List<T> {
-    return toCollection(ArrayList<T>())
+    val list = ArrayList<T>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
@@ -490,7 +492,7 @@ public fun ShortArray.toList(): List<Short> {
  * Returns a List containing all elements
  */
 public fun <T> Iterable<T>.toList(): List<T> {
-    return toCollection(ArrayList<T>())
+    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
 /**
@@ -504,7 +506,7 @@ public fun <T> Stream<T>.toList(): List<T> {
  * Returns a List containing all elements
  */
 public fun String.toList(): List<Char> {
-    return toCollection(ArrayList<Char>())
+    return toCollection(ArrayList<Char>(length()))
 }
 
 /**

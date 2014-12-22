@@ -13,7 +13,7 @@ import java.util.*
 public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -26,7 +26,7 @@ public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (
 public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -39,7 +39,7 @@ public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boo
 public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -52,7 +52,7 @@ public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, 
 public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -65,7 +65,7 @@ public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, 
 public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Double, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -78,7 +78,7 @@ public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Doub
 public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -91,7 +91,7 @@ public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float
 public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -104,7 +104,7 @@ public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R)
 public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -117,7 +117,7 @@ public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, 
 public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -130,20 +130,7 @@ public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short
 public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = array.iterator()
-    val list = arrayListOf<V>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
- */
-public inline fun <R, V> String.merge(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(collectionSizeOrDefault(10))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -156,7 +143,7 @@ public inline fun <R, V> String.merge(array: Array<out R>, transform: (Char, R) 
 public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -169,7 +156,7 @@ public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T
 public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -182,7 +169,7 @@ public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Bool
 public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -195,7 +182,7 @@ public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R
 public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -208,7 +195,7 @@ public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R
 public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -221,7 +208,7 @@ public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Doubl
 public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -234,7 +221,7 @@ public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float,
 public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -247,7 +234,7 @@ public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) 
 public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -260,7 +247,7 @@ public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R
 public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(size())
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -273,20 +260,7 @@ public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short,
 public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = arrayListOf<V>()
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
- */
-public inline fun <R, V> String.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = arrayListOf<V>()
+    val list = ArrayList<V>(collectionSizeOrDefault(10))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -880,13 +854,6 @@ public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> String.zip(array: Array<out R>): List<Pair<Char, R>> {
-    return merge(array) { (t1, t2) -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
 public fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
     return merge(other) { (t1, t2) -> t1 to t2 }
 }
@@ -955,19 +922,12 @@ public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 }
 
 /**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public fun <R> String.zip(other: Iterable<R>): List<Pair<Char, R>> {
-    return merge(other) { (t1, t2) -> t1 to t2 }
-}
-
-/**
  * Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
  */
 public fun String.zip(other: String): List<Pair<Char, Char>> {
     val first = iterator()
     val second = other.iterator()
-    val list = ArrayList<Pair<Char, Char>>()
+    val list = ArrayList<Pair<Char, Char>>(length())
     while (first.hasNext() && second.hasNext()) {
         list.add(first.next() to second.next())
     }
