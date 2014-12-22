@@ -19,7 +19,6 @@ package org.jetbrains.jet.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,6 +33,12 @@ import java.util.regex.Pattern;
 public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
+    }
+
+    @TestMetadata("AnnotationInTrait.A.kt")
+    public void testAnnotationInTrait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/AnnotationInTrait.A.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("ClassInObject.A.kt")

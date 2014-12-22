@@ -16,21 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
@@ -45,10 +37,6 @@ import org.jetbrains.org.objectweb.asm.*;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;
-
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public abstract class AnnotationCodegen {
 
@@ -84,11 +72,9 @@ public abstract class AnnotationCodegen {
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};
 
     private final JetTypeMapper typeMapper;
-    private final BindingContext bindingContext;
 
     private AnnotationCodegen(JetTypeMapper mapper) {
         typeMapper = mapper;
-        bindingContext = typeMapper.getBindingContext();
     }
 
     /**
@@ -103,48 +89,12 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        PsiElement psiElement;
-        if (annotated instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) annotated).getKind() == DELEGATION) {
-            psiElement = null;
-        }
-        else {
-            psiElement = descriptorToDeclaration((DeclarationDescriptor) annotated);
-        }
-
-        JetModifierList modifierList = null;
-        if (annotated instanceof ConstructorDescriptor && psiElement instanceof JetClass) {
-            modifierList = ((JetClass) psiElement).getPrimaryConstructorModifierList();
-        }
-        else if (psiElement instanceof JetModifierListOwner) {
-            modifierList = ((JetModifierListOwner) psiElement).getModifierList();
-        }
-
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<String>();
 
-        if (modifierList == null) {
-            if (annotated instanceof CallableMemberDescriptor &&
-                JvmCodegenUtil.getDirectMember((CallableMemberDescriptor) annotated) instanceof DeserializedCallableMemberDescriptor) {
-                for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
-                    String descriptor = genAnnotation(annotation);
-                    if (descriptor != null) {
-                        annotationDescriptorsAlreadyPresent.add(descriptor);
-                    }
-                }
-            }
-        }
-        else {
-            List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
-            for (JetAnnotationEntry annotationEntry : annotationEntries) {
-                ResolvedCall<?> resolvedCall = getResolvedCall(annotationEntry, bindingContext);
-                if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
-
-                AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
-                if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
-
-                String descriptor = genAnnotation(annotationDescriptor);
-                if (descriptor != null) {
-                    annotationDescriptorsAlreadyPresent.add(descriptor);
-                }
+        for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
+            String descriptor = genAnnotation(annotation);
+            if (descriptor != null) {
+                annotationDescriptorsAlreadyPresent.add(descriptor);
             }
         }
 
