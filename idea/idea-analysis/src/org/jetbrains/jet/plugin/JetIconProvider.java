@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -36,7 +37,7 @@ import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDecl
 import javax.swing.*;
 import java.util.List;
 
-public class JetIconProvider extends IconProvider {
+public class JetIconProvider extends IconProvider implements DumbAware {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
