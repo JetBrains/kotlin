@@ -37,13 +37,9 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
 
 public class ImportsResolver {
-    @NotNull
     private ModuleDescriptor moduleDescriptor;
-    @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
-    @NotNull
     private BindingTrace trace;
-    @NotNull
     private JetImportsFactory importsFactory;
 
     @Inject
