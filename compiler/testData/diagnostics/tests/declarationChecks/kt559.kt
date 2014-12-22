@@ -25,6 +25,6 @@ abstract class D(): A() {
         super.<!ABSTRACT_SUPER_CALL!>i<!>
 
         super.fff() //everything is ok
-        return super.<!ABSTRACT_SUPER_CALL!>foo()<!>  //no error!!
+        return super.<!ABSTRACT_SUPER_CALL!>foo<!>()  //no error!!
     }
 }

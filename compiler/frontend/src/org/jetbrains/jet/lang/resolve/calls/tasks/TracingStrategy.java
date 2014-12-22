@@ -81,6 +81,9 @@ public interface TracingStrategy {
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
+        public void abstractSuperCall(@NotNull BindingTrace trace) {}
+
+        @Override
         public void nestedClassAccessViaInstanceReference(
                 @NotNull BindingTrace trace,
                 @NotNull ClassDescriptor classDescriptor,
@@ -135,6 +138,8 @@ public interface TracingStrategy {
     );
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
+
+    void abstractSuperCall(@NotNull BindingTrace trace);
 
     void nestedClassAccessViaInstanceReference(
             @NotNull BindingTrace trace,

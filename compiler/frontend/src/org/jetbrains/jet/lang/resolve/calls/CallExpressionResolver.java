@@ -79,7 +79,6 @@ public class CallExpressionResolver {
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                 BasicCallResolutionContext.create(context, call, checkArguments));
         if (!results.isNothing()) {
-            checkSuper(call.getExplicitReceiver(), results, context.trace, callExpression);
             result[0] = true;
             return OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
         }
@@ -108,7 +107,6 @@ public class CallExpressionResolver {
             if (!isQualifier) {
                 result[0] = true;
                 temporaryForVariable.commit();
-                checkSuper(receiver, resolutionResult, context.trace, nameExpression);
                 return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
             }
         }
@@ -237,23 +235,6 @@ public class CallExpressionResolver {
             }
         }
         return false;
-    }
-
-    private static void checkSuper(
-            @NotNull ReceiverValue receiverValue,
-            @NotNull OverloadResolutionResults<?> results,
-            @NotNull BindingTrace trace,
-            @NotNull JetExpression expression
-    ) {
-        if (!results.isSingleResult()) return;
-        if (!(receiverValue instanceof ExpressionReceiver)) return;
-        JetExpression receiver = ((ExpressionReceiver) receiverValue).getExpression();
-        CallableDescriptor descriptor = results.getResultingDescriptor();
-        if (receiver instanceof JetSuperExpression && descriptor instanceof MemberDescriptor) {
-            if (((MemberDescriptor) descriptor).getModality() == Modality.ABSTRACT) {
-                trace.report(ABSTRACT_SUPER_CALL.on(expression));
-            }
-        }
     }
 
     @NotNull

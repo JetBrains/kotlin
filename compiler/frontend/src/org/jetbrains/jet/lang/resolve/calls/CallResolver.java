@@ -223,29 +223,9 @@ public class CallResolver {
         JetReferenceExpression functionReference;
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
-            functionReference = expression;
-
             Name name = expression.getReferencedNameAsName();
-
-            TracingStrategy tracing = TracingStrategyImpl.create(expression, context.call);
-            prioritizedTasks = taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(
-                    context, name, tracing, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
-            ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
-                @Override
-                public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
-                    if (descriptor instanceof ConstructorDescriptor) {
-                        Modality modality = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getModality();
-                        if (modality == Modality.ABSTRACT) {
-                            tracing.instantiationOfAbstractClass(trace);
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            };
-            for (ResolutionTask task : prioritizedTasks) {
-                task.setCheckingStrategy(abstractConstructorCheck);
-            }
+            return computeTasksAndResolveCall(context, name, expression, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES,
+                                              CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
         else {
             JetValueArgumentList valueArgumentList = context.call.getValueArgumentList();

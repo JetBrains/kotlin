@@ -472,6 +472,11 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
+        public void abstractSuperCall(@NotNull BindingTrace trace) {
+            logError();
+        }
+
+        @Override
         public void nestedClassAccessViaInstanceReference(
                 @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor,
                 @NotNull ExplicitReceiverKind explicitReceiverKind
