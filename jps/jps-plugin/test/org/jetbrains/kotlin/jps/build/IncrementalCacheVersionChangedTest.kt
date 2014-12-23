@@ -37,7 +37,7 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
 
     override fun performAdditionalModifications() {
         val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)
-        val relativePath = "module/${File.separator}${IncrementalCacheImpl.DIRECTORY_NAME}/${CacheFormatVersion.FORMAT_VERSION_TXT}"
+        val relativePath = "module/${CacheFormatVersion.FORMAT_VERSION_FILE_PATH}"
         val cacheVersionFile = File(storageForTargetType, relativePath)
 
         assertTrue(cacheVersionFile.exists())

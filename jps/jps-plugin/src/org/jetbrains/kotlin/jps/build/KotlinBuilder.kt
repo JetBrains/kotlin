@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -88,8 +89,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val dataManager = context.getProjectDescriptor().dataManager
 
-        if (chunk.getTargets().any { CacheFormatVersion(File(dataManager.getDataPaths().getTargetDataRoot(it), IncrementalCacheImpl.DIRECTORY_NAME)).isIncompatible() }) {
-            chunk.getTargets().forEach { dataManager.getStorage(it, IncrementalCacheStorageProvider).clean() }
+        if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
+            chunk.getTargets().forEach { dataManager.getKotlinCache(it).clean() }
             return CHUNK_REBUILD_REQUIRED
         }
 
@@ -100,7 +101,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
 
-        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
+        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
         val environment = createCompileEnvironment(incrementalCaches)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -164,7 +165,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return OK
     }
 
-    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>): CompilerEnvironment {
+    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>): CompilerEnvironment {
         val compilerServices = Services.Builder()
                 .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
                 .build()
