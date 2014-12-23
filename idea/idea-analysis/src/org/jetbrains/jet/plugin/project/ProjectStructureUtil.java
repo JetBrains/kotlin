@@ -59,7 +59,7 @@ public class ProjectStructureUtil {
     public static boolean isJavaKotlinModule(@NotNull Module module) {
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(
                 hasKotlinFilesOnlyInTests(module));
-        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(scope) != null;
+        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(module.getProject(), scope) != null;
     }
 
     public static boolean isJsKotlinModule(@NotNull final Module module) {

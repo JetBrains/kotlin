@@ -153,7 +153,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(scope) != null;
+        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(project, scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {
