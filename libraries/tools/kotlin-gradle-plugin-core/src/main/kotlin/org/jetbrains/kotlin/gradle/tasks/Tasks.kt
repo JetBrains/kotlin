@@ -30,6 +30,7 @@ import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jet.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.jet.utils.LibraryUtils
 
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
@@ -203,7 +204,13 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.outputFile = outputFile()
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
-        args.libraryFiles = (kotlinOptions.libraryFiles + getProject().getConfigurations().getByName("compile").map{ it.canonicalPath }).copyToArray()
+
+        val kotlinJsLibsFromDependencies =
+                getProject().getConfigurations().getByName("compile")
+                        .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
+                        .map { it.getAbsolutePath() }
+
+        args.libraryFiles = (kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies).copyToArray()
         args.target = kotlinOptions.target
         args.sourceMap = kotlinOptions.sourceMap
 
