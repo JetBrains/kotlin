@@ -474,6 +474,9 @@
             isEmpty: function () {
                 return this.map.$size === 0;
             },
+            size: function () {
+                return this.map.size();
+            },
             // TODO: test it
             contains: function (o) {
                 return this.map.containsValue_za3rmp$(o);
