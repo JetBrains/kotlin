@@ -21,11 +21,13 @@ import org.jetbrains.jet.lang.psi.JetBlockStringTemplateEntry
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import java.util.regex.*
+import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<JetBlockStringTemplateEntry>(
         "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {
 
     class object {
+        val INSTANCE = RemoveCurlyBracesFromTemplateIntention()
         val pattern = Pattern.compile("[a-zA-Z0-9_].*")
     }
 
@@ -35,10 +37,15 @@ public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<
         return element.getExpression() is JetSimpleNameExpression
     }
 
-    override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
-        if (!isApplicableTo(element)) return
+    fun convertIfApplicable(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
+        if (!isApplicableTo(element)) return element
 
         val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
-        element.replace(JetPsiFactory(element).createSimpleNameStringTemplateEntry(name))
+        val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
+        return element.replace(newEntry) as JetStringTemplateEntryWithExpression
+    }
+
+    override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
+        convertIfApplicable(element)
     }
 }

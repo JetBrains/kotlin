@@ -53,6 +53,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction;
+import org.jetbrains.jet.plugin.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -445,6 +446,14 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 else {
                     result = (JetExpression)replace.replace(replacement);
                 }
+
+                PsiElement parent = result != null ? result.getParent() : null;
+                if (parent instanceof JetBlockStringTemplateEntry) {
+                    JetStringTemplateEntryWithExpression newEntry =
+                            RemoveCurlyBracesFromTemplateIntention.INSTANCE.convertIfApplicable((JetBlockStringTemplateEntry) parent);
+                    result = newEntry.getExpression();
+                }
+
                 references.add(result);
                 if (isActualExpression) reference.set(result);
 
