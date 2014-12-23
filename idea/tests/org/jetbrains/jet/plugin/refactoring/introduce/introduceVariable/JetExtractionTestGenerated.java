@@ -354,6 +354,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("extensionFunForArray.kt")
+            public void testExtensionFunForArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extensionFunForArray.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("fragmentWithComment.kt")
             public void testFragmentWithComment() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/fragmentWithComment.kt");
