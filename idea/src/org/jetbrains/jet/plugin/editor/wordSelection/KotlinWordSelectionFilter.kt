@@ -29,7 +29,7 @@ public class KotlinWordSelectionFilter : Condition<PsiElement>{
 
         if (KotlinListSelectioner.canSelect(e)) return false
         if (e is JetContainerNode) return false
-        if (e.getParent().getFirstChild().getNextSibling() == null) return false // skip nodes with the same range as their parent
+        if (e.getParent().getFirstChild().getNextSibling() == null && e.getParent() !is JetContainerNode) return false // skip nodes with the same range as their parent
 
         return when (e.getNode().getElementType()) {
             BLOCK, LITERAL_STRING_TEMPLATE_ENTRY -> false

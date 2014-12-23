@@ -55,6 +55,10 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     public void testTemplateStringLiteral2() { doTest(); }
     public void testTemplateStringLiteral3() { doTest(); }
 
+    public void testForRange() { doTest(); }
+
+    public void testIfCondition() { doTest(); }
+
     private void doTest() {
         String dirName = getTestName(false);
 
