@@ -48,6 +48,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("GenericFunctionWithTab.kt")
+    public void testGenericFunctionWithTab() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/GenericFunctionWithTab.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SecondTypeArg.kt")
     public void testSecondTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/SecondTypeArg.kt");

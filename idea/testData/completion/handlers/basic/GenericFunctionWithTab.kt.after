@@ -1,0 +1,6 @@
+fun <T> foo() {}
+
+fun use() = foo<String>()<caret>
+
+// ELEMENT: foo
+// CHAR: '\t'
