@@ -10,7 +10,6 @@ import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
-import java.util.ArrayList
 import org.apache.commons.io.FilenameUtils
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
@@ -26,21 +25,7 @@ import org.gradle.api.Project
 import org.jetbrains.jet.config.Services
 import org.jetbrains.jet.cli.js.K2JSCompiler
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.k2js.config.MetaInfServices
-import org.jetbrains.k2js.config.ClassPathLibraryDefintionsConfig
-import org.jetbrains.jet.cli.common.CLIConfigurationKeys
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.k2js.config.EcmaVersion
-import org.gradle.api.tasks.Copy
-import org.gradle.api.Action
-import org.gradle.api.internal.project.ProjectInternal
-import groovy.lang.Closure
 import org.codehaus.groovy.runtime.MethodClosure
-import org.gradle.api.DefaultTask
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jet.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
@@ -169,7 +154,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noParamAssertions = kotlinOptions.noParamAssertions
     }
 
-    private fun getJavaSourceRoots(): Set<File> = getSource()
+    private fun getJavaSourceRoots(): Set<File> = 
+            getSource()
             .filter { isJava(it) }
             .map { findSrcDirRoot(it) }
             .filterNotNull()
@@ -177,6 +163,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
         getLogger().debug("Copying resulting files to classes")
+
         // Copy kotlin classes to all classes directory
         val outputDirFile = File(args.destination!!)
         if (outputDirFile.exists()) {
@@ -195,7 +182,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     public fun addLibraryFiles(vararg fs: String) {
-        kotlinOptions.libraryFiles = (kotlinOptions.libraryFiles + fs).copyToArray()
+        kotlinOptions.libraryFiles = (kotlinOptions.libraryFiles + (fs as Array<String>)).copyToArray()
     }
 
     public fun addLibraryFiles(vararg fs: File) {
@@ -212,6 +199,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
+        args.noStdlib = true
         args.outputFile = outputFile()
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
@@ -220,7 +208,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.sourceMap = kotlinOptions.sourceMap
 
         if (args.outputFile == null) {
-            throw GradleException("${getName()}.kotlinOptions.outputFile must be set to a string.")
+            throw GradleException("${getName()}.kotlinOptions.outputFile should be specified.")
         }
 
         val outputDir = File(args.outputFile).directory
