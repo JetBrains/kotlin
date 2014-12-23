@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -157,6 +158,12 @@ public class AsmUtil {
         String internalName = type.getInternalName();
         assert internalName.charAt(0) == '[';
         return Type.getType(internalName.substring(1));
+    }
+
+    @Nullable
+    public static PrimitiveType asmPrimitiveTypeToLangPrimitiveType(Type type) {
+        JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
+        return jvmPrimitiveType != null ? jvmPrimitiveType.getPrimitiveType() : null;
     }
 
     @NotNull

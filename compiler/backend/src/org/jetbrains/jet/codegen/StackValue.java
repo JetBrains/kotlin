@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -1229,24 +1230,12 @@ public abstract class StackValue {
             case Type.OBJECT:
             case Type.ARRAY:
                 return OBJECT_REF_TYPE;
-            case Type.BYTE:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$ByteRef");
-            case Type.SHORT:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$ShortRef");
-            case Type.CHAR:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$CharRef");
-            case Type.INT:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$IntRef");
-            case Type.LONG:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$LongRef");
-            case Type.BOOLEAN:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$BooleanRef");
-            case Type.FLOAT:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$FloatRef");
-            case Type.DOUBLE:
-                return Type.getObjectType("kotlin/jvm/internal/Ref$DoubleRef");
             default:
-                throw new UnsupportedOperationException();
+                PrimitiveType primitiveType = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(type);
+                if (primitiveType == null) throw new UnsupportedOperationException();
+
+                String typeName = primitiveType.getTypeName().getIdentifier();
+                return Type.getObjectType("kotlin/jvm/internal/Ref$" + typeName + "Ref");
         }
     }
 
