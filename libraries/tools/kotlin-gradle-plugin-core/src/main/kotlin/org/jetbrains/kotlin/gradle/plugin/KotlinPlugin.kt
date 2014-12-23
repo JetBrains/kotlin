@@ -159,13 +159,6 @@ class Kotlin2JsSourceSetProcessor(
     private fun kotlinTaskDestinationDir(): File? = kotlinTask.kotlinDestinationDir
     private fun kotlinJsDestinationDir(): File? = kotlinTask.outputFile()?.let { File(it).directory }
 
-    private fun copyKotlinJsTaskOutput(): String? = if (kotlinJsDestinationDir() == null) {
-        null
-    } else {
-        val copyTask = project.getTasks().getByName(copyKotlinJsTaskName) as Copy
-        "${copyTask.getDestinationDir()}/kotlin.js"
-    }
-
     private fun kotlinSourcePathsForSourceMap() = sourceSet.getAllSource()
             .map { it.path }
             .filter { it.endsWith(".kt") }
@@ -178,25 +171,7 @@ class Kotlin2JsSourceSetProcessor(
         build?.dependsOn(kotlinTaskName)
         clean?.dependsOn("clean" + kotlinTaskName.capitalize())
 
-        createCopyKotlinJsTask(GradleUtils(scriptHandler, project).resolveJsLibrary().getAbsolutePath())
         createCleanSourceMapTask()
-    }
-
-    private fun createCopyKotlinJsTask(jsLibraryJar: String) {
-        val copyKotlinJsTaskName = sourceSet.getTaskName("copy", "kotlinJs")
-
-        val copyKotlinJsTask = project.getTasks().create(copyKotlinJsTaskName, javaClass<Copy>())
-        copyKotlinJsTask.from(project.zipTree(jsLibraryJar))
-        copyKotlinJsTask.into(MethodClosure(this, "kotlinJsDestinationDir"))
-        copyKotlinJsTask.include("kotlin.js")
-        copyKotlinJsTask.onlyIf { kotlinJsDestinationDir() != null }
-        build?.dependsOn(copyKotlinJsTaskName)
-
-        val cleanTaskName = "clean" + copyKotlinJsTaskName.capitalize()
-        val cleanTask = project.getTasks().create(cleanTaskName, javaClass<Delete>())
-        cleanTask.delete(MethodClosure(this, "copyKotlinJsTaskOutput"))
-        copyKotlinJsTask.onlyIf { copyKotlinJsTaskOutput() != null }
-        clean?.dependsOn(cleanTaskName)
     }
 
     private fun createCleanSourceMapTask() {
