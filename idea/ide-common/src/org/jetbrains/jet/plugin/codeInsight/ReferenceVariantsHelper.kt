@@ -113,9 +113,8 @@ public class ReferenceVariantsHelper(
 
             // process instance members that can be called via implicit receiver's instances
             val receivers = resolutionScope.getImplicitReceiversWithInstance()
-            receivers.flatMapTo(descriptorsSet) {
-                it.getType().getMemberScope().getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter)
-            }
+            val fromReceiversFilter = kindFilter.withoutKinds(DescriptorKindFilter.CLASSIFIERS_MASK) exclude DescriptorKindExclude.Extensions
+            receivers.flatMapTo(descriptorsSet) { it.getType().getMemberScope().getDescriptorsFiltered(fromReceiversFilter, nameFilter) }
 
             val dataFlowInfo = context.getDataFlowInfo(expression)
             val receiverValues = receivers.map { it.getValue() }

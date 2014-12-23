@@ -706,6 +706,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NoEnumMembersFromImplicitQualifier.kt")
+        public void testNoEnumMembersFromImplicitQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoEnumMembersFromImplicitQualifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoExtensionsAfterQualifier.kt")
         public void testNoExtensionsAfterQualifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoExtensionsAfterQualifier.kt");
@@ -715,6 +721,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NoNestedClassAfterReceiver.kt")
         public void testNoNestedClassAfterReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoNestedClassAfterReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoNestedClassesFromImplicitQualifier.kt")
+        public void testNoNestedClassesFromImplicitQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoNestedClassesFromImplicitQualifier.kt");
             doTest(fileName);
         }
 
