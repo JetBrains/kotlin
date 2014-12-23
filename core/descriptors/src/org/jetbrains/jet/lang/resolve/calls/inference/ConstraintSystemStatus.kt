@@ -86,6 +86,11 @@ public trait ConstraintSystemStatus {
      */
     public fun hasErrorInConstrainingTypes(): Boolean
 
-    //todo comment
+    /**
+     * Returns <tt>true</tt> if a user type contains the type projection that cannot be captured.
+     *
+     * For example, for <pre>fun &lt;T&gt; foo(t: Array&lt;Array&lt;T&gt;&gt;) {}</pre>
+     * in invocation <tt>foo(array)</tt> where array has type <tt>Array&lt;Array&lt;out Int&gt;&gt;</tt>.
+     */
     public fun hasCannotCaptureTypesError(): Boolean
 }

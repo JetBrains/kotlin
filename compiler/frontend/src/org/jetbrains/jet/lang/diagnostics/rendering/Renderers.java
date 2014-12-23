@@ -421,7 +421,7 @@ public class Renderers {
                            " that cannot be satisfied capturing 'in' projection";
         }
         else {
-            explanation = "Only top level type projections can be captured";
+            explanation = "Only top-level type projections can be captured";
         }
         result.text(newText().normal("'" + typeParameterWithCapturedConstraint.getName() + "'" +
                                      " cannot capture " +
