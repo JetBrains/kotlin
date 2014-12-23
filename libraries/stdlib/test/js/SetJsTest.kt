@@ -17,7 +17,7 @@ class ComplexSetJsTest : SetJsTest() {
         assertEquals(data, set)
     }
 
-    Test override fun constructors() {
+    /*Test*/ override fun constructors() {
         doTest<String>()
     }
 
@@ -29,7 +29,7 @@ class ComplexSetJsTest : SetJsTest() {
 class PrimitiveSetJsTest : SetJsTest() {
     override fun createEmptyMutableSet(): MutableSet<String> = HashSet()
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = HashSet()
-    Test override fun constructors() {
+    /*Test*/ override fun constructors() {
         HashSet<String>()
         HashSet<String>(3)
         HashSet<String>(3, 0.5f)
