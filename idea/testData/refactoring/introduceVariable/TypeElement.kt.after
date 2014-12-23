@@ -1,0 +1,4 @@
+fun foo(t: Any) {
+    val list = t as List<String>
+    val x = list
+}

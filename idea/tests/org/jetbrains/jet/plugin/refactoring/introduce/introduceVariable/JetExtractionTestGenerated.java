@@ -243,6 +243,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("TypeElement.kt")
+        public void testTypeElement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/TypeElement.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("UnresolvedOccurrences.kt")
         public void testUnresolvedOccurrences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/UnresolvedOccurrences.kt");
