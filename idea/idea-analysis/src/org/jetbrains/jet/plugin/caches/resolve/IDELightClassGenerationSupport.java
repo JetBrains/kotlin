@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.caches.resolve;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ClassFileViewProvider;
 import com.intellij.psi.PsiClass;
@@ -396,7 +397,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull final JetFile decompiledKotlinFile,
             @NotNull VirtualFile virtualFile
     ) {
-        final PsiJavaFileStubImpl javaFileStub = (PsiJavaFileStubImpl) createStub(virtualFile);
+        final PsiJavaFileStubImpl javaFileStub = getOrCreateJavaFileStub(virtualFile);
         if (javaFileStub == null) {
             return null;
         }
@@ -416,6 +417,32 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         fakeFile.setPhysical(false);
         javaFileStub.setPsi(fakeFile);
         return (ClsClassImpl) single(fakeFile.getClasses());
+    }
+
+    private final static Key<CachedJavaStub> cachedJavaStubKey = Key.create("CACHED_JAVA_STUB");
+
+    private static class CachedJavaStub {
+        public CachedJavaStub(long modificationStamp, @NotNull PsiJavaFileStubImpl javaFileStub) {
+            this.modificationStamp = modificationStamp;
+            this.javaFileStub = javaFileStub;
+        }
+
+        public long modificationStamp;
+        public PsiJavaFileStubImpl javaFileStub;
+    }
+
+    @Nullable
+    private static PsiJavaFileStubImpl getOrCreateJavaFileStub(@NotNull VirtualFile virtualFile) {
+        CachedJavaStub cachedJavaStub = virtualFile.getUserData(cachedJavaStubKey);
+        long fileModificationStamp = virtualFile.getModificationStamp();
+        if (cachedJavaStub != null && cachedJavaStub.modificationStamp == fileModificationStamp) {
+            return cachedJavaStub.javaFileStub;
+        }
+        PsiJavaFileStubImpl stub = (PsiJavaFileStubImpl) createStub(virtualFile);
+        if (stub != null) {
+            virtualFile.putUserData(cachedJavaStubKey, new CachedJavaStub(fileModificationStamp, stub));
+        }
+        return stub;
     }
 
     @Nullable
