@@ -26,6 +26,11 @@
           <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-js-library</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>gradle-api</artifactId>
           <version>1.4</version>
