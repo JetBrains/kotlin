@@ -257,6 +257,11 @@ public class JetPsiFactory(private val project: Project) {
         return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
     }
 
+    public fun createSimpleNameStringTemplateEntry(name: String): JetStringTemplateEntryWithExpression {
+        val stringTemplateExpression = createExpression("\"\$$name\"") as JetStringTemplateExpression
+        return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
+    }
+
     public fun createImportDirective(path: String): JetImportDirective {
         return createImportDirective(ImportPath(path))
     }

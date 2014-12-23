@@ -32,20 +32,13 @@ public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
         val nextSiblingText = element.getNextSibling()?.getText()
         if (nextSiblingText != null && pattern.matcher(nextSiblingText).matches()) return false
-        return element.getExpression()?.getOriginalElement() is JetSimpleNameExpression
+        return element.getExpression() is JetSimpleNameExpression
     }
 
     override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
-        val parent = element.getParent()
-        if (parent == null) return
-        val sb = StringBuilder()
-        for (ch in parent.getChildren()) {
-            val newText = if (ch == element) "\$${element.getExpression()?.getText()}" else "${ch.getText()}"
-            sb.append(newText)
-        }
-        val tripleQuotes = parent.getFirstChild()?.getText()?.startsWith("\"\"\"")
-        if (tripleQuotes == null) return
-        val newExpression = if (tripleQuotes) "\"\"\"${sb.toString()}\"\"\"" else "\"${sb.toString()}\""
-        parent.replace(JetPsiFactory(element).createExpression(newExpression))
+        if (!isApplicableTo(element)) return
+
+        val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
+        element.replace(JetPsiFactory(element).createSimpleNameStringTemplateEntry(name))
     }
 }
