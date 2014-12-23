@@ -30,4 +30,17 @@ compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
 compileKotlin2Js.kotlinOptions.suppressWarnings = true
 compileKotlin2Js.kotlinOptions.verbose = true
 
-copyKotlinJs.into "${projectDir}/web/js/lib"
+task copyJsFilesFromDependencies(dependsOn: build) {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${projectDir}/web/js/lib"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+}

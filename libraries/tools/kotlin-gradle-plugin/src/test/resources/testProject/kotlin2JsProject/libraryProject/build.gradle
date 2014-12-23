@@ -32,4 +32,23 @@ artifacts {
     compile jarSources
 }
 
-compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/app.js"
+def outDir = "${buildDir}/kotlin2js/main/"
+
+compileKotlin2Js.kotlinOptions.outputFile = outDir + "test-library.js"
+
+jar {
+    from sourceSets.main.allSource
+    include "**/*.kt"
+
+    from outDir
+    include "**/*.js"
+
+    manifest {
+        attributes(
+                "Specification-Title": "Kotlin JavaScript Lib",
+                "Kotlin-JS-Module-Name": "test-library"
+        )
+    }
+}
+
+jar.dependsOn(compileKotlin2Js)
