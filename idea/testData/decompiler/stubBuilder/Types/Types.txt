@@ -275,3 +275,34 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=String]
+      FUN:[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isProbablyNothingType=false, isTopLevel=false, name=extOnFunctionType]
+        MODIFIER_LIST:[public final]
+        TYPE_PARAMETER_LIST:
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=P1]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=P2]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=P3]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_REFERENCE:
+          FUNCTION_TYPE:
+            VALUE_PARAMETER_LIST:
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=P1]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=P2]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=P3]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=R]
+        VALUE_PARAMETER_LIST:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
