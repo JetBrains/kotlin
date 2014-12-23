@@ -340,6 +340,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PackageInTypePosition.kt")
+        public void testPackageInTypePosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PackageInTypePosition.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PackageQualified.kt");

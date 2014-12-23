@@ -288,7 +288,7 @@ public class TypeResolver(
     }
 
     public fun resolveClass(scope: JetScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
-        val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace)
+        val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace, true)
                                         .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {
             ImportsResolver.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)

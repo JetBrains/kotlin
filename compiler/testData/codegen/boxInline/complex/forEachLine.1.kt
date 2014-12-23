@@ -6,7 +6,7 @@ fun sample(): Input {
     return Input("Hello", "World");
 }
 
-test fun testForEachLine() {
+fun testForEachLine() {
     val list = ArrayList<String>()
     val reader = sample()
 

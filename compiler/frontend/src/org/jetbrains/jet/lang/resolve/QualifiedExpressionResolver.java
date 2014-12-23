@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
@@ -156,8 +157,10 @@ public class QualifiedExpressionResolver {
     public Collection<DeclarationDescriptor> lookupDescriptorsForUserType(
             @NotNull JetUserType userType,
             @NotNull JetScope outerScope,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean onlyClassifiers
     ) {
+
         if (userType.isAbsoluteInRootPackage()) {
             trace.report(Errors.UNSUPPORTED.on(userType, "package"));
             return Collections.emptyList();
@@ -168,12 +171,45 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
         JetUserType qualifier = userType.getQualifier();
+
+        // We do not want to resolve the last segment of a user type to a package
+        JetScope filteredScope = filterOutPackagesIfNeeded(outerScope, onlyClassifiers);
+
         if (qualifier == null) {
-            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, trace, LookupMode.ONLY_CLASSES_AND_PACKAGES,
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, filteredScope, outerScope, trace, LookupMode.ONLY_CLASSES_AND_PACKAGES,
                                                            false, true);
         }
-        Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace);
-        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, outerScope, LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
+        Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace, false);
+        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, filteredScope, LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
+    }
+
+    private static JetScope filterOutPackagesIfNeeded(final JetScope outerScope, boolean noPackages) {
+        return !noPackages ? outerScope : new AbstractScopeAdapter() {
+
+                    @NotNull
+                    @Override
+                    protected JetScope getWorkerScope() {
+                        return outerScope;
+                    }
+
+                    @Nullable
+                    @Override
+                    public PackageViewDescriptor getPackage(@NotNull Name name) {
+                        return null;
+                    }
+
+                    @NotNull
+                    @Override
+                    public Collection<DeclarationDescriptor> getAllDescriptors() {
+                        throw new UnsupportedOperationException("Should not be called, because it may be cached before filtering is applied");
+                    }
+
+                    @NotNull
+                    @Override
+                    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+                        throw new UnsupportedOperationException("Should not be called, because it may be cached before filtering is applied");
+                    }
+        };
     }
 
     @NotNull

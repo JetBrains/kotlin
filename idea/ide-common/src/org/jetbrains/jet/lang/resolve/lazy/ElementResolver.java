@@ -478,7 +478,7 @@ public abstract class ElementResolver {
                 if (qualifier != null) {
                     JetScope resolutionScope = getExpressionResolutionScope(resolveSession, expression);
                     Collection<DeclarationDescriptor> descriptors =
-                            qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace);
+                            qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace, false);
                     for (DeclarationDescriptor descriptor : descriptors) {
                         if (descriptor instanceof LazyPackageDescriptor) {
                             return ((LazyPackageDescriptor) descriptor).getMemberScope();

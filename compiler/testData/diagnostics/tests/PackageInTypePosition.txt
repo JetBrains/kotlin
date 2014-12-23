@@ -1,0 +1,6 @@
+package
+
+[ERROR : foo]() internal fun bar(/*0*/ p: [ERROR : foo]): [ERROR : foo]
+
+package foo {
+}
