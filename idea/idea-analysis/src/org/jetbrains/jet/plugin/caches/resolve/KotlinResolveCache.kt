@@ -66,6 +66,7 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import com.intellij.openapi.project.IndexNotReadyException
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 
 public trait CacheExtension<T> {
@@ -180,6 +181,9 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         catch (e: ProcessCanceledException) {
             throw e
         }
+        catch (e: IndexNotReadyException) {
+            throw e
+        }
         catch (e: Throwable) {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
@@ -267,6 +271,9 @@ private object KotlinResolveDataProvider {
             )
         }
         catch (e: ProcessCanceledException) {
+            throw e
+        }
+        catch (e: IndexNotReadyException) {
             throw e
         }
         catch (e: Throwable) {
