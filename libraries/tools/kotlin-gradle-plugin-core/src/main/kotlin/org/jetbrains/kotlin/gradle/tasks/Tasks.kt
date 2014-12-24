@@ -20,7 +20,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.io.FileUtils
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.gradle.api.Project
 import org.jetbrains.jet.config.Services
 import org.jetbrains.jet.cli.js.K2JSCompiler
@@ -32,6 +31,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.utils.LibraryUtils
 
+val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -159,11 +159,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     }
 
     fun findSrcDirRoot(file: File): File? {
-        val absPath = file.getAbsolutePath()
         for (source in srcDirsSources) {
             for (root in source.getSrcDirs()) {
-                val rootAbsPath = root.getAbsolutePath()
-                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
+                if (FileUtils.directoryContains(root, file)) {
                     return root
                 }
             }

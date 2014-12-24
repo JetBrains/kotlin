@@ -31,9 +31,15 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.android.tools.build</groupId>
+            <artifactId>gradle</artifactId>
+            <version>0.4.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>gradle-api</artifactId>
-          <version>1.4</version>
+          <version>1.6</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
@@ -78,6 +84,12 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.build.outputDirectory}/../groovyOutput</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
 
                     <execution>
@@ -121,6 +133,32 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <providerSelection>2.0</providerSelection>
+                    <source/>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals> <goal>compile</goal></goals>
+                        <configuration>
+                            <sources>
+                                <fileset>
+                                    <directory>${project.basedir}/src/main/kotlin</directory>
+                                    <includes>
+                                        <include>**/*.groovy</include>
+                                    </includes>
+                                </fileset>
+                            </sources>
+                            <outputDirectory>${project.build.outputDirectory}/../groovyOutput</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
