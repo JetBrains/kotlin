@@ -41,7 +41,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
             public void report(
                     @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
             ) {
-                throw new AssertionError(MessageRenderer.PLAIN.render(severity, message, location));
+                throw new AssertionError(MessageRenderer.PLAIN_FULL_PATHS.render(severity, message, location));
             }
         });
 
