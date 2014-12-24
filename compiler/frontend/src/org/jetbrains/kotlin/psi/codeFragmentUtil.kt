@@ -20,14 +20,14 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetCodeFragment
 
-public val SKIP_VISIBILITY_CHECK: Key<Boolean> = Key.create<Boolean>("SKIP_VISIBILITY_CHECK")
+public val SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE: Key<Boolean> = Key.create<Boolean>("SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE")
 
-public var JetFile.skipVisibilityCheck: Boolean
+public var JetFile.suppressDiagnosticsInDebugMode: Boolean
     get() = when (this) {
         is JetCodeFragment -> true
-        is JetFile -> getUserData(SKIP_VISIBILITY_CHECK) ?: false
+        is JetFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
         else -> false
     }
     set(skip: Boolean) {
-        putUserData(SKIP_VISIBILITY_CHECK, skip)
+        putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)
     }

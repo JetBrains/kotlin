@@ -37,7 +37,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
@@ -117,7 +117,7 @@ public fun PsiElement.isInJavaSourceRoot(): Boolean =
 public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
     val tmpFile = JetPsiFactory(this).createAnalyzableFile(getName(), textTransform(getText() ?: ""), this)
     tmpFile.setOriginalFile(this)
-    tmpFile.skipVisibilityCheck = skipVisibilityCheck
+    tmpFile.suppressDiagnosticsInDebugMode = suppressDiagnosticsInDebugMode
     return tmpFile
 }
 

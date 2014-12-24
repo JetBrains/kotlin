@@ -21,7 +21,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
-import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
 import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
@@ -76,7 +76,7 @@ fun getFunctionForExtractedFragment(
         val originalFile = breakpointFile as JetFile
 
         val tmpFile = originalFile.createTempCopy { it }
-        tmpFile.skipVisibilityCheck = true
+        tmpFile.suppressDiagnosticsInDebugMode = true
 
         val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getContext(), breakpointLine)
         if (contextElement == null) return null
