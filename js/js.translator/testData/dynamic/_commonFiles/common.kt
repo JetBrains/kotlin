@@ -9,9 +9,6 @@ var arr: dynamic = noImpl
 native
 var baz: dynamic = noImpl
 
-native
-val undefined: Nothing? = noImpl
-
 object t {
     override fun toString() = "object t {}"
 }

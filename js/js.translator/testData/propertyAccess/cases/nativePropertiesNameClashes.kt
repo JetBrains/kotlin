@@ -2,8 +2,6 @@ package foo
 
 val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
 
-native fun eval(e: String): Any? = noImpl
-
 class A
 native val Any.__proto__: String get() = noImpl
 native val A.__proto__: String get() = noImpl

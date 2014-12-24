@@ -9,8 +9,6 @@ public trait B : A {
     }
 }
 
-native fun eval(code: String): Any = noImpl
-native val undefined: Any = noImpl
 native class Function(vararg args: String)
 
 val hasProp = Function("obj, prop", "return obj[prop] !== undefined") as ((Any, String) -> Boolean)

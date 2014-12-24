@@ -1,7 +1,5 @@
 package foo
 
-native val undefined: Any = noImpl
-
 fun box(): String {
     val a: Int? = null
     val r = a == null
