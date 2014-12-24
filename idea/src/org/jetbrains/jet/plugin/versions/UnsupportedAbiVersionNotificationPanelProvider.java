@@ -187,6 +187,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
     @Override
     public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor) {
         try {
+            if (DumbService.isDumb(project)) return null;
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 
             if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
