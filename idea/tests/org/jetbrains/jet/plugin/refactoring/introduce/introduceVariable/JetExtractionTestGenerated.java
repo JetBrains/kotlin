@@ -177,6 +177,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("NoNewLinesInBetween.kt")
+        public void testNoNewLinesInBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NoNewLinesInBetween.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("NoNewLinesInBetweenNoBraces.kt")
+        public void testNoNewLinesInBetweenNoBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NoNewLinesInBetweenNoBraces.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("nonEquivalentReceivers.kt")
         public void testNonEquivalentReceivers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");

@@ -377,8 +377,16 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         }
                     }
                     else {
+                        PsiElement parent = anchor.getParent();
+                        PsiElement copyTo = parent.getLastChild();
+                        PsiElement copyFrom = anchor.getNextSibling();
+
                         property = (JetProperty)emptyBody.addAfter(property, firstChild);
                         emptyBody.addAfter(psiFactory.createNewLine(), firstChild);
+                        if (copyFrom != null && copyTo != null) {
+                            emptyBody.addRangeAfter(copyFrom, copyTo, property);
+                            parent.deleteChildRange(copyFrom, copyTo);
+                        }
                         emptyBody = (JetBlockExpression) anchor.replace(emptyBody);
                     }
                     for (PsiElement child : emptyBody.getChildren()) {
@@ -406,7 +414,13 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         replaceExpression(replace);
                     }
                     else if (!needBraces) {
-                        replace.delete();
+                        PsiElement sibling = PsiTreeUtil.skipSiblingsBackward(replace, PsiWhiteSpace.class);
+                        if (sibling == property) {
+                            replace.getParent().deleteChildRange(property.getNextSibling(), replace);
+                        }
+                        else {
+                            replace.delete();
+                        }
                     }
                 }
                 propertyRef.set(property);
