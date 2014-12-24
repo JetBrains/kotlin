@@ -199,8 +199,9 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
                 JetTypeReference typeRef = declaration.getTypeReference();
-                assert typeRef != null;
-                ShortenReferences.INSTANCE$.process(typeRef);
+                if (typeRef != null) {
+                    ShortenReferences.INSTANCE$.process(typeRef);
+                }
             }
         });
     }
