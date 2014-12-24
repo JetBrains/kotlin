@@ -45,6 +45,19 @@ public class CompilerRunnerUtil {
 
     private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
+    @NotNull
+    private static synchronized ClassLoader getOrCreateClassLoader(
+            @NotNull CompilerEnvironment environment,
+            @NotNull File libPath
+    ) throws IOException {
+        ClassLoader classLoader = ourClassLoaderRef.get();
+        if (classLoader == null) {
+            classLoader = createClassLoader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent());
+            ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
+        }
+        return classLoader;
+    }
+
     @Nullable
     private static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
         File libs = paths.getLibPath();
@@ -130,11 +143,7 @@ public class CompilerRunnerUtil {
         File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
         if (libPath == null) return null;
 
-        ClassLoader classLoader = ourClassLoaderRef.get();
-        if (classLoader == null) {
-            classLoader = createClassLoader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent());
-            ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
-        }
+        ClassLoader classLoader = getOrCreateClassLoader(environment, libPath);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
         Method exec = kompiler.getMethod(
