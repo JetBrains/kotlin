@@ -41,44 +41,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     abstract protected fun populateTargetSpecificArgs(args: T)
 
     public var kotlinOptions: T = createBlankArgs()
-    val srcDirsSources = HashSet<SourceDirectorySet>()
-
     public var kotlinDestinationDir: File? = getDestinationDir()
 
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
-
-    // override setSource to track source directory sets
-    override fun setSource(source: Any?) {
-        srcDirsSources.clear()
-        if (source is SourceDirectorySet) {
-            srcDirsSources.add(source)
-        }
-        super.setSource(source)
-    }
-
-    // override source to track source directory sets
-    override fun source(vararg sources: Any?): SourceTask? {
-        for (source in sources) {
-            if (source is SourceDirectorySet) {
-                srcDirsSources.add(source)
-            }
-        }
-        return super.source(sources)
-    }
-
-    fun findSrcDirRoot(file: File): File? {
-        val absPath = file.getAbsolutePath()
-        for (source in srcDirsSources) {
-            for (root in source.getSrcDirs()) {
-                val rootAbsPath = root.getAbsolutePath()
-                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
-                    return root
-                }
-            }
-        }
-        return null
-    }
 
     [TaskAction]
     override fun compile() {
@@ -126,8 +92,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
 public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
-
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
+
+    val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
@@ -170,6 +137,38 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         if (outputDirFile.exists()) {
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
+    }
+
+    // override setSource to track source directory sets
+    override fun setSource(source: Any?) {
+        srcDirsSources.clear()
+        if (source is SourceDirectorySet) {
+            srcDirsSources.add(source)
+        }
+        super.setSource(source)
+    }
+
+    // override source to track source directory sets
+    override fun source(vararg sources: Any?): SourceTask? {
+        for (source in sources) {
+            if (source is SourceDirectorySet) {
+                srcDirsSources.add(source)
+            }
+        }
+        return super.source(sources)
+    }
+
+    fun findSrcDirRoot(file: File): File? {
+        val absPath = file.getAbsolutePath()
+        for (source in srcDirsSources) {
+            for (root in source.getSrcDirs()) {
+                val rootAbsPath = root.getAbsolutePath()
+                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
+                    return root
+                }
+            }
+        }
+        return null
     }
 }
 
