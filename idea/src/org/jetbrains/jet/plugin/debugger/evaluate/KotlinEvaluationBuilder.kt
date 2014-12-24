@@ -77,6 +77,7 @@ import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
 import org.jetbrains.jet.plugin.util.attachment.mergeAttachments
 import com.sun.jdi.ClassType
+import com.sun.jdi.InvocationException
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -211,7 +212,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun InterpreterResult.toJdiValue(vm: VirtualMachine): com.sun.jdi.Value? {
             val jdiValue = when (this) {
                 is ValueReturned -> result
-                is ExceptionThrown -> exception(exception.toString())
+                is ExceptionThrown -> {
+                    if (this.kind == ExceptionThrown.ExceptionKind.FROM_EVALUATED_CODE) {
+                        exception(InvocationException(this.exception.value as ObjectReference))
+                    }
+                    else {
+                        exception(exception.toString())
+                    }
+                }
                 is AbnormalTermination -> exception(message)
                 else -> throw IllegalStateException("Unknown result value produced by eval4j")
             }
@@ -264,10 +272,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
         private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)
 
-        private fun exception(e: Throwable) {
+        private fun exception(e: Throwable): Nothing {
             val message = e.getMessage()
             if (message != null) {
-                exception(message)
+                throw EvaluateExceptionUtil.createEvaluateException(message, e)
             }
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
