@@ -19,6 +19,7 @@ package org.jetbrains.jet.j2k.usageProcessing
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.CodeConverter
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.util.IncorrectOperationException
 
 class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, val isNullable: Boolean) : UsageProcessing {
     override val targetElement: PsiElement get() = field
@@ -29,14 +30,19 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
                 val identifier = Identifier(propertyName, isNullable).assignNoPrototype()
 
                 val qualifier = expression.getQualifierExpression()
-                return if (qualifier != null) {
-                    QualifiedExpression(codeConverter.convertExpression(qualifier), identifier)
+                if (qualifier != null) {
+                    return QualifiedExpression(codeConverter.convertExpression(qualifier), identifier)
                 }
                 else {
                     // check if field name is shadowed
                     val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.getProject())
-                    val refExpr = elementFactory.createExpressionFromText(propertyName, expression) as PsiReferenceExpression
-                    if (refExpr.resolve() == null)
+                    val refExpr = try {
+                        elementFactory.createExpressionFromText(propertyName, expression) as? PsiReferenceExpression ?: return identifier
+                    }
+                    catch(e: IncorrectOperationException) {
+                        return identifier
+                    }
+                    return if (refExpr.resolve() == null)
                         identifier
                     else
                         QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier) //TODO: this is not correct in case of nested/anonymous classes
