@@ -29,26 +29,38 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
     public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
-        if (delegate instanceof JetSourceFilterScope) {
-            return delegate;
-        }
-        return new JetSourceFilterScope(delegate, true, true, project);
+        return create(delegate, true, true, project);
     }
 
     @NotNull
     public static GlobalSearchScope kotlinSourceAndClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
-        if (delegate instanceof JetSourceFilterScope) {
-            delegate = ((JetSourceFilterScope) delegate).myBaseScope;
-        }
-        return new JetSourceFilterScope(delegate, false, true, project);
+        return create(delegate, false, true, project);
     }
 
     @NotNull
     public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        return create(delegate, false, false, project);
+    }
+
+    @NotNull
+    private static GlobalSearchScope create(
+            @NotNull GlobalSearchScope delegate,
+            boolean includeLibrarySourceFiles,
+            boolean includeClassFiles,
+            @NotNull Project project
+    ) {
+        if (delegate == GlobalSearchScope.EMPTY_SCOPE) return delegate;
+
         if (delegate instanceof JetSourceFilterScope) {
-            delegate = ((JetSourceFilterScope) delegate).myBaseScope;
+            JetSourceFilterScope wrappedDelegate = (JetSourceFilterScope) delegate;
+
+            boolean doIncludeLibrarySourceFiles = wrappedDelegate.includeLibrarySourceFiles && includeLibrarySourceFiles;
+            boolean doIncludeClassFiles = wrappedDelegate.includeClassFiles && includeClassFiles;
+
+            return new JetSourceFilterScope(wrappedDelegate.myBaseScope, doIncludeLibrarySourceFiles, doIncludeClassFiles, project);
         }
-        return new JetSourceFilterScope(delegate, false, false, project);
+
+        return new JetSourceFilterScope(delegate, includeLibrarySourceFiles, includeClassFiles, project);
     }
 
     private final ProjectFileIndex index;
@@ -70,6 +82,11 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
         //NOTE: avoid recomputing in potentially bottleneck 'contains' method
         this.index = ProjectRootManager.getInstance(project).getFileIndex();
         this.isJsProject = JsProjectDetector.isJsProject(project);
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
     }
 
     @Override
