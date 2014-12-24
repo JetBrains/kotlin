@@ -30,7 +30,6 @@ import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
-import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
@@ -178,10 +177,15 @@ public class LookupElementFactory(
         if (descriptor is CallableDescriptor) {
             if (descriptor.getExtensionReceiverParameter() != null) {
                 val container = descriptor.getContainingDeclaration()
-                val containerPresentation = if (container is ClassDescriptor)
-                    DescriptorUtils.getFqNameFromTopLevelClass(container)
-                else
-                    DescriptorUtils.getFqName(container)
+                val containerPresentation = if (container is ClassDescriptor) {
+                    if (container.getKind() != ClassKind.CLASS_OBJECT)
+                        DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
+                    else
+                        "class object for " + DescriptorUtils.getFqNameFromTopLevelClass(container.getContainingDeclaration())
+                }
+                else {
+                    DescriptorUtils.getFqName(container).toString()
+                }
                 val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
                 val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
                 element = element.appendTailText(" for $receiverPresentation in $containerPresentation", true)

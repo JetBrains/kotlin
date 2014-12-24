@@ -160,6 +160,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionFunctionInClassObject.kt")
+        public void testExtensionFunctionInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ExtensionFunctionInClassObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionInsideFunction.kt")
         public void testExtensionInsideFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ExtensionInsideFunction.kt");
