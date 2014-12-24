@@ -34,6 +34,7 @@ import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava
 import org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer
+import com.intellij.psi.search.GlobalSearchScope
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,
@@ -47,6 +48,7 @@ public class JvmPlatformParameters(
 
 public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatformParameters> {
     override fun <M : ModuleInfo> createResolverForModule(
+            moduleInfo: M,
             project: Project,
             globalContext: GlobalContext,
             moduleDescriptor: ModuleDescriptorImpl,
@@ -56,7 +58,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
     ): JvmResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, globalContext.storageManager, syntheticFiles, moduleContentScope
+                project, globalContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->

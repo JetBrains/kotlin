@@ -136,6 +136,9 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
 
     override fun contentScope() = LibraryWithoutSourceScope(project, library)
 
+    override val isLibrary: Boolean
+        get() = true
+
     override fun dependencies(): List<IdeaModuleInfo> {
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
@@ -155,6 +158,9 @@ private data class LibrarySourceInfo(val project: Project, val library: Library)
     override val name: Name = Name.special("<sources for library ${library.getName()}>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
+
+    override val isLibrary: Boolean
+        get() = true
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(this) + LibraryInfo(project, library).dependencies()
