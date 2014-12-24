@@ -1,0 +1,9 @@
+class AClass {
+    class object {}
+}
+
+fun foo() {
+    bar(AClass<caret>)
+}
+
+// ELEMENT: AClass
