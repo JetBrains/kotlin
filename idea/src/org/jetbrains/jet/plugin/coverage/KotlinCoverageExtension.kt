@@ -31,14 +31,105 @@ import org.jetbrains.jet.lang.psi.JetTreeVisitor
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import com.intellij.psi.PsiElement
 import java.util.LinkedHashSet
+import com.intellij.psi.PsiClass
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiNamedElement
+import com.intellij.coverage.PackageAnnotator
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.roots.CompilerModuleExtension
+import com.intellij.coverage.JavaCoverageAnnotator
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.diagnostic.Logger
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
+    private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
+
     override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
+
+    override fun suggestQualifiedName(sourceFile: PsiFile, classes: Array<out PsiClass>, names: MutableSet<String>): Boolean {
+        if (sourceFile is JetFile) {
+            names.addAll(collectOutputClassNames(sourceFile).map { StringUtil.replaceChar(it, '/', '.' )})
+            return true
+        }
+        return false
+    }
+
+    // Implements API added in IDEA 14.1
+    fun getSummaryCoverageInfo(coverageAnnotator: JavaCoverageAnnotator,
+                               element: PsiNamedElement): PackageAnnotator.ClassCoverageInfo? {
+        if (element is JetFile) {
+            LOG.info("Retrieving coverage for " + element.getName())
+            val module = ModuleUtilCore.findModuleForPsiElement(element)
+            if (module == null) return null
+            val fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex()
+            val inTests = fileIndex.isInTestSourceContent(element.getVirtualFile())
+            val compilerOutputExtension = CompilerModuleExtension.getInstance(module)
+            val outputRoot = if (inTests)
+                compilerOutputExtension.getCompilerOutputPathForTests()
+            else
+                compilerOutputExtension.getCompilerOutputPath()
+            if (outputRoot == null) return null
+            val fqName = element.getPackageFqName().asString().replace('.', '/')
+            val packageOutputDir = outputRoot.findFileByRelativePath(fqName)
+            if (packageOutputDir == null) return null
+            val prefixes = collectClassFilePrefixes(element)
+            LOG.debug("Classfile prefixes: [${prefixes.join(", ")}]")
+            val existingClassFiles = packageOutputDir.getChildren().filter {
+                file -> prefixes.any { file.getName().startsWith(it + "$") || file.getName().equals(it + ".class") }
+            }
+            if (existingClassFiles.size() > 0) {
+                LOG.debug("Classfiles: [${existingClassFiles.map { it.getName() }.join()}]")
+                val result = PackageAnnotator.ClassCoverageInfo()
+                result.totalClassCount = 0
+                existingClassFiles.forEach {
+                    val relativePath = VfsUtilCore.getRelativePath(it, outputRoot)
+                    val qName = StringUtil.trimEnd(relativePath, ".class").replace("/", ".")
+                    val classInfo = coverageAnnotator.getClassCoverageInfo(qName)
+                    if (classInfo != null) {
+                        result.totalClassCount += classInfo.totalClassCount
+                        result.coveredClassCount += classInfo.coveredClassCount
+                        result.totalMethodCount += classInfo.totalMethodCount
+                        result.coveredMethodCount += classInfo.coveredMethodCount
+                        result.totalLineCount += classInfo.totalLineCount
+                        result.fullyCoveredLineCount += classInfo.fullyCoveredLineCount
+                        result.partiallyCoveredLineCount += classInfo.partiallyCoveredLineCount
+                    } else {
+                        LOG.debug("Found no coverage for ${qName}")
+                    }
+                }
+                return result
+            }
+        }
+        return null
+    }
+
+    private fun collectClassFilePrefixes(file: JetFile): Collection<String> {
+        val result = file.getChildren().filter { it is JetClassOrObject }.map { (it as JetClassOrObject).getName() }
+        val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(file)
+        return result.union(arrayListOf(packagePartFqName.shortName().asString()))
+    }
+
+    // Implements API added in IDEA 14.1
+    fun keepCoverageInfoForClassWithoutSource(bundle: CoverageSuitesBundle, classFile: File): Boolean {
+        // TODO check scope and source roots
+        return true  // keep everything, sort it out later
+    }
+
+    // Implements API added in IDEA 14.1
+    fun ignoreCoverageForClass(bundle: CoverageSuitesBundle, classFile: File): Boolean {
+        val packageName = classFile.getParentFile().getName()
+        // Ignore classes that only contain bridge methods delegating to package parts.
+        if (classFile.getName().equals(StringUtil.capitalize(packageName) + "Package.class")) {
+            return true
+        }
+        return false;
+    }
 
     override fun collectOutputFiles(srcFile: PsiFile,
                                     output: VirtualFile?,
