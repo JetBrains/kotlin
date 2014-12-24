@@ -1,5 +1,5 @@
 // Fixpoint generic in Java: Enum<T extends Enum<T>>
-fun test(<!UNUSED_PARAMETER!>a<!> : annotation.RetentionPolicy) {
+fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.annotation.RetentionPolicy) {
 
 }
 

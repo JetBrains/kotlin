@@ -1,6 +1,6 @@
 package some
 
-import jettesting.*
+import jettesting.data
 
 fun other() {
     data.topLevelFunction()
