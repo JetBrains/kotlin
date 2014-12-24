@@ -46,7 +46,7 @@ public trait JetScope {
      *
      * @return All visible descriptors from current scope.
      */
-    public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors()
+    public final fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors()
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
