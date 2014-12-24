@@ -153,8 +153,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
             offset = skipSpaces(chars, offset)
             if (offset < document.getTextLength()) {
-                val c = chars[offset]
-                if (c == '<') {
+                if (chars[offset] == '<') {
                     PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
                     val psiFile = context.getFile()
                     val token = psiFile.findElementAt(offset)

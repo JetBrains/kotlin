@@ -42,6 +42,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("DoNotUseParenthesisOnNextLine.kt")
+    public void testDoNotUseParenthesisOnNextLine() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/DoNotUseParenthesisOnNextLine.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionReceiverTypeArg.kt")
     public void testExtensionReceiverTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/basic/ExtensionReceiverTypeArg.kt");
