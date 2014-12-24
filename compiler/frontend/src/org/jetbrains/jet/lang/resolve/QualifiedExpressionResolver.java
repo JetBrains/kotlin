@@ -197,18 +197,6 @@ public class QualifiedExpressionResolver {
                     public PackageViewDescriptor getPackage(@NotNull Name name) {
                         return null;
                     }
-
-                    @NotNull
-                    @Override
-                    public Collection<DeclarationDescriptor> getAllDescriptors() {
-                        throw new UnsupportedOperationException("Should not be called, because it may be cached before filtering is applied");
-                    }
-
-                    @NotNull
-                    @Override
-                    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
-                        throw new UnsupportedOperationException("Should not be called, because it may be cached before filtering is applied");
-                    }
         };
     }
 
