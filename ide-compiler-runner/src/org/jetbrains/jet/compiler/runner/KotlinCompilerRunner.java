@@ -31,10 +31,12 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.jet.compiler.CompilerSettings;
 
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
@@ -77,23 +79,28 @@ public class KotlinCompilerRunner {
     }
 
     private static void runCompiler(
-            final String compilerClassName,
+            String compilerClassName,
             CommonCompilerArguments arguments,
             String additionalArguments,
             CommonCompilerArguments defaultArguments,
-            final MessageCollector messageCollector,
+            MessageCollector messageCollector,
             OutputItemsCollector collector,
-            final CompilerEnvironment environment
+            CompilerEnvironment environment
     ) {
-        final List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments, defaultArguments);
+        List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments, defaultArguments);
         argumentsList.addAll(StringUtil.split(additionalArguments, " "));
 
-        CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
-            @Override
-            public Integer fun(PrintStream stream) {
-                return execCompiler(compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, stream, messageCollector);
-            }
-        });
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(stream);
+
+        int exitCode = execCompiler(compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, out, messageCollector);
+
+        BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
+        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector);
+
+        if (exitCode != 0 && exitCode != 1) {
+            messageCollector.report(ERROR, "Compiler terminated with internal error", NO_LOCATION);
+        }
     }
 
     private static int execCompiler(

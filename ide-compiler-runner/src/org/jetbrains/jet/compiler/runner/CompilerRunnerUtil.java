@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.compiler.runner;
 
-import com.intellij.util.Function;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,9 @@ import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -114,12 +115,6 @@ public class CompilerRunnerUtil {
         );
     }
 
-    private static void handleProcessTermination(int exitCode, @NotNull MessageCollector messageCollector) {
-        if (exitCode != 0 && exitCode != 1) {
-            messageCollector.report(ERROR, "Compiler terminated with exit code: " + exitCode, NO_LOCATION);
-        }
-    }
-
     public static int getReturnCodeFromObject(@Nullable Object rc) throws Exception {
         if (rc == null) {
             return /* ExitCode.INTERNAL_ERROR */ 2;
@@ -154,20 +149,5 @@ public class CompilerRunnerUtil {
         );
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
-    }
-
-    public static void outputCompilerMessagesAndHandleExitCode(
-            @NotNull MessageCollector messageCollector,
-            @NotNull OutputItemsCollector outputItemsCollector,
-            @NotNull Function<PrintStream, Integer> compilerRun
-    ) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outputStream);
-
-        int exitCode = compilerRun.fun(out);
-
-        BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, outputItemsCollector);
-        handleProcessTermination(exitCode, messageCollector);
     }
 }
