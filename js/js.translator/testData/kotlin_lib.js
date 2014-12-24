@@ -41,7 +41,7 @@
             return Kotlin.arrayEquals(obj1, obj2);
         }
 
-        if (typeof obj1 == "object" && obj1.equals_za3rmp$ !== undefined) {
+        if (typeof obj1 == "object" && typeof obj1.equals_za3rmp$ === "function") {
             return obj1.equals_za3rmp$(obj2);
         }
 
@@ -170,7 +170,7 @@
         return Kotlin.createClassNow(base,
                    /** @constructs */
                    function (message) {
-                       this.message = (message !== undefined) ? message : null;
+                       this.message = (message !== void 0) ? message : null;
                    }
                );
     }
@@ -191,7 +191,7 @@
     function throwAbstractFunctionInvocationError(funName) {
         return function () {
             var message;
-            if (funName !== undefined) {
+            if (funName !== void 0) {
                 message = "Function " + funName + " is abstract";
             }
             else {
@@ -283,8 +283,8 @@
 
     Kotlin.Enum = Kotlin.createClassNow(null,
         function () {
-            this.name$ = undefined;
-            this.ordinal$ = undefined;
+            this.name$ = void 0;
+            this.ordinal$ = void 0;
         }, {
             name: function () {
                 return this.name$;
@@ -848,8 +848,8 @@
     };
 
     Kotlin.collectionsSort = function (mutableList, comparator) {
-        var boundComparator = undefined;
-        if (comparator !== undefined) {
+        var boundComparator = void 0;
+        if (comparator !== void 0) {
             boundComparator = comparator.compare.bind(comparator);
         }
 
@@ -887,9 +887,9 @@
             this.string = "";
         }, {
         append: function (obj, from, to) {
-            if (from == undefined && to == undefined) {
+            if (from == void 0 && to == void 0) {
                 this.string = this.string + obj.toString();
-            } else if (to == undefined) {
+            } else if (to == void 0) {
                 this.string = this.string + obj.toString().substring(from);
             } else {
                 this.string = this.string + obj.toString().substring(from, to);

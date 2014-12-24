@@ -383,7 +383,7 @@ var Kotlin = {};
       var obj = {};
       obj.name = name;
       obj.get_za3rmp$ = getFun;
-      if (setFun !== undefined) {
+      if (typeof setFun === "function") {
           obj.set_wn2jw4$ = setFun;
       }
       return obj;

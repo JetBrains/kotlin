@@ -47,7 +47,7 @@
     }
 
     function hashSetEquals(o) {
-        if (o === null || o === undefined || this.size() !== o.size()) return false;
+        if (o == null || this.size() !== o.size()) return false;
 
         return this.containsAll_4fm7v2$(o);
     }
@@ -511,7 +511,7 @@
             },
             containsKey_za3rmp$: function (key) {
                 // TODO: should process "__proto__" separately?
-                return this.map[key] !== undefined;
+                return this.map[key] !== void 0;
             },
             containsValue_za3rmp$: function (value) {
                 var map = this.map;
@@ -529,15 +529,15 @@
             },
             put_wn2jw4$: function (key, value) {
                 var prevValue = this.map[key];
-                this.map[key] = value === undefined ? null : value;
-                if (prevValue === undefined) {
+                this.map[key] = value === void 0 ? null : value;
+                if (prevValue === void 0) {
                     this.$size++;
                 }
                 return prevValue;
             },
             remove_za3rmp$: function (key) {
                 var prevValue = this.map[key];
-                if (prevValue !== undefined) {
+                if (prevValue !== void 0) {
                     delete this.map[key];
                     this.$size--;
                 }
