@@ -21,31 +21,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.android.tools.build</groupId>
-            <artifactId>gradle</artifactId>
-            <version>0.4.2</version>
-            <scope>provided</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-gradle-plugin-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>commons-lang</groupId>
-        	<artifactId>commons-lang</artifactId>
-        	<version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.directory.studio</groupId>
-            <artifactId>org.apache.commons.io</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -73,12 +57,6 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <version>1.5</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
 
@@ -103,32 +81,6 @@
 
         <plugins>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.5</version>
-                <configuration>
-                    <providerSelection>2.0</providerSelection>
-                    <source/>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-sources</phase>
-                        <goals> <goal>compile</goal></goals>
-                        <configuration>
-                            <sources>
-                                <fileset>
-                                    <directory>${project.basedir}/src/main/kotlin</directory>
-                                    <includes>
-                                        <include>**/*.groovy</include>
-                                    </includes>
-                                </fileset>
-                            </sources>
-                            <outputDirectory>${project.build.outputDirectory}/../groovyOutput</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${project.version}</version>
@@ -143,12 +95,6 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals> <goal>compile</goal> </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <sourceDir>${project.build.outputDirectory}/../groovyOutput</sourceDir>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
 
                     <execution>
