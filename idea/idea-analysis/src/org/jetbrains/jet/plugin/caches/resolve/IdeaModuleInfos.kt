@@ -107,15 +107,13 @@ private fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
 
-private abstract class ModuleSourceScope : GlobalSearchScope() {
-    abstract val module: Module
-
+private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.getProject()) {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false
 }
 
-private data class ModuleProductionSourceScope(override val module: Module) : ModuleSourceScope() {
+private data class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
@@ -124,7 +122,7 @@ private data class ModuleProductionSourceScope(override val module: Module) : Mo
     override fun hashCode(): Int = module.hashCode()
 }
 
-private data class ModuleTestSourceScope(override val module: Module) : ModuleSourceScope() {
+private data class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
