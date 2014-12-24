@@ -195,7 +195,7 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
                 presentation.setItemText("?: " + presentation.getItemText())
             }
             override fun handleInsert(context: InsertionContext) {
-                handlers.WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate()) //TODO: code style
+                WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate()) //TODO: code style
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
