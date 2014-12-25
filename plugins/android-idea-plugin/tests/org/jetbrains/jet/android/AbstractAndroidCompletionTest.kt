@@ -56,11 +56,12 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private fun completionType() = CompletionType.BASIC
 
     fun doTest(testPath: String?) {
-        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
-        myFixture!!.configureByFile(testPath!! + getTestName(true) + ".kt");
+        myFixture.copyDirectoryToProject(getResDir()!!, "res")
+        val virtualFile = myFixture.copyFileToProject(testPath + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
+        myFixture.configureFromExistingVirtualFile(virtualFile)
         val fileText = FileUtil.loadFile(File(testPath + getTestName(true) + ".kt"), true)
         testCompletion(fileText, TargetPlatform.JVM, {
-            count -> myFixture!!.complete(completionType())
+            count -> myFixture.complete(completionType())
         })
     }
 
