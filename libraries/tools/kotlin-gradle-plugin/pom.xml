@@ -25,11 +25,13 @@
           <artifactId>kotlin-stdlib</artifactId>
           <version>${project.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>com.android.tools.build</groupId>
             <artifactId>gradle</artifactId>
@@ -40,12 +42,6 @@
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>gradle-api</artifactId>
           <version>1.6</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-gradle-plugin-core</artifactId>
-          <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
