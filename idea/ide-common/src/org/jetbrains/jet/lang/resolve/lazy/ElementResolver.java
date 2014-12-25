@@ -287,24 +287,25 @@ public abstract class ElementResolver {
     }
 
     private static void annotationAdditionalResolve(ResolveSession resolveSession, JetAnnotationEntry jetAnnotationEntry) {
-        Annotations annotations = null;
-
         JetModifierList modifierList = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetModifierList.class);
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(modifierList, JetDeclaration.class);
         if (declaration != null) {
-            annotations = getAnnotationsByDeclaration(resolveSession, modifierList, declaration);
+            doResolveAnnotations(resolveSession, getAnnotationsByDeclaration(resolveSession, modifierList, declaration));
         }
         else {
             JetFileAnnotationList fileAnnotationList = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetFileAnnotationList.class);
             if (fileAnnotationList != null) {
-                annotations = resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile());
+                doResolveAnnotations(resolveSession, resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile()));
+            }
+            if (modifierList != null && modifierList.getParent() instanceof JetFile) {
+                doResolveAnnotations(resolveSession, resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()));
             }
         }
+    }
 
-        if (annotations != null) {
-            AnnotationResolver.resolveAnnotationsArguments(annotations, resolveSession.getTrace());
-            ForceResolveUtil.forceResolveAllContents(annotations);
-        }
+    private static void doResolveAnnotations(ResolveSession resolveSession, Annotations annotations) {
+        AnnotationResolver.resolveAnnotationsArguments(annotations, resolveSession.getTrace());
+        ForceResolveUtil.forceResolveAllContents(annotations);
     }
 
     private static Annotations getAnnotationsByDeclaration(
@@ -312,13 +313,21 @@ public abstract class ElementResolver {
             JetModifierList modifierList,
             JetDeclaration declaration
     ) {
-        Annotations annotations;Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
-        if (declaration instanceof JetClass && modifierList == ((JetClass) declaration).getPrimaryConstructorModifierList()) {
-            descriptor = ((ClassDescriptor)descriptor).getUnsubstitutedPrimaryConstructor();
-            assert descriptor != null : "No constructor found: " + declaration.getText();
+        Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
+        if (declaration instanceof JetClass) {
+            JetClass jetClass = (JetClass) declaration;
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (modifierList == jetClass.getPrimaryConstructorModifierList()) {
+                descriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                assert descriptor != null : "No constructor found: " + declaration.getText();
+            }
+            else if (modifierList.getParent() == jetClass.getBody()) {
+                if (classDescriptor instanceof LazyClassDescriptor) {
+                    return ((LazyClassDescriptor) classDescriptor).getDanglingAnnotations();
+                }
+            }
         }
-        annotations = descriptor.getAnnotations();
-        return annotations;
+        return descriptor.getAnnotations();
     }
 
     private static void typeParameterAdditionalResolve(KotlinCodeAnalyzer analyzer, JetTypeParameter typeParameter) {

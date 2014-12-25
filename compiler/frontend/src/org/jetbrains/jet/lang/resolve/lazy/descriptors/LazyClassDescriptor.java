@@ -85,6 +85,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isInner;
 
     private final Annotations annotations;
+    private final Annotations danglingAnnotations;
     private final NullableLazyValue<LazyClassDescriptor> classObjectDescriptor;
     private final MemoizedFunctionToNotNull<JetClassObject, ClassDescriptor> extraClassObjectDescriptors;
 
@@ -94,8 +95,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
-
-    private final NullableLazyValue<Void> resolveDanglingAnnotations;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
 
@@ -144,7 +143,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.annotations = new LazyAnnotations(
                     new LazyAnnotationsContext(
                             resolveSession.getAnnotationResolver(),
-                            resolveSession.getStorageManager(),
+                            storageManager,
                             resolveSession.getTrace()
                     ) {
                         @NotNull
@@ -160,6 +159,27 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         else {
             this.annotations = Annotations.EMPTY;
+        }
+
+        List<JetAnnotationEntry> jetDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
+        if (jetDanglingAnnotations.isEmpty()) {
+            this.danglingAnnotations = Annotations.EMPTY;
+        }
+        else {
+            this.danglingAnnotations = new LazyAnnotations(
+                    new LazyAnnotationsContext(
+                            resolveSession.getAnnotationResolver(),
+                            storageManager,
+                            resolveSession.getTrace()
+                    ) {
+                        @NotNull
+                        @Override
+                        public JetScope getScope() {
+                            return getScopeForMemberDeclarationResolution();
+                        }
+                    },
+                    jetDanglingAnnotations
+            );
         }
 
         this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<LazyClassDescriptor>() {
@@ -190,15 +210,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @Override
             public JetScope invoke() {
                 return computeScopeForPropertyInitializerResolution();
-            }
-        });
-        this.resolveDanglingAnnotations = storageManager.createNullableLazyValue(new Function0<Void>() {
-            @Override
-            public Void invoke() {
-                resolveSession.getAnnotationResolver().resolveAnnotationsWithArguments(
-                        getScopeForMemberDeclarationResolution(), originalClassInfo.getDanglingAnnotations(), resolveSession.getTrace()
-                );
-                return null;
             }
         });
         this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(new Function0<Void>() {
@@ -431,6 +442,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return annotations;
     }
 
+    @NotNull
+    public Annotations getDanglingAnnotations() {
+        return danglingAnnotations;
+    }
+
     @Override
     public String toString() {
         // not using descriptor render to preserve laziness
@@ -458,8 +474,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     // Note: headers of member classes' members are not resolved
     public void resolveMemberHeaders() {
         ForceResolveUtil.forceResolveAllContents(getAnnotations());
-
-        resolveDanglingAnnotations.invoke();
+        ForceResolveUtil.forceResolveAllContents(getDanglingAnnotations());
 
         getClassObjectDescriptor();
 
