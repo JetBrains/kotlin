@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
