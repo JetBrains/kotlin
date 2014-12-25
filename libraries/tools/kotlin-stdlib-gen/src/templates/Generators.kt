@@ -39,7 +39,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("plus(array: Array<T>)") {
+    templates add f("plus(array: Array<out T>)") {
         exclude(Strings, Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
@@ -119,7 +119,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("merge(other: Iterable<R>, transform: (T, R) -> V)") {
-        exclude(Streams)
+        exclude(Streams, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
@@ -133,7 +133,18 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            val list = arrayListOf<V>()
+            val list = ArrayList<V>(collectionSizeOrDefault(10))
+            while (first.hasNext() && second.hasNext()) {
+                list.add(transform(first.next(), second.next()))
+            }
+            return list
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val first = iterator()
+            val second = other.iterator()
+            val list = ArrayList<V>(size())
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -142,8 +153,8 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("merge(array: Array<R>, transform: (T, R) -> V)") {
-        exclude(Streams)
+    templates add f("merge(array: Array<out R>, transform: (T, R) -> V)") {
+        exclude(Streams, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
@@ -157,13 +168,25 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = array.iterator()
-            val list = arrayListOf<V>()
+            val list = ArrayList<V>(collectionSizeOrDefault(10))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
             return list
             """
         }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val first = iterator()
+            val second = array.iterator()
+            val list = ArrayList<V>(size())
+            while (first.hasNext() && second.hasNext()) {
+                list.add(transform(first.next(), second.next()))
+            }
+            return list
+            """
+        }
+
     }
 
 
@@ -186,7 +209,7 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("zip(other: Iterable<R>)") {
-        exclude(Streams)
+        exclude(Streams, Strings)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -213,7 +236,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            val list = ArrayList<Pair<Char, Char>>()
+            val list = ArrayList<Pair<Char, Char>>(length())
             while (first.hasNext() && second.hasNext()) {
                 list.add(first.next() to second.next())
             }
@@ -222,8 +245,8 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(array: Array<R>)") {
-        exclude(Streams)
+    templates add f("zip(array: Array<out R>)") {
+        exclude(Streams, Strings)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.

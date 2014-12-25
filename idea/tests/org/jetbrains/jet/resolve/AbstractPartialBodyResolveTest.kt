@@ -41,13 +41,32 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.jet.plugin.JetFileType
+import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     public fun doTest(testPath: String) {
-        myFixture.configureByFile(testPath)
+        val dumpNormal = dump(testPath, BodyResolveMode.PARTIAL)
+
+        val testPathNoExt = FileUtil.getNameWithoutExtension(testPath)
+        JetTestUtils.assertEqualsToFile(File(testPathNoExt + ".dump"), dumpNormal)
+
+        val dumpForCompletion = dump(testPath, BodyResolveMode.PARTIAL_FOR_COMPLETION)
+        val completionDump = File(testPathNoExt + ".completion")
+        if (dumpForCompletion != dumpNormal) {
+            JetTestUtils.assertEqualsToFile(completionDump, dumpForCompletion)
+        }
+        else {
+            Assert.assertFalse(completionDump.exists())
+        }
+    }
+
+    private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
+        myFixture.configureByText(JetFileType.INSTANCE, File(testPath).readText())
 
         val file = myFixture.getFile() as JetFile
         val editor = myFixture.getEditor()
@@ -65,7 +84,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         val resolutionFacade = file.getResolutionFacade()
 
         // optimized resolve
-        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyzeWithPartialBodyResolve(expression))
+        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyze(expression, resolveMode))
 
         // full body resolve
         val (target2, type2, processedStatements2) = doResolve(expression, resolutionFacade.analyze(expression))
@@ -116,10 +135,10 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
             builder.append(fileText.substring(newCaretOffset))
         }
 
-        JetTestUtils.assertEqualsToFile(File(testPath.substringBeforeLast('.') + ".dump"), builder.toString())
-
         Assert.assertEquals(target2.presentation(null), target1.presentation(null))
         Assert.assertEquals(type2.presentation(), type1.presentation())
+
+        return builder.toString()
     }
 
     private data class ResolveData(

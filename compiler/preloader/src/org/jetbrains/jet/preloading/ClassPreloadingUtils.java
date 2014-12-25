@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.preloading;
 
-import sun.misc.CompoundEnumeration;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -154,7 +152,7 @@ public class ClassPreloadingUtils {
             protected Enumeration<URL> findResources(String name) throws IOException {
                 URL resource = findResource(name);
                 if (resource == null) {
-                    return new CompoundEnumeration<URL>(new Enumeration[0]);
+                    return Collections.enumeration(Collections.<URL>emptyList());
                 }
                 // Only the first resource is loaded
                 return Collections.enumeration(Collections.singletonList(resource));

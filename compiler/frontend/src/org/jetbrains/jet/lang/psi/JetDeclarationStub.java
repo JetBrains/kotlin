@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
@@ -49,5 +50,18 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetModifierList
             return stub.getParentStub().getPsi();
         }
         return super.getParent();
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigationElement() {
+        KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
+        if (navigationPolicy != null) {
+            JetElement navigationElement = navigationPolicy.getNavigationElement(this);
+            if (navigationElement != null) {
+                return navigationElement;
+            }
+        }
+        return this;
     }
 }

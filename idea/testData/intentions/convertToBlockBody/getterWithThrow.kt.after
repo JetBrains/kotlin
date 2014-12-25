@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 
 val foo: String
-    get()  {
+    get() {
         throw UnsupportedOperationException()
     }

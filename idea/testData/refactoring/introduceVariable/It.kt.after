@@ -3,5 +3,6 @@ fun b() {
     a {it}
     a {
         val i = it
+        i
     }
 }

@@ -51,6 +51,13 @@ class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeEx
 
 fun <T: Any> T?.sure(message: String? = null): T = this ?: throw JDIFailureException(message)
 
+public fun jdi.ObjectReference?.asValue(): ObjectValue {
+    return when (this) {
+        null -> NULL_VALUE
+        else -> ObjectValue(this, type().asType())
+    }
+}
+
 public fun jdi.Value?.asValue(): Value {
     return when (this) {
         null -> NULL_VALUE
@@ -63,7 +70,7 @@ public fun jdi.Value?.asValue(): Value {
         is jdi.LongValue -> LongValue(longValue())
         is jdi.FloatValue -> FloatValue(floatValue())
         is jdi.DoubleValue -> DoubleValue(doubleValue())
-        is jdi.ObjectReference -> ObjectValue(this, type().asType())
+        is jdi.ObjectReference -> this.asValue()
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }

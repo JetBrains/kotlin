@@ -12,7 +12,7 @@ import java.util.*
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
     if (n >= size())
-        return ArrayList<T>()
+        return emptyList()
     var count = 0
     val list = ArrayList<T>(size() - n)
     for (item in this) {
@@ -26,7 +26,7 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
  */
 public fun BooleanArray.drop(n: Int): List<Boolean> {
     if (n >= size())
-        return ArrayList<Boolean>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Boolean>(size() - n)
     for (item in this) {
@@ -40,7 +40,7 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
  */
 public fun ByteArray.drop(n: Int): List<Byte> {
     if (n >= size())
-        return ArrayList<Byte>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Byte>(size() - n)
     for (item in this) {
@@ -54,7 +54,7 @@ public fun ByteArray.drop(n: Int): List<Byte> {
  */
 public fun CharArray.drop(n: Int): List<Char> {
     if (n >= size())
-        return ArrayList<Char>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Char>(size() - n)
     for (item in this) {
@@ -68,7 +68,7 @@ public fun CharArray.drop(n: Int): List<Char> {
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
     if (n >= size())
-        return ArrayList<Double>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Double>(size() - n)
     for (item in this) {
@@ -82,7 +82,7 @@ public fun DoubleArray.drop(n: Int): List<Double> {
  */
 public fun FloatArray.drop(n: Int): List<Float> {
     if (n >= size())
-        return ArrayList<Float>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Float>(size() - n)
     for (item in this) {
@@ -96,7 +96,7 @@ public fun FloatArray.drop(n: Int): List<Float> {
  */
 public fun IntArray.drop(n: Int): List<Int> {
     if (n >= size())
-        return ArrayList<Int>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Int>(size() - n)
     for (item in this) {
@@ -110,7 +110,7 @@ public fun IntArray.drop(n: Int): List<Int> {
  */
 public fun LongArray.drop(n: Int): List<Long> {
     if (n >= size())
-        return ArrayList<Long>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Long>(size() - n)
     for (item in this) {
@@ -124,7 +124,7 @@ public fun LongArray.drop(n: Int): List<Long> {
  */
 public fun ShortArray.drop(n: Int): List<Short> {
     if (n >= size())
-        return ArrayList<Short>()
+        return emptyList()
     var count = 0
     val list = ArrayList<Short>(size() - n)
     for (item in this) {
@@ -138,7 +138,7 @@ public fun ShortArray.drop(n: Int): List<Short> {
  */
 public fun <T> Collection<T>.drop(n: Int): List<T> {
     if (n >= size())
-        return ArrayList<T>()
+        return emptyList()
     var count = 0
     val list = ArrayList<T>(size() - n)
     for (item in this) {
@@ -522,7 +522,7 @@ public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
 /**
  * Returns a list containing all elements that are not null
  */
-public fun <T : Any> Array<T?>.filterNotNull(): List<T> {
+public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
     return filterNotNullTo(ArrayList<T>())
 }
 
@@ -543,7 +543,7 @@ public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
 /**
  * Appends all elements that are not null to the given *destination*
  */
-public fun <C : MutableCollection<in T>, T : Any> Array<T?>.filterNotNullTo(destination: C): C {
+public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
 }

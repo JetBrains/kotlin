@@ -246,6 +246,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("NotInNotIs.kt")
+    public void testNotInNotIs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NotInNotIs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PrefixMatcher.kt")
     public void testPrefixMatcher() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PrefixMatcher.kt");

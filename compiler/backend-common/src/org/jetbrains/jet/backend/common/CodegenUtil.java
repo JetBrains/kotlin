@@ -19,13 +19,12 @@ package org.jetbrains.jet.backend.common;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
@@ -221,7 +220,13 @@ public class CodegenUtil {
 
     @Nullable
     public static Integer getLineNumberForElement(@NotNull PsiElement statement, boolean markEndOffset) {
-        Document document = statement.getContainingFile().getViewProvider().getDocument();
+        PsiFile file = statement.getContainingFile();
+        if (file instanceof JetFile) {
+            if (PsiPackage.getDoNotAnalyze((JetFile) file) != null) {
+                return null;
+            }
+        }
+        Document document = file.getViewProvider().getDocument();
         TextRange textRange = statement.getTextRange();
         return document != null ? document.getLineNumber(markEndOffset ? textRange.getEndOffset() : textRange.getStartOffset()) + 1 : null;
     }

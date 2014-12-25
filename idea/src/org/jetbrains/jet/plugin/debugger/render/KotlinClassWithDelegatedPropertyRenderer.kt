@@ -42,6 +42,7 @@ import com.sun.jdi.InvocationException
 import com.sun.jdi.Method
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
+import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
@@ -49,11 +50,11 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
     override fun isApplicable(jdiType: Type?): Boolean {
-        if (!super<ClassRenderer>.isApplicable(jdiType)) return false
+        if (!super.isApplicable(jdiType)) return false
 
         if (jdiType !is ReferenceType) return false
 
-        return jdiType.allFields()?.any { it.name()?.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: false } ?: false
+        return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
     }
 
     override fun buildChildren(value: Value?, builder: ChildrenBuilder, context: EvaluationContext) {
@@ -84,10 +85,10 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 val threadReference = context.getSuspendContext().getThread()?.getThreadReference()
                 if (method != null && threadReference != null) {
                     val propValue = try {
-                        value.invokeMethod(threadReference, method, listOf(), context.getSuspendContext().getSuspendPolicy())
+                        context.getDebugProcess().invokeInstanceMethod(context, value, method, listOf(), context.getSuspendContext().getSuspendPolicy())
                     }
-                    catch(e: InvocationException) {
-                        e.exception()
+                    catch(e: EvaluateException) {
+                        e.getExceptionFromTargetVM()
                     }
                     if (propValue != null) {
                         val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
@@ -106,9 +107,9 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
     }
 
     private fun findGetterForDelegatedProperty(objRef: ObjectReference, delegate: Field): Method? {
-        val fieldName = delegate.name()?.trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: return null
+        val fieldName = delegate.name().trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
         val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
-        return objRef.referenceType()?.methodsByName(getterName)?.firstOrNull()
+        return objRef.referenceType().methodsByName(getterName)?.firstOrNull()
     }
 
     private fun shouldDisplay(context: EvaluationContext, objInstance: ObjectReference, field: Field): Boolean {

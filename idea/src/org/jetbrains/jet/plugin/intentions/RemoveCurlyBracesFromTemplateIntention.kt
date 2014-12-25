@@ -21,31 +21,31 @@ import org.jetbrains.jet.lang.psi.JetBlockStringTemplateEntry
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import java.util.regex.*
+import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<JetBlockStringTemplateEntry>(
         "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {
 
     class object {
+        val INSTANCE = RemoveCurlyBracesFromTemplateIntention()
         val pattern = Pattern.compile("[a-zA-Z0-9_].*")
     }
 
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
         val nextSiblingText = element.getNextSibling()?.getText()
         if (nextSiblingText != null && pattern.matcher(nextSiblingText).matches()) return false
-        return element.getExpression()?.getOriginalElement() is JetSimpleNameExpression
+        return element.getExpression() is JetSimpleNameExpression
+    }
+
+    fun convertIfApplicable(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
+        if (!isApplicableTo(element)) return element
+
+        val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
+        val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
+        return element.replace(newEntry) as JetStringTemplateEntryWithExpression
     }
 
     override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
-        val parent = element.getParent()
-        if (parent == null) return
-        val sb = StringBuilder()
-        for (ch in parent.getChildren()) {
-            val newText = if (ch == element) "\$${element.getExpression()?.getText()}" else "${ch.getText()}"
-            sb.append(newText)
-        }
-        val tripleQuotes = parent.getFirstChild()?.getText()?.startsWith("\"\"\"")
-        if (tripleQuotes == null) return
-        val newExpression = if (tripleQuotes) "\"\"\"${sb.toString()}\"\"\"" else "\"${sb.toString()}\""
-        parent.replace(JetPsiFactory(element).createExpression(newExpression))
+        convertIfApplicable(element)
     }
 }

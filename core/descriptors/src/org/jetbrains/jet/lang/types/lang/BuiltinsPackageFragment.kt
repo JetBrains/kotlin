@@ -24,9 +24,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.jet.storage.StorageManager
-import java.io.DataInputStream
 import java.io.InputStream
-import java.util.ArrayList
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import com.google.protobuf.ExtensionRegistryLite
 
@@ -45,9 +43,9 @@ public class BuiltinsPackageFragment(
         extensionRegistry
     }
 
-    private val nameResolver = BuiltInsSerializationUtil.getStringTableFilePath(fqName).let { paths ->
-        NameSerializationUtil.deserializeNameResolver(loadResource(paths[0]) ?: getStream(paths[1]))
-    }
+    private val nameResolver = NameSerializationUtil.deserializeNameResolver(
+            getStream(BuiltInsSerializationUtil.getStringTableFilePath(fqName))
+    )
 
     public val provider: PackageFragmentProvider = PackageFragmentProviderImpl(listOf(this))
 
@@ -72,21 +70,7 @@ public class BuiltinsPackageFragment(
     }
 
     private fun readClassNames(proto: ProtoBuf.Package): List<Name> {
-        val stream = loadResource(BuiltInsSerializationUtil.getClassNamesFilePath(fqName))
-
-        if (stream == null) {
-            return proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
-        }
-
-        // TODO: drop
-        return DataInputStream(stream).use { data ->
-            val size = data.readInt()
-            val result = ArrayList<Name>(size)
-            size.times {
-                result.add(nameResolver.getName(data.readInt()))
-            }
-            result
-        }
+        return proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 
     override fun getMemberScope() = members

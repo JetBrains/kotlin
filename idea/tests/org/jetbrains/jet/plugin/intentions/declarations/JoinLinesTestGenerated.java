@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/joinLines")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class, JoinLinesTestGenerated.RemoveBraces.class})
+@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class, JoinLinesTestGenerated.NestedIfs.class, JoinLinesTestGenerated.RemoveBraces.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {
@@ -43,6 +43,18 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public static class DeclarationAndAssignment extends AbstractJoinLinesTest {
         public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("blankLineBetween.kt")
+        public void testBlankLineBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/blankLineBetween.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentBetween.kt")
+        public void testCommentBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/commentBetween.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("longInit.kt")
@@ -136,6 +148,51 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @TestMetadata("idea/testData/joinLines/nestedIfs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NestedIfs extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInNestedIfs() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("BlockBody.kt")
+        public void testBlockBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/BlockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ComplexCondition1.kt")
+        public void testComplexCondition1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/ComplexCondition1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ComplexCondition2.kt")
+        public void testComplexCondition2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/ComplexCondition2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InnerWithElse.kt")
+        public void testInnerWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/InnerWithElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OuterWithElse.kt")
+        public void testOuterWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/OuterWithElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/nestedIfs/Simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/joinLines/removeBraces")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -219,6 +276,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         @TestMetadata("TwoStatements.kt")
         public void testTwoStatements() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/TwoStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhenEntry.kt")
+        public void testWhenEntry() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/WhenEntry.kt");
             doTest(fileName);
         }
 

@@ -86,3 +86,6 @@ public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 /** Returns the List if its not null otherwise returns the empty list */
 public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
+
+public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) size() else null
+public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) size() else default

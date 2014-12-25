@@ -26,45 +26,33 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.jet.plugin.decompiler.textBuilder.descriptorToKey
 import org.jetbrains.jet.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.jet.lang.psi.JetFile
 
-public class JetClsFile(val provider: JetClassFileViewProvider) : ClsFileImpl(provider) {
-    private val mirrorLock = Any()
-
-    private val mirrorFile = LockedClearableLazyValue(mirrorLock) {
-        JetDummyClassFileViewProvider.createJetFile(
-                provider.getManager(),
-                getVirtualFile(),
-                decompiledText.get().text)!!
-    }
-
-    private val decompiledText = LockedClearableLazyValue(mirrorLock) {
+public class JetClsFile(val provider: JetClassFileViewProvider) : JetFile(provider, true) {
+    private val decompiledText = LockedClearableLazyValue(Any()) {
         buildDecompiledText(getVirtualFile())
     }
-
-    override fun getMirror(): PsiElement? = mirrorFile.get()
 
     public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
         val key = descriptorToKey(descriptor.getOriginal())
 
-        return synchronized(mirrorLock) {
-            val range = decompiledText.get().renderedDescriptorsToRange[key]
-            if (range != null) {
-                PsiTreeUtil.findElementOfClassAtRange(
-                        mirrorFile.get(), range.getStartOffset(), range.getEndOffset(), javaClass<JetDeclaration>())
-            }
-            else {
-                null
-            }
+        val range = decompiledText.get().renderedDescriptorsToRange[key]
+        return if (range != null) {
+            PsiTreeUtil.findElementOfClassAtRange(this, range.getStartOffset(), range.getEndOffset(), javaClass<JetDeclaration>())
+        }
+        else {
+            null
         }
     }
 
-    override fun onContentReload() {
-        super<ClsFileImpl>.onContentReload()
+    override fun getText(): String? {
+        return decompiledText.get().text
+    }
 
-        synchronized (mirrorLock) {
-            decompiledText.drop()
-            mirrorFile.drop()
-        }
+    override fun onContentReload() {
+        super.onContentReload()
+
+        decompiledText.drop()
     }
 
     TestOnly

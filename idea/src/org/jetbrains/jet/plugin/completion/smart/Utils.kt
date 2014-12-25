@@ -41,8 +41,9 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor
 import java.util.ArrayList
 import java.util.HashMap
 import org.jetbrains.jet.plugin.util.FuzzyType
-import org.jetbrains.jet.plugin.util.isNullable
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.plugin.util.nullability
+import org.jetbrains.jet.plugin.util.TypeNullability
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -117,7 +118,7 @@ fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): Expe
         return ExpectedInfoClassification.matches(substitutor)
     }
 
-    if (stream.any { it.isNullable() }) {
+    if (stream.any { it.nullability() == TypeNullability.NULLABLE }) {
         val substitutor2 = stream.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)

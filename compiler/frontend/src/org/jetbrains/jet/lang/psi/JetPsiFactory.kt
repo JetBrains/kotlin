@@ -214,8 +214,8 @@ public class JetPsiFactory(private val project: Project) {
         return aClass.getPrimaryConstructorModifierList()!!
     }
 
-    public fun createEmptyBody(): JetExpression {
-        return createFunction("fun foo() {}").getBodyExpression()!!
+    public fun createEmptyBody(): JetBlockExpression {
+        return createFunction("fun foo() {}").getBodyExpression() as JetBlockExpression
     }
 
     public fun createAnonymousInitializer(): JetClassInitializer {
@@ -257,6 +257,11 @@ public class JetPsiFactory(private val project: Project) {
         return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
     }
 
+    public fun createSimpleNameStringTemplateEntry(name: String): JetStringTemplateEntryWithExpression {
+        val stringTemplateExpression = createExpression("\"\$$name\"") as JetStringTemplateExpression
+        return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
+    }
+
     public fun createImportDirective(path: String): JetImportDirective {
         return createImportDirective(ImportPath(path))
     }
@@ -295,12 +300,11 @@ public class JetPsiFactory(private val project: Project) {
         return createExpression("$" + fieldName)
     }
 
-    public fun createBinaryExpression(lhs: String, op: String, rhs: String): JetBinaryExpression {
-        return createExpression(lhs + " " + op + " " + rhs) as JetBinaryExpression
-    }
-
-    public fun createBinaryExpression(lhs: JetExpression?, op: String, rhs: JetExpression?): JetBinaryExpression {
-        return createBinaryExpression(JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs))
+    public fun createBinaryExpression(lhs: JetExpression, op: String, rhs: JetExpression): JetBinaryExpression {
+        val expression = createExpression("a $op b") as JetBinaryExpression
+        expression.getLeft().replace(lhs)
+        expression.getRight().replace(rhs)
+        return expression
     }
 
     public fun createTypeCodeFragment(text: String, context: PsiElement?): JetTypeCodeFragment {
@@ -633,8 +637,8 @@ public class JetPsiFactory(private val project: Project) {
         }
     }
 
-    public fun createFunctionBody(bodyText: String): JetExpression {
-        return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression()!!
+    public fun createFunctionBody(bodyText: String): JetBlockExpression {
+        return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression() as JetBlockExpression
     }
 
     public fun createEmptyClassObject(): JetClassObject {

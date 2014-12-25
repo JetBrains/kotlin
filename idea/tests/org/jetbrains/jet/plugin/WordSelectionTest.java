@@ -23,38 +23,53 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
-    public void testStatements() {
-        doTest(11);
-    }
+    public void testStatements() { doTest(); }
 
-    public void testWhenEntries() {
-        doTest(6);
-    }
+    public void testWhenEntries() { doTest(); }
 
-    public void testTypeArguments() {
-        doTest(1);
-    }
+    public void testTypeArguments() { doTest(); }
 
-    public void testValueArguments() {
-        doTest(1);
-    }
+    public void testValueArguments() { doTest(); }
 
-    public void testTypeParameters() {
-        doTest(1);
-    }
+    public void testTypeParameters() { doTest(); }
 
-    public void testValueParameters() {
-        doTest(1);
-    }
+    public void testValueParameters() { doTest(); }
 
-    private void doTest(int howMany) {
-        String testName = getTestName(false);
-        String[] afterFiles = new String[howMany];
-        for (int i = 1; i <= howMany; i++) {
-            afterFiles[i - 1] = String.format("%s.%d.kt", testName, i);
+    public void testDocComment() { doTest(); }
+
+    public void testFunctionWithLineCommentBefore() { doTest(); }
+
+    public void testFunctionWithLineCommentAfter() { doTest(); }
+
+    public void testLineComment() { doTest(); }
+
+    public void testSimpleComment() { doTest(); }
+
+    public void testIfBody() { doTest(); }
+
+    public void testCommentForStatements() { doTest(); }
+
+    public void testSimpleStringLiteral() { doTest(); }
+
+    public void testTemplateStringLiteral1() { doTest(); }
+    public void testTemplateStringLiteral2() { doTest(); }
+    public void testTemplateStringLiteral3() { doTest(); }
+
+    public void testForRange() { doTest(); }
+
+    public void testIfCondition() { doTest(); }
+
+    private void doTest() {
+        String dirName = getTestName(false);
+
+        File dir = new File(myFixture.getTestDataPath() + dirName);
+        int filesCount = dir.listFiles().length;
+        String[] afterFiles = new String[filesCount - 1];
+        for (int i = 1; i < filesCount; i++) {
+            afterFiles[i - 1] = dirName + File.separator + i + ".kt";
         }
 
-        CodeInsightTestUtil.doWordSelectionTest(myFixture, testName + ".kt", afterFiles);
+        CodeInsightTestUtil.doWordSelectionTest(myFixture, dirName + File.separator + "0.kt", afterFiles);
     }
 
     @NotNull

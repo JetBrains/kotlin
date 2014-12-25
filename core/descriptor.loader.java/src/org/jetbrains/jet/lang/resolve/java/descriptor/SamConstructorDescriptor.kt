@@ -35,5 +35,4 @@ public class SamConstructorDescriptor(
 
 public object SamConstructorDescriptorKindExclude : DescriptorKindExclude {
     override fun matches(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
-    override fun toString() = this.javaClass.getSimpleName()
 }

@@ -33,7 +33,7 @@ fun filtering(): List<GenericFunction> {
         body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (n >= size())
-                return ArrayList<T>()
+                return emptyList()
 
             var count = 0
             val list = ArrayList<T>(size() - n)

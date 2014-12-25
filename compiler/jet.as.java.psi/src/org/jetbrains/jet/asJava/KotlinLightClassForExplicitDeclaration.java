@@ -195,7 +195,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             @NotNull FqName name,
             @NotNull JetClassOrObject classOrObject
     ) {
-        super(manager, JetLanguage.INSTANCE);
+        super(manager);
         this.classFqName = name;
         this.classOrObject = classOrObject;
     }
@@ -338,11 +338,6 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @Override
     public boolean isEquivalentTo(PsiElement another) {
         return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
-    }
-
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
     }
 
     @Override

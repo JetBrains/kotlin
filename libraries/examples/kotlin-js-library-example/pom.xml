@@ -46,7 +46,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>../../../resources/manifest.properties</file>
+                                <file>../../../resources/kotlinManifest.properties</file>
                             </files>
                         </configuration>
                     </execution>

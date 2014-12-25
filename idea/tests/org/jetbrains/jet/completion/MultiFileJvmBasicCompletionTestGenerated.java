@@ -120,6 +120,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("NoExtForOuterFromNested")
+    public void testNoExtForOuterFromNested() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoExtForOuterFromNested/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoExtensionMethodDuplication")
     public void testNoExtensionMethodDuplication() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoExtensionMethodDuplication/");
@@ -171,6 +177,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("NotImportedProperty")
     public void testNotImportedProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedProperty/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ObjectInTypePosition")
+    public void testObjectInTypePosition() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ObjectInTypePosition/");
         doTest(fileName);
     }
 

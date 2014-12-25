@@ -254,6 +254,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = PROPERTY_ACCESSOR, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))
 

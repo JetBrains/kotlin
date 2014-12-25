@@ -146,9 +146,9 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     private fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode) = importedScopesProvider(directive).scopeForMode(lookupMode)
 
-    override fun getClassifier(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
+    override fun getClassifier(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
 
-    override fun getPackage(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
+    override fun getPackage(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
 
     override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
 

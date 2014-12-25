@@ -53,42 +53,49 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.jet.utils.CachedValueProperty
 import org.jetbrains.jet.plugin.completion.isVisible
+import org.jetbrains.jet.utils.CachedValueProperty
 
 /**
  * Check possibility and perform fix for unresolved references.
  */
 public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<JetSimpleNameExpression>(element), HighPriorityAction {
     private val module = ModuleUtilCore.findModuleForPsiElement(element)
+    private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
-    private val suggestions: Collection<FqName>
-            by CachedValueProperty({ computeSuggestions(element) },
-                           { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
+    volatile private var anySuggestionFound: Boolean? = null
+
+    private val suggestions: Collection<FqName> by CachedValueProperty(
+            {
+                val fqnames = computeSuggestions(element)
+                anySuggestionFound = !fqnames.isEmpty()
+                fqnames
+            },
+            { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
 
     override fun showHint(editor: Editor): Boolean {
-        if (suggestions.isEmpty()) return false
-        val project = editor.getProject() ?: return false
+        if (!element.isValid() || isOutdated()) return false
 
         if (HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
+
+        if (suggestions.isEmpty()) return false
 
         if (!ApplicationManager.getApplication()!!.isUnitTestMode()) {
             val hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.first().asString())
 
+            val project = editor.getProject() ?: return false
             HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), createAction(project, editor))
         }
 
         return true
     }
 
-    override fun getText()
-            = JetBundle.message("import.fix")
+    override fun getText() = JetBundle.message("import.fix")
 
-    override fun getFamilyName()
-            = JetBundle.message("import.fix")
+    override fun getFamilyName() = JetBundle.message("import.fix")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
-            = super<JetHintAction>.isAvailable(project, editor, file) && !suggestions.isEmpty()
+            = (super<JetHintAction>.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
         CommandProcessor.getInstance().runUndoTransparentAction {
@@ -96,11 +103,11 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         }
     }
 
-    override fun startInWriteAction()
-            = true
+    override fun startInWriteAction() = true
 
-    private fun createAction(project: Project, editor: Editor)
-            = JetAddImportAction(project, editor, element, suggestions)
+    private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
+
+    private fun createAction(project: Project, editor: Editor) = JetAddImportAction(project, editor, element, suggestions)
 
     private fun computeSuggestions(element: JetSimpleNameExpression): Collection<FqName> {
         if (!element.isValid()) return listOf()
@@ -129,7 +136,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val containingDescriptor = resolutionScope.getContainingDeclaration()
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            if (descriptor is DeclarationDescriptorWithVisibility && containingDescriptor != null) {
+            if (descriptor is DeclarationDescriptorWithVisibility) {
                 return descriptor.isVisible(containingDescriptor, bindingContext, element)
             }
 

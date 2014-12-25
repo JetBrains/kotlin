@@ -1,7 +1,7 @@
 <project name="Kotlin" default="dist">
     <include file="jslib_files.xml" />
 
-    <property file="resources/manifest.properties"/>
+    <property file="resources/kotlinManifest.properties"/>
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
@@ -217,40 +217,68 @@
         </if>
     </target>
 
-    <target name="compile-kotlin-js-stdlib">
-        <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${kotlin-home}/lib/kotlin-ant.jar"/>
+    <macrodef name="new-kotlin2js">
+        <attribute name="output"/>
+        <element name="src"/>
 
-        <property name="compiled.builtins.js" value="builtins.js" />
-        <property name="compiled.stdlib.js" value="stdlib.js" />
-        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
+        <sequential>
+            <local name="src.line"/>
 
-        <kotlin2js output="${output}/${compiled.builtins.js}" noStdlib="true" main="noCall">
+            <path id="src.path">
+                <src/>
+            </path>
+
+            <pathconvert property="src.line" refid="src.path" pathsep=" "/>
+
+            <java classname="org.jetbrains.jet.cli.js.K2JSCompiler" failonerror="true" fork="true">
+                <classpath>
+                    <file file="${bootstrap.runtime}"/>
+                    <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                </classpath>
+                <assertions>
+                    <enable/>
+                </assertions>
+                <arg line="${src.line}"/>
+                <arg value="-output"/>
+                <arg value="@{output}"/>
+                <arg value="-no-stdlib"/>
+                <arg line="-main noCall"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="js-stdlib">
+        <property name="compiled.builtins.js" value="builtins.js"/>
+        <property name="compiled.stdlib.js" value="stdlib.js"/>
+        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
+
+        <new-kotlin2js output="${output}/${compiled.builtins.js}">
             <src>
-                <fileset refid="kotlin.builtin.files" />
+                <fileset refid="kotlin.builtin.files"/>
             </src>
-        </kotlin2js>
+        </new-kotlin2js>
 
-        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+        <new-kotlin2js output="${output}/${compiled.stdlib.js}">
             <src>
-                <resources refid="js.lib.files" />
+                <resources refid="js.lib.files"/>
             </src>
-        </kotlin2js>
+        </new-kotlin2js>
 
         <taskdef name="closure-compiler"
                  classname="com.google.javascript.jscomp.ant.CompileTask"
                  classpath="${dependencies.dir}/closure-compiler.jar"/>
 
         <!-- value should be one of: whitespace, simple, advanced -->
-        <property name="compilationLevel" value="simple" />
+        <property name="compilationLevel" value="simple"/>
         <!-- value should be one of: default, quiet, verbose -->
-        <property name="warningLevel" value="default" />
+        <property name="warningLevel" value="default"/>
 
         <closure-compiler
             compilationLevel="${compilationLevel}"
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${output}/kotlin.js" >
+            output="${output}/kotlin.js">
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
@@ -276,7 +304,7 @@
             </externs>
         </closure-compiler>
 
-        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
+        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar" duplicate="fail">
             <resources refid="js.lib.files" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset file="${output}/kotlin.js" prefix=""/>
@@ -293,8 +321,8 @@
         </jar>
     </target>
 
-    <target name="pack-kotlin-js-stdlib-sources">
-        <jar destfile="${kotlin-home}/lib/kotlin-jslib-sources.jar">
+    <target name="pack-js-stdlib-sources">
+        <jar destfile="${kotlin-home}/lib/kotlin-jslib-sources.jar" duplicate="fail">
             <resources refid="js.lib.files" />
             <fileset refid="kotlin.builtin.files" />
 
@@ -310,7 +338,7 @@
         </jar>
     </target>
 
-    <target name="kotlin-js-stdlib" depends="compile-kotlin-js-stdlib,pack-kotlin-js-stdlib-sources"/>
+    <target name="kotlin-js-stdlib" depends="js-stdlib,pack-js-stdlib-sources"/>
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
@@ -385,7 +413,7 @@
                 </fileset>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
-                <fileset dir="${basedir}/resources" includes="manifest.properties"/>
+                <fileset dir="${basedir}/resources" includes="kotlinManifest.properties"/>
 
                 <fileset dir="idea/src">
                     <include name="META-INF/extensions/common.xml"/>
@@ -731,7 +759,7 @@
     </target>
 
     <target name="pack-runtime-sources">
-        <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar">
+        <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar" duplicate="fail">
             <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
             <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
             <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>

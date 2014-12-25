@@ -22,6 +22,7 @@ import com.google.common.base.Predicates;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
@@ -59,12 +60,12 @@ public abstract class ElementResolver {
 
     @NotNull
     public BindingContext getElementAdditionalResolve(@NotNull JetElement jetElement) {
-        return elementAdditionalResolve(jetElement, PartialBodyResolveProvider.NONE);
+        return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
     }
 
     @NotNull
     public BindingContext resolveToElement(@NotNull JetElement jetElement) {
-        return resolveToElement(jetElement, false);
+        return resolveToElement(jetElement, BodyResolveMode.FULL);
     }
 
     @NotNull
@@ -73,7 +74,7 @@ public abstract class ElementResolver {
     }
 
     @NotNull
-    public BindingContext resolveToElement(@NotNull JetElement jetElement, boolean partialBodyResolve) {
+    public BindingContext resolveToElement(@NotNull JetElement jetElement, BodyResolveMode bodyResolveMode) {
         @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
                 JetNamedFunction.class,
@@ -93,12 +94,9 @@ public abstract class ElementResolver {
                 elementOfAdditionalResolve = jetElement;
             }
 
-            if (partialBodyResolve && elementOfAdditionalResolve instanceof JetDeclaration) {
+            if (bodyResolveMode != BodyResolveMode.FULL) {
                 //TODO: do not resolve with filter if whole body resolve cached already
-                PartialBodyResolveFilter filter = new PartialBodyResolveFilter(
-                        jetElement,
-                        (JetDeclaration) elementOfAdditionalResolve, probablyNothingCallableNames());
-                return elementAdditionalResolve(elementOfAdditionalResolve, filter);
+                return elementAdditionalResolve(elementOfAdditionalResolve, jetElement, bodyResolveMode);
             }
 
             return getElementAdditionalResolve(elementOfAdditionalResolve);
@@ -127,13 +125,26 @@ public abstract class ElementResolver {
     @NotNull
     protected BindingContext elementAdditionalResolve(
             @NotNull JetElement resolveElement,
-            @NotNull PartialBodyResolveProvider partialResolveProvider
+            @NotNull JetElement contextElement,
+            @NotNull BodyResolveMode bodyResolveMode
     ) {
         // All additional resolve should be done to separate trace
         BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
                 new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement));
 
         JetFile file = resolveElement.getContainingJetFile();
+
+        PartialBodyResolveProvider partialResolveProvider;
+        if (bodyResolveMode != BodyResolveMode.FULL && resolveElement instanceof JetDeclaration) {
+            partialResolveProvider = new PartialBodyResolveFilter(
+                    contextElement,
+                    (JetDeclaration) resolveElement,
+                    probablyNothingCallableNames(),
+                    bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION);
+        }
+        else {
+            partialResolveProvider = PartialBodyResolveProvider.NONE;
+        }
 
         if (resolveElement instanceof JetNamedFunction) {
             functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file, partialResolveProvider);
@@ -165,7 +176,7 @@ public abstract class ElementResolver {
             typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
         }
         else if (resolveElement instanceof JetCodeFragment) {
-            codeFragmentAdditionalResolve(resolveSession, (JetCodeFragment) resolveElement, trace);
+            codeFragmentAdditionalResolve(resolveSession, (JetCodeFragment) resolveElement, trace, bodyResolveMode);
         }
         else if (PsiTreeUtil.getParentOfType(resolveElement, JetPackageDirective.class) != null) {
             packageRefAdditionalResolve(resolveSession, trace, resolveElement);
@@ -218,7 +229,8 @@ public abstract class ElementResolver {
     private void codeFragmentAdditionalResolve(
             ResolveSession resolveSession,
             JetCodeFragment codeFragment,
-            BindingTrace trace
+            BindingTrace trace,
+            BodyResolveMode bodyResolveMode
     ) {
         JetElement codeFragmentExpression = codeFragment.getContentElement();
         if (!(codeFragmentExpression instanceof JetExpression)) return;
@@ -234,11 +246,21 @@ public abstract class ElementResolver {
             scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution();
             dataFlowInfoForContextElement = DataFlowInfo.EMPTY;
         }
+        else if (contextElement instanceof JetBlockExpression) {
+            JetElement newContextElement = KotlinPackage.lastOrNull(((JetBlockExpression) contextElement).getStatements());
+
+            if (!(newContextElement instanceof JetExpression)) return;
+
+            BindingContext contextForElement = resolveToElement((JetElement) contextElement, BodyResolveMode.FULL);
+
+            scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, ((JetExpression) newContextElement));
+            dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, (JetExpression) newContextElement);
+        }
         else {
             if (!(contextElement instanceof JetExpression)) return;
 
             JetExpression contextExpression = (JetExpression) contextElement;
-            BindingContext contextForElement = resolveToElement((JetElement) contextElement, true);
+            BindingContext contextForElement = resolveToElement((JetElement) contextElement, bodyResolveMode);
 
             scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
             dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, contextExpression);
@@ -456,7 +478,7 @@ public abstract class ElementResolver {
                 if (qualifier != null) {
                     JetScope resolutionScope = getExpressionResolutionScope(resolveSession, expression);
                     Collection<DeclarationDescriptor> descriptors =
-                            qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace);
+                            qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace, false);
                     for (DeclarationDescriptor descriptor : descriptors) {
                         if (descriptor instanceof LazyPackageDescriptor) {
                             return ((LazyPackageDescriptor) descriptor).getMemberScope();

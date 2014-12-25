@@ -17,31 +17,25 @@
 package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class KotlinRuntimeLibraryCoreUtil {
+    private static final ImmutableList<String> CANDIDATE_CLASSES = ImmutableList.of(
+            "kotlin.jvm.internal.Intrinsics",
+
+            // For older versions
+            "jet.runtime.Intrinsics"
+    );
+
     @Nullable
-    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
-        FqName kotlinPackageFqName = FqName.topLevel(Name.identifier("kotlin"));
-        String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).asString();
-
-        ImmutableList<String> candidateClassNames = ImmutableList.of(
-                kotlinPackageClassFqName,
-                "kotlin.Unit",
-                // For older versions
-                "kotlin.namespace",
-                "jet.Unit"
-        );
-
-        for (String className : candidateClassNames) {
-            PsiClass psiClass = JavaPsiFacade.getInstance(scope.getProject()).findClass(className, scope);
+    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull Project project, @NotNull GlobalSearchScope scope) {
+        for (String className : CANDIDATE_CLASSES) {
+            PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
             if (psiClass != null) {
                 return psiClass;
             }

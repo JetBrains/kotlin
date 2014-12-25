@@ -15,7 +15,6 @@ fun foo(pFoo: Boolean, s: String) {
 // ORDER: true
 // ORDER: false
 // ORDER: local
-// ORDER: ASSERTIONS_ENABLED
 // ORDER: nonNullable
 // ORDER: nullableX
 // ORDER: nullableX

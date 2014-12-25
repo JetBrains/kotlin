@@ -1,0 +1,9 @@
+<root>
+    <item name='com.intellij.codeInsight.editorActions.wordSelection.BasicSelectioner boolean canSelect(com.intellij.psi.PsiElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.wordSelection.BasicSelectioner boolean canSelectBasic(com.intellij.psi.PsiElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

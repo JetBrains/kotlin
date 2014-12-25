@@ -40,12 +40,13 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
-import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.JetTypeArgumentList
+import com.intellij.codeInsight.lookup.Lookup
 
 public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -139,14 +140,32 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
             context.setAddCompletionChar(false)
         }
 
-        val offset = context.getTailOffset()
+        var offset = context.getTailOffset()
         val document = context.getDocument()
+        val chars = document.getCharsSequence()
 
-        val forceParenthesis = lambdaInfo != null && completionChar == '\t' && document.getCharsSequence().charAt(offset) == '('
+        val forceParenthesis = lambdaInfo != null && completionChar == '\t' && chars.charAt(offset) == '('
         val braces = lambdaInfo != null && completionChar != '(' && !forceParenthesis
 
         val openingBracket = if (braces) '{' else '('
         val closingBracket = if (braces) '}' else ')'
+
+        if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
+            offset = skipSpaces(chars, offset)
+            if (offset < document.getTextLength()) {
+                if (chars[offset] == '<') {
+                    PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
+                    val psiFile = context.getFile()
+                    val token = psiFile.findElementAt(offset)
+                    if (token.getNode().getElementType() == JetTokens.LT) {
+                        val parent = token.getParent()
+                        if (parent is JetTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
+                            offset = parent.getTextRange().getEndOffset()
+                        }
+                    }
+                }
+            }
+        }
 
         var openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
         var inBracketsShift = 0
@@ -208,12 +227,15 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {
             val text = document.getCharsSequence()
             for (i in startIndex..text.length() - 1) {
-                val currentChar = text.charAt(i)
+                val currentChar = text[i]
                 if (ch == currentChar) return i
-                if (!Character.isWhitespace(currentChar)) return -1
+                if (currentChar != ' ' && currentChar != '\t') return -1
             }
             return -1
         }
+
+        private fun skipSpaces(chars: CharSequence, index : Int) : Int
+                = (index..chars.length() - 1).firstOrNull { val c = chars[it]; c != ' ' && c != '\t' } ?: chars.length()
 
         private fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
                 = CodeStyleSettingsManager.getSettings(project)

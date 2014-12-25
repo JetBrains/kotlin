@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
@@ -239,7 +240,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         StringBuilder builder = new StringBuilder();
 
         PsiElement owner = context.getParameterOwner();
-        BindingContext bindingContext = resolutionFacade.analyze((JetElement) owner);
+        BindingContext bindingContext = resolutionFacade.analyze((JetElement) owner, BodyResolveMode.FULL);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -383,7 +384,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         }
 
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(callNameExpression.getContainingJetFile());
-        BindingContext bindingContext = resolutionFacade.analyze(callNameExpression);
+        BindingContext bindingContext = resolutionFacade.analyze(callNameExpression, BodyResolveMode.FULL);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         final DeclarationDescriptor placeDescriptor;

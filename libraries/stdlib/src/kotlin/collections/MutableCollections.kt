@@ -20,7 +20,7 @@ public fun <T> MutableCollection<in T>.addAll(stream: Stream<T>) {
 /**
  * Adds all elements of the given *array* to this [[MutableCollection]]
  */
-public fun <T> MutableCollection<in T>.addAll(array: Array<T>) {
+public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
     for (item in array) add(item)
 }
 
@@ -44,7 +44,7 @@ public fun <T> MutableCollection<in T>.removeAll(stream: Stream<T>) {
 /**
  * Removes all elements of the given *array* from this [[MutableCollection]]
  */
-public fun <T> MutableCollection<in T>.removeAll(array: Array<T>) {
+public fun <T> MutableCollection<in T>.removeAll(array: Array<out T>) {
     for (item in array) remove(item)
 }
 
@@ -61,6 +61,6 @@ public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
 /**
  * Retains only elements of the given *array* in this [[MutableCollection]]
  */
-public fun <T> MutableCollection<in T>.retainAll(array: Array<T>) {
+public fun <T> MutableCollection<in T>.retainAll(array: Array<out T>) {
     retainAll(array.toSet())
 }

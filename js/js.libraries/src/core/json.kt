@@ -5,11 +5,13 @@ native public class Json() {
     public fun set(propertyName: String, value: Any?): Unit = noImpl
 }
 
-library("jsonFromTuples")
-public fun json(vararg pairs: Pair<String, Any?>): Json = noImpl
-
-library("jsonFromTuples")
-public fun json2(pairs: Array<Pair<String, Any?>>): Json = noImpl
+public fun json(vararg pairs: Pair<String, Any?>): Json {
+    var res: dynamic = js("({})")
+    for((name, value) in pairs) {
+        res[name] = value
+    }
+    return res
+}
 
 library("jsonAddProperties")
 public fun Json.add(other: Json): Json = noImpl

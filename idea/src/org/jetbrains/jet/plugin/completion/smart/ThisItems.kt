@@ -31,14 +31,13 @@ import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.plugin.util.FuzzyType
+import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
 
-        val receivers: List<ReceiverParameterDescriptor> = scope.getImplicitReceiversHierarchy()
-        for (i in 0..receivers.size - 1) {
-            val receiver = receivers[i]
+        for ((i, receiver) in scope.getImplicitReceiversWithInstance().withIndex()) {
             val thisType = receiver.getType()
             val fuzzyType = FuzzyType(thisType, listOf())
             val classifier = { (expectedInfo: ExpectedInfo) -> fuzzyType.classifyExpectedInfo(expectedInfo) }

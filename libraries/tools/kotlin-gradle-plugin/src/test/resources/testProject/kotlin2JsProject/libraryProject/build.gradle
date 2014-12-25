@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'file://' + pathToKotlinPlugin
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+repositories {
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-js-library:0.1-SNAPSHOT"
+}
+
+task jarSources(type:Jar){
+    from sourceSets.main.allSource
+    classifier = 'source'
+}
+artifacts {
+    compile jarSources
+}
+
+def outDir = "${buildDir}/kotlin2js/main/"
+
+compileKotlin2Js.kotlinOptions.outputFile = outDir + "test-library.js"
+
+jar {
+    from sourceSets.main.allSource
+    include "**/*.kt"
+
+    from outDir
+    include "**/*.js"
+
+    manifest {
+        attributes(
+                "Specification-Title": "Kotlin JavaScript Lib",
+                "Kotlin-JS-Module-Name": "test-library"
+        )
+    }
+}
+
+jar.dependsOn(compileKotlin2Js)

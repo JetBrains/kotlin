@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.plugin.decompiler.navigation;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -28,32 +28,20 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.decompiler.DecompilerPackage;
 import org.jetbrains.jet.plugin.decompiler.JetClsFile;
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class DecompiledNavigationUtils {
 
-    private static final Logger LOG = Logger.getInstance(DecompiledNavigationUtils.class);
-
     @Nullable
-    public static JetDeclaration findDeclarationForReference(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor referencedDescriptor
-    ) {
-        JetDeclaration declarationFromDecompiledClassFile = getDeclarationFromDecompiledClassFile(project, referencedDescriptor);
-        if (declarationFromDecompiledClassFile == null) {
-            return null;
-        }
-        return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declarationFromDecompiledClassFile);
-    }
-
-    @Nullable
-    private static JetDeclaration getDeclarationFromDecompiledClassFile(
+    public static JetDeclaration getDeclarationFromDecompiledClassFile(
             @NotNull Project project,
             @NotNull DeclarationDescriptor referencedDescriptor
     ) {
@@ -92,7 +80,8 @@ public final class DecompiledNavigationUtils {
         if (containerFqName == null) {
             return null;
         }
-        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
+        GlobalSearchScope scopeToSearchIn = JetSourceFilterScope.kotlinSourceAndClassFiles(GlobalSearchScope.allScope(project), project);
+        VirtualFileFinder fileFinder = VirtualFileFinderFactory.SERVICE.getInstance(project).create(scopeToSearchIn);
         VirtualFile virtualFile = fileFinder.findVirtualFileWithHeader(containerFqName);
         if (virtualFile == null) {
             return null;

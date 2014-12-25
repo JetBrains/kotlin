@@ -1,4 +1,8 @@
-fun x(): Int {
-    val i = 1
-    println(i)
+fun foo(a: Int): Int {
+    val i = a + 1
+    return if (a > 1) {
+        i * (a - 1)
+    } else {
+        a * i
+    }
 }

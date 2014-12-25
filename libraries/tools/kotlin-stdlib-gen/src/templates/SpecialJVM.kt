@@ -9,6 +9,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array" }
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         body {
             "return Arrays.copyOfRange(this, from, to)"
         }
@@ -18,6 +19,7 @@ fun specialJVM(): List<GenericFunction> {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array" }
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         body {
             "return Arrays.copyOf(this, size())"
         }
@@ -75,8 +77,9 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstanceTo(destination: C, klass: Class<R>)") {
         doc { "Appends all elements that are instances of specified class to the given *destination*" }
+        receiverAsterisk(true)
         typeParam("C : MutableCollection<in R>")
-        typeParam("R : T")
+        typeParam("R")
         returns("C")
         exclude(ArraysOfPrimitives, Strings)
         body {
@@ -89,7 +92,8 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstance(klass: Class<R>)") {
         doc { "Returns a list containing all elements that are instances of specified class" }
-        typeParam("R : T")
+        receiverAsterisk(true)
+        typeParam("R")
         returns("List<R>")
         body {
             """

@@ -26,6 +26,8 @@ import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {
@@ -66,13 +68,19 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
     if (module != null) {
-        if (isDecompiledFile) {
-            LOG.error("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+        fun warnIfDecompiled() {
+            if (isDecompiledFile) {
+                LOG.warn("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+            }
         }
-        if (projectFileIndex.isInTestSourceContent(virtualFile)) {
+
+        val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+        if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
+            warnIfDecompiled()
             return module.testSourceInfo()
         }
-        else {
+        else if (moduleFileIndex.isInSourceContent(virtualFile)) {
+            warnIfDecompiled()
             return module.productionSourceInfo()
         }
     }
@@ -83,10 +91,10 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.getLibrary() ?: continue @entries
-                if (projectFileIndex.isInLibraryClasses(virtualFile) && !isDecompiledFile) {
+                if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
                     return LibraryInfo(project, library)
                 }
-                else if (projectFileIndex.isInLibrarySource(virtualFile) || isDecompiledFile) {
+                else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || isDecompiledFile) {
                     return LibrarySourceInfo(project, library)
                 }
             }
@@ -100,6 +108,9 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 }
 
 private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
+    if (this is KotlinLightClassForDecompiledDeclaration) {
+        return getModuleInfoByVirtualFile(getProject(), getContainingFile().getVirtualFile(), false)
+    }
     val element = origin ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KotlinLightClassForPackage -> this.getFiles().first()

@@ -20,20 +20,15 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
 import org.junit.Assert
-import com.intellij.psi.PsiCompiledFile
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.impl.compiled.ClsFileImpl
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.jet.lang.psi.JetFile
-import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.jet.utils.addIfNotNull
-import java.util.LinkedHashSet
-import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION
 import org.jetbrains.jet.plugin.decompiler.AbstractInternalCompiledClassesTest
+import org.jetbrains.jet.plugin.decompiler.stubBuilder.findClassFileByName
+import org.jetbrains.jet.plugin.decompiler.JetClsFile
 
 public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
@@ -47,31 +42,19 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
 
     fun testAnonymousFunctionIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
 
-    fun testClassWithWrongAbiVersion() = doTest("ClassWithWrongAbiVersion\\.class")
+    fun testClassWithWrongAbiVersion() = doTest("ClassWithWrongAbiVersion")
 
-    fun testPackageFacadeWithWrongAbiVersion() = doTest("WrongPackage\\.class")
+    fun testPackageFacadeWithWrongAbiVersion() = doTest("WrongPackage")
 
-    fun doTest(namePattern: String) {
+    fun doTest(name: String) {
         val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)
-
-        val pattern = Pattern.compile(namePattern)
-        val files = LinkedHashSet<VirtualFile>()
-        VfsUtilCore.iterateChildrenRecursively(
-                root,
-                { virtualFile -> virtualFile.isDirectory() || pattern.matcher(virtualFile.getName()).matches() },
-                { virtualFile -> if (!virtualFile.isDirectory()) files.addIfNotNull(virtualFile); true })
-
-        Assert.assertTrue("Only file should matches the pattern '$namePattern', but found: $files", files.size == 1)
-
-        checkFileWithWrongAbiVersion(files.single())
+        checkFileWithWrongAbiVersion(root.findClassFileByName(name))
     }
 
     private fun checkFileWithWrongAbiVersion(file: VirtualFile) {
         val psiFile = PsiManager.getInstance(getProject()!!).findFile(file)
-        Assert.assertTrue(psiFile is ClsFileImpl)
-        val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()
-        Assert.assertTrue(decompiledPsiFile is JetFile)
-        val decompiledText = decompiledPsiFile!!.getText()!!
+        Assert.assertTrue(psiFile is JetClsFile)
+        val decompiledText = psiFile!!.getText()!!
         Assert.assertTrue(decompiledText.contains(INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT))
     }
 }

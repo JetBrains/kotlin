@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.inline.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.when.SwitchCodegen;
@@ -122,6 +123,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
 
     private int myLastLineNumber = -1;
+    private boolean shouldMarkLineNumbers = true;
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -495,7 +497,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, false, continueLabel);
+            conditionValue = generateBlock(statements, false, continueLabel, null);
         }
         else {
             if (body != null) {
@@ -1504,11 +1506,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     /* package */ StackValue generateBlock(@NotNull JetBlockExpression expression, boolean isStatement) {
-        return generateBlock(expression.getStatements(), isStatement, null);
+        if (expression.getParent() instanceof JetNamedFunction) {
+            // For functions end of block should be end of function label
+            return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
+        }
+        return generateBlock(expression.getStatements(), isStatement, null, null);
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean isStatement, Label labelBeforeLastExpression) {
-        final Label blockEnd = new Label();
+    private StackValue generateBlock(
+            List<JetElement> statements,
+            boolean isStatement,
+            Label labelBeforeLastExpression,
+            @Nullable final Label labelBlockEnd
+    ) {
+        final Label blockEnd = labelBlockEnd != null ? labelBlockEnd : new Label();
 
         final List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
 
@@ -1562,7 +1573,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return new StackValueWithLeaveTask(answer, new ExtensionFunction0<StackValueWithLeaveTask, Unit>() {
             @Override
             public Unit invoke(StackValueWithLeaveTask wrapper) {
-                v.mark(blockEnd);
+                if (labelBlockEnd == null) {
+                    v.mark(blockEnd);
+                }
                 for (Function<StackValue, Void> task : Lists.reverse(leaveTasks)) {
                     task.fun(wrapper.getStackValue());
                 }
@@ -1624,11 +1637,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
+    public boolean isShouldMarkLineNumbers() {
+        return shouldMarkLineNumbers;
+    }
+
+    public void setShouldMarkLineNumbers(boolean shouldMarkLineNumbers) {
+        this.shouldMarkLineNumbers = shouldMarkLineNumbers;
+    }
+
     public void markStartLineNumber(@NotNull JetElement element) {
         markLineNumber(element, false);
     }
 
     public void markLineNumber(@NotNull JetElement statement, boolean markEndOffset) {
+        if (!shouldMarkLineNumbers) return;
+
         Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
         if (lineNumber == null || lineNumber == myLastLineNumber) {
             return;
@@ -2311,10 +2334,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(entry.getValue());
             if (parameterDescriptor == null) {
                 // type is not generic
-                // boxType call needed because inlined method is compiled for T as java/lang/Object
+                BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
+                Type type = typeMapper.mapTypeParameter(entry.getValue(), signatureWriter);
+
                 mappings.addParameterMappingToType(
                         key.getName().getIdentifier(),
-                        boxType(asmType(entry.getValue()))
+                        type,
+                        signatureWriter.toString()
                 );
             }
             else {

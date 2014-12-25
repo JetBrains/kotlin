@@ -1,7 +1,7 @@
 Resolve target: value-parameter val p: kotlin.String? smart-cast to kotlin.String
 ----------------------------------------------
 fun foo(p: String?, p1: Any?) {
-    x(e.f!!)
+    /* STATEMENT DELETED: x(e.f!!) */
     /* STATEMENT DELETED: y(f()!!) */
 
     if (a) {

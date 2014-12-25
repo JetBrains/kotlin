@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
+deprecated("All tests from here to be moved to the generated test")
 public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     override val testDataRelativePath: String = "/completion/handlers"
 
@@ -167,4 +168,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')
 
     fun testImportedEnumMember() { doTest(1, "AAA", null, null, '\n') }
+
+    fun testInnerClass() { doTest(1, "Inner", null, null, '\n') }
 }

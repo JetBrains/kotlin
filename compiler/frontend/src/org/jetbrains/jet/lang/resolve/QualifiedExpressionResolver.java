@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
@@ -46,7 +47,7 @@ public class QualifiedExpressionResolver {
 
     public enum LookupMode {
         // Only classifier and packages are resolved
-        ONLY_CLASSES,
+        ONLY_CLASSES_AND_PACKAGES,
 
         // Resolve all descriptors
         EVERYTHING
@@ -115,7 +116,7 @@ public class QualifiedExpressionResolver {
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
+        if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
             return true;
         }
 
@@ -156,8 +157,10 @@ public class QualifiedExpressionResolver {
     public Collection<DeclarationDescriptor> lookupDescriptorsForUserType(
             @NotNull JetUserType userType,
             @NotNull JetScope outerScope,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean onlyClassifiers
     ) {
+
         if (userType.isAbsoluteInRootPackage()) {
             trace.report(Errors.UNSUPPORTED.on(userType, "package"));
             return Collections.emptyList();
@@ -168,12 +171,33 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
         JetUserType qualifier = userType.getQualifier();
+
+        // We do not want to resolve the last segment of a user type to a package
+        JetScope filteredScope = filterOutPackagesIfNeeded(outerScope, onlyClassifiers);
+
         if (qualifier == null) {
-            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, trace, LookupMode.ONLY_CLASSES,
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, filteredScope, outerScope, trace, LookupMode.ONLY_CLASSES_AND_PACKAGES,
                                                            false, true);
         }
-        Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace);
-        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, outerScope, LookupMode.ONLY_CLASSES, true);
+        Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace, false);
+        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, filteredScope, LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
+    }
+
+    private static JetScope filterOutPackagesIfNeeded(final JetScope outerScope, boolean noPackages) {
+        return !noPackages ? outerScope : new AbstractScopeAdapter() {
+
+                    @NotNull
+                    @Override
+                    protected JetScope getWorkerScope() {
+                        return outerScope;
+                    }
+
+                    @Nullable
+                    @Override
+                    public PackageViewDescriptor getPackage(@NotNull Name name) {
+                        return null;
+                    }
+        };
     }
 
     @NotNull
@@ -241,7 +265,7 @@ public class QualifiedExpressionResolver {
             @NotNull LookupMode lookupMode,
             @NotNull ClassDescriptor descriptor
     ) {
-        JetScope scope = lookupMode == LookupMode.ONLY_CLASSES
+        JetScope scope = lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES
                          ? descriptor.getUnsubstitutedInnerClassesScope()
                          : descriptor.getDefaultType().getMemberScope();
         results.add(lookupSimpleNameReference(selector, scope, lookupMode, false));
@@ -335,7 +359,7 @@ public class QualifiedExpressionResolver {
         }
 
         Collection<DeclarationDescriptor> filteredDescriptors;
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
+        if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
             filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_PACKAGE_VIEWS);
         }
         else {

@@ -1,0 +1,12 @@
+package
+
+internal fun </*0*/ T> foo1(/*0*/ f: (T) -> kotlin.Unit): Foo<T>
+kotlin.inline() internal fun </*0*/ reified T> foo2(/*0*/ f: (T) -> kotlin.Unit): Foo<T>
+internal fun test1(): kotlin.Unit
+
+internal final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

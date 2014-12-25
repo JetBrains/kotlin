@@ -42,6 +42,10 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
     public IDEVirtualFileFinder(@NotNull Project project, @NotNull GlobalSearchScope scope) {
         this.project = project;
         this.scope = scope;
+
+        if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.getProject() == null) {
+            LOG.warn("Scope with null project " + scope);
+        }
     }
 
     @Nullable

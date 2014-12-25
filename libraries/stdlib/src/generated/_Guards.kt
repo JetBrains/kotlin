@@ -10,13 +10,13 @@ import java.util.*
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
+public fun <T : Any> Array<out T?>.requireNoNulls(): Array<out T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")
         }
     }
-    return this as Array<T>
+    return this as Array<out T>
 }
 
 /**

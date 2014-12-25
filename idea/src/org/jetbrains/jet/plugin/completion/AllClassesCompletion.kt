@@ -17,15 +17,10 @@
 package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -56,37 +51,19 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         }
     }
 
-    /**
-     * Add java elements with performing conversion to kotlin elements if necessary.
-     */
     private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
-            if (psiClass!! !is KotlinLightClass) { // Kotlin non-compiled class should have already been added as kotlin element before
-                if (JavaResolverUtils.isCompiledKotlinClass(psiClass)) {
-                    addLookupElementForCompiledKotlinClass(psiClass, collector)
+            if (psiClass!! !is KotlinLightClass) { // Kotlin class should have already been added as kotlin element before
+                val kind = when {
+                    psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
+                    psiClass.isInterface() -> ClassKind.TRAIT
+                    psiClass.isEnum() -> ClassKind.ENUM_CLASS
+                    else -> ClassKind.CLASS
                 }
-                else if (!JavaResolverUtils.isCompiledKotlinPackageClass(psiClass)) {
-                    val kind = when {
-                        psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-                        psiClass.isInterface() -> ClassKind.TRAIT
-                        psiClass.isEnum() -> ClassKind.ENUM_CLASS
-                        else -> ClassKind.CLASS
-                    }
-                    if (kindFilter(kind)) {
-                        collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(psiClass))
-                    }
+                if (kindFilter(kind)) {
+                    collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(psiClass))
                 }
             }
         })
-    }
-
-    private fun addLookupElementForCompiledKotlinClass(aClass: PsiClass, collector: LookupElementsCollector) {
-        if (kindFilter(JetFromJavaDescriptorHelper.getCompiledClassKind(aClass))) {
-            val qualifiedName = aClass.getQualifiedName()
-            if (qualifiedName != null) {
-                val descriptors = ResolveSessionUtils.getClassDescriptorsByFqName(moduleDescriptor, FqName(qualifiedName)).filter(visibilityFilter)
-                collector.addDescriptorElements(descriptors, suppressAutoInsertion = true)
-            }
-        }
     }
 }

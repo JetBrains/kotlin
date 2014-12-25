@@ -42,6 +42,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.k2js.facade.Status;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -51,6 +52,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -144,12 +146,23 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions
     ) throws Exception {
+        generateJavaScriptFiles(files, testName, mainCallParameters, ecmaVersions, TEST_MODULE, null);
+    }
+
+    protected void generateJavaScriptFiles(
+            @NotNull List<String> files,
+            @NotNull String testName,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String moduleName,
+            @Nullable List<String> libraries
+    ) throws Exception {
         Project project = getProject();
         List<String> allFiles = withAdditionalKotlinFiles(files);
         List<JetFile> jetFiles = createJetFileList(project, allFiles, null);
 
         for (EcmaVersion version : ecmaVersions) {
-            Config config = createConfig(getProject(), TEST_MODULE, version);
+            Config config = createConfig(getProject(), moduleName, version, libraries);
             File outputFile = new File(getOutputFilePath(testName, version));
 
             translateFiles(jetFiles, outputFile, mainCallParameters, config);
@@ -265,9 +278,20 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     @NotNull
-    private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
-        return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion,
-                                                   shouldGenerateSourcemap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+    private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, @Nullable List<String> libraries) {
+        if (libraries == null) {
+            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourcemap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+        }
+        else {
+            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourcemap(), IS_INLINE_ENABLED);
+        }
+    }
+
+    @NotNull
+    private static List<String> librariesWithJsStdlib(List<String> libraries) {
+        List<String> result = new ArrayList<String>(libraries);
+        result.addAll(0, LibrarySourcesConfigWithCaching.JS_STDLIB);
+        return result;
     }
 
     @NotNull
@@ -341,5 +365,4 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         return path.substring(start, end);
     }
-
 }

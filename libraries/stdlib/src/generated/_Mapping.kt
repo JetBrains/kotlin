@@ -564,70 +564,70 @@ public inline fun <R> String.map(transform: (Char) -> R): List<R> {
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
 /**
@@ -641,7 +641,7 @@ public fun <T, R> Stream<T>.mapIndexed(transform: (Int, T) -> R): Stream<R> {
  * Returns a list containing the results of applying the given *transform* function to each element and its index of the original collection
  */
 public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(), transform)
+    return mapIndexedTo(ArrayList<R>(length()), transform)
 }
 
 /**
@@ -790,7 +790,7 @@ public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destinati
 /**
  * Returns a list containing the results of applying the given *transform* function to each non-null element of the original collection
  */
-public inline fun <T : Any, R> Array<T?>.mapNotNull(transform: (T) -> R): List<R> {
+public inline fun <T : Any, R> Array<out T?>.mapNotNull(transform: (T) -> R): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -812,7 +812,7 @@ public fun <T : Any, R> Stream<T?>.mapNotNull(transform: (T) -> R): Stream<R> {
  * Appends transformed non-null elements of original collection using the given *transform* function
  * to the given *destination*
  */
-public inline fun <T : Any, R, C : MutableCollection<in R>> Array<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
+public inline fun <T : Any, R, C : MutableCollection<in R>> Array<out T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
             destination.add(transform(element))

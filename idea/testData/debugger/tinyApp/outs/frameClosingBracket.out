@@ -1,0 +1,23 @@
+LineBreakpoint created at frameClosingBracket.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameClosingBracket.FrameClosingBracketPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameClosingBracket.kt:6
+Compile bytecode for a
+package frameClosingBracket
+
+fun main(args: Array<String>) {
+    val a = 1
+    //Breakpoint!
+}
+
+// PRINT_FRAME
+// EXPRESSION: a
+// RESULT: 1: I
+
+ frame    = main():6, FrameClosingBracketPackage$@packagePartHASH {frameClosingBracket}
+   static   = static = frameClosingBracket.FrameClosingBracketPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = a: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

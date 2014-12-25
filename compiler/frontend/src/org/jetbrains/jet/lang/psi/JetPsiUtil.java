@@ -482,7 +482,11 @@ public class JetPsiUtil {
 
         if (expression instanceof JetPrefixExpression || expression instanceof JetLabeledExpression) return maxPriority - 2;
 
-        if (expression instanceof JetDeclaration || expression instanceof JetStatementExpression || expression instanceof JetIfExpression) {
+        if (expression instanceof JetIfExpression) {
+            return JetExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+        }
+
+        if (expression instanceof JetDeclaration || expression instanceof JetStatementExpression) {
             return 0;
         }
 

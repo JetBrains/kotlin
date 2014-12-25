@@ -4,5 +4,5 @@ trait A {
 
 class B : A {
     override val String.prop: Int
-        get() = <selection><caret>0</selection>
+        get() = <selection><caret>throw UnsupportedOperationException()</selection>
 }

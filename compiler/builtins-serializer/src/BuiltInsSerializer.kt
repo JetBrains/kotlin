@@ -175,7 +175,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val nameStream = ByteArrayOutputStream()
         NameSerializationUtil.serializeStringTable(nameStream, serializer.getStringTable())
-        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName).first(), nameStream)
+        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 
     fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {

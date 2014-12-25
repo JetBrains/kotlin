@@ -37,6 +37,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -157,18 +158,26 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         Runnable action = new Runnable() {
             @Override
             public void run() {
-                Collection<VirtualFile> badRoots =
-                        KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
-                assert !badRoots.isEmpty() : "This action should only be called when bad roots are present";
+                DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<Object>() {
+                    @Override
+                    public Object compute() {
+                        Collection<VirtualFile> badRoots =
+                                KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+                        assert !badRoots.isEmpty() : "This action should only be called when bad roots are present";
 
-                LibraryRootsPopupModel listPopupModel = new LibraryRootsPopupModel("Unsupported format", project, badRoots);
-                ListPopup popup = JBPopupFactory.getInstance().createListPopup(listPopupModel);
-                popup.showUnderneathOf(label.get());
+                        LibraryRootsPopupModel listPopupModel = new LibraryRootsPopupModel("Unsupported format", project, badRoots);
+                        ListPopup popup = JBPopupFactory.getInstance().createListPopup(listPopupModel);
+                        popup.showUnderneathOf(label.get());
+
+                        return null;
+                    }
+                }, "Can't show all paths during index update");
             }
         };
         label.set(answer.createActionLabel(labelText, action));
     }
 
+    @NotNull
     @Override
     public Key<EditorNotificationPanel> getKey() {
         return KEY;
@@ -176,8 +185,9 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @Nullable
     @Override
-    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
+    public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor) {
         try {
+            if (DumbService.isDumb(project)) return null;
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 
             if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;

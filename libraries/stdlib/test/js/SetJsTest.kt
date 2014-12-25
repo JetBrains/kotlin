@@ -17,7 +17,7 @@ class ComplexSetJsTest : SetJsTest() {
         assertEquals(data, set)
     }
 
-    test override fun constructors() {
+    Test override fun constructors() {
         doTest<String>()
     }
 
@@ -29,7 +29,7 @@ class ComplexSetJsTest : SetJsTest() {
 class PrimitiveSetJsTest : SetJsTest() {
     override fun createEmptyMutableSet(): MutableSet<String> = HashSet()
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = HashSet()
-    test override fun constructors() {
+    Test override fun constructors() {
         HashSet<String>()
         HashSet<String>(3)
         HashSet<String>(3, 0.5f)
@@ -43,7 +43,7 @@ class PrimitiveSetJsTest : SetJsTest() {
 class LinkedHashSetTest : SetJsTest() {
     override fun createEmptyMutableSet(): MutableSet<String> = LinkedHashSet()
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = LinkedHashSet()
-    test override fun constructors() {
+    Test override fun constructors() {
         LinkedHashSet<String>()
         LinkedHashSet<String>(3)
         LinkedHashSet<String>(3, 0.5f)
@@ -68,6 +68,13 @@ abstract class SetJsTest {
     Test fun isEmpty() {
         assertFalse(data.isEmpty())
         assertTrue(empty.isEmpty())
+    }
+
+    Test fun equals() {
+        assertNotEquals(createEmptyMutableSet(), data)
+        assertNotEquals(data, empty)
+        assertEquals(createEmptyMutableSet(), empty)
+        assertEquals(createTestMutableSetReversed(), data)
     }
 
     Test fun contains() {
@@ -186,7 +193,7 @@ abstract class SetJsTest {
         }
     }
 
-    test abstract fun constructors()
+    abstract fun constructors()
 
     Test fun nullAsValue() {
         val set = createEmptyMutableSetWithNullableValues()
@@ -207,6 +214,12 @@ abstract class SetJsTest {
         val set = createEmptyMutableSet()
         set.add("foo")
         set.add("bar")
+        return set
+    }
+    fun createTestMutableSetReversed(): MutableSet<String> {
+        val set = createEmptyMutableSet()
+        set.add("bar")
+        set.add("foo")
         return set
     }
 }

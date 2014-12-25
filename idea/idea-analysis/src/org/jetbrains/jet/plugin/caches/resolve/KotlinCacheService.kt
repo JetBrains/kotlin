@@ -38,6 +38,7 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -49,12 +50,8 @@ public class KotlinCacheService(val project: Project) {
     public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
         val cache = getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
         return object : ResolutionFacade {
-            override fun analyze(element: JetElement): BindingContext {
-                return cache.getLazyResolveSession(element).resolveToElement(element)
-            }
-
-            override fun analyzeWithPartialBodyResolve(element: JetElement): BindingContext {
-                return cache.getLazyResolveSession(element).resolveToElementWithPartialBodyResolve(element)
+            override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+                return cache.getLazyResolveSession(element).resolveToElement(element, bodyResolveMode)
             }
 
             override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {

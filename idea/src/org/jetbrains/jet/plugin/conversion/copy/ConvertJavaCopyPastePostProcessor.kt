@@ -35,6 +35,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.lang.java.JavaLanguage
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
+import com.intellij.openapi.project.DumbService
 
 public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
@@ -57,6 +58,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, value: TextBlockTransferableData) {
+        if (DumbService.getInstance(project).isDumb()) return
         if (value !is CopiedCode) return
 
         val sourceFile = PsiFileFactory.getInstance(project).

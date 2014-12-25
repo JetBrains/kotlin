@@ -35,7 +35,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val declaration: JetDeclaration,
-        probablyNothingCallableNames: ProbablyNothingCallableNames
+        probablyNothingCallableNames: ProbablyNothingCallableNames,
+        forCompletion: Boolean
 ) : PartialBodyResolveProvider() {
 
     private val statementMarks = StatementMarks()
@@ -74,7 +75,7 @@ class PartialBodyResolveFilter(
             }
         })
 
-        statementMarks.mark(elementToResolve, MarkLevel.NEED_COMPLETION)
+        statementMarks.mark(elementToResolve, if (forCompletion) MarkLevel.NEED_COMPLETION else MarkLevel.NEED_REFERENCE_RESOLVE)
         declaration.blocks().forEach { processBlock(it) }
     }
 
@@ -285,7 +286,7 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitIfExpression(expression: JetIfExpression) {
-                expression.getCondition().accept(this)
+                expression.getCondition()?.accept(this)
 
                 val thenBranch = expression.getThen()
                 val elseBranch = expression.getElse()
@@ -307,7 +308,7 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitWhileExpression(loop: JetWhileExpression) {
-                val condition = loop.getCondition()
+                val condition = loop.getCondition() ?: return
                 if (condition.isTrueConstant()) {
                     insideLoopLevel++
                     loop.getBody()?.accept(this)
@@ -315,7 +316,7 @@ class PartialBodyResolveFilter(
                 }
                 else {
                     // do not make sense to search exits inside while-loop as not necessary enter it at all
-                    condition?.accept(this)
+                    condition.accept(this)
                 }
             }
 

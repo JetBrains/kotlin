@@ -160,10 +160,6 @@ public class TypeBoundsImpl(
         // a captured type might be an answer
         if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
 
-        // e.g. if T has a lower bound 'Nothing' and an upper bound 'String',
-        // by default 'Nothing' is inferred which can lead to an error for reified type variable
-        if (typeVariable.isReified() && possibleAnswer.cannotBeReified()) return false
-
         for (bound in bounds) {
             when (bound.kind) {
                 LOWER_BOUND -> if (!JetTypeChecker.DEFAULT.isSubtypeOf(bound.constrainingType, possibleAnswer)) {

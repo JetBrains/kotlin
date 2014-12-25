@@ -1419,6 +1419,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("JavaKeywordPropertyName.java")
+        public void testJavaKeywordPropertyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/JavaKeywordPropertyName.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("KeywordPropertyName.java")
+        public void testKeywordPropertyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/KeywordPropertyName.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("SetterTypeNotMatch.java")
         public void testSetterTypeNotMatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/SetterTypeNotMatch.java");

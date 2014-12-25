@@ -22,11 +22,13 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -61,7 +63,7 @@ public class KotlinRuntimeLibraryUtil {
 
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
-        ID<Integer,Void> id = KotlinAbiVersionIndex.INSTANCE.getName();
+        ID<Integer, Void> id = KotlinAbiVersionIndex.INSTANCE.getName();
         Collection<Integer> abiVersions = FileBasedIndex.getInstance().getAllKeys(id, project);
         Set<Integer> badAbiVersions = Sets.newHashSet(Collections2.filter(abiVersions, new Predicate<Integer>() {
             @Override

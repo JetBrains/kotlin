@@ -4,9 +4,9 @@
 package test
 
 internal abstract class FlexibleTypes() {
-    internal abstract val p: kotlin.Int? /* platform type */
+    internal abstract val p: kotlin.Int /* platform type */
 
-    internal abstract fun collection(): kotlin.List<kotlin.Any> /* platform type */
+    internal abstract fun collection(): kotlin.List<kotlin.Int> /* platform type */
 
-    internal final fun withBody(): kotlin.Int? /* platform type */ { /* compiled code */ }
+    internal final fun withBody(): kotlin.Int /* platform type */ { /* compiled code */ }
 }

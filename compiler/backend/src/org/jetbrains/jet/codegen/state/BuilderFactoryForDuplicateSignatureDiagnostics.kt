@@ -31,7 +31,6 @@ import org.jetbrains.jet.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
@@ -82,7 +81,8 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
             var memberElement: PsiElement? = null
             var nonFakeCount = 0
-            for (member in origins.stream().map { it.descriptor as? CallableMemberDescriptor? }) {
+            for (origin in origins) {
+                val member = origin.descriptor as? CallableMemberDescriptor?
                 if (member != null && member.getKind() != FAKE_OVERRIDE) {
                     nonFakeCount++
                     // If there's more than one real element, the clashing signature is already reported.
@@ -91,7 +91,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
                     if (member.getKind() != DELEGATION) {
                         // Delegates don't have declarations in the code
-                        memberElement = DescriptorToSourceUtils.callableDescriptorToDeclaration(member)
+                        memberElement = origin.element ?: DescriptorToSourceUtils.callableDescriptorToDeclaration(member)
                         if (memberElement == null && member is PropertyAccessorDescriptor) {
                             memberElement = DescriptorToSourceUtils.callableDescriptorToDeclaration(member.getCorrespondingProperty())
                         }

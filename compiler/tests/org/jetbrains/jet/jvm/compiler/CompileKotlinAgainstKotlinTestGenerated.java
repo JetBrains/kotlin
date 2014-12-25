@@ -36,6 +36,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
     }
 
+    @TestMetadata("AnnotationInTrait.A.kt")
+    public void testAnnotationInTrait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/AnnotationInTrait.A.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassInObject.A.kt")
     public void testClassInObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassInObject.A.kt");

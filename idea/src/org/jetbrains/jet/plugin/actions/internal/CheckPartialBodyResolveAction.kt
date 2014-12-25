@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public class CheckPartialBodyResolveAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -74,7 +75,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
             val partialResolveDump = dumpResolve(file) {(element, resolutionFacade) ->
-                resolutionFacade.analyzeWithPartialBodyResolve(element)
+                resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             }
             val goldDump = dumpResolve(file) {(element, resolutionFacade) ->
                 resolutionFacade.analyze(element)

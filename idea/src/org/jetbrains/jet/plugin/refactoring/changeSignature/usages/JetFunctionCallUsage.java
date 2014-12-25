@@ -70,7 +70,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             else
                 parametersBuilder.append(',');
 
-            String defaultValueText = parameterInfo.getDefaultValueText();
+            String defaultValueText = parameterInfo.getDefaultValueForCall();
 
             if (isNamedCall) {
                 String newName = parameterInfo.getInheritedName(callee);
@@ -96,7 +96,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 changeArgumentName(argumentNameExpression, parameterInfo);
                 newArgument.replace(oldArgument);
             }
-            else if (parameterInfo.getDefaultValueText().isEmpty())
+            else if (parameterInfo.getDefaultValueForCall().isEmpty())
                 newArgument.delete();
         }
 

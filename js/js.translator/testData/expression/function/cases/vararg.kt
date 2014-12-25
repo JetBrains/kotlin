@@ -34,6 +34,18 @@ fun spreadInObjectMethodCall(size: Int, sum: Int, vararg args: Int) = obj.test(s
 
 fun testVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = f(args)
 
+fun idVarArgs<T>(vararg a: T) = a
+
+fun idArrayVarArg<T>(vararg a: Array<T>) = a
+
+fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int {
+    var result = f(x) + f(y)
+    for(u in a) {
+        result += f(u)
+    }
+    return result
+}
+
 fun box(): String {
     if (!testSize(0))
         return "wrong vararg size when call function without args"
@@ -64,6 +76,32 @@ fun box(): String {
 
     if (!testVarargWithFunLit(1, 2, 3) { args -> args.size == 3 })
         return "failed when call function with vararg and fun literal"
+
+    val a = array(1, 2, 3)
+    val b = array(4, 5)
+
+    assertEquals(5, array(*a, *b).size)
+    assertEquals(8, array(10, *a, 20,  *b, 30).size)
+
+    assertEquals(5, idVarArgs(*a, *b).size)
+    assertEquals(8, idVarArgs(10, *a, 20,  *b, 30).size)
+
+    assertEquals(9, array(1, *a, *a, 1, 2).size)
+    assertEquals(9, idVarArgs(1, *a, *a, 1, 2).size)
+
+    assertEquals(9, array(1, *a, *array(1, 2, 3), 1, 2).size)
+    assertEquals(9, idVarArgs(1, *a, *array(1, 2, 3), 1, 2).size)
+
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArray(5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5, 6, 7), 8, 9) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4, 5), *intArray(6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, *intArray(3, 4), 5, 6, *intArray(7, 8, 9)) { 2*it })
+
+    assertEquals(2, idArrayVarArg(array(1), *array(array(2, 3, 4))).size())
+    assertEquals(3, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6))).size())
+    assertEquals(6, idArrayVarArg(array(1, 2), *array(array(3, 4), array(5, 6)), array(7), *array(array(8, 9), array(10, 11))).size())
 
     return "OK"
 }

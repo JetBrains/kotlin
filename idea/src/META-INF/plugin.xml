@@ -25,9 +25,6 @@
       <implementation-class>org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
@@ -147,8 +144,12 @@
 
     <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
+
     <applicationService serviceInterface="org.jetbrains.jet.plugin.quickfix.ImportInsertHelper"
                         serviceImplementation="org.jetbrains.jet.plugin.quickfix.ImportInsertHelperImpl"/>
+
+    <applicationService serviceInterface="org.jetbrains.jet.lang.psi.KotlinDeclarationNavigationPolicy"
+                        serviceImplementation="org.jetbrains.jet.plugin.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>
@@ -219,6 +220,8 @@
     <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
     <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
     <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.jet.plugin.structureView.JetStructureViewFactory"/>
+    <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.jet.plugin.structureView.JetClsStructureViewBuilderProvider"/>
+
     <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
     <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
@@ -317,9 +320,13 @@
     <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DuplicateJvmSignatureAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.jet.plugin.highlighter.KotlinProblemHighlightFilter"/>
 
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetStatementGroupSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetCodeBlockSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetListSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStatementGroupSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinCodeBlockSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDocCommentSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDeclarationSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinListSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStringLiteralSelectioner"/>
+    <basicWordSelectionFilter implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinWordSelectionFilter"/>
 
     <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinEnterHandler"
@@ -369,6 +376,7 @@
     <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider"/>
     <debuggerClassFilterProvider implementation="org.jetbrains.jet.plugin.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
     <debugger.nodeRenderer implementation="org.jetbrains.jet.plugin.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
+    <debugger.sourcePositionProvider implementation="org.jetbrains.jet.plugin.debugger.KotlinSourcePositionProvider"/>
     <xdebugger.settings implementation="org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>

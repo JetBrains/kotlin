@@ -52,6 +52,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction;
+import org.jetbrains.jet.plugin.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -175,7 +177,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
             @Override
             public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
-                boolean replaceOccurrence = container != expression.getParent();
+                boolean replaceOccurrence =
+                        container != expression.getParent() || BindingContextUtilPackage.isUsedAsExpression(expression, bindingContext);
                 List<JetExpression> allReplaces;
                 if (OccurrencesChooser.ReplaceChoice.ALL == replaceChoice) {
                     if (allOccurrences.size() > 1) replaceOccurrence = true;
@@ -240,8 +243,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
     private static Runnable introduceVariable(
             final JetExpression expression,
             final String[] suggestedNames,
-            final List<JetExpression> allReplaces, final PsiElement commonContainer,
-            final PsiElement commonParent, final boolean replaceOccurrence,
+            final List<JetExpression> allReplaces,
+            final PsiElement commonContainer,
+            final PsiElement commonParent,
+            final boolean replaceOccurrence,
             final Ref<JetProperty> propertyRef,
             final ArrayList<JetExpression> references,
             final Ref<JetExpression> reference,
@@ -253,6 +258,46 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         return new Runnable() {
             @Override
             public void run() {
+                if (commonContainer instanceof JetDeclarationWithBody) {
+                    JetDeclarationWithBody originalDeclaration = (JetDeclarationWithBody) commonContainer;
+                    final JetExpression originalBody = originalDeclaration.getBodyExpression();
+                    assert originalBody != null : "Original body is not found: " + originalDeclaration;
+
+                    JetDeclarationWithBody newDeclaration = ConvertToBlockBodyAction.OBJECT$.convert(originalDeclaration);
+
+                    JetBlockExpression newCommonContainer = (JetBlockExpression) newDeclaration.getBodyExpression();
+                    assert newCommonContainer != null : "New body is not found: " + newDeclaration;
+
+                    JetExpression resultExpression = (JetExpression) newCommonContainer.getStatements().get(0);
+                    if (resultExpression instanceof JetReturnExpression && !(originalBody instanceof JetReturnExpression)) {
+                        resultExpression = ((JetReturnExpression) resultExpression).getReturnedExpression();
+                    }
+                    final JetExpression finalResultExpression = resultExpression;
+
+                    JetExpression newExpression = (JetExpression) findElementCounterpart(expression, originalBody, resultExpression);
+                    PsiElement newCommonParent = findElementCounterpart(commonParent, originalBody, resultExpression);
+                    List<JetExpression> newAllReplaces = KotlinPackage.map(
+                            allReplaces,
+                            new Function1<JetExpression, JetExpression>() {
+                                @Override
+                                public JetExpression invoke(JetExpression expression) {
+                                    return (JetExpression) findElementCounterpart(expression, originalBody, finalResultExpression);
+                                }
+                            }
+                    );
+                    run(newExpression, newCommonContainer, newCommonParent, newAllReplaces);
+                }
+                else {
+                    run(expression, commonContainer, commonParent, allReplaces);
+                }
+            }
+
+            private void run(
+                    JetExpression expression,
+                    PsiElement commonContainer,
+                    PsiElement commonParent,
+                    List<JetExpression> allReplaces
+            ) {
                 String variableText = "val " + suggestedNames[0];
                 if (noTypeInference) {
                     variableText += ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(expressionType);
@@ -285,19 +330,18 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     JetExpression emptyBody = psiFactory.createEmptyBody();
                     PsiElement firstChild = emptyBody.getFirstChild();
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild);
+
                     if (replaceOccurrence && commonContainer != null) {
                         for (JetExpression replace : allReplaces) {
-                            replaceExpression(replace);
+                            JetExpression exprAfterReplace = replaceExpression(replace);
+                            if (anchor == replace) {
+                                anchor = exprAfterReplace;
+                            }
                         }
+
                         PsiElement oldElement = commonContainer;
                         if (commonContainer instanceof JetWhenEntry) {
                             JetExpression body = ((JetWhenEntry)commonContainer).getExpression();
-                            if (body != null) {
-                                oldElement = body;
-                            }
-                        }
-                        else if (commonContainer instanceof JetNamedFunction) {
-                            JetExpression body = ((JetNamedFunction)commonContainer).getBodyExpression();
                             if (body != null) {
                                 oldElement = body;
                             }
@@ -316,11 +360,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         int diff = actualExpression.getTextRange().getStartOffset() - oldElement.getTextRange().getStartOffset();
                         String actualExpressionText = actualExpression.getText();
                         PsiElement newElement = emptyBody.addAfter(oldElement, firstChild);
-                        PsiElement elem = newElement.findElementAt(diff);
-                        while (elem != null && !(elem instanceof JetExpression &&
-                                                 actualExpressionText.equals(elem.getText()))) {
-                            elem = elem.getParent();
-                        }
+                        PsiElement elem = findElementByOffsetAndText(diff, actualExpressionText, newElement);
                         if (elem != null) {
                             reference.set((JetExpression)elem);
                         }
@@ -330,12 +370,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         actualExpression = reference.get();
                         diff = actualExpression.getTextRange().getStartOffset() - emptyBody.getTextRange().getStartOffset();
                         actualExpressionText = actualExpression.getText();
-                        emptyBody = (JetExpression)anchor.replace(emptyBody);
-                        elem = emptyBody.findElementAt(diff);
-                        while (elem != null && !(elem instanceof JetExpression &&
-                                                 actualExpressionText.equals(elem.getText()))) {
-                            elem = elem.getParent();
-                        }
+                        emptyBody = (JetBlockExpression) anchor.replace(emptyBody);
+                        elem = findElementByOffsetAndText(diff, actualExpressionText, emptyBody);
                         if (elem != null) {
                             reference.set((JetExpression)elem);
                         }
@@ -343,25 +379,14 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     else {
                         property = (JetProperty)emptyBody.addAfter(property, firstChild);
                         emptyBody.addAfter(psiFactory.createNewLine(), firstChild);
-                        emptyBody = (JetExpression)anchor.replace(emptyBody);
+                        emptyBody = (JetBlockExpression) anchor.replace(emptyBody);
                     }
                     for (PsiElement child : emptyBody.getChildren()) {
                         if (child instanceof JetProperty) {
                             property = (JetProperty)child;
                         }
                     }
-                    if (commonContainer instanceof JetNamedFunction) {
-                        //we should remove equals sign
-                        JetNamedFunction function = (JetNamedFunction)commonContainer;
-                        if (!function.hasDeclaredReturnType()) {
-                            //todo: add return type
-                        }
-
-                        PsiElement equalsToken = function.getEqualsToken();
-                        assert equalsToken != null : "Function without block body was expected: " + function.getText();
-                        equalsToken.delete();
-                    }
-                    else if (commonContainer instanceof JetContainerNode) {
+                    if (commonContainer instanceof JetContainerNode) {
                         JetContainerNode node = (JetContainerNode)commonContainer;
                         if (node.getParent() instanceof JetIfExpression) {
                             PsiElement next = node.getNextSibling();
@@ -390,7 +415,23 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 }
             }
 
-            private void replaceExpression(JetExpression replace) {
+            private PsiElement findElementCounterpart(PsiElement oldElement, PsiElement oldContainer, PsiElement newContainer) {
+                return findElementByOffsetAndText(
+                        oldElement.getTextOffset() - oldContainer.getTextOffset(),
+                        oldElement.getText(),
+                        newContainer
+                );
+            }
+
+            private PsiElement findElementByOffsetAndText(int offset, String text, PsiElement newContainer) {
+                PsiElement elem = newContainer.findElementAt(offset);
+                while (elem != null && !(elem instanceof JetExpression && text.equals(elem.getText()))) {
+                    elem = elem.getParent();
+                }
+                return elem;
+            }
+
+            private JetExpression replaceExpression(JetExpression replace) {
                 boolean isActualExpression = expression == replace;
 
                 JetExpression replacement = psiFactory.createExpression(suggestedNames[0]);
@@ -405,8 +446,18 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 else {
                     result = (JetExpression)replace.replace(replacement);
                 }
+
+                PsiElement parent = result != null ? result.getParent() : null;
+                if (parent instanceof JetBlockStringTemplateEntry) {
+                    JetStringTemplateEntryWithExpression newEntry =
+                            RemoveCurlyBracesFromTemplateIntention.INSTANCE.convertIfApplicable((JetBlockStringTemplateEntry) parent);
+                    result = newEntry.getExpression();
+                }
+
                 references.add(result);
                 if (isActualExpression) reference.set(result);
+
+                return result;
             }
         };
     }
@@ -468,11 +519,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
                 return parent;
             }
-            else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction)parent;
-                if (function.getBodyExpression() == place) {
-                    return parent;
-                }
+            if (parent instanceof JetDeclarationWithBody && ((JetDeclarationWithBody) parent).getBodyExpression() == place) {
+                return parent;
             }
             place = parent;
         }
@@ -520,8 +568,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     result = parent;
                 }
             }
-            else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction)parent;
+            else if (parent instanceof JetDeclarationWithBody) {
+                JetDeclarationWithBody function = (JetDeclarationWithBody)parent;
                 if (function.getBodyExpression() == place) {
                     if (!(place instanceof JetBlockExpression)) {
                         result = parent;

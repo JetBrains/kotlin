@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -26,6 +28,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.utils.KotlinFrontEndException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
@@ -123,35 +126,49 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
     @NotNull
     private JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
-        JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
-        if (recordedTypeInfo != null) {
-            return recordedTypeInfo;
-        }
-        JetTypeInfo result;
         try {
-            result = expression.accept(visitor, context);
-            // Some recursive definitions (object expressions) must put their types in the cache manually:
-            if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
-                                          result.getDataFlowInfo());
+            JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
+            if (recordedTypeInfo != null) {
+                return recordedTypeInfo;
+            }
+            JetTypeInfo result;
+            try {
+                result = expression.accept(visitor, context);
+                // Some recursive definitions (object expressions) must put their types in the cache manually:
+                if (context.trace.get(BindingContext.PROCESSED, expression)) {
+                    return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
+                                              result.getDataFlowInfo());
+                }
+
+                if (result.getType() instanceof DeferredType) {
+                    result = JetTypeInfo.create(((DeferredType) result.getType()).getDelegate(), result.getDataFlowInfo());
+                }
+                if (result.getType() != null) {
+                    context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());
+                }
+
+            }
+            catch (ReenteringLazyValueComputationException e) {
+                context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                result = JetTypeInfo.create(null, context.dataFlowInfo);
             }
 
-            if (result.getType() instanceof DeferredType) {
-                result = JetTypeInfo.create(((DeferredType) result.getType()).getDelegate(), result.getDataFlowInfo());
-            }
-            if (result.getType() != null) {
-                context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());
-            }
-
+            context.trace.record(BindingContext.PROCESSED, expression);
+            recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
+            return result;
         }
-        catch (ReenteringLazyValueComputationException e) {
-            context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-            result = JetTypeInfo.create(null, context.dataFlowInfo);
+        catch (ProcessCanceledException e) {
+            throw e;
         }
-
-        context.trace.record(BindingContext.PROCESSED, expression);
-        recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
-        return result;
+        catch (KotlinFrontEndException e) {
+            throw e;
+        }
+        catch (Throwable e) {
+            throw new KotlinFrontEndException(
+                    "Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression) + ":\n" + expression.getText() + "\n",
+                    e
+            );
+        }
     }  
 
     //////////////////////////////////////////////////////////////////////////////////////////////

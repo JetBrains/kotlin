@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import org.jetbrains.jet.lexer.JetTokens.*
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import com.intellij.psi.tree.IElementType
 
 class KeywordLookupObject(val keyword: String)
 
@@ -158,9 +159,9 @@ object KeywordCompletion {
             val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: ""
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length)!!
-            val nodeType = elementAt.getNode()!!.getElementType()
+
             when {
-                nodeType != keywordTokenType -> false
+                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> false
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false
 
@@ -168,6 +169,15 @@ object KeywordCompletion {
 
                 else -> true
             }
+        }
+    }
+
+    private fun IElementType.matchesKeyword(keywordType: JetKeywordToken): Boolean {
+        return when(this) {
+            keywordType -> true
+            NOT_IN -> keywordType == IN_KEYWORD
+            NOT_IS -> keywordType == IS_KEYWORD
+            else -> false
         }
     }
 

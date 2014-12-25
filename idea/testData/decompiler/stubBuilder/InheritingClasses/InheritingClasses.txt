@@ -1,0 +1,354 @@
+PsiJetFileStubImpl[package=a]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=a]
+  CLASS:[fqName=a.InheritingClasses, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=InheritingClasses, superNames=[]]
+    MODIFIER_LIST:[internal final]
+    VALUE_PARAMETER_LIST:
+    CLASS_BODY:
+      CLASS:[fqName=a.InheritingClasses.A, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[C]]
+        MODIFIER_LIST:[abstract internal]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=C]
+        CLASS_BODY:
+          PROPERTY:[fqName=a.InheritingClasses.A.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=ap]
+            MODIFIER_LIST:[abstract internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          PROPERTY:[fqName=a.InheritingClasses.A.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[open internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          PROPERTY:[fqName=a.InheritingClasses.A.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=op]
+            MODIFIER_LIST:[open internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=a.InheritingClasses.A.af, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=af]
+            MODIFIER_LIST:[abstract internal]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=a.InheritingClasses.A.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=of]
+            MODIFIER_LIST:[open internal]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=a.InheritingClasses.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[A]]
+        MODIFIER_LIST:[open internal]
+        VALUE_PARAMETER_LIST:
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=A]
+        CLASS_BODY:
+          PROPERTY:[fqName=a.InheritingClasses.B.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=ap]
+            MODIFIER_LIST:[open internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          PROPERTY:[fqName=a.InheritingClasses.B.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=op]
+            MODIFIER_LIST:[open internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=a.InheritingClasses.B.af, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=af]
+            MODIFIER_LIST:[open internal]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=a.InheritingClasses.B.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=of]
+            MODIFIER_LIST:[open internal]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=a.InheritingClasses.C, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=true, name=C, superNames=[]]
+        MODIFIER_LIST:[internal]
+        CLASS_BODY:
+          PROPERTY:[fqName=a.InheritingClasses.C.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[abstract internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=a.InheritingClasses.D, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=true, name=D, superNames=[C]]
+        MODIFIER_LIST:[internal]
+        TYPE_PARAMETER_LIST:
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=C]
+        CLASS_BODY:
+          PROPERTY:[fqName=a.InheritingClasses.D.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[abstract internal]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+      CLASS:[fqName=a.InheritingClasses.E, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=true, name=E, superNames=[]]
+        MODIFIER_LIST:[internal]
+        CLASS_BODY:
+      CLASS:[fqName=a.InheritingClasses.G, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=G, superNames=[B, C, D, E]]
+        MODIFIER_LIST:[internal final]
+        VALUE_PARAMETER_LIST:
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=B]
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=C]
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=D]
+                TYPE_ARGUMENT_LIST:
+                  TYPE_PROJECTION:[projectionKind=NONE]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=kotlin]
+                        REFERENCE_EXPRESSION:[referencedName=Int]
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=a]
+                  REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION:[referencedName=E]
+        CLASS_BODY:
+      CLASS:[fqName=a.InheritingClasses.InheritAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritAny, superNames=[]]
+        MODIFIER_LIST:[internal final]
+        VALUE_PARAMETER_LIST:
+        CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.ExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=ExplicitAny, superNames=[]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.ImplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=ImplicitAny, superNames=[]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.OnlyTrait, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=OnlyTrait, superNames=[SomeTrait]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            DELEGATION_SPECIFIER_LIST:
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait]
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.OnlyTraits, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            DELEGATION_SPECIFIER_LIST:
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait]
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait2]
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.SomeTrait, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=true, name=SomeTrait, superNames=[]]
+            MODIFIER_LIST:[internal]
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.SomeTrait2, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=true, name=SomeTrait2, superNames=[]]
+            MODIFIER_LIST:[internal]
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            DELEGATION_SPECIFIER_LIST:
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Any]
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait]
+            CLASS_BODY:
+          CLASS:[fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            DELEGATION_SPECIFIER_LIST:
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait2]
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Any]
+              DELEGATOR_SUPER_CLASS:
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION:[referencedName=SomeTrait]
+            CLASS_BODY:
+      CLASS:[fqName=a.InheritingClasses.InheritExtensionFunctionType, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritExtensionFunctionType, superNames=[]]
+        MODIFIER_LIST:[abstract internal]
+        VALUE_PARAMETER_LIST:
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              FUNCTION_TYPE:
+                FUNCTION_TYPE_RECEIVER:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=a]
+                        REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION:[referencedName=E]
+                VALUE_PARAMETER_LIST:
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=kotlin]
+                        REFERENCE_EXPRESSION:[referencedName=Int]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=kotlin]
+                        REFERENCE_EXPRESSION:[referencedName=String]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Int]
+        CLASS_BODY:
+      CLASS:[fqName=a.InheritingClasses.InheritFunctionType, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=InheritFunctionType, superNames=[]]
+        MODIFIER_LIST:[abstract internal]
+        VALUE_PARAMETER_LIST:
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              FUNCTION_TYPE:
+                VALUE_PARAMETER_LIST:
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=kotlin]
+                        REFERENCE_EXPRESSION:[referencedName=Int]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        USER_TYPE:[isAbsoluteInRootPackage=false]
+                          REFERENCE_EXPRESSION:[referencedName=kotlin]
+                        REFERENCE_EXPRESSION:[referencedName=String]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Int]
+        CLASS_BODY:

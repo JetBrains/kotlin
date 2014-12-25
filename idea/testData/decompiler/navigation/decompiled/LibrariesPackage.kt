@@ -23,7 +23,7 @@ package testData.libraries
 
 [public fun func(a: kotlin.Int, b: kotlin.Int): kotlin.Unit { /* compiled code */ }]
 
-[public fun func(a: kotlin.Int, b: kotlin.String = /* compiled code */): kotlin.Unit { /* compiled code */ }]
+[public fun func(a: kotlin.Int, b: kotlin.String /* = compiled code */): kotlin.Unit { /* compiled code */ }]
 
 [public fun func(str: kotlin.String): kotlin.Unit { /* compiled code */ }]
 

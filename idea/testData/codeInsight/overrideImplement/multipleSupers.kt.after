@@ -1,0 +1,29 @@
+open class A {
+    open fun foo() {}
+}
+
+trait B {
+    fun bar()
+}
+
+class C : A(), B {
+    override fun bar() {
+        <selection><caret>throw UnsupportedOperationException()</selection>
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return super<A>.equals(other)
+    }
+
+    override fun foo() {
+        super<A>.foo()
+    }
+
+    override fun hashCode(): Int {
+        return super<A>.hashCode()
+    }
+
+    override fun toString(): String {
+        return super<A>.toString()
+    }
+}

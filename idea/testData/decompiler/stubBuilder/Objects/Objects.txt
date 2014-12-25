@@ -1,0 +1,72 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  OBJECT_DECLARATION:[fqName=Objects, isClassObject=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
+    MODIFIER_LIST:[public]
+    CLASS_BODY:
+      PROPERTY:[fqName=Objects.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+        MODIFIER_LIST:[internal final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      FUN:[fqName=Objects.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+        MODIFIER_LIST:[internal final]
+        VALUE_PARAMETER_LIST:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
+      OBJECT_DECLARATION:[fqName=Objects.InnerObject, isClassObject=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
+        MODIFIER_LIST:[private]
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=A]
+        CLASS_BODY:
+          PROPERTY:[fqName=Objects.InnerObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[internal final]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=Objects.InnerObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Unit]
+      CLASS:[fqName=Objects.NestedClass, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=NestedClass, superNames=[]]
+        MODIFIER_LIST:[open internal]
+        VALUE_PARAMETER_LIST:
+        CLASS_BODY:
+      OBJECT_DECLARATION:[fqName=Objects.OtherObject, isClassObject=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
+        MODIFIER_LIST:[public]
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=Objects]
+                REFERENCE_EXPRESSION:[referencedName=NestedClass]
+        CLASS_BODY:
+          PROPERTY:[fqName=Objects.OtherObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST:[internal final]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          FUN:[fqName=Objects.OtherObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+            MODIFIER_LIST:[internal final]
+            VALUE_PARAMETER_LIST:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Unit]

@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.util.sure
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.asJava.LightClassUtil
-import org.jetbrains.jet.asJava.KotlinLightClass
 import kotlin.test.assertTrue
+import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
 
 public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     public fun testJdkClass() {
@@ -49,11 +49,13 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     }
 
     // This test is not exactly for navigation, but separating it to another class doesn't worth it.
-    public fun testNoLightClassForLibrarySource() {
+    public fun testLightClassForLibrarySource() {
         val navigationElement = navigationElementForReferenceInLibrarySource("Foo")
         assertTrue(navigationElement is JetClassOrObject, "Foo should navigate to JetClassOrObject")
         val lightClass = LightClassUtil.getPsiClass(navigationElement as JetClassOrObject)
-        assertTrue(lightClass !is KotlinLightClass, "Do not create Kotlin Light Class for file from library sources")
+        assertTrue(lightClass is KotlinLightClassForDecompiledDeclaration,
+                   "Light classes for decompiled declaration should be provided for library source")
+        assertEquals("Foo", lightClass.getName())
     }
 
     private fun checkNavigationFromLibrarySource(referenceText: String, targetFqName: String) {

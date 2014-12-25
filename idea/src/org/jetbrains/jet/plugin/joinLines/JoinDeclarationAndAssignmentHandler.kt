@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.openapi.util.text.StringUtil
 
 public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
@@ -72,6 +73,10 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
         property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we delete range?
     }
 
-    private fun isToSkip(element: PsiElement)
-            = element is PsiWhiteSpace || element is PsiComment || element.getNode()!!.getElementType() == JetTokens.SEMICOLON
+    private fun isToSkip(element: PsiElement): Boolean {
+        return when (element) {
+            is PsiWhiteSpace -> StringUtil.getLineBreakCount(element.getText()!!) <= 1 // do not skip blank line
+            else -> element.getNode()!!.getElementType() == JetTokens.SEMICOLON
+        }
+    }
 }

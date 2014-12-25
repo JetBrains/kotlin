@@ -46,6 +46,12 @@
         }
     }
 
+    function hashSetEquals(o) {
+        if (o === null || o === undefined || this.size() !== o.size()) return false;
+
+        return this.containsAll_4fm7v2$(o);
+    }
+
     /** @const */
     var FUNCTION = "function";
     var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
@@ -474,6 +480,9 @@
             isEmpty: function () {
                 return this.map.$size === 0;
             },
+            size: function () {
+                return this.map.size();
+            },
             // TODO: test it
             contains: function (o) {
                 return this.map.containsValue_za3rmp$(o);
@@ -683,6 +692,7 @@
         },
         /** @lends {Kotlin.LinkedHashSet.prototype} */
         {
+            equals_za3rmp$: hashSetEquals,
             size: function () {
                 return this.map.size()
             },
@@ -750,6 +760,7 @@
         },
         /** @lends {Kotlin.AbstractPrimitiveHashSet.prototype} */
         {
+            equals_za3rmp$: hashSetEquals,
             size: function () {
                 return this.$size;
             },
@@ -895,27 +906,7 @@
             return h;
         };
 
-        this.equals_za3rmp$ = function (o) {
-            if (o === null || o === undefined) return false;
-            if (this.size() === o.size()) {
-                var iter1 = this.iterator();
-                var iter2 = o.iterator();
-                while (true) {
-                    var hn1 = iter1.hasNext();
-                    var hn2 = iter2.hasNext();
-                    if (hn1 != hn2) return false;
-                    if (!hn2) {
-                        return true;
-                    }
-                    else {
-                        var o1 = iter1.next();
-                        var o2 = iter2.next();
-                        if (!Kotlin.equals(o1, o2)) return false;
-                    }
-                }
-            }
-            return false;
-        };
+        this.equals_za3rmp$ = hashSetEquals;
 
         this.toString = function () {
             var builder = "[";

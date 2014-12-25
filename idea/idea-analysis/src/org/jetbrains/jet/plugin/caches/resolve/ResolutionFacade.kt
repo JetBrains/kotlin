@@ -22,12 +22,11 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.analyzer.AnalysisResult
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public trait ResolutionFacade {
 
-    public fun analyze(element: JetElement): BindingContext
-
-    public fun analyzeWithPartialBodyResolve(element: JetElement): BindingContext
+    public fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
 
     public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
 

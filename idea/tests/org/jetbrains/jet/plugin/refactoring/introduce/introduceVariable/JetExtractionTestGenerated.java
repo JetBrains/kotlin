@@ -93,6 +93,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("FunctionLiteralWithExtraArgs.kt")
+        public void testFunctionLiteralWithExtraArgs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FunctionLiteralWithExtraArgs.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("IfCondition.kt")
         public void testIfCondition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfCondition.kt");
@@ -120,6 +126,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("IfThenAddBlockInner.kt")
         public void testIfThenAddBlockInner() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfThenAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("IfThenValuedAddBlock.kt")
+        public void testIfThenValuedAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IfThenValuedAddBlock.kt");
             doIntroduceVariableTest(fileName);
         }
 
@@ -189,6 +201,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("PropertyAccessorAddBlock.kt")
+        public void testPropertyAccessorAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/PropertyAccessorAddBlock.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("PropertyAccessorAddBlockInner.kt")
+        public void testPropertyAccessorAddBlockInner() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/PropertyAccessorAddBlockInner.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ReplaceOccurence.kt")
         public void testReplaceOccurence() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");
@@ -219,6 +243,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("TypeElement.kt")
+        public void testTypeElement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/TypeElement.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("UnresolvedOccurrences.kt")
         public void testUnresolvedOccurrences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/UnresolvedOccurrences.kt");
@@ -240,6 +270,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         @TestMetadata("WhenParts.kt")
         public void testWhenParts() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenParts.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("WhenValuedAddBlock.kt")
+        public void testWhenValuedAddBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenValuedAddBlock.kt");
             doIntroduceVariableTest(fileName);
         }
 
@@ -316,6 +352,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
         public static class Basic extends AbstractJetExtractionTest {
             public void testAllFilesPresentInBasic() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("extensionFunForArray.kt")
+            public void testExtensionFunForArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extensionFunForArray.kt");
+                doExtractFunctionTest(fileName);
             }
 
             @TestMetadata("fragmentWithComment.kt")

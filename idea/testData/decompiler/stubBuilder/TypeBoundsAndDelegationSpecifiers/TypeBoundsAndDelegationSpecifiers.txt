@@ -1,0 +1,64 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=test]
+  CLASS:[fqName=test.TypeBoundsAndDelegationSpecifiers, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
+    MODIFIER_LIST:[internal final]
+    TYPE_PARAMETER_LIST:
+      TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=H]
+      TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Any]
+      TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=test]
+            REFERENCE_EXPRESSION:[referencedName=T]
+    VALUE_PARAMETER_LIST:
+    DELEGATION_SPECIFIER_LIST:
+      DELEGATOR_SUPER_CLASS:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=test]
+            REFERENCE_EXPRESSION:[referencedName=A]
+      DELEGATOR_SUPER_CLASS:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=test]
+            REFERENCE_EXPRESSION:[referencedName=T]
+    TYPE_CONSTRAINT_LIST:
+      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+        REFERENCE_EXPRESSION:[referencedName=H]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=List]
+            TYPE_ARGUMENT_LIST:
+              TYPE_PROJECTION:[projectionKind=NONE]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=String]
+      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+        REFERENCE_EXPRESSION:[referencedName=G]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=CharSequence]
+      TYPE_CONSTRAINT:[isClassObjectConstraint=false]
+        REFERENCE_EXPRESSION:[referencedName=C]
+        TYPE_REFERENCE:
+          NULLABLE_TYPE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=Any]
+    CLASS_BODY:

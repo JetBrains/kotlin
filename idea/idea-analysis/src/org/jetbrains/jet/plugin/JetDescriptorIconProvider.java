@@ -18,9 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMember;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils;
 
 import javax.swing.*;
 
@@ -41,7 +38,7 @@ public final class JetDescriptorIconProvider {
 
     @NotNull
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
-        if (declaration != null && !isKotlinDeclaration(declaration)) {
+        if (declaration != null && !(declaration instanceof JetElement)) {
             return declaration.getIcon(flags);
         }
 
@@ -141,21 +138,5 @@ public final class JetDescriptorIconProvider {
 
         LOG.warn("No icon for descriptor: " + descriptor);
         return null;
-    }
-
-    private static boolean isKotlinDeclaration(@NotNull PsiElement declaration) {
-        if (declaration instanceof JetElement) {
-            return true;
-        }
-        else if (declaration instanceof PsiClass) {
-            return JavaResolverUtils.isCompiledKotlinClassOrPackageClass((PsiClass) declaration);
-        }
-        else if (declaration instanceof PsiMember) {
-            PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            return containingClass != null && JavaResolverUtils.isCompiledKotlinClassOrPackageClass(containingClass);
-        }
-        else {
-            return false;
-        }
     }
 }

@@ -27,7 +27,7 @@ public class InnerClassesScopeWrapper(override val workerScope: JetScope) : Abst
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
-        val restrictedFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return listOf()
+        val restrictedFilter = kindFilter.restrictedToKindsOrNull(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return listOf()
         return workerScope.getDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassDescriptor>()
     }
 

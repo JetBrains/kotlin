@@ -50,6 +50,15 @@ import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.jet.lang.psi.psiUtil.prevLeaf
+import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
+import org.jetbrains.jet.lang.psi.JetTypeArgumentList
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -82,7 +91,9 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             isInFunctionLiteralParameterList(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
 
-            else -> specialExtensionReceiverDummyIdentifier(tokenBefore) ?: DEFAULT_DUMMY_IDENTIFIER
+            else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
+                    ?: specialInTypeArgsDummyIdentifier(tokenBefore)
+                    ?: DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
 
@@ -266,5 +277,70 @@ public class KotlinCompletionContributor : CompletionContributor() {
             i++
         }
         return true
+    }
+
+    private fun specialInTypeArgsDummyIdentifier(tokenBefore: PsiElement?): String? {
+        if (tokenBefore == null) return null
+        val pair = unclosedTypeArgListNameAndBalance(tokenBefore) ?: return null
+        val (nameToken, balance) = pair
+        assert(balance > 0)
+
+        val nameRef = nameToken.getParent() as? JetNameReferenceExpression ?: return null
+        val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
+        val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
+        val targets = if (target != null) {
+            listOf(target)
+        }
+        else {
+            bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, nameRef] ?: return null
+        }
+        if (targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.getKind() == ClassKind.CLASS }) {
+            return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
+        }
+        else {
+            return null
+        }
+    }
+
+    private fun unclosedTypeArgListNameAndBalance(tokenBefore: PsiElement): Pair<PsiElement, Int>? {
+        if (tokenBefore.getParentOfType<JetTypeArgumentList>(true) != null) return null // already parsed inside type argument list
+        val nameToken = findCallNameTokenIfInTypeArgs(tokenBefore) ?: return null
+        val pair = unclosedTypeArgListNameAndBalance(nameToken)
+        if (pair == null) {
+            return Pair(nameToken, 1)
+        }
+        else {
+            return Pair(pair.first, pair.second + 1)
+        }
+    }
+
+    private val callTypeArgsTokens = TokenSet.orSet(TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LT, JetTokens.GT,
+                                                                   JetTokens.COMMA, JetTokens.DOT, JetTokens.QUEST, JetTokens.COLON,
+                                                                   JetTokens.LPAR, JetTokens.RPAR, JetTokens.ARROW),
+                                                   JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET)
+
+    // if the leaf could be located inside type argument list of a call (if parsed properly)
+    // then it returns the call name reference this type argument list would belong to
+    private fun findCallNameTokenIfInTypeArgs(leaf: PsiElement): PsiElement? {
+        var current = leaf
+        while (true) {
+            val tokenType = current.getNode()!!.getElementType()
+            if (tokenType !in callTypeArgsTokens) return null
+
+            if (tokenType == JetTokens.LT) {
+                val nameToken = current.prevLeaf(skipEmptyElements = true) ?: return null
+                if (nameToken.getNode()!!.getElementType() != JetTokens.IDENTIFIER) return null
+                return nameToken
+            }
+
+            if (tokenType == JetTokens.GT) { // pass nested type argument list
+                val prev = current.prevLeaf(skipEmptyElements = true) ?: return null
+                val typeRef = findCallNameTokenIfInTypeArgs(prev) ?: return null
+                current = typeRef
+                continue
+            }
+
+            current = current.prevLeaf(skipEmptyElements = true) ?: return null
+        }
     }
 }

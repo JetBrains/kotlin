@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "file://" + pathToKotlinPlugin
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+    }
+}
+
+apply plugin: "kotlin2js"
+
+repositories {
+    maven {
+        url "file://" + pathToKotlinPlugin
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":libraryProject"),
+            "org.jetbrains.kotlin:kotlin-js-library:0.1-SNAPSHOT"
+}
+
+compileKotlin2Js.kotlinOptions.sourceMap = true
+compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
+compileKotlin2Js.kotlinOptions.suppressWarnings = true
+compileKotlin2Js.kotlinOptions.verbose = true
+
+task copyJsFilesFromDependencies(dependsOn: build) {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${projectDir}/web/js/lib"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+}

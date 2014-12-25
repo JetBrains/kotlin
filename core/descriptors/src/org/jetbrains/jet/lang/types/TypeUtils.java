@@ -299,7 +299,7 @@ public class TypeUtils {
         }
     }
 
-    public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
+    public static boolean canHaveSubtypes(JetTypeChecker typeChecker, @NotNull JetType type) {
         if (type.isMarkedNullable()) {
             return true;
         }

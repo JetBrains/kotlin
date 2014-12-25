@@ -185,6 +185,11 @@ public class JetTypeMapper {
     }
 
     @NotNull
+    public Type mapTypeParameter(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
+        return mapType(jetType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+    }
+
+    @NotNull
     public Type mapClass(@NotNull ClassifierDescriptor classifier) {
         return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.IMPL);
     }

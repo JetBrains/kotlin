@@ -786,6 +786,14 @@ public class KotlinBuiltIns {
         return isTypeConstructorFqNameInSet(type, FQ_NAMES.extensionFunctionClasses);
     }
 
+    public static boolean isExactFunctionType(@NotNull FqNameUnsafe fqName) {
+        return FQ_NAMES.functionClasses.contains(fqName);
+    }
+
+    public static boolean isExactExtensionFunctionType(@NotNull FqNameUnsafe fqName) {
+        return FQ_NAMES.extensionFunctionClasses.contains(fqName);
+    }
+
     private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull Set<FqNameUnsafe> classes) {
         ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
 
@@ -857,7 +865,11 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isAny(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.any.equals(DescriptorUtils.getFqName(descriptor));
+        return isAny(DescriptorUtils.getFqName(descriptor));
+    }
+
+    public static boolean isAny(@NotNull FqNameUnsafe fqName) {
+        return FQ_NAMES.any.equals(fqName);
     }
 
     public static boolean isNothing(@NotNull JetType type) {

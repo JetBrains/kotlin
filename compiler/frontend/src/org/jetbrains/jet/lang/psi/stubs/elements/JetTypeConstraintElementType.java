@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
 import org.jetbrains.jet.lang.psi.stubs.KotlinTypeConstraintStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeConstraintImpl;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeConstraintStubImpl;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class JetTypeConstraintElementType extends JetStubElementType<KotlinTypeC
 
     @Override
     public KotlinTypeConstraintStub createStub(@NotNull JetTypeConstraint psi, StubElement parentStub) {
-        return new KotlinTypeConstraintImpl(parentStub, psi.isClassObjectConstraint());
+        return new KotlinTypeConstraintStubImpl(parentStub, psi.isClassObjectConstraint());
     }
 
     @Override
@@ -46,6 +46,6 @@ public class JetTypeConstraintElementType extends JetStubElementType<KotlinTypeC
     @Override
     public KotlinTypeConstraintStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isClassObjectConstraint = dataStream.readBoolean();
-        return new KotlinTypeConstraintImpl(parentStub, isClassObjectConstraint);
+        return new KotlinTypeConstraintStubImpl(parentStub, isClassObjectConstraint);
     }
 }

@@ -21,10 +21,6 @@ import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.jet.cli.js.K2JSCompiler
 import java.io.File
 
-/**
- * Kotlin JavaScript compiler Ant task.
- * http://evgeny-goldin.org/javadoc/ant/tutorial-writing-tasks.html
- */
 public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
     override val arguments = K2JSCompilerArguments()
     override val compiler = K2JSCompiler()
@@ -52,13 +48,13 @@ public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
     }
 
     override fun fillSpecificArguments() {
-        arguments.outputFile = getPath(output!!)
+        arguments.outputFile = output!!.canonicalPath
 
         arguments.noStdlib = noStdlib
 
         // TODO: write test
         library?.let {
-            arguments.libraryFiles = it.list().map { getPath(File(it)) }.copyToArray()
+            arguments.libraryFiles = it.list().map { File(it).canonicalPath }.copyToArray()
         }
 
         arguments.outputPrefix = outputPrefix?.canonicalPath

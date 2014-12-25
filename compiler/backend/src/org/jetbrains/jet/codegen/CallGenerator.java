@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
-public interface CallGenerator {
+public abstract class CallGenerator {
 
-    class DefaultCallGenerator implements CallGenerator {
+    static class DefaultCallGenerator extends CallGenerator {
 
         private final ExpressionCodegen codegen;
 
@@ -34,7 +34,7 @@ public interface CallGenerator {
         }
 
         @Override
-        public void genCall(
+        public void genCallInner(
                 @NotNull CallableMethod callableMethod,
                 ResolvedCall<?> resolvedCall,
                 boolean callDefault,
@@ -90,24 +90,35 @@ public interface CallGenerator {
         }
     }
 
-    void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
+    public void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
+        if (resolvedCall != null) {
+            JetExpression calleeExpression = resolvedCall.getCall().getCalleeExpression();
+            if (calleeExpression != null) {
+                codegen.markStartLineNumber(calleeExpression);
+            }
+        }
 
-    void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
+        genCallInner(callableMethod, resolvedCall, callDefault, codegen);
+    }
 
-    void afterParameterPut(@NotNull Type type, StackValue stackValue, @NotNull ValueParameterDescriptor valueParameterDescriptor);
+    public abstract void genCallInner(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
 
-    void genValueAndPut(
+    public abstract void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
+
+    public abstract void afterParameterPut(@NotNull Type type, StackValue stackValue, @NotNull ValueParameterDescriptor valueParameterDescriptor);
+
+    public abstract void genValueAndPut(
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull JetExpression argumentExpression,
             @NotNull Type parameterType
     );
 
-    void putValueIfNeeded(@Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value);
+    public abstract void putValueIfNeeded(@Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value);
 
-    void putCapturedValueOnStack(
+    public abstract void putCapturedValueOnStack(
             @NotNull StackValue stackValue,
             @NotNull Type valueType, int paramIndex
     );
 
-    void putHiddenParams();
+    public abstract void putHiddenParams();
 }

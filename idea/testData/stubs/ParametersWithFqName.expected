@@ -3,15 +3,15 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION:[referencedName=test]
   CLASS:[fqName=test.A, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=A, superNames=[]]
     VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=test.A.b, hasDefaultValue=false, hasValOrValNode=true, isMutable=false, name=b]
+      VALUE_PARAMETER:[fqName=test.A.b, hasDefaultValue=false, hasValOrVarNode=true, isMutable=false, name=b]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=test.A.c, hasDefaultValue=false, hasValOrValNode=true, isMutable=true, name=c]
+      VALUE_PARAMETER:[fqName=test.A.c, hasDefaultValue=false, hasValOrVarNode=true, isMutable=true, name=c]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=String]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrValNode=false, isMutable=false, name=justParam]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=justParam]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=Int]

@@ -65,6 +65,9 @@ import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import com.intellij.openapi.project.IndexNotReadyException
+import org.jetbrains.jet.lang.psi.JetBlockExpression
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
@@ -178,6 +181,9 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         catch (e: ProcessCanceledException) {
             throw e
         }
+        catch (e: IndexNotReadyException) {
+            throw e
+        }
         catch (e: Throwable) {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
@@ -267,6 +273,9 @@ private object KotlinResolveDataProvider {
         catch (e: ProcessCanceledException) {
             throw e
         }
+        catch (e: IndexNotReadyException) {
+            throw e
+        }
         catch (e: Throwable) {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
@@ -289,10 +298,19 @@ private object KotlinResolveDataProvider {
             scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
             dataFlowInfo = DataFlowInfo.EMPTY
         }
+        else if (contextElement is JetBlockExpression) {
+            val newContextElement = contextElement.getStatements().lastOrNull()
+            if (newContextElement !is JetExpression) return BindingContext.EMPTY
+
+            val contextForElement = newContextElement.getResolutionFacade().analyze(newContextElement, BodyResolveMode.FULL)
+
+            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, newContextElement]
+            dataFlowInfo = contextForElement.getDataFlowInfo(newContextElement)
+        }
         else {
             if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-            val contextForElement = contextElement.getResolutionFacade().analyzeWithPartialBodyResolve(contextElement)
+            val contextForElement = contextElement.getResolutionFacade().analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
 
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
             dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)

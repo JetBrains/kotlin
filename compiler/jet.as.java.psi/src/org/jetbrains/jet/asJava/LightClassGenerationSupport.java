@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.List;
 
 public abstract class LightClassGenerationSupport {
 
@@ -55,12 +54,6 @@ public abstract class LightClassGenerationSupport {
     @NotNull
     public abstract Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 
-    @NotNull
-    public abstract List<KotlinLightPackageClassInfo> findPackageClassesInfos(
-            @NotNull FqName fqName,
-            @NotNull GlobalSearchScope wholeScope
-    );
-
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
     @NotNull
     public abstract Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
@@ -76,23 +69,6 @@ public abstract class LightClassGenerationSupport {
     @Nullable
     public abstract PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject);
 
-    public final class KotlinLightPackageClassInfo {
-        private final Collection<JetFile> files;
-        private final GlobalSearchScope scope;
-
-        public KotlinLightPackageClassInfo(@NotNull Collection<JetFile> files, @NotNull GlobalSearchScope scope) {
-            this.files = files;
-            this.scope = scope;
-        }
-
-        @NotNull
-        public Collection<JetFile> getFiles() {
-            return files;
-        }
-
-        @NotNull
-        public GlobalSearchScope getScope() {
-            return scope;
-        }
-    }
+    @NotNull
+    public abstract Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 }

@@ -198,19 +198,23 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         }
         contextElement is JetFunctionLiteral -> {
             val block = contextElement.getBodyExpression()!!
-            block.getStatements().first ?: block.getLastChild()
+            block.getStatements().firstOrNull() ?: block.getLastChild()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)
         }
         contextElement is JetDeclarationWithBody && contextElement.hasBlockBody()-> {
             val block = contextElement.getBodyExpression() as JetBlockExpression
-            block.getStatements().first ?: block.getLastChild()
+            val last = block.getStatements().lastOrNull()
+            if (last is JetReturnExpression)
+                last
+            else
+                block.getRBrace()
         }
         contextElement is JetWhenEntry -> {
             val entryExpression = contextElement.getExpression()
             if (entryExpression is JetBlockExpression) {
-                entryExpression.getStatements().first ?: entryExpression.getLastChild()
+                entryExpression.getStatements().firstOrNull() ?: entryExpression.getLastChild()
             }
             else {
                 wrapInRunFun(entryExpression!!)

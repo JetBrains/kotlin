@@ -17,6 +17,8 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.lang.Language;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
@@ -24,6 +26,7 @@ import com.intellij.psi.impl.light.LightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -39,8 +42,8 @@ import java.util.List;
 public abstract class KotlinWrappingLightClass extends AbstractLightClass implements KotlinLightClass, PsiExtensibleClass {
     private final ClassInnerStuffCache myInnersCache = new ClassInnerStuffCache(this);
 
-    protected KotlinWrappingLightClass(PsiManager manager, Language language) {
-        super(manager, language);
+    protected KotlinWrappingLightClass(PsiManager manager) {
+        super(manager, JetLanguage.INSTANCE);
     }
 
     @NotNull
@@ -178,5 +181,10 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
 
         // Method was generated from declaration in some other trait
         return (parentOfMethodOrigin != null && thisClassDeclaration != parentOfMethodOrigin && JetPsiUtil.isTrait(parentOfMethodOrigin));
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 }

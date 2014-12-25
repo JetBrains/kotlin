@@ -340,6 +340,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PackageInTypePosition.kt")
+        public void testPackageInTypePosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PackageInTypePosition.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PackageQualified.kt");
@@ -439,6 +445,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("SafeCallOnFakePackage.kt")
         public void testSafeCallOnFakePackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SafeCallOnFakePackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SelfTypesUnsupported.kt")
+        public void testSelfTypesUnsupported() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SelfTypesUnsupported.kt");
             doTest(fileName);
         }
 
@@ -5172,6 +5184,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("equalityConstraintOnNullableType.kt")
                 public void testEqualityConstraintOnNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
+                public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");
                     doTest(fileName);
                 }
 

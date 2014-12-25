@@ -170,6 +170,11 @@ class ArraysTest {
         assertEquals(listOf("1","2","3","4"), listOf("1", "2") + array("3", "4"))
     }
 
+    test fun plusVararg() {
+        fun onePlus(vararg a: String) = array("1") + a
+        assertEquals(listOf("1","2"), onePlus("2"))
+    }
+
     test fun first() {
         expect(1) { array(1,2,3).first() }
         expect(2) { array(1,2,3).first { it % 2 == 0 } }

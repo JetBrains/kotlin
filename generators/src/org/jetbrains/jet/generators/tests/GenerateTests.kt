@@ -135,6 +135,10 @@ import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
+import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
+import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
+import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
+import org.jetbrains.jet.codegen.AbstractLineNumberTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -301,6 +305,11 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetTypeBindingTest>()) {
             model("type/binding")
         }
+
+        testClass(javaClass<AbstractLineNumberTest>()) {
+            model("lineNumber", recursive = false)
+            model("lineNumber/custom", testMethod = "doTestCustom")
+        }
     }
 
     testGroup("idea/tests", "idea/testData") {
@@ -363,6 +372,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
             model("completion/basic/custom", recursive = false)
+        }
+
+        testClass(javaClass<AbstractBasicCompletionHandlerTest>()) {
+            model("completion/handlers/basic")
         }
 
         testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
@@ -604,6 +617,10 @@ fun main(args: Array<String>) {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
         }
 
+        testClass(javaClass<AbstractClsStubBuilderTest>()) {
+            model("decompiler/stubBuilder", extension = null, recursive = false)
+        }
+
         testClass(javaClass<AbstractOptimizeImportsTest>()) {
             model("editor/optimizeImports", extension = null, recursive = false)
         }
@@ -685,6 +702,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDynamicTest>()) {
             model("dynamic/cases")
+        }
+
+        testClass(javaClass<AbstractMultiModuleTest>()) {
+            model("multiModule/cases", extension = null, recursive=false)
         }
     }
 

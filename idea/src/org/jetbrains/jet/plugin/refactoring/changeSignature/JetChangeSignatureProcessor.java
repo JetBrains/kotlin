@@ -48,7 +48,7 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     @NotNull
     @Override
     protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
-        String subject = getChangeInfo().isConstructor() ? "constructor" : "function";
+        String subject = ChangeSignaturePackage.getIsConstructor(getChangeInfo()) ? "constructor" : "function";
         return new JetUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject));
     }
 
@@ -147,15 +147,6 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     @Override
     protected boolean isPreviewUsages(UsageInfo[] usages) {
         return isPreviewUsages();
-    }
-
-    @NotNull
-    @Override
-    protected Collection<? extends PsiElement> getElementsToWrite(@NotNull UsageViewDescriptor descriptor) {
-        Collection<PsiElement> elements = new ArrayList<PsiElement>();
-        elements.addAll(super.getElementsToWrite(descriptor));
-        elements.addAll(getChangeInfo().getGeneratedInfo().getFilesToWrite());
-        return elements;
     }
 
     @Override

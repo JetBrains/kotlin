@@ -46,7 +46,7 @@ public class JetParameterElementType extends JetStubElementType<KotlinParameterS
     public void serialize(@NotNull KotlinParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
-        dataStream.writeBoolean(stub.hasValOrValNode());
+        dataStream.writeBoolean(stub.hasValOrVarNode());
         dataStream.writeBoolean(stub.hasDefaultValue());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);

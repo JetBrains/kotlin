@@ -610,7 +610,7 @@ private fun ExtractionData.inferParametersInfo(
 
         with (parameter) {
             if (currentName == null) {
-                currentName = JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
+                currentName = JetNameSuggester.suggestNames(parameterType, varNameValidator, "p").first()
             }
             mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(name) else null
             info.parameters.add(this)

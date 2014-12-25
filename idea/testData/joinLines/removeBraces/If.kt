@@ -1,5 +1,5 @@
 fun foo() {
-    <caret>if (a) {
+    if (a) { <caret>
         bar()
     }
 }

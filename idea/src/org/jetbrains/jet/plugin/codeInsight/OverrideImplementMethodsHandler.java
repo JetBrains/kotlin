@@ -101,8 +101,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 PsiElement firstGenerated = null;
 
                 List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-                JetFile file = classOrObject.getContainingJetFile();
-                for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+                for (JetElement element : generateOverridingMembers(selectedElements, classOrObject)) {
                     PsiElement added = body.addAfter(element, afterAnchor);
 
                     if (firstGenerated == null) {
@@ -179,22 +178,22 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return whiteSpace;
     }
 
-    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
+    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetClassOrObject classOrObject) {
         List<JetElement> overridingMembers = new ArrayList<JetElement>();
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
+                overridingMembers.add(overrideFunction(classOrObject, (SimpleFunctionDescriptor) descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
+                overridingMembers.add(overrideProperty(classOrObject, (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
     }
 
     @NotNull
-    private static JetElement overrideProperty(@NotNull Project project, @NotNull PropertyDescriptor descriptor) {
+    private static JetElement overrideProperty(@NotNull JetClassOrObject classOrObject, @NotNull PropertyDescriptor descriptor) {
         PropertyDescriptor newDescriptor = (PropertyDescriptor) descriptor.copy(
                 descriptor.getContainingDeclaration(),
                 Modality.OPEN,
@@ -204,23 +203,17 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         newDescriptor.addOverriddenDescriptor(descriptor);
 
         StringBuilder body = new StringBuilder();
-        String defaultInitializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
-        String initializer = defaultInitializer != null ? " = " + defaultInitializer : " = ?";
-        if (descriptor.getExtensionReceiverParameter() != null) {
-            body.append("\nget()");
-            body.append(initializer);
-            if (descriptor.isVar()) {
-                body.append("\nset(value) {}");
-            }
+        body.append("\nget()");
+        body.append(" = ");
+        body.append(generateUnsupportedOrSuperCall(classOrObject, descriptor));
+        if (descriptor.isVar()) {
+            body.append("\nset(value) {}");
         }
-        else {
-            body.append(initializer);
-        }
-        return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
+        return JetPsiFactory(classOrObject.getProject()).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull
-    private static JetNamedFunction overrideFunction(@NotNull Project project, @NotNull FunctionDescriptor descriptor) {
+    private static JetNamedFunction overrideFunction(@NotNull JetClassOrObject classOrObject, @NotNull FunctionDescriptor descriptor) {
         FunctionDescriptor newDescriptor = descriptor.copy(
                 descriptor.getContainingDeclaration(),
                 Modality.OPEN,
@@ -229,33 +222,48 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 /* copyOverrides = */ true);
         newDescriptor.addOverriddenDescriptor(descriptor);
 
-        boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
-        StringBuilder delegationBuilder = new StringBuilder();
-        if (isAbstractFun) {
-            delegationBuilder.append("throw UnsupportedOperationException()");
-        }
-        else {
-            delegationBuilder.append("super<").append(descriptor.getContainingDeclaration().getName());
-            delegationBuilder.append(">.").append(descriptor.getName()).append("(");
-        }
-        boolean first = true;
-        if (!isAbstractFun) {
-            for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
-                if (!first) {
-                    delegationBuilder.append(", ");
-                }
-                first = false;
-                delegationBuilder.append(parameterDescriptor.getName());
-            }
-            delegationBuilder.append(")");
-        }
+
         JetType returnType = descriptor.getReturnType();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
-        String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
+        boolean isAbstract = descriptor.getModality() == Modality.ABSTRACT;
 
-        return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
+        String delegation = generateUnsupportedOrSuperCall(classOrObject, descriptor);
+
+        String body = "{" + (returnsNotUnit && !isAbstract ? "return " : "") + delegation + "}";
+
+        return JetPsiFactory(classOrObject.getProject()).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body);
+    }
+
+    private static String generateUnsupportedOrSuperCall(@NotNull JetClassOrObject classOrObject, @NotNull CallableMemberDescriptor descriptor) {
+        boolean isAbstract = descriptor.getModality() == Modality.ABSTRACT;
+        if (isAbstract) {
+            return "throw UnsupportedOperationException()";
+        }
+        else {
+            StringBuilder builder = new StringBuilder();
+            builder.append("super");
+            if (classOrObject.getDelegationSpecifiers().size() > 1) {
+                builder.append("<").append(descriptor.getContainingDeclaration().getName()).append(">");
+            }
+            builder.append(".").append(descriptor.getName());
+
+            if (descriptor instanceof FunctionDescriptor) {
+                builder.append("(");
+                boolean first = true;
+                for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
+                    if (!first) {
+                        builder.append(", ");
+                    }
+                    first = false;
+                    builder.append(parameterDescriptor.getName());
+                }
+                builder.append(")");
+            }
+
+            return builder.toString();
+        }
     }
 
     @NotNull

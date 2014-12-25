@@ -432,6 +432,9 @@ public class JetRefactoringUtil {
                     }
                 }
             }
+            else if (element instanceof JetTypeElement) {
+                expressions.clear();
+            }
             element = element.getParent();
         }
         return expressions;

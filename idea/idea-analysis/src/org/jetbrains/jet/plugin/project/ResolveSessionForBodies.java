@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
@@ -50,12 +51,8 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    public BindingContext resolveToElement(JetElement element) {
-        return resolveElementCache.resolveToElement(element, false);
-    }
-
-    public BindingContext resolveToElementWithPartialBodyResolve(JetElement element) {
-        return resolveElementCache.resolveToElement(element, true);
+    public BindingContext resolveToElement(JetElement element, BodyResolveMode bodyResolveMode) {
+        return resolveElementCache.resolveToElement(element, bodyResolveMode);
     }
 
     @NotNull

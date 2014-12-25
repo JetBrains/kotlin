@@ -1,4 +1,4 @@
 val foo: String
-    get()  {
+    get() {
         return "abc"
     }

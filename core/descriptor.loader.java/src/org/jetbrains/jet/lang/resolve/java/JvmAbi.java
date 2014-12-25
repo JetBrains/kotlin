@@ -25,6 +25,7 @@ public final class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
+    //TODO: remove clsStubBuilding#sortCallableStubs and this comment when abi version is increased to 20
     public static final int VERSION = 19;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";

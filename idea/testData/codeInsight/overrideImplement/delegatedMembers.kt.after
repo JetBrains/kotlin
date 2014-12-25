@@ -9,7 +9,7 @@ class C(t :T) : T by t {
     }
 
     override fun equals(other: Any?): Boolean {
-        return super<T>.equals(other)
+        return super.equals(other)
     }
 
     override fun foo() {
@@ -17,11 +17,11 @@ class C(t :T) : T by t {
     }
 
     override fun hashCode(): Int {
-        return super<T>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<T>.toString()
+        return super.toString()
     }
 }
 

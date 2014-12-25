@@ -3,8 +3,9 @@ open class A() {
 }
 
 fun some() : A {
-    return object : A() {<caret>
-        override val method: () -> Unit? = ?
+    return object : A() {
+        override val method: () -> Unit?
+            get() = <selection><caret>super.method</selection>
     }
 }
 

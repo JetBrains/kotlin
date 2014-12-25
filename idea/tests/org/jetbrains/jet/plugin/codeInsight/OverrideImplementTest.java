@@ -189,4 +189,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testPropagationKJK() {
         doDirectoryTest(new OverrideMethodsHandler());
     }
+
+    public void testMultipleSupers() {
+        doMultiOverrideFileTest();
+    }
 }

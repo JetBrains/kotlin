@@ -4,6 +4,6 @@ trait A<T> {
 
 class C : A<C> {
     override fun foo(value: C) {
-        <selection><caret>super<A>.foo(value)</selection>
+        <selection><caret>super.foo(value)</selection>
     }
 }

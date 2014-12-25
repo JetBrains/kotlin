@@ -35,7 +35,6 @@ import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.jet.lang.diagnostics.Errors
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -230,6 +229,10 @@ public class TypeResolver(
                 }
             }
 
+            override fun visitSelfType(type: JetSelfType) {
+                c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
+            }
+
             override fun visitJetElement(element: JetElement) {
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
@@ -285,7 +288,7 @@ public class TypeResolver(
     }
 
     public fun resolveClass(scope: JetScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
-        val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace)
+        val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace, true)
                                         .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {
             ImportsResolver.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)

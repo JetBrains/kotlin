@@ -57,7 +57,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.addInlineMarker;
 
-public class InlineCodegen implements CallGenerator {
+public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
     private final JetTypeMapper typeMapper;
 
@@ -115,7 +115,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     @Override
-    public void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
+    public void genCallInner(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         MethodNode node = null;
 
         try {

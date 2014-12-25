@@ -46,11 +46,11 @@ public class JetFunctionParameterTableModel extends ParameterTableModelBase<JetP
     @Override
     protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(-1);
+            parameterInfo = new JetParameterInfo(-1, "", null, null, "", null, null);
         }
         JetPsiFactory psiFactory = JetPsiFactory(project);
-        final PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
-        final PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(parameterInfo.getDefaultValueText(), myDefaultValueContext);
+        PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
+        PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(parameterInfo.getDefaultValueForCall(), myDefaultValueContext);
         return new ParameterTableModelItemBase<JetParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
             @Override
             public boolean isEllipsisType() {

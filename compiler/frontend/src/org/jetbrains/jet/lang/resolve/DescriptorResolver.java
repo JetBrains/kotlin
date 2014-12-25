@@ -786,7 +786,7 @@ public class DescriptorResolver {
 
     public static void checkUpperBoundType(
             JetTypeReference upperBound,
-            JetType upperBoundType,
+            @NotNull JetType upperBoundType,
             boolean isClassObjectConstraint,
             BindingTrace trace
     ) {

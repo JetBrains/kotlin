@@ -15,7 +15,7 @@ public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMap
  */
-public fun <K, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
+public fun <K : Any, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
 /**
  * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order

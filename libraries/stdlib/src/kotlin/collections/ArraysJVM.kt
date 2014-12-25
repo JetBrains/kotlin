@@ -37,4 +37,4 @@ public fun ByteArray.toString(charset: Charset): String = String(this, charset)
         throw UnsupportedOperationException()
 
 /** Returns the List if its not null otherwise returns the empty list */
-public inline fun <reified T> Array<T>?.orEmpty(): Array<T> = this ?: array<T>()
+public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: array<T>()

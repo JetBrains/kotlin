@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,11 +32,12 @@ import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration;
 
 import javax.swing.*;
 import java.util.List;
 
-public class JetIconProvider extends IconProvider {
+public class JetIconProvider extends IconProvider implements DumbAware {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
@@ -100,6 +102,17 @@ public class JetIconProvider extends IconProvider {
 
         if (psiElement instanceof KotlinLightClassForPackage) {
             return JetIcons.FILE;
+        }
+
+        if (psiElement instanceof KotlinLightClassForDecompiledDeclaration) {
+            JetClassOrObject origin = ((KotlinLightClassForDecompiledDeclaration) psiElement).getOrigin();
+            if (origin != null) {
+                psiElement = origin;
+            }
+            else {
+                //TODO (light classes for decompiled files): correct presentation
+                return JetIcons.CLASS;
+            }
         }
 
         if (psiElement instanceof KotlinLightClassForExplicitDeclaration) {

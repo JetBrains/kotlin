@@ -98,6 +98,7 @@ public class JetPropertyAccessor extends JetDeclarationStub<KotlinPropertyAccess
         return getBodyExpression() != null;
     }
 
+    @Override
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(JetTokens.EQ);

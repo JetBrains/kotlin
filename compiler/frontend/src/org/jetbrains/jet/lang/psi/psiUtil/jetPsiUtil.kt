@@ -35,6 +35,7 @@ import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
@@ -358,8 +359,19 @@ public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = tr
     return if (withItself) stream else stream.drop(1)
 }
 
+public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<ASTNode> {
+    val stepFun = if (forward) { (node: ASTNode) -> node.getTreeNext() } else { (e: ASTNode) -> e.getTreeNext() }
+    val stream = stream(this, stepFun)
+    return if (withItself) stream else stream.drop(1)
+}
+
 public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
     val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
+    return if (withItself) stream else stream.drop(1)
+}
+
+public fun ASTNode.parents(withItself: Boolean = true): Stream<ASTNode> {
+    val stream = stream(this) { it.getTreeParent() }
     return if (withItself) stream else stream.drop(1)
 }
 

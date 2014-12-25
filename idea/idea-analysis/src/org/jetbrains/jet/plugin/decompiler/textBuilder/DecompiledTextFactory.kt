@@ -19,9 +19,7 @@ package org.jetbrains.jet.plugin.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.MemberComparator
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder
@@ -30,11 +28,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+import org.jetbrains.jet.lang.types.flexibility
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
@@ -73,13 +71,21 @@ public fun buildDecompiledText(
     }
 }
 
-private val DECOMPILED_COMMENT = "/* compiled code */"
+private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
+private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 
 public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
         .setWithDefinedIn(false)
         .setClassWithPrimaryConstructor(true)
-        .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
+        .setTypeNormalizer {
+            type ->
+            if (type.isFlexible()) {
+                type.flexibility().lowerBound
+            }
+            else type
+
+        }
         .build()
 
 //TODO: should use more accurate way to identify descriptors
@@ -113,7 +119,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         val header = if (isEnumEntry(descriptor))
             descriptor.getName().asString()
         else
-            descriptorRendererForDecompiler.render(descriptor).replace("= ...", "= " + DECOMPILED_COMMENT)
+            descriptorRendererForDecompiler.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
         builder.append(header)
         var endOffset = builder.length()
 
@@ -127,11 +133,11 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         if (descriptor is FunctionDescriptor || descriptor is PropertyDescriptor) {
             if ((descriptor as MemberDescriptor).getModality() != Modality.ABSTRACT) {
                 if (descriptor is FunctionDescriptor) {
-                    builder.append(" { ").append(DECOMPILED_COMMENT).append(" }")
+                    builder.append(" { ").append(DECOMPILED_CODE_COMMENT).append(" }")
                 }
                 else {
                     // descriptor instanceof PropertyDescriptor
-                    builder.append(" ").append(DECOMPILED_COMMENT)
+                    builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
                 endOffset = builder.length()
             }
@@ -152,8 +158,9 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                         continue
                     }
                     if (member is CallableMemberDescriptor
-                            && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
-                            && !isComponentLike(member.getName())) {
+                        && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
+                        //TODO: not synthesized and component like
+                        && !isComponentLike(member.getName())) {
                         continue
                     }
 

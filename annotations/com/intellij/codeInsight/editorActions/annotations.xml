@@ -168,20 +168,57 @@
       name='com.intellij.codeInsight.editorActions.CopyPasteReferenceProcessor void restoreReferences(com.intellij.codeInsight.editorActions.ReferenceData[], TRef[]) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-    <item
-        name='com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate int tryJoinLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 0'>
+    <item name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler boolean canSelect(com.intellij.psi.PsiElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item
-        name='com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate int tryJoinLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 1'>
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item
-        name='com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate int tryJoinRawLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 0'>
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item
-        name='com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate int tryJoinRawLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 1'>
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange) 1'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

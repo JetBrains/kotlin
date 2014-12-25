@@ -225,7 +225,7 @@ public class ExpectedCompletionUtils {
     }
 
     public static boolean isWithOrder(String fileText) {
-        return InTextDirectivesUtils.getPrefixedInt(fileText, WITH_ORDER_PREFIX) != null;
+        return Boolean.TRUE.equals(InTextDirectivesUtils.getPrefixedBoolean(fileText, WITH_ORDER_PREFIX));
     }
 
     public static void assertDirectivesValid(String fileText) {

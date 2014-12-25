@@ -37,13 +37,9 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
 
 public class ImportsResolver {
-    @NotNull
     private ModuleDescriptor moduleDescriptor;
-    @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
-    @NotNull
     private BindingTrace trace;
-    @NotNull
     private JetImportsFactory importsFactory;
 
     @Inject
@@ -67,7 +63,7 @@ public class ImportsResolver {
     }
 
     public void processTypeImports(@NotNull TopDownAnalysisContext c) {
-        processImports(c, LookupMode.ONLY_CLASSES);
+        processImports(c, LookupMode.ONLY_CLASSES_AND_PACKAGES);
     }
 
     public void processMembersImports(@NotNull TopDownAnalysisContext c) {
@@ -129,7 +125,7 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors);
             }
 
-            if (lookupMode != LookupMode.ONLY_CLASSES) {
+            if (lookupMode != LookupMode.ONLY_CLASSES_AND_PACKAGES) {
                 checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }

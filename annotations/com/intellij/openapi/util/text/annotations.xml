@@ -1,4 +1,16 @@
 <root>
+    <item name='com.intellij.openapi.util.text.LineTokenizer java.lang.String[] tokenize(char[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.openapi.util.text.LineTokenizer java.lang.String[] tokenize(char[], boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.openapi.util.text.LineTokenizer java.lang.String[] tokenize(char[], int, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.openapi.util.text.LineTokenizer java.lang.String[] tokenize(char[], int, int, boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='com.intellij.openapi.util.text.StringUtil java.lang.String decapitalize(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>

@@ -105,8 +105,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                 }
 
                 // else TypeVariable is replaced by concrete type
-                visitClassType(mapping.asmType!!.getInternalName())
-                visitEnd()
+                SignatureReader(mapping.signature).accept(this)
             }
 
             override fun visitFormalTypeParameter(name: String?) {
@@ -197,12 +196,12 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 public class ReifiedTypeParameterMappings() {
     private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
 
-    public fun addParameterMappingToType(name: String, asmType: Type) {
-        mappingsByName[name] =  ReifiedTypeParameterMapping(name, asmType, null)
+    public fun addParameterMappingToType(name: String, asmType: Type, signature: String) {
+        mappingsByName[name] =  ReifiedTypeParameterMapping(name, asmType, newName = null, signature = signature)
     }
 
     public fun addParameterMappingToNewParameter(name: String, newName: String) {
-        mappingsByName[name] = ReifiedTypeParameterMapping(name, null, newName)
+        mappingsByName[name] = ReifiedTypeParameterMapping(name, asmType = null, newName = newName, signature = null)
     }
 
     fun get(name: String): ReifiedTypeParameterMapping? {
@@ -210,7 +209,7 @@ public class ReifiedTypeParameterMappings() {
     }
 }
 
-public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newName: String?)
+public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newName: String?, val signature: String?)
 
 public class ReifiedTypeParametersUsages {
     val usedTypeParameters: MutableSet<String> = hashSetOf()

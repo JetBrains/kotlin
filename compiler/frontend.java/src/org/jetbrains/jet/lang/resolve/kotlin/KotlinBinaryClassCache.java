@@ -20,6 +20,7 @@ import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public final class KotlinBinaryClassCache implements Disposable {
             };
 
     @Nullable
-    public static KotlinJvmBinaryClass getKotlinBinaryClass(@NotNull VirtualFile file) {
+    public static KotlinJvmBinaryClass getKotlinBinaryClass(@NotNull final VirtualFile file) {
         if (file.getFileType() != JavaClassFileType.INSTANCE) return null;
 
         KotlinBinaryClassCache service = ServiceManager.getService(KotlinBinaryClassCache.class);
@@ -58,10 +59,14 @@ public final class KotlinBinaryClassCache implements Disposable {
             return requestCache.virtualFileKotlinClass;
         }
         else {
-            ApplicationManager.getApplication().assertReadAccessAllowed();
+            VirtualFileKotlinClass aClass = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFileKotlinClass>() {
+                @Override
+                public VirtualFileKotlinClass compute() {
+                    //noinspection deprecation
+                    return VirtualFileKotlinClass.OBJECT$.create(file);
+                }
+            });
 
-            //noinspection deprecation
-            VirtualFileKotlinClass aClass = VirtualFileKotlinClass.OBJECT$.create(file);
             return requestCache.cache(file, aClass);
         }
     }

@@ -19,10 +19,8 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature.usages
 import org.jetbrains.jet.lang.psi.JetEnumEntry
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
@@ -37,7 +35,7 @@ public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsa
             ) as JetDelegatorToSuperCall
             element.addBefore(psiFactory.createColon(), delegatorToSuperCall)
 
-            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.getFunctionDescriptor().getOriginalPrimaryFunction())
+            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryFunction)
                     .processUsage(changeInfo, delegatorToSuperCall)
         }
 

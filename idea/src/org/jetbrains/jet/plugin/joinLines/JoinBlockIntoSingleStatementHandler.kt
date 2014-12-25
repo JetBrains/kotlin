@@ -23,19 +23,43 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetContainerNode
+import org.jetbrains.jet.lang.psi.JetWhenEntry
+import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
         if (file !is JetFile) return -1
 
         if (start == 0) return -1
-        val brace = file.findElementAt(start - 1)!!
+        val c = document.getCharsSequence()[start]
+        val index = if (c == '\n') start - 1 else start
+
+        val brace = file.findElementAt(index)!!
         if (brace.getNode()!!.getElementType() != JetTokens.LBRACE) return -1
 
         val block = brace.getParent() as? JetBlockExpression ?: return -1
         val statement = block.getStatements().singleOrNull() ?: return -1
-        if (block.getParent() !is JetContainerNode) return -1
+        val parent = block.getParent()
+        if (parent !is JetContainerNode && parent !is JetWhenEntry) return -1
         if (block.getNode().getChildren(JetTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
+
+        // handle nested if's
+        val pparent = parent.getParent()
+        if (pparent is JetIfExpression && block == pparent.getThen() && statement is JetIfExpression && statement.getElse() == null) {
+            // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
+            if (pparent.getElse() != null) return -1
+
+            val condition1 = pparent.getCondition()
+            val condition2 = statement.getCondition()
+            val body = statement.getThen()
+            if (condition1 != null && condition2 != null && body != null) {
+                val newCondition = JetPsiFactory(pparent).createBinaryExpression(condition1, "&&", condition2)
+                condition1.replace(newCondition)
+                val newBody = block.replace(body)
+                return newBody.getTextRange()!!.getStartOffset()
+            }
+        }
 
         val newStatement = block.replace(statement)
         return newStatement.getTextRange()!!.getStartOffset()

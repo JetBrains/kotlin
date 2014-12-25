@@ -118,7 +118,7 @@ public class JetChangeSignature(val project: Project,
             return
         }
 
-        val affectedFunctions = dialog.getMethodDescriptor().getAffectedFunctions().map { it.getElement() }.filterNotNull()
+        val affectedFunctions = dialog.getMethodDescriptor().affectedFunctions.map { it.getElement() }.filterNotNull()
 
         if (affectedFunctions.any { !checkModifiable(it) }) {
             return
@@ -212,7 +212,7 @@ public class JetChangeSignature(val project: Project,
                                                options: List<String>): Int {
         val superString = superFunctions.map {
             it.getContainingDeclaration().getName().asString()
-        }.makeString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
+        }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
         val message = JetBundle.message("x.overrides.y.in.class.list",
                                         DescriptorRenderer.COMPACT.render(functionFromEditor),
                                         functionFromEditor.getContainingDeclaration().getName().asString(), superString,

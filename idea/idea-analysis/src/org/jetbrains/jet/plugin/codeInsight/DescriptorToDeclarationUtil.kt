@@ -57,7 +57,9 @@ public object DescriptorToDeclarationUtil {
             result.addIfNotNull(psiFacade.findPackage(fqName))
             result.addIfNotNull(psiFacade.findClass(fqName, project.allScope()))
         }
-        return result
+        // filter out elements which are navigate to some other element of the result
+        // this is needed to avoid duplicated results for references to declaration in same library source file
+        return result.filter { element -> result.none { element != it && it.getNavigationElement() == element } }
     }
 
     private fun findDecompiledAndBuiltInDeclarations(project: Project, descriptor: DeclarationDescriptor): Collection<PsiElement> {
@@ -67,7 +69,7 @@ public object DescriptorToDeclarationUtil {
             return elements
         }
 
-        val decompiledDeclaration = DecompiledNavigationUtils.findDeclarationForReference(project, descriptor)
+        val decompiledDeclaration = DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, descriptor)
         if (decompiledDeclaration != null) {
             return setOf(decompiledDeclaration)
         }

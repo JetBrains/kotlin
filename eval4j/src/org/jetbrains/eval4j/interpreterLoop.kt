@@ -32,7 +32,7 @@ public trait InterpreterResult {
     override fun toString(): String
 }
 
-public class ExceptionThrown(public val exception: Value, public val kind: ExceptionKind): InterpreterResult {
+public class ExceptionThrown(public val exception: ObjectValue, public val kind: ExceptionKind): InterpreterResult {
     override fun toString(): String = "Thrown $exception: $kind"
 
     public enum class ExceptionKind {
@@ -74,7 +74,7 @@ abstract class ThrownFromEvalExceptionBase(cause: Throwable): RuntimeException(c
 class BrokenCode(cause: Throwable): ThrownFromEvalExceptionBase(cause)
 class ThrownFromEvalException(cause: Throwable): ThrownFromEvalExceptionBase(cause)
 
-class ThrownFromEvaluatedCodeException(val exception: Value): RuntimeException() {
+class ThrownFromEvaluatedCodeException(val exception: ObjectValue): RuntimeException() {
     override fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
@@ -212,7 +212,7 @@ public fun interpreterLoop(
                         }
 
                         ATHROW -> {
-                            val exceptionValue = frame.getStackTop()
+                            val exceptionValue = frame.getStackTop() as ObjectValue
                             val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
                             if (handled != null) return handled
                             if (exceptionCaught(exceptionValue)) continue

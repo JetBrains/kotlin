@@ -26,6 +26,11 @@ import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
+import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.jet.lang.descriptors.ClassKind
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -36,22 +41,40 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
             val startOffset = context.getStartOffset()
             val document = context.getDocument()
             if (!isAfterDot(document, startOffset)) {
-                val qualifiedName = qualifiedNameToInsert(item)
-                // insert dot after because otherwise parser can sometimes produce no suitable reference here
-                val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
-                document.replaceString(startOffset, context.getTailOffset(), qualifiedName + tempSuffix)
-                val classNameEnd = startOffset + qualifiedName.length()
-
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
-                val rangeMarker = document.createRangeMarker(classNameEnd, classNameEnd + tempSuffix.length())
 
-                ShortenReferences.process(file, startOffset, classNameEnd)
+                val qualifiedName = qualifiedNameToInsert(item)
+
+                // first try to resolve short name for faster handling
+                val token = file.findElementAt(startOffset)
+                val nameRef = token.getParent() as? JetNameReferenceExpression
+                if (nameRef != null) {
+                    val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
+                    val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
+                    if (target != null && qualifiedNameForSourceCode(target) == qualifiedName) return
+                }
+
+                val tempPrefix = if (nameRef != null)
+                    " " // insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
+                else
+                    "$;val v:" // if we have no reference in the current context we have a more complicated prefix to get one
+                val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
+                document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
+
                 psiDocumentManager.commitAllDocuments()
+
+                val classNameStart = startOffset + tempPrefix.length()
+                val classNameEnd = classNameStart + qualifiedName.length()
+                val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
+                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
+
+                ShortenReferences.process(file, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
-                if (rangeMarker.isValid()) {
-                    document.deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                if (rangeMarker.isValid() && wholeRangeMarker.isValid()) {
+                    document.deleteString(wholeRangeMarker.getStartOffset(), rangeMarker.getStartOffset())
+                    document.deleteString(rangeMarker.getEndOffset(), wholeRangeMarker.getEndOffset())
                 }
             }
         }
