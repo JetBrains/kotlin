@@ -67,7 +67,7 @@ public fun JetType.isNullabilityFlexible(): Boolean {
 }
 
 // This function is intended primarily for sets: since JetType.equals() represents _syntactical_ equality of types,
-// whereas JetTypeChecker.DEFAULT.equalsTypes() represents semantical equality
+// whereas JetTypeChecker.DEFAULT.equalsTypes() represents semantic equality
 // A set of types (e.g. exact bounds etc) may contain, for example, X, X? and X!
 // These are not equal syntactically (by JetType.equals()), but X! is _compatible_ with others as exact bounds,
 // moreover, X! is a better fit.

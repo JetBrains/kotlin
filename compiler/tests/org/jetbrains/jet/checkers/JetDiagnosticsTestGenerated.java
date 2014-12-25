@@ -8043,7 +8043,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/platformTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.MethodCall.class})
+        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.Intersection.class, PlatformTypes.MethodCall.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PlatformTypes extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInPlatformTypes() throws Exception {
@@ -8181,6 +8181,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("withNothing.kt")
                 public void testWithNothing() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/withNothing.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/intersection")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Intersection extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInIntersection() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/intersection"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("map.kt")
+                public void testMap() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/intersection/map.kt");
                     doTest(fileName);
                 }
             }
@@ -8950,6 +8965,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt630.kt")
             public void testKt630() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt630.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6508.kt")
+            public void testKt6508() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt6508.kt");
                 doTest(fileName);
             }
 

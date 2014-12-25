@@ -172,6 +172,8 @@ public class TypeUtils {
         boolean nothingTypePresent = false;
         List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
         for (JetType type : types) {
+            if (type.isError()) continue;
+
             nothingTypePresent |= KotlinBuiltIns.isNothingOrNullableNothing(type);
             allNullable &= type.isMarkedNullable();
             nullabilityStripped.add(makeNotNullable(type));
@@ -179,6 +181,11 @@ public class TypeUtils {
 
         if (nothingTypePresent) {
             return allNullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
+        }
+
+        if (nullabilityStripped.isEmpty()) {
+            // All types were errors
+            return ErrorUtils.createErrorType("Intersection of errors types: " + types);
         }
 
         // Now we remove types that have subtypes in the list
@@ -213,10 +220,22 @@ public class TypeUtils {
             resultingTypes.add(type);
         }
 
+        if (resultingTypes.isEmpty()) {
+            // If we ended up here, it means that all types from `nullabilityStripped` were excluded by the code above
+            // most likely, this is because they are all semantically interchangeable (e.g. List<Foo>! and List<Foo>),
+            // in that case, we can safely select the best representative out of that set and return it
+            // TODO: maybe return the most specific among the types that are subtypes to all others in the `nullabilityStripped`?
+            // TODO: e.g. among {Int, Int?, Int!}, return `Int` (now it returns `Int!`).
+            JetType bestRepresentative = TypesPackage.singleBestRepresentative(nullabilityStripped);
+            if (bestRepresentative == null) {
+                throw new AssertionError("Empty intersection for types " + types);
+            }
+            return makeNullableAsSpecified(bestRepresentative, allNullable);
+        }
+
         if (resultingTypes.size() == 1) {
             return makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }
-
 
         TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.EMPTY, resultingTypes);
 
