@@ -35,7 +35,8 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
         val f = myFixture!!
         f.copyDirectoryToProject(getResDir()!!, "res")
-        f.configureByFile(path + getTestName(true) + ".kt")
+        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
+        f.configureFromExistingVirtualFile(virtualFile)
         val editor = f.getEditor()
         val file = f.getFile()
         val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)

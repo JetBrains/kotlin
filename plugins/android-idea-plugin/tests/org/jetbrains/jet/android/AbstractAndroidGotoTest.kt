@@ -33,7 +33,8 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
         val f = myFixture!!
         f.copyDirectoryToProject(getResDir()!!, "res")
-        f.configureByFile(path + getTestName(true) + ".kt");
+        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
+        f.configureFromExistingVirtualFile(virtualFile)
 
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
         if (f.getElementAtCaret() !is JetProperty) fail("element at caret must be a property, not a ${f.getElementAtCaret().javaClass}")

@@ -28,7 +28,8 @@ public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
         val f = myFixture!!
         f.copyDirectoryToProject(getResDir()!!, "res")
-        f.configureByFile(path + getTestName(true) + ".kt")
+        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
+        f.configureFromExistingVirtualFile(virtualFile)
 
         val targetElement = TargetElementUtilBase.findTargetElement(f.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED or TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
         val propUsages = f.findUsages(targetElement!!)
