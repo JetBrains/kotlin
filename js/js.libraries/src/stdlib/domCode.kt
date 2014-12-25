@@ -4,7 +4,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 
 public fun createDocument(): Document {
-    return js.dom.html.document.implementation.createDocument(null, null, null)
+    return kotlin.js.dom.html.document.implementation.createDocument(null, null, null)
 }
 
 native public val Node.outerHTML: String get() = noImpl
