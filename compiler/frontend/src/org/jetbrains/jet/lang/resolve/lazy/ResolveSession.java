@@ -429,6 +429,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
+            public DeclarationDescriptor visitScript(@NotNull JetScript script, Void data) {
+                return scriptDescriptors.invoke(script);
+            }
+
+            @Override
             public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    JetPsiUtil.getElementTextWithContext(element));
