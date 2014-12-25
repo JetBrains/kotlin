@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import com.intellij.openapi.editor.Document
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -170,3 +171,17 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     }
     return false
 }
+
+fun InsertionContext.isAfterDot(): Boolean {
+    var offset = getStartOffset()
+    val chars = getDocument().getCharsSequence()
+    while (offset > 0) {
+        offset--
+        val c = chars.charAt(offset)
+        if (!Character.isWhitespace(c)) {
+            return c == '.'
+        }
+    }
+    return false
+}
+

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.completion.handlers
 
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
@@ -30,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.plugin.completion.isAfterDot
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -38,11 +37,12 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
 
         val file = context.getFile()
         if (file is JetFile) {
-            val startOffset = context.getStartOffset()
-            val document = context.getDocument()
-            if (!isAfterDot(document, startOffset)) {
+            if (!context.isAfterDot()) {
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
+
+                val startOffset = context.getStartOffset()
+                val document = context.getDocument()
 
                 val qualifiedName = qualifiedNameToInsert(item)
 
@@ -87,18 +87,5 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
             is PsiClass -> lookupObject.getQualifiedName()!!
             else -> error("Unknown object in LookupElement with KotlinClassInsertHandler: $lookupObject")
         }
-    }
-
-    private fun isAfterDot(document: Document, offset: Int): Boolean {
-        var curOffset = offset
-        val chars = document.getCharsSequence()
-        while (curOffset > 0) {
-            curOffset--
-            val c = chars.charAt(curOffset)
-            if (!Character.isWhitespace(c)) {
-                return c == '.'
-            }
-        }
-        return false
     }
 }
