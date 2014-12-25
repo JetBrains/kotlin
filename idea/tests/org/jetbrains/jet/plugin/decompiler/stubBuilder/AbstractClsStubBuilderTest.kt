@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import java.util.LinkedHashSet
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.jet.utils.addIfNotNull
+import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {
@@ -52,7 +53,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     }
 
     private fun getClassFileToDecompile(sourcePath: String): VirtualFile {
-        val outDir = JetTestUtils.tmpDir("libForStubTest-" + sourcePath)
+        val outDir = FileUtil.createTempDirectory("libForStubTest", getTestName(true))
         MockLibraryUtil.compileKotlin(sourcePath, outDir)
         val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)
         return root.findClassFileByName(lastSegment(sourcePath))
