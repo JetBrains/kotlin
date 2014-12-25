@@ -17,7 +17,6 @@
 package org.jetbrains.jet.compiler.runner;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.preloading.ClassCondition;
@@ -28,34 +27,25 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public final class CompilerEnvironment {
-
     @NotNull
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
-            @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
             @NotNull Services compilerServices
     ) {
-        return new CompilerEnvironment(kotlinPaths, parentClassLoader, classesToLoadByParent, compilerServices);
+        return new CompilerEnvironment(kotlinPaths, classesToLoadByParent, compilerServices);
     }
 
-    @NotNull
     private final KotlinPaths kotlinPaths;
-    @Nullable
-    private final ClassLoader parentClassLoader;
-    @NotNull
     private final ClassCondition classesToLoadByParent;
-    @NotNull
     private final Services services;
 
     private CompilerEnvironment(
             @NotNull KotlinPaths kotlinPaths,
-            @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
             @NotNull Services services
     ) {
         this.kotlinPaths = kotlinPaths;
-        this.parentClassLoader = parentClassLoader;
         this.classesToLoadByParent = classesToLoadByParent;
         this.services = services;
     }
@@ -67,11 +57,6 @@ public final class CompilerEnvironment {
     @NotNull
     public KotlinPaths getKotlinPaths() {
         return kotlinPaths;
-    }
-
-    @Nullable
-    public ClassLoader getParentClassLoader() {
-        return parentClassLoader;
     }
 
     @NotNull

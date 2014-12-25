@@ -53,7 +53,7 @@ public class CompilerRunnerUtil {
     ) throws IOException {
         ClassLoader classLoader = ourClassLoaderRef.get();
         if (classLoader == null) {
-            classLoader = createClassLoader(libPath, environment.getParentClassLoader(), environment.getClassesToLoadByParent());
+            classLoader = createClassLoader(libPath, CompilerRunnerUtil.class.getClassLoader(), environment.getClassesToLoadByParent());
             ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
         }
         return classLoader;

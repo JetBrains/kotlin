@@ -169,16 +169,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
                 .build()
 
-        val environment = CompilerEnvironment.getEnvironmentFor(
+        return CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
-                javaClass.getClassLoader(),
                 { className ->
-                    className!!.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
+                    className.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
                     || className == "org.jetbrains.jet.config.Services"
                 },
                 compilerServices
         )
-        return environment
     }
 
     private fun getOutputItemsAndTargets(
