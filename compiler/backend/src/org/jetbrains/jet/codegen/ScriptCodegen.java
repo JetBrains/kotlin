@@ -140,68 +140,73 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
                 ACC_PUBLIC, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
                 null, null);
 
-        mv.visitCode();
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            mv.visitCode();
 
-        final InstructionAdapter iv = new InstructionAdapter(mv);
+            final InstructionAdapter iv = new InstructionAdapter(mv);
 
-        Type classType = typeMapper.mapType(classDescriptorForScript);
+            Type classType = typeMapper.mapType(classDescriptorForScript);
 
-        iv.load(0, classType);
-        iv.invokespecial("java/lang/Object", "<init>", "()V", false);
+            iv.load(0, classType);
+            iv.invokespecial("java/lang/Object", "<init>", "()V", false);
 
-        iv.load(0, classType);
+            iv.load(0, classType);
 
-        final FrameMap frameMap = new FrameMap();
-        frameMap.enterTemp(OBJECT_TYPE);
+            final FrameMap frameMap = new FrameMap();
+            frameMap.enterTemp(OBJECT_TYPE);
 
-        for (ScriptDescriptor importedScript : context.getEarlierScripts()) {
-            frameMap.enter(importedScript, OBJECT_TYPE);
-        }
-
-        Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
-        int add = 0;
-
-        for (int i = 0; i < scriptDescriptor.getScriptCodeDescriptor().getValueParameters().size(); i++) {
-            ValueParameterDescriptor parameter = scriptDescriptor.getScriptCodeDescriptor().getValueParameters().get(i);
-            frameMap.enter(parameter, argTypes[i + add]);
-        }
-
-        generateInitializers(new Function0<ExpressionCodegen>() {
-            @Override
-            public ExpressionCodegen invoke() {
-                return new ExpressionCodegen(iv, frameMap, Type.VOID_TYPE, methodContext, state, ScriptCodegen.this);
+            for (ScriptDescriptor importedScript : context.getEarlierScripts()) {
+                frameMap.enter(importedScript, OBJECT_TYPE);
             }
-        });
 
-        int offset = 1;
+            Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
+            int add = 0;
 
-        for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
-            Type earlierClassType = asmTypeForScriptDescriptor(bindingContext, earlierScript);
-            iv.load(0, classType);
-            iv.load(offset, earlierClassType);
-            offset += earlierClassType.getSize();
-            iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
+            for (int i = 0; i < scriptDescriptor.getScriptCodeDescriptor().getValueParameters().size(); i++) {
+                ValueParameterDescriptor parameter = scriptDescriptor.getScriptCodeDescriptor().getValueParameters().get(i);
+                frameMap.enter(parameter, argTypes[i + add]);
+            }
+
+            generateInitializers(new Function0<ExpressionCodegen>() {
+                @Override
+                public ExpressionCodegen invoke() {
+                    return new ExpressionCodegen(iv, frameMap, Type.VOID_TYPE, methodContext, state, ScriptCodegen.this);
+                }
+            });
+
+            int offset = 1;
+
+            for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
+                Type earlierClassType = asmTypeForScriptDescriptor(bindingContext, earlierScript);
+                iv.load(0, classType);
+                iv.load(offset, earlierClassType);
+                offset += earlierClassType.getSize();
+                iv.putfield(classType.getInternalName(), context.getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
+            }
+
+            for (ValueParameterDescriptor parameter : scriptDescriptor.getScriptCodeDescriptor().getValueParameters()) {
+                Type parameterType = typeMapper.mapType(parameter.getType());
+                iv.load(0, classType);
+                iv.load(offset, parameterType);
+                offset += parameterType.getSize();
+                iv.putfield(classType.getInternalName(), parameter.getName().getIdentifier(), parameterType.getDescriptor());
+            }
+
+            StackValue stackValue =
+                    new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
+                            .gen(scriptDeclaration.getBlockExpression());
+            if (stackValue.type != Type.VOID_TYPE) {
+                StackValue.Field resultValue = StackValue
+                        .field(blockType, classType, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, false, StackValue.LOCAL_0);
+                resultValue.store(stackValue, iv);
+            }
+            else {
+                stackValue.put(blockType, iv);
+            }
+
+            iv.areturn(Type.VOID_TYPE);
         }
 
-        for (ValueParameterDescriptor parameter : scriptDescriptor.getScriptCodeDescriptor().getValueParameters()) {
-            Type parameterType = typeMapper.mapType(parameter.getType());
-            iv.load(0, classType);
-            iv.load(offset, parameterType);
-            offset += parameterType.getSize();
-            iv.putfield(classType.getInternalName(), parameter.getName().getIdentifier(), parameterType.getDescriptor());
-        }
-
-        StackValue stackValue =
-                new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this).gen(scriptDeclaration.getBlockExpression());
-        if (stackValue.type != Type.VOID_TYPE) {
-            StackValue.Field resultValue = StackValue
-                    .field(blockType, classType, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, false, StackValue.LOCAL_0);
-            resultValue.store(stackValue, iv);
-        } else {
-            stackValue.put(blockType, iv);
-        }
-
-        iv.areturn(Type.VOID_TYPE);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
     }

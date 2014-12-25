@@ -304,13 +304,17 @@ public class PackageCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                if (state.getGenerateDeclaredClassFilter().shouldProcess(classOrObject)) {
+                if (state.getGenerateDeclaredClassFilter().shouldProcessClass(classOrObject)) {
                     generateClassOrObject(classOrObject);
                 }
             }
             else if (declaration instanceof JetScript) {
+                JetScript script = (JetScript) declaration;
+
                // SCRIPT: generate script code, should be separate execution branch
-               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packagePartContext).generate();
+                if (state.getGenerateDeclaredClassFilter().shouldProcessScript(script)) {
+                    ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
+                }
             }
         }
 

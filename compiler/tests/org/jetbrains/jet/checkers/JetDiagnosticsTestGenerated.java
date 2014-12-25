@@ -637,6 +637,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DanglingInScript.kt")
+            public void testDanglingInScript() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DanglingMixed.kt")
             public void testDanglingMixed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
