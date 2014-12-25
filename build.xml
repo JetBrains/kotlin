@@ -792,7 +792,7 @@
             depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
             description="Builds compiler jar from project out dir"/>
 
-    <target name="zip-compiler" depends="dist">
+    <target name="zip-compiler">
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" dir="${kotlin-home}" excludes="bin/*"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
@@ -800,32 +800,20 @@
         </zip>
     </target>
 
-    <target name="kotlin-for-upsource" depends="dist">
+    <target name="kotlin-for-upsource">
         <cleandir dir="${output}/classes/idea-analysis"/>
 
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
-                <dirset dir="${basedir}/idea/ide-common">
-                    <include name="src"/>
-                </dirset>
-                <dirset dir="${basedir}/idea/idea-analysis">
-                    <include name="src"/>
-                </dirset>
+                <dirset dir="${basedir}/idea/ide-common" includes="src"/>
+                <dirset dir="${basedir}/idea/idea-analysis" includes="src"/>
             </src>
             <classpath>
-                <fileset dir="${idea.sdk}" includes="core/*.jar"/>
                 <fileset dir="${idea.sdk}" includes="core-analysis/*.jar"/>
-                <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
-
-                <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-                <fileset dir="${dependencies.dir}" includes="jline.jar"/>
-                <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
-                <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
-                <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
-                <fileset dir="${kotlin-home}/lib" includes="kotlin-runtime.jar"/>
-                <pathelement location="${output}/classes/compiler"/>
+                <pathelement location="${output}/kotlin-compiler-before-shrink.jar"/>
+                <path refid="classpath"/>
             </classpath>
         </javac2>
 
@@ -883,5 +871,5 @@
         </zip>
     </target>
 
-    <target name="build-artifacts" depends="zip-compiler,kotlin-for-upsource,zip-test-data"/>
+    <target name="build-artifacts" depends="dist,zip-compiler,kotlin-for-upsource,zip-test-data"/>
 </project>
