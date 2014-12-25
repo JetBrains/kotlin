@@ -44,7 +44,19 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
-import com.intellij.openapi.editor.Document
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.psi.JetValueArgument
+import org.jetbrains.jet.lang.psi.JetValueArgumentList
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.jet.lang.psi.JetExpression
+import java.util.ArrayList
+import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.plugin.util.FuzzyType
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -185,3 +197,55 @@ fun InsertionContext.isAfterDot(): Boolean {
     return false
 }
 
+// do not complete this items by prefix like "is"
+fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
+    val prefix = prefixMatcher.getPrefix()
+    val s = "this@"
+    return if (prefix.length() > s.length())
+        prefix.startsWith(s)
+    else
+        s.startsWith(prefix)
+}
+
+data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)
+
+fun thisExpressionItems(bindingContext: BindingContext, context: JetExpression): Collection<ThisItemInfo> {
+    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
+
+    val result = ArrayList<ThisItemInfo>()
+    for ((i, receiver) in scope.getImplicitReceiversWithInstance().withIndex()) {
+        val thisType = receiver.getType()
+        val fuzzyType = FuzzyType(thisType, listOf())
+        val qualifier = if (i == 0) null else (thisQualifierName(receiver) ?: continue)
+
+        fun createLookupElement(): LookupElement {
+            var element = LookupElementBuilder.create(KeywordLookupObject, if (qualifier == null) "this" else "this@" + qualifier)
+            element = element.withPresentableText("this")
+            element = element.withBoldness(true)
+            if (qualifier != null) {
+                element = element.withTailText("@" + qualifier, false)
+            }
+            element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
+            return element
+        }
+
+        result.add(ThisItemInfo({ createLookupElement() }, fuzzyType))
+    }
+    return result
+}
+
+private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
+    val descriptor = receiver.getContainingDeclaration()
+    val name = descriptor.getName()
+    if (!name.isSpecial()) {
+        return name.asString()
+    }
+
+    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral
+    val valueArgument = (functionLiteral?.getParent() as? JetFunctionLiteralExpression)
+                                ?.getParent() as? JetValueArgument ?: return null
+    val parent = valueArgument.getParent()
+    val callExpression = (if (parent is JetValueArgumentList) parent else valueArgument)
+            .getParent() as? JetCallExpression
+    return (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+}

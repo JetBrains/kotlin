@@ -276,6 +276,24 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("QualifiedThis.kt")
+    public void testQualifiedThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/QualifiedThis.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("This.kt")
+    public void testThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/This.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ThisPrefixMatching.kt")
+    public void testThisPrefixMatching() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/ThisPrefixMatching.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopScope.kt")
     public void testTopScope() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/TopScope.kt");

@@ -34,8 +34,9 @@ import org.jetbrains.jet.lexer.JetTokens.*
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.tree.IElementType
+import com.intellij.codeInsight.lookup.LookupElement
 
-class KeywordLookupObject(val keyword: String)
+object KeywordLookupObject
 
 object KeywordCompletion {
     private val NON_ACTUAL_KEYWORDS = setOf(REIFIED_KEYWORD,
@@ -47,22 +48,20 @@ object KeywordCompletion {
 
     private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(OUT_KEYWORD to " X")
 
-    public fun complete(parameters: CompletionParameters, prefix: String, collector: LookupElementsCollector) {
-        val position = parameters.getPosition()
-
+    public fun complete(position: PsiElement, prefix: String, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
             val keyword = keywordToken.getValue()
             if (keyword.startsWith(prefix)/* use simple matching by prefix, not prefix matcher from completion*/ && parserFilter(keywordToken)) {
-                val element = LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
+                val element = LookupElementBuilder.create(KeywordLookupObject, keyword)
                         .bold()
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler
                                            else
                                                KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER)
-                collector.addElement(element)
+                consumer(element)
             }
         }
     }
@@ -223,10 +222,7 @@ object KeywordCompletion {
     }
 
     private fun PsiElement.getStartOffsetInAncestor(ancestor: PsiElement): Int {
-        val parent = getParent()!!
-        return if (parent == ancestor)
-            getStartOffsetInParent()
-        else
-            parent.getStartOffsetInAncestor(ancestor) + getStartOffsetInParent()
+        if (ancestor == this) return 0
+        return getParent()!!.getStartOffsetInAncestor(ancestor) + getStartOffsetInParent()
     }
 }

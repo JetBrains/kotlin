@@ -11,10 +11,9 @@ fun foo(p: Int = <caret>)
 // EXIST: package
 // EXIST: return
 // EXIST: super
-// EXIST: this
 // EXIST: throw
 // EXIST: true
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 17
+// NUMBER: 16

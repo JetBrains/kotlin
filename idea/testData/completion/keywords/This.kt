@@ -4,10 +4,8 @@ class Outer {
             fun String.foo() {
                 takeHandler1 {
                     takeHandler2({
-                        takeHandler3 {
-                            takeHandler4 { val v: Any = <caret> }
-                        }
-                    })
+                                     takeHandler3 { this<caret> }
+                                 })
                 }
             }
         }
@@ -16,11 +14,10 @@ class Outer {
 
 fun takeHandler1(handler: Int.() -> Unit){}
 fun takeHandler2(handler: Char.() -> Unit){}
-fun takeHandler3(handler: Any?.() -> Unit){}
-fun takeHandler4(handler: Any.() -> Unit){}
+fun takeHandler3(handler: Char.() -> Unit){}
 
-// EXIST: { lookupString: "this", itemText: "this", tailText: null, typeText: "Any", attributes: "bold" }
-// ABSENT: "this@takeHandler4"
+// INVOCATION_COUNT: 1
+// EXIST: { lookupString: "this", itemText: "this", tailText: null, typeText: "Char", attributes: "bold" }
 // ABSENT: "this@takeHandler3"
 // EXIST: { lookupString: "this@takeHandler2", itemText: "this", tailText: "@takeHandler2", typeText: "Char", attributes: "bold" }
 // EXIST: { lookupString: "this@takeHandler1", itemText: "this", tailText: "@takeHandler1", typeText: "Int", attributes: "bold" }
@@ -28,3 +25,4 @@ fun takeHandler4(handler: Any.() -> Unit){}
 // EXIST: { lookupString: "this@Inner", itemText: "this", tailText: "@Inner", typeText: "Outer.Nested.Inner", attributes: "bold" }
 // EXIST: { lookupString: "this@Nested", itemText: "this", tailText: "@Nested", typeText: "Outer.Nested", attributes: "bold" }
 // ABSENT: "this@Outer"
+// NUMBER: 6

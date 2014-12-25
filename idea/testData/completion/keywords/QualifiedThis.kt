@@ -1,7 +1,7 @@
 class Outer {
     inner class Inner {
         fun String.foo() {
-            val v: Any = this@<caret>
+            this@<caret>
         }
     }
 }

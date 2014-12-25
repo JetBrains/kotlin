@@ -15,7 +15,6 @@ fun foo() {
 // EXIST: package
 // EXIST: return
 // EXIST: super
-// EXIST: this
 // EXIST: throw
 // EXIST: trait
 // EXIST: true
@@ -24,4 +23,4 @@ fun foo() {
 // EXIST: var
 // EXIST: when
 // EXIST: while
-// NUMBER: 22
+// NUMBER: 21
