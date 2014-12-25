@@ -257,13 +257,7 @@ public class AnnotationResolver {
                 }
             });
 
-            JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
-            if (arrayType == null) {
-                arrayType = KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, varargElementType);
-            }
-
-            //todo use parameterDescriptor.getType() instead of arrayType
-            return new ArrayValue(constants, arrayType, true, usesVariableAsConstant);
+            return new ArrayValue(constants, parameterDescriptor.getType(), true, usesVariableAsConstant);
         }
         else {
             // we should actually get only one element, but just in case of getting many, we take the last one

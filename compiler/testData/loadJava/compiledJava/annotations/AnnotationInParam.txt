@@ -6,7 +6,7 @@ public trait AnnotationInParam {
         public constructor A()
     }
 
-    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"}: kotlin.Array<kotlin.String>): test.AnnotationInParam.MyAnnotation2) public open class B {
+    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"}: kotlin.Array<out kotlin.String>): test.AnnotationInParam.MyAnnotation2) public open class B {
         public constructor B()
     }
 
@@ -20,7 +20,7 @@ public trait AnnotationInParam {
     }
 
     public final annotation class MyAnnotation2 : kotlin.Annotation {
-        public constructor MyAnnotation2(/*0*/ vararg value: kotlin.String /*kotlin.Array<kotlin.String>*/)
+        public constructor MyAnnotation2(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
         public abstract fun value(): kotlin.Array<kotlin.String>
     }
 
