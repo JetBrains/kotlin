@@ -42,6 +42,7 @@ public class JsResolverForModule(
 public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAnalysisParameters> {
 
     override fun <M : ModuleInfo> createResolverForModule(
+            moduleInfo: M,
             project: Project,
             globalContext: GlobalContext,
             moduleDescriptor: ModuleDescriptorImpl,

@@ -83,6 +83,8 @@ public data class ModuleContent(
 public trait PlatformAnalysisParameters
 
 public trait ModuleInfo {
+    public val isLibrary: Boolean
+        get() = false
     public val name: Name
     public fun dependencies(): List<ModuleInfo>
     public fun friends(): Collection<ModuleInfo> = listOf()
@@ -170,7 +172,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val resolverForModule = createResolverForModule(
-                        project, globalContext, descriptor, modulesContent(module), platformParameters, resolverForProject
+                        module, project, globalContext, descriptor, modulesContent(module), platformParameters, resolverForProject
                 )
                 assert(descriptor.isInitialized, "ModuleDescriptorImpl#initialize() should be called in createResolverForModule")
                 resolverForProject.resolverByModuleDescriptor[descriptor] = resolverForModule
@@ -182,6 +184,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
     }
 
     protected fun <M : ModuleInfo> createResolverForModule(
+            moduleInfo: M,
             project: Project,
             globalContext: GlobalContext,
             moduleDescriptor: ModuleDescriptorImpl,
