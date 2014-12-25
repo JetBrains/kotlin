@@ -101,7 +101,9 @@ public class ReferenceVariantsHelper(
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                 val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                descriptors.addMembers(receiverValue, callType, dataFlowInfo, kindFilter, nameFilter)
+                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
+                    descriptors.addMembersFromReceiver(variant, callType, kindFilter, nameFilter)
+                }
 
                 descriptors.addCallableExtensions(resolutionScope, receiverValue, dataFlowInfo, callType, kindFilter, nameFilter)
             }
@@ -113,8 +115,9 @@ public class ReferenceVariantsHelper(
 
             // process instance members that can be called via implicit receiver's instances
             val receivers = resolutionScope.getImplicitReceiversWithInstance()
-            val fromReceiversFilter = kindFilter.withoutKinds(DescriptorKindFilter.CLASSIFIERS_MASK) exclude DescriptorKindExclude.Extensions
-            receivers.flatMapTo(descriptorsSet) { it.getType().getMemberScope().getDescriptorsFiltered(fromReceiversFilter, nameFilter) }
+            for (receiver in receivers) {
+                descriptorsSet.addMembersFromReceiver(receiver.getType(), CallType.NORMAL, kindFilter, nameFilter)
+            }
 
             val dataFlowInfo = context.getDataFlowInfo(expression)
             val receiverValues = receivers.map { it.getValue() }
@@ -135,24 +138,22 @@ public class ReferenceVariantsHelper(
         }
     }
 
-    private fun MutableCollection<DeclarationDescriptor>.addMembers(
-            receiverValue: ExpressionReceiver,
+    private fun MutableCollection<DeclarationDescriptor>.addMembersFromReceiver(
+            receiverType: JetType,
             callType: CallType,
-            dataFlowInfo: DataFlowInfo,
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean) {
+            nameFilter: (Name) -> Boolean
+    ) {
         var memberFilter = kindFilter exclude DescriptorKindExclude.Extensions
-        for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
-            val members = variant.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
-            for (member in members) {
-                if (member is ClassDescriptor) {
-                    if (member.isInner()) {
-                        member.getConstructors().filterTo(this) { callType.canCall(it) && memberFilter.accepts(it) }
-                    }
+        val members = receiverType.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
+        for (member in members) {
+            if (member is ClassDescriptor) {
+                if (member.isInner()) {
+                    member.getConstructors().filterTo(this) { callType.canCall(it) && memberFilter.accepts(it) }
                 }
-                else if (callType.canCall(member) && memberFilter.accepts(member)) {
-                    this.add(member)
-                }
+            }
+            else if (callType.canCall(member) && memberFilter.accepts(member)) {
+                this.add(member)
             }
         }
     }

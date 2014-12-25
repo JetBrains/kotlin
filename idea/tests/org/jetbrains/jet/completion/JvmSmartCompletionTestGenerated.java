@@ -636,6 +636,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("NoInnerClassInstantiation.kt")
+    public void testNoInnerClassInstantiation() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/NoInnerClassInstantiation.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoNothing.kt")
     public void testNoNothing() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/NoNothing.kt");
