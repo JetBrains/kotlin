@@ -4,7 +4,7 @@ public trait InheritNotVarargNotNull {
 
     public trait Sub : test.InheritNotVarargNotNull.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(/*0*/ p: kotlin.Array<out kotlin.String!>?): kotlin.Unit
+        public abstract override /*1*/ fun foo(/*0*/ p: (kotlin.Array<kotlin.String!>?..kotlin.Array<out kotlin.String!>?)): kotlin.Unit
     }
 
     public trait Super {
