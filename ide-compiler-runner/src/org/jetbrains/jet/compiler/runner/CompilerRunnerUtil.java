@@ -115,18 +115,6 @@ public class CompilerRunnerUtil {
         );
     }
 
-    public static int getReturnCodeFromObject(@Nullable Object rc) throws Exception {
-        if (rc == null) {
-            return /* ExitCode.INTERNAL_ERROR */ 2;
-        }
-        else if ("org.jetbrains.jet.cli.common.ExitCode".equals(rc.getClass().getCanonicalName())) {
-            return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
-        }
-        else {
-            throw new IllegalStateException("Unexpected return: " + rc);
-        }
-    }
-
     @Nullable
     public static Object invokeExecMethod(
             @NotNull String compilerClassName,
