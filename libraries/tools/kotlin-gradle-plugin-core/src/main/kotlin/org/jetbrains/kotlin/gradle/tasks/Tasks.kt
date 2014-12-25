@@ -188,17 +188,22 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         addLibraryFiles(*strs)
     }
 
-    fun outputFile(): String? = kotlinOptions.outputFile
+    public val outputFile: String?
+            get() = kotlinOptions.outputFile
 
-    public fun sourceMapDestinationDir(): File = File(outputFile()).directory
+    public val sourceMapDestinationDir: File
+            get() = File(outputFile).directory
+
+    public val sourceMap: Boolean
+            get() = kotlinOptions.sourceMap
 
     {
-        getOutputs().file(MethodClosure(this, "outputFile"))
+        getOutputs().file(MethodClosure(this, "getOutputFile"))
     }
 
     override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
         args.noStdlib = true
-        args.outputFile = outputFile()
+        args.outputFile = outputFile
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
 
