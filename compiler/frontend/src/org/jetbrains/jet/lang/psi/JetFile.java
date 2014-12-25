@@ -26,6 +26,8 @@ import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -236,5 +238,20 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         if (fileAnnotationList == null) return Collections.emptyList();
 
         return fileAnnotationList.getAnnotationEntries();
+    }
+
+    /**
+     * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
+     */
+    @NotNull
+    public List<JetAnnotationEntry> getDanglingAnnotations() {
+        return KotlinPackage.flatMap(
+                findChildrenByClass(JetModifierList.class),
+                new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
+                    @Override
+                    public Iterable<JetAnnotationEntry> invoke(JetModifierList modifierList) {
+                        return modifierList.getAnnotationEntries();
+                    }
+                });
     }
 }

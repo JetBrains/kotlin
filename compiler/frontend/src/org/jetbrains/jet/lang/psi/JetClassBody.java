@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -82,5 +84,20 @@ public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetCl
     public PsiElement getLBrace() {
         ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.LBRACE));
         return children.length == 1 ? children[0].getPsi() : null;
+    }
+
+    /**
+     * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
+     */
+    @NotNull
+    public List<JetAnnotationEntry> getDanglingAnnotations() {
+        return KotlinPackage.flatMap(
+                findChildrenByClass(JetModifierList.class),
+                new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
+                    @Override
+                    public Iterable<JetAnnotationEntry> invoke(JetModifierList modifierList) {
+                        return modifierList.getAnnotationEntries();
+                    }
+                });
     }
 }

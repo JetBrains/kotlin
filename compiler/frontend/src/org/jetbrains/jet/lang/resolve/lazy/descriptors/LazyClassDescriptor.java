@@ -95,6 +95,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
+    private final NullableLazyValue<Void> resolveDanglingAnnotations;
+
     private final NullableLazyValue<Void> forceResolveAllContents;
 
     public LazyClassDescriptor(
@@ -188,6 +190,15 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @Override
             public JetScope invoke() {
                 return computeScopeForPropertyInitializerResolution();
+            }
+        });
+        this.resolveDanglingAnnotations = storageManager.createNullableLazyValue(new Function0<Void>() {
+            @Override
+            public Void invoke() {
+                resolveSession.getAnnotationResolver().resolveAnnotationsWithArguments(
+                        getScopeForMemberDeclarationResolution(), originalClassInfo.getDanglingAnnotations(), resolveSession.getTrace()
+                );
+                return null;
             }
         });
         this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(new Function0<Void>() {
@@ -447,6 +458,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     // Note: headers of member classes' members are not resolved
     public void resolveMemberHeaders() {
         ForceResolveUtil.forceResolveAllContents(getAnnotations());
+
+        resolveDanglingAnnotations.invoke();
 
         getClassObjectDescriptor();
 

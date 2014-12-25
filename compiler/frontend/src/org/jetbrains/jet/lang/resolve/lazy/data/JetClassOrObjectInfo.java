@@ -77,6 +77,13 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
         throw new IllegalArgumentException("Not in a JetFile: " + element);
     }
 
+    @NotNull
+    @Override
+    public List<JetAnnotationEntry> getDanglingAnnotations() {
+        JetClassBody body = element.getBody();
+        return body == null ? Collections.<JetAnnotationEntry>emptyList() : body.getDanglingAnnotations();
+    }
+
     @Override
     public String toString() {
         return "info for " + element.getText();

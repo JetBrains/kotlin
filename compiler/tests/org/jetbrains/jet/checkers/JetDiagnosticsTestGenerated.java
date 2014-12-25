@@ -637,6 +637,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DanglingMixed.kt")
+            public void testDanglingMixed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("DanglingNoBrackets.kt")
+            public void testDanglingNoBrackets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/DanglingNoBrackets.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("DanglingWithBrackets.kt")
+            public void testDanglingWithBrackets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/DanglingWithBrackets.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Deprecated.kt")
             public void testDeprecated() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/Deprecated.kt");
