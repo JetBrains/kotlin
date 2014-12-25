@@ -23,6 +23,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.ClassesInPackageScope;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
@@ -97,7 +98,7 @@ public class ScopeProvider {
 
     public JetScope[] collectFileScopes(@NotNull JetFile file) {
         List<JetScope> list = new ArrayList<JetScope>();
-        list.add(getFilePackageDescriptor(file).getMemberScope());
+        list.add(new ClassesInPackageScope(getFilePackageDescriptor(file)));
         list.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()));
         list.add(explicitImportScopes.invoke(file));
         list.addAll(additionalFileScopeProvider.scopes(file));
