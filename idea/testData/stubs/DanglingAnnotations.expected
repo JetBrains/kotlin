@@ -1,0 +1,18 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=C, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=C, superNames=[]]
+    CLASS_BODY:
+      MODIFIER_LIST:[]
+        ANNOTATION:
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Ann]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=Ann]
+  MODIFIER_LIST:[]
+    ANNOTATION:
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Ann]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=Ann]

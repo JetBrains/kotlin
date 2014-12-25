@@ -92,7 +92,7 @@ public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetCl
     @NotNull
     public List<JetAnnotationEntry> getDanglingAnnotations() {
         return KotlinPackage.flatMap(
-                findChildrenByClass(JetModifierList.class),
+                getStubOrPsiChildrenAsList(MODIFIER_LIST),
                 new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
                     @Override
                     public Iterable<JetAnnotationEntry> invoke(JetModifierList modifierList) {

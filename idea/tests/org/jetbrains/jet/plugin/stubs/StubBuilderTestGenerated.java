@@ -84,6 +84,12 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DanglingAnnotations.kt")
+    public void testDanglingAnnotations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/DanglingAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DynamicType.kt")
     public void testDynamicType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/DynamicType.kt");

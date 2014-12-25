@@ -245,8 +245,15 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
      */
     @NotNull
     public List<JetAnnotationEntry> getDanglingAnnotations() {
+        KotlinFileStub stub = getStub();
+        JetModifierList[] danglingModifierLists = stub == null
+                                                  ? findChildrenByClass(JetModifierList.class)
+                                                  : stub.getChildrenByType(
+                                                          JetStubElementTypes.MODIFIER_LIST,
+                                                          JetStubElementTypes.MODIFIER_LIST.getArrayFactory()
+                                                  );
         return KotlinPackage.flatMap(
-                findChildrenByClass(JetModifierList.class),
+                danglingModifierLists,
                 new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
                     @Override
                     public Iterable<JetAnnotationEntry> invoke(JetModifierList modifierList) {
