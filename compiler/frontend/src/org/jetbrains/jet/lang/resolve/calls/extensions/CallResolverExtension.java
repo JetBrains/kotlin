@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.extensions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -22,23 +22,6 @@ import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
-import java.util.List;
-
-public class CompositeExtension implements CallResolverExtension {
-
-    private final List<CallResolverExtension> extensions;
-
-    public CompositeExtension(@NotNull List<CallResolverExtension> extensions) {
-        this.extensions = extensions;
-    }
-
-    @Override
-    public <F extends CallableDescriptor> void run(
-            @NotNull ResolvedCall<F> resolvedCall,
-            @NotNull BasicCallResolutionContext context
-    ) {
-        for (CallResolverExtension resolverExtension : extensions) {
-            resolverExtension.run(resolvedCall, context);
-        }
-    }
+public interface CallResolverExtension {
+    <F extends CallableDescriptor> void run(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context);
 }

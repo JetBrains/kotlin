@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.extensions.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.extensions;
 
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
