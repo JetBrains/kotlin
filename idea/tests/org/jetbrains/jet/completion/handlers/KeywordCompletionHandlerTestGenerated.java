@@ -19,6 +19,7 @@ package org.jetbrains.jet.completion.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -44,6 +45,24 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("NoSpaceAfterNull.kt")
     public void testNoSpaceAfterNull() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/keywords/NoSpaceAfterNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("QualifiedReturnNonUnit.kt")
+    public void testQualifiedReturnNonUnit() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/keywords/QualifiedReturnNonUnit.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("QualifiedReturnNonUnitExplicit.kt")
+    public void testQualifiedReturnNonUnitExplicit() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/keywords/QualifiedReturnNonUnitExplicit.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("QualifiedReturnUnit.kt")
+    public void testQualifiedReturnUnit() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/keywords/QualifiedReturnUnit.kt");
         doTest(fileName);
     }
 
