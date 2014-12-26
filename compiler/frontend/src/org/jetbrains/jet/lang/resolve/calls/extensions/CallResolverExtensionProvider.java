@@ -27,7 +27,11 @@ import java.util.*;
 public class CallResolverExtensionProvider {
 
     private final static CompositeExtension DEFAULT =
-            new CompositeExtension(Arrays.asList(new NeedSyntheticCallResolverExtension(), new ReifiedTypeParameterSubstitutionCheck()));
+            new CompositeExtension(Arrays.asList(
+                    new NeedSyntheticCallResolverExtension(),
+                    new ReifiedTypeParameterSubstitutionCheck(),
+                    new CapturingInClosureExtension()
+            ));
 
     private WeakReference<Map<DeclarationDescriptor, List<CallResolverExtension>>> extensionsCache;
 

@@ -301,12 +301,7 @@ public class CallResolver {
         }
 
         TracingStrategy tracing = TracingStrategyImpl.create(functionReference, context.call);
-        OverloadResolutionResultsImpl<FunctionDescriptor> results = doResolveCallOrGetCachedResults(
-                context, prioritizedTasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
-        if (calleeExpression instanceof JetSimpleNameExpression) {
-            ExpressionTypingUtils.checkCapturingInClosure((JetSimpleNameExpression) calleeExpression, context.trace, context.scope);
-        }
-        return results;
+        return doResolveCallOrGetCachedResults(context, prioritizedTasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
