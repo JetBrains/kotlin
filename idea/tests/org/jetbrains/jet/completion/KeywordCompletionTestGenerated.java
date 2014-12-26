@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -225,6 +224,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InTopScopeAfterPackage.kt")
     public void testInTopScopeAfterPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTopScopeAfterPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LabeledLambdaThis.kt")
+    public void testLabeledLambdaThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/LabeledLambdaThis.kt");
         doTest(fileName);
     }
 

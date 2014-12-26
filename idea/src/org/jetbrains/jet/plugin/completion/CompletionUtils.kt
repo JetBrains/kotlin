@@ -57,6 +57,7 @@ import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.util.FuzzyType
+import org.jetbrains.jet.lang.psi.JetLabeledExpression
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -241,11 +242,18 @@ private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
         return name.asString()
     }
 
-    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral
-    val valueArgument = (functionLiteral?.getParent() as? JetFunctionLiteralExpression)
-                                ?.getParent() as? JetValueArgument ?: return null
-    val parent = valueArgument.getParent()
-    val callExpression = (if (parent is JetValueArgumentList) parent else valueArgument)
-            .getParent() as? JetCallExpression
-    return (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral ?: return null
+    val literalParent = (functionLiteral.getParent() as JetFunctionLiteralExpression).getParent()
+    when (literalParent) {
+        is JetLabeledExpression -> return literalParent.getLabelName()
+
+        is JetValueArgument -> {
+            val parent = literalParent.getParent()
+            val callExpression = (if (parent is JetValueArgumentList) parent else literalParent)
+                    .getParent() as? JetCallExpression
+            return (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+        }
+
+        else -> return null
+    }
 }
