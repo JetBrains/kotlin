@@ -286,6 +286,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LocalClassAndShortSubpackageNames.kt")
+        public void testLocalClassAndShortSubpackageNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/LocalClassAndShortSubpackageNames.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MergePackagesWithJava.kt")
         public void testMergePackagesWithJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/MergePackagesWithJava.kt");
