@@ -194,7 +194,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun shouldRunExtensionsCompletion(): Boolean
-            = configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length() >= 3
+            = configuration.completeNonImportedDeclarations || prefix.length() >= 3
 
     protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, reference!!.expression)

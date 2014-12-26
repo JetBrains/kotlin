@@ -210,10 +210,7 @@ fun InsertionContext.isAfterDot(): Boolean {
 fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
     val prefix = prefixMatcher.getPrefix()
     val s = "this@"
-    return if (prefix.length() > s.length())
-        prefix.startsWith(s)
-    else
-        s.startsWith(prefix)
+    return prefix.startsWith(s) || s.startsWith(prefix)
 }
 
 data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)

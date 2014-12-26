@@ -160,6 +160,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
     }
 
     private static boolean endsWith(CharSequence chars, int offset, String text) {
+        if (offset < text.length()) return false;
         return chars.subSequence(offset - text.length(), offset).toString().equals(text);
     }
 
