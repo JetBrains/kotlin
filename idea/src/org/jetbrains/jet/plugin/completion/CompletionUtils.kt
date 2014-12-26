@@ -63,6 +63,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.parents
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -278,11 +280,12 @@ private fun functionLiteralLabelAndCall(functionLiteral: JetFunctionLiteral): Pa
 fun returnExpressionItems(bindingContext: BindingContext, position: JetElement): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
     for (parent in position.parents()) {
-        when (parent) {
-            is JetFunctionLiteral -> {
+        if (parent is JetDeclarationWithBody) {
+            val returnsUnit = returnsUnit(parent, bindingContext)
+            if (parent is JetFunctionLiteral) {
                 val (label, call) = functionLiteralLabelAndCall(parent)
                 if (label != null) {
-                    result.add(createKeywordWithLabelElement("return", label))
+                    result.add(createKeywordWithLabelElement("return", label, addSpace = !returnsUnit))
                 }
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
@@ -290,16 +293,35 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
                 val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] as? SimpleFunctionDescriptor ?: break // not inlined
                 if (!target.getInlineStrategy().isInline()) break // not inlined
             }
-
-            is JetDeclarationWithBody -> {
+            else {
                 if (parent.hasBlockBody()) {
-                    result.add(createKeywordWithLabelElement("return", null))
+                    result.add(createKeywordWithLabelElement("return", null, addSpace = !returnsUnit))
                 }
                 break
             }
         }
     }
     return result
+}
+
+private fun returnsUnit(declaration: JetDeclarationWithBody, bindingContext: BindingContext): Boolean {
+    val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return true
+    val returnType = callable.getReturnType() ?: return true
+    return KotlinBuiltIns.isUnit(returnType)
+}
+
+private fun createKeywordWithLabelElement(keyword: String, label: String?, addSpace: Boolean): LookupElement {
+    val element = createKeywordWithLabelElement(keyword, label)
+    return if (addSpace) {
+        object: LookupElementDecorator<LookupElement>(element) {
+            override fun handleInsert(context: InsertionContext) {
+                WithTailInsertHandler.spaceTail().handleInsert(context, getDelegate())
+            }
+        }
+    }
+    else {
+        element
+    }
 }
 
 private fun createKeywordWithLabelElement(keyword: String, label: String?): LookupElementBuilder {

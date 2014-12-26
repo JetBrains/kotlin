@@ -35,25 +35,12 @@ public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                                        JetTokens.CONTINUE_KEYWORD.toString())
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        if (shouldInsertSpaceAfter(item.getLookupString(), context)) {
+        if (shouldInsertSpaceAfter(item.getLookupString())) {
             WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
         }
     }
 
-    private fun shouldInsertSpaceAfter(keyword: String, context: InsertionContext): Boolean {
-        if (keyword in NO_SPACE_AFTER) return false
-
-        if (keyword == JetTokens.RETURN_KEYWORD.toString()) {
-            val element = context.getFile().findElementAt(context.getStartOffset())
-            if (element != null) {
-                val jetFunction = element.getStrictParentOfType<JetFunction>()
-                if (jetFunction != null && (!jetFunction.hasDeclaredReturnType() || JetPsiUtil.isVoidType(jetFunction.getTypeReference()))) {
-                    // No space for void function
-                    return false
-                }
-            }
-        }
-
-        return true
+    private fun shouldInsertSpaceAfter(keyword: String): Boolean {
+        return keyword !in NO_SPACE_AFTER
     }
 }
