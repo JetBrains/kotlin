@@ -30,12 +30,14 @@ import com.intellij.mock.MockProject;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiElementFinderImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
@@ -275,8 +277,13 @@ public class JetCoreEnvironment {
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CodeAnalyzerInitializer.class, cliLightClassGenerationSupport);
-        Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
+
+        ExtensionsArea area = Extensions.getArea(project);
+
+        area.getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new PsiElementFinderImpl(project, ServiceManager.getService(project, JavaFileManager.class)));
+
+        area.getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
     }
 

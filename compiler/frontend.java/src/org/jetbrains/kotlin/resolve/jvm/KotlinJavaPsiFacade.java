@@ -26,10 +26,8 @@ import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFinder;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiElementFinderImpl;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -149,8 +147,7 @@ public class KotlinJavaPsiFacade {
                 getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
                     @Override
                     public Boolean invoke(PsiElementFinder finder) {
-                        // TODO: Filter out PsiElementFinderImpl in idea 14
-                        return !(finder instanceof KotlinFinderMarker);
+                        return !(finder instanceof KotlinFinderMarker || finder instanceof PsiElementFinderImpl);
                     }
                 });
 
