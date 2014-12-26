@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve
+package org.jetbrains.jet.lang.resolve.diagnostics
 
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import java.util.ArrayList
@@ -23,6 +23,7 @@ import com.intellij.util.CachedValueImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 public class MutableDiagnosticsWithSuppression(
         private val bindingContext: BindingContext,

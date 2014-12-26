@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class DiagnosticUtils {
     @NotNull
     private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
         @Override
-        public int compare(TextRange o1, TextRange o2) {
+        public int compare(@NotNull TextRange o1, @NotNull TextRange o2) {
             if (o1.getStartOffset() != o2.getStartOffset()) {
                 return o1.getStartOffset() - o2.getStartOffset();
             }
@@ -57,10 +57,10 @@ public class DiagnosticUtils {
             element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getOriginal());
         }
         if (element == null && descriptor instanceof ASTNode) {
-            element = DiagnosticUtils.getClosestPsiElement((ASTNode) descriptor);
+            element = getClosestPsiElement((ASTNode) descriptor);
         }
         if (element != null) {
-            return DiagnosticUtils.atLocation(element);
+            return atLocation(element);
         } else {
             return "unknown location";
         }
@@ -162,7 +162,7 @@ public class DiagnosticUtils {
     public static List<Diagnostic> sortedDiagnostics(@NotNull Collection<Diagnostic> diagnostics) {
         Comparator<Diagnostic> diagnosticComparator = new Comparator<Diagnostic>() {
             @Override
-            public int compare(Diagnostic d1, Diagnostic d2) {
+            public int compare(@NotNull Diagnostic d1, @NotNull Diagnostic d2) {
                 String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
                 String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
                 if (!path1.equals(path2)) return path1.compareTo(path2);

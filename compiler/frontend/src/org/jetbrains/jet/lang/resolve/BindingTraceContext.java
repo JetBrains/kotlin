@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
+import org.jetbrains.jet.lang.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;

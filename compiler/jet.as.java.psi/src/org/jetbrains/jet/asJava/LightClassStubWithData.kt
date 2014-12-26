@@ -19,7 +19,7 @@ package org.jetbrains.jet.asJava
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 trait LightClassData

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger
 
-import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression
+import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.diagnostics.Errors

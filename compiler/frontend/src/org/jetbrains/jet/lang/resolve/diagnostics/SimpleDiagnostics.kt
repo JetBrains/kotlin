@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve
+package org.jetbrains.jet.lang.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.Diagnostic

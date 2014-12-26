@@ -17,7 +17,7 @@
 package org.jetbrains.jet.asJava
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetClassOrObject

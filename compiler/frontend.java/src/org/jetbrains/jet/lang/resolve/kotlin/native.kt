@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations
 
-import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression
+import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.diagnostics.Errors
