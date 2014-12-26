@@ -8,5 +8,5 @@ class MyActivity: Activity() {
 }
 
 // 1 GETSTATIC
-// 1 INVOKEVIRTUAL
+// 4 INVOKEVIRTUAL
 // 2 CHECKCAST
