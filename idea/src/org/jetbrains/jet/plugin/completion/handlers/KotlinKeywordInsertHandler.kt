@@ -19,28 +19,31 @@ package org.jetbrains.jet.plugin.completion.handlers
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.jet.lexer.JetTokens.*
 
 public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
-    private val NO_SPACE_AFTER = setOf(JetTokens.THIS_KEYWORD.toString(),
-                                       JetTokens.SUPER_KEYWORD.toString(),
-                                       JetTokens.CAPITALIZED_THIS_KEYWORD.toString(),
-                                       JetTokens.THIS_KEYWORD.toString(),
-                                       JetTokens.FALSE_KEYWORD.toString(),
-                                       JetTokens.NULL_KEYWORD.toString(),
-                                       JetTokens.BREAK_KEYWORD.toString(),
-                                       JetTokens.CONTINUE_KEYWORD.toString())
+    private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,
+                                        SUPER_KEYWORD,
+                                        FOR_KEYWORD,
+                                        NULL_KEYWORD,
+                                        TRUE_KEYWORD,
+                                        FALSE_KEYWORD,
+                                        BREAK_KEYWORD,
+                                        CONTINUE_KEYWORD,
+                                        IF_KEYWORD,
+                                        ELSE_KEYWORD,
+                                        WHILE_KEYWORD,
+                                        DO_KEYWORD,
+                                        TRY_KEYWORD,
+                                        WHEN_KEYWORD,
+                                        FILE_KEYWORD,
+                                        CATCH_KEYWORD,
+                                        FINALLY_KEYWORD,
+                                        DYNAMIC_KEYWORD).map { it.getValue() }
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        if (shouldInsertSpaceAfter(item.getLookupString())) {
+        if (item.getLookupString() !in NO_SPACE_AFTER) {
             WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
         }
-    }
-
-    private fun shouldInsertSpaceAfter(keyword: String): Boolean {
-        return keyword !in NO_SPACE_AFTER
     }
 }
