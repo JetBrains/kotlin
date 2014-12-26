@@ -8,8 +8,10 @@ class Test(val br2 = 12) {
     fun brf() = 112
 
     fun test(br4: Int) {
-        val br5 = 14
-        br<caret>
+        while (true) {
+            val br5 = 14
+            br<caret>
+        }
     }
 }
 

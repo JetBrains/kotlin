@@ -5,8 +5,6 @@ fun foo(p: Int) {
     z()
 }
 
-// EXIST: break
-// EXIST: continue
 // EXIST: do
 // EXIST: false
 // EXIST: for
@@ -21,4 +19,4 @@ fun foo(p: Int) {
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 16
+// NUMBER: 14

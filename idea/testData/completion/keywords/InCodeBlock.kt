@@ -2,9 +2,7 @@ fun foo() {
     <caret>
 }
 
-// EXIST: break
 // EXIST: class
-// EXIST: continue
 // EXIST: do
 // EXIST: false
 // EXIST: for
@@ -23,4 +21,4 @@ fun foo() {
 // EXIST: var
 // EXIST: when
 // EXIST: while
-// NUMBER: 21
+// NUMBER: 19

@@ -1,7 +1,5 @@
 fun foo() = <caret>
 
-// EXIST: break
-// EXIST: continue
 // EXIST: do
 // EXIST: false
 // EXIST: for
@@ -15,4 +13,4 @@ fun foo() = <caret>
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 15
+// NUMBER: 13

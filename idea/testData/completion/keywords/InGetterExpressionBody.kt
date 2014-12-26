@@ -1,8 +1,6 @@
 val prop: Int
     get() = <caret>
 
-// EXIST: break
-// EXIST: continue
 // EXIST: do
 // EXIST: false
 // EXIST: for
@@ -16,4 +14,4 @@ val prop: Int
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 15
+// NUMBER: 13

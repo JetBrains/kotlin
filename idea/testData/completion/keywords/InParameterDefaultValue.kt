@@ -1,7 +1,5 @@
 fun foo(p: Int = <caret>)
 
-// EXIST: break
-// EXIST: continue
 // EXIST: do
 // EXIST: false
 // EXIST: for
@@ -16,4 +14,4 @@ fun foo(p: Int = <caret>)
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 16
+// NUMBER: 14

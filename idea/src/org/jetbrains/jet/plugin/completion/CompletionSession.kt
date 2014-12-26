@@ -234,7 +234,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             val ampIndex = prefix.indexOf("@")
             val keywordsPrefix = if (ampIndex < 0) prefix else prefix.substring(0, ampIndex) // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
-                when (lookupElement.getLookupString()) {
+                val keyword = lookupElement.getLookupString()
+                when (keyword) {
                     // if "this" is parsed correctly in the current context - insert it and all this@xxx items
                     "this" -> {
                         if (expression != null) {
@@ -246,6 +247,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     "return" -> {
                         if (expression != null) {
                             collector.addElements(returnExpressionItems(bindingContext!!, expression))
+                        }
+                    }
+
+                    "break", "continue" -> {
+                        if (expression != null) {
+                            collector.addElements(breakOrContinueExpressionItems(expression, keyword))
                         }
                     }
 

@@ -1,3 +1,5 @@
 fun t() {
-    break<caret>
+    while (true) {
+        break<caret>
+    }
 }

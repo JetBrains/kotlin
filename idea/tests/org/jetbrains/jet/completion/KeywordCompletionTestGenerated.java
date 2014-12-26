@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -78,9 +77,27 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
+    @TestMetadata("BreakContinue.kt")
+    public void testBreakContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/BreakContinue.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("BreakWithLabel.kt")
+    public void testBreakWithLabel() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/BreakWithLabel.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CommaExpected.kt")
     public void testCommaExpected() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/CommaExpected.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ContinueWithLabel.kt")
+    public void testContinueWithLabel() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/ContinueWithLabel.kt");
         doTest(fileName);
     }
 
@@ -240,9 +257,27 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("NoBreak1.kt")
+    public void testNoBreak1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoBreak1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoBreak2.kt")
+    public void testNoBreak2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoBreak2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoCompletionForCapitalPrefix.kt")
     public void testNoCompletionForCapitalPrefix() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoCompletionForCapitalPrefix.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoContinue.kt")
+    public void testNoContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoContinue.kt");
         doTest(fileName);
     }
 

@@ -65,6 +65,7 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.psi.JetLoopExpression
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -333,3 +334,25 @@ private fun createKeywordWithLabelElement(keyword: String, label: String?): Look
     }
     return element
 }
+
+fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String): Collection<LookupElement> {
+    val result = ArrayList<LookupElement>()
+    for (parent in position.parents()) {
+        when (parent) {
+            is JetLoopExpression -> {
+                if (result.isEmpty()) {
+                    result.add(createKeywordWithLabelElement(breakOrContinue, null))
+                }
+
+                val label = (parent.getParent() as? JetLabeledExpression)?.getLabelName()
+                if (label != null) {
+                    result.add(createKeywordWithLabelElement(breakOrContinue, label))
+                }
+            }
+
+            is JetDeclarationWithBody -> break //TODO: support non-local break's&continue's when they are supported by compiler
+        }
+    }
+    return result
+}
+
