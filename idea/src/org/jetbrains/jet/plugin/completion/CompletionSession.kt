@@ -70,7 +70,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         val reference = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
         if (reference != null) {
             if (reference.expression is JetLabelReferenceExpression) {
-                this.expression = reference.expression.getParent().getParent() as? JetThisExpression
+                this.expression = reference.expression.getParent().getParent() as? JetExpressionWithLabel
                 this.reference = null
             }
             else {
@@ -239,6 +239,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     "this" -> {
                         if (expression != null) {
                             collector.addElements(thisExpressionItems(bindingContext!!, expression).map { it.factory() })
+                        }
+                    }
+
+                    // if "return" is parsed correctly in the current context - insert it and all return@xxx items
+                    "return" -> {
+                        if (expression != null) {
+                            collector.addElements(returnExpressionItems(bindingContext!!, expression))
                         }
                     }
 

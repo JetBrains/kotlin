@@ -287,6 +287,60 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("Return1.kt")
+    public void testReturn1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return2.kt")
+    public void testReturn2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return3.kt")
+    public void testReturn3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return4.kt")
+    public void testReturn4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return5.kt")
+    public void testReturn5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return5.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return6.kt")
+    public void testReturn6() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return6.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return7.kt")
+    public void testReturn7() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return7.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return8.kt")
+    public void testReturn8() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return8.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return9.kt")
+    public void testReturn9() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return9.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("This.kt")
     public void testThis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/This.kt");

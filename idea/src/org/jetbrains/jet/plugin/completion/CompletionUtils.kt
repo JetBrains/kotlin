@@ -58,6 +58,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.util.FuzzyType
 import org.jetbrains.jet.lang.psi.JetLabeledExpression
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.psiUtil.parents
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -210,22 +215,17 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 
 data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)
 
-fun thisExpressionItems(bindingContext: BindingContext, context: JetExpression): Collection<ThisItemInfo> {
-    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
+fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression): Collection<ThisItemInfo> {
+    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return listOf()
 
     val result = ArrayList<ThisItemInfo>()
     for ((i, receiver) in scope.getImplicitReceiversWithInstance().withIndex()) {
         val thisType = receiver.getType()
         val fuzzyType = FuzzyType(thisType, listOf())
-        val qualifier = if (i == 0) null else (thisQualifierName(receiver) ?: continue)
+        val label = if (i == 0) null else (thisQualifierName(receiver) ?: continue)
 
         fun createLookupElement(): LookupElement {
-            var element = LookupElementBuilder.create(KeywordLookupObject, if (qualifier == null) "this" else "this@" + qualifier)
-            element = element.withPresentableText("this")
-            element = element.withBoldness(true)
-            if (qualifier != null) {
-                element = element.withTailText("@" + qualifier, false)
-            }
+            var element = createKeywordWithLabelElement("this", label)
             element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
             return element
         }
@@ -243,17 +243,71 @@ private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
     }
 
     val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral ?: return null
-    val literalParent = (functionLiteral.getParent() as JetFunctionLiteralExpression).getParent()
-    when (literalParent) {
-        is JetLabeledExpression -> return literalParent.getLabelName()
+    return functionLiteralLabel(functionLiteral)
+}
 
-        is JetValueArgument -> {
-            val parent = literalParent.getParent()
-            val callExpression = (if (parent is JetValueArgumentList) parent else literalParent)
-                    .getParent() as? JetCallExpression
-            return (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+private fun functionLiteralLabel(functionLiteral: JetFunctionLiteral): String?
+        = functionLiteralLabelAndCall(functionLiteral).first
+
+private fun functionLiteralLabelAndCall(functionLiteral: JetFunctionLiteral): Pair<String?, JetCallExpression?> {
+    val literalParent = (functionLiteral.getParent() as JetFunctionLiteralExpression).getParent()
+
+    fun JetValueArgument.callExpression(): JetCallExpression? {
+        val parent = getParent()
+        return (if (parent is JetValueArgumentList) parent else this).getParent() as? JetCallExpression
+    }
+
+    when (literalParent) {
+        is JetLabeledExpression -> {
+            val callExpression = (literalParent.getParent() as? JetValueArgument)?.callExpression()
+            return Pair(literalParent.getLabelName(), callExpression)
         }
 
-        else -> return null
+        is JetValueArgument -> {
+            val callExpression = literalParent.callExpression()
+            val label = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+            return Pair(label, callExpression)
+        }
+
+        else -> {
+            return Pair(null, null)
+        }
     }
+}
+
+fun returnExpressionItems(bindingContext: BindingContext, position: JetElement): Collection<LookupElement> {
+    val result = ArrayList<LookupElement>()
+    for (parent in position.parents()) {
+        when (parent) {
+            is JetFunctionLiteral -> {
+                val (label, call) = functionLiteralLabelAndCall(parent)
+                if (label != null) {
+                    result.add(createKeywordWithLabelElement("return", label))
+                }
+
+                // check if the current function literal is inlined and stop processing outer declarations if it's not
+                val callee = call?.getCalleeExpression() as? JetReferenceExpression ?: break // not inlined
+                val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] as? SimpleFunctionDescriptor ?: break // not inlined
+                if (!target.getInlineStrategy().isInline()) break // not inlined
+            }
+
+            is JetDeclarationWithBody -> {
+                if (parent.hasBlockBody()) {
+                    result.add(createKeywordWithLabelElement("return", null))
+                }
+                break
+            }
+        }
+    }
+    return result
+}
+
+private fun createKeywordWithLabelElement(keyword: String, label: String?): LookupElementBuilder {
+    var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$label")
+    element = element.withPresentableText(keyword)
+    element = element.withBoldness(true)
+    if (label != null) {
+        element = element.withTailText("@$label", false)
+    }
+    return element
 }
