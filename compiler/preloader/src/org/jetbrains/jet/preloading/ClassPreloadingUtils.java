@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@SuppressWarnings("unchecked")
 public class ClassPreloadingUtils {
 
     public static abstract class ClassHandler {
@@ -59,7 +60,7 @@ public class ClassPreloadingUtils {
             ClassCondition classesToLoadByParent,
             ClassHandler handler
     ) throws IOException {
-        Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
+        Map<String, Object> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
         return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
     }
@@ -72,7 +73,7 @@ public class ClassPreloadingUtils {
 
     private static ClassLoader createMemoryBasedClassLoader(
             final ClassLoader parent,
-            final Map<String, ResourceData> preloadedResources,
+            final Map<String, Object> preloadedResources,
             final ClassHandler handler,
             final ClassCondition classesToLoadByParent
     ) {
@@ -106,8 +107,12 @@ public class ClassPreloadingUtils {
             @Override
             protected Class<?> findClass(String name) throws ClassNotFoundException {
                 String internalName = name.replace('.', '/').concat(".class");
-                ResourceData resourceData = preloadedResources.get(internalName);
-                if (resourceData == null) return null;
+                Object resources = preloadedResources.get(internalName);
+                if (resources == null) return null;
+
+                ResourceData resourceData = resources instanceof ResourceData
+                                            ? ((ResourceData) resources)
+                                            : ((List<ResourceData>) resources).get(0);
 
                 int sizeInBytes = resourceData.bytes.length;
                 if (handler != null) {
@@ -134,9 +139,8 @@ public class ClassPreloadingUtils {
 
             @Override
             protected URL findResource(String name) {
-                ResourceData resourceData = preloadedResources.get(name);
-                if (resourceData == null) return null;
-                return resourceData.getURL();
+                Enumeration<URL> resources = findResources(name);
+                return resources.hasMoreElements() ? resources.nextElement() : null;
             }
 
             @Override
@@ -149,23 +153,37 @@ public class ClassPreloadingUtils {
             }
 
             @Override
-            protected Enumeration<URL> findResources(String name) throws IOException {
-                URL resource = findResource(name);
-                if (resource == null) {
+            protected Enumeration<URL> findResources(String name) {
+                Object resources = preloadedResources.get(name);
+                if (resources == null) {
                     return Collections.enumeration(Collections.<URL>emptyList());
                 }
-                // Only the first resource is loaded
-                return Collections.enumeration(Collections.singletonList(resource));
+                else if (resources instanceof ResourceData) {
+                    return Collections.enumeration(Collections.singletonList(((ResourceData) resources).getURL()));
+                }
+                else {
+                    assert resources instanceof ArrayList : name;
+                    List<ResourceData> resourceDatas = (ArrayList<ResourceData>) resources;
+                    List<URL> urls = new ArrayList<URL>(resourceDatas.size());
+                    for (ResourceData data : resourceDatas) {
+                        urls.add(data.getURL());
+                    }
+                    return Collections.enumeration(urls);
+                }
             }
         };
     }
 
-    private static Map<String, ResourceData> loadAllClassesFromJars(
+    /**
+     * @return a map of name to resources. Each value is either a ResourceData if there's only one instance (in the vast majority of cases)
+     * or a non-empty ArrayList of ResourceData if there's many
+     */
+    private static Map<String, Object> loadAllClassesFromJars(
             Collection<File> jarFiles,
             int classNumberEstimate,
             ClassHandler handler
     ) throws IOException {
-        Map<String, ResourceData> resources = new HashMap<String, ResourceData>(classNumberEstimate);
+        Map<String, Object> resources = new HashMap<String, Object>(classNumberEstimate);
 
         for (File jarFile : jarFiles) {
             if (handler != null) {
@@ -180,8 +198,6 @@ public class ClassPreloadingUtils {
                     ZipEntry entry = stream.getNextEntry();
                     if (entry == null) break;
                     if (entry.isDirectory()) continue;
-                    String name = entry.getName();
-                    if (resources.containsKey(name)) continue; // Only the first resource is stored
 
                     int size = (int) entry.getSize();
                     int effectiveSize = size < 0 ? 32 : size;
@@ -192,12 +208,28 @@ public class ClassPreloadingUtils {
                         bytes.write(buffer, 0, count);
                     }
 
+                    String name = entry.getName();
                     byte[] data = bytes.toByteArray();
                     if (handler != null) {
                         data = handler.instrument(name, data);
                     }
+                    ResourceData resourceData = new ResourceData(jarFile, name, data);
 
-                    resources.put(name, new ResourceData(jarFile, name, data));
+                    Object previous = resources.get(name);
+                    if (previous == null) {
+                        resources.put(name, resourceData);
+                    }
+                    else if (previous instanceof ResourceData) {
+                        List<ResourceData> list = new ArrayList<ResourceData>();
+                        list.add((ResourceData) previous);
+                        list.add(resourceData);
+                        resources.put(name, list);
+                    }
+                    else {
+                        assert previous instanceof ArrayList :
+                                "Resource map should contain ResourceData or ArrayList<ResourceData>: " + name;
+                        ((ArrayList<ResourceData>) previous).add(resourceData);
+                    }
                 }
             }
             finally {
@@ -213,10 +245,17 @@ public class ClassPreloadingUtils {
                 handler.afterLoadJar(jarFile);
             }
         }
+
+        for (Object value : resources.values()) {
+            if (value instanceof ArrayList) {
+                ((ArrayList) value).trimToSize();
+            }
+        }
+
         return resources;
     }
 
-    private static class ResourceData {
+    private static final class ResourceData {
         private final File jarFile;
         private final String resourceName;
         private final byte[] bytes;
