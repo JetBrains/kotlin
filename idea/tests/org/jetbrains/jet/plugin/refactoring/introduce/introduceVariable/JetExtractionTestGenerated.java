@@ -1421,6 +1421,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("flexibleTypesWithNull.kt")
+                public void testFlexibleTypesWithNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/flexibleTypesWithNull.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("flexibleTypesWithoutNull.kt")
+                public void testFlexibleTypesWithoutNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/flexibleTypesWithoutNull.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("liftAnonymousToSupertype1.kt")
                 public void testLiftAnonymousToSupertype1() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/liftAnonymousToSupertype1.kt");
