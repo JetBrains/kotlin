@@ -1,0 +1,43 @@
+package
+
+kotlin.js.nativeSetter() internal fun kotlin.Int.foo(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Int
+
+kotlin.js.native() internal final class Bar {
+    public constructor Bar(/*0*/ b: kotlin.Int, /*1*/ c: kotlin.Char)
+    kotlin.js.nativeSetter() internal final fun baz(/*0*/ d: kotlin.Int, /*1*/ v: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.js.native() internal object Obj {
+    private constructor Obj()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.js.nativeSetter() internal final fun test1(/*0*/ e: kotlin.String, /*1*/ v: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-Obj> : Obj {
+        private constructor <class-object-for-Obj>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        kotlin.js.nativeSetter() internal final override /*1*/ /*fake_override*/ fun test1(/*0*/ e: kotlin.String, /*1*/ v: kotlin.Any): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal object Nested {
+        private constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        kotlin.js.nativeSetter() internal final fun test2(/*0*/ g: kotlin.Int, /*1*/ v: kotlin.Any): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-Nested> : Obj.Nested {
+            private constructor <class-object-for-Nested>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            kotlin.js.nativeSetter() internal final override /*1*/ /*fake_override*/ fun test2(/*0*/ g: kotlin.Int, /*1*/ v: kotlin.Any): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

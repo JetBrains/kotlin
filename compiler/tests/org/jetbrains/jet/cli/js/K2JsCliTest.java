@@ -57,13 +57,6 @@ public class K2JsCliTest extends CliBaseTest {
     }
 
     @Test
-    public void nativeDeclarations() throws Exception {
-        executeCompilerCompareOutputJS();
-
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), "out.js").isFile());
-    }
-
-    @Test
     public void withLib() throws Exception {
         executeCompilerCompareOutputJS();
 

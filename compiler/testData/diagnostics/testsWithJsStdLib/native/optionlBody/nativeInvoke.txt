@@ -1,0 +1,22 @@
+package
+
+kotlin.js.nativeInvoke() internal fun kotlin.String.bar(): kotlin.Int
+kotlin.js.nativeInvoke() internal fun kotlin.String.foo(): kotlin.Int
+
+kotlin.js.native() internal object O {
+    private constructor O()
+    kotlin.js.nativeInvoke() internal final fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.js.nativeInvoke() internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-O> : O {
+        private constructor <class-object-for-O>()
+        kotlin.js.nativeInvoke() internal final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        kotlin.js.nativeInvoke() internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
