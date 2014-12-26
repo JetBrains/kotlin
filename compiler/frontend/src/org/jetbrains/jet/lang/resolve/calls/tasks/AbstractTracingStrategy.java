@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage;
@@ -66,14 +67,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-        JetElement reportOn;
-        JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-        if (valueArgumentList != null) {
-            reportOn = valueArgumentList;
-        }
-        else {
-            reportOn = reference;
-        }
+        JetElement reportOn = CallUtilPackage.getValueArgumentListOrElement(call);
         trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
     }
 

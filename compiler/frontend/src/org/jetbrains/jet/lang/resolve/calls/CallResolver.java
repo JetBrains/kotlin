@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -44,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
@@ -182,6 +180,19 @@ public class CallResolver {
     }
 
     @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksFromCandidatesAndResolvedCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetReferenceExpression referenceExpression,
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull CallTransformer<D, F> callTransformer
+    ) {
+        TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
+        List<ResolutionTask<D, F>> prioritizedTasks =
+                taskPrioritizer.<D, F>computePrioritizedTasksFromCandidates(context, candidates, tracing);
+        return doResolveCallOrGetCachedResults(context, prioritizedTasks, callTransformer, tracing);
+    }
+
+    @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveBinaryCall(
             ExpressionTypingContext context,
             ExpressionReceiver receiver,
@@ -214,94 +225,88 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
-
         ProgressIndicatorProvider.checkCanceled();
 
-        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> prioritizedTasks;
-
         JetExpression calleeExpression = context.call.getCalleeExpression();
-        JetReferenceExpression functionReference;
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
-            Name name = expression.getReferencedNameAsName();
-            return computeTasksAndResolveCall(context, name, expression, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES,
-                                              CallTransformer.FUNCTION_CALL_TRANSFORMER);
+            return computeTasksAndResolveCall(
+                    context, expression.getReferencedNameAsName(), expression,
+                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
-        else {
-            JetValueArgumentList valueArgumentList = context.call.getValueArgumentList();
-            PsiElement reportAbsenceOn = valueArgumentList == null ? context.call.getCallElement() : valueArgumentList;
-            if (calleeExpression instanceof JetConstructorCalleeExpression) {
-                assert !context.call.getExplicitReceiver().exists();
-
-                JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
-                functionReference = expression.getConstructorReferenceExpression();
-                if (functionReference == null) {
-                    return checkArgumentTypesAndFail(context); // No type there
-                }
-                JetTypeReference typeReference = expression.getTypeReference();
-                assert typeReference != null;
-                JetType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
-
-                if (constructedType.isError()) {
-                    return checkArgumentTypesAndFail(context);
-                }
-
-                DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
-                if (declarationDescriptor instanceof ClassDescriptor) {
-                    ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                    Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-                    if (constructors.isEmpty()) {
-                        context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
-                        return checkArgumentTypesAndFail(context);
-                    }
-                    Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                            taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
-                                    context.scope, constructors, context.call);
-                    prioritizedTasks = taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
-                            context, candidates, TracingStrategyImpl.create(functionReference, context.call));
-                }
-                else {
-                    context.trace.report(NOT_A_CLASS.on(calleeExpression));
-                    return checkArgumentTypesAndFail(context);
-                }
-            }
-            else if (calleeExpression instanceof JetThisReferenceExpression) {
-                functionReference = (JetThisReferenceExpression) calleeExpression;
-                DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
-                if (containingDeclaration instanceof ConstructorDescriptor) {
-                    containingDeclaration = containingDeclaration.getContainingDeclaration();
-                }
-                assert containingDeclaration instanceof ClassDescriptor;
-                ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-
-                Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-                if (constructors.isEmpty()) {
-                    context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
-                    return checkArgumentTypesAndFail(context);
-                }
-                List<ResolutionCandidate<CallableDescriptor>> candidates =
-                        ResolutionCandidate.<CallableDescriptor>convertCollection(context.call, constructors);
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context)); // !! DataFlowInfo.EMPTY
-            }
-            else if (calleeExpression != null) {
-
-                // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-                JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
-                ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
-
-                Call call = new CallTransformer.CallForImplicitInvoke(
-                        context.call.getExplicitReceiver(), expressionReceiver, context.call);
-                TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(
-                        calleeExpression, call, calleeType);
-                return resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
-            }
-            else {
-                return checkArgumentTypesAndFail(context);
-            }
+        if (calleeExpression instanceof JetConstructorCalleeExpression) {
+            return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
+        }
+        else if (calleeExpression instanceof JetThisReferenceExpression) {
+            return resolveCallForThisExpression(context, (JetThisReferenceExpression) calleeExpression);
+        }
+        else if (calleeExpression == null) {
+            return checkArgumentTypesAndFail(context);
         }
 
-        TracingStrategy tracing = TracingStrategyImpl.create(functionReference, context.call);
-        return doResolveCallOrGetCachedResults(context, prioritizedTasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+        // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
+        JetType calleeType = expressionTypingServices.safeGetType(
+                context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+        ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
+
+        Call call = new CallTransformer.CallForImplicitInvoke(context.call.getExplicitReceiver(), expressionReceiver, context.call);
+        TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call, calleeType);
+        return resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
+    }
+
+    private OverloadResolutionResults<FunctionDescriptor> resolveCallForConstructor(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetConstructorCalleeExpression expression
+    ) {
+        assert !context.call.getExplicitReceiver().exists() :
+                "Constructor can't be invoked with explicit receiver: " + context.call.getCallElement().getText();
+
+        JetReferenceExpression functionReference = expression.getConstructorReferenceExpression();
+        JetTypeReference typeReference = expression.getTypeReference();
+        if (functionReference == null || typeReference == null) {
+            return checkArgumentTypesAndFail(context); // No type there
+        }
+        JetType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
+        if (constructedType.isError()) {
+            return checkArgumentTypesAndFail(context);
+        }
+
+        DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
+        if (!(declarationDescriptor instanceof ClassDescriptor)) {
+            context.trace.report(NOT_A_CLASS.on(expression));
+            return checkArgumentTypesAndFail(context);
+        }
+        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        if (constructors.isEmpty()) {
+            context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
+            return checkArgumentTypesAndFail(context);
+        }
+        Collection<ResolutionCandidate<CallableDescriptor>> candidates =
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(context.scope, constructors, context.call);
+
+        return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+    }
+
+    private OverloadResolutionResults<FunctionDescriptor> resolveCallForThisExpression(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetThisReferenceExpression calleeExpression
+    ) {
+        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
+        if (containingDeclaration instanceof ConstructorDescriptor) {
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
+        assert containingDeclaration instanceof ClassDescriptor;
+
+        Collection<ConstructorDescriptor> constructors = ((ClassDescriptor) containingDeclaration).getConstructors();
+        if (constructors.isEmpty()) {
+            context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
+            return checkArgumentTypesAndFail(context);
+        }
+        List<ResolutionCandidate<CallableDescriptor>> candidates =
+                ResolutionCandidate.<CallableDescriptor>convertCollection(context.call, constructors);
+
+        return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
@@ -315,9 +320,9 @@ public class CallResolver {
                 BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
 
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(basicCallResolutionContext, Collections.singleton(candidate), tracing);
-        return doResolveCallOrGetCachedResults(
-                basicCallResolutionContext, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+                taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                        basicCallResolutionContext, Collections.singleton(candidate), tracing);
+        return doResolveCallOrGetCachedResults(basicCallResolutionContext, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
