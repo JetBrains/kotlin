@@ -44,6 +44,7 @@ import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.augment.PsiAugmentProvider;
 import com.intellij.psi.compiled.ClassFileDecompilers;
+import com.intellij.psi.impl.PsiElementFinderImpl;
 import com.intellij.psi.impl.PsiTreeChangePreprocessor;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.compiled.ClsStubBuilderFactory;
@@ -316,8 +317,13 @@ public class JetCoreEnvironment {
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CodeAnalyzerInitializer.class, cliLightClassGenerationSupport);
-        Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
+
+        ExtensionsArea area = Extensions.getArea(project);
+
+        area.getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new PsiElementFinderImpl(project, ServiceManager.getService(project, JavaFileManager.class)));
+
+        area.getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
     }
 
