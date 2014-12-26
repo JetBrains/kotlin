@@ -11,9 +11,9 @@ fun bar(a: Int): Int {
 fun foo(a: Int) {
     val b: Int = 1
 
-    unit(a, b)
+    __dummyTestFun__(a, b)
 }
 
-private fun unit(a: Int, b: Int) {
+private fun __dummyTestFun__(a: Int, b: Int) {
     if (a > 0) bar(a) else b
 }

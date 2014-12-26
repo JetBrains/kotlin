@@ -5,10 +5,10 @@
 // SIBLING:
 val x = object {
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 }
 
-private fun Any.unit() {
+private fun Any.__dummyTestFun__() {
     println(this)
 }

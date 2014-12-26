@@ -5,17 +5,17 @@
 
 // SIBLING:
 fun foo(a: Int, b: Int) {
-    unit(a, b)
+    __dummyTestFun__(a, b)
 }
 
 fun bar() {
     val x = 1
     val y = 2
 
-    unit(x, y)
+    __dummyTestFun__(x, y)
 }
 
-private fun unit(a: Int, b: Int) {
+private fun __dummyTestFun__(a: Int, b: Int) {
     println("a = $a")
     println("b = $b")
     println(a + b * a)

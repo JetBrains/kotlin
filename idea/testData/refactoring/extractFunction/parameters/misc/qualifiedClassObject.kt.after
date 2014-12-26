@@ -1,7 +1,7 @@
 // SIBLING:
 class MyClass {
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 
     public class P {
@@ -12,7 +12,7 @@ class MyClass {
     }
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     MyClass.P.foo()
     MyClass.P.a
 }

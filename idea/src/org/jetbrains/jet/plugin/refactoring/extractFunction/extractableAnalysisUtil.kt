@@ -731,7 +731,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             )
     controlFlowMessage?.let { messages.add(it) }
 
-    controlFlow.outputValueBoxer.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
+    val returnType = controlFlow.outputValueBoxer.returnType
+    returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
         val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
@@ -751,10 +752,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
                     JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
-    val functionName = JetNameSuggester.suggestNames(
-            controlFlow.outputValueBoxer.returnType,
-            functionNameValidator, DEFAULT_FUNCTION_NAME
-    ).first()
+    val functionName = if (returnType.isDefault()) "" else {
+        JetNameSuggester.suggestNames(returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
+    }
 
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
             object : JetTreeVisitorVoid() {

@@ -125,7 +125,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                                 assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                                 assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
 
-                                return descriptor
+                                return if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor
                             }
                         }
                 ).doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)

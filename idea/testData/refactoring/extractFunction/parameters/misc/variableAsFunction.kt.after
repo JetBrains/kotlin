@@ -6,9 +6,9 @@ class A {
 // SIBLING:
 fun testProp() {
     val foo = A()
-    unit(foo)
+    __dummyTestFun__(foo)
 }
 
-private fun unit(foo: A) {
+private fun __dummyTestFun__(foo: A) {
     foo()
 }

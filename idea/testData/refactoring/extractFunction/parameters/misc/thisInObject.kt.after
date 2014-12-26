@@ -4,10 +4,10 @@ package p
 object O {
     val a = 1
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     O.a
 }

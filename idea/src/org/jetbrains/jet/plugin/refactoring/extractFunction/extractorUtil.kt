@@ -81,7 +81,7 @@ fun ExtractableCodeDescriptor.getDeclarationText(
 
         receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) }
 
-        builder.name(name)
+        builder.name(if (name != "") name else DEFAULT_FUNCTION_NAME)
 
         parameters.forEach { parameter ->
             builder.param(parameter.name, descriptorRenderer.renderType(parameter.parameterType))

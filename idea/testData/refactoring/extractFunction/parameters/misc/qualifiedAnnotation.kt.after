@@ -1,13 +1,13 @@
 // SIBLING:
 class MyClass {
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 
     public annotation class P
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     [MyClass.P] val t: Int = 1
     t
 }

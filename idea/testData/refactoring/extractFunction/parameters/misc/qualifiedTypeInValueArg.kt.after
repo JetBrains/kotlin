@@ -1,7 +1,7 @@
 // SIBLING:
 class MyClass {
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 
     public class P<T> {
@@ -15,7 +15,7 @@ class MyClass {
     }
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     val a: Any = MyClass.P.Q()
     val t = MyClass.P.R<MyClass.P.Q>(a as MyClass.P.Q)
 }
