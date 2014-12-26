@@ -33,9 +33,9 @@ fun main(args: Array<String>) {
  frame    = main():9, FrameSimplePackage$@packagePartHASH {frameSimple}
    static   = static = frameSimple.FrameSimplePackage$@packagePartHASH
      field    = topVal1: int = 1 (sp = null)
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
-   local    = val1: int = 1
-   local    = val2: java.lang.String = {@uniqueID}str
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSimple.kt, 5)
+   local    = val1: int = 1 (sp = frameSimple.kt, 6)
+   local    = val2: java.lang.String = {@uniqueID}str (sp = frameSimple.kt, 7)
      field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
        unknown  = [0] = 's' 115
        unknown  = [1] = 't' 116

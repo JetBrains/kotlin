@@ -33,6 +33,19 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ClassNotPreparedException
 import com.intellij.debugger.ui.tree.FieldDescriptor
+import com.intellij.debugger.ui.tree.LocalVariableDescriptor
+import com.intellij.debugger.impl.PositionUtil
+import com.intellij.psi.PsiVariable
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 public class KotlinSourcePositionProvider: SourcePositionProvider() {
     override fun computeSourcePosition(descriptor: NodeDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
@@ -40,6 +53,42 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
 
         if (descriptor is FieldDescriptor) {
             return computeSourcePosition(descriptor, project, context, nearest)
+        }
+
+        if (descriptor is LocalVariableDescriptor) {
+            return computeSourcePosition(descriptor, project, context, nearest)
+        }
+
+        return null
+    }
+
+    fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
+        val place = PositionUtil.getContextElement(context)
+        if (place == null) {
+            return null
+        }
+
+        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>())
+        if (contextElement == null) {
+            return null
+        }
+
+        val codeFragment = JetPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
+        val expression = codeFragment.getContentElement()
+        if (expression is JetSimpleNameExpression) {
+            val bindingContext = expression.analyze()
+            val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
+            val sourceElement = declarationDescriptor?.getSource()
+            if (sourceElement is KotlinSourceElement) {
+                val element = sourceElement.getPsi()
+                if (element == null) {
+                    return null
+                }
+                if (nearest) {
+                    return DebuggerContextUtil.findNearest(context, element, element.getContainingFile())
+                }
+                return SourcePosition.createFromOffset(element.getContainingFile(), element.getTextOffset())
+            }
         }
 
         return null
