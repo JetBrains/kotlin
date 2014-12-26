@@ -16,24 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve
 
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.lang.resolve.scopes.AbstractScopeAdapter
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
-class ClassesInPackageScope(packageDescriptor: PackageViewDescriptor) : JetScope by packageDescriptor.getMemberScope() {
-    private val memberScope = packageDescriptor.getMemberScope()
+class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : AbstractScopeAdapter() {
+    override val workerScope: JetScope = packageDescriptor.getMemberScope()
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val modifiedFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
         if (modifiedFilter.kindMask == 0) return listOf()
-        return memberScope.getDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
+        return workerScope.getDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return memberScope.getOwnDeclaredDescriptors().filter { it !is PackageViewDescriptor }
+        return workerScope.getOwnDeclaredDescriptors().filter { it !is PackageViewDescriptor }
     }
 }

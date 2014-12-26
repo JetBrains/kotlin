@@ -86,7 +86,7 @@ public interface Importer {
         protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
             List<JetScope> scopesToImport = new ArrayList<JetScope>(3);
             if (descriptor instanceof PackageViewDescriptor) {
-                scopesToImport.add(new ClassesInPackageScope((PackageViewDescriptor) descriptor));
+                scopesToImport.add(new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor));
             }
             else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
