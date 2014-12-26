@@ -139,6 +139,7 @@ import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
 import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.jet.codegen.AbstractLineNumberTest
+import org.jetbrains.jet.completion.handlers.AbstractKeywordCompletionHandlerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -376,6 +377,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
             model("completion/handlers/smart")
+        }
+
+        testClass(javaClass<AbstractKeywordCompletionHandlerTest>()) {
+            model("completion/handlers/keywords")
         }
 
         testClass(javaClass<AbstractCompletionCharFilterTest>()) {

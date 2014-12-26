@@ -77,3 +77,8 @@ public abstract class AbstractCompletionCharFilterTest() : AbstractCompletionHan
     override val defaultCompletionType: CompletionType = CompletionType.BASIC
     override val testDataRelativePath: String = "/completion/handlers/charFilter"
 }
+
+public abstract class AbstractKeywordCompletionHandlerTest() : AbstractCompletionHandlerTest() {
+    override val defaultCompletionType: CompletionType = CompletionType.BASIC
+    override val testDataRelativePath: String = "/completion/handlers/keywords"
+}
