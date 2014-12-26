@@ -6,14 +6,18 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin-core:0.1-SNAPSHOT'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
   }
 }
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
 
-apply plugin: KotlinPlugin
+
+apply plugin: "kotlin"
 apply plugin: 'java'
+
+sourceSets {
+ deploy
+}
 
 repositories {
   maven {
@@ -22,18 +26,11 @@ repositories {
   mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir 'generated/'
-        }
-    }
-}
-
 dependencies {
     compile 'com.google.guava:guava:12.0'
+    deployCompile 'com.google.guava:guava:12.0'
     testCompile  'org.testng:testng:6.8'
-    testRuntime  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
+    testRuntime  "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
 }
 
 test {
