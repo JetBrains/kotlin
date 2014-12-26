@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.junit.Test
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 
-class BasicKotlinGradleIT: BaseGradleIT() {
+class KotlinGradleIT: BaseGradleIT() {
 
     Test fun testCrossCompile() {
         val project = Project("kotlinJavaProject", "1.6")
