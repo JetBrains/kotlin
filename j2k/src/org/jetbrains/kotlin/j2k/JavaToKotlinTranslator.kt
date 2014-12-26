@@ -28,6 +28,23 @@ import java.io.File
 import java.net.URLClassLoader
 import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.psi.PsiModifierListOwner
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
+import com.intellij.psi.augment.PsiAugmentProvider
+import com.intellij.codeInsight.runner.JavaMainMethodProvider
+import com.intellij.codeInsight.ContainerProvider
+import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
+import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
+import com.intellij.psi.stubs.BinaryFileStubBuilders
+import com.intellij.psi.FileContextProvider
+import com.intellij.psi.meta.MetaDataContributor
+import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.PsiElementFinder
+import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.psi.PsiElement
 
 public object JavaToKotlinTranslator {
     val DISPOSABLE = Disposer.newDisposable()
@@ -38,12 +55,24 @@ public object JavaToKotlinTranslator {
     }
 
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
+        Extensions.cleanRootArea(DISPOSABLE)
+        val area = Extensions.getRootArea()
+
+        registerExtensionPoints(area)
+
         val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
-        val javaCoreEnvironment = JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment)
+        val javaCoreEnvironment = object : JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment) {
+            override fun preregisterServices() {
+                val projectArea = Extensions.getArea(getProject())
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
+            }
+        };
 
         javaCoreEnvironment.getProject().registerService(javaClass<NullableNotNullManager>(), object : NullableNotNullManager() {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
+            override fun hasHardcodedContracts(element: PsiElement): Boolean = false
         })
 
         for (root in PathUtil.getJdkClassesRoots()) {
@@ -54,6 +83,21 @@ public object JavaToKotlinTranslator {
             javaCoreEnvironment.addJarToClassPath(annotations)
         }
         return javaCoreEnvironment
+    }
+
+    private fun registerExtensionPoints(area: ExtensionsArea) {
+        CoreApplicationEnvironment.registerExtensionPoint(area, ContentBasedFileSubstitutor.EP_NAME, javaClass<ContentBasedFileSubstitutor>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
+        //
+        CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsStubBuilderFactory.EP_NAME, javaClass<ClsStubBuilderFactory<PsiFile>>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
+        //
+        CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
     }
 
     fun prettify(code: String?): String {
