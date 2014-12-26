@@ -6,6 +6,7 @@ import android.app.Activity
 class MyActivity: Activity() {
     val button = this.MyButton
 }
+
 // 1 GETSTATIC
-// 1 INVOKEVIRTUAL
+// 4 INVOKEVIRTUAL
 // 2 CHECKCAST

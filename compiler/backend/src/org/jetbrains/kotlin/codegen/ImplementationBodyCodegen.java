@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.CodegenUtilKt;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
@@ -400,6 +401,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateToArray();
 
         genClosureFields(context.closure, v, typeMapper);
+
+        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Default.getInstances(state.getProject())) {
+            extension.generateClassSyntheticParts(v, myClass, descriptor);
+        }
     }
 
     private void generateReflectionObjectFieldIfNeeded() {
