@@ -22,6 +22,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -62,6 +65,11 @@ public class ClassPreloadingUtils {
     ) throws IOException {
         Map<String, Object> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
+        Collection<File> classpath = mergeClasspathFromManifests(entries);
+        if (!classpath.isEmpty()) {
+            parentClassLoader = preloadClasses(classpath, classCountEstimation, parentClassLoader, null, handler);
+        }
+
         return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
     }
 
@@ -69,6 +77,43 @@ public class ClassPreloadingUtils {
             Collection<File> jarFiles, int classCountEstimation, ClassLoader parentClassLoader, ClassCondition classesToLoadByParent
     ) throws IOException {
         return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, classesToLoadByParent, null);
+    }
+
+    private static Collection<File> mergeClasspathFromManifests(Map<String, Object> preloadedResources) throws IOException {
+        Object manifest = preloadedResources.get(JarFile.MANIFEST_NAME);
+        if (manifest instanceof ResourceData) {
+            return extractManifestClasspath((ResourceData) manifest);
+        }
+        else if (manifest instanceof ArrayList) {
+            List<File> result = new ArrayList<File>();
+            for (ResourceData data : (ArrayList<ResourceData>) manifest) {
+                result.addAll(extractManifestClasspath(data));
+            }
+            return result;
+        }
+        else {
+            assert manifest == null : "Resource map should contain ResourceData or ArrayList<ResourceData>: " + manifest;
+            return Collections.emptyList();
+        }
+    }
+
+    private static Collection<File> extractManifestClasspath(ResourceData manifestData) throws IOException {
+        Manifest manifest = new Manifest(new ByteArrayInputStream(manifestData.bytes));
+        String classpathSpaceSeparated = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
+        if (classpathSpaceSeparated == null) return Collections.emptyList();
+
+        Collection<File> classpath = new ArrayList<File>(1);
+        for (String jar : classpathSpaceSeparated.split(" ")) {
+            if (".".equals(jar)) continue;
+
+            if (!jar.endsWith(".jar")) {
+                throw new UnsupportedOperationException("Class-Path attribute should only contain paths to JAR files: " + jar);
+            }
+
+            classpath.add(new File(manifestData.jarFile.getParent(), jar));
+        }
+
+        return classpath;
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
