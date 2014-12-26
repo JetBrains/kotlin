@@ -1,7 +1,11 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in bar
+// PARAM_DESCRIPTOR: value-parameter val b: kotlin.Int defined in bar
 fun bar(a: Int, b: Int) {
-    fun i(): Int {
-        return a + b
-    }
+    val foo = { i(a, b) - 1 }.invoke()
+}
 
-    val foo = { i() - 1 }.invoke()
+private fun i(a: Int, b: Int): Int {
+    return a + b
 }

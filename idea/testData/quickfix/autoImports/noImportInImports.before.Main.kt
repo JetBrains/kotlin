@@ -3,6 +3,7 @@
 // ACTION: Create class 'SomeTest'
 // ACTION: Create enum 'SomeTest'
 // ACTION: Create object 'SomeTest'
+// ACTION: Create property 'SomeTest'
 // ACTION: Create trait 'SomeTest'
 // ERROR: Unresolved reference: SomeTest
 

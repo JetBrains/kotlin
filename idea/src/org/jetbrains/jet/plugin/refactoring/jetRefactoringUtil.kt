@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -137,27 +138,27 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<J
 }
 
 public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<JetElement> {
+    fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
+        return element.parents(!strict)
+                .filter {
+                    (it is JetDeclarationWithBody && it !is JetFunctionLiteral)
+                    || it is JetClassInitializer
+                    || it is JetClassBody
+                    || it is JetFile
+                }
+                .firstOrNull()
+    }
+
     if (includeAll) return getAllExtractionContainers(strict)
 
-    val declaration = getParentOfType<JetDeclaration>(strict)?.let { declaration ->
-        stream(declaration) { it.getStrictParentOfType<JetDeclaration>() }.firstOrNull { it !is JetFunctionLiteral }
-    } ?: return Collections.emptyList()
-
-    val parent = declaration.getParent()?.let {
-        when (it) {
-            is JetProperty, is JetMultiDeclaration -> it.getParent()
-            is JetParameterList -> it.getParent()?.getParent()
-            else -> it
-        }
+    val enclosingDeclaration = getEnclosingDeclaration(this, strict)?.let {
+        if (it is JetDeclarationWithBody || it is JetClassInitializer) getEnclosingDeclaration(it, true) else it
     }
-    return when (parent) {
-        is JetFile -> Collections.singletonList(parent)
-        is JetClassBody -> {
-            getAllExtractionContainers(strict).filterIsInstance<JetClassBody>()
-        }
+
+    return when (enclosingDeclaration) {
+        is JetFile -> Collections.singletonList(enclosingDeclaration)
+        is JetClassBody -> getAllExtractionContainers(strict).filterIsInstance<JetClassBody>()
         else -> {
-            val enclosingDeclaration =
-                    PsiTreeUtil.getNonStrictParentOfType(parent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassInitializer>())
             val targetContainer = when (enclosingDeclaration) {
                 is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
                 is JetClassInitializer -> enclosingDeclaration.getBody()
