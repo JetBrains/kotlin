@@ -208,6 +208,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("unsafeCall.kt")
+        public void testUnsafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/unsafeCall.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("vars.kt")
         public void testVars() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/vars.kt");

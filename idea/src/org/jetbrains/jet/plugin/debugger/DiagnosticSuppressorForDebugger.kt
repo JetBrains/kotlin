@@ -31,7 +31,8 @@ public class DiagnosticSuppressorForDebugger : DiagnosticsWithSuppression.Diagno
             val diagnosticFactory = diagnostic.getFactory()
             return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
                    diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
-                   diagnosticFactory == Errors.INVISIBLE_SETTER
+                   diagnosticFactory == Errors.INVISIBLE_SETTER ||
+                   diagnosticFactory == Errors.UNSAFE_CALL
         }
 
         return false
