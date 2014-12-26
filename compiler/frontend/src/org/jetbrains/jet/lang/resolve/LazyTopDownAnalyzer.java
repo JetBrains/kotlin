@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
@@ -297,7 +297,7 @@ public class LazyTopDownAnalyzer {
         declarationResolver.checkRedeclarationsInPackages(resolveSession, topLevelFqNames);
         declarationResolver.checkRedeclarationsInInnerClassNames(c);
 
-        CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
+        ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
 
         overrideResolver.check(c);
 
