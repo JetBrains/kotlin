@@ -17,7 +17,9 @@
 package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -33,13 +35,18 @@ public class KotlinRuntimeLibraryCoreUtil {
     );
 
     @Nullable
-    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        for (String className : CANDIDATE_CLASSES) {
-            PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
-            if (psiClass != null) {
-                return psiClass;
+    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull final Project project, @NotNull final GlobalSearchScope scope) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
+            @Override
+            public PsiClass compute() {
+                for (String className : CANDIDATE_CLASSES) {
+                    PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
+                    if (psiClass != null) {
+                        return psiClass;
+                    }
+                }
+                return null;
             }
-        }
-        return null;
+        });
     }
 }
