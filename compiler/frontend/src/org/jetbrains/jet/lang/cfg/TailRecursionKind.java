@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.cfg;
 
 public enum TailRecursionKind {
     TAIL_CALL(true),
