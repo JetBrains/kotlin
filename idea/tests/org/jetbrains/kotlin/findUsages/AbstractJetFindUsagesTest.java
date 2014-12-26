@@ -328,6 +328,10 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
                 ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
                 : myFixture.getElementAtCaret();
+        if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT")) {
+            assert originalElement instanceof PsiCompiledElement : "PsiCompiledElement is expected: " + originalElement;
+            originalElement = ((PsiCompiledElement)originalElement).getMirror();
+        }
         T caretElement = PsiTreeUtil.getParentOfType(originalElement, caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 

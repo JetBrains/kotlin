@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/kotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Kotlin.Conventions.class, Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindPackageUsages.class, Kotlin.FindParameterUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindTypeParameterUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.FindWithStructuralGrouping.class, Kotlin.UnresolvedAnnotation.class})
+    @InnerTestClasses({Kotlin.Conventions.class, Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindPackageUsages.class, Kotlin.FindParameterUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindTypeParameterUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.FindWithStructuralGrouping.class, Kotlin.Library.class, Kotlin.UnresolvedAnnotation.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Kotlin extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInKotlin() throws Exception {
@@ -840,6 +840,45 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinPropertyUsages.0.kt")
             public void testKotlinPropertyUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findWithStructuralGrouping/kotlinPropertyUsages.0.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/findUsages/kotlin/library")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Library extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInLibrary() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/library"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("LibraryClassUsages.0.kt")
+            public void testLibraryClassUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/library/LibraryClassUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LibraryFieldUsages.0.kt")
+            public void testLibraryFieldUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/library/LibraryFieldUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LibraryMethodUsages.0.kt")
+            public void testLibraryMethodUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/library/LibraryMethodUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LibraryStaticFieldUsages.0.kt")
+            public void testLibraryStaticFieldUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/library/LibraryStaticFieldUsages.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LibraryStaticMethodUsages.0.kt")
+            public void testLibraryStaticMethodUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/library/LibraryStaticMethodUsages.0.kt");
                 doTest(fileName);
             }
         }
