@@ -108,7 +108,8 @@ public class ClassPreloadingUtils {
             int classNumberEstimate,
             ClassHandler handler
     ) throws IOException {
-        Map<String, Object> resources = new HashMap<String, Object>(classNumberEstimate);
+        // 0.75 is HashMap.DEFAULT_LOAD_FACTOR
+        Map<String, Object> resources = new HashMap<String, Object>((int) (classNumberEstimate / 0.75));
 
         for (File jarFile : jarFiles) {
             if (handler != null) {
