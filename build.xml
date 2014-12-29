@@ -117,6 +117,7 @@
         <include name="js/js.frontend/src"/>
         <include name="js/js.inliner/src"/>
         <include name="js/js.parser/src"/>
+        <include name="js/js.serializer/src"/>
     </dirset>
 
     <property name="idea.out" value="${basedir}/out/production"/>
@@ -142,6 +143,7 @@
         <include name="js.frontend/**"/>
         <include name="js.inliner/**"/>
         <include name="js.parser/**"/>
+        <include name="js.serializer/**"/>
     </patternset>
 
     <path id="compilerSources.path">
@@ -210,6 +212,7 @@
             <fileset dir="js/js.frontend/src"/>
             <fileset dir="js/js.inliner/src"/>
             <fileset dir="js/js.parser/src"/>
+            <fileset dir="js/js.serializer/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
