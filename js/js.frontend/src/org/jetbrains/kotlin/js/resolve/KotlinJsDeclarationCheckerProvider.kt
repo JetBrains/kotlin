@@ -31,10 +31,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 
-public object KotlinJsDeclarationCheckerProvider : AdditionalCheckerProvider {
-    override val annotationCheckers: List<AnnotationChecker> = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker())
-}
+public object KotlinJsDeclarationCheckerProvider : AdditionalCheckerProvider(
+        annotationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker()),
+        additionalCallCheckers = listOf()
+)
 
 private abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : AnnotationChecker {
 
