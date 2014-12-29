@@ -60,7 +60,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     }
 
     // Implements API added in IDEA 14.1
-    fun getSummaryCoverageInfo(coverageAnnotator: JavaCoverageAnnotator,
+    override fun getSummaryCoverageInfo(coverageAnnotator: JavaCoverageAnnotator,
                                element: PsiNamedElement): PackageAnnotator.ClassCoverageInfo? {
         if (element !is JetFile) {
             return null
@@ -72,13 +72,13 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     }
 
     // Implements API added in IDEA 14.1
-    fun keepCoverageInfoForClassWithoutSource(bundle: CoverageSuitesBundle, classFile: File): Boolean {
+    override fun keepCoverageInfoForClassWithoutSource(bundle: CoverageSuitesBundle, classFile: File): Boolean {
         // TODO check scope and source roots
         return true  // keep everything, sort it out later
     }
 
     // Implements API added in IDEA 14.1
-    fun ignoreCoverageForClass(bundle: CoverageSuitesBundle, classFile: File): Boolean {
+    override fun ignoreCoverageForClass(bundle: CoverageSuitesBundle, classFile: File): Boolean {
         // Ignore classes that only contain bridge methods delegating to package parts.
         if (looksLikePackageFacade(classFile)) {
             val classVFile = LocalFileSystem.getInstance().findFileByIoFile(classFile)

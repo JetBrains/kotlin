@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
@@ -29,6 +28,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.Predicate;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -212,7 +212,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         return answer.toArray(new PsiClass[answer.size()]);
     }
 
-    // implements a method added in 14.1
+    @Override
     @NotNull
     public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
@@ -220,13 +220,12 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         return result.toArray(new PsiFile[result.size()]);
     }
 
-    // implements a method added in IDEA 14.1
-    @SuppressWarnings({"UnusedDeclaration", "MethodMayBeStatic"})
+    @Override
     @Nullable
-    public Condition<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        return new Condition<PsiFile>() {
+    public Predicate<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        return new Predicate<PsiFile>() {
             @Override
-            public boolean value(@Nullable PsiFile input) {
+            public boolean apply(@Nullable PsiFile input) {
                 if (!(input instanceof JetFile)) {
                     return true;
                 }
