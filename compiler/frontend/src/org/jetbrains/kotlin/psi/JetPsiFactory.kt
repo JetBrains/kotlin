@@ -32,12 +32,14 @@ import java.io.StringWriter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.jet.analyzer.ModuleInfo
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
 
 public var JetFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 public var JetFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
+public var JetFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
 
 public class JetPsiFactory(private val project: Project) {
 

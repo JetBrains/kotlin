@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import java.util.ArrayList
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
 import kotlin.platform.platformStatic
+import com.intellij.openapi.module.Module
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,
@@ -60,7 +61,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
             resolverForProject: ResolverForProject<M, JvmResolverForModule>
     ): JvmResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
-        val filesToAnalyze = getAllFilesToAnalyze(project, syntheticFiles)
+        val filesToAnalyze = getAllFilesToAnalyze(project, moduleInfo, syntheticFiles)
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
                 project, globalContext.storageManager, filesToAnalyze,
                 if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
@@ -87,10 +88,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
     override val defaultImports = TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
     override val platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
 
-    public platformStatic fun getAllFilesToAnalyze(project: Project, baseFiles: Collection<JetFile>): List<JetFile> {
+    public platformStatic fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
         val allFiles = ArrayList(baseFiles)
         for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
-            allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations())
+            allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))
         }
         return allFiles
     }

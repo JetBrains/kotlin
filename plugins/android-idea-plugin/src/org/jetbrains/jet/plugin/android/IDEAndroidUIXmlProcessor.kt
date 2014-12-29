@@ -25,13 +25,14 @@ import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
+import com.intellij.openapi.module.Module
 
-class IDEAndroidUIXmlProcessor(project: Project) : AndroidUIXmlProcessor(project) {
+class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
     override val searchPath: String? = project.getBasePath() + "/res/layout/"
     override var androidAppPackage: String = ""
         get() = resourceManager.readManifest()._package
 
-    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(project, searchPath)
+    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module, searchPath)
 
     override fun parseSingleFileImpl(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()

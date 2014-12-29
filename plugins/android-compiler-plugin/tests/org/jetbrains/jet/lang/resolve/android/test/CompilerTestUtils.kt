@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.android.AndroidExpressionCodegen
 import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
+import org.jetbrains.jet.analyzer.ModuleInfo
 
-private class AndroidTestDeclarationsProvider(
+private class AndroidTestExternalDeclarationsProvider(
         val project: Project,
         val resPath: String,
         val manifestPath: String
 ) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(): Collection<JetFile> {
+    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
         val parser = CliAndroidUIXmlProcessor(project, resPath, manifestPath)
         return emptyOrSingletonList(parser.parseToPsi(project))
     }
@@ -49,7 +50,7 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
     val myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.getProject()
-    ExternalDeclarationsProvider.registerExtension(project, AndroidTestDeclarationsProvider(project, resPath, manifestPath))
+    ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPath, manifestPath))
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
     return myEnvironment
 }

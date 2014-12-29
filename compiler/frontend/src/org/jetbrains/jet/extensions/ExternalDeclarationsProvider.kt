@@ -17,6 +17,7 @@
 package org.jetbrains.jet.extensions
 
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.analyzer.ModuleInfo
 
 public trait ExternalDeclarationsProvider {
     class object : ProjectExtensionDescriptor<ExternalDeclarationsProvider>(
@@ -24,5 +25,5 @@ public trait ExternalDeclarationsProvider {
             javaClass<ExternalDeclarationsProvider>()
     )
 
-    public fun getExternalDeclarations(): Collection<JetFile>
+    public fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile>
 }

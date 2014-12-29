@@ -3,6 +3,7 @@ package com.myapp
 import android.app.Activity
 import android.view.View
 import android.widget.*
+import kotlinx.android.synthetic.layout.*
 
 class R {
     class id {

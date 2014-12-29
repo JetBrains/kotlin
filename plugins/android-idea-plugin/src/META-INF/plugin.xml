@@ -12,7 +12,7 @@
   <depends optional="false">org.jetbrains.android</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-      <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
+      <moduleService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
                       serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
       <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
       <gotoDeclarationHandler implementation="org.jetbrains.jet.plugin.android.AndroidGotoDeclarationHandler"/>
@@ -22,7 +22,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-      <externalDeclarationsProvider implementation="org.jetbrains.kotlin.android.AndroidDeclarationsProvider"/>
+      <externalDeclarationsProvider implementation="org.jetbrains.jet.plugin.android.IDEAndroidExternalDeclarationsProvider"/>
       <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
       <findUsagesHandlerDecorator implementation="org.jetbrains.jet.plugin.android.AndroidFindUsageHandlerDecorator"/>
       <simpleNameReferenceExtension implementation="org.jetbrains.jet.plugin.android.AndroidSimpleNameReferenceExtension"/>

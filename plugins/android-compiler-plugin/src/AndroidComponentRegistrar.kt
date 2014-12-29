@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.analyzer.ModuleInfo
 
 public object AndroidConfigurationKeys {
 
@@ -79,8 +80,8 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-public class AndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(): Collection<JetFile> {
+public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
+    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
         val parser = ServiceManager.getService<AndroidUIXmlProcessor>(project, javaClass<AndroidUIXmlProcessor>())
         return emptyOrSingletonList(parser?.parseToPsi(project))
     }
@@ -219,7 +220,7 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
         val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
         project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidResPath, androidManifest))
 
-        ExternalDeclarationsProvider.registerExtension(project, AndroidDeclarationsProvider(project))
+        ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
         ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
     }
 }
