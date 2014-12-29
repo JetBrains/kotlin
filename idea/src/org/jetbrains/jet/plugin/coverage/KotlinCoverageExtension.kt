@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import com.intellij.openapi.util.io.FileUtilRt
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
@@ -91,7 +92,10 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
         val prefixes = collectClassFilePrefixes(file)
         LOG.debug("Classfile prefixes: [${prefixes.join(", ")}]")
         return packageOutputDir.getChildren().filter {
-            file -> prefixes.any { file.getName().startsWith(it + "$") || file.getName().equals(it + ".class") }
+            file -> prefixes.any {
+                (file.getName().startsWith(it + "$") && FileUtilRt.getExtension(file.getName()) == "class") ||
+                    file.getName() == it + ".class"
+            }
         }
     }
 
