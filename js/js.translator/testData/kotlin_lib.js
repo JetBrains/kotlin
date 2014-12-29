@@ -276,8 +276,11 @@
             this.size = list.size();
             this.index = 0;
         }, {
+            hasNext: function () {
+                return this.index < this.size;
+            },
             next: function () {
-                return this.list.get(this.index++);
+                return this.list.get_za3lpa$(this.index++);
             }
     });
 
