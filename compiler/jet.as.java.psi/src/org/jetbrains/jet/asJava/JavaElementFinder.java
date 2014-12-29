@@ -21,10 +21,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFinder;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiPackage;
+import com.intellij.openapi.util.Condition;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -36,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -211,6 +210,29 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
+    }
+
+    // implements a method added in 14.1
+    @NotNull
+    public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+        Collection<JetFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
+        return result.toArray(new PsiFile[result.size()]);
+    }
+
+    // implements a method added in IDEA 14.1
+    @SuppressWarnings({"UnusedDeclaration", "MethodMayBeStatic"})
+    @Nullable
+    public Condition<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        return new Condition<PsiFile>() {
+            @Override
+            public boolean value(@Nullable PsiFile input) {
+                if (!(input instanceof JetFile)) {
+                    return true;
+                }
+                return psiPackage.getQualifiedName().equals(((JetFile) input).getPackageFqName().asString());
+            }
+        };
     }
 
     private static class FindClassesRequest {
