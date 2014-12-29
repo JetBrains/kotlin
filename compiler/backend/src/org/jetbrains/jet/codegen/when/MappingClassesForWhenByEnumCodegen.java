@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class MappingClassesForWhenByEnumCodegen {

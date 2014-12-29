@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -68,7 +68,7 @@ public class IteratorNext extends IntrinsicMethod {
         else {
             throw new UnsupportedOperationException();
         }
-        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+        receiver.put(AsmTypes.OBJECT_TYPE, v);
         v.invokevirtual(BUILT_INS_PACKAGE_FQ_NAME + "/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor(), false);
         return returnType;
     }

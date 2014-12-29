@@ -30,7 +30,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.getType;
 
 public class JavaClassProperty extends IntrinsicMethod {
     @NotNull

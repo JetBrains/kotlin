@@ -22,17 +22,18 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.jet.codegen.ExpressionCodegen
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants
+import org.jetbrains.jet.lang.resolve.java.AsmTypes
 
 public class HashCode : LazyIntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen,
-                              returnType: Type,
-                              element: PsiElement?,
-                              arguments: List<JetExpression>,
-                              receiver: StackValue): StackValue {
-
+    override fun generateImpl(
+            codegen: ExpressionCodegen,
+            returnType: Type,
+            element: PsiElement?,
+            arguments: List<JetExpression>,
+            receiver: StackValue
+    ): StackValue {
         return StackValue.operation(Type.INT_TYPE) {
-            receiver.put(AsmTypeConstants.OBJECT_TYPE, it)
+            receiver.put(AsmTypes.OBJECT_TYPE, it)
             it.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
         }
     }

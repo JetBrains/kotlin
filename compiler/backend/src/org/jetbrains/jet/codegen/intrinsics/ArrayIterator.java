@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.getType;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 

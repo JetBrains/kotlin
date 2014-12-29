@@ -58,8 +58,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
@@ -361,16 +360,16 @@ public class AsmUtil {
     private static Type stringValueOfType(Type type) {
         int sort = type.getSort();
         return sort == Type.OBJECT || sort == Type.ARRAY
-               ? AsmTypeConstants.OBJECT_TYPE
+               ? OBJECT_TYPE
                : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
     }
 
     private static Type stringBuilderAppendType(Type type) {
         switch (type.getSort()) {
             case Type.OBJECT:
-                return STRING_BUILDER_OBJECT_APPEND_ARG_TYPES.contains(type) ? type : AsmTypeConstants.OBJECT_TYPE;
+                return STRING_BUILDER_OBJECT_APPEND_ARG_TYPES.contains(type) ? type : OBJECT_TYPE;
             case Type.ARRAY:
-                return AsmTypeConstants.OBJECT_TYPE;
+                return OBJECT_TYPE;
             case Type.BYTE:
             case Type.SHORT:
                 return Type.INT_TYPE;

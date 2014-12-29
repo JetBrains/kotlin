@@ -41,7 +41,7 @@ import java.util.List;
 import static org.jetbrains.jet.codegen.AsmUtil.method;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForScriptDescriptor;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;

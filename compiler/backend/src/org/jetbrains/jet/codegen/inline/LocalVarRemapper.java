@@ -18,12 +18,12 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import static org.jetbrains.jet.codegen.inline.LocalVarRemapper.RemapStatus.*;
 
@@ -48,7 +48,7 @@ public class LocalVarRemapper {
         int index = 0;
         for (ParameterInfo info : params) {
             if (!info.isSkippedOrRemapped()) {
-                remapValues[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
+                remapValues[index] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
                 realSize += info.getType().getSize();
             } else {
                 remapValues[index] = info.isRemapped() ? info.getRemapValue() : null;
@@ -77,7 +77,7 @@ public class LocalVarRemapper {
             remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
         }
 
-        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE), null, SHIFT);
+        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);
     }
 
     public RemapInfo remap(int index) {

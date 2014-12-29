@@ -22,19 +22,16 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-
-public class AsmTypeConstants {
+public class AsmTypes {
     private static final Map<Class<?>, Type> TYPES_MAP = new HashMap<Class<?>, Type>();
 
     public static final Type OBJECT_TYPE = getType(Object.class);
     public static final Type JAVA_STRING_TYPE = getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
 
-    public static final Type UNIT_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Unit");
-    public static final Type FUNCTION1_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function1");
-    public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadata");
-    public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadataImpl");
+    public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
+    public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType("kotlin/PropertyMetadata");
+    public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
     public static final Type K_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMemberProperty");
     public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = Type.getObjectType("kotlin/reflect/KMutableMemberProperty");
@@ -65,6 +62,6 @@ public class AsmTypeConstants {
         return type;
     }
 
-    private AsmTypeConstants() {
+    private AsmTypes() {
     }
 }

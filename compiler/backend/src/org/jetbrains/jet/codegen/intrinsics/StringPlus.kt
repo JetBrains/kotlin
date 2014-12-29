@@ -22,8 +22,8 @@ import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Type
 
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE
+import org.jetbrains.jet.lang.resolve.java.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE
 
 public class StringPlus : LazyIntrinsicMethod() {
     override fun generateImpl(

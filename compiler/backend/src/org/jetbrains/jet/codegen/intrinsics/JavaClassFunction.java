@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.putJavaLangClassInstance;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.getType;
 
 public class JavaClassFunction extends IntrinsicMethod {
     @NotNull

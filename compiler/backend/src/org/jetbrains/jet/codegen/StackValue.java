@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public abstract class StackValue {

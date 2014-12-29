@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE;
 
 public class MonitorInstruction extends IntrinsicMethod {
 
