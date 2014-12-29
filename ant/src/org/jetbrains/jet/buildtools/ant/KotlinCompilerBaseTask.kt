@@ -56,10 +56,6 @@ object CompilerClassLoaderHolder {
     }
 }
 
-/**
- * Base class for Kotlin compiler Ant tasks.
- * http://evgeny-goldin.org/javadoc/ant/tutorial-writing-tasks.html
- */
 public abstract class KotlinCompilerBaseTask : Task() {
     protected abstract val compilerFqName: String
 
