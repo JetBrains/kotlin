@@ -47,6 +47,8 @@ import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
+import org.jetbrains.jet.analyzer.ModuleInfo
+import com.intellij.openapi.module.Module
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 

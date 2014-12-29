@@ -27,8 +27,9 @@ import org.jetbrains.jet.lang.resolve.android.AndroidManifest
 import com.intellij.openapi.module.ModuleManager
 import java.util.ArrayList
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.module.Module
 
-public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
+public class IDEAndroidResourceManager(val module: Module, searchPath: String?) : AndroidResourceManagerBase(module.getProject(), searchPath) {
 
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
         val directories = getAndroidFacet()?.getAllResourceDirectories() ?: listOf()
@@ -38,17 +39,13 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
     }
 
     private fun getAndroidFacet(): AndroidFacet? {
-        for (module in ModuleManager.getInstance(project).getModules()) {
-            val facet = AndroidFacet.getInstance(module)
-            if (facet != null) return facet
-        }
-        return null
+        return AndroidFacet.getInstance(module)
     }
 
     override fun readManifest(): AndroidManifest {
         val facet = getAndroidFacet()
         val attributeValue = facet?.getManifest()!!.getPackage()
-        return AndroidManifest(attributeValue!!.getRawText()!!)
+        return AndroidManifest(attributeValue.getRawText())
     }
 
     override fun idToXmlAttribute(id: String): PsiElement? {

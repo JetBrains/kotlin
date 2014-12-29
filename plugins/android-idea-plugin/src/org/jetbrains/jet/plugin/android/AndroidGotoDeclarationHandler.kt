@@ -30,6 +30,9 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.jet.lang.resolve.android.isRClassField
 import com.intellij.psi.PsiField
+import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
+import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
@@ -41,10 +44,13 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
             }
             else null
             if (name != null) {
-                val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
-                val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
+                val moduleInfo = sourceElement.getModuleInfo()
+                if (moduleInfo !is ModuleSourceInfo) return null
+
+                val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+                val psiElement = parser.resourceManager.idToXmlAttribute(name) as? XmlAttribute
                 if (psiElement != null) {
-                    return array(psiElement.getValueElement()!!)
+                    return array(psiElement.getValueElement())
                 }
             }
         }

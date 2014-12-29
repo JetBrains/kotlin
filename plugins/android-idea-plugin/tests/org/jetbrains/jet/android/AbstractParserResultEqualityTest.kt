@@ -28,6 +28,7 @@ import org.jetbrains.jet.plugin.android.TestConst
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import com.intellij.openapi.module.ModuleManager
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
@@ -35,7 +36,7 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
         project.putUserData(TestConst.TESTDATA_PATH, path)
         myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
         val cliParser = CliAndroidUIXmlProcessor(project, path + getResDir() + "/layout/", path + "../AndroidManifest.xml")
-        val ideParser = IDEAndroidUIXmlProcessor(project)
+        val ideParser = IDEAndroidUIXmlProcessor(ModuleManager.getInstance(project).getModules()[0])
 
         val cliResult = cliParser.parseToPsi(project)!!.getText()
         val ideResult = ideParser.parseToPsi(project)!!.getText()

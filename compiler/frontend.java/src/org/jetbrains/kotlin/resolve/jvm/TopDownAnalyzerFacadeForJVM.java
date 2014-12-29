@@ -116,7 +116,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
-        List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, files);
+        List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
 
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), allFiles);
