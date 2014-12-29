@@ -17,10 +17,6 @@
 package org.jetbrains.jet.preloading;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -30,19 +26,6 @@ import java.util.zip.ZipInputStream;
 
 @SuppressWarnings("unchecked")
 public class ClassPreloadingUtils {
-
-    public static abstract class ClassHandler {
-        public byte[] instrument(String resourceName, byte[] data) {
-            return data;
-        }
-
-        public void beforeDefineClass(String name, int sizeInBytes) {}
-        public void afterDefineClass(String name) {}
-
-        public void beforeLoadJar(File jarFile) {}
-        public void afterLoadJar(File jarFile) {}
-    }
-
     /**
      * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
      *
@@ -70,7 +53,7 @@ public class ClassPreloadingUtils {
             parentClassLoader = preloadClasses(classpath, classCountEstimation, parentClassLoader, null, handler);
         }
 
-        return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
+        return new MemoryBasedClassLoader(classesToLoadByParent, parentClassLoader, entries, handler);
     }
 
     public static ClassLoader preloadClasses(
@@ -114,109 +97,6 @@ public class ClassPreloadingUtils {
         }
 
         return classpath;
-    }
-
-    private static ClassLoader createMemoryBasedClassLoader(
-            final ClassLoader parent,
-            final Map<String, Object> preloadedResources,
-            final ClassHandler handler,
-            final ClassCondition classesToLoadByParent
-    ) {
-        return new ClassLoader(null) {
-            @Override
-            public Class<?> loadClass(String name) throws ClassNotFoundException {
-                if (classesToLoadByParent != null && classesToLoadByParent.accept(name)) {
-                    if (parent == null) {
-                        return super.loadClass(name);
-                    }
-
-                    try {
-                        return parent.loadClass(name);
-                    }
-                    catch (ClassNotFoundException e) {
-                        return super.loadClass(name);
-                    }
-                }
-
-                // Look in this class loader and then in the parent one
-                Class<?> aClass = super.loadClass(name);
-                if (aClass == null) {
-                    if (parent == null) {
-                        throw new ClassNotFoundException("Class not available in preloader: " + name);
-                    }
-                    return parent.loadClass(name);
-                }
-                return aClass;
-            }
-
-            @Override
-            protected Class<?> findClass(String name) throws ClassNotFoundException {
-                String internalName = name.replace('.', '/').concat(".class");
-                Object resources = preloadedResources.get(internalName);
-                if (resources == null) return null;
-
-                ResourceData resourceData = resources instanceof ResourceData
-                                            ? ((ResourceData) resources)
-                                            : ((List<ResourceData>) resources).get(0);
-
-                int sizeInBytes = resourceData.bytes.length;
-                if (handler != null) {
-                    handler.beforeDefineClass(name, sizeInBytes);
-                }
-
-                Class<?> definedClass = defineClass(name, resourceData.bytes, 0, sizeInBytes);
-
-                if (handler != null) {
-                    handler.afterDefineClass(name);
-                }
-
-                return definedClass;
-            }
-
-            @Override
-            public URL getResource(String name) {
-                URL resource = super.getResource(name);
-                if (resource == null && parent != null) {
-                    return parent.getResource(name);
-                }
-                return resource;
-            }
-
-            @Override
-            protected URL findResource(String name) {
-                Enumeration<URL> resources = findResources(name);
-                return resources.hasMoreElements() ? resources.nextElement() : null;
-            }
-
-            @Override
-            public Enumeration<URL> getResources(String name) throws IOException {
-                Enumeration<URL> resources = super.getResources(name);
-                if (!resources.hasMoreElements() && parent != null) {
-                    return parent.getResources(name);
-                }
-                return resources;
-            }
-
-            @Override
-            protected Enumeration<URL> findResources(String name) {
-                Object resources = preloadedResources.get(name);
-                if (resources == null) {
-                    return Collections.enumeration(Collections.<URL>emptyList());
-                }
-                else if (resources instanceof ResourceData) {
-                    return Collections.enumeration(Collections.singletonList(((ResourceData) resources).getURL()));
-                }
-                else {
-                    assert resources instanceof ArrayList : name;
-                    List<ResourceData> resourceDatas = (ArrayList<ResourceData>) resources;
-                    List<URL> urls = new ArrayList<URL>(resourceDatas.size());
-                    for (ResourceData data : resourceDatas) {
-                        urls.add(data.getURL());
-                    }
-                    return Collections.enumeration(urls);
-                }
-            }
-        };
     }
 
     /**
@@ -298,42 +178,5 @@ public class ClassPreloadingUtils {
         }
 
         return resources;
-    }
-
-    private static final class ResourceData {
-        private final File jarFile;
-        private final String resourceName;
-        private final byte[] bytes;
-
-        public ResourceData(File jarFile, String resourceName, byte[] bytes) {
-            this.jarFile = jarFile;
-            this.resourceName = resourceName;
-            this.bytes = bytes;
-        }
-
-        public URL getURL() {
-            try {
-                String path = "file:" + jarFile + "!/" + resourceName;
-                return new URL("jar", null, 0, path, new URLStreamHandler() {
-                    @Override
-                    protected URLConnection openConnection(URL u) throws IOException {
-                        return new URLConnection(u) {
-                            @Override
-                            public void connect() throws IOException {}
-
-                            @Override
-                            public InputStream getInputStream() throws IOException {
-                                return new ByteArrayInputStream(bytes);
-                            }
-                        };
-                    }
-                });
-            }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
     }
 }
