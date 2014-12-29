@@ -1,0 +1,6 @@
+package
+
+package test {
+    internal fun bar(): kotlin.Int
+    internal fun foo(): kotlin.Int
+}
