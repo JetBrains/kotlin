@@ -1921,6 +1921,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/ReturnFromFunctionInObject.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("simpleClass.kt")
+                public void testSimpleClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/simpleClass.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -4718,6 +4724,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ImportsHiddenByDefinitionInTheSameFile.kt")
             public void testImportsHiddenByDefinitionInTheSameFile() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsHiddenByDefinitionInTheSameFile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyClassFileDependencyRecursion.kt")
+            public void testPropertyClassFileDependencyRecursion() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/propertyClassFileDependencyRecursion.kt");
                 doTest(fileName);
             }
 
@@ -9609,6 +9621,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("NoAmbiguityBetweenRootAndPackage.kt")
             public void testNoAmbiguityBetweenRootAndPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/NoAmbiguityBetweenRootAndPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sameClassNameResolve.kt")
+            public void testSameClassNameResolve() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/sameClassNameResolve.kt");
                 doTest(fileName);
             }
 
