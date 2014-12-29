@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
@@ -28,7 +29,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.Predicate;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,9 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
 
@@ -213,23 +215,22 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     // implements a method added in 14.1
     @NotNull
     public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        List<PsiFile> result = new ArrayList<PsiFile>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
-        result.addAll(lightClassGenerationSupport.findFilesForPackage(packageFQN, scope));
+        Collection<JetFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
         return result.toArray(new PsiFile[result.size()]);
     }
 
     // implements a method added in IDEA 14.1
     @SuppressWarnings({"UnusedDeclaration", "MethodMayBeStatic"})
     @Nullable
-    public Predicate<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        return new Predicate<PsiFile>() {
+    public Condition<PsiFile> getPackageFilesFilter(@NotNull final PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        return new Condition<PsiFile>() {
             @Override
-            public boolean apply(@Nullable PsiFile input) {
-                if (input instanceof JetFile && !(psiPackage.getQualifiedName().equals(((JetFile) input).getPackageFqName().asString()))) {
-                    return false;
+            public boolean value(@Nullable PsiFile input) {
+                if (!(input instanceof JetFile)) {
+                    return true;
                 }
-                return true;
+                return psiPackage.getQualifiedName().equals(((JetFile) input).getPackageFqName().asString());
             }
         };
     }
