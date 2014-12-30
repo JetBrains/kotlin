@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
+import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
 
 private enum class RenameType {
     JAVA_CLASS
@@ -58,7 +59,7 @@ private enum class RenameType {
     KOTLIN_PACKAGE
 }
 
-public abstract class AbstractRenameTest : MultiFileTestCase() {
+public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     inner class TestContext(
             val project: Project = getProject()!!,
             val javaFacade: JavaPsiFacade = getJavaFacade()!!,
@@ -168,7 +169,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val fileFqn = jetFile.getPackageFqName()
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
 
-            val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size - 1]
+            val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size() - 1]
             val segmentReference = packageSegment.getReference()!!
 
             val psiElement = segmentReference.resolve()!!

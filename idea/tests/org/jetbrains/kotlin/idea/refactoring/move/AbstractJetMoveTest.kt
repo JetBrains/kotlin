@@ -55,8 +55,9 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
 
-public abstract class AbstractJetMoveTest : MultiFileTestCase() {
+public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
     protected fun doTest(path: String) {
         fun extractCaretOffset(doc: Document): Int {
             return runWriteAction {
@@ -64,7 +65,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
                 val offset = text.indexOf("<caret>")
 
                 if (offset >= 0) {
-                    text.delete(offset, offset + "<caret>".length)
+                    text.delete(offset, offset + "<caret>".length())
                     doc.setText(text.toString())
                 }
 
