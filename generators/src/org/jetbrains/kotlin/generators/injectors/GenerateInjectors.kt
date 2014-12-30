@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
-import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
+import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -129,7 +129,7 @@ private fun generatorForTopDownAnalyzerForJs() =
             publicField<LazyTopDownAnalyzer>()
 
             field<MutablePackageFragmentProvider>()
-            field<KotlinJsDeclarationCheckerProvider>()
+            field<KotlinJsCheckerProvider>()
             field<DynamicTypesAllowed>()
         }
 
