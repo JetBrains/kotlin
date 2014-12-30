@@ -82,7 +82,6 @@
         <!--because it is used in tests but cannot be added as test-dependency-->
         <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
         <module>tools/kotlin-js-library</module>
-        <module>tools/kotlin-gradle-plugin-test</module>
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-core</module>
         <module>tools/kotlin-maven-plugin</module>
