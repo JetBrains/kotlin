@@ -30,58 +30,12 @@ public class CallResolverExtensionProvider {
             new CompositeChecker(Arrays.asList(
                     new NeedSyntheticChecker(),
                     new ReifiedTypeParameterSubstitutionChecker(),
-                    new CapturingInClosureChecker()
+                    new CapturingInClosureChecker(),
+                    new InlineCheckerWrapper()
             ));
-
-    private WeakReference<Map<DeclarationDescriptor, List<CallChecker>>> extensionsCache;
 
     @NotNull
     public CallChecker createExtension(@Nullable DeclarationDescriptor descriptor, boolean isAnnotationContext) {
-        if (descriptor == null || isAnnotationContext) {
-            return DEFAULT;
-        }
-        return new CompositeChecker(createExtensions(descriptor));
-    }
-
-    // create extension list with default one at the end
-    @NotNull
-    private List<CallChecker> createExtensions(@NotNull DeclarationDescriptor declaration) {
-        Map<DeclarationDescriptor, List<CallChecker>> map;
-        if (extensionsCache == null || (map = extensionsCache.get()) == null) {
-            map = new HashMap<DeclarationDescriptor, List<CallChecker>>();
-            extensionsCache = new WeakReference<Map<DeclarationDescriptor, List<CallChecker>>>(map);
-        }
-
-        List<CallChecker> extensions = map.get(declaration);
-        if (extensions != null) {
-            return extensions;
-        }
-
-        extensions = new ArrayList<CallChecker>();
-
-        DeclarationDescriptor parent = declaration.getContainingDeclaration();
-        if (parent != null) {
-            extensions.addAll(createExtensions(parent));
-            extensions.remove(extensions.size() - 1);//remove default from parent list
-        }
-
-        appendExtensionsFor(declaration, extensions);
-
-        List<CallChecker> immutableResult = Collections.unmodifiableList(extensions);
-        map.put(declaration, immutableResult);
-
-        return immutableResult;
-    }
-
-    // with default one at the end
-    private static void appendExtensionsFor(DeclarationDescriptor declarationDescriptor, List<CallChecker> extensions) {
-        if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
-            SimpleFunctionDescriptor descriptor = (SimpleFunctionDescriptor) declarationDescriptor;
-            if (descriptor.getInlineStrategy().isInline()) {
-                extensions.add(new InlineChecker(descriptor));
-            }
-        }
-        // add your checkers here
-        extensions.add(DEFAULT);
+        return DEFAULT;
     }
 }
