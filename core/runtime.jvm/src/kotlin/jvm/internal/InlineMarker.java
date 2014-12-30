@@ -25,13 +25,4 @@ public class InlineMarker {
     public static void afterInlineCall() {
 
     }
-
-    public static void beforeLambdaCall() {
-
-    }
-
-    public static void afterLambdaCall() {
-
-    }
-
 }
