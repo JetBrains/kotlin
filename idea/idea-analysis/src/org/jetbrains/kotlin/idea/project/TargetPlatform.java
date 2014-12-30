@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider;
-import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesAllowed;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -30,6 +30,6 @@ public interface TargetPlatform {
     @NotNull
     DynamicTypesSettings getDynamicTypesSettings();
 
-    TargetPlatform JVM = new TargetPlatformImpl("JVM", JavaDeclarationCheckerProvider.INSTANCE$, new DynamicTypesSettings());
+    TargetPlatform JVM = new TargetPlatformImpl("JVM", KotlinJvmCheckerProvider.INSTANCE$, new DynamicTypesSettings());
     TargetPlatform JS = new TargetPlatformImpl("JS", KotlinJsDeclarationCheckerProvider.INSTANCE$, new DynamicTypesAllowed());
 }

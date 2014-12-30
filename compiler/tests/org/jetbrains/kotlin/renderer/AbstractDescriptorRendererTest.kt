@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
@@ -55,7 +55,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 getProject(), globalContext, lazyModule,
                 FileBasedDeclarationProviderFactory(globalContext.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                JavaDeclarationCheckerProvider, DynamicTypesSettings()).getResolveSession()
+                KotlinJvmCheckerProvider, DynamicTypesSettings()).getResolveSession()
 
         lazyModule.initialize(resolveSession.getPackageFragmentProvider())
 
