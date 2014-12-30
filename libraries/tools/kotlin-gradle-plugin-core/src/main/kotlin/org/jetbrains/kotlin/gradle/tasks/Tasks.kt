@@ -10,7 +10,6 @@ import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
-import org.apache.commons.io.FilenameUtils
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.common.messages.MessageCollector
@@ -51,7 +50,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         getLogger().debug("Starting ${javaClass} task")
         val args = createBlankArgs()
         val sources = getKotlinSources()
-        if (sources.empty) {
+        if (sources.isEmpty()) {
             getLogger().warn("No Kotlin files found, skipping Kotlin compiler task")
             return
         }
@@ -253,7 +252,7 @@ public open class KDoc() : SourceTask() {
 
         val kdocOptions = kdocArgs.docConfig
 
-        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length == 0) && (destinationDir != null)) {
+        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length() == 0) && (destinationDir != null)) {
             destinationDir!!.path
         } else {
             kdocOptions.docOutputDir
@@ -277,7 +276,7 @@ public open class KDoc() : SourceTask() {
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.makeString(File.pathSeparator)
+        args.annotations = allAnnotations.joinToString(File.pathSeparator)
 
         args.noStdlib = true
         args.noJdkAnnotations = true
@@ -297,6 +296,7 @@ public open class KDoc() : SourceTask() {
 }
 
 fun getAnnotations(project: Project, logger: Logger): Collection<File> {
+    [suppress("UNCHECKED_CAST")]
     val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
     if (!annotations.isEmpty()) {
