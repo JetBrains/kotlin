@@ -6,27 +6,28 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin-core:0.1-SNAPSHOT'
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
   }
 }
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
 
-apply plugin: KotlinPlugin
 
-sourceSets {
-  main {
-     kotlin {
-        srcDir 'src'
-     }
-  }
-}
+apply plugin: "kotlin"
+apply plugin: 'java'
 
 repositories {
   maven {
      url 'file://' + pathToKotlinPlugin
   }
   mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'generated/'
+        }
+    }
 }
 
 dependencies {
@@ -39,11 +40,13 @@ test {
     useTestNG()
 }
 
+task show << {
+   buildscript.configurations.classpath.each { println it }
+}
+
+
 compileKotlin {
-    kotlinOptions.noInline = true
-    kotlinOptions.noOptimize = true
-    kotlinOptions.noCallAssertions = true
-    kotlinOptions.noParamAssertions = true
+    kotlinOptions.annotations = "externalAnnotations"
 }
 
 
