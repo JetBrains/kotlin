@@ -37,11 +37,11 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
     public fun doTest(path: String) {
         val jetCoreEnvironment = getEnvironment(path)
-        val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), path + "/layout", path + "AndroidManifest.xml")
+        val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.getProject(), path + "AndroidManifest.xml", path + "/layout")
 
-        val actual = parser.parseToString()
+        val actual = parser.parse()
 
-        JetTestUtils.assertEqualsToFile(File(path + "/layout.kt"), actual!!)
+        JetTestUtils.assertEqualsToFile(File(path + "/layout.kt"), actual)
     }
 
     public fun doNoManifestTest(path: String) {
@@ -55,8 +55,6 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
     private fun getEnvironment(testPath: String): JetCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-//        configuration.put<String>(JVMConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
-//        configuration.put<String>(JVMConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
         return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

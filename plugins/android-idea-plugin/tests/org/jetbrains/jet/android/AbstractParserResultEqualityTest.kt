@@ -32,14 +32,14 @@ import com.intellij.openapi.module.ModuleManager
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
-        val project = myFixture!!.getProject()
+        val project = myFixture.getProject()
         project.putUserData(TestConst.TESTDATA_PATH, path)
-        myFixture!!.copyDirectoryToProject(getResDir()!!, "res")
-        val cliParser = CliAndroidUIXmlProcessor(project, path + getResDir() + "/layout/", path + "../AndroidManifest.xml")
+        myFixture.copyDirectoryToProject(getResDir(), "res")
+        val cliParser = CliAndroidUIXmlProcessor(project, path + "../AndroidManifest.xml", path + getResDir() + "/layout/")
         val ideParser = IDEAndroidUIXmlProcessor(ModuleManager.getInstance(project).getModules()[0])
 
-        val cliResult = cliParser.parseToPsi(project)!!.getText()
-        val ideResult = ideParser.parseToPsi(project)!!.getText()
+        val cliResult = cliParser.parseToPsi()!!.getText()
+        val ideResult = ideParser.parseToPsi()!!.getText()
 
         assertEquals(cliResult, ideResult)
     }

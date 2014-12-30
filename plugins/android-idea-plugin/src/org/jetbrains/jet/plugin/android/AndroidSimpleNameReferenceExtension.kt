@@ -33,7 +33,7 @@ public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension 
         }
         if (isAndroidSyntheticElement(resolvedElement)) {
             if (element is ValueResourceElementWrapper) {
-                val resource = element.getValue()!!
+                val resource = element.getValue()
                 return (resolvedElement as JetProperty).getName() == resource.substring(resource.indexOf('/') + 1)
             }
         }

@@ -32,7 +32,7 @@ public class IDEAndroidExternalDeclarationsProvider(private val project: Project
 
         val module = moduleInfo.module
         val parser = ModuleServiceManager.getService<AndroidUIXmlProcessor>(module, javaClass<AndroidUIXmlProcessor>())
-        val syntheticFile = parser.parseToPsi(project)
+        val syntheticFile = parser.parseToPsi()
         syntheticFile?.moduleInfo = moduleInfo
 
         return if (syntheticFile != null) listOf(syntheticFile) else listOf()

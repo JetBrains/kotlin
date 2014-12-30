@@ -22,8 +22,13 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
+import org.jetbrains.jet.lang.resolve.android.idToName
+import org.jetbrains.jet.lang.resolve.android.AndroidConst
 
-class AndroidXmlVisitor(val resourceManager: AndroidResourceManager, val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
+class AndroidXmlVisitor(
+        val resourceManager: AndroidResourceManager,
+        val elementCallback: (String, String, XmlAttribute) -> Unit
+) : XmlElementVisitor() {
 
     override fun visitElement(element: PsiElement) {
         element.acceptChildren(this)
@@ -34,10 +39,10 @@ class AndroidXmlVisitor(val resourceManager: AndroidResourceManager, val element
     }
 
     override fun visitXmlTag(tag: XmlTag?) {
-        val attribute = tag?.getAttribute(resourceManager.idAttribute)
+        val attribute = tag?.getAttribute(AndroidConst.idAttribute)
         if (attribute != null && attribute.getValue() != null) {
-            val classNameAttr = tag?.getAttribute(resourceManager.classAttributeNoNamespace)?.getValue() ?: tag?.getLocalName()
-            elementCallback(resourceManager.idToName(attribute.getValue()), classNameAttr!!, attribute)
+            val classNameAttr = tag?.getAttribute(AndroidConst.classAttributeNoNamespace)?.getValue() ?: tag?.getLocalName()
+            elementCallback(idToName(attribute.getValue()), classNameAttr!!, attribute)
         }
         tag?.acceptChildren(this)
     }

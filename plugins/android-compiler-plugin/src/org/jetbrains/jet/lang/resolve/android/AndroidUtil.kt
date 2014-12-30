@@ -26,25 +26,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.jet.utils.emptyOrSingletonList
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
-
-trait AndroidResource
-
-class AndroidID(val rawID: String) : AndroidResource {
-
-    override fun equals(other: Any?): Boolean {
-        return other is AndroidID && this.rawID == other.rawID
-    }
-    override fun hashCode(): Int {
-        return rawID.hashCode()
-    }
-    override fun toString(): String {
-        return rawID
-    }
-}
-
-public class AndroidWidget(val id: String, val className: String) : AndroidResource
-
-public class AndroidManifest(public val _package: String) : AndroidResource
+import com.intellij.openapi.module.ModuleServiceManager
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
     return f?.getUserData(org.jetbrains.jet.lang.resolve.android.AndroidConst.ANDROID_USER_PACKAGE) != null
@@ -54,16 +36,4 @@ public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
     return isAndroidSyntheticFile(ApplicationManager.getApplication()!!.runReadAction(Computable {
         element?.getContainingFile()
     }))
-}
-
-public fun isRClassField(element: PsiElement): Boolean {
-    return if (element is PsiField) {
-        val outerClass = element.getParent()?.getParent()
-        if (outerClass !is PsiClass) return false
-        val processor = ServiceManager.getService<AndroidUIXmlProcessor>(element.getProject(), javaClass<AndroidUIXmlProcessor>())
-        val packageName = processor?.resourceManager?.readManifest()?._package
-        if ((outerClass : PsiClass).getQualifiedName()?.startsWith(packageName ?: "") ?: false)
-        true else false
-    }
-    else false
 }

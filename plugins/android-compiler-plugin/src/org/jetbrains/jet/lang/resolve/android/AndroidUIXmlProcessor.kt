@@ -46,115 +46,65 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import java.util.Queue
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
-import org.jetbrains.jet.analyzer.ModuleInfo
 import com.intellij.openapi.module.Module
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.CachedValueProvider.Result
+import java.util.concurrent.atomic.AtomicInteger
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.ModificationTracker
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
-    private enum class CacheAction { HIT; MISS }
-
     private val androidImports = arrayListOf("android.app.Activity",
                                      "android.view.View",
                                      "android.widget.*")
 
-    protected abstract val searchPath: String?
-    protected abstract val androidAppPackage: String
+    private val cachedSourceText = CachedValuesManager.getManager(project).createCachedValue {
+        Result.create(parse(), ProjectRootModificationTracker.getInstance(project))
+    }
 
-    private val fileCache = HashMap<PsiFile, String>()
-    var lastCachedPsi: JetFile? = null
-        private set
-    protected val fileModificationTime: HashMap<PsiFile, Long> = HashMap()
+    private val cachedJetFile = CachedValuesManager.getManager(project).createCachedValue {
+        //TODO: dep checking .. cachedSourceText.getValue()
+        val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME, parse()) //cachedSourceTest.getValue()
+        val jetFile = PsiManager.getInstance(project).findFile(virtualFile) as JetFile
 
-    protected val filesToProcess: Queue<PsiFile> = ConcurrentLinkedQueue()
+        val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
+        if (applicationPackage != null) jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
+
+        Result.create(jetFile, cachedSourceText)
+    }
 
     public abstract val resourceManager: AndroidResourceManager
 
-    protected val LOG: Logger = Logger.getInstance(this.javaClass)
+    protected val LOG: Logger = Logger.getInstance(javaClass)
 
-    public fun parseToString(): String? {
-        val cacheState = doParse()
-        if (cacheState == null) return null
-        return renderString()
-    }
-
-
-    public fun parseToPsi(project: Project): JetFile? {
-        val cacheState = doParse()
-        if (cacheState == null) return null
-        return if (cacheState == CacheAction.MISS || lastCachedPsi == null) {
-            try {
-                val vf = LightVirtualFile(SYNTHETIC_FILENAME, renderString())
-                val psiFile = PsiManager.getInstance(project).findFile(vf) as JetFile
-                psiFile.putUserData(ANDROID_USER_PACKAGE, androidAppPackage)
-                lastCachedPsi = psiFile
-                psiFile
-            }
-            catch (e: Exception) {
-                invalidateCaches()
-                null
-            }
-        }
-        else lastCachedPsi
-    }
-
-    private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
-        kw.writePackage(androidAppPackage)
-        for (elem in androidImports)
-            kw.writeImport(elem)
-        kw.writeEmptyLine()
-        return kw
-    }
-
-    private fun parseSingleFileWithCache(file: PsiFile): Pair<String, CacheAction> {
-        val lastRecorded = fileModificationTime[file] ?: -1
-        if (file.getModificationStamp() > lastRecorded)
-            return Pair(parseSingleFile(file), CacheAction.MISS)
-        else
-            return Pair(fileCache[file]!!, CacheAction.HIT)
-    }
-
-    private fun parseSingleFile(file: PsiFile): String {
-        val res = parseSingleFileImpl(file)
-        fileModificationTime[file] = file.getModificationStamp()
-        fileCache[file] = res
-        return res
-    }
-
-    protected abstract fun parseSingleFileImpl(file: PsiFile): String
-
-    private fun doParse(): CacheAction? {
-        if (searchPath == null || searchPath == "") return null
-        populateQueue()
-        var overallCacheMiss = false
-        var file = filesToProcess.poll()
-        while (file != null) {
-            val res = parseSingleFileWithCache(file!!)
-            overallCacheMiss = overallCacheMiss or (res.second == CacheAction.MISS)
-            file = filesToProcess.poll()
-        }
-        return if (overallCacheMiss) CacheAction.MISS else CacheAction.HIT
-    }
-
-    private fun renderString(): String {
+    public fun parse(): String {
         val buffer = writeImports(KotlinStringWriter()).output()
-        for (buf in fileCache.entrySet().sortBy({it.key.getName()}))
-            buffer.append(buf.value)
+        for (file in resourceManager.getLayoutXmlFiles()) {
+            buffer.append(parseSingleFile(file))
+        }
         return buffer.toString()
     }
 
-    private fun invalidateCaches() {
-        fileCache.clear()
-        fileModificationTime.clear()
-        lastCachedPsi = null
-    }
+    public fun parseToPsi(): JetFile? = cachedJetFile.getValue()
 
-    protected fun populateQueue() {
-        filesToProcess.addAll(resourceManager.getLayoutXmlFiles())
-    }
+    protected abstract fun parseSingleFile(file: PsiFile): String
 
+    private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
+        val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
+        if (applicationPackage != null) kw.writePackage(applicationPackage)
+
+        for (elem in androidImports) {
+            kw.writeImport(elem)
+        }
+
+        kw.writeEmptyLine()
+        return kw
+    }
 
     protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
         for (id in ids) {

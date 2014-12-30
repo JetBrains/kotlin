@@ -29,12 +29,12 @@ class KotlinStringWriter : KotlinWriter {
     fun writeFunction(name: String,
                       args: Collection<String>?,
                       retType: String,
-                      stmts: Collection<String>) {
+                      statements: Collection<String>) {
         val returnTerm = if (retType == "" || retType == "Unit") "" else ": $retType"
         val argStr = if (args != null) args.join(", ") else ""
         body.writeln("fun $name($argStr)$returnTerm {")
         body.incIndent()
-        for (stmt in stmts)
+        for (stmt in statements)
             body.writeln(stmt)
         body.decIndent()
         body.writeln("}")

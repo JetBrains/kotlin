@@ -24,6 +24,7 @@ import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetProperty
 
@@ -42,9 +43,10 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
         val element = TargetElementUtilBase.findTargetElement(completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
         assert(element != null)
+        assertTrue(element is JetProperty)
 
         // rename xml attribute by property
-        renameElementWithTextOccurences(element!!, NEW_NAME)
+        renameElementWithTextOccurences(element, NEW_NAME)
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
         assertEquals("\"@+id/$NEW_NAME\"", resolved?.getText())
 
