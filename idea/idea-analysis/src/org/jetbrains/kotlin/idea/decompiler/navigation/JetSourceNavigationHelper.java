@@ -264,7 +264,7 @@ public class JetSourceNavigationHelper {
                 moduleDescriptor,
                 providerFactory,
                 new BindingTraceContext(),
-                AdditionalCheckerProvider.Empty.INSTANCE$,
+                AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
                 new DynamicTypesSettings()).getResolveSession();
 
         moduleDescriptor.initialize(resolveSession.getPackageFragmentProvider());
