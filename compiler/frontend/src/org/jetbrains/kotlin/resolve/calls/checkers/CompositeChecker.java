@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.extensions;
+package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 import java.util.List;
 
-public class CompositeExtension implements CallResolverExtension {
+public class CompositeChecker implements CallChecker {
 
-    private final List<CallResolverExtension> extensions;
+    private final List<CallChecker> extensions;
 
-    public CompositeExtension(@NotNull List<CallResolverExtension> extensions) {
+    public CompositeChecker(@NotNull List<CallChecker> extensions) {
         this.extensions = extensions;
     }
 
     @Override
-    public <F extends CallableDescriptor> void run(
+    public <F extends CallableDescriptor> void check(
             @NotNull ResolvedCall<F> resolvedCall,
             @NotNull BasicCallResolutionContext context
     ) {
-        for (CallResolverExtension resolverExtension : extensions) {
-            resolverExtension.run(resolvedCall, context);
+        for (CallChecker resolverExtension : extensions) {
+            resolverExtension.check(resolvedCall, context);
         }
     }
 }

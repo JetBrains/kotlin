@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.extensions;
+package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,38 +26,38 @@ import java.util.*;
 
 public class CallResolverExtensionProvider {
 
-    private final static CompositeExtension DEFAULT =
-            new CompositeExtension(Arrays.asList(
-                    new NeedSyntheticCallResolverExtension(),
-                    new ReifiedTypeParameterSubstitutionCheck(),
-                    new CapturingInClosureExtension()
+    private final static CompositeChecker DEFAULT =
+            new CompositeChecker(Arrays.asList(
+                    new NeedSyntheticChecker(),
+                    new ReifiedTypeParameterSubstitutionChecker(),
+                    new CapturingInClosureChecker()
             ));
 
-    private WeakReference<Map<DeclarationDescriptor, List<CallResolverExtension>>> extensionsCache;
+    private WeakReference<Map<DeclarationDescriptor, List<CallChecker>>> extensionsCache;
 
     @NotNull
-    public CallResolverExtension createExtension(@Nullable DeclarationDescriptor descriptor, boolean isAnnotationContext) {
+    public CallChecker createExtension(@Nullable DeclarationDescriptor descriptor, boolean isAnnotationContext) {
         if (descriptor == null || isAnnotationContext) {
             return DEFAULT;
         }
-        return new CompositeExtension(createExtensions(descriptor));
+        return new CompositeChecker(createExtensions(descriptor));
     }
 
     // create extension list with default one at the end
     @NotNull
-    private List<CallResolverExtension> createExtensions(@NotNull DeclarationDescriptor declaration) {
-        Map<DeclarationDescriptor, List<CallResolverExtension>> map;
+    private List<CallChecker> createExtensions(@NotNull DeclarationDescriptor declaration) {
+        Map<DeclarationDescriptor, List<CallChecker>> map;
         if (extensionsCache == null || (map = extensionsCache.get()) == null) {
-            map = new HashMap<DeclarationDescriptor, List<CallResolverExtension>>();
-            extensionsCache = new WeakReference<Map<DeclarationDescriptor, List<CallResolverExtension>>>(map);
+            map = new HashMap<DeclarationDescriptor, List<CallChecker>>();
+            extensionsCache = new WeakReference<Map<DeclarationDescriptor, List<CallChecker>>>(map);
         }
 
-        List<CallResolverExtension> extensions = map.get(declaration);
+        List<CallChecker> extensions = map.get(declaration);
         if (extensions != null) {
             return extensions;
         }
 
-        extensions = new ArrayList<CallResolverExtension>();
+        extensions = new ArrayList<CallChecker>();
 
         DeclarationDescriptor parent = declaration.getContainingDeclaration();
         if (parent != null) {
@@ -67,21 +67,21 @@ public class CallResolverExtensionProvider {
 
         appendExtensionsFor(declaration, extensions);
 
-        List<CallResolverExtension> immutableResult = Collections.unmodifiableList(extensions);
+        List<CallChecker> immutableResult = Collections.unmodifiableList(extensions);
         map.put(declaration, immutableResult);
 
         return immutableResult;
     }
 
     // with default one at the end
-    private static void appendExtensionsFor(DeclarationDescriptor declarationDescriptor, List<CallResolverExtension> extensions) {
+    private static void appendExtensionsFor(DeclarationDescriptor declarationDescriptor, List<CallChecker> extensions) {
         if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor descriptor = (SimpleFunctionDescriptor) declarationDescriptor;
             if (descriptor.getInlineStrategy().isInline()) {
-                extensions.add(new InlineCallResolverExtension(descriptor));
+                extensions.add(new InlineChecker(descriptor));
             }
         }
-        // add your extensions here
+        // add your checkers here
         extensions.add(DEFAULT);
     }
 }

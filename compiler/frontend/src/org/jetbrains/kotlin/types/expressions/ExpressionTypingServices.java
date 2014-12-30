@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtension;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtensionProvider;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallResolverExtensionProvider;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -361,7 +361,7 @@ public class ExpressionTypingServices {
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
         return ExpressionTypingContext.newContext(
                 trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency, oldContext.resolutionResultsCache,
-                oldContext.callResolverExtension, oldContext.isAnnotationContext);
+                oldContext.callChecker, oldContext.isAnnotationContext);
     }
 
     @Nullable
@@ -417,7 +417,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public CallResolverExtension createExtension(@NotNull JetScope scope, boolean isAnnotationContext) {
+    public CallChecker createExtension(@NotNull JetScope scope, boolean isAnnotationContext) {
         return extensionProvider.createExtension(scope == JetScope.Empty.INSTANCE$ ? null : scope.getContainingDeclaration(), isAnnotationContext);
     }
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.extensions;
+package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
-public interface CallResolverExtension {
-    <F extends CallableDescriptor> void run(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context);
+public interface CallChecker {
+    <F extends CallableDescriptor> void check(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context);
 }

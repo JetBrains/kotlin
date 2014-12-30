@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.extensions;
+package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.Map;
 
-public class ReifiedTypeParameterSubstitutionCheck implements CallResolverExtension {
+public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
     @Override
-    public <F extends CallableDescriptor> void run(
+    public <F extends CallableDescriptor> void check(
             @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
     ) {
         Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();

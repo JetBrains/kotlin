@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.extensions;
+package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -46,7 +46,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
 import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
 
-public class InlineCallResolverExtension implements CallResolverExtension {
+public class InlineChecker implements CallChecker {
 
     private final SimpleFunctionDescriptor descriptor;
 
@@ -54,7 +54,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
     private final boolean isEffectivelyPublicApiFunction;
 
-    public InlineCallResolverExtension(@NotNull SimpleFunctionDescriptor descriptor) {
+    public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert descriptor.getInlineStrategy().isInline() : "This extension should be created only for inline functions but not " + descriptor;
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
@@ -75,7 +75,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     }
 
     @Override
-    public <F extends CallableDescriptor> void run(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context) {
+    public <F extends CallableDescriptor> void check(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context) {
         JetExpression expression = context.call.getCalleeExpression();
         if (expression == null) {
             return;
