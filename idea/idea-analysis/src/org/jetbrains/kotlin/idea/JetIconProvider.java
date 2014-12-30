@@ -68,9 +68,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         Icon result = getBaseIcon(psiElement);
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
             JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
-            if (list != null) {
-                result = createRowIcon(result, getVisibilityIcon(list));
-            }
+            result = createRowIcon(result, getVisibilityIcon(list));
         }
         return result;
     }
@@ -82,16 +80,19 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         return rowIcon;
     }
 
-    public static Icon getVisibilityIcon(JetModifierList list) {
-        if (list.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-            return PlatformIcons.PRIVATE_ICON;
+    public static Icon getVisibilityIcon(@Nullable JetModifierList list) {
+        if (list != null) {
+            if (list.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                return PlatformIcons.PRIVATE_ICON;
+            }
+            if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+                return PlatformIcons.PROTECTED_ICON;
+            }
+            if (list.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
+                return PlatformIcons.PUBLIC_ICON;
+            }
         }
-        if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
-            return PlatformIcons.PROTECTED_ICON;
-        }
-        if (list.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-            return PlatformIcons.PUBLIC_ICON;
-        }
+
         return PlatformIcons.PACKAGE_LOCAL_ICON;
     }
 
