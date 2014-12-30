@@ -5,9 +5,9 @@ kotlin.js.nativeSetter() internal fun kotlin.String.foo(/*0*/ n: kotlin.Int, /*1
 
 kotlin.js.native() internal final class C {
     public constructor C()
-    kotlin.js.nativeSetter() internal final fun bar(/*0*/ d: kotlin.Double, /*1*/ v: kotlin.Any): kotlin.String?
+    kotlin.js.nativeSetter() internal final fun bar(/*0*/ d: kotlin.Double, /*1*/ v: kotlin.Any): kotlin.Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    kotlin.js.nativeSetter() internal final fun foo(/*0*/ d: kotlin.Double, /*1*/ v: kotlin.Any): kotlin.String?
+    kotlin.js.nativeSetter() internal final fun foo(/*0*/ d: kotlin.Double, /*1*/ v: kotlin.Any): kotlin.Any
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

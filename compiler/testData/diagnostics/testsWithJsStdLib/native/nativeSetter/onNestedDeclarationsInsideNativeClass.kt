@@ -13,6 +13,12 @@ class A {
             nativeSetter
             fun foo(a: Int, v: String) {}
 
+            nativeSetter
+            fun set4(a: Double, v: String): Any = 1
+
+            nativeSetter
+            fun set5(a: Double, v: String): CharSequence = "OK"
+
             class object {
                 nativeSetter
                 fun set(a: String, v: Any?): Any? = null
@@ -22,6 +28,12 @@ class A {
 
                 nativeSetter
                 fun foo(a: Int, v: String) {}
+
+                nativeSetter
+                fun set4(a: Double, v: String): Any = 1
+
+                nativeSetter
+                fun set5(a: Double, v: String): CharSequence = "OK"
             }
         }
 
@@ -46,10 +58,13 @@ class A {
             fun Int.set(a: String, v: Int)<!> {}
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set2(a: Number, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set2<!>(a: Number, v: String?)<!> = "OK"
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set3(a: Double, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set3<!>(a: Double, v: String?)<!> = "OK"
+
+            nativeSetter
+            fun set6(a: Double, v: String): <!NATIVE_SETTER_WRONG_RETURN_TYPE!>Number<!> = 1
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeSetter
             fun set(): Any?<!> = null
@@ -72,10 +87,10 @@ class A {
             fun Int.set(a: String, v: Int)<!> {}
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set2(a: Number, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set2<!>(a: Number, v: String?)<!> = "OK"
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set3(a: Double, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set3<!>(a: Double, v: String?)<!> = "OK"
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeSetter
             fun set(): Any?<!> = null
@@ -98,10 +113,10 @@ class A {
             fun Int.set(a: String, v: Int)<!> {}
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set2(a: Number, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set2<!>(a: Number, v: String?)<!> = "OK"
 
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            fun Int.set3(a: Double, v: String?)<!> = "OK"
+            fun Int.<!NATIVE_SETTER_WRONG_RETURN_TYPE!>set3<!>(a: Double, v: String?)<!> = "OK"
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>nativeSetter
             fun set(): Any?<!> = null
