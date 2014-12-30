@@ -95,7 +95,7 @@ open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
     override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
-open class KotlinAndriodPluginWrapper: KotlinBasePluginWrapper() {
+open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
