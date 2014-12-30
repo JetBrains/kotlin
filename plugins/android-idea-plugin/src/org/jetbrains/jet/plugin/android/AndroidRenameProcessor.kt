@@ -29,21 +29,37 @@ import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
 import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.impl.light.LightElement
-import org.jetbrains.jet.lang.resolve.android.isRClassField
 import com.intellij.openapi.module.ModuleServiceManager
 import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
 import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 import com.intellij.openapi.module.Module
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.moduleInfo
+import org.jetbrains.jet.lang.resolve.android.nameToIdDeclaration
+import org.jetbrains.jet.lang.resolve.android.idToName
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiClass
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
+
     override fun canProcessElement(element: PsiElement): Boolean {
-        // either renaming synthetic property, or value in ui xml, or R class field
+        // Either renaming synthetic property, or value in layout xml, or R class field
         return (element.namedUnwrappedElement is JetProperty &&
                 isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
                 isRClassField(element)
     }
+
+    private fun isRClassField(element: PsiElement): Boolean {
+        return if (element is PsiField) {
+            val outerClass = element.getParent()?.getParent()
+            if (outerClass !is PsiClass) return false
+
+            if (outerClass.getQualifiedName()?.startsWith(AndroidConst.SYNTHETIC_PACKAGE) ?: false)
+                true else false
+        }
+        else false
+    }
+
 
     private fun PsiElement.getModule(): Module? {
         val moduleInfo = getModuleInfo()
@@ -58,7 +74,12 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         return null
     }
 
-    override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    override fun prepareRenaming(
+            element: PsiElement?,
+            newName: String,
+            allRenames: MutableMap<PsiElement, String>,
+            scope: SearchScope
+    ) {
         if (element != null && element.namedUnwrappedElement is JetProperty) {
             renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames, scope)
         }
@@ -70,45 +91,66 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         }
     }
 
-    private fun renameSyntheticProperty(jetProperty: JetProperty, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    private fun renameSyntheticProperty(
+            jetProperty: JetProperty,
+            newName: String,
+            allRenames: MutableMap<PsiElement, String>,
+            scope: SearchScope
+    ) {
         val oldName = jetProperty.getName()
         val module = jetProperty.getModule()
         if (module == null) return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
-        val resourceManager = processor!!.resourceManager
+        val resourceManager = processor.resourceManager
         val attr = resourceManager.idToXmlAttribute(oldName) as XmlAttribute
-        allRenames[XmlAttributeValueWrapper(attr.getValueElement()!!)] = resourceManager.nameToIdDeclaration(newName!!)
+        allRenames[XmlAttributeValueWrapper(attr.getValueElement())] = nameToIdDeclaration(newName)
         val name = AndroidResourceUtil.getResourceNameByReferenceText(newName)
         for (resField in AndroidResourceUtil.findIdFields(attr)) {
-            allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name!!))
+            allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name))
         }
     }
 
-    private fun renameAttributeValue(attribute: XmlAttributeValue, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        val element1 = LazyValueResourceElementWrapper.computeLazyElement(attribute)
-        val module = attribute.getModule()
+    private fun renameAttributeValue(
+            attribute: XmlAttributeValue,
+            newName: String,
+            allRenames: MutableMap<PsiElement, String>,
+            scope: SearchScope
+    ) {
+        val element = LazyValueResourceElementWrapper.computeLazyElement(attribute)
+        val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
+                attribute.getContainingFile().getVirtualFile(), attribute.getProject())
         if (module == null) return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
-        if (element1 == null) return
-        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue()!!)
-        val newPropName = processor!!.resourceManager.idToName(newName!!)
+        if (element == null) return
+        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
+        val newPropName = idToName(newName)
         renameSyntheticProperties(allRenames, newPropName, oldPropName, processor)
     }
 
-    private fun renameSyntheticProperties(allRenames: MutableMap<PsiElement, String>, newPropName: String, oldPropName: String?, processor: AndroidUIXmlProcessor) {
-        val props = processor.lastCachedPsi?.findChildrenByClass(javaClass<JetProperty>())
-        val matchedProps = props?.filter { it.getName() == oldPropName } ?: arrayListOf()
+    private fun renameSyntheticProperties(
+            allRenames: MutableMap<PsiElement, String>,
+            newPropName: String,
+            oldPropName: String,
+            processor: AndroidUIXmlProcessor
+    ) {
+        val props = processor.parseToPsi()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
+        val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
         }
     }
 
-    private fun renameLightClassField(field: LightElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    private fun renameLightClassField(
+            field: LightElement,
+            newName: String,
+            allRenames: MutableMap<PsiElement, String>,
+            scope: SearchScope
+    ) {
         val oldName = field.getName()
         val processor = ServiceManager.getService(field.getProject(), javaClass<AndroidUIXmlProcessor>())
-        renameSyntheticProperties(allRenames, newName!!, oldName, processor!!)
+        renameSyntheticProperties(allRenames, newName, oldName, processor)
     }
 
 }

@@ -23,35 +23,46 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
+import kotlin.properties.Delegates
 
-public class CliAndroidResourceManager(project: Project, searchPath: String?, private val manifestPath: String?) : org.jetbrains.jet.lang.resolve.android.AndroidResourceManagerBase(project, searchPath) {
+public class CliAndroidResourceManager(
+        project: Project,
+        private val manifestPath: String,
+        private val mainResDirectory: String
+) : AndroidResourceManager(project) {
+
+    override val androidModuleInfo by Delegates.lazy {
+        AndroidModuleInfo(getApplicationPackage(manifestPath), mainResDirectory)
+    }
 
     val saxParser: SAXParser = initSAX()
 
     protected fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()
-        saxFactory?.setNamespaceAware(true)
-        return saxFactory!!.newSAXParser()
+        saxFactory.setNamespaceAware(true)
+        return saxFactory.newSAXParser()
     }
-    override fun readManifest(): org.jetbrains.jet.lang.resolve.android.AndroidManifest {
+
+    private fun getApplicationPackage(manifestPath: String): String {
         try {
-            val manifestXml = File(manifestPath!!)
-            var _package: String = ""
+            val manifestXml = File(manifestPath)
+            var applicationPackage: String = ""
             try {
                 saxParser.parse(FileInputStream(manifestXml), object : DefaultHandler() {
                     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
                         if (localName == "manifest")
-                            _package = attributes.toMap()["package"] ?: ""
+                            applicationPackage = attributes.toMap()["package"] ?: ""
                     }
                 })
             }
             catch (e: Exception) {
                 throw e
             }
-            return org.jetbrains.jet.lang.resolve.android.AndroidManifest(_package)
+            return applicationPackage
         }
         catch (e: Exception) {
-            throw org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor.NoAndroidManifestFound()
+            throw AndroidUIXmlProcessor.NoAndroidManifestFound()
         }
     }
+
 }

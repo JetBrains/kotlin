@@ -28,18 +28,16 @@ import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 import com.intellij.openapi.module.Module
 
 class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
-    override val searchPath: String? = project.getBasePath() + "/res/layout/"
-    override var androidAppPackage: String = ""
-        get() = resourceManager.readManifest()._package
 
-    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module, searchPath)
+    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
 
-    override fun parseSingleFileImpl(file: PsiFile): String {
-        val ids: MutableCollection<AndroidWidget> = ArrayList()
+    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+        val widgets = arrayListOf<AndroidWidget>()
         file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
-            ids.add(AndroidWidget(id, wClass))
+            widgets.add(AndroidWidget(id, wClass))
         }))
-        return produceKotlinProperties(KotlinStringWriter(), ids).toString()
-    }
-}
 
+        return widgets
+    }
+
+}

@@ -20,6 +20,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertTrue
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
+import kotlin.test.assertNotNull
 
 public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
@@ -32,7 +33,10 @@ public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
         f.configureFromExistingVirtualFile(virtualFile)
 
         val targetElement = TargetElementUtilBase.findTargetElement(f.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED or TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
-        val propUsages = f.findUsages(targetElement!!)
+
+        assertNotNull(targetElement)
+
+        val propUsages = f.findUsages(targetElement)
 
         assertTrue(propUsages.notEmpty)
     }

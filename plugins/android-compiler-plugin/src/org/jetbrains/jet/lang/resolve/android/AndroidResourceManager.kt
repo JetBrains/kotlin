@@ -19,32 +19,47 @@ package org.jetbrains.jet.lang.resolve.android
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiManager
+import com.intellij.openapi.vfs.VirtualFile
 
-public abstract class AndroidResourceManager(protected val project: Project, protected val searchPath: String?) {
-    private val idDeclarationPrefix = "@+id/"
-    private val idUsagePrefix = "@id/"
-    public val androidNamespace: String = "android"
-    public val idAttributeNoNamespace: String = "id"
-    public val idAttribute: String = androidNamespace + ":" + idAttributeNoNamespace
-    public val classAttributeNoNamespace: String = "class"
-    public val classAttribute: String = androidNamespace + ":" + classAttributeNoNamespace
+public abstract class AndroidResourceManager(val project: Project) {
 
-    abstract fun getLayoutXmlFiles(): Collection<PsiFile>
-    public abstract fun idToXmlAttribute(id: String): PsiElement?
-    public fun nameToIdDeclaration(name: String): String = idDeclarationPrefix + name
-    public fun nameToIdUsage(name: String): String = idUsagePrefix + name
-    public fun idToName(id: String?): String {
-        return if (isResourceIdDeclaration(id)) id!!.replace(idDeclarationPrefix, "")
-        else if (isResourceIdUsage(id)) id!!.replace(idUsagePrefix, "")
-        else throw WrongIdFormat(id)
+    public abstract val androidModuleInfo: AndroidModuleInfo?
+
+    public open fun idToXmlAttribute(id: String): PsiElement? = null
+
+    open fun getLayoutXmlFiles(): List<PsiFile> {
+        val info = androidModuleInfo
+        if (info == null) return listOf()
+
+        val psiManager = PsiManager.getInstance(project)
+        val fileManager = VirtualFileManager.getInstance()
+
+        fun VirtualFile.getAllChildren(): List<VirtualFile> {
+            val allChildren = arrayListOf<VirtualFile>()
+            val currentChildren = getChildren() ?: array()
+            for (child in currentChildren) {
+                if (child.isDirectory()) {
+                    allChildren.addAll(child.getAllChildren())
+                }
+                else {
+                    allChildren.add(child)
+                }
+            }
+            return allChildren
+        }
+
+        val resDirectory = fileManager.findFileByUrl("file://" + info.mainResDirectory)
+        val allChildren = resDirectory?.getAllChildren() ?: listOf()
+
+        return allChildren
+                .filter { it.getParent().getName().startsWith("layout") && it.getName().toLowerCase().endsWith(".xml") }
+                .map { psiManager.findFile(it) }
+                .filterNotNull()
+                .sortBy { it.getName() }
     }
-    public fun isResourceIdDeclaration(str: String?): Boolean = str?.startsWith(idDeclarationPrefix) ?: false
-    public fun isResourceIdUsage(str: String?): Boolean = str?.startsWith(idUsagePrefix) ?: false
-    public fun isResourceDeclarationOrUsage(id: String?): Boolean = isResourceIdDeclaration(id) || isResourceIdUsage(id)
 
-    abstract fun readManifest(): AndroidManifest
-
-    inner class NoUIXMLsFound : Exception("No android UI xmls found in $searchPath")
-    inner class WrongIdFormat(id: String?) : Exception("Id \"$id\" has wrong format")
+    inner class NoLayoutXmlFound : Exception("No android UI xmls found in " + androidModuleInfo?.mainResDirectory)
 
 }

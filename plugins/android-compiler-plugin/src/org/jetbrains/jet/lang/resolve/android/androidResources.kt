@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android;
+package org.jetbrains.jet.lang.resolve.android
 
-import com.intellij.openapi.util.Key;
+public data class AndroidModuleInfo(val applicationPackage: String, val mainResDirectory: String?)
 
-public class AndroidConst {
-    public static final Key<String> ANDROID_USER_PACKAGE = Key.create("ANDROID_USER_PACKAGE");
-    public static final String SYNTHETIC_FILENAME = "ANDROIDXML.kt";
-}
+trait AndroidResource
+
+public class AndroidWidget(val id: String, val className: String) : AndroidResource

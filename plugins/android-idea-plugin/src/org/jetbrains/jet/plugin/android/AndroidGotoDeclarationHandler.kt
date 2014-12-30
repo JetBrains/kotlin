@@ -28,13 +28,13 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.jet.lang.resolve.android.isRClassField
 import com.intellij.psi.PsiField
 import com.intellij.openapi.module.ModuleServiceManager
 import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
 import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
+
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement && sourceElement.getParent() is JetSimpleNameExpression) {
             val resolved = JetSimpleNameReference(sourceElement.getParent() as JetSimpleNameExpression).resolve()
@@ -60,4 +60,5 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getActionText(context: DataContext?): String? {
         return null
     }
+
 }

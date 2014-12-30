@@ -20,17 +20,21 @@ import java.util.ArrayList
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import java.io.ByteArrayInputStream
+import kotlin.properties.Delegates
 
-public class CliAndroidUIXmlProcessor(project: Project, override val searchPath: String?, val manifestPath: String?) : org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor(project) {
+public class CliAndroidUIXmlProcessor(
+        project: Project,
+        private val manifestPath: String,
+        private val mainResDirectory: String
+) : AndroidUIXmlProcessor(project) {
 
-    override var androidAppPackage: String = ""
-        get() = resourceManager.readManifest()._package
+    override val resourceManager: CliAndroidResourceManager by Delegates.lazy {
+        CliAndroidResourceManager(project, manifestPath, mainResDirectory)
+    }
 
-    override val resourceManager = org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager(project, searchPath, manifestPath)
-
-    override fun parseSingleFileImpl(file: PsiFile): String {
+    override fun parseSingleFile(file: PsiFile): String {
         val ids: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = org.jetbrains.jet.lang.resolve.android.AndroidXmlHandler(resourceManager, { id, wClass -> ids.add(AndroidWidget(id, wClass)) })
+        val handler = AndroidXmlHandler(resourceManager, { id, clazz -> ids.add(AndroidWidget(id, clazz)) })
         try {
             val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
             resourceManager.saxParser.parse(inputStream, handler)

@@ -36,8 +36,8 @@ private class AndroidTestExternalDeclarationsProvider(
         val manifestPath: String
 ) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = CliAndroidUIXmlProcessor(project, resPath, manifestPath)
-        return emptyOrSingletonList(parser.parseToPsi(project))
+        val parser = CliAndroidUIXmlProcessor(project, manifestPath, resPath)
+        return emptyOrSingletonList(parser.parseToPsi())
     }
 }
 
