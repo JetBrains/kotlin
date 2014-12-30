@@ -45,10 +45,9 @@
     located in dependencies/bootstrap-compiler/.../kotlin-runtime.jar, because the newly built compiler is just a Kotlin application,
     compiled by the old compiler with the old runtime in classpath. If you advance the ABI version, the newly built compiler will NOT work
     against the runtime it will produce on its own because they have different ABI versions.
-    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar and change the compiler classpath
-    accordingly. On the second step this is believed to be not required, because there are little to no differences between
-    the new and the newest runtime.
-    Also see target 'copy-bootstrap-runtime'
+    So on the first step of bootstrap we copy that runtime to kotlin-runtime-internal-bootstrap.jar (see 'compiler' target) and change
+    the compiler classpath accordingly. On the second step this is believed to be not required, because there are
+    little to no differences between the new and the newest runtime.
     -->
     <condition property="compiler.manifest.class.path"
                value="kotlin-runtime-internal-bootstrap.jar"
