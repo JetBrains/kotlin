@@ -69,3 +69,11 @@ fun MethodNode.prepareForEmitting() {
         current = prev
     }
 }
+
+abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wrappedValue?.getType()) {
+    val basicValue: BasicValue? get() = (wrappedValue as? BasicValueWrapper)?.basicValue ?: wrappedValue
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other) && this.javaClass == other?.javaClass
+    }
+}

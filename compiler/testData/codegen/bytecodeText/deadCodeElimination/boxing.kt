@@ -1,3 +1,5 @@
+class A
+
 fun foo(x: Any?) {}
 
 fun box() {
@@ -8,6 +10,9 @@ fun box() {
     z!!
 
     foo(1 as java.lang.Integer)
+    
+    val y: Any? = if (1 == 1) x else A()
+    y!!
 }
 
 // 0 IFNULL
