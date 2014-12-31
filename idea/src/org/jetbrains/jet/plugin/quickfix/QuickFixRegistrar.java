@@ -46,6 +46,8 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
 
         QuickFixes.factories.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
+        QuickFixes.factories.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, addAbstractModifierFactory);
+        QuickFixes.factories.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, addAbstractModifierFactory);
 
         JetSingleIntentionActionFactory removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD);
 
