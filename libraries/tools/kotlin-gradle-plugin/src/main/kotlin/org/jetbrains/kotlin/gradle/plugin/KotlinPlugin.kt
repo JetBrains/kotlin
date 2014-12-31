@@ -294,7 +294,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
         val logger = project.getLogger()
-        val kotlinOptions = getExtention<Any>(androidExt, "kotlinOptions")
+        val kotlinOptions = getExtension<Any>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
         //TODO: change to BuilderConstants.MAIN - it was relocated in 0.11 plugin
         val mainSourceSet = sourceSets.getByName("main")
@@ -331,17 +331,17 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
                 if (variant is TestVariant) {
                     javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(testSourceSet))
-                    val testKotlinSource = getExtention<KotlinSourceSet>(testSourceSet, "kotlin")
+                    val testKotlinSource = getExtension<KotlinSourceSet>(testSourceSet, "kotlin")
                     kotlinTask.source(testKotlinSource.getKotlin())
                 } else {
                     javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(mainSourceSet))
-                    val mainKotlinSource = getExtention<KotlinSourceSet>(mainSourceSet, "kotlin")
+                    val mainKotlinSource = getExtension<KotlinSourceSet>(mainSourceSet, "kotlin")
                     kotlinTask.source(mainKotlinSource.getKotlin())
                 }
 
                 if (null != buildTypeSourceSet) {
                     javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(buildTypeSourceSet))
-                    kotlinTask.source(getExtention<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
+                    kotlinTask.source(getExtension<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
                 }
 
                 for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
@@ -357,13 +357,13 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                         val defaultFlavourSourceSet = sourceSets.findByName(defaultFlavourSourceSetName)
                         if (defaultFlavourSourceSet != null) {
                             javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(defaultFlavourSourceSet))
-                            kotlinTask.source(getExtention<KotlinSourceSet>(defaultFlavourSourceSet, "kotlin").getKotlin())
+                            kotlinTask.source(getExtension<KotlinSourceSet>(defaultFlavourSourceSet, "kotlin").getKotlin())
                         }
 
                         val flavourSourceSet = sourceSets.findByName(flavourName)
                         if (flavourSourceSet != null) {
                             javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(flavourSourceSet))
-                            kotlinTask.source(getExtention<KotlinSourceSet>(flavourSourceSet, "kotlin").getKotlin())
+                            kotlinTask.source(getExtension<KotlinSourceSet>(flavourSourceSet, "kotlin").getKotlin())
                         }
                     }
                 }
@@ -387,7 +387,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         }
     }
 
-    fun <T> getExtention(obj: Any, extensionName: String): T {
+    fun <T> getExtension(obj: Any, extensionName: String): T {
         if (obj is ExtensionAware) {
             val result = obj.getExtensions().findByName(extensionName)
             if (result != null) {
