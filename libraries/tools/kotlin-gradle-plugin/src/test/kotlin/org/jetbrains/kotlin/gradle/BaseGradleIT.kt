@@ -14,9 +14,9 @@ import org.gradle.api.logging.LogLevel
 
 private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
 
-open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
+abstract class BaseGradleIT {
 
-    private val resourcesRootFile = File(resourcesRoot)
+    private val resourcesRootFile = File("src/test/resources")
     private var workingDir = File(".")
 
     Before fun setUp() {
