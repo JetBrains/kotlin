@@ -27,13 +27,13 @@ public class InjectorForJavaDescriptorResolverUtil {
     public static InjectorForJavaDescriptorResolver create(
             @NotNull Project project,
             @NotNull BindingTrace bindingTrace,
-            boolean dependendOnBuitlins
+            boolean dependOnBuiltins
     ) {
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace);
         ModuleDescriptorImpl module = injector.getModule();
         module.initialize(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
         module.addDependencyOnModule(module);
-        if (dependendOnBuitlins) {
+        if (dependOnBuiltins) {
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         }
         module.seal();
