@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.generators.di;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -22,13 +22,14 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static org.jetbrains.jet.di.InjectorGeneratorUtil.var;
+import static org.jetbrains.kotlin.generators.di.InjectorGeneratorUtil.var;
 
 public class Dependencies {
 
@@ -69,14 +70,16 @@ public class Dependencies {
         List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getDeclaredMethods());
         Collections.sort(declaredMethods, new Comparator<Method>() {
             @Override
-            public int compare(Method o1, Method o2) {
+            public int compare(@NotNull Method o1, @NotNull Method o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
         for (Method method : declaredMethods) {
-            if (method.getAnnotation(javax.inject.Inject.class) == null
+            if (method.getAnnotation(Inject.class) == null
                 || !method.getName().startsWith("set")
-                || method.getParameterTypes().length != 1) continue;
+                || method.getParameterTypes().length != 1) {
+                continue;
+            }
 
             Type parameterType = method.getGenericParameterTypes()[0];
 
@@ -245,6 +248,7 @@ public class Dependencies {
         };
 
         @NotNull
+        @SuppressWarnings("unchecked")
         public static <T> ImmutableStack<T> empty() {
             return EMPTY;
         }

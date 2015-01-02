@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.di.GeneratorsFileUtil;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.generators.di;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +69,7 @@ public class ConstructorCall implements Expression {
     }
 
     @NotNull
+    @Override
     public DiType getType() {
         return new DiType(constructor.getDeclaringClass());
     }

@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jetbrains.jet.di.DependencyInjectorGenerator;
+import org.jetbrains.kotlin.generators.di.DependencyInjectorGenerator;
 import org.junit.Assert;
 
 import java.io.IOException;

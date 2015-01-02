@@ -19,7 +19,7 @@ package org.jetbrains.jet.generators.tests.reservedWords
 import java.io.File
 import org.jetbrains.jet.renderer.KeywordStringsGenerated
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
-import org.jetbrains.jet.di.GeneratorsFileUtil.writeFileIfContentChanged
+import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil.writeFileIfContentChanged
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { (testByName, testByRef) ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)

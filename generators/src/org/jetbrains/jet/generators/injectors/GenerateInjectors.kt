@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
-import org.jetbrains.jet.di.*
+import org.jetbrains.kotlin.generators.di.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.resolve.calls.CallResolver

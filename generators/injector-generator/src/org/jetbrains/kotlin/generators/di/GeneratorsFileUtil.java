@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.generators.di;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -48,17 +48,17 @@ public class GeneratorsFileUtil {
             return;
         }
 
-        boolean useTmpfile = !SystemInfo.isWindows;
+        boolean useTempFile = !SystemInfo.isWindows;
 
-        File tmpfile = useTmpfile ? new File(file.getName() + ".tmp") : file;
+        File tempFile = useTempFile ? new File(file.getName() + ".tmp") : file;
 
-        FileUtil.writeToFile(tmpfile, newText);
-        System.out.println("File written: " + tmpfile.getAbsolutePath());
-        if (useTmpfile) {
-            if (!tmpfile.renameTo(file)) {
-                throw new RuntimeException("failed to rename " + tmpfile + " to " + file);
+        FileUtil.writeToFile(tempFile, newText);
+        System.out.println("File written: " + tempFile.getAbsolutePath());
+        if (useTempFile) {
+            if (!tempFile.renameTo(file)) {
+                throw new RuntimeException("failed to rename " + tempFile + " to " + file);
             }
-            System.out.println("Renamed " + tmpfile + " to " + file);
+            System.out.println("Renamed " + tempFile + " to " + file);
         }
         System.out.println();
     }

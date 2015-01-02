@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.generators.di;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.jetbrains.jet.di.InjectorGeneratorUtil.var;
+import static org.jetbrains.kotlin.generators.di.InjectorGeneratorUtil.var;
 
 public class DependencyInjectorGenerator {
 

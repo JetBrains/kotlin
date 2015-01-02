@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,43 +14,44 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.generators.di;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 
-public class InstantiateType implements Expression {
+public class ParameterExpression implements Expression {
+    private final Parameter parameter;
 
-    private final DiType type;
-
-    public InstantiateType(@NotNull DiType type) {
-        this.type = type;
+    public ParameterExpression(Parameter parameter) {
+        this.parameter = parameter;
     }
 
-    public InstantiateType(@NotNull Class<?> theClass) {
-        this(new DiType(theClass));
-    }
-
-    @NotNull
-    public DiType getType() {
-        return type;
+    public Parameter getParameter() {
+        return parameter;
     }
 
     @Override
     public String toString() {
-        return "[Instantiate type: " + getType() + "]";
+        return "parameter<" + parameter.getName() + ">";
     }
 
     @NotNull
     @Override
     public String renderAsCode() {
-        throw new UnsupportedOperationException("This should be replaced by some concrete expression by the time this method is called");
+        return parameter.getName();
     }
 
     @NotNull
     @Override
     public Collection<DiType> getTypesToImport() {
-        throw new UnsupportedOperationException("This should be replaced by some concrete expression by the time this method is called");
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public DiType getType() {
+        return parameter.getType();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di
+package org.jetbrains.kotlin.generators.di;
 
-import java.lang.reflect.Method
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MethodCall(
-        val receiver: Field,
-        val method: Method
-) : Expression {
-    override fun renderAsCode(): String {
-        return "${receiver.getName()}.${method.getName()}()"
-    }
+import java.util.Collection;
 
-    override fun getTypesToImport() = listOf<DiType>()
+public interface Expression {
+    @NotNull
+    String renderAsCode();
 
-    override fun getType(): DiType = DiType.fromReflectionType(method.getGenericReturnType())
+    @NotNull
+    Collection<DiType> getTypesToImport();
 
+    @Nullable
+    DiType getType();
 }
