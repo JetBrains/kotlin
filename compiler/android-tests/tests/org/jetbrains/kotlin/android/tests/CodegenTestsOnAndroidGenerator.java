@@ -30,10 +30,10 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestFiles;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
 import org.junit.Assert;
 
 import java.io.File;

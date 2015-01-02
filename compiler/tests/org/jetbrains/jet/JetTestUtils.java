@@ -97,7 +97,7 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToD
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTestUtils {
-    public static final String TEST_GENERATOR_NAME = "org.jetbrains.jet.generators.tests.TestsPackage";
+    public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
