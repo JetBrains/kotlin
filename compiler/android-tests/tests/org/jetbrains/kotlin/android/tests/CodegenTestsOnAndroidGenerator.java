@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.android;
+package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
@@ -29,7 +29,7 @@ import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestFiles;
 import org.jetbrains.jet.codegen.GenerationUtils;
-import org.jetbrains.jet.compiler.PathManager;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -38,17 +38,17 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private final PathManager pathManager;
-    private static final String testClassPackage = "org.jetbrains.jet.compiler.android";
+    private static final String testClassPackage = "org.jetbrains.kotlin.android.tests";
     private static final String testClassName = "CodegenTestCaseOnAndroid";
-    private static final String baseTestClassPackage = "org.jetbrains.jet.compiler.android";
+    private static final String baseTestClassPackage = "org.jetbrains.kotlin.android.tests";
     private static final String baseTestClassName = "AbstractCodegenTestCaseOnAndroid";
     private static final String generatorName = "CodegenTestsOnAndroidGenerator";
 
@@ -81,11 +81,10 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     }
 
     private void copyKotlinRuntimeJar() throws IOException {
-        File kotlinRuntimeJar = new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-runtime.jar");
-        File kotlinRuntimeInDist = new File("dist/kotlinc/lib/kotlin-runtime.jar");
-        Assert.assertTrue("kotlin-runtime.jar in dist/kotlnc/lib/ doesn't exists. Run dist ant task before generating test for android.",
-                          kotlinRuntimeInDist.exists());
-        FileUtil.copy(kotlinRuntimeInDist, kotlinRuntimeJar);
+        FileUtil.copy(
+                ForTestCompileRuntime.runtimeJarForTests(),
+                new File(pathManager.getLibsFolderInAndroidTmpFolder() + "/kotlin-runtime.jar")
+        );
     }
 
     private void generateAndSave() throws Throwable {

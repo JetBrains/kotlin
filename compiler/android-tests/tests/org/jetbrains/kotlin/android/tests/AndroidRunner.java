@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.android;
+package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CodegenTestsOnAndroidRunner;
-import org.jetbrains.jet.compiler.PathManager;
 
 import java.io.File;
-
 
 public class AndroidRunner extends TestSuite {
 

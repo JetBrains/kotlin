@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler;
+package org.jetbrains.kotlin.android.tests;
 
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.run.RunUtils;
-import org.jetbrains.jet.compiler.run.result.RunResult;
+import org.jetbrains.kotlin.android.tests.run.RunResult;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class OutputUtils {
 

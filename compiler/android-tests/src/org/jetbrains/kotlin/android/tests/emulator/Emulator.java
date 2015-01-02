@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.emulator;
+package org.jetbrains.kotlin.android.tests.emulator;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.OutputUtils;
-import org.jetbrains.jet.compiler.PathManager;
-import org.jetbrains.jet.compiler.ThreadUtils;
-import org.jetbrains.jet.compiler.run.RunUtils;
-import org.jetbrains.jet.compiler.run.result.RunResult;
+import org.jetbrains.kotlin.android.tests.OutputUtils;
+import org.jetbrains.kotlin.android.tests.PathManager;
+import org.jetbrains.kotlin.android.tests.run.RunResult;
+import org.jetbrains.kotlin.android.tests.run.RunUtils;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class Emulator {
 
@@ -85,7 +83,7 @@ public class Emulator {
     }
 
     @Nullable
-    private GeneralCommandLine getStopCommand() {
+    private static GeneralCommandLine getStopCommand() {
         if (SystemInfo.isWindows) {
             GeneralCommandLine commandLine = new GeneralCommandLine();
             commandLine.setExePath("taskkill");
@@ -143,7 +141,7 @@ public class Emulator {
     }
 
     //Only for Unix
-    private void stopDdmsProcess() {
+    private static void stopDdmsProcess() {
         if (SystemInfo.isUnix) {
             GeneralCommandLine listOfEmulatorProcess = new GeneralCommandLine();
             listOfEmulatorProcess.setExePath("sh");
@@ -169,7 +167,7 @@ public class Emulator {
     }
 
     //Only for Unix
-    private void finishProcess(String processName) {
+    private static void finishProcess(String processName) {
         if (SystemInfo.isUnix) {
             GeneralCommandLine pidOfProcess = new GeneralCommandLine();
             pidOfProcess.setExePath("pidof");

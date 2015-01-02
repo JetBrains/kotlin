@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.run;
+package org.jetbrains.kotlin.android.tests.run;
 
 import com.google.common.base.Charsets;
 import com.intellij.execution.ExecutionException;
@@ -24,19 +24,15 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.OutputUtils;
-import org.jetbrains.jet.compiler.ThreadUtils;
-import org.jetbrains.jet.compiler.run.result.RunResult;
+import org.jetbrains.kotlin.android.tests.OutputUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 
 public class RunUtils {
     private RunUtils() {
@@ -86,12 +82,12 @@ public class RunUtils {
     }
 
     public static RunResult execute(@NotNull RunSettings settings) {
-        assert settings.waitForEnd == true : "Use executeOnSeparateThread() instead";
+        assert settings.waitForEnd : "Use executeOnSeparateThread() instead";
         return run(settings);
     }
 
     public static void executeOnSeparateThread(@NotNull final RunSettings settings) {
-        assert settings.waitForEnd == false : "Use execute() instead";
+        assert !settings.waitForEnd : "Use execute() instead";
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {

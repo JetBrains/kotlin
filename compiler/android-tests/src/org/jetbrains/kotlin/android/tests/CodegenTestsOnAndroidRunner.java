@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler;
+package org.jetbrains.kotlin.android.tests;
 
 import com.intellij.util.PlatformUtils;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.ant.AntRunner;
-import org.jetbrains.jet.compiler.download.SDKDownloader;
-import org.jetbrains.jet.compiler.emulator.Emulator;
-import org.jetbrains.jet.compiler.run.PermissionManager;
+import org.jetbrains.kotlin.android.tests.ant.AntRunner;
+import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
+import org.jetbrains.kotlin.android.tests.emulator.Emulator;
+import org.jetbrains.kotlin.android.tests.run.PermissionManager;
 import org.junit.Assert;
 
 import java.io.File;
@@ -105,14 +105,14 @@ public class CodegenTestsOnAndroidRunner {
     /*
     Output example:
     [exec] Error in testKt344:
-    [exec] java.lang.RuntimeException: File: compiler\testData\codegen\regressions\kt344.jet
-    [exec] 	at org.jetbrains.jet.compiler.android.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:38)
-    [exec] 	at org.jetbrains.jet.compiler.android.CodegenTestCaseOnAndroid.testKt344(CodegenTestCaseOnAndroid.java:595)
+    [exec] java.lang.RuntimeException: File: compiler\testData\codegen\boxWithStdlib\regressions\kt344.kt
+    [exec] 	at org.jetbrains.kotlin.android.tests.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:38)
+    [exec] 	at org.jetbrains.kotlin.android.tests.CodegenTestCaseOnAndroid.testKt344(CodegenTestCaseOnAndroid.java:595)
     [exec] 	at java.lang.reflect.Method.invokeNative(Native Method)
     [exec] 	at android.test.AndroidTestRunner.runTest(AndroidTestRunner.java:169)
     [exec] Caused by: java.lang.reflect.InvocationTargetException
     [exec] 	at java.lang.reflect.Method.invokeNative(Native Method)
-    [exec] 	at org.jetbrains.jet.compiler.android.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:35)
+    [exec] 	at org.jetbrains.kotlin.android.tests.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:35)
     [exec] 	... 13 more
     [exec] Caused by: java.lang.VerifyError: compiler_testData_codegen_boxWithStdlib_regressions_kt344_kt.Compiler_testData_codegen_boxWithStdlib_regressions_kt344_ktPackage$t6$foo$1
     [exec] 	at compiler_testData_codegen_boxWithStdlib_regressions_kt344_kt.Compiler_testData_codegen_boxWithStdlib_regressions_kt344_ktPackage.t6(dummy.jet:94)

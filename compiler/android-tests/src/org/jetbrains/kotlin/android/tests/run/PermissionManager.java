@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.run;
+package org.jetbrains.kotlin.android.tests.run;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
-import org.jetbrains.jet.compiler.PathManager;
-
+import org.jetbrains.kotlin.android.tests.PathManager;
 
 public class PermissionManager {
     private PermissionManager() {

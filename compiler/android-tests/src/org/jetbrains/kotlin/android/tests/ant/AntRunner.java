@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.ant;
+package org.jetbrains.kotlin.android.tests.ant;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
-import org.jetbrains.jet.compiler.OutputUtils;
-import org.jetbrains.jet.compiler.PathManager;
-import org.jetbrains.jet.compiler.ThreadUtils;
-import org.jetbrains.jet.compiler.run.RunUtils;
-import org.jetbrains.jet.compiler.run.result.RunResult;
+import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.android.tests.OutputUtils;
+import org.jetbrains.kotlin.android.tests.PathManager;
+import org.jetbrains.kotlin.android.tests.run.RunResult;
+import org.jetbrains.kotlin.android.tests.run.RunUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class AntRunner {
     private final List<String> listOfAntCommands;
@@ -87,7 +86,12 @@ public class AntRunner {
     private static boolean isInstallSuccessful(String output) {
         if (output.contains("Is the system running?")) {
             System.out.println("Device not ready. Waiting for 20 sec.");
-            ThreadUtils.sleep(20);
+            try {
+                Thread.sleep(20000);
+            }
+            catch (InterruptedException e) {
+                throw UtilsPackage.rethrow(e);
+            }
             return false;
         }
         return true;

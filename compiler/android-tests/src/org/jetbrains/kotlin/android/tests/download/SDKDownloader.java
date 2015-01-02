@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.download;
+package org.jetbrains.kotlin.android.tests.download;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.jet.compiler.PathManager;
-import org.jetbrains.jet.compiler.run.RunUtils;
+import org.jetbrains.kotlin.android.tests.PathManager;
+import org.jetbrains.kotlin.android.tests.run.RunUtils;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 
 public class SDKDownloader {
     private final String platformZipPath;
@@ -39,11 +38,11 @@ public class SDKDownloader {
 
     public SDKDownloader(PathManager pathManager) {
         this.pathManager = pathManager;
-        platformZipPath = pathManager.getRootForDownload() + "/platforms.zip";
-        systemImages = pathManager.getRootForDownload() + "/system-images.zip";
-        platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
-        toolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
-        antZipPath = pathManager.getRootForDownload() + "/apache-ant-1.8.0.zip";
+        this.platformZipPath = pathManager.getRootForDownload() + "/platforms.zip";
+        this.systemImages = pathManager.getRootForDownload() + "/system-images.zip";
+        this.platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
+        this.toolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
+        this.antZipPath = pathManager.getRootForDownload() + "/apache-ant-1.8.0.zip";
     }
 
     public void downloadPlatform() {
@@ -116,12 +115,12 @@ public class SDKDownloader {
         delete(antZipPath);
     }
 
-    protected void download(String urlString, String output) {
+    private static void download(String urlString, String output) {
         System.out.println("Start downloading: " + urlString + " to " + output);
         OutputStream outStream = null;
-        URLConnection urlConnection = null;
+        URLConnection urlConnection;
 
-        InputStream is = null;
+        InputStream is;
         try {
             URL Url;
             byte[] buf;
@@ -171,7 +170,7 @@ public class SDKDownloader {
         }
         try {
             byte[] buf = new byte[1024];
-            ZipInputStream zipinputstream = null;
+            ZipInputStream zipinputstream;
             ZipEntry zipentry;
             zipinputstream = new ZipInputStream(new FileInputStream(pathToFile));
 
@@ -222,9 +221,8 @@ public class SDKDownloader {
         System.out.println("Finish unzipping: " + pathToFile + " to " + outputFolder);
     }
 
-    protected void delete(String filePath) {
-        File file = new File(filePath);
-        file.delete();
+    private static void delete(String filePath) {
+        new File(filePath).delete();
     }
 }
 

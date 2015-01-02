@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- package name must be unique so suffix with "tests" so package loader doesn't ignore us -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.jetbrains.jet.compiler.android"
+          package="org.jetbrains.kotlin.android.tests"
           android:versionCode="1"
           android:versionName="1.0">
-  <!-- We add an application tag here just so that we can indicate that
-this package needs to link against the android.test library,
-which is needed when building test cases. -->
   <application>
     <uses-library android:name="android.test.runner" />
   </application>
@@ -16,6 +12,6 @@ which is needed when building test cases. -->
   "adb shell am instrument -w com.example.tests/android.test.InstrumentationTestRunner"
   -->
   <instrumentation android:name="android.test.InstrumentationTestRunner"
-                   android:targetPackage="org.jetbrains.jet.compiler.android"
-                   android:label="Tests for org.jetbrains.jet.compiler.android"/>
+                   android:targetPackage="org.jetbrains.kotlin.android.tests"
+                   android:label="Tests for org.jetbrains.kotlin.android.tests"/>
 </manifest>
