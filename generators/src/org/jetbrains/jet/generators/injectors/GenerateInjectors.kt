@@ -66,6 +66,8 @@ public fun main(args: Array<String>) {
     }
 }
 
+private val DI_DEFAULT_PACKAGE = "org.jetbrains.jet.di"
+
 public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         listOf(
                 generatorForTopDownAnalyzerBasic(),
@@ -83,7 +85,7 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         )
 
 private fun generatorForTopDownAnalyzerBasic() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForTopDownAnalyzerBasic") {
             parameter<Project>()
             parameter<GlobalContext>(useAsContext = true)
             parameter<BindingTrace>()
@@ -98,7 +100,7 @@ private fun generatorForTopDownAnalyzerBasic() =
         }
 
 private fun generatorForLazyTopDownAnalyzerBasic() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyTopDownAnalyzerBasic") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyTopDownAnalyzerBasic") {
             commonForResolveSessionBased()
 
             publicField<LazyTopDownAnalyzer>()
@@ -107,7 +109,7 @@ private fun generatorForLazyTopDownAnalyzerBasic() =
         }
 
 private fun generatorForLazyBodyResolve() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyBodyResolve") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyBodyResolve") {
             parameter<Project>()
             parameter<GlobalContext>(useAsContext = true)
             parameter<KotlinCodeAnalyzer>(name = "analyzer")
@@ -121,7 +123,7 @@ private fun generatorForLazyBodyResolve() =
         }
 
 private fun generatorForTopDownAnalyzerForJs() =
-        generator("js/js.frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
+        generator("js/js.frontend/src", DI_DEFAULT_PACKAGE, "InjectorForTopDownAnalyzerForJs") {
             commonForResolveSessionBased()
 
             publicField<LazyTopDownAnalyzer>()
@@ -132,12 +134,12 @@ private fun generatorForTopDownAnalyzerForJs() =
         }
 
 private fun generatorForTopDownAnalyzerForJvm() =
-        generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm") {
+        generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForTopDownAnalyzerForJvm") {
             commonForJavaTopDownAnalyzer()
         }
 
 private fun generatorForJavaDescriptorResolver() =
-        generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver") {
+        generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForJavaDescriptorResolver") {
             parameter<Project>()
             parameter<BindingTrace>()
 
@@ -167,7 +169,7 @@ private fun generatorForJavaDescriptorResolver() =
         }
 
 private fun generatorForLazyResolveWithJava() =
-        generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForLazyResolveWithJava") {
+        generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForLazyResolveWithJava") {
             commonForResolveSessionBased()
 
             parameter<GlobalSearchScope>(name = "moduleContentScope")
@@ -198,13 +200,13 @@ private fun generatorForLazyResolveWithJava() =
         }
 
 private fun generatorForReplWithJava() =
-        generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForReplWithJava") {
+        generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForReplWithJava") {
             commonForJavaTopDownAnalyzer()
             parameter<ScopeProvider.AdditionalFileScopeProvider>()
         }
 
 private fun generatorForMacro() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForMacros") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForMacros") {
             parameter<Project>()
             parameter<ModuleDescriptor>(useAsContext = true)
 
@@ -219,7 +221,7 @@ private fun generatorForMacro() =
         }
 
 private fun generatorForTests() =
-        generator("compiler/tests", "org.jetbrains.jet.di", "InjectorForTests") {
+        generator("compiler/tests", DI_DEFAULT_PACKAGE, "InjectorForTests") {
             parameter<Project>()
             parameter<ModuleDescriptor>(useAsContext = true)
 
@@ -235,7 +237,7 @@ private fun generatorForTests() =
         }
 
 private fun generatorForBodyResolve() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForBodyResolve") {
             parameter<Project>()
             parameter<GlobalContext>(useAsContext = true)
             parameter<BindingTrace>()
@@ -247,7 +249,7 @@ private fun generatorForBodyResolve() =
         }
 
 private fun generatorForLazyResolve() =
-        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve") {
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyResolve") {
             parameter<Project>()
             parameter<GlobalContext>(useAsContext = true)
             parameter<ModuleDescriptorImpl>(useAsContext = true)
