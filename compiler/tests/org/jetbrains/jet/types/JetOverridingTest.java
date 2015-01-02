@@ -21,7 +21,6 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -29,12 +28,13 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.di.InjectorForTests;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetOverridingTest extends JetLiteFixture {
 
-    private ModuleDescriptor root = JetTestUtils.createEmptyModule("<test_root>");
+    private final ModuleDescriptor root = JetTestUtils.createEmptyModule("<test_root>");
     private DescriptorResolver descriptorResolver;
 
     @Override

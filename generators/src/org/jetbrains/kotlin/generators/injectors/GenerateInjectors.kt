@@ -66,7 +66,7 @@ public fun main(args: Array<String>) {
     }
 }
 
-private val DI_DEFAULT_PACKAGE = "org.jetbrains.jet.di"
+private val DI_DEFAULT_PACKAGE = "org.jetbrains.kotlin.di"
 
 public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         listOf(

@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
-import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.di.InjectorForBodyResolve;
 
 import java.util.Collection;
 import java.util.Collections;

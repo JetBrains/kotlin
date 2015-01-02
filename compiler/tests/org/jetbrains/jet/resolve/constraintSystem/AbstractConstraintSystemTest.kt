@@ -20,7 +20,7 @@ import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.di.InjectorForTests
+import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.resolve.*

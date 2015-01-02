@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -46,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.di.InjectorForTests;
 
 import java.io.File;
 import java.io.IOException;

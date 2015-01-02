@@ -36,8 +36,6 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -46,6 +44,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
 
 import java.io.File;
 import java.io.IOException;

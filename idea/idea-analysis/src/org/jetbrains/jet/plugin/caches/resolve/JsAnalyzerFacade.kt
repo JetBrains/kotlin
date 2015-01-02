@@ -27,7 +27,7 @@ import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.di.InjectorForLazyResolve
+import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.analyzer.ModuleContent

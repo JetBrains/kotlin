@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.jet.lang.resolve.calls.extensions.CompositeExtension
-import org.jetbrains.jet.di.InjectorForMacros
+import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import java.util.HashSet
@@ -117,8 +117,8 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
         val functionLiteralArgument = expressionWithType.getParent() as? JetFunctionLiteralArgument
         val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression
         if (callExpression != null) {
-            if (callExpression.getFunctionLiteralArguments().head?.getArgumentExpression() == expressionWithType) {
-                return calculateForArgument(callExpression, callExpression.getValueArguments().size - 1, true)
+            if (callExpression.getFunctionLiteralArguments().firstOrNull()?.getArgumentExpression() == expressionWithType) {
+                return calculateForArgument(callExpression, callExpression.getValueArguments().size() - 1, true)
             }
         }
         return null
@@ -185,7 +185,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
 
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
-            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
+            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size() > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()
 
                 val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
@@ -346,5 +346,5 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
     }
 
     private fun String.fromPlural()
-            = if (endsWith("s")) substring(0, length - 1) else this
+            = if (endsWith("s")) substring(0, length() - 1) else this
 }

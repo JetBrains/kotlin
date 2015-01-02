@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.DynamicTypesSettings;
+import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerBasic;
 
 import java.util.Collections;
 

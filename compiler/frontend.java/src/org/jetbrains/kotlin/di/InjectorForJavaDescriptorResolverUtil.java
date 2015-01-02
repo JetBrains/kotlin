@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.di;
+package org.jetbrains.kotlin.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;

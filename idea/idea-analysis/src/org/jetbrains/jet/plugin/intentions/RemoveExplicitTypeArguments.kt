@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.psi.JetTypeProjection
 import org.jetbrains.jet.lang.psi.Call
-import org.jetbrains.jet.di.InjectorForMacros
+import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList

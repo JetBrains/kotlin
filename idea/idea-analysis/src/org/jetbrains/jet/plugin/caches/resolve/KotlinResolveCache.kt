@@ -60,7 +60,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.di.InjectorForLazyBodyResolve
+import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo

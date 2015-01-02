@@ -30,7 +30,6 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.UtilPackage;
+import org.jetbrains.kotlin.di.InjectorForMacros;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJs;
 
 import java.util.Collection;
 import java.util.Collections;

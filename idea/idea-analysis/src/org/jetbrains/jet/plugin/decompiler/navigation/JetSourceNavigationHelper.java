@@ -40,7 +40,6 @@ import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -64,6 +63,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyFqnNameIndex;
+import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 
 import java.util.Collection;
 import java.util.Collections;

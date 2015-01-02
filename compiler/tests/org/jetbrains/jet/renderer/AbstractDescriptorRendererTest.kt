@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.di.InjectorForLazyResolve
+import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider

@@ -23,7 +23,6 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
@@ -40,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.di.InjectorForTests;
 
 import java.util.List;
 
