@@ -675,17 +675,17 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("j2k/tests/test", "j2k/tests/testData") {
+    testGroup("j2k/tests", "j2k/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterSingleFileTest>()) {
             model("fileOrElement", extension = "java")
         }
     }
-    testGroup("j2k/tests/test", "j2k/tests/testData") {
+    testGroup("j2k/tests", "j2k/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterMultiFileTest>()) {
             model("multiFile", extension = null)
         }
     }
-    testGroup("j2k/tests/test", "j2k/tests/testData") {
+    testGroup("j2k/tests", "j2k/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterForWebDemoTest>()) {
             model("fileOrElement", extension = "java")
         }

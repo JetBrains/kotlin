@@ -50,7 +50,7 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     }
     
     private fun addFile(fileName: String, packageName: String) {
-        addFile(File("j2k/tests/testData/$fileName"), packageName)
+        addFile(File("j2k/testData/$fileName"), packageName)
     }
 
     protected fun addFile(file: File, dirName: String): VirtualFile {
