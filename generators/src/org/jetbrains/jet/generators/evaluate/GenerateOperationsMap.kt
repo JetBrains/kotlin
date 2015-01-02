@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(FileUtil.loadFile(File("injector-generator/copyright.txt")))
+    p.println(FileUtil.loadFile(File("generators/injector-generator/copyright.txt")))
     p.println("package org.jetbrains.jet.lang.evaluate")
     p.println()
     p.println("import java.math.BigInteger")
@@ -61,7 +61,7 @@ fun generate(): String {
         for (function in functions) {
             val parametersTypes = function.getParametersTypes()
 
-            when (parametersTypes.size) {
+            when (parametersTypes.size()) {
                 1 -> unaryOperationsMap.add(function.getName().asString() to parametersTypes)
                 2 -> binaryOperationsMap.add(function.getName().asString() to parametersTypes)
                 else -> throw IllegalStateException("Couldn't add following method from builtins to operations map: ${function.getName()} in class ${descriptor.getName()}")

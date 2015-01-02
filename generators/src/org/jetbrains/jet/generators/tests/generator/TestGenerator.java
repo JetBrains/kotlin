@@ -76,7 +76,7 @@ public class TestGenerator {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
 
-        p.println(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
+        p.println(FileUtil.loadFile(new File("generators/injector-generator/copyright.txt")));
         p.println("package ", suiteClassPackage, ";");
         p.println();
         p.println("import com.intellij.testFramework.TestDataPath;");

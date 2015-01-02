@@ -38,7 +38,7 @@ public class GenerateKeywordStrings {
         StringBuilder sb = new StringBuilder();
         Printer p = new Printer(sb);
 
-        p.println(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
+        p.println(FileUtil.loadFile(new File("generators/injector-generator/copyright.txt")));
         p.println("package org.jetbrains.jet.renderer;");
         p.println();
         p.println("import java.util.Arrays;");

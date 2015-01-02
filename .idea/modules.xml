@@ -27,7 +27,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea.iml" filepath="$PROJECT_DIR$/idea/idea.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" filepath="$PROJECT_DIR$/idea/idea-analysis/idea-analysis.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/injector-generator/injector-generator.iml" filepath="$PROJECT_DIR$/injector-generator/injector-generator.iml" group="infrastructure" />
+      <module fileurl="file://$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" filepath="$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" group="infrastructure" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" filepath="$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" group="compiler/java" />
