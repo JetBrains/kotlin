@@ -23,6 +23,10 @@ import java.io.File;
 public class ForTestCompileRuntime {
     @NotNull
     public static File runtimeJarForTests() {
-        return new File("dist/kotlinc/lib/kotlin-runtime.jar");
+        File runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar");
+        if (!runtime.exists()) {
+            throw new IllegalStateException("kotlin-runtime.jar in dist/kotlinc/lib does not exist. Run 'ant dist'");
+        }
+        return runtime;
     }
 }
