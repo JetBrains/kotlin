@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin;
+package org.jetbrains.kotlin.integration;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -30,6 +30,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -46,8 +47,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected static final File INTEGRATION_TEST_DATA_BASE_DIR =
-            new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
+    protected static final File INTEGRATION_TEST_DATA_BASE_DIR = new File(JetTestCaseBuilder.getTestDataPathBase(), "integration");
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
@@ -60,8 +60,7 @@ public abstract class KotlinIntegrationTestBase {
     protected abstract File getTestDataDir();
 
     protected int runJava(String logName, String... arguments) throws Exception {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setWorkDirectory(getTestDataDir());
+        GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(getTestDataDir());
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin;
+package org.jetbrains.kotlin.integration;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
@@ -147,7 +147,6 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         doJsAntTest();
     }
 
-
     @Test
     public void outputWithoutDirectory() throws Exception {
         doJsAntTest();
@@ -179,10 +178,10 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void sourcemap() throws Exception {
+    public void sourceMap() throws Exception {
         doJsAntTest();
 
-        File sourcemap = getOutputFileByName(JS_OUT_FILE + ".map");
-        assertTrue("Sourcemap file \"" + sourcemap.getAbsolutePath() + "\" not found", sourcemap.exists());
+        File sourceMap = getOutputFileByName(JS_OUT_FILE + ".map");
+        assertTrue("Source map file \"" + sourceMap.getAbsolutePath() + "\" not found", sourceMap.exists());
     }
 }
