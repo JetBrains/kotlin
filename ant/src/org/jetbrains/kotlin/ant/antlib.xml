@@ -1,5 +1,3 @@
-<!-- NOTE: this Antlib is deprecated. Use org/jetbrains/kotlin/ant/antlib.xml instead -->
-<!-- TODO: delete this file -->
 <antlib>
     <taskdef name="kotlinc" classname="org.jetbrains.kotlin.ant.Kotlin2JvmTask"/>
     <taskdef name="kotlin2js" classname="org.jetbrains.kotlin.ant.Kotlin2JsTask"/>
