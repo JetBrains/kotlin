@@ -16,7 +16,7 @@
           <element id="module-output" name="frontend.java" />
           <element id="module-output" name="descriptor.loader.java" />
           <element id="module-output" name="idea" />
-          <element id="module-output" name="jet.as.java.psi" />
+          <element id="module-output" name="light-classes" />
           <element id="module-output" name="util" />
           <element id="module-output" name="util.runtime" />
           <element id="module-output" name="j2k" />

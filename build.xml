@@ -98,7 +98,7 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
-        <include name="compiler/jet.as.java.psi/src"/>
+        <include name="compiler/light-classes/src"/>
         <include name="compiler/builtins-serializer/src"/>
         <include name="js/js.dart-ast/src"/>
         <include name="js/js.translator/src"/>
@@ -121,7 +121,7 @@
         <include name="cli-common/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
-        <include name="jet.as.java.psi/**"/>
+        <include name="light-classes/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -187,7 +187,7 @@
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/util/src"/>
-            <fileset dir="compiler/jet.as.java.psi/src"/>
+            <fileset dir="compiler/light-classes/src"/>
             <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="js/js.dart-ast/src"/>
             <fileset dir="js/js.translator/src"/>
