@@ -1,5 +1,5 @@
 //file
-package org.jetbrains.jet.j2k;
+package test.j2k;
 
 import org.jetbrains.annotations.*;
 

@@ -3144,9 +3144,9 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/packageStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
-        @TestMetadata("orgJetbrainsJetJ2kIn.java")
-        public void testOrgJetbrainsJetJ2kIn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/packageStatement/orgJetbrainsJetJ2kIn.java");
+        @TestMetadata("keywordInPackageName.java")
+        public void testKeywordInPackageName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/packageStatement/keywordInPackageName.java");
             doTest(fileName);
         }
     }
