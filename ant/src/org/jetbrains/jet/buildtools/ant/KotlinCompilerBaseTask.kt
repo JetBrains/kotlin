@@ -25,13 +25,13 @@ import org.apache.tools.ant.types.Commandline
 import java.io.PrintStream
 import org.apache.tools.ant.AntClassLoader
 import java.lang.ref.SoftReference
-import org.apache.tools.ant.Project
+import org.jetbrains.jet.preloading.ClassPreloadingUtils
 import java.net.JarURLConnection
 
 object CompilerClassLoaderHolder {
     private var classLoaderRef = SoftReference<ClassLoader?>(null)
 
-    synchronized fun getOrCreateClassLoader(project: Project?): ClassLoader {
+    synchronized fun getOrCreateClassLoader(): ClassLoader {
         val cached = classLoaderRef.get()
         if (cached != null) return cached
 
@@ -49,7 +49,7 @@ object CompilerClassLoaderHolder {
             throw IllegalStateException("kotlin-compiler.jar is not found in the directory of Kotlin Ant task")
         }
 
-        val classLoader = AntClassLoader(myLoader, project, Path(project, compilerJarPath.path), /* parentFirst = */ false)
+        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJarPath), 4096, myLoader, null)
         classLoaderRef = SoftReference(classLoader)
 
         return classLoader
@@ -112,7 +112,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
     final override fun execute() {
         fillArguments()
 
-        val compilerClass = CompilerClassLoaderHolder.getOrCreateClassLoader(project).loadClass(compilerFqName)
+        val compilerClass = CompilerClassLoaderHolder.getOrCreateClassLoader().loadClass(compilerFqName)
         val compiler = compilerClass.newInstance()
         val exec = compilerClass.getMethod("execFullPathsInMessages", javaClass<PrintStream>(), javaClass<Array<String>>())
 

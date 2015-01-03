@@ -641,7 +641,8 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <file file="${kotlin-home}/lib/${compiler.manifest.class.path}"/>
-                <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
+                <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
         </javac2>
 
@@ -657,7 +658,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.ant.task}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
+                <attribute name="Class-Path" value="${compiler.manifest.class.path} kotlin-preloader.jar"/>
             </manifest>
         </jar>
     </target>
