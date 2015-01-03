@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.grammar;
+package org.jetbrains.kotlin.grammar;
 
-public class Comment extends Token {
-    public Comment(CharSequence text, String fileName, int line) {
+public class Other extends Token {
+    public Other(CharSequence text, String fileName, int line) {
         super(text, fileName, line);
-    }
-
-    @Override
-    public String toString() {
-        return "";//getText().toString().replaceAll("\\{", "\\\\{").replaceAll("\\[", "\\\\[").replaceAll("\\(", "\\\\(");
     }
 }

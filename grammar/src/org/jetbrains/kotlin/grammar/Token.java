@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.grammar;
+package org.jetbrains.kotlin.grammar;
 
-public class DocComment extends Token {
-    public DocComment(CharSequence text, String fileName, int line) {
-        super(text, fileName, line);
+public class Token {
+    private final String fileName;
+    private final CharSequence text;
+    private final int line;
+
+    public Token(CharSequence text, String fileName, int line) {
+        this.text = text;
+        this.fileName = fileName;
+        this.line = line;
+    }
+
+    public CharSequence getText() {
+        return text;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public int getLine() {
+        return line;
     }
 
     @Override
     public String toString() {
-        String s = super.toString();
-        return s.substring(3, s.length() - 2);
+        return getText().toString();
     }
 }

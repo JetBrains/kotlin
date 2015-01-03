@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.grammar;
+package org.jetbrains.kotlin.grammar;
 
-public class Declaration extends Token {
+public class Identifier extends Token {
     private final String name;
 
-    public Declaration(CharSequence text, String fileName, int line) {
+    public Identifier(CharSequence text, String fileName, int line) {
         super(text, fileName, line);
-        name = text.toString().substring(1);
+        name = text.toString();
     }
 
     @Override
     public String toString() {
-        return "*" + name + "*";
+        return "[#" + getText() + "]";
     }
 
     public String getName() {

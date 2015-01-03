@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.grammar;
+package org.jetbrains.kotlin.grammar;
 
-public class SymbolToken extends Token {
-    public SymbolToken(CharSequence text, String fileName, int line) {
+public class StringToken extends Token {
+    public StringToken(CharSequence text, String fileName, int line) {
         super(text, fileName, line);
     }
 
     @Override
     public String toString() {
-        return "{color:blue}*" + getText().toString().replaceAll("\\*", "\\\\*") + "*{color}";
+        return "{color:green}*{{" +
+               getText().toString()
+                       .replaceAll("\\{", "\\\\{")
+                       .replaceAll("\\[", "\\\\[")
+                       .replaceAll("!", "\\\\!")
+                       .replaceAll("\\*", "\\\\*")
+               + "}}*{color}";
     }
 }

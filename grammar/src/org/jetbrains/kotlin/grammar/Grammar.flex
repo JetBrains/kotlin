@@ -1,5 +1,5 @@
 /* It's an automatically generated code. Do not modify it. */
-package org.jetbrains.jet.grammar;
+package org.jetbrains.kotlin.grammar;
 
 //import com.intellij.lexer.*;
 //import com.intellij.psi.*;
