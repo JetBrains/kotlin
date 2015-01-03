@@ -22,10 +22,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.j2k.ConverterSettings
-import org.jetbrains.jet.j2k.FilesConversionScope
-import org.jetbrains.jet.j2k.IdeaReferenceSearcher
-import org.jetbrains.jet.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.FilesConversionScope
+import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
+import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
@@ -109,7 +109,7 @@ public class JavaToKotlinAction : AnAction() {
         val convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it) })
 
         val result = ArrayList<VirtualFile>()
-        for ((i, psiFile) in javaFiles.withIndices()) {
+        for ((i, psiFile) in javaFiles.withIndex()) {
             ApplicationManager.getApplication().runWriteAction {
                 result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), convertedTexts[i], project))
             }

@@ -109,7 +109,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterSingleFileTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
@@ -123,8 +123,8 @@ import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForRe
 import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
 import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
+import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
@@ -775,5 +775,5 @@ private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
     if (!baseName.startsWith("Abstract")) {
         throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")
     }
-    return baseName.substring("Abstract".length) + "Generated"
+    return baseName.substring("Abstract".length()) + "Generated"
 }

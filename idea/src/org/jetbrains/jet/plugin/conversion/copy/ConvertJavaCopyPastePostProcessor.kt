@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
-import org.jetbrains.jet.j2k.*
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
@@ -99,7 +99,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         )
         val startOffsets = code.startOffsets
         val endOffsets = code.endOffsets
-        assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
+        assert(startOffsets.size() == endOffsets.size()) { "Must have the same size" }
         val result = StringBuilder()
         for (i in startOffsets.indices) {
             val startOffset = startOffsets[i]

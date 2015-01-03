@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.j2k
+package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.ResolverForConverter
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
-public object IdeaResolverForConverter : ResolverForConverter {
-    override fun resolveToDescriptor(declaration: JetDeclaration) = declaration.resolveToDescriptor()
+class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
+: Class(Identifier.Empty, Annotations.Empty, Modifiers.Empty, TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
+    override fun generateCode(builder: CodeBuilder) {
+        body.append(builder)
+    }
 }
