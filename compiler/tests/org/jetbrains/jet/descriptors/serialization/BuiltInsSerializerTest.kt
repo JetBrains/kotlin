@@ -17,7 +17,7 @@
 package org.jetbrains.jet.descriptors.serialization
 
 import java.io.File
-import org.jetbrains.jet.utils.builtinsSerializer.BuiltInsSerializer
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import org.jetbrains.jet.test.TestCaseWithTmpdir
 import org.jetbrains.jet.lang.types.lang.BuiltinsPackageFragment
 import org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
