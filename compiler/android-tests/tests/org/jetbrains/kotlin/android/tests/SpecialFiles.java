@@ -63,6 +63,8 @@ public class SpecialFiles {
         excludedFiles.add("boxMultiFile"); // MultiFileTest not supported yet
         excludedFiles.add("boxInline"); // MultiFileTest not supported yet
 
+        excludedFiles.add("native"); // Reflection is used to check full class name
+
         excludedFiles.add("reflection");
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection
@@ -76,6 +78,10 @@ public class SpecialFiles {
         excludedFiles.add("invokeOnImportedEnum2.kt"); // Cannot change package name
         excludedFiles.add("sortEnumEntries.kt"); // Cannot change package name
         excludedFiles.add("assertionStackTrace.kt"); // Cannot change package name
+        excludedFiles.add("anonymousObjectReifiedSupertype.kt"); // Cannot change package name
+        excludedFiles.add("innerAnonymousObject.kt"); // Cannot change package name
+        excludedFiles.add("nestedReifiedSignature.kt"); // Cannot change package name
+        excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
 
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented
