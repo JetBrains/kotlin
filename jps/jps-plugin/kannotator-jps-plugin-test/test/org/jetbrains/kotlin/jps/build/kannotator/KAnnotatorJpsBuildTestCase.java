@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.build.kannotator;
+package org.jetbrains.kotlin.jps.build.kannotator;
 
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.jps.build.AbstractKotlinJpsBuildTestCase;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -81,6 +82,7 @@ public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         System.out.println("'Rebuild all' finished");
     }
 
+    @NotNull
     @Override
     protected BuildResult makeAll() {
         System.out.println("'Make all' started");
