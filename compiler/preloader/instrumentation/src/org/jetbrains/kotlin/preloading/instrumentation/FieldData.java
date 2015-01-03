@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.preloading.instrumentation;
+package org.jetbrains.kotlin.preloading.instrumentation;
 
-class MemberData {
+import org.jetbrains.org.objectweb.asm.Type;
 
-    private final String declaringClass;
-    private final String name;
-    private final String desc;
+class FieldData extends MemberData {
 
-    public MemberData(String declaringClass, String name, String desc) {
-        this.declaringClass = declaringClass;
-        this.name = name;
-        this.desc = desc;
+    private final Type runtimeType;
+
+    public FieldData(String declaringClass, String name, String desc, Type runtimeType) {
+        super(declaringClass, name, desc);
+        this.runtimeType = runtimeType;
     }
 
-    public String getDeclaringClass() {
-        return declaringClass;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDesc() {
-        return desc;
+    public Type getRuntimeType() {
+        return runtimeType;
     }
 }

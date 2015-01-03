@@ -19,8 +19,8 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
 
 import java.io.File;
 import java.io.IOException;

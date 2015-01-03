@@ -383,7 +383,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.preloader}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.jet.preloading.Preloader"/>
+                <attribute name="Main-Class" value="org.jetbrains.kotlin.preloading.Preloader"/>
             </manifest>
         </jar>
     </target>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.preloading.instrumentation;
+package org.jetbrains.kotlin.preloading.instrumentation;
 
-import org.jetbrains.jet.preloading.instrumentation.annotations.*;
+import org.jetbrains.kotlin.preloading.instrumentation.annotations.*;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.util.Textifier;

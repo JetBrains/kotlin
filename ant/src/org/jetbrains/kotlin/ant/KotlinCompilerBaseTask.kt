@@ -25,7 +25,7 @@ import org.apache.tools.ant.types.Commandline
 import java.io.PrintStream
 import org.apache.tools.ant.AntClassLoader
 import java.lang.ref.SoftReference
-import org.jetbrains.jet.preloading.ClassPreloadingUtils
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import java.net.JarURLConnection
 
 object CompilerClassLoaderHolder {

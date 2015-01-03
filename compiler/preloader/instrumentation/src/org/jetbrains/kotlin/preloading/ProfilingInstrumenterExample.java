@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.preloading;
+package org.jetbrains.kotlin.preloading;
 
-import org.jetbrains.jet.preloading.instrumentation.InterceptionInstrumenterAdaptor;
-import org.jetbrains.jet.preloading.instrumentation.annotations.ClassName;
-import org.jetbrains.jet.preloading.instrumentation.annotations.MethodDesc;
-import org.jetbrains.jet.preloading.instrumentation.annotations.MethodInterceptor;
-import org.jetbrains.jet.preloading.instrumentation.annotations.MethodName;
+import org.jetbrains.kotlin.preloading.instrumentation.InterceptionInstrumenterAdaptor;
+import org.jetbrains.kotlin.preloading.instrumentation.annotations.ClassName;
+import org.jetbrains.kotlin.preloading.instrumentation.annotations.MethodDesc;
+import org.jetbrains.kotlin.preloading.instrumentation.annotations.MethodInterceptor;
+import org.jetbrains.kotlin.preloading.instrumentation.annotations.MethodName;
 
 import java.io.PrintStream;
 import java.util.*;

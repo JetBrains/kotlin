@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.preloading;
+package org.jetbrains.kotlin.preloading.instrumentation.annotations;
 
-import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@SuppressWarnings("UnusedParameters")
-public abstract class ClassHandler {
-    public byte[] instrument(String resourceName, byte[] data) {
-        return data;
-    }
-
-    public void beforeDefineClass(String name, int sizeInBytes) {}
-    public void afterDefineClass(String name) {}
-
-    public void beforeLoadJar(File jarFile) {}
-    public void afterLoadJar(File jarFile) {}
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AllArgs {
 }

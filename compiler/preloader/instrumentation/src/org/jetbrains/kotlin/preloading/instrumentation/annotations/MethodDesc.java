@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.preloading.instrumentation;
+package org.jetbrains.kotlin.preloading.instrumentation.annotations;
 
-import java.io.PrintStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface Instrumenter {
-
-    Instrumenter DO_NOTHING = new Instrumenter() {
-        @Override
-        public byte[] instrument(String resourceName, byte[] data) {
-            return data;
-        }
-
-        @Override
-        public void dump(PrintStream out) {
-            // Do nothing
-        }
-    };
-
-    byte[] instrument(String resourceName, byte[] data);
-    void dump(PrintStream out);
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MethodDesc {
 }
