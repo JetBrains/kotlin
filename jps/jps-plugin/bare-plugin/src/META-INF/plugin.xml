@@ -16,7 +16,7 @@
 
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.jet.plugin.bare.BareJpsPluginRegistrar</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.plugin.bare.BareJpsPluginRegistrar</implementation-class>
         </component>
     </application-components>
 </idea-plugin>
