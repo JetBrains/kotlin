@@ -12,7 +12,7 @@ org.jetbrains.jet.preloading.Preloader \
              dist/kotlinc/lib/kotlin-compiler.jar \
              org.jetbrains.jet.cli.jvm.K2JVMCompiler \
              5000 \
-             instrument=out/artifacts/instrumentation_jar/instrumentation.jar \
+             instrument=out/artifacts/Instrumentation/instrumentation.jar \
              <compiler's command-line args>
 ```
 
