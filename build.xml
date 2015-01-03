@@ -408,15 +408,6 @@
         <attribute name="compress" default="true"/>
 
         <sequential>
-            <!-- TODO: temporary, remove after bootstrap. Needed for proguard -->
-            <if>
-                <available file="${bootstrap.runtime.minimal}"/>
-                <then/>
-                <else>
-                    <copy file="${bootstrap.runtime}" tofile="${bootstrap.runtime.minimal}"/>
-                </else>
-            </if>
-
             <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
