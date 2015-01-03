@@ -4,11 +4,11 @@
     <module name="kannotator-jps-plugin-test" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
-    <option name="PACKAGE_NAME" value="org.jetbrains.jet.jps.build.kannotator" />
+    <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.jps.build.kannotator" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-ea" />
+    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx900m -XX:MaxPermSize=320m -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=64m" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
