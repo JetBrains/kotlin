@@ -21,7 +21,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
 import kotlin.properties.Delegates
 
-public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, IncrementalCacheImpl>): IncrementalCacheProvider {
+public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, IncrementalCache>): IncrementalCacheProvider {
     private val idToCache = caches.mapKeys { it.key.getId()!! }
 
     override fun getIncrementalCache(moduleId: String): IncrementalCache {
