@@ -25,13 +25,14 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.context.DefinitionPlace;
+import org.jetbrains.k2js.translate.context.DynamicContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 final class PackageTranslator extends AbstractTranslator {
     static PackageTranslator create(
@@ -106,8 +107,35 @@ final class PackageTranslator extends AbstractTranslator {
     }
 
     private JsPropertyInitializer getEntry(@NotNull FqName fqName, DefineInvocation defineInvocation) {
+        DynamicContext dynamicContext = context().getRootContext().dynamicContext();
+        List<JsStatement> rootStatements = dynamicContext.jsBlock().getStatements();
+
+        for (JsPropertyInitializer initializer : defineInvocation.getMembers()) {
+            if (initializer.getValueExpr() instanceof JsFunction) {
+                JsFunction fun = (JsFunction) initializer.getValueExpr();
+                String labelExpr = ((JsNameRef) initializer.getLabelExpr()).getName().getIdent();
+                String fqNameStr = fqName.toString();
+                JsName longName = dynamicContext.getScope().declareName(labelExpr + "_$" + fqNameStr.replace('.', '$'));
+                JsNameRef longNameRef = longName.makeRef();
+                String substituteName = "_." + fqNameStr + "." + labelExpr;
+                if (fun.getName() != null) {
+                    fun = TranslationUtils.simpleReturnFunction(context().scope(), fun);
+                    JsInvocation jsInvocation = new JsInvocation(longNameRef);
+                    initializer.setValueExpr(jsInvocation);
+                    // todo: we for now don't substitute yet recursive or otherwise named functions
+                }
+                else {
+                    initializer.setValueExpr(longNameRef);
+                    dynamicContext.addSubstitute(substituteName, longNameRef);
+                }
+                fun.setName(longName);
+                rootStatements.add(fun.makeStmt());
+            }
+        }
+
         return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
-                                         new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
+                                                                      new JsInvocation(context().namer().packageDefinitionMethodReference(),
+                                                                                       defineInvocation.asList()));
     }
 
     private static boolean addEntryIfParentExists(

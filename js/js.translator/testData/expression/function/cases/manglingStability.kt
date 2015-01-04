@@ -150,8 +150,10 @@ val internal_in_trait_b = { (obj: TestInternalInTrait) -> obj.boo() + obj.boo }
 //Testing
 
 fun test(testName: String, ff: Any, fb: Any) {
-    val f = ff.toString()
-    val b = fb.toString().replaceAll("boo", "foo")
+    fun String.onlyBody() = this.substring(this.indexOf("("))  // we ignore function names on comparison
+
+    val f = ff.toString().onlyBody()
+    val b = fb.toString().onlyBody().replaceAll("boo", "foo")
 
     if (f != b) throw Exception("FAILED on ${testName}:\n f = \"$f\"\n b = \"$b\"")
 }

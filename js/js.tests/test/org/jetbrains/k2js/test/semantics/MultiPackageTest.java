@@ -54,6 +54,10 @@ public class MultiPackageTest extends MultipleFilesTranslationTest {
         runMultiFileTest("subpackagesWithClashingNamesUsingImport", "a.foo", TEST_FUNCTION, true);
     }
 
+    public void testMultiPackageInitialization() throws Exception {
+        runMultiFileTest("multiPackageInitialization", "foo", TEST_FUNCTION, true);
+    }
+
     public void testCreateClassFromOtherPackage() throws Exception {
         runMultiFileTest("createClassFromOtherPackage", "a.foo", TEST_FUNCTION, true);
     }
