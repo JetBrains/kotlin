@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import java.util.ArrayList
 import java.util.IdentityHashMap
 
-import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.inline.util.replaceNames
 
 class NamingContext(

@@ -18,8 +18,8 @@ package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
 
 import java.util.List;
 

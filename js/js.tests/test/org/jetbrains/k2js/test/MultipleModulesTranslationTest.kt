@@ -17,17 +17,14 @@
 package org.jetbrains.k2js.test
 
 import org.jetbrains.k2js.config.EcmaVersion
-import org.jetbrains.k2js.facade.MainCallParameters
-import org.jetbrains.k2js.test.BasicTest
+import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker
 
 import java.io.File
 import java.util.ArrayList
 
 import org.jetbrains.k2js.test.utils.JsTestUtils.getAllFilesInDir
-import java.util.HashMap
 import java.util.LinkedHashMap
-import java.util.Collections
 
 public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
 

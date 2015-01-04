@@ -53,9 +53,11 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.*;
-import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.facade.Status;
+import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
+import org.jetbrains.kotlin.js.facade.Status;
 
 import java.io.File;
 import java.util.List;
@@ -63,7 +65,7 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.k2js.facade.K2JSTranslator.translateWithMainCallParameters;
+import static org.jetbrains.kotlin.js.facade.K2JSTranslator.translateWithMainCallParameters;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 

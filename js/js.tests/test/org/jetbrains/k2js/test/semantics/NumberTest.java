@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationInternalException;
 import org.junit.Assert;
 
 public final class NumberTest extends SingleFileTranslationTest {

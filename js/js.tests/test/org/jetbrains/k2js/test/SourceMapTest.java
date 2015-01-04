@@ -32,7 +32,7 @@ public final class SourceMapTest extends SingleFileTranslationTest {
     }
 
     @Override
-    protected boolean shouldGenerateSourcemap() {
+    protected boolean shouldGenerateSourceMap() {
         return true;
     }
 

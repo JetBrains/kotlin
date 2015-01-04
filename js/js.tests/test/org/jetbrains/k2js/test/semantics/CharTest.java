@@ -16,9 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.junit.Assert;
 
 public final class CharTest extends SingleFileTranslationTest {
     public CharTest() {

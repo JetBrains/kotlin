@@ -20,9 +20,9 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
 
 import java.io.File;
 import java.util.List;

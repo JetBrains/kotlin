@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.analyze
 
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.k2js.PredefinedAnnotation.*
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.Severity

@@ -19,9 +19,9 @@ package org.jetbrains.k2js.test;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
 

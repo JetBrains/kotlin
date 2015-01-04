@@ -20,13 +20,16 @@ import com.google.common.collect.Lists;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
-import org.jetbrains.k2js.test.utils.JsUnitTestReporter;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 import org.jetbrains.k2js.test.rhino.RhinoUtils;
+import org.jetbrains.k2js.test.utils.JsUnitTestReporter;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
@@ -48,7 +51,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     @NotNull
     @Override
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
-        ArrayList<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
+        List<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
         result.add(JS_TESTS_JS);
         return result;
     }

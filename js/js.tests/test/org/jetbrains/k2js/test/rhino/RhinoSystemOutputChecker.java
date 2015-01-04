@@ -17,7 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 

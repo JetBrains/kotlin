@@ -44,11 +44,11 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
-import org.jetbrains.k2js.facade.Status;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
+import org.jetbrains.kotlin.js.facade.Status;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,9 +57,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.k2js.facade.K2JSTranslator.translateWithMainCallParameters;
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
+import static org.jetbrains.kotlin.js.facade.K2JSTranslator.translateWithMainCallParameters;
 
 public abstract class BasicTest extends KotlinTestWithEnvironment {
     // predictable order of ecma version in tests
@@ -198,7 +198,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    protected boolean shouldGenerateSourcemap() {
+    protected boolean shouldGenerateSourceMap() {
         return false;
     }
 
@@ -280,10 +280,10 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, @Nullable List<String> libraries) {
         if (libraries == null) {
-            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourcemap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+            return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
         }
         else {
-            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourcemap(), IS_INLINE_ENABLED);
+            return new LibrarySourcesConfig(project, moduleId, librariesWithJsStdlib(libraries), ecmaVersion, shouldGenerateSourceMap(), IS_INLINE_ENABLED);
         }
     }
 

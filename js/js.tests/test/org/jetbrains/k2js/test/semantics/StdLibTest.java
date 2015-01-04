@@ -18,9 +18,9 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionNativeObjectResultChecker;
+import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

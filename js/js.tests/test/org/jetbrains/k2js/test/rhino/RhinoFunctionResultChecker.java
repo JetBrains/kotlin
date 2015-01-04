@@ -18,7 +18,7 @@ package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 

@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsFunction
-import org.jetbrains.k2js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.Namer
 import com.google.dart.compiler.backend.js.ast.HasName
 import com.google.dart.compiler.backend.js.ast.JsNode
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef

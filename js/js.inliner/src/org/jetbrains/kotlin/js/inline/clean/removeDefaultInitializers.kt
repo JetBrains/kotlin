@@ -21,9 +21,9 @@ import com.google.dart.compiler.backend.js.ast.metadata.hasDefaultValue
 
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import org.jetbrains.kotlin.js.inline.util.zipWithDefault
-import org.jetbrains.k2js.translate.context.Namer
-import org.jetbrains.k2js.translate.context.Namer.isUndefined
-import org.jetbrains.k2js.translate.utils.JsAstUtils.flattenStatement
+import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.Namer.isUndefined
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement
 
 /**
  * Removes initializers for default parameters with defined arguments given

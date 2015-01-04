@@ -16,7 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
@@ -36,8 +36,7 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-
-    public void testSafecallComputesExpressionOnlyOnce() throws Exception {
+    public void testSafeCallComputesExpressionOnlyOnce() throws Exception {
         fooBoxTest();
     }
 
@@ -171,6 +170,7 @@ public final class MiscTest extends AbstractExpressionTest {
             fail();
         }
         catch (JavaScriptException e) {
+            // ignore
         }
     }
 

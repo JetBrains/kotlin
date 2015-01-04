@@ -28,11 +28,11 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.Stack;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.flattenStatement;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
 import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
 import static org.jetbrains.kotlin.js.inline.util.UtilPackage.*;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 

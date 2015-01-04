@@ -22,7 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.mozilla.javascript.*;
 
 import java.io.File;
