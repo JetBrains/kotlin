@@ -162,7 +162,37 @@ class ArraysTest {
         expect(0) { array("cat", "dog", "bird").indexOf("cat") }
         expect(1) { array("cat", "dog", "bird").indexOf("dog") }
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
-        expect(0) { array(null, "dog", null).indexOf(null)}
+        expect(0) { array(null, "dog", null).indexOf(null : String?)}
+
+        expect(-1) { array("cat", "dog", "bird").indexOf {it.contains("p")} }
+        expect(0) { array("cat", "dog", "bird").indexOf {it.startsWith('c')} }
+        expect(1) { array("cat", "dog", "bird").indexOf {it.startsWith('d')} }
+        expect(2) { array("cat", "dog", "bird").indexOf {it.endsWith('d')} }
+
+        expect(-1) { streamOf("cat", "dog", "bird").indexOf {it.contains("p")} }
+        expect(0) { streamOf("cat", "dog", "bird").indexOf {it.startsWith('c')} }
+        expect(1) { streamOf("cat", "dog", "bird").indexOf {it.startsWith('d')} }
+        expect(2) { streamOf("cat", "dog", "bird").indexOf {it.endsWith('d')} }
+    }
+
+    test fun lastIndexOf() {
+        expect(-1) { array("cat", "dog", "bird").lastIndexOf("mouse") }
+        expect(0) { array("cat", "dog", "bird").lastIndexOf("cat") }
+        expect(1) { array("cat", "dog", "bird").lastIndexOf("dog") }
+        expect(2) { array(null, "dog", null).lastIndexOf(null : String?)}
+        expect(3) { array("cat", "dog", "bird", "dog").lastIndexOf("dog") }
+
+        expect(-1) { array("cat", "dog", "bird").lastIndexOf {it.contains("p")} }
+        expect(0) { array("cat", "dog", "bird").lastIndexOf {it.startsWith('c')} }
+        expect(2) { array("cat", "dog", "cap", "bird").lastIndexOf {it.startsWith('c')} }
+        expect(2) { array("cat", "dog", "bird").lastIndexOf {it.endsWith('d')} }
+        expect(3) { array("cat", "dog", "bird", "red").lastIndexOf {it.endsWith('d')} }
+
+        expect(-1) { streamOf("cat", "dog", "bird").lastIndexOf {it.contains("p")} }
+        expect(0) { streamOf("cat", "dog", "bird").lastIndexOf {it.startsWith('c')} }
+        expect(2) { streamOf("cat", "dog", "cap", "bird").lastIndexOf {it.startsWith('c')} }
+        expect(2) { streamOf("cat", "dog", "bird").lastIndexOf {it.endsWith('d')} }
+        expect(3) { streamOf("cat", "dog", "bird", "red").lastIndexOf {it.endsWith('d')} }
     }
 
     test fun plus() {
