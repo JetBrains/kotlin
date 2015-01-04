@@ -28,13 +28,9 @@ import org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.descriptors.Visibilities
-import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
 import org.jetbrains.k2js.translate.utils.JsAstUtils
-import com.intellij.util.SmartList
-import org.jetbrains.k2js.inline.util.getInnerFunction
+import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.jet.lang.types.lang.InlineUtil
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
@@ -133,7 +129,7 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
             CapturedArgsParams()
         }
         is JsInvocation ->
-            moveCapturedLocalInside(capturingFunction, capturedName, localFunAlias as JsInvocation)
+            moveCapturedLocalInside(capturingFunction, capturedName, localFunAlias)
         else ->
             throw AssertionError("Local function reference has wrong alias $localFunAlias")
     }

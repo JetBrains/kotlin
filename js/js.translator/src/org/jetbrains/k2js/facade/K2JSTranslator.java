@@ -46,8 +46,8 @@ import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
-import org.jetbrains.k2js.inline.JsInliner;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.kotlin.js.inline.JsInliner;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,9 +86,6 @@ public final class K2JSTranslator {
         String prefix = FileUtilsPackage.readTextOrEmpty(outputPrefixFile);
         String postfix = FileUtilsPackage.readTextOrEmpty(outputPostfixFile);
 
-        StringBuilder outBuilder = new StringBuilder(programCode.length() + prefix.length() + postfix.length());
-        outBuilder.append(prefix).append(programCode).append(postfix);
-
         List<File> sourceFiles = ContainerUtil.map(files, new Function<JetFile, File>() {
             @Override
             public File fun(JetFile file) {
@@ -98,13 +95,13 @@ public final class K2JSTranslator {
             }
         });
 
-        SimpleOutputFile jsFile = new SimpleOutputFile(sourceFiles, outputFile.getName(), outBuilder.toString());
+        SimpleOutputFile jsFile = new SimpleOutputFile(sourceFiles, outputFile.getName(), prefix + programCode + postfix);
         List<SimpleOutputFile> outputFiles = new SmartList<SimpleOutputFile>(jsFile);
 
         if (sourceMapBuilder != null) {
             sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix));
-            SimpleOutputFile sourcemapFile = new SimpleOutputFile(sourceFiles, sourceMapBuilder.getOutFile().getName(), sourceMapBuilder.build());
-            outputFiles.add(sourcemapFile);
+            SimpleOutputFile sourceMapFile = new SimpleOutputFile(sourceFiles, sourceMapBuilder.getOutFile().getName(), sourceMapBuilder.build());
+            outputFiles.add(sourceMapFile);
         }
 
         OutputFileCollection outputFileCollection = new SimpleOutputFileCollection(outputFiles);

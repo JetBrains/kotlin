@@ -22,13 +22,14 @@ import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.jetbrains.k2js.inline.util.UtilPackage.collectInstances;
+import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectInstances;
+import static org.junit.Assert.*;
 
 public class DirectiveTestUtils {
 

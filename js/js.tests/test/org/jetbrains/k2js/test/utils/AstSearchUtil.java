@@ -16,12 +16,14 @@
 
 package org.jetbrains.k2js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsFunction;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
+import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectNamedFunctions;
 
 public class AstSearchUtil {
     @NotNull

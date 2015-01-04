@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 import org.jetbrains.k2js.test.SingleFileTranslationWithDirectivesTest;
+import org.jetbrains.kotlin.js.inline.exception.InlineRecursionException;
 
 public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
     public InlineTest() {
