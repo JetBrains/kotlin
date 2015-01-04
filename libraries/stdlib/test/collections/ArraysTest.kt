@@ -1,6 +1,9 @@
 package test.collections
 
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.expect
 import org.junit.Test as test
 
 fun <T> checkContent(iter: Iterator<T>, length: Int, value: (Int) -> T) {
@@ -212,6 +215,28 @@ class ArraysTest {
         assertTrue(array<Long>().toSortedList().none())
         assertEquals(listOf(1), array(1).toSortedList())
         assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
+    }
+
+    test fun asIterable() {
+        val arr1 = intArray(1, 2, 3, 4, 5)
+        val iter1 = arr1.asIterable()
+        assertEquals(arr1.toList(), iter1.toList())
+        arr1[0] = 0
+        assertEquals(arr1.toList(), iter1.toList())
+
+        val arr2 = array("one", "two", "three")
+        val iter2 = arr2.asIterable()
+        assertEquals(arr2.toList(), iter2.toList())
+        arr2[0] = ""
+        assertEquals(arr2.toList(), iter2.toList())
+
+        val arr3 = IntArray(0)
+        val iter3 = arr3.asIterable()
+        assertEquals(iter3.toList(), emptyList<Int>())
+
+        val arr4 = Array(0, { "$it" })
+        val iter4 = arr4.asIterable()
+        assertEquals(iter4.toList(), emptyList<String>())
     }
 
     /*
