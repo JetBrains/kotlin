@@ -214,6 +214,14 @@ class ArraysTest {
         assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
     }
 
+    test fun asIterable() {
+        val a = intArray(1, 2, 3, 4, 5)
+        val iter = a.asIterable()
+        assertEquals(a.toList(), iter.toList())
+        a[0] = 0
+        assertEquals(a.toList(), iter.toList())
+    }
+
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers
