@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.build;
+package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,7 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.jps.build.JpsUtils.getAllDependencies;
+import static org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies;
 import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProcessor;
 import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProvider;
 

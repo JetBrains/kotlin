@@ -110,7 +110,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
+import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest

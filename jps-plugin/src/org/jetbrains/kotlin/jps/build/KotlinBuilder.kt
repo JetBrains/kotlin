@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.build
+package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
@@ -28,8 +28,8 @@ import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl
 import org.jetbrains.jet.config.Services
 import org.jetbrains.jet.config.IncrementalCompilation
-import org.jetbrains.jet.jps.JpsKotlinCompilerSettings
-import org.jetbrains.jet.jps.incremental.*
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.jet.utils.PathUtil
 import org.jetbrains.jps.ModuleChunk

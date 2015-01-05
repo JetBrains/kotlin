@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.jps.build.kannotator;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.jps.build.AbstractKotlinJpsBuildTestCase;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
 
 import java.io.File;
 
