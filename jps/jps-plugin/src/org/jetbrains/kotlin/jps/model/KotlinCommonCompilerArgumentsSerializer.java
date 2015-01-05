@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.model;
+package org.jetbrains.kotlin.jps.model;
 
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
 
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION;
 
-class Kotlin2JsCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
-    Kotlin2JsCompilerArgumentsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION);
+class KotlinCommonCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
+    KotlinCommonCompilerArgumentsSerializer() {
+        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION);
     }
 
     @Override
     public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        K2JSCompilerArguments settings = XmlSerializer.deserialize(componentTag, K2JSCompilerArguments.class);
+        CommonCompilerArguments settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl.class);
         if (settings == null) {
-            settings = new K2JSCompilerArguments();
+            settings = new CommonCompilerArguments.DummyImpl();
         }
 
-        JpsKotlinCompilerSettings.setK2JsCompilerArguments(project, settings);
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings);
     }
 
     @Override

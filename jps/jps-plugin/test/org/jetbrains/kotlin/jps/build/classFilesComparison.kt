@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.build
+package org.jetbrains.kotlin.jps.build
 
 import java.io.File
 import org.junit.Assert.*
@@ -28,14 +28,13 @@ import com.google.common.hash.Hashing
 import com.intellij.openapi.util.io.FileUtil
 import com.google.common.collect.Sets
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import org.jetbrains.jet.descriptors.serialization.DebugJavaProtoBuf
 import com.google.protobuf.ExtensionRegistry
 import java.io.ByteArrayInputStream
 import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
 import java.util.Arrays
-import org.jetbrains.jet.jps.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 

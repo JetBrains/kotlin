@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.incremental
+package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
 import java.io.File
 import com.intellij.util.io.PersistentHashMap
 import java.io.DataOutput

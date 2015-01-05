@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.model;
+package org.jetbrains.kotlin.jps.model;
 
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompilerSettings;
-import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
+import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
 
-class KotlinCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
-    KotlinCompilerSettingsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMPILER_SETTINGS_SECTION);
+class Kotlin2JvmCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
+    Kotlin2JvmCompilerArgumentsSerializer() {
+        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION);
     }
 
     @Override
     public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        CompilerSettings settings = XmlSerializer.deserialize(componentTag, CompilerSettings.class);
+        K2JVMCompilerArguments settings = XmlSerializer.deserialize(componentTag, K2JVMCompilerArguments.class);
         if (settings == null) {
-            settings = new CompilerSettings();
+            settings = new K2JVMCompilerArguments();
         }
 
-        JpsKotlinCompilerSettings.setCompilerSettings(project, settings);
+        JpsKotlinCompilerSettings.setK2JvmCompilerArguments(project, settings);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.incremental
+package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
-import kotlin.properties.Delegates
 
 public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, IncrementalCacheImpl>): IncrementalCacheProvider {
     private val idToCache = caches.mapKeys { it.key.getId()!! }
@@ -28,4 +27,3 @@ public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, Increme
         return idToCache[moduleId]!!
     }
 }
-
