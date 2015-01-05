@@ -120,9 +120,9 @@ import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
-import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
+import org.jetbrains.kotlin.js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
-import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
+import org.jetbrains.kotlin.js.test.semantics.AbstractBridgeTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
@@ -134,8 +134,8 @@ import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
-import org.jetbrains.k2js.test.semantics.AbstractMultiModuleTest
+import org.jetbrains.kotlin.js.test.semantics.AbstractDynamicTest
+import org.jetbrains.kotlin.js.test.semantics.AbstractMultiModuleTest
 import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.jet.codegen.AbstractLineNumberTest
