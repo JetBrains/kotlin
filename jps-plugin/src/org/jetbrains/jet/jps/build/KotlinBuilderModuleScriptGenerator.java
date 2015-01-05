@@ -22,9 +22,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder;
-import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilderFactory;
-import org.jetbrains.jet.compiler.runner.KotlinModuleXmlBuilderFactory;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
@@ -41,14 +38,17 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
+import org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder;
+import org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilderFactory;
+import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilderFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProcessor;
-import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProvider;
 import static org.jetbrains.jet.jps.build.JpsUtils.getAllDependencies;
+import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProcessor;
+import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProvider;
 
 public class KotlinBuilderModuleScriptGenerator {
 

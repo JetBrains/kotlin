@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.runner;
+package org.jetbrains.kotlin.modules;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.config.IncrementalCompilation;
+import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.util.Collection;
@@ -24,12 +26,14 @@ import java.util.List;
 import java.util.Set;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
+import static com.intellij.openapi.util.text.StringUtil.escapeXml;
+import static org.jetbrains.jet.cli.common.modules.ModuleXmlParser.*;
 
-public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescriptionBuilderFactory {
+public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBuilderFactory {
 
-    public static final KotlinModuleScriptBuilderFactory INSTANCE = new KotlinModuleScriptBuilderFactory();
+    public static final KotlinModuleXmlBuilderFactory INSTANCE = new KotlinModuleXmlBuilderFactory();
 
-    private KotlinModuleScriptBuilderFactory() {}
+    private KotlinModuleXmlBuilderFactory() {}
 
     @Override
     public KotlinModuleDescriptionBuilder create() {
@@ -38,16 +42,16 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
 
     @Override
     public String getFileExtension() {
-        return "kts";
+        return "xml";
     }
 
     private static class Builder implements KotlinModuleDescriptionBuilder {
-        private final StringBuilder script = new StringBuilder();
+        private final StringBuilder xml = new StringBuilder();
+        private final Printer p = new Printer(xml);
         private boolean done = false;
 
-        {
-            script.append("import kotlin.modules.*\n");
-            script.append("fun project() {\n");
+        public Builder() {
+            openTag(p, MODULES);
         }
 
         @Override
@@ -62,56 +66,80 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
             assert !done : "Already done";
 
             if (tests) {
-                script.append("// Module script for tests\n");
+                p.println("<!-- Module script for tests -->");
             }
             else {
-                script.append("// Module script for production\n");
+                p.println("<!-- Module script for production -->");
             }
 
-            script.append("    module(\"" + moduleName + "\", outputDir = \"" + toSystemIndependentName(outputDir) + "\") {\n");
+            p.println("<", MODULE, " ",
+                      NAME, "=\"", escapeXml(moduleName), "\" ",
+                      OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">"
+            );
+            p.pushIndent();
 
             for (File sourceFile : sourceFiles) {
-                script.append("        sources += \"" + toSystemIndependentName(sourceFile.getPath()) + "\"\n");
+                p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");
             }
 
             dependencyProvider.processClassPath(new DependencyProcessor() {
                 @Override
                 public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
-                    script.append("        // " + sectionDescription + "\n");
+                    p.println("<!-- ", sectionDescription, " -->");
                     for (File file : files) {
-                        if (directoriesToFilterOut.contains(file)) {
+                        boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
+                        if (isOutput) {
                             // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                             // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
                             // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                            script.append("        // Output directory, commented out\n");
-                            script.append("        // ");
+                            p.println("<!-- Output directory, commented out -->");
+                            p.println("<!-- ");
+                            p.pushIndent();
                         }
-                        script.append("        classpath += \"" + toSystemIndependentName(file.getPath()) + "\"\n");
+
+                        p.println("<", CLASSPATH, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+
+                        if (isOutput) {
+                            p.popIndent();
+                            p.println("-->");
+                        }
                     }
                 }
 
                 @Override
                 public void processAnnotationRoots(@NotNull List<File> files) {
-                    script.append("        // External annotations\n");
+                    p.println("<!-- External annotations -->");
                     for (File file : files) {
-                        script.append("        annotationsPath += \"").append(toSystemIndependentName(file.getPath())).append("\"\n");
+                        p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "= \"", getEscapedPath(file), "\"/>");
                     }
                 }
             });
 
-            script.append("    }\n");
+            closeTag(p, MODULE);
             return this;
         }
 
         @Override
         public CharSequence asText() {
             if (!done)  {
-                script.append("}\n");
+                closeTag(p, MODULES);
                 done = true;
             }
-
-            return script;
+            return xml;
         }
     }
 
+    private static void openTag(Printer p, String tag) {
+        p.println("<" + tag + ">");
+        p.pushIndent();
+    }
+
+    private static void closeTag(Printer p, String tag) {
+        p.popIndent();
+        p.println("</" + tag + ">");
+    }
+
+    private static String getEscapedPath(File sourceFile) {
+        return escapeXml(toSystemIndependentName(sourceFile.getPath()));
+    }
 }
