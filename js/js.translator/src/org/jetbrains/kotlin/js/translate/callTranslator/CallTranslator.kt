@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver

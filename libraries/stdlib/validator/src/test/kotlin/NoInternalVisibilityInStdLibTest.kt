@@ -39,9 +39,9 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.k2js.config.LibrarySourcesConfig
-import org.jetbrains.k2js.config.EcmaVersion
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.config.EcmaVersion
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.jet.context.GlobalContext

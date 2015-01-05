@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.resolve.diagnostics;
+package org.jetbrains.kotlin.js.resolve.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory2;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -25,9 +28,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.CALL_EXPRESSION;
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_RETURN_TYPE;
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT;
+import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 

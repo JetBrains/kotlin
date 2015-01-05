@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.JavaScript;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
 
 import java.io.File;

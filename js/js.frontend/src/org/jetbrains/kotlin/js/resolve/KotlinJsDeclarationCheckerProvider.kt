@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.resolve
+package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.k2js.resolve.diagnostics.ErrorsJs
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.k2js.PredefinedAnnotation
+import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 

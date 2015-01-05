@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 
 import java.io.File;
 import java.io.IOException;

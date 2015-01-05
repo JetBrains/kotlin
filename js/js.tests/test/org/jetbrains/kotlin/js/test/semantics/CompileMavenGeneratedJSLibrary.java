@@ -21,7 +21,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
 
 import java.io.File;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js
+package org.jetbrains.kotlin.js.config;
 
-object JavaScript {
-    val FULL_NAME = "JavaScript"
-    val NAME = "JS"
-    val LOWER_NAME = "js"
+import org.jetbrains.annotations.NotNull;
 
-    val EXTENSION = "js"
-    val DOT_EXTENSION = "." + EXTENSION
+public enum EcmaVersion {
+    v3, v5;
+
+    @NotNull
+    public static EcmaVersion defaultVersion() {
+        return v5;
+    }
 }

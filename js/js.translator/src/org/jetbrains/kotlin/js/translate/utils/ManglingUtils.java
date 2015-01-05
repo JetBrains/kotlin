@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 
 import java.util.*;
 

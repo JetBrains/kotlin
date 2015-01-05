@@ -23,7 +23,7 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.analyzer.ResolverForProject
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider
+import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed
 
 public class JsResolverForModule(

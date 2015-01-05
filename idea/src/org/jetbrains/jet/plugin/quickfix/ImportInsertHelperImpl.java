@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 
 import java.util.List;
 

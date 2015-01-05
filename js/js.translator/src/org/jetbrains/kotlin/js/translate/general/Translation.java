@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
-import org.jetbrains.k2js.config.Config;
+import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.exceptions.MainFunctionNotFoundException;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;

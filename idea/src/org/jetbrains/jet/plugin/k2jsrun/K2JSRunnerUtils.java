@@ -31,7 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.JavaScript;
+import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
 import java.io.IOException;

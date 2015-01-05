@@ -31,9 +31,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfigWithCaching;
 
 import java.util.List;
 import java.util.Map;

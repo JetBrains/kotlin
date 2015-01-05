@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.utils;
+package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.k2js.PredefinedAnnotation;
+import org.jetbrains.kotlin.js.PredefinedAnnotation;
 
 import java.util.List;
 import java.util.Set;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.resolve.diagnostics
+package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.jet.lang.diagnostics.PositioningStrategy
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.renderer.Renderer
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic
 

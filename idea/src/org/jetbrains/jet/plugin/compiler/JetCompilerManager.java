@@ -32,7 +32,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings;
-import org.jetbrains.k2js.JavaScript;
+import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

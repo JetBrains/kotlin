@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject;
+import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.

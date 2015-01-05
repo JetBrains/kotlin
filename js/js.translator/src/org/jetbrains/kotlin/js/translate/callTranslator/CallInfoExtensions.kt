@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import com.google.dart.compiler.backend.js.ast.JsExpression

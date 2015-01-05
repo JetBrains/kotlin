@@ -52,10 +52,10 @@ import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
 import org.jetbrains.jet.utils.PathUtil;
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.config.Config;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.Status;
 

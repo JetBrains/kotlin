@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.kotlin.js.config;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -30,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.k2js.JavaScript;
 import org.jetbrains.jet.utils.LibraryUtils;
+import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
 import java.util.ArrayList;

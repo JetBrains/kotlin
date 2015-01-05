@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.analyze
+package org.jetbrains.kotlin.js.analyze
 
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.k2js.PredefinedAnnotation.*
+import org.jetbrains.kotlin.js.PredefinedAnnotation.*
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.k2js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.jet.lang.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.jet.lang.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS

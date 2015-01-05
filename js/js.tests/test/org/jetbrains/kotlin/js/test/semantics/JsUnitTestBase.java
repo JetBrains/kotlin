@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 import com.google.common.collect.Lists;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.test.MultipleFilesTranslationTest;
 import org.jetbrains.kotlin.js.test.rhino.RhinoSystemOutputChecker;

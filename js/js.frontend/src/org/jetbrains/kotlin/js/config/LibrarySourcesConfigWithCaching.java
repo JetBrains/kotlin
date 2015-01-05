@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.kotlin.js.config;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.PathUtil;
-import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 
 import java.io.IOException;
 import java.util.Arrays;

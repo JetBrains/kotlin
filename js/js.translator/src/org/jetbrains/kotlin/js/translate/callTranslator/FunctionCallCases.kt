@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.descriptors.Visibilities
 import com.intellij.util.SmartList
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils
-import org.jetbrains.k2js.PredefinedAnnotation
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable

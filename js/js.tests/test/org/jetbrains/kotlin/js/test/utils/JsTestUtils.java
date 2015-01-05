@@ -20,8 +20,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.JavaScript;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 
 import java.io.File;
 import java.io.IOException;

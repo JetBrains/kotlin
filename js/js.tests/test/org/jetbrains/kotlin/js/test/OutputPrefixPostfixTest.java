@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.test.semantics.TranslatorTestCaseBuilder;
 
 import java.io.File;

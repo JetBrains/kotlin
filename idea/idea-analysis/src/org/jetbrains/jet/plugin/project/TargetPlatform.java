@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed;
 import org.jetbrains.jet.lang.types.DynamicTypesSettings;
-import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider;
+import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider;
 
 public interface TargetPlatform {
     @NotNull

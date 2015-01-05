@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionNativeObjectResultChecker;

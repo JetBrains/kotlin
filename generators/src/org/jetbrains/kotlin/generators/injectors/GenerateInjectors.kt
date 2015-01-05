@@ -48,7 +48,7 @@ import org.jetbrains.jet.context.LazyResolveToken
 import org.jetbrains.jet.lang.resolve.java.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolverPostConstruct
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider
-import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider
+import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed
 import org.jetbrains.jet.lang.types.DynamicTypesSettings
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.analyze;
+package org.jetbrains.kotlin.js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -35,8 +35,8 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJs;
+import org.jetbrains.kotlin.js.config.Config;
 
 import java.util.Collection;
 import java.util.Collections;

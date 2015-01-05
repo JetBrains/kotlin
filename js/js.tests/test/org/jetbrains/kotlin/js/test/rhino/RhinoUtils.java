@@ -21,7 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.mozilla.javascript.*;
 
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
-import static org.jetbrains.k2js.config.LibrarySourcesConfig.*;
+import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.*;
 import static org.jetbrains.kotlin.js.test.BasicTest.DIST_DIR_PATH;
 import static org.jetbrains.kotlin.js.test.BasicTest.TEST_DATA_DIR_PATH;
 

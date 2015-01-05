@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider;
+import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.types.DynamicTypesAllowed;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
