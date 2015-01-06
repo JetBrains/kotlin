@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
 import org.jetbrains.jet.codegen.context.MethodContext
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
 import kotlin.platform.platformStatic
 

@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
 
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import java.util.HashMap
 import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledMemberNameForExplicitDelegation
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
-import org.jetbrains.jet.backend.common.CodegenUtilKt
+import org.jetbrains.kotlin.backend.common.CodegenUtilKt
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,

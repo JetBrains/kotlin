@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen
 
 import junit.framework.TestCase
-import org.jetbrains.jet.codegen.bridges.*
+import org.jetbrains.kotlin.backend.common.bridges.*
 import kotlin.test.assertEquals
 import java.util.HashSet
 import org.jetbrains.jet.utils.DFS
@@ -42,7 +42,7 @@ class BridgeTest : TestCase() {
     }
 
     private fun v(text: String): Fun {
-        assert(text.length == 3, "Function vertex representation should consist of 3 characters: $text")
+        assert(text.length() == 3, "Function vertex representation should consist of 3 characters: $text")
         assert(text[0] in setOf('-', '+'), "First character should be '-' for abstract functions or '+' for concrete ones: $text")
         assert(text[1] in setOf('D', 'F'), "Second character should be 'D' for declarations or 'F' for fake overrides: $text")
         assert(text[2].isDigit(),
@@ -91,7 +91,7 @@ class BridgeTest : TestCase() {
 
         for (vertex in vertices) {
             val directConcreteSuperFunctions = vertex.overriddenFunctions.filter { !it.isAbstract }
-            assert(directConcreteSuperFunctions.size <= 1,
+            assert(directConcreteSuperFunctions.size() <= 1,
                    "Incorrect test data: function $vertex has more than one direct concrete super-function: ${vertex.overriddenFunctions}\n" +
                    "This is not allowed because only classes can contain implementations (concrete functions), and having more than one " +
                    "concrete super-function means having more than one superclass, which is prohibited in Kotlin")
@@ -112,7 +112,7 @@ class BridgeTest : TestCase() {
             if (!vertex.isAbstract) {
                 assert(!concreteDeclarations.isEmpty(),
                        "Incorrect test data: concrete fake override vertex $vertex has no concrete super-declarations")
-                assert(concreteDeclarations.size == 1,
+                assert(concreteDeclarations.size() == 1,
                        "Incorrect test data: concrete fake override vertex $vertex has more than one concrete super-declaration: " +
                        "$concreteDeclarations")
             }
