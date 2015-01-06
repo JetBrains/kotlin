@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.runner;
-
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
+package org.jetbrains.kotlin.compilerRunner;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
-public class OutputItemsCollectorImpl implements OutputItemsCollector {
-    private final List<SimpleOutputItem> outputs = ContainerUtil.newArrayList();
-
-    @Override
-    public void add(Collection<File> sourceFiles, File outputFile) {
-        outputs.add(new SimpleOutputItem(sourceFiles, outputFile));
-    }
-
-    @NotNull
-    public List<SimpleOutputItem> getOutputs() {
-        return outputs;
-    }
+public interface OutputItemsCollector {
+    void add(Collection<File> sourceFiles, File outputFile);
 }

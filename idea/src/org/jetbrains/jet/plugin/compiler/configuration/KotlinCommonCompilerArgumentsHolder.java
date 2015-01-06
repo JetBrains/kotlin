@@ -21,8 +21,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
 
 @State(
     name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,

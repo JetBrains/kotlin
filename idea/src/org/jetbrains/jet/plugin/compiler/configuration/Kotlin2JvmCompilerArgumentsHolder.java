@@ -21,8 +21,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
 
 @State(
     name = KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION,

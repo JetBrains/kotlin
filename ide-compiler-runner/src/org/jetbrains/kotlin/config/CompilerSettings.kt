@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.runner;
+package org.jetbrains.kotlin.config
 
-import java.io.File;
-import java.util.Collection;
+public class CompilerSettings {
+    public var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
+    public var copyJsLibraryFiles: Boolean = true
+    public var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
-public interface OutputItemsCollector {
-    void add(Collection<File> sourceFiles, File outputFile);
+    class object {
+        private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
+        private val DEFAULT_OUTPUT_DIRECTORY = "lib"
+    }
 }

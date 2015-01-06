@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler.runner;
+package org.jetbrains.kotlin.compilerRunner;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.preloading.ClassCondition;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
-public final class CompilerEnvironment {
+public class CompilerEnvironment {
     @NotNull
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,

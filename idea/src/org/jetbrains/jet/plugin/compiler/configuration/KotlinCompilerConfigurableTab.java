@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.config.CompilerSettings;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

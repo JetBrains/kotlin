@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jps.model.JpsElementChildRole;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
+import org.jetbrains.kotlin.config.CompilerSettings;
 
 public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerSettings> {
     static final JpsElementChildRole<JpsKotlinCompilerSettings> ROLE = JpsElementChildRoleBase.create("Kotlin Compiler Settings");
