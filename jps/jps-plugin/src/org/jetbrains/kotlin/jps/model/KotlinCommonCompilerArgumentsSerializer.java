@@ -24,8 +24,8 @@ import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
 
 class KotlinCommonCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
     KotlinCommonCompilerArgumentsSerializer() {

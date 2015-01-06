@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.jps.model;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
+import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
 
 class KotlinCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
     KotlinCompilerSettingsSerializer() {

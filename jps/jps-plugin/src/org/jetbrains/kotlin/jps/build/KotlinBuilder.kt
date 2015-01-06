@@ -23,9 +23,9 @@ import org.jetbrains.jet.cli.common.KotlinVersion
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.compiler.runner.CompilerEnvironment
-import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants
-import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
+import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.jet.config.Services
 import org.jetbrains.jet.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
@@ -43,9 +43,9 @@ import java.io.File
 import java.util.*
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
-import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler
-import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler
+import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
@@ -54,7 +54,7 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jet.compiler.runner.SimpleOutputItem
+import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.jet.utils.LibraryUtils
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
