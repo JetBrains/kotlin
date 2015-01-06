@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.Project;
@@ -34,7 +33,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -47,6 +45,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
 
 import java.util.Collection;
 
@@ -166,11 +165,11 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, DataContext dataContext) {
         editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
         PsiElement element = findTargetMember(file, editor);
         if (element == null) {
-            element = LangDataKeys.PSI_ELEMENT.getData(dataContext);
+            element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         }
 
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
@@ -184,7 +183,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     @Override
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, @Nullable DataContext dataContext) {
         if (elements.length != 1) return;
-        Editor editor = dataContext != null ? PlatformDataKeys.EDITOR.getData(dataContext) : null;
+        Editor editor = dataContext != null ? CommonDataKeys.EDITOR.getData(dataContext) : null;
 
         PsiElement element = AsJavaPackage.getUnwrapped(elements[0]);
         assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();

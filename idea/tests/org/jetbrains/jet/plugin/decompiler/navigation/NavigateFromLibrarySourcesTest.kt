@@ -31,7 +31,7 @@ import kotlin.test.fail
 import org.jetbrains.kotlin.util.sure
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import kotlin.test.assertTrue
 import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
 

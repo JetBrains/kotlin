@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.util.Processor
 import com.intellij.util.Query
-import com.intellij.psi.search.GlobalSearchScope
 import java.util.HashMap
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import java.util.Collections
@@ -35,7 +34,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
-import org.jetbrains.jet.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.jet.plugin.search.allScope
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {

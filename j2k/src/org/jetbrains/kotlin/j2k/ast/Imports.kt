@@ -22,7 +22,7 @@ import com.intellij.psi.PsiImportList
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.psi.PsiJavaCodeReferenceElement
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 
 class Import(val name: String) : Element() {
     override fun generateCode(builder: CodeBuilder) {

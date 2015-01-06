@@ -32,7 +32,7 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodU
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.asJava.*
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.psi.*
@@ -80,7 +80,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteOverrideAnnotation ->
                         usageInfo.getSmartPointer().getElement()?.let { usageElement ->
-                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().size == 0 }) {
+                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().size() == 0 }) {
                                 KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.getReferencedElement())
                             }
                             else null

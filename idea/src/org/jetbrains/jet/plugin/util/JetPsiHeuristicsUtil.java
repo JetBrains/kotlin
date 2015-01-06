@@ -19,13 +19,13 @@ package org.jetbrains.jet.plugin.util;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 
 public class JetPsiHeuristicsUtil {
     private JetPsiHeuristicsUtil() {}

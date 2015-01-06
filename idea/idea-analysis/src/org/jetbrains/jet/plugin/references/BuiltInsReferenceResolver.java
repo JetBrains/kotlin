@@ -36,7 +36,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -50,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.di.InjectorForLazyTopDownAnalyzerBasic;
 
 import java.io.File;

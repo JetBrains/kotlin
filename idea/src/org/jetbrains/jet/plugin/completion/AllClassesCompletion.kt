@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.*
-import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns

@@ -22,7 +22,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteDelegate
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.references.JetReference
@@ -59,7 +59,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         val args = callExpression.getValueArguments()
 
         val namedArguments = args.filter { arg -> arg is JetValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
-        if (!namedArguments.empty) {
+        if (!namedArguments.isEmpty()) {
             usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first as JetValueArgument, parameter))
             return
         }

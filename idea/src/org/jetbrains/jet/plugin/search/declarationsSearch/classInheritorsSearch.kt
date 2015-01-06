@@ -21,7 +21,7 @@ import com.intellij.util.Query
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiAnonymousClass
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.util.EmptyQuery

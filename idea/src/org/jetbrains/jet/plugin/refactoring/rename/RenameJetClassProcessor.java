@@ -20,16 +20,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.asJava.KotlinLightClass;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 
 import java.util.Map;
 

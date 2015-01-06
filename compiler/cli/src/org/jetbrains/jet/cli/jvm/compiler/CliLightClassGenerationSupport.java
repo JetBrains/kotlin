@@ -18,7 +18,6 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -31,10 +30,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
-import org.jetbrains.jet.asJava.LightClassConstructionContext;
-import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -50,6 +45,10 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.LightClassConstructionContext;
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -68,10 +67,6 @@ import java.util.List;
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
 public class CliLightClassGenerationSupport extends LightClassGenerationSupport implements CodeAnalyzerInitializer {
-    public static CliLightClassGenerationSupport getInstanceForCli(@NotNull Project project) {
-        return ServiceManager.getService(project, CliLightClassGenerationSupport.class);
-    }
-
     private final PsiManager psiManager;
     private BindingContext bindingContext = null;
     private ModuleDescriptor module = null;
@@ -221,6 +216,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
         if (PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage).isEmpty()) return Collections.emptyList();
 
+        //noinspection RedundantTypeArguments
         return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.create(psiManager, packageFqName, scope, filesInPackage));
     }
 

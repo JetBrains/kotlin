@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.types.JetType
@@ -264,8 +264,8 @@ public class LookupElementFactory(
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     val parameters = descriptor.getValueParameters()
-                    when (parameters.size) {
-                        0 ->  KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+                    when (parameters.size()) {
+                        0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
 
                         1 -> {
                             val parameterType = parameters.single().getType()

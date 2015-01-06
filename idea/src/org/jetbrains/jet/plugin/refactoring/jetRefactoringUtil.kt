@@ -63,14 +63,13 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
-import org.jetbrains.jet.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
@@ -362,8 +361,8 @@ public fun chooseContainerElementIfNecessary<T>(
         onSelect: (T) -> Unit
 ) {
     when {
-        containers.empty -> return
-        containers.size == 1 || ApplicationManager.getApplication()!!.isUnitTestMode() -> onSelect(containers.first())
+        containers.isEmpty() -> return
+        containers.size() == 1 || ApplicationManager.getApplication()!!.isUnitTestMode() -> onSelect(containers.first())
         else -> chooseContainerElement(containers, editor, title, highlightSelection, toPsi, onSelect)
     }
 }

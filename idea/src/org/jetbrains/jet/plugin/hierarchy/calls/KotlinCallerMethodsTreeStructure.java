@@ -34,16 +34,13 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 import java.util.Collections;
 import java.util.HashSet;

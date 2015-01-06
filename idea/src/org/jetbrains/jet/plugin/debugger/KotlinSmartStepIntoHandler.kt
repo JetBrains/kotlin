@@ -24,7 +24,7 @@ import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.*

@@ -21,8 +21,8 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.asJava.KotlinLightMethod
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.psi.*

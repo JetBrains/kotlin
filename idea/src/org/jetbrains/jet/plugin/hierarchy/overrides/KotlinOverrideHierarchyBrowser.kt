@@ -24,12 +24,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
-import org.jetbrains.jet.asJava.getRepresentativeLightMethod
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.kotlin.asJava.unwrapped
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement

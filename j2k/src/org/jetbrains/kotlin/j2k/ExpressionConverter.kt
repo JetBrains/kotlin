@@ -24,7 +24,7 @@ import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
 import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.jet.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetClassOrObject
@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.asJava.KotlinLightField
+import org.jetbrains.kotlin.asJava.KotlinLightField
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 

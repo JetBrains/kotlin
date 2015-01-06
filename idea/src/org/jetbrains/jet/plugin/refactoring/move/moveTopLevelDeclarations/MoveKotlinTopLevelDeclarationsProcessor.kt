@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.refactoring.createKotlinFile
 import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.move.getFileNameAfterMove
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import org.jetbrains.jet.asJava.toLightElements
+import org.jetbrains.kotlin.asJava.toLightElements
 import java.util.HashMap
 import org.jetbrains.jet.utils.flatten
 import java.util.ArrayList
@@ -52,7 +52,7 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.psi.psiUtil.isPrivate
 import org.jetbrains.jet.plugin.refactoring.getUsageContext
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf

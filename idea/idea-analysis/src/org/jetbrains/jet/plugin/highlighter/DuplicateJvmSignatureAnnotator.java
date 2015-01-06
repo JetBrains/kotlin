@@ -22,20 +22,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
 
 import static org.jetbrains.jet.plugin.caches.resolve.ResolvePackage.getModuleInfo;
 
 public class DuplicateJvmSignatureAnnotator implements Annotator {
-
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (!(element instanceof JetFile) && !(element instanceof JetDeclaration)) return;

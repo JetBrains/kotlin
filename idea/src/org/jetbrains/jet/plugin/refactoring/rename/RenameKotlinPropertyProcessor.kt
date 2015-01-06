@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.search.SearchScope
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
@@ -143,7 +143,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         OverridingMethodsSearch.search(psiMethod, scope, true).forEach { overrider ->
             val overriderElement = overrider.namedUnwrappedElement
 
-            if (overriderElement != null && !(overriderElement is SyntheticElement)) {
+            if (overriderElement != null && overriderElement !is SyntheticElement) {
                 RenameProcessor.assertNonCompileElement(overriderElement)
 
                 val overriderName = overriderElement.getName()
@@ -163,8 +163,6 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                     }
                 }
             }
-
-            true
         }
     }
 

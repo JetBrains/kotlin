@@ -43,12 +43,12 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.types.TypeProjection
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.PossiblyBareType
 import org.jetbrains.jet.lang.types.JetTypeImpl
@@ -176,9 +176,9 @@ class TypeInstantiationItems(
                 val startOffset = context.getStartOffset()
                 val text = "object: $typeText$constructorParenthesis {}"
                 editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
-                editor.getCaretModel().moveToOffset(startOffset + text.length - 1)
+                editor.getCaretModel().moveToOffset(startOffset + text.length() - 1)
 
-                shortenReferences(context, startOffset, startOffset + text.length)
+                shortenReferences(context, startOffset, startOffset + text.length())
 
                 ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
             }
@@ -187,13 +187,13 @@ class TypeInstantiationItems(
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
-            signatureText = when (visibleConstructors.size) {
+            signatureText = when (visibleConstructors.size()) {
                 0 -> "()"
                 1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
                 else -> "(...)"
             }
 
-            val baseInsertHandler = when (visibleConstructors.size) {
+            val baseInsertHandler = when (visibleConstructors.size()) {
                 0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
                 1 -> LookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
                 else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
@@ -202,7 +202,7 @@ class TypeInstantiationItems(
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-                    context.setTailOffset(context.getStartOffset() + typeText.length)
+                    context.setTailOffset(context.getStartOffset() + typeText.length())
 
                     baseInsertHandler.handleInsert(context, item)
 

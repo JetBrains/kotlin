@@ -157,7 +157,7 @@
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory"
                     serviceImplementation="org.jetbrains.jet.plugin.vfilefinder.IDEVirtualFileFinderFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
 
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer"
@@ -183,8 +183,8 @@
 
     <projectService serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.asJava.KotlinLightClassForPackage$FileStubCache"
-                    serviceImplementation="org.jetbrains.jet.asJava.KotlinLightClassForPackage$FileStubCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"
                     serviceImplementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"/>
@@ -402,7 +402,7 @@
         language="jet"
         implementationClass="org.jetbrains.jet.plugin.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
-    <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
+    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 
     <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
@@ -430,7 +430,7 @@
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 
-    <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.KotlinCodeBlockModificationListener"/>
+    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
 
     <referencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>

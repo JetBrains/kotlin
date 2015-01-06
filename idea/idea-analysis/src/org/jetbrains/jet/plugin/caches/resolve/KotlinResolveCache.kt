@@ -31,7 +31,7 @@ import org.jetbrains.jet.context.SimpleGlobalContext
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies

@@ -16,14 +16,10 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.asJava.KotlinWrappingLightClass
+import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
-import org.jetbrains.jet.plugin.JetLanguage
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import com.intellij.navigation.ItemPresentation
-import com.intellij.psi.PsiElement
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,

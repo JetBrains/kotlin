@@ -40,7 +40,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import java.util.ArrayList
@@ -168,7 +168,7 @@ fun createMoveUsageInfo(
 
 public fun JetNamedDeclaration.getFileNameAfterMove(): String? {
     return (getContainingFile() as? JetFile)?.let { file ->
-        if (file.getDeclarations().size > 1) "${getName()}.${JetFileType.EXTENSION}" else file.getName()
+        if (file.getDeclarations().size() > 1) "${getName()}.${JetFileType.EXTENSION}" else file.getName()
     }
 }
 
@@ -206,7 +206,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
     for (usage in sortedUsages) {
         when (usage) {
             is NonCodeUsageInfo -> {
-                nonCodeUsages.add(usage as NonCodeUsageInfo)
+                nonCodeUsages.add(usage)
             }
 
             is MoveRenameUsageInfoForExtension -> {

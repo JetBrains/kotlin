@@ -41,7 +41,7 @@ import com.intellij.psi.search.searches.AllOverridingMethodsSearch
 import com.intellij.openapi.util.Pair
 import java.util.HashSet
 import com.intellij.util.Processor
-import org.jetbrains.jet.asJava.KotlinLightMethodForTraitFakeOverride
+import org.jetbrains.kotlin.asJava.KotlinLightMethodForTraitFakeOverride
 
 private fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
@@ -115,7 +115,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     PsiElementListNavigator.openTargets(
             e,
             overridingJavaMethods.copyToArray(),
-            methodsUpdater.getCaption(overridingJavaMethods.size),
+            methodsUpdater.getCaption(overridingJavaMethods.size()),
             "Overriding declarations of " + method.getName(),
             renderer,
             methodsUpdater)

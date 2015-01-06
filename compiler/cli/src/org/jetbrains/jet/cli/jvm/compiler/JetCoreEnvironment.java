@@ -42,9 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.CompilerModeProvider;
 import org.jetbrains.jet.OperationModeProvider;
-import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
-import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -62,6 +59,9 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFa
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.asJava.JavaElementFinder;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 
 import java.io.File;
 import java.util.ArrayList;

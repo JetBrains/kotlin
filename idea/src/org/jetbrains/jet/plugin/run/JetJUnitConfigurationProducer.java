@@ -31,10 +31,11 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer {
     private JetElement myElement;
@@ -143,7 +144,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(@NotNull Object o) {
         return 0;
     }
 }

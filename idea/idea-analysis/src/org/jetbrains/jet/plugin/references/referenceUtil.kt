@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.references
 
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.kotlin.asJava.unwrapped
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetProperty
@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
 import com.intellij.psi.PsiPolyVariantReference
 import org.jetbrains.jet.utils.emptyOrSingletonList
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 

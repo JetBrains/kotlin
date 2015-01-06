@@ -26,10 +26,10 @@ import java.util.Collections
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
+import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lexer.JetSingleValueToken

@@ -38,7 +38,6 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.*;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -58,6 +57,7 @@ import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
+import org.jetbrains.kotlin.asJava.*;
 
 import java.io.IOException;
 import java.util.*;

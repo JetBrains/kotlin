@@ -17,13 +17,13 @@
 package org.jetbrains.jet.plugin.caches.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.asJava.KotlinLightElement
+import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.jet.lang.psi.*
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.roots.ModuleRootManager

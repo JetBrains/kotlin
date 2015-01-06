@@ -28,11 +28,11 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 
 import javax.swing.*;
 import java.util.List;

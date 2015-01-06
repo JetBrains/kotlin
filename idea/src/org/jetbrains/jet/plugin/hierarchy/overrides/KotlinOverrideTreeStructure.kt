@@ -23,14 +23,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.ide.hierarchy.method.MethodHierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.method.MethodHierarchyTreeStructure
 import com.intellij.util.ArrayUtil
-import org.jetbrains.jet.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.toLightMethods
 import com.intellij.util.containers.ContainerUtil
 
 class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : HierarchyTreeStructure(project, null) {
     val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) };
 
     {
-        setBaseElement(javaTreeStructures.first!!.getBaseDescriptor()!!)
+        setBaseElement(javaTreeStructures.first().getBaseDescriptor()!!)
     }
 
     override fun buildChildren(descriptor: HierarchyNodeDescriptor): Array<Any> {

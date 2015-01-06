@@ -48,7 +48,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.lang.diagnostics.Errors
@@ -67,9 +67,9 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private val suggestions: Collection<FqName> by CachedValueProperty(
             {
-                val fqnames = computeSuggestions(element)
-                anySuggestionFound = !fqnames.isEmpty()
-                fqnames
+                val fqNames = computeSuggestions(element)
+                anySuggestionFound = !fqNames.isEmpty()
+                fqNames
             },
             { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
 

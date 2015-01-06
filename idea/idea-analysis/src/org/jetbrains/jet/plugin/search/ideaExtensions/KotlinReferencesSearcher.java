@@ -25,12 +25,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.AsJavaPackage;
-import org.jetbrains.jet.asJava.KotlinLightMethod;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.search.usagesSearch.*;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     public static void processJetClassOrObject(

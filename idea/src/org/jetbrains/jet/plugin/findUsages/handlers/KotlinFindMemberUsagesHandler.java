@@ -30,7 +30,6 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchHelper;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 import java.util.Collection;
 import java.util.Collections;

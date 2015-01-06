@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetBlockCodeFragment
-import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.debugger.DebuggerManagerEx
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.types.JetType

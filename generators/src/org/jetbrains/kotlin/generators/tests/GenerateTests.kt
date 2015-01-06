@@ -111,7 +111,7 @@ import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
-import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
+import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest

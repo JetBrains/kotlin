@@ -23,7 +23,7 @@ import com.intellij.psi.CommonClassNames
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 
 fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {

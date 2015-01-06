@@ -32,7 +32,6 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -40,6 +39,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
 import org.jetbrains.jet.lang.types.Flexibility;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.junit.Assert;
 
 import java.io.File;

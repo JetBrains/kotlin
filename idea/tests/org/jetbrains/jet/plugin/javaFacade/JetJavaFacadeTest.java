@@ -21,14 +21,14 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.asJava.KotlinLightMethod;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.asJava.KotlinLightClass;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull

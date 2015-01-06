@@ -57,7 +57,7 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
         val fqNames = packageClasses.get(name)
         if (!fqNames.isEmpty()) {
             for (fqName in fqNames) {
-                val psiClass = org.jetbrains.jet.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
+                val psiClass = org.jetbrains.kotlin.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
                 if (psiClass != null) {
                     result.add(psiClass)
                 }
@@ -74,7 +74,7 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
             val fqName = classOrObject.getFqName()
             if (fqName != null) {
                 assert(fqName.shortName().asString() == name) { "A declaration obtained from index has non-matching name:\n" + "in index: " + name + "\n" + "declared: " + fqName.shortName() + "(" + fqName + ")" }
-                val psiClass = org.jetbrains.jet.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
+                val psiClass = org.jetbrains.kotlin.asJava.JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope)
                 if (psiClass != null) {
                     result.add(psiClass)
                 }

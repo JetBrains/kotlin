@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.refactoring.fqName
 
-import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.psi.PsiPackage

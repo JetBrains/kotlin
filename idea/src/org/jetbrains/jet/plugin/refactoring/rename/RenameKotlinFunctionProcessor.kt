@@ -20,10 +20,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
-import org.jetbrains.jet.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import kotlin.properties.Delegates
 import org.jetbrains.jet.plugin.util.application.runReadAction
 
@@ -47,11 +47,11 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         }
 
         // Use java dialog to ask we should rename function with the base element
-        val subtitudedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
+        val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
-        return when (subtitudedJavaElement) {
-            is KotlinLightMethod -> subtitudedJavaElement.origin as? JetNamedFunction
-            else -> subtitudedJavaElement
+        return when (substitutedJavaElement) {
+            is KotlinLightMethod -> substitutedJavaElement.origin as? JetNamedFunction
+            else -> substitutedJavaElement
         }
     }
 
