@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet
+package org.jetbrains.kotlin.backend.common.output
 
 import java.io.File
 
@@ -37,7 +37,7 @@ public trait OutputFile {
     override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }
 
-class SimpleOutputFile(
+public class SimpleOutputFile(
         override val sourceFiles: List<File>,
         override val relativePath: String,
         private val content: String

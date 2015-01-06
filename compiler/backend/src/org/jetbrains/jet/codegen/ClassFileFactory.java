@@ -24,12 +24,12 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;

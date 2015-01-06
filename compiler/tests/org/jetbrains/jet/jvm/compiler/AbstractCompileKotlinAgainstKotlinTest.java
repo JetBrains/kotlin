@@ -21,7 +21,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.*;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -35,6 +37,8 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,12 +73,12 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         inputFiles.add(firstFileName);
         inputFiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
 
-        ArrayList<OutputFile> files = doBoxTest(inputFiles);
+        List<OutputFile> files = doBoxTest(inputFiles);
         InlineTestUtil.checkNoCallsToInline(files);
     }
 
     @NotNull
-    private ArrayList<OutputFile> doBoxTest(@NotNull List<String> files) throws Exception {
+    private List<OutputFile> doBoxTest(@NotNull List<String> files) throws Exception {
         Collections.sort(files);
 
         ClassFileFactory factory1 = null;
@@ -95,7 +99,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
             throw UtilsPackage.rethrow(e);
         }
 
-        ArrayList<OutputFile> allGeneratedFiles = new ArrayList<OutputFile>(factory1.asList());
+        List<OutputFile> allGeneratedFiles = new ArrayList<OutputFile>(factory1.asList());
         allGeneratedFiles.addAll(factory2.asList());
         return allGeneratedFiles;
     }
@@ -106,7 +110,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
                 AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
         Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-        Method main = clazz.getMethod("main", new Class[] {String[].class});
+        Method main = clazz.getMethod("main", String[].class);
         main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
     }
 
@@ -116,7 +120,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
                 AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
         Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-        Method box = clazz.getMethod("box", new Class[] {});
+        Method box = clazz.getMethod("box");
         String result = (String) box.invoke(null);
         assertEquals("OK", result);
     }

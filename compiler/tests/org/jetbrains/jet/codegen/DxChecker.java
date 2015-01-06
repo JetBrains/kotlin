@@ -21,7 +21,7 @@ import com.android.dx.cf.direct.StdAttributeFactory;
 import com.android.dx.command.dexer.Main;
 import com.android.dx.dex.cf.CfTranslator;
 import com.android.dx.dex.file.DexFile;
-import org.jetbrains.jet.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.junit.Assert;
 
 import java.io.PrintWriter;

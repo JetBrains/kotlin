@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 
 import java.net.URL;
 import java.net.URLClassLoader;

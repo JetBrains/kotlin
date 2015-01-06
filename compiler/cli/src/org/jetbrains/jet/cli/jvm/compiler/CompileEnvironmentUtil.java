@@ -36,7 +36,6 @@ import kotlin.modules.AllModules;
 import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -57,6 +56,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -162,7 +162,7 @@ public class CompileEnvironmentUtil {
             method.setAccessible(true);
             method.invoke(null);
 
-            ArrayList<Module> answer = new ArrayList<Module>(AllModules.INSTANCE$.get());
+            List<Module> answer = new ArrayList<Module>(AllModules.INSTANCE$.get());
             AllModules.INSTANCE$.get().clear();
             return answer;
         }

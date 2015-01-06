@@ -20,10 +20,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

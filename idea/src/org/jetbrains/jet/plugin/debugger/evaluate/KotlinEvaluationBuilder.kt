@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.codegen.ClassFileFactory
-import org.jetbrains.jet.OutputFileCollection
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck

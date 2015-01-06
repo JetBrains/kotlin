@@ -18,14 +18,15 @@ package org.jetbrains.jet.codegen.flags;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -75,7 +76,6 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         String fileText = FileUtil.loadFile(ktFile, true);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
-        assertTrue("Cannot create JetFile from text", psiFile != null);
 
         OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
@@ -213,7 +213,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         private int access = 0;
 
         @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
             this.access = access;
             isExists = true;
         }
@@ -233,7 +233,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         }
 
         @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
             if (name.equals(funName)) {
                 this.access = access;
                 isExists = true;
@@ -256,7 +256,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         }
 
         @Override
-        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+        public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
             if (name.equals(propertyName)) {
                 this.access = access;
                 isExists = true;
@@ -279,7 +279,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         }
 
         @Override
-        public void visitInnerClass(String innerClassInternalName, String outerClassInternalName, String name, int access) {
+        public void visitInnerClass(@NotNull String innerClassInternalName, String outerClassInternalName, String name, int access) {
             if (name.equals(innerClassName)) {
                 this.access = access;
                 isExists = true;

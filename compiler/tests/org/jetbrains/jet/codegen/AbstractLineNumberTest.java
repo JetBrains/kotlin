@@ -21,10 +21,12 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.org.objectweb.asm.*;
-import org.jetbrains.jet.*;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -32,6 +34,9 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -181,7 +186,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
         ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5) {
             @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
                 return new MethodVisitor(Opcodes.ASM5) {
                     private Label lastLabel;
 
@@ -195,12 +200,12 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
                     }
 
                     @Override
-                    public void visitLabel(Label label) {
+                    public void visitLabel(@NotNull Label label) {
                         lastLabel = label;
                     }
 
                     @Override
-                    public void visitLineNumber(int line, Label start) {
+                    public void visitLineNumber(int line, @NotNull Label start) {
                         labels2LineNumbers.put(start, line);
                     }
                 };
@@ -224,10 +229,10 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
         final List<Integer> result = new ArrayList<Integer>();
         reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
                 return new MethodVisitor(Opcodes.ASM5) {
                     @Override
-                    public void visitLineNumber(int line, Label label) {
+                    public void visitLineNumber(int line, @NotNull Label label) {
                         result.add(line);
                     }
                 };

@@ -18,11 +18,11 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.cli.common.output.outputUtils
 
-import org.jetbrains.jet.OutputFileCollection
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.jet.cli.common.messages.OutputMessageUtil
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity

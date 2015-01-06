@@ -16,7 +16,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;

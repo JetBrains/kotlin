@@ -32,7 +32,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
@@ -65,6 +64,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.di.InjectorForReplWithJava;
 import org.jetbrains.org.objectweb.asm.Type;
 
