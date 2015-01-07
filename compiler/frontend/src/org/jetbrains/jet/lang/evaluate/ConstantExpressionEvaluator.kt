@@ -96,7 +96,20 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (nodeElementType == JetNodeTypes.NULL) return NullValue.NULL
 
         val result: Any? = when (nodeElementType) {
-            JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
+            JetNodeTypes.INTEGER_CONSTANT -> {
+                val typeSize = if (expectedType is TypeUtils.SpecialType) {
+                    java.lang.Long.SIZE
+                } else {
+                    val builtIns = KotlinBuiltIns.getInstance()
+                    when (TypeUtils.makeNotNullable(expectedType)) {
+                        builtIns.getByteType() -> java.lang.Byte.SIZE
+                        builtIns.getShortType() -> java.lang.Short.SIZE
+                        builtIns.getIntType() -> java.lang.Integer.SIZE
+                        else -> java.lang.Long.SIZE
+                    }
+                }
+                parseInteger(text, typeSize)
+            }
             JetNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(text)
             JetNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
@@ -104,8 +117,8 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         }
         if (result == null) return null
 
-        fun isLongWithSuffix() = nodeElementType == JetNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
-        return createCompileTimeConstant(result, expectedType, !isLongWithSuffix(), true, false)
+        val isLongWithSuffix = nodeElementType == JetNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
+        return createCompileTimeConstant(result, expectedType, !isLongWithSuffix, true, false)
     }
 
     override fun visitParenthesizedExpression(expression: JetParenthesizedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -464,15 +477,22 @@ public fun IntegerValueTypeConstant.createCompileTimeConstantWithType(expectedTy
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
-public fun parseLong(text: String): Long? {
+public fun parseInteger(text: String, bits: Int): Long? {
     try {
-        fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
-        fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)
+        fun parseInteger(text: String, radix: Int, bits: Int): Long? {
+            val bigIntValue = BigInteger(text, radix)
+            if (bigIntValue.compareTo(BigInteger.ONE.shiftLeft(bits)) >= 0) {
+                return null
+            }
+            val d = java.lang.Long.SIZE - bits
+            return (bigIntValue.longValue() shl d) shr d
+        }
 
+        val cutText = if (hasLongSuffix(text)) text.substring(0, text.length - 1) else text
         return when {
-            text.startsWith("0x") || text.startsWith("0X") -> parseLong(text.substring(2), 16)
-            text.startsWith("0b") || text.startsWith("0B") -> parseLong(text.substring(2), 2)
-            else -> parseLong(text, 10)
+            text.startsWith("0x") || text.startsWith("0X") -> parseInteger(cutText.substring(2), 16, bits)
+            cutText.startsWith("0b") || cutText.startsWith("0B") -> parseInteger(cutText.substring(2), 2, bits)
+            else -> java.lang.Long.parseLong(cutText, 10)
         }
     }
     catch (e: NumberFormatException) {

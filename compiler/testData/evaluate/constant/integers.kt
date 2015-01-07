@@ -1,6 +1,6 @@
 package test
 
-// val prop1: 513105426295.toLong()
+// val prop1: null
 val prop1: Int = 0x7777777777
 
 // val prop2: 513105426295.toLong()

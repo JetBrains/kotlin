@@ -1760,6 +1760,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/constants/long.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("nonDecimalOverflow.kt")
+        public void testNonDecimalOverflow() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/constants/nonDecimalOverflow.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
