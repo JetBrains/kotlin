@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.jet.config.Services
-import org.jetbrains.jet.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider
-import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
-import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -55,7 +55,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
-import org.jetbrains.jet.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.LibraryUtils
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -173,7 +173,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
                 { className ->
                     className.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
-                    || className == "org.jetbrains.jet.config.Services"
+                    || className == "org.jetbrains.kotlin.config.Services"
                 },
                 compilerServices
         )
