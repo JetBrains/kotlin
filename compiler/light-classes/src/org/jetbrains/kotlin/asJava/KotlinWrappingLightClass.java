@@ -109,7 +109,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     }
 
     /**
-     * @see org.jetbrains.jet.codegen.binding.CodegenBinding#ENUM_ENTRY_CLASS_NEED_SUBCLASS
+     * @see org.jetbrains.kotlin.codegen.binding.CodegenBinding#ENUM_ENTRY_CLASS_NEED_SUBCLASS
       */
     @NotNull
     @Override

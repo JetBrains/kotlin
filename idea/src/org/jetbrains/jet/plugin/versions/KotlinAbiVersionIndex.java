@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 
 /**

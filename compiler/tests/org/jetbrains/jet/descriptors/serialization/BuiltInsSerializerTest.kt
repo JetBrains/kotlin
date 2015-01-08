@@ -26,7 +26,7 @@ import org.jetbrains.jet.JetTestUtils
 import java.io.FileInputStream
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 
 public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {

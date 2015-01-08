@@ -21,7 +21,7 @@ import com.intellij.debugger.ui.tree.NodeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
-import org.jetbrains.jet.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.debugger.impl.DebuggerContextUtil
 import com.sun.jdi.ReferenceType

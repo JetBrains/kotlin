@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.codegen.PropertyCodegen
+import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils

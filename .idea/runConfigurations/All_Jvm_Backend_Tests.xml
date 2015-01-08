@@ -9,7 +9,7 @@
     <module name="compiler-tests" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
-    <option name="PACKAGE_NAME" value="org.jetbrains.jet.codegen" />
+    <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.codegen" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />

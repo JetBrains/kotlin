@@ -27,7 +27,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.jet.codegen.PropertyCodegen
+import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
 import com.intellij.usageView.UsageInfo
 import com.intellij.refactoring.listeners.RefactoringElementListener

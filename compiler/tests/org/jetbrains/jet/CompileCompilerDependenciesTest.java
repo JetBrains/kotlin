@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet;
 
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.junit.Test;
 
 public class CompileCompilerDependenciesTest {

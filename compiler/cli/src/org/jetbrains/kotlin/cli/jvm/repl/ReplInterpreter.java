@@ -32,10 +32,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ClassBuilderFactories;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.KotlinCodegenFacade;
-import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
@@ -80,8 +80,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
+import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public class ReplInterpreter {

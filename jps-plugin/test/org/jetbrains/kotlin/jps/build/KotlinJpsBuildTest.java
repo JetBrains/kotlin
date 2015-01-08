@@ -24,7 +24,7 @@ import com.intellij.util.io.ZipUtil;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.AsmUtil;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.kotlin.utils.PathUtil;

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.asJava;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.kotlin.codegen.ClassBuilder;
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory;
+import org.jetbrains.kotlin.codegen.ClassBuilderMode;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 
 /*package*/ class KotlinLightClassBuilderFactory implements ClassBuilderFactory {

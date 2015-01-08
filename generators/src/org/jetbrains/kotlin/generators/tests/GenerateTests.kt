@@ -26,12 +26,12 @@ import junit.framework.TestCase
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest
 import org.jetbrains.jet.resolve.AbstractResolveTest
 import org.jetbrains.jet.parsing.AbstractJetParsingTest
-import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.jet.codegen.AbstractBytecodeTextTest
-import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest
-import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest
-import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
+import org.jetbrains.kotlin.codegen.AbstractTopLevelMembersInvocationTest
+import org.jetbrains.kotlin.codegen.AbstractCheckLocalVariablesTableTest
+import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
@@ -114,7 +114,7 @@ import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
-import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
+import org.jetbrains.kotlin.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
@@ -138,7 +138,7 @@ import org.jetbrains.kotlin.js.test.semantics.AbstractDynamicTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractMultiModuleTest
 import org.jetbrains.jet.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
-import org.jetbrains.jet.codegen.AbstractLineNumberTest
+import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
 import org.jetbrains.jet.completion.handlers.AbstractKeywordCompletionHandlerTest
 
 fun main(args: Array<String>) {

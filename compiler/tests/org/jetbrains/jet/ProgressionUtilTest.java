@@ -17,7 +17,7 @@
 package org.jetbrains.jet;
 
 import com.intellij.testFramework.UsefulTestCase;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.lang.reflect.Method;
 import java.net.URL;

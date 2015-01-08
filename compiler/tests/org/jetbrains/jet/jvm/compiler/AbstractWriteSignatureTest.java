@@ -23,7 +23,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.codegen.GenerationUtils;
+import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;

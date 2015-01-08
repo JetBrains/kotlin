@@ -22,9 +22,9 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.*
 import com.intellij.debugger.engine.evaluation.expression.*
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils
-import org.jetbrains.jet.codegen.state.GenerationState
-import org.jetbrains.jet.codegen.ClassBuilderFactories
-import org.jetbrains.jet.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetLanguage
 import org.jetbrains.jet.lang.psi.JetFile
@@ -42,13 +42,13 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.codegen.ClassFileFactory
+import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
@@ -57,7 +57,7 @@ import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.sun.jdi.VirtualMachine
-import org.jetbrains.jet.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.lang.psi.analysisContext
@@ -70,7 +70,7 @@ import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.codegen.StackValue
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.jet.lang.types.Flexibility
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile

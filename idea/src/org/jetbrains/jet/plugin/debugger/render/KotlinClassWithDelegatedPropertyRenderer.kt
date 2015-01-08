@@ -33,9 +33,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.sun.jdi.Field
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
-import com.sun.jdi.InvocationException
 import com.sun.jdi.Method
-import org.jetbrains.jet.codegen.PropertyCodegen
+import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
 import com.intellij.debugger.engine.evaluation.EvaluateException
 

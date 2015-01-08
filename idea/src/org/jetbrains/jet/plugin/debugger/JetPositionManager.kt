@@ -37,10 +37,10 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.codegen.AsmUtil
-import org.jetbrains.jet.codegen.ClassBuilderFactories
-import org.jetbrains.jet.codegen.state.GenerationState
-import org.jetbrains.jet.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
@@ -65,7 +65,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 import java.util.*
 
-import org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.stubs.StubElement
