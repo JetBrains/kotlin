@@ -28,11 +28,11 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.utils.Printer
 
 import java.util.*
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 

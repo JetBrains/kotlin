@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
 

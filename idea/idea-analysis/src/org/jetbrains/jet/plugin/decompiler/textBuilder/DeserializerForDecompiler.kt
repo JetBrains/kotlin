@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.Collections
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope

@@ -20,8 +20,8 @@ import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 

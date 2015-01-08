@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.*;
+import org.jetbrains.kotlin.storage.*;
 
 import javax.inject.Inject;
 import java.util.Collection;

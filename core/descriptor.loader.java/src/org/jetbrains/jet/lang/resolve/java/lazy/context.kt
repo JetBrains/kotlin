@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy
 
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter

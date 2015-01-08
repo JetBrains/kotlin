@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.storage
+package org.jetbrains.kotlin.storage
 
-public trait MemoizedFunctionToNotNull<P, R: Any> : Function1<P, R>
-public trait MemoizedFunctionToNullable<P, R: Any> : Function1<P, R?>
+public trait MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R>
+public trait MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?>
 
-public trait NotNullLazyValue<T: Any> : Function0<T> {
+public trait NotNullLazyValue<T : Any> : Function0<T> {
     public fun isComputed(): Boolean
 }
 
-public trait NullableLazyValue<T: Any> : Function0<T?> {
+public trait NullableLazyValue<T : Any> : Function0<T?> {
     public fun isComputed(): Boolean
 }
 

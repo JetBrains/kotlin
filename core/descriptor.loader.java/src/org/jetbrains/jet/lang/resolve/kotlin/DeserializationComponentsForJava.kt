@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents

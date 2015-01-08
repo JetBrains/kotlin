@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.HashMap;

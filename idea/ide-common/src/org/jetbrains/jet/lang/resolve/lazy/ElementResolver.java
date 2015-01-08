@@ -40,8 +40,8 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.storage.ExceptionTracker;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.ExceptionTracker;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.di.InjectorForBodyResolve;
 
 import java.util.Collection;

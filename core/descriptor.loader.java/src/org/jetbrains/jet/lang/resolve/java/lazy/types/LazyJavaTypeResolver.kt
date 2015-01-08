@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.lazy.*
-import org.jetbrains.jet.storage.*
+import org.jetbrains.kotlin.storage.*
 import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES

@@ -21,8 +21,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.LazinessToken;
-import org.jetbrains.jet.storage.ExceptionTracker;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.ExceptionTracker;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 /**
  * Various junk that cannot be placed into context (yet).

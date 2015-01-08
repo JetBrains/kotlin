@@ -24,7 +24,7 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.name.FqName
 import java.util.HashMap

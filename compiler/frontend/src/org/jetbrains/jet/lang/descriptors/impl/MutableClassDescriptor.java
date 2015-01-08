@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;

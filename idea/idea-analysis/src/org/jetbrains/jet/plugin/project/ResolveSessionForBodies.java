@@ -30,8 +30,8 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.storage.ExceptionTracker;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.ExceptionTracker;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.Collection;
 

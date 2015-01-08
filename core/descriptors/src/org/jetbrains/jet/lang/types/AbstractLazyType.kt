@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.types
 
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 

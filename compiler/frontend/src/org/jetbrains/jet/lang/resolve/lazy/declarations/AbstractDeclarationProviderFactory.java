@@ -20,9 +20,9 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 public abstract class AbstractDeclarationProviderFactory implements DeclarationProviderFactory {
     private final MemoizedFunctionToNullable<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;

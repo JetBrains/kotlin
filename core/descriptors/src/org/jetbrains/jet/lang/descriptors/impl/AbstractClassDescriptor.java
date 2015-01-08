@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.List;
 import java.util.Map;

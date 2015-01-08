@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.tasks
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.toReadOnlyList
 

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 // SCRIPT: Members of a script class

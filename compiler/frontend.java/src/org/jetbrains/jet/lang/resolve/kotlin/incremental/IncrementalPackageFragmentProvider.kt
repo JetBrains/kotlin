@@ -25,12 +25,12 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache

@@ -20,8 +20,8 @@ import kotlin.Function0
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.storage.NotNullLazyValue
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.StorageManager
 
 public class FileBasedPackageMemberDeclarationProvider internal(
         storageManager: StorageManager,

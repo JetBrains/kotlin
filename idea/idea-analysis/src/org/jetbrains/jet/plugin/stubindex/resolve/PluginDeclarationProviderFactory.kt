@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.*
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 
 public class PluginDeclarationProviderFactory(

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.*
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import com.google.protobuf.ExtensionRegistryLite

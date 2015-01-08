@@ -18,8 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
 
 public class ClassBuilderOnDemand extends DelegatingClassBuilder {
     private final NotNullLazyValue<ClassBuilder> classBuilder;

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.AnnotationResolver
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.scopes.JetScope

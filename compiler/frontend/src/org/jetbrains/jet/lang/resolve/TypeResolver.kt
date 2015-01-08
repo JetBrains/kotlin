@@ -23,14 +23,14 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.resolve.PossiblyBareType.type
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import kotlin.platform.platformStatic
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil

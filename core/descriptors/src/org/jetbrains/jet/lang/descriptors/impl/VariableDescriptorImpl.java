@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.kotlin.storage.NullableLazyValue;
 
 import java.util.Collections;
 import java.util.List;

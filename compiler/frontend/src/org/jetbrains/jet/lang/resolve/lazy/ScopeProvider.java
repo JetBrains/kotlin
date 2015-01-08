@@ -31,8 +31,8 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

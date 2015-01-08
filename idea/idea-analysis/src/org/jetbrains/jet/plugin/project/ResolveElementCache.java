@@ -31,8 +31,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.*;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex;
-import org.jetbrains.jet.storage.LazyResolveStorageManager;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.kotlin.storage.LazyResolveStorageManager;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;

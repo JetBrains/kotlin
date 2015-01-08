@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.plugin.caches.resolve.JsProjectDetector
 

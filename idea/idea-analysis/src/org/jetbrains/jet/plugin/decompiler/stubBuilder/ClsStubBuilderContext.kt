@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
 import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 

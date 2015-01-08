@@ -28,8 +28,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Set;

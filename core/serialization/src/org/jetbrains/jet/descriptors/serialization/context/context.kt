@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization.context
 
-import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader

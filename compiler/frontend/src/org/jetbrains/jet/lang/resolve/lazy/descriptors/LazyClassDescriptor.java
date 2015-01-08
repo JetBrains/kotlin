@@ -51,10 +51,10 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.NullableLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.NullableLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.*;
 

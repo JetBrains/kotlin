@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
 import java.io.InputStream;
 import java.util.*;

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;

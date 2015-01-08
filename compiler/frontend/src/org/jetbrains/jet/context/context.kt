@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.context
 
-import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.storage.ExceptionTracker
-import org.jetbrains.jet.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.ExceptionTracker
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 public trait GlobalContext {
     public val storageManager: StorageManager

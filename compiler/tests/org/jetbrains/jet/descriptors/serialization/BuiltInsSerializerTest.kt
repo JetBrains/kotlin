@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import org.jetbrains.jet.test.TestCaseWithTmpdir
 import org.jetbrains.jet.lang.types.lang.BuiltinsPackageFragment
 import org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-import org.jetbrains.jet.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.jet.JetTestUtils
 import java.io.FileInputStream
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod

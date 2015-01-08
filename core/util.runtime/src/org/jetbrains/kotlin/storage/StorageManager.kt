@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.storage
+package org.jetbrains.kotlin.storage
 
 import java.util.concurrent.ConcurrentMap
 
@@ -27,17 +27,17 @@ public trait StorageManager {
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
      *       the value gets collected and then re-computed
      */
-    public fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
+    public fun createMemoizedFunction<K, V : Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
 
-    public fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
+    public fun createMemoizedFunctionWithNullableValues<K, V : Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
 
-    public fun createMemoizedFunction<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V>
+    public fun createMemoizedFunction<K, V : Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V>
 
-    public fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V>
+    public fun createMemoizedFunctionWithNullableValues<K, V : Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V>
 
-    public fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T>
+    public fun createLazyValue<T : Any>(computable: () -> T): NotNullLazyValue<T>
 
-    public fun createRecursionTolerantLazyValue<T: Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
+    public fun createRecursionTolerantLazyValue<T : Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
 
     /**
      * @param onRecursiveCall is called if the computation calls itself recursively.
@@ -46,17 +46,17 @@ public trait StorageManager {
      *                        otherwise it's executed and its result is returned
      * @param postCompute is called after the value is computed, but before any other thread sees it
      */
-    public fun createLazyValueWithPostCompute<T: Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
+    public fun createLazyValueWithPostCompute<T : Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
 
-    public fun createNullableLazyValue<T: Any>(computable: () -> T?): NullableLazyValue<T>
+    public fun createNullableLazyValue<T : Any>(computable: () -> T?): NullableLazyValue<T>
 
-    public fun createRecursionTolerantNullableLazyValue<T: Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
+    public fun createRecursionTolerantNullableLazyValue<T : Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
-    public fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
+    public fun createNullableLazyValueWithPostCompute<T : Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
 
     public fun compute<T>(computable: () -> T): T
 }

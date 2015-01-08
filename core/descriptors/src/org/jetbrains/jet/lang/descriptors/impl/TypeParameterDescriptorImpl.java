@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

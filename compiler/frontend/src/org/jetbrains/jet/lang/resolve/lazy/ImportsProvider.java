@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.List;
 import java.util.Set;

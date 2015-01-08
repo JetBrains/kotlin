@@ -30,14 +30,14 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.DeferredType
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.storage.NullableLazyValue
+import org.jetbrains.kotlin.storage.NullableLazyValue
 
 import java.util.*
 
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker
 

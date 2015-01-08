@@ -33,9 +33,9 @@ import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;

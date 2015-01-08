@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 
 import java.util.Collection;
 import java.util.Collections;

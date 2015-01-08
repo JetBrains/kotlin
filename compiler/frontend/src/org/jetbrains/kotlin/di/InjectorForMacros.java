@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider.Empty;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
