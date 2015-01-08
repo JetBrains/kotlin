@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;

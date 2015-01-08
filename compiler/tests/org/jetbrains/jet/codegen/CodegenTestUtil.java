@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
@@ -35,6 +33,8 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.io.IOException;

@@ -27,7 +27,7 @@ import java.util.Set;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
 import static com.intellij.openapi.util.text.StringUtil.escapeXml;
-import static org.jetbrains.jet.cli.common.modules.ModuleXmlParser.*;
+import static org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser.*;
 
 public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBuilderFactory {
 

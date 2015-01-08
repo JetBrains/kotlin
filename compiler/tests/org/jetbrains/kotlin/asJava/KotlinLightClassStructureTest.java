@@ -32,8 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 import static org.jetbrains.kotlin.asJava.KotlinLightClassStructureTest.ClassProperty.*;
+import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 @SuppressWarnings("JUnitTestClassNamingConvention")
 public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase {

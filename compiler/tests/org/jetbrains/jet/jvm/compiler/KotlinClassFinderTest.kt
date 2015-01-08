@@ -19,7 +19,7 @@ package org.jetbrains.jet.jvm.compiler
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement
 import org.jetbrains.jet.JetTestUtils
 import java.io.File
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.TestJdkKind
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
@@ -28,7 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testNestedClass() {

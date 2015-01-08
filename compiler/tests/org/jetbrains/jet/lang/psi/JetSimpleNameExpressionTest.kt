@@ -18,10 +18,10 @@ package org.jetbrains.jet.lang.psi
 
 import org.junit.Assert
 import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class JetSimpleNameExpressionTest() : JetLiteFixture() {
     public fun testGetReceiverExpressionIdentifier() {

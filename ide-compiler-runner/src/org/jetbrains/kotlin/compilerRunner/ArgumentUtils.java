@@ -21,7 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

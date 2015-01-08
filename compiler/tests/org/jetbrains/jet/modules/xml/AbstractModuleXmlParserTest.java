@@ -21,12 +21,12 @@ import junit.framework.TestCase;
 import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
-import org.jetbrains.jet.cli.common.modules.ModuleScriptData;
-import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
+import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
+import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 
 import java.io.File;
 import java.io.IOException;

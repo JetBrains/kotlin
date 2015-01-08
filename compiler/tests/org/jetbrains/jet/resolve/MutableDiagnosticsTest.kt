@@ -21,13 +21,13 @@ import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.junit.Assert
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.lang.resolve.diagnostics.MutableDiagnosticsWithSuppression
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): JetCoreEnvironment? {

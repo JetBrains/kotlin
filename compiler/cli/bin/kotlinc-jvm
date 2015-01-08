@@ -84,4 +84,4 @@ CPSELECT="-cp "
   ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
   org.jetbrains.kotlin.preloading.Preloader \
   "${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
-  org.jetbrains.jet.cli.jvm.K2JVMCompiler 4096 notime "$@"
+  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler 4096 notime "$@"

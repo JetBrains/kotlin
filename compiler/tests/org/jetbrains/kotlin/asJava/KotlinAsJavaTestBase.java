@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.asJava;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.util.List;

@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.KotlinMultiFileTestWithWithJava;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.io.IOException;

@@ -20,11 +20,11 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.junit.Assert;
 
 import java.io.File;

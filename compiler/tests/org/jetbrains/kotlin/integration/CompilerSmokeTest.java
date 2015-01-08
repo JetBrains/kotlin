@@ -46,7 +46,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");
         javaArgs.add(classpath);
-        javaArgs.add("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
+        javaArgs.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
         Collections.addAll(javaArgs, arguments);
 
         return runJava(logName, ArrayUtil.toStringArray(javaArgs));

@@ -48,8 +48,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -77,6 +75,8 @@ import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -91,10 +91,10 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.ConfigurationKind.ALL;
 import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
-import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
+import static org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 public class JetTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";

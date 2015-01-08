@@ -20,8 +20,8 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals

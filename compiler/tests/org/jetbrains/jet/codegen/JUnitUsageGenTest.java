@@ -19,8 +19,8 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.junit.Test;
 
 import java.io.File;

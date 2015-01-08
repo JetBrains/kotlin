@@ -20,11 +20,11 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.io.*;
 import java.lang.reflect.Method;

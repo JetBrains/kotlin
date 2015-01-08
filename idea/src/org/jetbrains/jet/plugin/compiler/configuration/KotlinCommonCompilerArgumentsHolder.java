@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;

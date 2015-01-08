@@ -18,7 +18,6 @@ package org.jetbrains.jet.types;
 
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -28,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.BoundsSubstitutor;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.util.Collection;
 import java.util.Collections;

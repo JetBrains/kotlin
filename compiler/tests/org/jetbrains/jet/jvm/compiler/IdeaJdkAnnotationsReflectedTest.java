@@ -28,11 +28,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.CoreExternalAnnotationsManager;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.cli.jvm.compiler.CoreExternalAnnotationsManager;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.util.Set;
 

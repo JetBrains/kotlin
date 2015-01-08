@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.js.test.semantics;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
 

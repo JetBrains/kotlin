@@ -256,7 +256,7 @@
 
             <pathconvert property="src.line" refid="src.path" pathsep=" "/>
 
-            <java classname="org.jetbrains.jet.cli.js.K2JSCompiler" failonerror="true" fork="true">
+            <java classname="org.jetbrains.kotlin.cli.js.K2JSCompiler" failonerror="true" fork="true">
                 <classpath>
                     <file file="${bootstrap.runtime}"/>
                     <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -441,7 +441,7 @@
                     <attribute name="Implementation-Version" value="${build.number}"/>
 
                     <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
-                    <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+                    <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
                 </manifest>
             </jar>
         </sequential>
@@ -614,7 +614,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+                <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
             </manifest>
         </jar>
     </target>
@@ -693,7 +693,7 @@
             <!-- Classpath separated by the system path separator -->
             <pathconvert property="classpath.paths" refid="classpath.path"/>
 
-            <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
+            <java classname="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
                 <classpath>
                     <file file="${bootstrap.runtime}"/>
                     <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>

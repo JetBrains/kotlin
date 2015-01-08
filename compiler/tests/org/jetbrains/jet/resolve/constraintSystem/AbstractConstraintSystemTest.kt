@@ -19,7 +19,7 @@ package org.jetbrains.jet.resolve.constraintSystem
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers

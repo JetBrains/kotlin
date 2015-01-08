@@ -2,7 +2,7 @@ package test.kotlin.kdoc
 
 import java.io.File
 import java.io.IOException
-import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.junit.Assert
 import org.junit.Test

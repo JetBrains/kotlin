@@ -19,7 +19,7 @@ package org.jetbrains.jet.resolve.calls
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue

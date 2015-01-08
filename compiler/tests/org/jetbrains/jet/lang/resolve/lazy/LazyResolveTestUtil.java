@@ -20,8 +20,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -32,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.util.List;
 import java.util.Set;

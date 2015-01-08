@@ -10,7 +10,7 @@ To run Preloader with instrumentation, pass ```instrument=...``` on the command 
 ```
 org.jetbrains.kotlin.preloading.Preloader \
              dist/kotlinc/lib/kotlin-compiler.jar \
-             org.jetbrains.jet.cli.jvm.K2JVMCompiler \
+             org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
              5000 \
              instrument=out/artifacts/Instrumentation/instrumentation.jar \
              <compiler's command-line args>

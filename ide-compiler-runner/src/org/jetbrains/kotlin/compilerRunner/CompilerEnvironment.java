@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.compilerRunner;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.kotlin.preloading.ClassCondition;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompilerEnvironment {
     @NotNull

@@ -22,7 +22,7 @@ import java.io.File
 import java.io.File.pathSeparator
 
 public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
-    override val compilerFqName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler"
+    override val compilerFqName = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 
     public var externalAnnotations: Path? = null
     public var includeRuntime: Boolean = true

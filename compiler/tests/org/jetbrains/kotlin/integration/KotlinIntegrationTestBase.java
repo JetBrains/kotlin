@@ -32,10 +32,10 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
 

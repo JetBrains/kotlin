@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionD
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +83,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private void addDeclaration(Map<JetElement, Pseudocode> data, BindingContext bindingContext, JetDeclaration declaration) {
+    private static void addDeclaration(Map<JetElement, Pseudocode> data, BindingContext bindingContext, JetDeclaration declaration) {
         Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
         data.put(declaration, pseudocode);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
@@ -98,9 +98,8 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         StringBuilder instructionDump = new StringBuilder();
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
-
             JetElement correspondingElement = pseudocode.getCorrespondingElement();
-            String label = "";
+            String label;
             assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetPropertyAccessor) :
                     "Unexpected element class is pseudocode: " + correspondingElement.getClass();
             if (correspondingElement instanceof JetFunctionLiteral) {
@@ -110,7 +109,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
                 JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
                 label = namedDeclaration.getName();
             }
-            else if (correspondingElement instanceof JetPropertyAccessor) {
+            else {
                 String propertyName = ((JetProperty) correspondingElement.getParent()).getName();
                 label = (((JetPropertyAccessor) correspondingElement).isGetter() ? "get" : "set") + "_" + propertyName;
             }
@@ -135,7 +134,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
     protected void checkPseudocode(PseudocodeImpl pseudocode) {
     }
 
-    private String getIsDeadInstructionPrefix(
+    private static String getIsDeadInstructionPrefix(
             @NotNull Instruction instruction,
             @NotNull Set<Instruction> remainedAfterPostProcessInstructions
     ) {
@@ -144,7 +143,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         return isRemovedThroughPostProcess ? "-" : " ";
     }
 
-    private String getDepthInstructionPrefix(@NotNull Instruction instruction, @Nullable Instruction previous) {
+    private static String getDepthInstructionPrefix(@NotNull Instruction instruction, @Nullable Instruction previous) {
         Integer prevDepth = previous != null ? previous.getLexicalScope().getDepth() : null;
         int depth = instruction.getLexicalScope().getDepth();
         if (prevDepth == null || depth != prevDepth) {
@@ -153,7 +152,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         return "   ";
     }
 
-    private String formatInstruction(Instruction instruction, int maxLength, String prefix) {
+    private static String formatInstruction(Instruction instruction, int maxLength, String prefix) {
         String[] parts = instruction.toString().split("\n");
 
         if (parts.length == 1) {

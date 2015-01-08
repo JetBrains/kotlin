@@ -21,7 +21,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter
+import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import java.io.File
 import java.util.ArrayDeque
 import java.util.ArrayList

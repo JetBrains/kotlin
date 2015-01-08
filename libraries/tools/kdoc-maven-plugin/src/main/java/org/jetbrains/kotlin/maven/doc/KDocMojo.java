@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.maven.doc;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.CLICompiler;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.doc.KDocArguments;
 import org.jetbrains.kotlin.doc.KDocCompiler;
 import org.jetbrains.kotlin.doc.KDocConfig;

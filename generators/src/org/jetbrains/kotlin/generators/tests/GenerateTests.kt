@@ -37,7 +37,7 @@ import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
-import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
+import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest

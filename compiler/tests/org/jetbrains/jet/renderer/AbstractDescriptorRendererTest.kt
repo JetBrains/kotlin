@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
 import org.jetbrains.jet.JetTestUtils
 import java.util.ArrayList
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.ConfigurationKind
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetClassObject

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
     private JetCoreEnvironment environment;

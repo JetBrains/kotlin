@@ -1,8 +1,8 @@
 package test.kotlin
 
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer

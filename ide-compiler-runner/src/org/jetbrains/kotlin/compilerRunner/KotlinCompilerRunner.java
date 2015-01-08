@@ -24,25 +24,25 @@ import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO;
 
 public class KotlinCompilerRunner {
-    private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
-    private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
+    private static final String K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler";
+    private static final String K2JS_COMPILER = "org.jetbrains.kotlin.cli.js.K2JSCompiler";
     private static final String INTERNAL_ERROR = ExitCode.INTERNAL_ERROR.toString();
 
     public static void runK2JvmCompiler(

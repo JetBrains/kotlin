@@ -18,7 +18,7 @@ package org.jetbrains.jet;
 
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
     static {

@@ -27,7 +27,7 @@ set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
 
 "%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
   org.jetbrains.kotlin.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
-  org.jetbrains.jet.cli.js.K2JSCompiler 4096 notime %*
+  org.jetbrains.kotlin.cli.js.K2JSCompiler 4096 notime %*
 
 exit /b %ERRORLEVEL%
 goto end
