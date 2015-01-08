@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.model;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings;
