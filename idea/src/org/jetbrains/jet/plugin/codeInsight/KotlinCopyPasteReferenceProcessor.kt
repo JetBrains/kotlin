@@ -60,7 +60,7 @@ import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException

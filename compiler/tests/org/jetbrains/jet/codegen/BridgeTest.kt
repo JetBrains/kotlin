@@ -20,7 +20,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.bridges.*
 import kotlin.test.assertEquals
 import java.util.HashSet
-import org.jetbrains.jet.utils.DFS
+import org.jetbrains.kotlin.utils.DFS
 
 class BridgeTest : TestCase() {
     private class Fun(val text: String) : FunctionHandle {

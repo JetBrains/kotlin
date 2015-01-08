@@ -34,7 +34,7 @@ import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
-import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.lexer.JetTokens
 
 public class TypeResolver(

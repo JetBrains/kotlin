@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
 import com.intellij.psi.PsiPolyVariantReference
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;

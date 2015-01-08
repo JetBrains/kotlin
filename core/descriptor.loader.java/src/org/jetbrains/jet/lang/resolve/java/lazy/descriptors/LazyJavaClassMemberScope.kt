@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.DescriptorUtils

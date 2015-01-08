@@ -22,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.PrintWriter
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.StringWriter
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import com.google.common.io.Files
 import com.google.common.hash.Hashing
 import com.intellij.openapi.util.io.FileUtil

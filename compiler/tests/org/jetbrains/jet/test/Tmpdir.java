@@ -19,7 +19,7 @@ package org.jetbrains.jet.test;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 

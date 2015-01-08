@@ -54,7 +54,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.jet.plugin.completion.isVisible
-import org.jetbrains.jet.utils.CachedValueProperty
+import org.jetbrains.kotlin.utils.CachedValueProperty
 
 /**
  * Check possibility and perform fix for unresolved references.

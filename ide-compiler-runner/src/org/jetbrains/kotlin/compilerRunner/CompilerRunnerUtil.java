@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.compilerRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class CompilerRunnerUtil {
         Method exec = kompiler.getMethod(
                 "execAndOutputXml",
                 PrintStream.class,
-                Class.forName("org.jetbrains.jet.config.Services", true, classLoader),
+                Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
                 String[].class
         );
 

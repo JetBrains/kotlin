@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
 import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.*;
 import static org.jetbrains.kotlin.js.test.BasicTest.DIST_DIR_PATH;
 import static org.jetbrains.kotlin.js.test.BasicTest.TEST_DATA_DIR_PATH;
+import static org.jetbrains.kotlin.utils.UtilsPackage.rethrow;
 
 public final class RhinoUtils {
     private static final String KOTLIN_JS_LIB_ECMA_5 = TEST_DATA_DIR_PATH + "kotlin_lib_ecma5.js";

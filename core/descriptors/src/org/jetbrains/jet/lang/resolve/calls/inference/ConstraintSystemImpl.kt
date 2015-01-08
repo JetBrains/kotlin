@@ -36,15 +36,11 @@ import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.*
 import java.util.HashMap
 import java.util.ArrayList
-import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
-import org.jetbrains.jet.lang.types.CustomTypeVariable
 import org.jetbrains.jet.lang.types.getCustomTypeVariable
 import org.jetbrains.jet.lang.types.isFlexible
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound
 
 public class ConstraintSystemImpl : ConstraintSystem {

@@ -29,7 +29,7 @@ import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.resolve.java.JvmClassName

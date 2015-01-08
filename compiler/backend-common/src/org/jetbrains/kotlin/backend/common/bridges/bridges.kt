@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.bridges
 
-import org.jetbrains.jet.utils.DFS
+import org.jetbrains.kotlin.utils.DFS
 import java.util.HashSet
 
 public trait FunctionHandle {

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 

@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;

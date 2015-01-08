@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.ArrayList;
 import java.util.List;

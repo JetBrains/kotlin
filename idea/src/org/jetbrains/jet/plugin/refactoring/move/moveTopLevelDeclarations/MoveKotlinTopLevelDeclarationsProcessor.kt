@@ -29,7 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.refactoring.util.RefactoringUIUtil
-import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.refactoring.rename.RenameUtil
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import com.intellij.openapi.util.text.StringUtil
@@ -43,7 +43,7 @@ import org.jetbrains.jet.plugin.refactoring.move.getFileNameAfterMove
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.asJava.toLightElements
 import java.util.HashMap
-import org.jetbrains.jet.utils.flatten
+import org.jetbrains.kotlin.utils.flatten
 import java.util.ArrayList
 import java.util.HashSet
 import com.intellij.psi.PsiReference

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public abstract class JetSingleIntentionActionFactory : JetIntentionActionsFactory() {
     protected abstract fun createAction(diagnostic: Diagnostic): IntentionAction?

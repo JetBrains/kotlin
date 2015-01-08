@@ -17,7 +17,7 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.IOException;
 import java.io.InputStream;

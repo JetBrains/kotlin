@@ -26,12 +26,12 @@ import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.jet.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import java.util.ArrayList
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import kotlin.test.fail
 import java.util.HashMap
-import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import kotlin.test.assertFalse
 import java.util.regex.Pattern

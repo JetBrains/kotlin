@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.utils.valuesToMap
+import org.jetbrains.kotlin.utils.valuesToMap
 import java.util.HashSet
 
 trait MemberIndex {

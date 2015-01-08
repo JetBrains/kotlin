@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.ImportsResolver
 import org.jetbrains.jet.lang.resolve.JetModuleUtil
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.*
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import java.util.LinkedHashSet

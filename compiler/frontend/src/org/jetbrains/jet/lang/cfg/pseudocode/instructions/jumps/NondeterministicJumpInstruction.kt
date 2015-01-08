@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class NondeterministicJumpInstruction(
         element: JetElement,

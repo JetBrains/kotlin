@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;

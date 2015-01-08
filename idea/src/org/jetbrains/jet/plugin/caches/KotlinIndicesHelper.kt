@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
 import org.jetbrains.jet.plugin.util.CallType
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
 
 public class KotlinIndicesHelper(

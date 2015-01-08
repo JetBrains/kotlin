@@ -34,7 +34,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope

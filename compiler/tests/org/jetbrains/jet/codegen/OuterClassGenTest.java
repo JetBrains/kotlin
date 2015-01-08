@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
-import static org.jetbrains.jet.utils.UtilsPackage.join;
+import static org.jetbrains.kotlin.utils.UtilsPackage.join;
 
 public class OuterClassGenTest extends CodegenTestCase {
 

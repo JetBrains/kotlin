@@ -12,7 +12,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.JetLanguage
-import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.doc.highlighter2.splitPsi
 import org.junit.After
 import org.junit.Assert

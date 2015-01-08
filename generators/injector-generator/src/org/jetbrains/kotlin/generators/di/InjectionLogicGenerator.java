@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.generators.di;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.DFS;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.DFS;
+import org.jetbrains.kotlin.utils.Printer;
 
 import java.lang.reflect.Method;
 import java.util.Collection;

@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.utils.DFS;
+import org.jetbrains.kotlin.utils.DFS;
 
 import javax.inject.Inject;
 import java.util.*;

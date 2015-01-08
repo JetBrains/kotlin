@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
-import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 public class CheckPartialBodyResolveAction : AnAction() {

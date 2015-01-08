@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.JetScope

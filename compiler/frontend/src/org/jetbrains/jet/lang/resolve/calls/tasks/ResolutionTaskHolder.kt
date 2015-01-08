@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.storage.StorageManager
 import java.util.ArrayList
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         private val storageManager: StorageManager,

@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
-import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.CompilerPlugin;

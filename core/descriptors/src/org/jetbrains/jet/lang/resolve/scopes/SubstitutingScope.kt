@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.scopes
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 
 import java.util.*
 import kotlin.properties.Delegates

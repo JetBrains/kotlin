@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetPackageDirective
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST

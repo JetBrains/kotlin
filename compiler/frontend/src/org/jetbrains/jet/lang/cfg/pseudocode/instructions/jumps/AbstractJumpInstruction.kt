@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstructionImpl
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class AbstractJumpInstruction(
         element: JetElement,

@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.descriptors.serialization
 import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
 import org.jetbrains.jet.descriptors.serialization.classKind
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import java.util.*

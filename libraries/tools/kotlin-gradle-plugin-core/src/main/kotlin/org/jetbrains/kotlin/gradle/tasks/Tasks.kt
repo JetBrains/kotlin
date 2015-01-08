@@ -20,7 +20,7 @@ import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-import org.jetbrains.jet.config.Services
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.codehaus.groovy.runtime.MethodClosure
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.LibraryUtils
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 

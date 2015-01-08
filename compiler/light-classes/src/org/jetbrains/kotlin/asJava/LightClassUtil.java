@@ -42,8 +42,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.KotlinVfsUtil;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.KotlinVfsUtil;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 import java.net.MalformedURLException;

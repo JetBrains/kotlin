@@ -12,7 +12,7 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInf
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {

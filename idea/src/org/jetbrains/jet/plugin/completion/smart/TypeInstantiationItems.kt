@@ -45,7 +45,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil

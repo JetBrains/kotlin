@@ -20,7 +20,7 @@ import com.google.common.collect.*
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 
 import java.util.*
 import com.intellij.util.SmartList

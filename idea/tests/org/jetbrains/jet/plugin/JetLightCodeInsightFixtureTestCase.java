@@ -36,7 +36,7 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;

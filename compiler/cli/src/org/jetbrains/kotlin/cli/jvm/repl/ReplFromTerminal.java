@@ -22,7 +22,7 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.PrintWriter;

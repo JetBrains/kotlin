@@ -24,9 +24,8 @@ import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetKeywordToken
 import org.jetbrains.jet.lexer.JetTokens
-
+import org.jetbrains.kotlin.utils.sure
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.util.sure
 
 public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {

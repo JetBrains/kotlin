@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.util
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import java.util.LinkedHashMap

@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeProjectionStubImpl
 import org.jetbrains.jet.lang.psi.JetFunctionType
 import org.jetbrains.jet.lang.psi.JetFunctionTypeReceiver
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.lang.psi.JetTypeParameterList
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeParameterStubImpl

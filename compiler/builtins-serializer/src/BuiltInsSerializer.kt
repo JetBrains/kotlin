@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.utils.recursePostOrder
+import org.jetbrains.kotlin.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
 import org.jetbrains.jet.context.GlobalContext

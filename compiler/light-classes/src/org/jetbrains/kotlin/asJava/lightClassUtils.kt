@@ -22,7 +22,7 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 

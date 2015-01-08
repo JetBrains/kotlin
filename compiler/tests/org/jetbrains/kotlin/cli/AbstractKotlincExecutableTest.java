@@ -22,7 +22,7 @@ import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 
 import java.io.File;

@@ -27,7 +27,7 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 public object DescriptorToDeclarationUtil {
     public fun getDeclaration(file: JetFile, descriptor: DeclarationDescriptor): PsiElement? {

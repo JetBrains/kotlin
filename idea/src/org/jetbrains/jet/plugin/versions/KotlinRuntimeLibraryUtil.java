@@ -46,8 +46,8 @@ import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
-import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.KotlinPaths;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;

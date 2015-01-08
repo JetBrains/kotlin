@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;

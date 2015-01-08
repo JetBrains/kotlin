@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
 import java.util.Collections;

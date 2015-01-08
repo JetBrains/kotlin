@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.jet.plugin.decompiler.textBuilder.descriptorToKey
-import org.jetbrains.jet.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 import org.jetbrains.jet.lang.psi.JetFile
 
 public class JetClsFile(val provider: JetClassFileViewProvider) : JetFile(provider, true) {

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;

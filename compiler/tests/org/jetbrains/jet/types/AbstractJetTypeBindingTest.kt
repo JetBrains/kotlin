@@ -28,7 +28,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.test.util.trimIndent
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.JetTestUtils.*

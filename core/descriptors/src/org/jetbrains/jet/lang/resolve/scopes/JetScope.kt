@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.scopes
 
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.utils.Printer
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
 public trait JetScope {

@@ -21,7 +21,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil;
 
 import java.io.File;

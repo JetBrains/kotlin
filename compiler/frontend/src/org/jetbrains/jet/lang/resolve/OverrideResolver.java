@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.HashSetUtil;
+import org.jetbrains.kotlin.utils.HashSetUtil;
 
 import javax.inject.Inject;
 import java.util.*;

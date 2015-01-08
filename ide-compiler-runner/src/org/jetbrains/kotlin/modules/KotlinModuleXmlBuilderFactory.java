@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.modules;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.config.IncrementalCompilation;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.config.IncrementalCompilation;
+import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
 import java.util.Collection;

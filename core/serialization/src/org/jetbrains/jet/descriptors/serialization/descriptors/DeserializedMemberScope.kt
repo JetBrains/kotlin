@@ -21,8 +21,8 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.utils.Printer
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext

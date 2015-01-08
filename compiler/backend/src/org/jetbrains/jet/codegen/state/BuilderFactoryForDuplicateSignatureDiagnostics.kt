@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.*
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils

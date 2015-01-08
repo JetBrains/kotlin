@@ -28,7 +28,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.jet.lang.psi.JetClass
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import org.jetbrains.kotlin.util.sure
+import org.jetbrains.kotlin.utils.sure
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.kotlin.asJava.LightClassUtil

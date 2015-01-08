@@ -20,7 +20,7 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JSLibraryStdDescription;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;

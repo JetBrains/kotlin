@@ -21,7 +21,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
-import org.jetbrains.jet.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex
 
 // used in Upsource, what's why in idea-analysis module

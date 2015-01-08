@@ -21,7 +21,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeP
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 
 import java.util.LinkedHashMap
 

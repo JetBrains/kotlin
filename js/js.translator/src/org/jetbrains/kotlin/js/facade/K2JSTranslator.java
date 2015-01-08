@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
-import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
+import org.jetbrains.kotlin.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;

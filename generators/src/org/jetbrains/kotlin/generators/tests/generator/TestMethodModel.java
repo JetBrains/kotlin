@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.tests.generator;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 
 public interface TestMethodModel extends TestEntityModel {
     void generateBody(@NotNull Printer p);

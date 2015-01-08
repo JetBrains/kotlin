@@ -25,7 +25,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.strings.StringsPackage;
+import org.jetbrains.kotlin.utils.strings.StringsPackage;
 
 import java.util.HashMap;
 import java.util.Map;

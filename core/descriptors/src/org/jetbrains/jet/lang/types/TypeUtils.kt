@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.Flexibility
 import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.isDynamic

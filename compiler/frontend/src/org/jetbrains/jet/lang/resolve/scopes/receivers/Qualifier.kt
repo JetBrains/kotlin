@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import java.util.ArrayList
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.BindingContext.*
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext

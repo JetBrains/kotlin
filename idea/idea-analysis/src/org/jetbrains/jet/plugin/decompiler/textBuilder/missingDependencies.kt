@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.utils.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class InstructionWithNext(
         element: JetElement,

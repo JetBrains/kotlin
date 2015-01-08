@@ -38,8 +38,8 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.jet.utils.DFS
-import org.jetbrains.jet.utils.DFS.*
+import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.DFS.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.lang.diagnostics.Errors

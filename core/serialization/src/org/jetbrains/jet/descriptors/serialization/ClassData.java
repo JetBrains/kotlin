@@ -18,7 +18,7 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

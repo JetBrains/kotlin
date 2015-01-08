@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.generators.evaluate
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor

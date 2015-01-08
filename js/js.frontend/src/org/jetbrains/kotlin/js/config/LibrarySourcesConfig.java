@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.utils.LibraryUtils;
+import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
@@ -38,8 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptLibrary;
-import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
+import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptLibrary;
+import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull

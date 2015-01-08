@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.config.Services;
+import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
 import java.lang.reflect.Field;

@@ -30,7 +30,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import kotlin.test.fail
-import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import java.util.HashSet

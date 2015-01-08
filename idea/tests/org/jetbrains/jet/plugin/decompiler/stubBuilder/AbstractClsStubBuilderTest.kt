@@ -31,7 +31,7 @@ import org.junit.Assert
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import java.util.LinkedHashSet
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {

@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaStaticClassScope(

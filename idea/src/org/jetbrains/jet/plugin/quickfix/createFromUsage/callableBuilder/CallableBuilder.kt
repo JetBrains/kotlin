@@ -65,7 +65,7 @@ import java.util.LinkedHashMap
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.jet.plugin.util.isAny
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import org.jetbrains.jet.plugin.refactoring.getLineCount
 

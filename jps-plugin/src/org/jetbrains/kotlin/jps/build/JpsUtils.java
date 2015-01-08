@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.LibraryUtils;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind;
 import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
@@ -26,6 +25,7 @@ import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryRoot;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.util.Set;
 

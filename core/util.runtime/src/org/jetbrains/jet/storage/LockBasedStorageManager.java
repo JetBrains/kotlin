@@ -21,8 +21,8 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.UtilsPackage;
-import org.jetbrains.jet.utils.WrappedValues;
+import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.WrappedValues;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

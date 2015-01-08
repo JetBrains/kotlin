@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.kotlin.util.sure
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.jet.lang.resolve.ScriptParameterResolver
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver
 import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor

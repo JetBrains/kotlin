@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lexer.JetTokens

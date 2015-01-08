@@ -18,7 +18,7 @@ package org.jetbrains.jet.storage
 
 import com.intellij.openapi.util.ModificationTracker
 import java.util.concurrent.atomic.AtomicLong
-import org.jetbrains.jet.utils.rethrow
+import org.jetbrains.kotlin.utils.rethrow
 
 public open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
     private val cancelledTracker: AtomicLong = AtomicLong()

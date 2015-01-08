@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.utils.valuesToMap
-import org.jetbrains.jet.utils.keysToMapExceptNulls
+import org.jetbrains.kotlin.utils.valuesToMap
+import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap

@@ -29,7 +29,7 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public trait JetReference : PsiPolyVariantReference {

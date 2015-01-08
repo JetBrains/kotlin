@@ -29,11 +29,11 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 
 import java.util.*
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(

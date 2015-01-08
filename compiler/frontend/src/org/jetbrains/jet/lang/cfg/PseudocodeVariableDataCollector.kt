@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
-import org.jetbrains.jet.utils.addToStdlib.*
+import org.jetbrains.kotlin.utils.addToStdlib.*
 
 import java.util.*
 

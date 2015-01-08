@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.ErrorUtils.UninferredParameterTypeConstructor;
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 

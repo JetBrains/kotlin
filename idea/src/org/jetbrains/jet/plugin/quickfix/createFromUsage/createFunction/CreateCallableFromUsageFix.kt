@@ -13,8 +13,8 @@ import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.HashSet
 import org.jetbrains.jet.lang.psi.JetElement
 

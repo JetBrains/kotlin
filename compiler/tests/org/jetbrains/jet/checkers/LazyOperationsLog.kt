@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaTypeImpl
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import java.util.ArrayList
-import org.jetbrains.jet.utils.Printer
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.structure.JavaNamedElement
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.descriptors.serialization.TypeDeserializer

@@ -32,7 +32,7 @@ import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor

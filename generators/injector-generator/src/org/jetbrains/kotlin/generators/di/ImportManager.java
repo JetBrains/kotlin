@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.generators.di;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
 import java.util.Iterator;

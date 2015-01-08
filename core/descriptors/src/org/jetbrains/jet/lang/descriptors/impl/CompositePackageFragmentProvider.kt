@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 
 import java.util.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 public class CompositePackageFragmentProvider(// can be modified from outside
         private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {

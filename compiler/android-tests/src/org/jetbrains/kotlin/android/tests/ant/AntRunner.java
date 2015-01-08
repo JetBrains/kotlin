@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.android.tests.ant;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
-import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.kotlin.android.tests.OutputUtils;
 import org.jetbrains.kotlin.android.tests.PathManager;
 import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.ArrayList;
 import java.util.List;
