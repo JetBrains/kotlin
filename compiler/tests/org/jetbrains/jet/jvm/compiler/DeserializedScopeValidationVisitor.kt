@@ -17,10 +17,10 @@
 package org.jetbrains.jet.jvm.compiler
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedMemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import java.util.Collections
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import com.intellij.testFramework.UsefulTestCase
 import java.util.ArrayList
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor

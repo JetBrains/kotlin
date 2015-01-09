@@ -29,7 +29,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.module.impl.scopes.JdkScope

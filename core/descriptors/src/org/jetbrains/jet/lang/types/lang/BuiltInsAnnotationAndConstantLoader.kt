@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.lang.types.lang
 
-import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.descriptors.*
+import org.jetbrains.kotlin.serialization.*
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 class BuiltInsAnnotationAndConstantLoader(
         module: ModuleDescriptor

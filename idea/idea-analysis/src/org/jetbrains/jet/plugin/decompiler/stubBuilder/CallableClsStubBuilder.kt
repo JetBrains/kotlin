@@ -18,16 +18,16 @@ package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.Flags
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Modality
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPropertyStubImpl
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
-import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.MemberKind
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.jet.descriptors.serialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.FlagsToModifiers.*
 
 fun createCallableStub(

@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.constants.EnumValue
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue
 import org.jetbrains.jet.lang.resolve.constants.createCompileTimeConstant
-import org.jetbrains.jet.descriptors.serialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 
 public class BinaryClassAnnotationAndConstantLoaderImpl(

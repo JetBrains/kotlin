@@ -20,7 +20,7 @@ import java.io.File
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.descriptors.serialization.*
+import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import java.io.ByteArrayOutputStream

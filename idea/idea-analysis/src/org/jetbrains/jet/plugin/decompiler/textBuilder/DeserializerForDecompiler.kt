@@ -26,11 +26,10 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.Collections
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl

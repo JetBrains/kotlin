@@ -26,9 +26,9 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.structure.JavaNamedElement
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.TypeDeserializer
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap

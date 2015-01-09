@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 

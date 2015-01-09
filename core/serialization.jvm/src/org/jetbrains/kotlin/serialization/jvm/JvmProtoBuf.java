@@ -2798,14 +2798,14 @@ public final class JvmProtoBuf {
 
   public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
       org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> methodSignature = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
         null,
@@ -2813,14 +2813,14 @@ public final class JvmProtoBuf {
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
       org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> propertySignature = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
         null,
@@ -2828,14 +2828,14 @@ public final class JvmProtoBuf {
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int IMPL_CLASS_NAME_FIELD_NUMBER = 102;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
       java.lang.Integer> implClassName = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
         0,
         null,
         null,
@@ -2843,14 +2843,14 @@ public final class JvmProtoBuf {
         com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter,
       java.lang.Integer> index = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance(),
         0,
         null,
         null,

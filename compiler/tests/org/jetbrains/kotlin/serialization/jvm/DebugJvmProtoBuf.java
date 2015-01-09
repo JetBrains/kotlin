@@ -3723,44 +3723,44 @@ public final class DebugJvmProtoBuf {
 
   public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
       org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature> methodSignature = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
       org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature> propertySignature = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
   public static final int IMPL_CLASS_NAME_FIELD_NUMBER = 102;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable,
       java.lang.Integer> implClassName = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
-   * <code>extend .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Callable.ValueParameter,
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.ValueParameter,
       java.lang.Integer> index = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
@@ -3820,19 +3820,18 @@ public final class DebugJvmProtoBuf {
       "(\0132:.org.jetbrains.kotlin.serialization." +
       "jvm.JvmMethodSignature\022J\n\006setter\030\004 \001(\0132:" +
       ".org.jetbrains.kotlin.serialization.jvm." +
-      "JvmMethodSignature:\213\001\n\020method_signature\022" +
-      "5.org.jetbrains.jet.descriptors.serializ" +
-      "ation.Callable\030d \001(\0132:.org.jetbrains.kot" +
-      "lin.serialization.jvm.JvmMethodSignature",
-      ":\217\001\n\022property_signature\0225.org.jetbrains." +
-      "jet.descriptors.serialization.Callable\030e" +
-      " \001(\0132<.org.jetbrains.kotlin.serializatio" +
-      "n.jvm.JvmPropertySignature:N\n\017impl_class" +
-      "_name\0225.org.jetbrains.jet.descriptors.se" +
-      "rialization.Callable\030f \001(\005:S\n\005index\022D.or" +
-      "g.jetbrains.jet.descriptors.serializatio" +
-      "n.Callable.ValueParameter\030d \001(\005B\022B\020Debug" +
-      "JvmProtoBuf"
+      "JvmMethodSignature:\202\001\n\020method_signature\022" +
+      ",.org.jetbrains.kotlin.serialization.Cal" +
+      "lable\030d \001(\0132:.org.jetbrains.kotlin.seria" +
+      "lization.jvm.JvmMethodSignature:\206\001\n\022prop",
+      "erty_signature\022,.org.jetbrains.kotlin.se" +
+      "rialization.Callable\030e \001(\0132<.org.jetbrai" +
+      "ns.kotlin.serialization.jvm.JvmPropertyS" +
+      "ignature:E\n\017impl_class_name\022,.org.jetbra" +
+      "ins.kotlin.serialization.Callable\030f \001(\005:" +
+      "J\n\005index\022;.org.jetbrains.kotlin.serializ" +
+      "ation.Callable.ValueParameter\030d \001(\005B\022B\020D" +
+      "ebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3873,7 +3872,7 @@ public final class DebugJvmProtoBuf {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.getDescriptor(),
+          org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor(),
         }, assigner);
   }
 

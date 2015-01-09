@@ -16,8 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang
 
-import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
@@ -25,8 +24,14 @@ import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.NameSerializationUtil
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.ClassData
 
 public class BuiltinsPackageFragment(
         fqName: FqName,

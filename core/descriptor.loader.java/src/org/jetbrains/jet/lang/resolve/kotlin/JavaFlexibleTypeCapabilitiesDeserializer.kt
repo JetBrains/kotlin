@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.jet.descriptors.serialization.FlexibleTypeCapabilitiesDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.jet.lang.types.FlexibleTypeCapabilities

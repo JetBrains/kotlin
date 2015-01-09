@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.FqName;

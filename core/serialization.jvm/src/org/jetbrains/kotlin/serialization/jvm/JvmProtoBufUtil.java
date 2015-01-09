@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.serialization.jvm;
 
 import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.PackageData;
+import org.jetbrains.kotlin.serialization.ClassData;
+import org.jetbrains.kotlin.serialization.PackageData;
 
 public class JvmProtoBufUtil {
     private JvmProtoBufUtil() {

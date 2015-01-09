@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPlaceHolderStubImpl
@@ -37,20 +37,20 @@ import org.jetbrains.jet.lang.psi.JetFunctionType
 import org.jetbrains.jet.lang.psi.JetFunctionTypeReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.lang.psi.JetTypeParameterList
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type
+import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeParameterStubImpl
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Variance
+import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.jet.lang.psi.JetTypeConstraintList
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeConstraintStubImpl
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import java.util.ArrayList
-import org.jetbrains.jet.descriptors.serialization.Flags
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.jet.lang.psi.stubs.impl.ModifierMaskUtils
-import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.jet.lang.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.Projection
+import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.jet.lang.psi.JetProjectionKind
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {

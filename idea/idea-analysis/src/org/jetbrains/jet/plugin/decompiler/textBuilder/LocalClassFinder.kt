@@ -25,8 +25,8 @@ import org.jetbrains.jet.plugin.decompiler.isKotlinWithCompatibleAbiVersion
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
-import org.jetbrains.jet.descriptors.serialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import com.intellij.openapi.diagnostic.Logger
 
