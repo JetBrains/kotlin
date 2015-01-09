@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import com.google.protobuf.ExtensionRegistry
 import java.io.ByteArrayInputStream
-import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
+import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import java.util.Arrays
 import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
