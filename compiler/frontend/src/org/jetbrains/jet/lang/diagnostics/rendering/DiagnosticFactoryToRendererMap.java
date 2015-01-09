@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.*;
-import org.jetbrains.jet.renderer.MultiRenderer;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.MultiRenderer;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.HashMap;
 import java.util.Map;

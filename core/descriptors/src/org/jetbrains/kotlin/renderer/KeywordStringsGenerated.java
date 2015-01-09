@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.renderer;
+package org.jetbrains.kotlin.renderer;
 
 import java.util.Arrays;
 import java.util.Set;

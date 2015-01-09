@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.refactoring.extractFunction
 
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.HashMap

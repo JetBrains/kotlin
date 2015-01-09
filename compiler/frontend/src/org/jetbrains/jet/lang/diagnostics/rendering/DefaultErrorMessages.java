@@ -36,8 +36,8 @@ import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker.VarianceCo
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
-import org.jetbrains.jet.renderer.MultiRenderer;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.MultiRenderer;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -46,7 +46,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.jet.renderer.DescriptorRenderer.*;
+import static org.jetbrains.kotlin.renderer.DescriptorRenderer.*;
 
 public class DefaultErrorMessages {
 

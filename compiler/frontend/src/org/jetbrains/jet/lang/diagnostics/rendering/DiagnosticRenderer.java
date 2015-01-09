@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 public interface DiagnosticRenderer<D extends Diagnostic> extends Renderer<D> {
     @NotNull

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.highlighter.renderersUtil
 
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.calls.callUtil.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils

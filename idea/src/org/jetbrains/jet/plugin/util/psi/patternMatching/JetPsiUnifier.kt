@@ -75,7 +75,7 @@ import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.JetClassObject
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor

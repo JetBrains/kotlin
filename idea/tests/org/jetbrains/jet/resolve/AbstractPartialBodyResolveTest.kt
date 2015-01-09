@@ -30,7 +30,7 @@ import java.io.File
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.junit.Assert
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade

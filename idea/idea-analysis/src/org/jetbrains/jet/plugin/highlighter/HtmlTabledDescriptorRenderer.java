@@ -27,9 +27,9 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.Tab
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.Iterator;
 import java.util.List;

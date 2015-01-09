@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.diagnostics.rendering
 
-import org.jetbrains.jet.renderer.Renderer
+import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject
-import org.jetbrains.jet.renderer.DescriptorRendererImpl
+import org.jetbrains.kotlin.renderer.DescriptorRendererImpl
 
 public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
 

@@ -28,7 +28,7 @@ import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory

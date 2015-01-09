@@ -29,7 +29,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.jet.InTextDirectivesUtils
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase

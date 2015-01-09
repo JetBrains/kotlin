@@ -55,7 +55,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.util.FuzzyType
 import org.jetbrains.jet.lang.psi.JetLabeledExpression
 import org.jetbrains.jet.lang.psi.JetElement

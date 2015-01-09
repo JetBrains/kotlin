@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.renderer;
+package org.jetbrains.kotlin.renderer;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface MultiRenderer<O> {
+public interface Renderer<O> {
     @NotNull
-    String[] render(@NotNull O object);
+    String render(@NotNull O object);
 }

@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.highlighter.markers
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.descriptors.Modality
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import com.intellij.psi.NavigatablePsiElement

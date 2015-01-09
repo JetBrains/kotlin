@@ -35,7 +35,7 @@ import java.util.HashMap
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.psi.debugText.getDebugText
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate

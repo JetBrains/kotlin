@@ -47,7 +47,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.*;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.util.Collections;
 import java.util.List;

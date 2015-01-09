@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.annotations.TestOnly

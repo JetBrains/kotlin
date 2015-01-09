@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.jet.renderer.MultiRenderer;
+import org.jetbrains.kotlin.renderer.MultiRenderer;
 
 public class DiagnosticWithMultiParametersRenderer<A> extends AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters1<?,A>> {
     @NotNull private final MultiRenderer<? super A> renderersForA;

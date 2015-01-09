@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.tests.reservedWords
 
 import java.io.File
-import org.jetbrains.jet.renderer.KeywordStringsGenerated
+import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil.writeFileIfContentChanged
 

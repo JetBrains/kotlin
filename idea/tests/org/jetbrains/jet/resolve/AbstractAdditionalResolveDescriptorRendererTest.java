@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.project.ResolveElementCache;
-import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest;
+import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest;
 
 public abstract class AbstractAdditionalResolveDescriptorRendererTest extends AbstractDescriptorRendererTest {
     @NotNull

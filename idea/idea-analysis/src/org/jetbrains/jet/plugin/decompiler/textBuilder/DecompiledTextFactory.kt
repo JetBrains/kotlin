@@ -21,8 +21,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import java.util.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject

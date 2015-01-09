@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diff.DiffManager
 import com.intellij.openapi.diff.SimpleDiffRequest
 import com.intellij.openapi.diff.SimpleContent

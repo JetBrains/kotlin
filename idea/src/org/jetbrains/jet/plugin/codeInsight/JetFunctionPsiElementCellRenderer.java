@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRenderer {
     @Override

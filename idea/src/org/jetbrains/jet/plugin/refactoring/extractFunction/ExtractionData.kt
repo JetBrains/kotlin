@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
 import java.util.ArrayList

@@ -20,7 +20,7 @@ import com.intellij.psi.search.FilenameIndex
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.roots.libraries.LibraryUtil

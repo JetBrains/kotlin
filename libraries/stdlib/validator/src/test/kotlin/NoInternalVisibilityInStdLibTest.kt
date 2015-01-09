@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import kotlin.test.fail
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.jet.lang.resolve.DescriptorUtils

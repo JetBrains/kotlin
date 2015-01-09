@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.plugin.completion.handlers.*
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.codeInsight.lookup.LookupElementDecorator

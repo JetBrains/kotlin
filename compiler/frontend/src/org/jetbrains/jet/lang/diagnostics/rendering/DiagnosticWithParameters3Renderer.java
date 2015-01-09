@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.RenderingPackage.renderParameter;
 
