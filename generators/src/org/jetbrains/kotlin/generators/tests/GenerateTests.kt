@@ -39,7 +39,7 @@ import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.repl.AbstractReplInterpreterTest
-import org.jetbrains.jet.cfg.AbstractControlFlowTest
+import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
@@ -91,7 +91,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTe
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
-import org.jetbrains.jet.cfg.AbstractDataFlowTest
+import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
@@ -107,7 +107,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletion
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
 import org.jetbrains.jet.plugin.stubs.AbstractResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
-import org.jetbrains.jet.cfg.AbstractPseudoValueTest
+import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
