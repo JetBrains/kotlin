@@ -24,7 +24,7 @@ import com.intellij.util.io.IOUtil
 import java.io.DataInput
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.jet.descriptors.serialization.BitEncoding
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import java.util.Arrays
 import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
