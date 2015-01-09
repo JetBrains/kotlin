@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization;
+package org.jetbrains.kotlin.serialization.jvm;
 
 import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
 
-public class JavaProtoBufUtil {
-    private JavaProtoBufUtil() {
+public class JvmProtoBufUtil {
+    private JvmProtoBufUtil() {
     }
 
     @NotNull
     public static ExtensionRegistryLite getExtensionRegistry() {
         ExtensionRegistryLite registry = ExtensionRegistryLite.newInstance();
-        JavaProtoBuf.registerAllExtensions(registry);
+        JvmProtoBuf.registerAllExtensions(registry);
         return registry;
     }
 

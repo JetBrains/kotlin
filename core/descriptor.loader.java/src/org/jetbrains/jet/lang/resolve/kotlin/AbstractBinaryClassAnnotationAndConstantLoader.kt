@@ -21,8 +21,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind
 import org.jetbrains.jet.descriptors.serialization.NameResolver
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.*
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.ProtoContainer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
@@ -119,7 +118,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val methodSignature = getCallableSignature(callable, nameResolver, kind)
         if (methodSignature != null) {
             if (proto.hasExtension(index)) {
-                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(JavaProtoBuf.index))
+                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(index))
                 return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
             }
         }

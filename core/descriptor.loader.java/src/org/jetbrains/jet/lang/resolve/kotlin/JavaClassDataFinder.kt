@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.ClassData
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 
 public class JavaClassDataFinder(
@@ -30,6 +30,6 @@ public class JavaClassDataFinder(
         val javaClassId = DeserializedResolverUtils.kotlinClassIdToJavaClassId(classId)
         val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(javaClassId) ?: return null
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
-        return JavaProtoBufUtil.readClassDataFrom(data)
+        return JvmProtoBufUtil.readClassDataFrom(data)
     }
 }

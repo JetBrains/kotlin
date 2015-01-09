@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.ClassData
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import com.intellij.openapi.diagnostic.Logger
 
 class LocalClassFinder(
@@ -61,7 +61,7 @@ class LocalClassDataFinder(
             log.error("Annotation data missing for ${binaryClass.getClassId()}")
             return null
         }
-        return JavaProtoBufUtil.readClassDataFrom(data)
+        return JvmProtoBufUtil.readClassDataFrom(data)
     }
 }
 

@@ -28,8 +28,8 @@ import com.google.common.hash.Hashing
 import com.intellij.openapi.util.io.FileUtil
 import com.google.common.collect.Sets
 import java.util.HashSet
-import org.jetbrains.jet.descriptors.serialization.BitEncoding
-import org.jetbrains.jet.descriptors.serialization.DebugJavaProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding
+import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import com.google.protobuf.ExtensionRegistry
 import java.io.ByteArrayInputStream
 import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
@@ -158,7 +158,7 @@ fun classFileToString(classFile: File): String {
 
 fun getExtensionRegistry(): ExtensionRegistry {
     val registry = ExtensionRegistry.newInstance()!!
-    DebugJavaProtoBuf.registerAllExtensions(registry)
+    DebugJvmProtoBuf.registerAllExtensions(registry)
     return registry
 }
 

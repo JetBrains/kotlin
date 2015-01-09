@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.*
@@ -59,7 +59,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
             return Collections.emptyList()
         }
-        val packageData = JavaProtoBufUtil.readPackageDataFrom(annotationData)
+        val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName),
                 packageData.getPackageProto(),

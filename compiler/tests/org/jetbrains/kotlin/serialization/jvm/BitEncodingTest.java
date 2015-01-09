@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization;
+package org.jetbrains.kotlin.serialization.jvm;
 
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-import static org.jetbrains.jet.descriptors.serialization.BitEncoding.decodeBytes;
-import static org.jetbrains.jet.descriptors.serialization.BitEncoding.encodeBytes;
+import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.decodeBytes;
+import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.encodeBytes;
 import static org.junit.Assert.assertArrayEquals;
 
 public class BitEncodingTest extends UsefulTestCase {

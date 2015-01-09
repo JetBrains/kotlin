@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -33,7 +33,7 @@ public class SignatureDeserializer {
     }
 
     @NotNull
-    public String methodSignatureString(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+    public String methodSignatureString(@NotNull JvmProtoBuf.JvmMethodSignature signature) {
         Name name = nameResolver.getName(signature.getName());
 
         StringBuilder sb = new StringBuilder();
@@ -48,17 +48,17 @@ public class SignatureDeserializer {
     }
 
     @NotNull
-    public MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+    public MemberSignature methodSignature(@NotNull JvmProtoBuf.JvmMethodSignature signature) {
         return MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
     }
 
     @NotNull
-    public String typeDescriptor(@NotNull JavaProtoBuf.JavaType type) {
+    public String typeDescriptor(@NotNull JvmProtoBuf.JvmType type) {
         return typeDescriptor(type, new StringBuilder()).toString();
     }
 
     @NotNull
-    private StringBuilder typeDescriptor(@NotNull JavaProtoBuf.JavaType type, @NotNull StringBuilder sb) {
+    private StringBuilder typeDescriptor(@NotNull JvmProtoBuf.JvmType type, @NotNull StringBuilder sb) {
         for (int i = 0; i < type.getArrayDimension(); i++) {
             sb.append('[');
         }

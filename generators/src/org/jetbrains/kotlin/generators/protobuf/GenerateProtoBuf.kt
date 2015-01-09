@@ -51,7 +51,7 @@ public data class ProtoPath(
 public val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/serialization/src/descriptors.proto", "core/serialization/src"),
         ProtoPath("core/serialization/src/builtins.proto", "core/serialization/src"),
-        ProtoPath("core/serialization.java/src/java_descriptors.proto", "core/serialization.java/src")
+        ProtoPath("core/serialization.jvm/src/jvm_descriptors.proto", "core/serialization.jvm/src")
 )
 
 fun main(args: Array<String>) {

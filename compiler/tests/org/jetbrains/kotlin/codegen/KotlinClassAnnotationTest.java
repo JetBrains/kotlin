@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -54,7 +54,7 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
 
         String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinClass, "data");
         assertNotNull(data);
-        ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
+        ClassData classData = JvmProtoBufUtil.readClassDataFrom(data);
 
         Set<String> callableNames = collectCallableNames(classData.getClassProto().getMemberList(), classData.getNameResolver());
         assertSameElements(Arrays.asList("foo", "bar"), callableNames);

@@ -19,13 +19,17 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
+import org.jetbrains.jet.descriptors.serialization.StringTable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.kotlin.SignatureDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -33,10 +37,10 @@ import java.util.Arrays;
 
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 
-public class JavaSerializerExtension extends SerializerExtension {
+public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
 
-    public JavaSerializerExtension(@NotNull JvmSerializationBindings bindings) {
+    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings) {
         this.bindings = bindings;
     }
 
@@ -58,7 +62,7 @@ public class JavaSerializerExtension extends SerializerExtension {
     ) {
         Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
         if (index != null) {
-            proto.setExtension(JavaProtoBuf.index, index);
+            proto.setExtension(JvmProtoBuf.index, index);
         }
     }
 
@@ -69,18 +73,18 @@ public class JavaSerializerExtension extends SerializerExtension {
     ) {
         SignatureSerializer signatureSerializer = new SignatureSerializer(stringTable);
         if (callable instanceof FunctionDescriptor) {
-            JavaProtoBuf.JavaMethodSignature signature;
+            JvmProtoBuf.JvmMethodSignature signature;
             if (callable instanceof DeserializedSimpleFunctionDescriptor) {
                 DeserializedSimpleFunctionDescriptor deserialized = (DeserializedSimpleFunctionDescriptor) callable;
                 signature = signatureSerializer.copyMethodSignature(
-                        deserialized.getProto().getExtension(JavaProtoBuf.methodSignature), deserialized.getNameResolver());
+                        deserialized.getProto().getExtension(JvmProtoBuf.methodSignature), deserialized.getNameResolver());
             }
             else {
                 Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
                 signature = method != null ? signatureSerializer.methodSignature(method) : null;
             }
             if (signature != null) {
-                proto.setExtension(JavaProtoBuf.methodSignature, signature);
+                proto.setExtension(JvmProtoBuf.methodSignature, signature);
             }
         }
         else if (callable instanceof PropertyDescriptor) {
@@ -109,11 +113,11 @@ public class JavaSerializerExtension extends SerializerExtension {
                 syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, property);
             }
 
-            JavaProtoBuf.JavaPropertySignature signature;
+            JvmProtoBuf.JvmPropertySignature signature;
             if (callable instanceof DeserializedPropertyDescriptor) {
                 DeserializedPropertyDescriptor deserializedCallable = (DeserializedPropertyDescriptor) callable;
                 signature = signatureSerializer.copyPropertySignature(
-                        deserializedCallable.getProto().getExtension(JavaProtoBuf.propertySignature),
+                        deserializedCallable.getProto().getExtension(JvmProtoBuf.propertySignature),
                         deserializedCallable.getNameResolver()
                 );
             }
@@ -121,7 +125,7 @@ public class JavaSerializerExtension extends SerializerExtension {
                 signature = signatureSerializer
                         .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getterMethod, setterMethod);
             }
-            proto.setExtension(JavaProtoBuf.propertySignature, signature);
+            proto.setExtension(JvmProtoBuf.propertySignature, signature);
         }
     }
 
@@ -132,7 +136,7 @@ public class JavaSerializerExtension extends SerializerExtension {
     ) {
         String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
         if (name != null) {
-            proto.setExtension(JavaProtoBuf.implClassName, stringTable.getSimpleNameIndex(Name.identifier(name)));
+            proto.setExtension(JvmProtoBuf.implClassName, stringTable.getSimpleNameIndex(Name.identifier(name)));
         }
     }
 
@@ -144,8 +148,8 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaMethodSignature copyMethodSignature(
-                @NotNull JavaProtoBuf.JavaMethodSignature signature,
+        public JvmProtoBuf.JvmMethodSignature copyMethodSignature(
+                @NotNull JvmProtoBuf.JvmMethodSignature signature,
                 @NotNull NameResolver nameResolver
         ) {
             String method = new SignatureDeserializer(nameResolver).methodSignatureString(signature);
@@ -153,8 +157,8 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaMethodSignature methodSignature(@NotNull Method method) {
-            JavaProtoBuf.JavaMethodSignature.Builder signature = JavaProtoBuf.JavaMethodSignature.newBuilder();
+        public JvmProtoBuf.JvmMethodSignature methodSignature(@NotNull Method method) {
+            JvmProtoBuf.JvmMethodSignature.Builder signature = JvmProtoBuf.JvmMethodSignature.newBuilder();
 
             signature.setName(stringTable.getStringIndex(method.getName()));
 
@@ -168,8 +172,8 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaPropertySignature copyPropertySignature(
-                @NotNull JavaProtoBuf.JavaPropertySignature signature,
+        public JvmProtoBuf.JvmPropertySignature copyPropertySignature(
+                @NotNull JvmProtoBuf.JvmPropertySignature signature,
                 @NotNull NameResolver nameResolver
         ) {
             Type fieldType;
@@ -177,7 +181,7 @@ public class JavaSerializerExtension extends SerializerExtension {
             boolean isStaticInOuter;
             SignatureDeserializer signatureDeserializer = new SignatureDeserializer(nameResolver);
             if (signature.hasField()) {
-                JavaProtoBuf.JavaFieldSignature field = signature.getField();
+                JvmProtoBuf.JvmFieldSignature field = signature.getField();
                 fieldType = Type.getType(signatureDeserializer.typeDescriptor(field.getType()));
                 fieldName = nameResolver.getName(field.getName()).asString();
                 isStaticInOuter = field.getIsStaticInOuter();
@@ -199,7 +203,7 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaPropertySignature propertySignature(
+        public JvmProtoBuf.JvmPropertySignature propertySignature(
                 @Nullable Type fieldType,
                 @Nullable String fieldName,
                 boolean isStaticInOuter,
@@ -207,7 +211,7 @@ public class JavaSerializerExtension extends SerializerExtension {
                 @Nullable Method getter,
                 @Nullable Method setter
         ) {
-            JavaProtoBuf.JavaPropertySignature.Builder signature = JavaProtoBuf.JavaPropertySignature.newBuilder();
+            JvmProtoBuf.JvmPropertySignature.Builder signature = JvmProtoBuf.JvmPropertySignature.newBuilder();
 
             if (fieldType != null) {
                 assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldType;
@@ -229,8 +233,8 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name, boolean isStaticInOuter) {
-            JavaProtoBuf.JavaFieldSignature.Builder signature = JavaProtoBuf.JavaFieldSignature.newBuilder();
+        public JvmProtoBuf.JvmFieldSignature fieldSignature(@NotNull Type type, @NotNull String name, boolean isStaticInOuter) {
+            JvmProtoBuf.JvmFieldSignature.Builder signature = JvmProtoBuf.JvmFieldSignature.newBuilder();
             signature.setName(stringTable.getStringIndex(name));
             signature.setType(type(type));
             if (isStaticInOuter) {
@@ -240,8 +244,8 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaType type(@NotNull Type givenType) {
-            JavaProtoBuf.JavaType.Builder builder = JavaProtoBuf.JavaType.newBuilder();
+        public JvmProtoBuf.JvmType type(@NotNull Type givenType) {
+            JvmProtoBuf.JvmType.Builder builder = JvmProtoBuf.JvmType.newBuilder();
 
             int arrayDimension = 0;
             Type type = givenType;
@@ -258,7 +262,7 @@ public class JavaSerializerExtension extends SerializerExtension {
                 builder.setClassFqName(stringTable.getFqNameIndex(fqName));
             }
             else {
-                builder.setPrimitiveType(JavaProtoBuf.JavaType.PrimitiveType.valueOf(type.getSort()));
+                builder.setPrimitiveType(JvmProtoBuf.JvmType.PrimitiveType.valueOf(type.getSort()));
             }
 
             return builder.build();

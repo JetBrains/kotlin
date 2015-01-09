@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.descriptors.serialization.BitEncoding;
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -234,7 +234,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JavaSerializerExtension(v.getSerializationBindings()));
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

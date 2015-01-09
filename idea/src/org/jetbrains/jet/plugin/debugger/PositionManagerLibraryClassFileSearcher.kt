@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.debugger
 import com.intellij.psi.search.FilenameIndex
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -92,8 +92,8 @@ fun findPackagePartInternalNameForLibraryFile(elementAt: JetElement): String? {
     }
 
     val proto = deserializedDescriptor.proto
-    if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-        val name = deserializedDescriptor.nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName)!!)
+    if (proto.hasExtension(JvmProtoBuf.implClassName)) {
+        val name = deserializedDescriptor.nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName)!!)
         return JvmClassName.byFqNameWithoutInnerClasses(packageFqName.child(name)).getInternalName()
     }
 

@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassFinder
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassDataFinder
@@ -64,13 +64,13 @@ public class KotlinClsStubBuilder : ClsStubBuilder() {
         }
         return when (header.kind) {
             KotlinClassHeader.Kind.PACKAGE_FACADE -> {
-                val packageData = JavaProtoBufUtil.readPackageDataFrom(annotationData)
+                val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.getNameResolver(), packageFqName)
                 createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)
             }
 
             KotlinClassHeader.Kind.CLASS -> {
-                val classData = JavaProtoBufUtil.readClassDataFrom(annotationData)
+                val classData = JvmProtoBufUtil.readClassDataFrom(annotationData)
                 val context = components.createContext(classData.getNameResolver(), packageFqName)
                 createTopLevelClassStub(classId, classData.getClassProto(), context)
             }
