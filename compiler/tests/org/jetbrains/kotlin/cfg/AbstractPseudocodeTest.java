@@ -77,7 +77,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             throw new RuntimeException(e);
         }
         finally {
-            if ("true".equals(System.getProperty("jet.control.flow.test.dump.graphs"))) {
+            if ("true".equals(System.getProperty("kotlin.control.flow.test.dump.graphs"))) {
                 CFGraphToDotFilePrinter.dumpDot(file, data.values());
             }
         }
