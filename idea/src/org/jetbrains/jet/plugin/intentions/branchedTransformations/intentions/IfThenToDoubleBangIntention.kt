@@ -20,7 +20,7 @@ import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.comparesNonNullToNull
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.getNonNullExpression

@@ -35,8 +35,8 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lexer.JetLexer;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetLexer;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class JetParserDefinition implements ParserDefinition {

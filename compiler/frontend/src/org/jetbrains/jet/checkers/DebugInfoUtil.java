@@ -38,14 +38,14 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class DebugInfoUtil {
     private static final TokenSet MAY_BE_UNRESOLVED = TokenSet.create(IN_KEYWORD, NOT_IN);

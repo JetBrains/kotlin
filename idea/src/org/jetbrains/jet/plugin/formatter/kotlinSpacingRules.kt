@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.formatter
 
 import org.jetbrains.jet.JetNodeTypes.*
-import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.JetTokens.*
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.tree.IElementType
@@ -29,7 +29,7 @@ import com.intellij.formatting.ASTBlock
 import org.jetbrains.jet.plugin.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 

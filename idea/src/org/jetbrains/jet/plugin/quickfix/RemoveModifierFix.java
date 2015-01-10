@@ -28,9 +28,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {

@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;

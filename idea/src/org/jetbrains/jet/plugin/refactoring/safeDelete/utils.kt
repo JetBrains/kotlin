@@ -21,7 +21,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.lang.psi.JetModifierListOwner
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.jet.lang.psi.JetParameter

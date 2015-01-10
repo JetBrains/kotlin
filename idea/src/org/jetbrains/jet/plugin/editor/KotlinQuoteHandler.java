@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.QuoteHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class KotlinQuoteHandler implements QuoteHandler {
     @Override

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 
 public interface JetModifierListOwner extends PsiElement, JetAnnotated {
     @Nullable

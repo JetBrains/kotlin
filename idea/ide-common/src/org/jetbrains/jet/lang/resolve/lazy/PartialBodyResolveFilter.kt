@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy
 import java.util.HashSet
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.HashMap

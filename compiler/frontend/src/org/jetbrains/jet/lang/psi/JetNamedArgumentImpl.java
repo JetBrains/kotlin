@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class JetNamedArgumentImpl extends JetValueArgument {
     public JetNamedArgumentImpl(@NotNull ASTNode node) {

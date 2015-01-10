@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore

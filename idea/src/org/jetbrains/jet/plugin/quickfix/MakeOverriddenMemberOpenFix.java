@@ -40,7 +40,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD;
 
 public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {
     private final List<JetCallableDeclaration> overriddenNonOverridableMembers = new ArrayList<JetCallableDeclaration>();

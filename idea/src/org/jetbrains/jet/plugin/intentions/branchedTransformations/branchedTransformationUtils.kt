@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.intentions.branchedTransformations
 
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import java.util.ArrayList

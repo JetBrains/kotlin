@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.JetLoopExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {

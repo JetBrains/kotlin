@@ -25,9 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class JetNameReferenceExpression extends JetExpressionImplStub<KotlinNameReferenceExpressionStub> implements JetSimpleNameExpression {
 

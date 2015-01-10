@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import com.intellij.usageView.UsageInfo
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.openapi.ui.Messages

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 
 import org.jetbrains.kotlin.codegen.AsmUtil.genEqualsForExpressionsOnStack
 import org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE

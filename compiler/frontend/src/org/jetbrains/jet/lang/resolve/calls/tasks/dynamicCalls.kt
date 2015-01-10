@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorFactory

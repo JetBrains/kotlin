@@ -22,11 +22,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 
 import java.util.ArrayList
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
-import org.jetbrains.jet.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 
 public class KotlinDocCommentSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)

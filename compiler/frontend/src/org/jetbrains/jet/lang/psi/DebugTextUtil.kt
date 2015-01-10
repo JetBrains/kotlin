@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.psi.JetEnumEntry
 import org.jetbrains.jet.lang.psi.JetInitializerList
 import org.jetbrains.jet.lang.psi.JetFunctionType
 import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetTypeConstraintList
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression

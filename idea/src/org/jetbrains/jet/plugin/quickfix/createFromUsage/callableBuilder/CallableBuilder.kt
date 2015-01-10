@@ -51,7 +51,7 @@ import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import org.jetbrains.jet.plugin.util.isUnit
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker

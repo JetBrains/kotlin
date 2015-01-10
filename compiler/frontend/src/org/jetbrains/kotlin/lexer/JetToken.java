@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.kdoc.lexer;
+package org.jetbrains.kotlin.lexer;
 
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.plugin.JetLanguage;
 
-public class KDocToken extends JetToken {
-    public KDocToken(@NotNull @NonNls String debugName) {
-        super(debugName);
+public class JetToken extends IElementType {
+    public JetToken(@NotNull @NonNls String debugName) {
+        super(debugName, JetLanguage.INSTANCE);
     }
 }

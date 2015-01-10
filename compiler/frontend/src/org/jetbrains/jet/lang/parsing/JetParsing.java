@@ -23,14 +23,14 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeType;
-import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.lexer.JetKeywordToken;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lang.parsing.JetParsing.AnnotationParsingMode.*;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class JetParsing extends AbstractJetParsing {
     private static final Logger LOG = Logger.getInstance(JetParsing.class);

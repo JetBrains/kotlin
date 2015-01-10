@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lexer;
+package org.jetbrains.kotlin.lexer;
 
-import com.intellij.lexer.FlexAdapter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.Reader;
+public class JetSingleValueToken extends JetToken {
 
-public class JetLexer extends FlexAdapter {
-    public JetLexer() {
-        super(new _JetLexer((Reader) null));
+    private final String myValue;
+
+    public JetSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {
+        super(debugName);
+        myValue = value;
+    }
+
+    @NotNull @NonNls
+    public String getValue() {
+        return myValue;
     }
 }

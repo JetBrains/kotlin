@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.psi.JetTypeProjection
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetIsExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier

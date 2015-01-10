@@ -1,4 +1,4 @@
-package org.jetbrains.jet.kdoc.lexer;
+package org.jetbrains.kotlin.kdoc.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;

@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.CallType
 import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
 import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance

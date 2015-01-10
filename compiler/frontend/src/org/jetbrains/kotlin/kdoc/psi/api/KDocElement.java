@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.psi.api;
 
-import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
 
-// Don't implement JetElement (or it will be treated as statement)
-public interface KDoc extends PsiComment {
+public interface KDocElement extends PsiElement {
 }

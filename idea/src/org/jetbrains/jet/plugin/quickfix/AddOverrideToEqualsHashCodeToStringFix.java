@@ -33,8 +33,8 @@ import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.jet.lexer.JetTokens.PUBLIC_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.PUBLIC_KEYWORD;
 
 public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<PsiElement> {
     public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {

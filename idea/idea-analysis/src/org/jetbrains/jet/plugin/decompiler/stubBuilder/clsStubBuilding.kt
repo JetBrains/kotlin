@@ -29,9 +29,9 @@ import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinUserTypeStubImpl
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.jet.lang.psi.stubs.impl.ModifierMaskUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.parsing
 
 import com.intellij.lang.WhitespacesAndCommentsBinder
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.text.StringUtil
 
 object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {

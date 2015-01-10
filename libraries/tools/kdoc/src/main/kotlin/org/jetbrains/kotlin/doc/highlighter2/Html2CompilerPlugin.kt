@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.local.CoreLocalVirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.model.KModel
 import org.jetbrains.kotlin.doc.model.SourceInfo

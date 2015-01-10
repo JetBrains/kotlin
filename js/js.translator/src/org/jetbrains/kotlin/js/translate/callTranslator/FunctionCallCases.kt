@@ -44,7 +44,7 @@ import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
 import org.jetbrains.jet.lang.psi.JetPostfixExpression
 import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
 

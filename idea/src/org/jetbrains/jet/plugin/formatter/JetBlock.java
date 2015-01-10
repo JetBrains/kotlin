@@ -29,9 +29,9 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.jet.plugin.formatter.NodeIndentStrategy.strategy;
 
 /**

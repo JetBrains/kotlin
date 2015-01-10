@@ -41,13 +41,13 @@ import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetUnaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetConstantExpression
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.psi.JetLabelReferenceExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall

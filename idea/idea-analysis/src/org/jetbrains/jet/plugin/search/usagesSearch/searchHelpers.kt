@@ -32,10 +32,10 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lexer.JetSingleValueToken
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.references.*
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.util.containers.ContainerUtil

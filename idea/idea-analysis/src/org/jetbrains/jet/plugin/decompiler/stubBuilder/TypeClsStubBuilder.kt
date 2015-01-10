@@ -24,8 +24,8 @@ import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinParameterStubImpl
 import org.jetbrains.jet.lang.resolve.name.Name

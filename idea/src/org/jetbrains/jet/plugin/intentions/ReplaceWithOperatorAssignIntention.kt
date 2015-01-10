@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext

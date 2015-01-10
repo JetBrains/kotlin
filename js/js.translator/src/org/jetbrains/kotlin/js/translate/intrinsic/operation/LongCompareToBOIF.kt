@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder.pattern

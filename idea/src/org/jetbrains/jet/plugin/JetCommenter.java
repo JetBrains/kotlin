@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin;
 import com.intellij.lang.CodeDocumentationAwareCommenter;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.jet.kdoc.psi.api.KDoc;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class JetCommenter implements CodeDocumentationAwareCommenter {
     @Override

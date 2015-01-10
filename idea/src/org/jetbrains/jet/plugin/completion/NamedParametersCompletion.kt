@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.completion
 
 import org.jetbrains.jet.lang.psi.JetValueArgument
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor

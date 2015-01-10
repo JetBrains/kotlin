@@ -5,11 +5,11 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.lang.types.Variance
 import java.util.Collections
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 public object CreateBinaryOperationActionFactory: JetSingleIntentionActionFactory() {

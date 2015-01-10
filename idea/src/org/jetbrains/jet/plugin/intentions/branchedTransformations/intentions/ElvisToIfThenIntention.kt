@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.introduceValueForCondition

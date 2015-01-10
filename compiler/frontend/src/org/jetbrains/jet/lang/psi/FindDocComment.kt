@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.psi.findDocComment
 
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.kdoc.psi.impl;
+package org.jetbrains.kotlin.kdoc.psi.impl;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.kdoc.lexer.KDocTokens;
-import org.jetbrains.jet.kdoc.psi.api.KDoc;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KDocImpl extends LazyParseablePsiElement implements KDoc {

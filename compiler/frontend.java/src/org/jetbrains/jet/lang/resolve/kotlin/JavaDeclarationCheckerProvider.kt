@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.Visibilities

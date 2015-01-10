@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.text.StringUtil
 
 public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {

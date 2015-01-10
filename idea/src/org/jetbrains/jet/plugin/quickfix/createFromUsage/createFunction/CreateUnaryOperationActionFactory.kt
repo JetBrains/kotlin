@@ -5,7 +5,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.types.Variance
 import java.util.Collections

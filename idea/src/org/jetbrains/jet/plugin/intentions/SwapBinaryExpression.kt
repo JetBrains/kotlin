@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences
-import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 
 public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(

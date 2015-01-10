@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression

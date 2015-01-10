@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.psi.stubs.impl
 
 import org.jetbrains.jet.lang.psi.JetModifierList
 
-import org.jetbrains.jet.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import kotlin.platform.platformStatic
 
 public object ModifierMaskUtils {

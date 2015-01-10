@@ -23,8 +23,8 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.kdoc.lexer.KDocTokens;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -25,12 +25,12 @@ import com.intellij.codeInsight.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.KotlinFunctionInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.jet.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetKeywordToken
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 
-import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.tree.IElementType

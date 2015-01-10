@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.jet.lexer.JetKeywordToken
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = getName()

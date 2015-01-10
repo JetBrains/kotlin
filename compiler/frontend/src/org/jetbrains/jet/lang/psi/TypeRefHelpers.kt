@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.psi.typeRefHelpers
 
 import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetPsiFactory

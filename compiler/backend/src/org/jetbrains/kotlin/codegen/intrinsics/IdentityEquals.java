@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;

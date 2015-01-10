@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.highlighter.SyntaxHighlighter
 import org.jetbrains.kotlin.doc.templates.KDocTemplate

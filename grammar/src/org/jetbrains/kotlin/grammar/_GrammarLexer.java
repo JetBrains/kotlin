@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.grammar;
 //import com.intellij.psi.*;
 //import com.intellij.psi.tree.IElementType;
 
-//import org.jetbrains.jet.lexer.JetTokens;
+//import org.jetbrains.kotlin.lexer.JetTokens;
 
 
 /**

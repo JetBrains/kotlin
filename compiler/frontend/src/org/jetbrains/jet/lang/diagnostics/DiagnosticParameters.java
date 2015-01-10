@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.lexer.JetKeywordToken;
 
 public interface DiagnosticParameters {
     DiagnosticParameter<JetKeywordToken> MODIFIER = new DiagnosticParameterImpl<JetKeywordToken>("MODIFIER");

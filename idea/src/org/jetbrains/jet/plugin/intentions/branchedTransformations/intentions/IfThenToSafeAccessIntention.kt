@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.comparesNonNullToNull
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.getNonNullExpression

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;

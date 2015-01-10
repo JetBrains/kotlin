@@ -23,8 +23,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens.*
 
 public trait JetSimpleNameExpression : JetReferenceExpression {
 

@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetWhenEntry

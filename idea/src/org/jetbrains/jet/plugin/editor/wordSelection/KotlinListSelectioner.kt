@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import org.jetbrains.jet.lang.psi.JetTypeParameterList
 import org.jetbrains.jet.lang.psi.JetValueArgumentList
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {

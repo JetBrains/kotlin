@@ -44,7 +44,7 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import com.intellij.codeInsight.lookup.Lookup
 import org.jetbrains.jet.plugin.completion.isAfterDot

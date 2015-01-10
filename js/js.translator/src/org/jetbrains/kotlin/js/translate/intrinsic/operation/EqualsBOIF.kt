@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.NamePredic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-
 import java.util.Arrays
-
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
-import org.jetbrains.jet.lexer.JetToken
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall

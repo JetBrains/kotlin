@@ -24,13 +24,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
-import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.VAL_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.VAR_KEYWORD;
 
 public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed implements JetVariableDeclaration {
     public JetMultiDeclarationEntry(@NotNull ASTNode node) {

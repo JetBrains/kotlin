@@ -23,7 +23,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.psi.findDocComment.FindDocCommentPackage;
 import org.jetbrains.jet.lang.psi.stubs.KotlinClassOrObjectStub;
 

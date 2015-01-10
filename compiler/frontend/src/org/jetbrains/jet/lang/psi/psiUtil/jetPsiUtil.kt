@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import java.util.Collections
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import java.util.ArrayList

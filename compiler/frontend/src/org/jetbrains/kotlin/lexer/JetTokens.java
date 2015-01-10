@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lexer;
+package org.jetbrains.kotlin.lexer;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.jet.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 
 public interface JetTokens {
     JetToken EOF   = new JetToken("EOF");

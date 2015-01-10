@@ -20,8 +20,8 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.Map;
 

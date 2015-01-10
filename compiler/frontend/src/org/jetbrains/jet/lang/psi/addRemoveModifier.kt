@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.psi.addRemoveModifier
 
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
-import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens.*
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetModifierListOwner

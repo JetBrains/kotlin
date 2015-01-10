@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import gnu.trove.THashMap

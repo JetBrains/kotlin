@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetSingleValueToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetSingleValueToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public enum JetProjectionKind {
     IN(JetTokens.IN_KEYWORD), OUT(JetTokens.OUT_KEYWORD), STAR(JetTokens.MUL), NONE(null);

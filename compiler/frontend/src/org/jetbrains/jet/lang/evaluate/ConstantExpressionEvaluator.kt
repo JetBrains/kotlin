@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.constants.*
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument

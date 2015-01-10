@@ -61,7 +61,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.kotlin.utils.ThrowingList;
 
@@ -82,8 +82,8 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil.reconstructBareType;
-import static org.jetbrains.jet.lexer.JetTokens.AS_KEYWORD;
-import static org.jetbrains.jet.lexer.JetTokens.AS_SAFE;
+import static org.jetbrains.kotlin.lexer.JetTokens.AS_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.AS_SAFE;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {

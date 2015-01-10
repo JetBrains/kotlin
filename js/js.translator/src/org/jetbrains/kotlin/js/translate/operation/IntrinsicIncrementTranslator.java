@@ -20,8 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;

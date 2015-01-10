@@ -21,7 +21,7 @@ import com.intellij.psi.stubs.NamedStub
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.PsiFileStub
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.jet.lang.psi.*
 
 public trait KotlinFileStub : PsiFileStub<JetFile> {

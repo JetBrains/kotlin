@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetModifierListElementType;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<JetModifierList> implements KotlinModifierListStub {
 

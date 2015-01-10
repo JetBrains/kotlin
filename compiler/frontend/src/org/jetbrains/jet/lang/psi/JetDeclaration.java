@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 
 public interface JetDeclaration extends JetExpression, JetModifierListOwner {
     JetDeclaration[] EMPTY_ARRAY = new JetDeclaration[0];

@@ -45,9 +45,9 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 import javax.inject.Inject;
@@ -59,8 +59,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
-import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.jet.lexer.JetTokens.VARARG_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder.Target
 import com.intellij.openapi.util.Key

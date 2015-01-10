@@ -28,7 +28,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.openapi.diagnostic.Logger

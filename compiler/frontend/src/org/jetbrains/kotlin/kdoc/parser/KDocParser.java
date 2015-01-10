@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.kdoc.psi.impl;
+package org.jetbrains.kotlin.kdoc.parser;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiParser;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
 
-public abstract class KDocElementImpl extends ASTWrapperPsiElement {
+public class KDocParser implements PsiParser {
+    @Override
     @NotNull
-    @Override
-    public Language getLanguage() {
-        return JetLanguage.INSTANCE;
-    }
+    public ASTNode parse(IElementType root, PsiBuilder builder) {
+        PsiBuilder.Marker rootMarker = builder.mark();
 
-    @Override
-    public String toString() {
-        return getNode().getElementType().toString();
-    }
+        // todo: parse KDoc tags, markdown, etc...
+        while (!builder.eof()) {
+            builder.advanceLexer();
+        }
 
-    public KDocElementImpl(@NotNull ASTNode node) {
-        super(node);
+        rootMarker.done(root);
+        return builder.getTreeBuilt();
     }
 }

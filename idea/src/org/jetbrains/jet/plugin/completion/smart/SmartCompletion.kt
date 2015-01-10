@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.completion.smart
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.types.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*

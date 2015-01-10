@@ -19,8 +19,8 @@ package org.jetbrains.jet.lang.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Nullable
-import org.jetbrains.jet.lexer.JetToken
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
 
 object JetQualifiedExpressionImpl {

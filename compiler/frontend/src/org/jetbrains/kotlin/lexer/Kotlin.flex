@@ -1,13 +1,12 @@
-package org.jetbrains.jet.lexer;
+package org.jetbrains.kotlin.lexer;
 
 import java.util.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.jet.lexer.KotlinLexerException;
-
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KotlinLexerException;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 %%
 

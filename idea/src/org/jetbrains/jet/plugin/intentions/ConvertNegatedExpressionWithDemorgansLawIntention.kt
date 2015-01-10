@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl

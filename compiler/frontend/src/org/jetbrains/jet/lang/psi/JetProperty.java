@@ -31,13 +31,13 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStub>
         implements JetVariableDeclaration, PsiModifiableCodeBlock {

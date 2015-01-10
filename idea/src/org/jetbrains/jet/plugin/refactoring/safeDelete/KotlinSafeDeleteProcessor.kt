@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import org.jetbrains.jet.plugin.references.JetReference

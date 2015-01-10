@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lexer;
+package org.jetbrains.kotlin.kdoc.psi.impl;
 
-import org.jetbrains.annotations.NonNls;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLanguage;
 
-public class JetSingleValueToken extends JetToken {
-
-    private final String myValue;
-
-    public JetSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {
-        super(debugName);
-        myValue = value;
+public abstract class KDocElementImpl extends ASTWrapperPsiElement {
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 
-    @NotNull @NonNls
-    public String getValue() {
-        return myValue;
+    @Override
+    public String toString() {
+        return getNode().getElementType().toString();
     }
 
+    public KDocElementImpl(@NotNull ASTNode node) {
+        super(node);
+    }
 }

@@ -30,12 +30,12 @@ import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifierList
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
 import org.jetbrains.jet.lang.psi.JetClassObject
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl
-import org.jetbrains.jet.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.FlagsToModifiers.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns

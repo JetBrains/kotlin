@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.lexer;
 
-import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.JetToken;
 
-public interface KDocElement extends PsiElement {
+public class KDocToken extends JetToken {
+    public KDocToken(@NotNull @NonNls String debugName) {
+        super(debugName);
+    }
 }
