@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
-import org.jetbrains.jet.lang.psi.Call.CallType
+import org.jetbrains.kotlin.psi.Call.CallType
 import kotlin.test.assertNotNull
 
 object CallTranslator {

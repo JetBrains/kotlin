@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.plugin.decompiler.JetClsFile
 

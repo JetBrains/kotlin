@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Label;

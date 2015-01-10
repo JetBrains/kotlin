@@ -133,7 +133,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceInterface="org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService"
+    <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
                         serviceImplementation="org.jetbrains.jet.plugin.stubindex.StubIndexServiceImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.jet.OperationModeProvider"
@@ -148,7 +148,7 @@
     <applicationService serviceInterface="org.jetbrains.jet.plugin.quickfix.ImportInsertHelper"
                         serviceImplementation="org.jetbrains.jet.plugin.quickfix.ImportInsertHelperImpl"/>
 
-    <applicationService serviceInterface="org.jetbrains.jet.lang.psi.KotlinDeclarationNavigationPolicy"
+    <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.jet.plugin.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
@@ -225,8 +225,8 @@
     <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
     <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
-    <lang.elementManipulator forClass="org.jetbrains.jet.lang.psi.JetStringTemplateExpression"
-                             implementationClass="org.jetbrains.jet.lang.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
+    <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.JetStringTemplateExpression"
+                             implementationClass="org.jetbrains.kotlin.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.jet.plugin.findUsages.KotlinDeclarationGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule"/>
     <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
@@ -348,15 +348,15 @@
                                     implementationClass="org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerProvider"/>
     <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetFunctionPresenter"
-                              forClass="org.jetbrains.jet.lang.psi.JetNamedFunction"/>
+                              forClass="org.jetbrains.kotlin.psi.JetNamedFunction"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetClassPresenter"
-                              forClass="org.jetbrains.jet.lang.psi.JetClass"/>
+                              forClass="org.jetbrains.kotlin.psi.JetClass"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetObjectPresenter"
-                              forClass="org.jetbrains.jet.lang.psi.JetObjectDeclaration"/>
+                              forClass="org.jetbrains.kotlin.psi.JetObjectDeclaration"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetPropertyPresenter"
-                              forClass="org.jetbrains.jet.lang.psi.JetProperty"/>
+                              forClass="org.jetbrains.kotlin.psi.JetProperty"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetParameterPresenter"
-                              forClass="org.jetbrains.jet.lang.psi.JetParameter"/>
+                              forClass="org.jetbrains.kotlin.psi.JetParameter"/>
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.jet.plugin.JetGotoTargetRenderProvider"
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider" order="first"/>
@@ -405,7 +405,7 @@
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 
-    <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
+    <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex"/>

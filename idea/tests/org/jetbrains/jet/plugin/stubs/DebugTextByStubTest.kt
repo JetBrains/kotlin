@@ -17,28 +17,28 @@
 package org.jetbrains.jet.plugin.stubs
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.junit.Assert
-import org.jetbrains.jet.lang.psi.JetPackageDirective
-import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.jet.lang.psi.JetImportList
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.stubs.KotlinFunctionStub
-import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.stubs.KotlinObjectStub
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub
+import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.JetImportList
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
+import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import kotlin.test.assertEquals
-import org.jetbrains.jet.lang.psi.JetClassBody
-import org.jetbrains.jet.lang.psi.JetClassInitializer
-import org.jetbrains.jet.lang.psi.JetClassObject
-import org.jetbrains.jet.lang.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassInitializer
+import org.jetbrains.kotlin.psi.JetClassObject
+import org.jetbrains.kotlin.psi.debugText.getDebugText
 
 public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     private fun createFileAndStubTree(text: String): Pair<JetFile, StubElement<*>> {

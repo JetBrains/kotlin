@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy
 
 import java.util.HashSet
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
@@ -26,9 +26,9 @@ import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider
-import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
+import org.jetbrains.kotlin.psi.psiUtil.isProbablyNothing
 
 //TODO: do resolve anonymous object's body
 

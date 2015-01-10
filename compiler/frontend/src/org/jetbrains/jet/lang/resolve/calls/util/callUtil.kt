@@ -22,14 +22,14 @@ import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.jet.lang.resolve.BindingContext.CALL
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
+import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 // resolved call

@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetExpressionImpl
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetExpressionImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment

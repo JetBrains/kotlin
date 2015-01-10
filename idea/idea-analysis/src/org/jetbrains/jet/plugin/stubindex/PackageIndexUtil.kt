@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.name.FqName
 import kotlin.platform.platformStatic
 import com.intellij.util.containers.MultiMap

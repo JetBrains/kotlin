@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.j2k
 
 import org.jetbrains.kotlin.j2k.ResolverForConverter
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 public object IdeaResolverForConverter : ResolverForConverter {

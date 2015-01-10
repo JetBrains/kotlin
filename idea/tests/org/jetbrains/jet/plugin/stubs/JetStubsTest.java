@@ -20,11 +20,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
 import java.util.List;

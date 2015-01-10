@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.decompiler.navigation
 
-import org.jetbrains.jet.lang.psi.KotlinDeclarationNavigationPolicy
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.openapi.project.DumbService
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {

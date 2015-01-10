@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.jet.lang.types.expressions.CaptureKind
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.*
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall

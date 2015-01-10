@@ -19,9 +19,9 @@ package org.jetbrains.jet.lang.resolve.calls.context
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import java.util.HashMap
-import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache.CachedData
 

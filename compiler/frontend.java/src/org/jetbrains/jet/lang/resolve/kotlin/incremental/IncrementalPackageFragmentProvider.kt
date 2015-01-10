@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin.incremental
 
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.util.containers.MultiMap
 import java.util.HashMap
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor

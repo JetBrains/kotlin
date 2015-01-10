@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.tasks
 
-import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
@@ -47,14 +47,14 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.kotlin.psi.ValueArgument
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
 object DynamicCallableDescriptors {
 

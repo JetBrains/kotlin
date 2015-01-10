@@ -19,12 +19,12 @@ import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.jet.lang.psi.JetClassInitializer
+import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClass
 import com.google.dart.compiler.backend.js.ast.JsFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.*

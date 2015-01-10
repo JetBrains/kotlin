@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.Editor
 import com.intellij.codeInsight.editorActions.ReferenceTransferableData
 import com.intellij.codeInsight.daemon.impl.CollectHighlightsUtil
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.openapi.project.Project
@@ -39,33 +39,33 @@ import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.psi.JetImportDirective
-import org.jetbrains.jet.lang.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.jet.plugin.references.JetMultiReference
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetThisExpression
-import org.jetbrains.jet.lang.psi.JetSuperExpression
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetThisExpression
+import org.jetbrains.kotlin.psi.JetSuperExpression
 import org.jetbrains.jet.plugin.conversion.copy.*
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {

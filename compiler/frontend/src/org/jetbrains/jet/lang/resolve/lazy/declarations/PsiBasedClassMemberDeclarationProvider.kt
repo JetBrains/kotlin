@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 

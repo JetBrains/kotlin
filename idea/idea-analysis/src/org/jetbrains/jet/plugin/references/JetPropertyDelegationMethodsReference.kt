@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.references
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetPropertyDelegate
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPropertyDelegate
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class JetPropertyDelegationMethodsReference(element: JetPropertyDelegate) : JetMultiReference<JetPropertyDelegate>(element) {
 

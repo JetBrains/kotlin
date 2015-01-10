@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetParameter
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetParameter
 // OPTIONS: usages
 
 data class A(val <caret>n: Int, val s: String, val o: Any)

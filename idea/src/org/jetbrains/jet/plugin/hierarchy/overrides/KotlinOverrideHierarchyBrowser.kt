@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.asJava.unwrapped
 
 class KotlinOverrideHierarchyBrowser(

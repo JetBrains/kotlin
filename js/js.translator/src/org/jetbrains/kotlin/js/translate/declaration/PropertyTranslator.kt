@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.js.translate.declaration.propertyTranslator
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

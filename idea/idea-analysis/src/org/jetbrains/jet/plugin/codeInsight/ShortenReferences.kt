@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -33,10 +33,10 @@ import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public object ShortenReferences {
     public fun process(element: JetElement) {

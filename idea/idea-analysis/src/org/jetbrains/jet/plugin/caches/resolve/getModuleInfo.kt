@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry

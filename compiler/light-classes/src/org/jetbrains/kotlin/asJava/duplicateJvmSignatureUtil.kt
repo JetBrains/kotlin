@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetClassBody
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {

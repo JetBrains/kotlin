@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.search.declarationsSearch
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.util.Processor
 import com.intellij.util.Query
 import java.util.HashMap
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.Collections
 import com.intellij.psi.PsiClass
 import com.intellij.psi.util.TypeConversionUtil

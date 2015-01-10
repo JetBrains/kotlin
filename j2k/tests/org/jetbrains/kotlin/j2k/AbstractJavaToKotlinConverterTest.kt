@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.Computable
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess

@@ -27,12 +27,12 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.test.util.trimIndent
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.JetTestUtils.*
-import org.jetbrains.jet.lang.psi.JetVariableDeclaration
+import org.jetbrains.kotlin.psi.JetVariableDeclaration
 
 abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
     override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.ALL)

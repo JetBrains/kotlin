@@ -22,14 +22,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetTypeElement;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetTypeElement;
+import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement> {
     public ChangeToStarProjectionFix(@NotNull JetTypeElement element) {

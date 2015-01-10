@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.android.navigation
 import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.android.util.AndroidUtils
 import com.android.SdkConstants
 import org.jetbrains.android.augment.AndroidPsiElementFinder
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.JetExpression
 
 private fun getReferenceExpression(element: PsiElement?): JetSimpleNameExpression? {
     return PsiTreeUtil.getParentOfType<JetSimpleNameExpression>(element, javaClass<JetSimpleNameExpression>())

@@ -17,11 +17,11 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBlockStringTemplateEntry
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetBlockStringTemplateEntry
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.util.regex.*
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingIntention<JetBlockStringTemplateEntry>(
         "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {

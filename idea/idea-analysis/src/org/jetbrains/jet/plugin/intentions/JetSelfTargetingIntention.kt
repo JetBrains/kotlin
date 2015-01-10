@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfTypesAndPredicate
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import com.intellij.codeInsight.intention.IntentionAction
 
 public abstract class JetSelfTargetingIntention<T: JetElement>(protected val key: String, val elementType: Class<T>) : IntentionAction {

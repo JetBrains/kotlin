@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public interface Transformer {
     @NotNull

@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;

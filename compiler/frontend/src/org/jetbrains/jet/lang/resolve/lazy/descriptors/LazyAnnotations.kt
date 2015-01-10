@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant

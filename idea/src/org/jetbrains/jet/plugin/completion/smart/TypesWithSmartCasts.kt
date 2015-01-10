@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.completion.smart
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import java.util.Collections

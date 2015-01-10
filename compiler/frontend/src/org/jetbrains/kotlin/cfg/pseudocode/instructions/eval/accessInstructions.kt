@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
 public trait AccessTarget {
     public data class Declaration(val descriptor: VariableDescriptor): AccessTarget

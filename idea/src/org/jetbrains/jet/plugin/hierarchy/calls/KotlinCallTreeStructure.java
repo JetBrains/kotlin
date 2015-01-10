@@ -29,8 +29,8 @@ import com.intellij.util.containers.HashMap;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 import java.util.Map;

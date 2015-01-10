@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.cfg.Label
 import com.google.common.collect.Maps
 import com.google.common.collect.Lists

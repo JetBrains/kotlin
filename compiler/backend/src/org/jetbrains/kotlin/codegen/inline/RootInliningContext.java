@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetElement;
 
 import java.util.Collections;
 import java.util.Map;

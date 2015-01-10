@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.completion
 import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.CharFilter.Result
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.util.Key
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 

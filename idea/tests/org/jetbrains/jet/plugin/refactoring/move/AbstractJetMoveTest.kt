@@ -22,7 +22,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import java.io.File
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.PsiMember
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.google.gson.JsonObject
@@ -52,11 +52,11 @@ import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.testing.ConfigLibraryUtil

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
 
 import javax.inject.Inject;

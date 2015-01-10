@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetVisitorVoid
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
 import org.jetbrains.jet.JetTestUtils
@@ -28,27 +27,16 @@ import org.jetbrains.jet.ConfigurationKind
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetClassObject
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetFunctionType
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.types.DynamicTypesSettings
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {

@@ -22,10 +22,10 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0
 
 public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor>> =

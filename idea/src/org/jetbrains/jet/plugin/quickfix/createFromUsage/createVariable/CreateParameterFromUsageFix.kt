@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData
 import org.jetbrains.jet.lang.resolve.BindingContext

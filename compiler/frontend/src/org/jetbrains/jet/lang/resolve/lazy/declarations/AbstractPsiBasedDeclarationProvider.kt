@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo

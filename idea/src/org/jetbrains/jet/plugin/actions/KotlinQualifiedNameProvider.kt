@@ -20,12 +20,12 @@ import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 public class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun adjustElementToCopy(element: PsiElement?) = null

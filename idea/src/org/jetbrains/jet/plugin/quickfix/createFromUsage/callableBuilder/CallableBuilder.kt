@@ -29,7 +29,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.Name
@@ -66,7 +66,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.jet.plugin.util.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.jet.plugin.refactoring.getLineCount
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"

@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.refactoring.safeDelete
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetValueArgument
 
 public class SafeDeleteValueArgumentListUsageInfo(
         valueArgument: JetValueArgument, parameter: PsiElement

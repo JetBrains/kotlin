@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 
 public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> {
     private final ExpressionCodegen codegen;

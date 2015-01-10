@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.JetFunctionLiteral;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {

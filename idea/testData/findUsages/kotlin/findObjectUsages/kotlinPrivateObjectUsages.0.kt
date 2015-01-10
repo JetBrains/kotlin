@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetObjectDeclaration
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetObjectDeclaration
 // OPTIONS: usages
 package server
 

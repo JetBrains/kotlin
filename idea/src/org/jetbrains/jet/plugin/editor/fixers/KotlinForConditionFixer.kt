@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.editor.fixers
 
-import org.jetbrains.jet.lang.psi.JetWhileExpression
+import org.jetbrains.kotlin.psi.JetWhileExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetForExpression
 
 public class KotlinForConditionFixer: MissingConditionFixer<JetForExpression>() {
     override val keyword = "for"

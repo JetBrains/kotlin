@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.plugin.completion.isVisible
 
 // adds java static members, enum members and members from class object

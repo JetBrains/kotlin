@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetBlockExpression;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 

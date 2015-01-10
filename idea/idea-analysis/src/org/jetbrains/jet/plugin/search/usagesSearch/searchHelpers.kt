@@ -17,27 +17,27 @@
 package org.jetbrains.jet.plugin.search.usagesSearch
 
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.search.usagesSearch.*
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchFilter.*
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import java.util.Collections
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.references.*
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

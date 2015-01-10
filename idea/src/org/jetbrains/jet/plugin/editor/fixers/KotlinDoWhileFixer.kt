@@ -20,8 +20,8 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetDoWhileExpression
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetDoWhileExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
 
 public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {

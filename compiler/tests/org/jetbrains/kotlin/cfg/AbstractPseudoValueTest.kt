@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
 import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate

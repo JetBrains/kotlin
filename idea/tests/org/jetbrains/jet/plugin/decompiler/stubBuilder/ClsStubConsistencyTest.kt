@@ -24,8 +24,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.util.indexing.FileContentImpl
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
 import org.junit.Assert
 
 public class ClsStubConsistencyTest : JetLightCodeInsightFixtureTestCase() {

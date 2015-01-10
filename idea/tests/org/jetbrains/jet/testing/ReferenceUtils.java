@@ -26,8 +26,8 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.junit.Assert;
 

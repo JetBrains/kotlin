@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 

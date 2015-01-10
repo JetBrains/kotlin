@@ -17,13 +17,13 @@
 package org.jetbrains.jet.plugin.util.psi.patternMatching
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetElement
 import java.util.ArrayList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.openapi.util.TextRange
 import java.util.HashSet
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match

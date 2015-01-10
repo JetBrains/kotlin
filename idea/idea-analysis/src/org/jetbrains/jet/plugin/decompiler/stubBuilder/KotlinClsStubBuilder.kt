@@ -25,7 +25,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassFinder
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassDataFinder
 import com.intellij.openapi.diagnostic.Logger

@@ -17,37 +17,37 @@
 package org.jetbrains.jet.plugin.refactoring.move
 
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.name.isImported
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.jet.lang.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.JetImportDirective
 import java.util.ArrayList
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
-import org.jetbrains.jet.lang.psi.JetThisExpression
+import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.Comparing
@@ -55,11 +55,11 @@ import java.util.Comparator
 import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 

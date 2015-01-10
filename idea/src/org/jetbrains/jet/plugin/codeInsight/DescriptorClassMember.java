@@ -26,9 +26,9 @@ import com.intellij.psi.PsiMember;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 

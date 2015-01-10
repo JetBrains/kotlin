@@ -18,14 +18,14 @@ package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.annotations.hasPlatformStaticAnnotation
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
@@ -36,10 +36,10 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.jet.lang.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {

@@ -23,7 +23,7 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 
 /**

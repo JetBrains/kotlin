@@ -17,7 +17,7 @@
 package org.jetbrains.jet.shortenRefs
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import java.io.File

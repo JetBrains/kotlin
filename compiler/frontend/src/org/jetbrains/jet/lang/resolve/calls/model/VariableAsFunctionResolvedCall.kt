@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.psi.Call
-import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus

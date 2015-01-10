@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.refactoring.safeDelete
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public class KotlinSafeDeleteOverridingUsageInfo(
         overridingElement: PsiElement, superElement: PsiElement

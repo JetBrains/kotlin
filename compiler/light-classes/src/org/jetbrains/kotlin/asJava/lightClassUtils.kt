@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?

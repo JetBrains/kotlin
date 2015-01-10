@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.codeInsight
 
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo

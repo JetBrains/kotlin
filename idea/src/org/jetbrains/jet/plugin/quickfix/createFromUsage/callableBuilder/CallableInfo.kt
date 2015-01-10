@@ -1,7 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.JetType
 import kotlin.properties.Delegates
@@ -12,8 +12,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.supertypes
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable

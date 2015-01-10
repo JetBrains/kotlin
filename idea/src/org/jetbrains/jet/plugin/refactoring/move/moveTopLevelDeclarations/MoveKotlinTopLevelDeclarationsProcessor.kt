@@ -34,13 +34,13 @@ import com.intellij.refactoring.rename.RenameUtil
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
 import org.jetbrains.jet.plugin.refactoring.createKotlinFile
 import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.move.getFileNameAfterMove
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.asJava.toLightElements
 import java.util.HashMap
 import org.jetbrains.kotlin.utils.flatten
@@ -53,13 +53,13 @@ import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.jet.lang.psi.psiUtil.isPrivate
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.jet.plugin.refactoring.getUsageContext
-import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.JetModifierListOwner
+import org.jetbrains.kotlin.psi.JetModifierListOwner
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiModifier
 import com.intellij.util.VisibilityUtil
@@ -69,7 +69,7 @@ import org.jetbrains.jet.plugin.refactoring.move.getInternalReferencesToUpdateOn
 import org.jetbrains.jet.plugin.refactoring.move.createMoveUsageInfo
 import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.refactoring.move.MoveRenameUsageInfoForExtension
 import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 

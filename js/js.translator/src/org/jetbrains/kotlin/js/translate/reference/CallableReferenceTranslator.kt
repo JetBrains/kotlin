@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.jet.lang.psi.JetCallableReferenceExpression
+import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor

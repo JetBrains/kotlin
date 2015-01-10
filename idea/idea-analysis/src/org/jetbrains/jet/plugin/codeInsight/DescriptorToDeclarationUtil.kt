@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.codeInsight
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.decompiler.navigation.DecompiledNavigationUtils
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver

@@ -28,12 +28,12 @@ import org.jetbrains.jet.lang.resolve.typeBinding.TypeBinding
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.typeBinding.createTypeBinding
 import org.jetbrains.jet.lang.resolve.typeBinding.createTypeBindingForReturnType
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.impl.PropertyAccessorDescriptorImpl
 import org.jetbrains.jet.lang.resolve.source.getPsi
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
+import org.jetbrains.kotlin.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.lang.resolve.BindingContext
 import kotlin.platform.platformStatic
 

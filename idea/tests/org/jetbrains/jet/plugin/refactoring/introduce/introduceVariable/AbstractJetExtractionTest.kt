@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetTestCaseBuilder
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
 import org.jetbrains.jet.plugin.refactoring.extractFunction.selectElements
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import com.intellij.psi.PsiComment
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import org.jetbrains.jet.JetTestUtils
@@ -40,10 +40,10 @@ import org.jetbrains.jet.testing.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.lang.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {

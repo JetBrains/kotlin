@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterI
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetElement;
 
 import java.util.*;
 

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.*;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;

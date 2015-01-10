@@ -21,7 +21,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.j2k.ast.Element
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.diagnostic.Logger
 import java.util.ArrayList

@@ -44,7 +44,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {

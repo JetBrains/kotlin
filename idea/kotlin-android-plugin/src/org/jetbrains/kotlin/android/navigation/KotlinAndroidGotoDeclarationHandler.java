@@ -35,7 +35,7 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 
 import java.util.ArrayList;
 import java.util.Collections;

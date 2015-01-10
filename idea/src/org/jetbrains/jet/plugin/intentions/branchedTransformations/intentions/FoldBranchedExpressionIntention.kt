@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.FoldableKind
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetWhenExpression
 
 public open class FoldBranchedExpressionIntention<T: JetExpression>(
         val kind: FoldableKind, elementType: Class<T>

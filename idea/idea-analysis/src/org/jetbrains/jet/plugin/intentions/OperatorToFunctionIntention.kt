@@ -16,17 +16,17 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetPrefixExpression
-import org.jetbrains.jet.lang.psi.JetPostfixExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall

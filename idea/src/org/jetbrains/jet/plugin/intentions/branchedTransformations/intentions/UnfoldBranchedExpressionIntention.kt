@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetReturnExpression
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.psi.JetProperty
 
 public open class UnfoldBranchedExpressionIntention<T: JetExpression>(
         val kind: UnfoldableKind, elementType: Class<T>

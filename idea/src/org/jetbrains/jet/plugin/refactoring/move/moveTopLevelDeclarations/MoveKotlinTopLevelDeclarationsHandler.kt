@@ -23,13 +23,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.psi.PsiReference
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.isInJavaSourceRoot
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClass
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.jet.plugin.refactoring.move.getFileNameAfterMove
 import java.util.HashSet
 import com.intellij.refactoring.RefactoringBundle
@@ -38,9 +38,9 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.openapi.actionSystem.LangDataKeys
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
 public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun doMoveWithCheck(

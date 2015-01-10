@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.rename
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor

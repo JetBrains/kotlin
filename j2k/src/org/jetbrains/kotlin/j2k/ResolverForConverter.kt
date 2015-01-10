@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public trait ResolverForConverter {

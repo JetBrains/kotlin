@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.jet.plugin.JetFileType
 import com.intellij.openapi.project.Project
@@ -31,13 +31,13 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import java.util.ArrayList
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
@@ -56,7 +56,7 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -69,8 +69,8 @@ import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.OverridingUtil
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 

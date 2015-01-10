@@ -21,9 +21,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usages.Usage
 import com.intellij.usages.rules.ImportFilteringRule
 import com.intellij.usages.rules.PsiElementUsage
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetImportDirective
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public class JetImportFilteringRule : ImportFilteringRule() {
     public override fun isVisible(usage: Usage): Boolean {

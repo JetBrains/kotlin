@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.inspections
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder

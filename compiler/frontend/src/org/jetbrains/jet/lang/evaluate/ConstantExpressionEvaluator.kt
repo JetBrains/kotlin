@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.evaluate
 
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.constants.*
@@ -33,7 +33,7 @@ import org.jetbrains.jet.JetNodeTypes
 import java.math.BigInteger
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 

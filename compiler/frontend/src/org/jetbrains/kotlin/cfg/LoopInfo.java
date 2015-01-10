@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import org.jetbrains.jet.lang.psi.JetLoopExpression;
+import org.jetbrains.kotlin.psi.JetLoopExpression;
 
 public class LoopInfo extends BreakableBlockInfo {
     private final Label bodyEntryPoint;

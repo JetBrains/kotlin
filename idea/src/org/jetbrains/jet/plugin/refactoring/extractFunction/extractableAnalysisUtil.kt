@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.refactoring.extractFunction
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
-import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import java.util.*
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.psi.util.PsiTreeUtil
@@ -67,7 +67,7 @@ import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBo
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 
 private val DEFAULT_FUNCTION_NAME = "myFun"

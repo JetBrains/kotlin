@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import org.jetbrains.annotations.ReadOnly
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 public trait PackageMemberDeclarationProvider : DeclarationProvider {

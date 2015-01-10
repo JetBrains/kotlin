@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 
 public open class PartialBodyResolveProvider {
     public open val filter: ((JetElement) -> Boolean)?

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.rename
 
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.search.SearchScope
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -34,7 +34,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement

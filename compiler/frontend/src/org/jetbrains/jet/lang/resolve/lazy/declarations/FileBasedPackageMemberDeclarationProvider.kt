@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import kotlin.Function0
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager

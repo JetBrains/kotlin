@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve
 
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.jet.lang.types.*

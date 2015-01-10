@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetConstantExpression
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetConstantExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns

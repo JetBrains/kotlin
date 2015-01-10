@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature.usages
 
-import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.kotlin.psi.JetCallElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 
 class KotlinLightFieldForDeclaration(
         manager: PsiManager,

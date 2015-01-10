@@ -20,7 +20,7 @@ import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 

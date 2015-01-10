@@ -26,9 +26,9 @@ import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

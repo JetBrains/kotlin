@@ -23,10 +23,10 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
     private final Project project;

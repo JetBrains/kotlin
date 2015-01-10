@@ -1,22 +1,22 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.HashSet
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 
 public class CreateCallableFromUsageFix(
         originalExpression: JetExpression,

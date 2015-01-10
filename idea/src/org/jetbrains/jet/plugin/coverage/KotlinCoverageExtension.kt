@@ -23,14 +23,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.coverage.CoverageSuitesBundle
 import java.io.File
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.debugger.JetPositionManager
 import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.openapi.roots.ProjectRootManager
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import com.intellij.psi.PsiElement
 import java.util.LinkedHashSet
 import com.intellij.psi.PsiClass
@@ -40,7 +40,7 @@ import com.intellij.coverage.PackageAnnotator
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.coverage.JavaCoverageAnnotator
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.diagnostic.Logger

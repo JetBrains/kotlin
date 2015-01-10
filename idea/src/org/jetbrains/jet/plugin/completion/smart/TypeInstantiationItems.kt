@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.PossiblyBareType
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
@@ -59,7 +59,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
 

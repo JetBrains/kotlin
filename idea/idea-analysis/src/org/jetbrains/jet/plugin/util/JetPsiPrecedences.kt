@@ -21,7 +21,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing
 import java.util.HashMap
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing.Precedence.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 
 public object JetPsiPrecedences {
 

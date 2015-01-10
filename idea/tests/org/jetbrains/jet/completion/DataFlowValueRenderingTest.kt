@@ -17,8 +17,8 @@
 package org.jetbrains.jet.completion
 
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.renderDataFlowValue
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
@@ -28,7 +28,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.caches.resolve.analyze
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() : String {

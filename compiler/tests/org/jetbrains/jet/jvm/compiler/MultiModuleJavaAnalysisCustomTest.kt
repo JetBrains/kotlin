@@ -21,7 +21,7 @@ import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.name.Name

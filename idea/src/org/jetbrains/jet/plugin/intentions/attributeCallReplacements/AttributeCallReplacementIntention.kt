@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.intentions.attributeCallReplacements
 
-import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument

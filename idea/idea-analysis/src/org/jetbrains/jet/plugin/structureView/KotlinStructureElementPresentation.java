@@ -30,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassInitializer;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.kotlin.psi.JetClassInitializer;
+import org.jetbrains.kotlin.psi.JetModifierListOwner;
+import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 
 import javax.swing.*;

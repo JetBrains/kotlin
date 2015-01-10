@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
 import org.jetbrains.jet.JetTestUtils
 import java.io.File
 import org.jetbrains.jet.MockLibraryUtil

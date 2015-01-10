@@ -27,7 +27,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 // Copied from com.intellij.psi.impl.light.LightField

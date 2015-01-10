@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.debugger.evaluate
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.completion.util.testCompletion
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import com.intellij.codeInsight.completion.CompletionType

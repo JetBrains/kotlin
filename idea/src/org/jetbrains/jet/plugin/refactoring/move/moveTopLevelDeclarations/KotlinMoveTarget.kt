@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations
 
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.MoveDestination
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager

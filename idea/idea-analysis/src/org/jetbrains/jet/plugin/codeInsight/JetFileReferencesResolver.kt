@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.plugin.codeInsight
 
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.Collections
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import java.util.LinkedHashMap
 
 object JetFileReferencesResolver {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetLanguage
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.PsiFileFactory
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -41,12 +41,12 @@ import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.jet.lang.diagnostics.Severity
@@ -60,7 +60,7 @@ import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.util.application.runReadAction
-import org.jetbrains.jet.lang.psi.analysisContext
+import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
@@ -72,7 +72,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.jet.lang.types.Flexibility
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
 import org.jetbrains.jet.plugin.util.attachment.mergeAttachments

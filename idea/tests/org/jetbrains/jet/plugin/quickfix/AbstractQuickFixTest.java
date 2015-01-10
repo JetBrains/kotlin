@@ -30,7 +30,7 @@ import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.KotlinLightQuickFixTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;

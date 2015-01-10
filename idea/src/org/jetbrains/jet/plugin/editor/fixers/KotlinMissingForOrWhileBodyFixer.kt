@@ -20,10 +20,10 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetWhileExpression
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetLoopExpression
-import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetWhileExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetLoopExpression
+import org.jetbrains.kotlin.psi.JetForExpression
 
 public class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {

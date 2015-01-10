@@ -20,7 +20,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollector

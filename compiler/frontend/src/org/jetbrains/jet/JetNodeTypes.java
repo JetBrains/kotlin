@@ -18,8 +18,8 @@ package org.jetbrains.jet;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public interface JetNodeTypes {

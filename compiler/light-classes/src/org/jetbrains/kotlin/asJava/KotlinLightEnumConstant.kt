@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.jet.lang.psi.JetEnumEntry
+import org.jetbrains.kotlin.psi.JetEnumEntry
 
 class KotlinLightEnumConstant(
         manager: PsiManager,

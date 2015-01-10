@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.psi.JetScript
+import org.jetbrains.kotlin.psi.JetScript
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations

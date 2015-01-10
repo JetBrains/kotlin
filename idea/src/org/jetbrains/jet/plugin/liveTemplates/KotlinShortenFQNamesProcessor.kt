@@ -26,7 +26,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import com.intellij.psi.util.PsiUtilBase
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 
 public class KotlinShortenFQNamesProcessor : TemplateOptionalProcessor {
     override fun processText(project: Project, template: Template, document: Document, templateRange: RangeMarker, editor: Editor) {

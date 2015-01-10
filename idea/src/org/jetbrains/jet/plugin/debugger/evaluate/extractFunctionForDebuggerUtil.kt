@@ -21,7 +21,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
 import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
@@ -32,13 +32,13 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
-import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,

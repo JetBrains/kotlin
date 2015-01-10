@@ -22,7 +22,7 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper;

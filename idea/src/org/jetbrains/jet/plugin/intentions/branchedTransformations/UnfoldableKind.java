@@ -19,10 +19,10 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetBinaryExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetReturnExpression;
+import org.jetbrains.kotlin.psi.JetBinaryExpression;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetReturnExpression;
 import org.jetbrains.jet.plugin.intentions.Transformer;
 
 public enum UnfoldableKind implements Transformer {

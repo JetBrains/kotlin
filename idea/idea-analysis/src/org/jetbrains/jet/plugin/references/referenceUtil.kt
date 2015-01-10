@@ -20,19 +20,19 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.JetProperty
 import java.util.HashSet
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClass
 import com.intellij.psi.PsiPolyVariantReference
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property

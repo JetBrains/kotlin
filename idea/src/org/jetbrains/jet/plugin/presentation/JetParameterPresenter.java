@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.presentation;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
-import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.kotlin.psi.JetParameter;
 
 public class JetParameterPresenter implements ItemPresentationProvider<JetParameter> {
     @Override

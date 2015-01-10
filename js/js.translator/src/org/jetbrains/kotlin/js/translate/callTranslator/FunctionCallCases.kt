@@ -36,16 +36,16 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
-import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
-import org.jetbrains.jet.lang.psi.JetPrefixExpression
+import org.jetbrains.kotlin.psi.JetPrefixExpression
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
-import org.jetbrains.jet.lang.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetPostfixExpression
 import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetOperationExpression
+import org.jetbrains.kotlin.psi.JetOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {

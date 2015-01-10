@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.context;
 
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 
 public class TemporaryTraceAndCache {

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.presentation;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetProperty;
 
 public class JetPropertyPresenter implements ItemPresentationProvider<JetProperty> {
     @Override

@@ -32,7 +32,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.ObjectValue
 import com.sun.jdi.ObjectReference
-import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetCodeFragment
 import java.util.Collections
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.execution.process.ProcessOutputTypes

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class ImportInsertHelperImpl extends ImportInsertHelper {
     /**

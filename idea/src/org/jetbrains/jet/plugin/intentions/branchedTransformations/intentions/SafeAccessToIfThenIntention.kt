@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
-import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
+import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement
 

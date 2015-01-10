@@ -29,9 +29,9 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetImportList;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetImportDirective;
+import org.jetbrains.kotlin.psi.JetImportList;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.ArrayList;

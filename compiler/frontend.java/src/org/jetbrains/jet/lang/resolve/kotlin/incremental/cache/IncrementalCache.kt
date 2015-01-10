@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin.incremental.cache
 
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import java.util.HashMap
 import java.io.File
 

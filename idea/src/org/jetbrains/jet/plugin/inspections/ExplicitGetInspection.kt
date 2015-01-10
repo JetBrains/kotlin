@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.inspections
 
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceGetIntention
 
 public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(ReplaceGetIntention())

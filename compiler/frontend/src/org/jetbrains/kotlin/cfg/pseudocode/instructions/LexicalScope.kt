@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetDeclaration
 import kotlin.properties.Delegates
 
 public class LexicalScope(val parentScope: LexicalScope?, val element: JetElement) {

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.BasicStepMethodFilter

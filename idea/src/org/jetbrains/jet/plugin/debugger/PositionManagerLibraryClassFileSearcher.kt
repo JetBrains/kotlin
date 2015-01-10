@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.debugger
 
 import com.intellij.psi.search.FilenameIndex
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diagnostic.Logger
@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.openapi.module.impl.scopes.LibraryScope
 import com.intellij.openapi.roots.LibraryOrderEntry
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.module.impl.scopes.JdkScope
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor

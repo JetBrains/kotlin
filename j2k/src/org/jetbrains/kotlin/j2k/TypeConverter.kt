@@ -32,7 +32,7 @@ import java.util.HashMap
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import java.util.HashSet
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor

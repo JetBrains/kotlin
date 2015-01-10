@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.*
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.plugin.JetLanguage
 import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValue
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.search.SearchScope
 import com.intellij.lang.Language
 import com.intellij.psi.scope.PsiScopeProcessor

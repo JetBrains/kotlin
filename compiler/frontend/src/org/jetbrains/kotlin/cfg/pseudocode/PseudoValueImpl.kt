@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 class PseudoValueImpl(

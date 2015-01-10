@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.AnnotationResolver
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil

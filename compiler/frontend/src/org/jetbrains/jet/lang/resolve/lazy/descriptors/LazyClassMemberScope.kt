@@ -20,7 +20,7 @@ import com.google.common.collect.Lists
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.dataClassUtils.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession

@@ -37,7 +37,7 @@ import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.jet.lang.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Method

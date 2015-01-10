@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature.usages
 
-import org.jetbrains.jet.lang.psi.JetEnumEntry
+import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry): Boolean {

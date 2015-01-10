@@ -22,10 +22,10 @@ import com.intellij.codeInspection.SuppressIntentionAction
 import org.jetbrains.jet.lang.diagnostics.Severity
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.KotlinSuppressIntentionAction
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.quickfix.AnnotationHostKind
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class KotlinSuppressableWarningProblemGroup(
         private val diagnosticFactory: DiagnosticFactory<*>

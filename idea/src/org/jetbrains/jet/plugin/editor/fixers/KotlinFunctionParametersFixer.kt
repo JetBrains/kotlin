@@ -20,7 +20,7 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 
 
 public class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {

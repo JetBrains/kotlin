@@ -17,6 +17,6 @@
 package org.jetbrains.jet.plugin.inspections
 
 import org.jetbrains.jet.plugin.intentions.RemoveExplicitTypeArguments
-import org.jetbrains.jet.lang.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.psi.JetTypeArgumentList
 
 public class RemoveExplicitTypeArgsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArguments())

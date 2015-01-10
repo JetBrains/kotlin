@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.PositioningStrategy
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic
 

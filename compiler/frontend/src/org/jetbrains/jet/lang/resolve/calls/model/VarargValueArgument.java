@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.calls.model;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.ValueArgument;
 
 import java.util.Iterator;
 import java.util.List;

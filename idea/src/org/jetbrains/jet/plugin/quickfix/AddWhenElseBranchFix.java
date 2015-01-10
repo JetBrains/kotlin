@@ -27,13 +27,13 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetWhenEntry;
-import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetWhenEntry;
+import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
     private static final String ELSE_ENTRY_TEXT = "else -> {}";

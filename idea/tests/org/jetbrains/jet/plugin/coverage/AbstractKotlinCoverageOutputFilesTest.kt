@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.coverage
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import kotlin.test.assertNotNull
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil

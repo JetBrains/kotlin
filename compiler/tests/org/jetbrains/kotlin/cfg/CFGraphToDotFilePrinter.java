@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import java.util.HashSet
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import org.jetbrains.kotlin.j2k.ast.Element
 import kotlin.platform.platformName

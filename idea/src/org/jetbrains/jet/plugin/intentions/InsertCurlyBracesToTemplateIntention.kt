@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetSimpleNameStringTemplateEntry
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameStringTemplateEntry
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingIntention<JetSimpleNameStringTemplateEntry>(
         "insert.curly.brackets.to.string.template", javaClass()) {

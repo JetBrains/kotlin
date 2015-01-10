@@ -20,7 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
     @Override

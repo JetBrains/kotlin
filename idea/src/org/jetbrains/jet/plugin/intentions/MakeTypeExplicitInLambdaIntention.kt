@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers

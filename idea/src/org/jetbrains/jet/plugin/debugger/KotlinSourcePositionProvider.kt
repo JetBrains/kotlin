@@ -22,14 +22,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.debugger.impl.DebuggerContextUtil
 import com.sun.jdi.ReferenceType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ClassNotPreparedException
 import com.intellij.debugger.ui.tree.FieldDescriptor

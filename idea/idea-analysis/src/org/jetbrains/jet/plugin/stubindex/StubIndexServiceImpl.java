@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.stubs.*;
-import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
+import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.stubs.*;
+import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;

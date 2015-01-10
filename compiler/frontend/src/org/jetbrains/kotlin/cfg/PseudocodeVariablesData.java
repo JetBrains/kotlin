@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.Collection;

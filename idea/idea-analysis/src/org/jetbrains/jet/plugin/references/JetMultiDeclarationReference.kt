@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.references
 
-import org.jetbrains.jet.lang.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
 import org.jetbrains.jet.lang.resolve.source.getPsi
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 

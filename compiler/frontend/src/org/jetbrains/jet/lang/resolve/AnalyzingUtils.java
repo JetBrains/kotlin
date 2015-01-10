@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
-import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid;
+import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope

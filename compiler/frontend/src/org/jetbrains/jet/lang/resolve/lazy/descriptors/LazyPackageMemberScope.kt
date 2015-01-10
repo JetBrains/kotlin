@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name

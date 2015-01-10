@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Sets;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetElement;
 
 import java.util.Collections;
 import java.util.Set;

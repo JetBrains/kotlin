@@ -20,7 +20,7 @@ import com.intellij.refactoring.actions.BasePlatformRefactoringAction
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.lang.refactoring.RefactoringSupportProvider
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider
 
 public abstract class AbstractExtractFunctionAction: BasePlatformRefactoringAction() {

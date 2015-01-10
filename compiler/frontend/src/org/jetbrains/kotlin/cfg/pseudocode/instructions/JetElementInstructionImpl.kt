@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 
 public abstract class JetElementInstructionImpl(
         override val element: JetElement,

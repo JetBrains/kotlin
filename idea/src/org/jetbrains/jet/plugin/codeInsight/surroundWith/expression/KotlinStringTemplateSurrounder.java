@@ -22,13 +22,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetConstantExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression;
+import org.jetbrains.kotlin.psi.JetConstantExpression;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetStringTemplateEntry;
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
     @Override

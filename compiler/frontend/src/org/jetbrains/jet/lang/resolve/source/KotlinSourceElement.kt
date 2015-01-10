@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.source
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.lang.descriptors.SourceElement
 import com.intellij.psi.PsiElement
 

@@ -21,8 +21,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetTypeParameter;
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.kotlin.psi.JetTypeParameter;
+import org.jetbrains.kotlin.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KotlinLightTypeParameter

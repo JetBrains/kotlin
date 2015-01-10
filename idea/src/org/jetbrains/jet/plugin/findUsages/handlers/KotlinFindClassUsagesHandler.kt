@@ -26,7 +26,7 @@ import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog

@@ -21,7 +21,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 
 public class UnaryMinus : LazyIntrinsicMethod() {
     override fun generateImpl(

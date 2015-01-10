@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.analyzer.AnalysisResult
@@ -38,23 +38,23 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetClassInitializer
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetImportDirective
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry
-import org.jetbrains.jet.lang.psi.JetTypeConstraint
-import org.jetbrains.jet.lang.psi.JetPackageDirective
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetClassInitializer
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.JetTypeConstraint
+import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.CompositeBindingContext
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifierList
-import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
-import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
+import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
@@ -67,7 +67,7 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 import com.intellij.openapi.project.IndexNotReadyException
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.references
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
 

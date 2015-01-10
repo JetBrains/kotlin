@@ -21,12 +21,12 @@ import com.intellij.usages.UsageGroup
 import com.intellij.usages.Usage
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usages.rules.UsageGroupingRule
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.usages.PsiNamedElementUsageGroupBase
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.usages.impl.FileStructureGroupRuleProvider
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 
 public class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider {
     public class KotlinDeclarationGroupingRule : UsageGroupingRule {

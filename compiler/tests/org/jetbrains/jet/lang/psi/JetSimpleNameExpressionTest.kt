@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi
+package org.jetbrains.kotlin.psi
 
 import org.junit.Assert
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class JetSimpleNameExpressionTest() : JetLiteFixture() {

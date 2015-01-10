@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.analyzer.AnalysisResult
 import com.intellij.openapi.diagnostic.Logger
@@ -31,12 +31,12 @@ import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
-import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 

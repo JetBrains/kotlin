@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.asJava;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 public trait KotlinLightClass : PsiClass, KotlinLightElement<JetClassOrObject, PsiClass> {
     val fqName: FqName

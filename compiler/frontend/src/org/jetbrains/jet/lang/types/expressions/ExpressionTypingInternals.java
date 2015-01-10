@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 
 /*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {

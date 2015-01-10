@@ -29,7 +29,7 @@ import java.util.Stack
 import java.util.HashSet
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.psi.psiUtil.contains
+import org.jetbrains.kotlin.psi.psiUtil.contains
 
 trait DeclarationSearchRequest<in T> {
     val project: Project

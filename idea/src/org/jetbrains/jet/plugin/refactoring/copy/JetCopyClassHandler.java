@@ -20,7 +20,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler;
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories.KotlinMoveFilesOrDirectoriesHandler;
 
 import java.util.ArrayList;

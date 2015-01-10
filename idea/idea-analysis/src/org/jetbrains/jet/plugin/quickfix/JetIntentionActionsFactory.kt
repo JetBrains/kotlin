@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetCodeFragment
 import java.util.Collections
 
 // TODO: Replace with trait when all subclasses are translated to Kotlin

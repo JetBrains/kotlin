@@ -28,7 +28,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.psi.search.GlobalSearchScope

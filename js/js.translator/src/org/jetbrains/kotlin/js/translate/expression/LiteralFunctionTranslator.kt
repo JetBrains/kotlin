@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import com.google.dart.compiler.backend.js.ast.metadata.isLocal
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor

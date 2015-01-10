@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.data
 
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
 import org.jetbrains.jet.lang.resolve.name.FqName

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.types.*
 import com.intellij.codeInsight.lookup.*
@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 import org.jetbrains.jet.plugin.util.FuzzyType
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)

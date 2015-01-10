@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.jet.lang.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope

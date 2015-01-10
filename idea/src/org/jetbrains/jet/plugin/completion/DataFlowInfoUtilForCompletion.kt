@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.completion
 
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 

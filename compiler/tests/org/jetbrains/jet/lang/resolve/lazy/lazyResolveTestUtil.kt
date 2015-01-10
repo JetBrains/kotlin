@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade

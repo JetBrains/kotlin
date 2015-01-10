@@ -20,7 +20,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     @Override

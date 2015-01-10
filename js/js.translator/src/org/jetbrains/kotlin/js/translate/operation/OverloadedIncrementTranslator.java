@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.kotlin.psi.JetUnaryExpression;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;

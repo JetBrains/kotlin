@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Type
-
 import org.jetbrains.jet.lang.resolve.java.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE
 

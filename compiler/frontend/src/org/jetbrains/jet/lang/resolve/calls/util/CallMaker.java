@@ -21,9 +21,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.Call.CallType;
-import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.Call.CallType;
+import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collections;

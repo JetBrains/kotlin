@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
@@ -43,13 +43,13 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 

@@ -28,7 +28,7 @@ import org.jetbrains.jet.test.util.trimIndent
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {

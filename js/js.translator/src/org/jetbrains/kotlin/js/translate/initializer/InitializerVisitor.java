@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 

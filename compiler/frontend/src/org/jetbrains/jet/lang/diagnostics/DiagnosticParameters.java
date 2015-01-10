@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 

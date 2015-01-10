@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.org.objectweb.asm.Label;
 

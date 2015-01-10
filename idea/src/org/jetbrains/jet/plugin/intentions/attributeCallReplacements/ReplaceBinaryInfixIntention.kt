@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntention("replace.binary.operator.with.infix") {
 

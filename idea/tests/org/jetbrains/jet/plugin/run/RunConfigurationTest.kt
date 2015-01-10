@@ -40,20 +40,20 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import java.util.ArrayList
 import com.intellij.psi.PsiComment
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.PsiManager
 import org.jetbrains.jet.testing.ConfigLibraryUtil
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.psiUtil.getParentOfType
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 private val RUN_PREFIX = "// RUN: "
 

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
 import java.util.HashMap
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.types.TypeUtils

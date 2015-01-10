@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.Call;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument;
+import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;

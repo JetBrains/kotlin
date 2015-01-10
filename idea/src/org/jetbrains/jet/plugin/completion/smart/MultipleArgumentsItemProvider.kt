@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.completion.smart
 
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.ui.LayeredIcon
 import com.intellij.codeInsight.lookup.LookupElementBuilder

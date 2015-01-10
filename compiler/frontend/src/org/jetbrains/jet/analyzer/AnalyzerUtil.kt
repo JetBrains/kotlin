@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.analyzer
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo

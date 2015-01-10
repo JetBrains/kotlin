@@ -27,16 +27,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
-import org.jetbrains.jet.lang.psi.IfNotParsed;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.psi.IfNotParsed;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetVisitorVoid;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public abstract class AbstractJetParsingTest extends ParsingTestCase {
     static {

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
