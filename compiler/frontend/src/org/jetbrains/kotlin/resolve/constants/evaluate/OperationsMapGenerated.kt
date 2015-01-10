@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.evaluate
+package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import java.math.BigInteger
 import java.util.HashMap

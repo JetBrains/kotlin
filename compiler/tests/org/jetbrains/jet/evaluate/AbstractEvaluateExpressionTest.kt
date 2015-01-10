@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
 import java.util.HashMap
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.types.TypeUtils
 
