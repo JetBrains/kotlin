@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;

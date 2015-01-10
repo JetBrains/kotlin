@@ -12,7 +12,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableInfo
 import com.intellij.util.SmartList
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor

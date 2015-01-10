@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 
 import java.util.HashSet;
 import java.util.Set;

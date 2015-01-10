@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.types.Variance
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetOperationExpression

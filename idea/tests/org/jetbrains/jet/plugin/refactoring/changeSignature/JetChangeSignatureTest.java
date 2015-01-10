@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;

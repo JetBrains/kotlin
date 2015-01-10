@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext

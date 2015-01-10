@@ -54,8 +54,8 @@ import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.types.lang.InlineStrategy
-import org.jetbrains.jet.lang.types.lang.InlineUtil
+import org.jetbrains.kotlin.builtins.InlineStrategy
+import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.jet.plugin.caches.resolve.IdeaModuleInfo
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService
 import org.jetbrains.jet.plugin.caches.resolve.*

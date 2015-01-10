@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getTypeParameters
 import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes

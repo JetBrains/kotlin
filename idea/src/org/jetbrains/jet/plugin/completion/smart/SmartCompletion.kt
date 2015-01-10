@@ -25,7 +25,7 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
 import java.util.*
 import org.jetbrains.jet.plugin.completion.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.makeNullable
 import org.jetbrains.kotlin.renderer.DescriptorRenderer

@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer

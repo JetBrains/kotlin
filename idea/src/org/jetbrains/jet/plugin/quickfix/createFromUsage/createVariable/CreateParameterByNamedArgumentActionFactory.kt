@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.JetCallElement

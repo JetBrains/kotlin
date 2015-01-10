@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.PossiblyBareType;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.NO_TYPE_ARGUMENTS_ON_RHS;
 

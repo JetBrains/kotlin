@@ -33,7 +33,7 @@ import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.JvmResolverForModule
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleInfo

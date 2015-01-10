@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 import org.jetbrains.jet.lang.resolve.ImportPath

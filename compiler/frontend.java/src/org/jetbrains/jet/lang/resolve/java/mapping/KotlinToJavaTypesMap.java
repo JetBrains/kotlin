@@ -24,8 +24,8 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashMap;

@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.util.containers.MultiMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetThisExpression

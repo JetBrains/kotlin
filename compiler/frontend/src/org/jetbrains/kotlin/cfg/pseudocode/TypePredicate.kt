@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.util.SmartFMap
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.TypeUtils
 
 public trait TypePredicate: (JetType) -> Boolean {

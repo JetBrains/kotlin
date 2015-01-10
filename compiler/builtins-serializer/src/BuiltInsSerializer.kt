@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import java.io.ByteArrayOutputStream
-import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
+import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.config.CommonConfigurationKeys

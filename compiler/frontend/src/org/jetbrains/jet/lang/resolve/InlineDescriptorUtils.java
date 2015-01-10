@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 
 public class InlineDescriptorUtils {
 

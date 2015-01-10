@@ -54,7 +54,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;

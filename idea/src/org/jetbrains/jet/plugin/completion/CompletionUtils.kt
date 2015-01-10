@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.psi.JetLoopExpression
 

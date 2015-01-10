@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.types.Flexibility;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.TypesPackage;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.Retention;

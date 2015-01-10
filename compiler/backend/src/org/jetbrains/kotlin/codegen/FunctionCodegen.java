@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.NativeDeclaratio
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.TypesPackage;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;

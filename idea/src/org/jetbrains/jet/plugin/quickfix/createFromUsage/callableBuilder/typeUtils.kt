@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetPropertyDelegate
 import org.jetbrains.kotlin.psi.JetProperty

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.resolveUtil
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes

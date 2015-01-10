@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 public class ByteValue extends IntegerValueConstant<Byte> {
 

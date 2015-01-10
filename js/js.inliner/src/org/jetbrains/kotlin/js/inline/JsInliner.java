@@ -20,7 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.lang.InlineStrategy;
+import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.js.inline.context.*;
 import org.jetbrains.kotlin.js.inline.exception.InlineRecursionException;
 

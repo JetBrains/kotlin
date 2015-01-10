@@ -11,7 +11,7 @@ import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.supertypes
 import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind

@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;

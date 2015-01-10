@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.constants
 
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.TypeUtils
 
 public fun createCompileTimeConstant(

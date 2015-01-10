@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.types
 
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import kotlin.platform.platformStatic
 
 open class DynamicTypesSettings {

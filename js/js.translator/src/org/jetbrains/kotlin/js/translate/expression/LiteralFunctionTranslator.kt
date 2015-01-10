@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.MemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
-import org.jetbrains.jet.lang.types.lang.InlineUtil
+import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {

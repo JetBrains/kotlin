@@ -5,7 +5,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.JetFile

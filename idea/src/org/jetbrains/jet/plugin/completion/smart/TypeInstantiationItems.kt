@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler

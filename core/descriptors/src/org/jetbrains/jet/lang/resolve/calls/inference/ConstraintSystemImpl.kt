@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedureCallbacks

@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {

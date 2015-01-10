@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.lazy.hasNotNullAnnotation
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter

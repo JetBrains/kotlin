@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.util.*;

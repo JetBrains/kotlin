@@ -50,7 +50,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.ValueArgument
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression

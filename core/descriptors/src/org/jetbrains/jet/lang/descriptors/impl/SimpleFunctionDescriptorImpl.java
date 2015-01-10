@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.lang.InlineStrategy;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.kotlin.builtins.InlineStrategy;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 
 import java.util.List;
 

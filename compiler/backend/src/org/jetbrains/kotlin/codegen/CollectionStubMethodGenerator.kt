@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.impl.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations

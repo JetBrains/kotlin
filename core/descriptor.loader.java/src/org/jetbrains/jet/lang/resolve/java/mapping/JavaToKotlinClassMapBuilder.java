@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.mapping;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.lang.annotation.Annotation;
 import java.util.*;

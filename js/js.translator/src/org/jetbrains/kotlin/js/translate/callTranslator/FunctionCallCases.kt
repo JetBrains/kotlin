@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsNew
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor

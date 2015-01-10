@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.*
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor

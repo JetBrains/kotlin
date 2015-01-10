@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.InlineUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.List;
 

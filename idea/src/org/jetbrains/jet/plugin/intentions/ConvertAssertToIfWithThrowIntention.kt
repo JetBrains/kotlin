@@ -24,7 +24,7 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.utils.sure

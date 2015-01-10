@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 public class ModuleDescriptorImpl(
         moduleName: Name,

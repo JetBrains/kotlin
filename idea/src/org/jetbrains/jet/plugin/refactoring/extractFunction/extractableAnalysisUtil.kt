@@ -26,7 +26,7 @@ import java.util.*
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver

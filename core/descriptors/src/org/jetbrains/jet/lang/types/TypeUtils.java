@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.utils.DFS;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 

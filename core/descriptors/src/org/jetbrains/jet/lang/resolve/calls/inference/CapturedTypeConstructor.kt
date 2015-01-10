@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.Variance.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.SubtypingRepresentatives
 import org.jetbrains.jet.lang.types.AbstractJetType

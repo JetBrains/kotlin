@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetContainerNode
 import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.jet.lang.descriptors.Visibilities

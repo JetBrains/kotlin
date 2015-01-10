@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
 import org.jetbrains.kotlin.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;

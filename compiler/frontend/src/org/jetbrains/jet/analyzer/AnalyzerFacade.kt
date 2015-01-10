@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.JetFile

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.jet.lang.descriptors.SourceElement;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

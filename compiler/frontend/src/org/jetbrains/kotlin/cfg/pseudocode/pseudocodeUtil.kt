@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.*
 import org.jetbrains.jet.lang.resolve.calls.model.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue

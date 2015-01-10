@@ -26,7 +26,7 @@ import java.util.HashSet
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferencePackage;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.typeUtil.TypeUtilPackage;
 import org.jetbrains.jet.lang.types.typesApproximation.TypesApproximationPackage;
 

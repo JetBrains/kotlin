@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.TypeProjection
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.Variance
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.JetTypeImpl

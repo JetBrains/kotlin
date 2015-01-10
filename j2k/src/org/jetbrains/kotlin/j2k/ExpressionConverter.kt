@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.types.lang.PrimitiveType
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.psi.JetProperty

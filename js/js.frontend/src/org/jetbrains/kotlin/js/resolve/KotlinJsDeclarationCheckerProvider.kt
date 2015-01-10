@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.jet.lang.resolve.DescriptorUtils

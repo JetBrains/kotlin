@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.types.lang;
+package org.jetbrains.kotlin.builtins;
 
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import java.io.InputStream;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
+import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 
 public class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");

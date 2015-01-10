@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 public trait ModuleDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null

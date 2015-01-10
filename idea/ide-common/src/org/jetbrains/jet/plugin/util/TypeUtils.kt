@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.util
 
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.ErrorUtils

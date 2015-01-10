@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.FlagsToModifiers.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {

@@ -7,7 +7,7 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import java.util.Collections

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.FileInputStream
-import org.jetbrains.jet.lang.types.lang.BuiltinsPackageFragment
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator
 import org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 

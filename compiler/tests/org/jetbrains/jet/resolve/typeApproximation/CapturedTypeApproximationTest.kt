@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.jet.JetTestUtils

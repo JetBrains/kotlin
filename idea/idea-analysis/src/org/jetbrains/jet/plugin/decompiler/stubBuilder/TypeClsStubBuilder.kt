@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetParameterList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.kotlin.psi.JetNullableType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl
 import org.jetbrains.kotlin.psi.JetFunctionType

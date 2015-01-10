@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.lang.InlineStrategy;
+import org.jetbrains.kotlin.builtins.InlineStrategy;
 
 /**
  * Simple functions are the ones with 'fun' keyword and function literals

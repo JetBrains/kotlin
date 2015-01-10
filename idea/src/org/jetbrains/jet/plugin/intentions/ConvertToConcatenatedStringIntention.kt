@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.caches.resolve.analyze

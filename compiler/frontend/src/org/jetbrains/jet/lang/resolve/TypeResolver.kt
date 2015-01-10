@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 import org.jetbrains.jet.lang.diagnostics.Errors.*

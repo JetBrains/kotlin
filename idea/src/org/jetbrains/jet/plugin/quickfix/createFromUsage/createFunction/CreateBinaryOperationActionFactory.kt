@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.lang.types.Variance
 import java.util.Collections
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 

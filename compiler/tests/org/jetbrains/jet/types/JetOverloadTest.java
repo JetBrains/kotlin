@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.di.InjectorForTests;
 
