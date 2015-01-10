@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.utils.valuesToMap
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES

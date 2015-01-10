@@ -63,7 +63,7 @@ import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.descriptors
 
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.TypeSubstitutor

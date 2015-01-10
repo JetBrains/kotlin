@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;

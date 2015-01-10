@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve

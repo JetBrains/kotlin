@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import java.util.HashMap
 import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

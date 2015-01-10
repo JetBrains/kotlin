@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.jet.lang.resolve.scopes.JetScope

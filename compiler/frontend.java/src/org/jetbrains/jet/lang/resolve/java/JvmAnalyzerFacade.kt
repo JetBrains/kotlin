@@ -21,7 +21,7 @@ import org.jetbrains.jet.analyzer.ResolverForModule
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.analyzer.PlatformAnalysisParameters
 import org.jetbrains.jet.analyzer.ResolverForProject
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext

@@ -38,7 +38,7 @@ import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
 import com.intellij.psi.PsiClass
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor

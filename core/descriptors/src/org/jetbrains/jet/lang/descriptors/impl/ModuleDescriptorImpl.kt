@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl
 
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.ImportPath
