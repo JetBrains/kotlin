@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 
 public class IncrementalCacheProviderImpl(caches: Map<ModuleBuildTarget, IncrementalCacheImpl>): IncrementalCacheProvider {
     private val idToCache = caches.mapKeys { it.key.getId()!! }

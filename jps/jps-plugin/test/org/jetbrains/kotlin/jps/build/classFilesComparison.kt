@@ -35,8 +35,8 @@ import java.io.ByteArrayInputStream
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import java.util.Arrays
 import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
