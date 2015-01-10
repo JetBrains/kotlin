@@ -16,25 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
 import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaClassMemberScope(

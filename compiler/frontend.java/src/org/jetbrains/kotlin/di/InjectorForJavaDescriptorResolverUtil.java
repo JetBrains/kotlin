@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 

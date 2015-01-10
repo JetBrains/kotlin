@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.types.JetType
 import kotlin.platform.platformStatic
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import java.util.Comparator
-import org.jetbrains.jet.lang.types.isDynamic
+import org.jetbrains.kotlin.types.isDynamic
 
 public object CodegenUtilKt {
 

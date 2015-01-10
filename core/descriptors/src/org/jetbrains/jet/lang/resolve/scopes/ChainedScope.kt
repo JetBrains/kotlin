@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.scopes
 
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-
 import java.util.*
-
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*
 
 public open class ChainedScope(

@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
 import org.jetbrains.kotlin.psi.JetScript;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 
 public class ScriptNameUtil {
     private ScriptNameUtil() {

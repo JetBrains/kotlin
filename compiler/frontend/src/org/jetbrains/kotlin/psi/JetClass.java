@@ -30,7 +30,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 

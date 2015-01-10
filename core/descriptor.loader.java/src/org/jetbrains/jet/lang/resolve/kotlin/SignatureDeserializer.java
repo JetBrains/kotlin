@@ -19,8 +19,8 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 
 public class SignatureDeserializer {
     // These types are ordered according to their sorts, this is significant for deserialization

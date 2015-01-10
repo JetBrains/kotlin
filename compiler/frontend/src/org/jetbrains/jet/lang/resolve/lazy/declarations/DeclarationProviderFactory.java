@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 
 public interface DeclarationProviderFactory {
     @NotNull

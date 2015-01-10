@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
-import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 object KeywordValues {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {

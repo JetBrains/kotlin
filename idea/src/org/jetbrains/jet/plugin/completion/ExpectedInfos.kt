@@ -31,24 +31,24 @@ import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.jet.lang.resolve.calls.extensions.CompositeExtension
 import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetContainerNode
 import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
-import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.kotlin.psi.JetWhenConditionWithExpression
 import org.jetbrains.kotlin.psi.JetWhenEntry
 import org.jetbrains.kotlin.psi.JetWhenExpression
 import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.psi.JetPrefixExpression
@@ -62,13 +62,13 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.jet.plugin.completion.smart.toList
-import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 enum class Tail {
     COMMA

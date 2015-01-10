@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationOwnerImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;

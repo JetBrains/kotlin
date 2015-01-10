@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

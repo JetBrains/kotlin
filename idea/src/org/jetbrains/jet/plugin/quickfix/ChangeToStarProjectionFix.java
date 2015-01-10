@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetTypeElement;
 import org.jetbrains.kotlin.psi.JetTypeReference;
-import org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil;
+import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;

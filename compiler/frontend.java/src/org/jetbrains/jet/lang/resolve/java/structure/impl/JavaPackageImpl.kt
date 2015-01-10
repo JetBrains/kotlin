@@ -18,12 +18,12 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl
 
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import com.intellij.psi.search.GlobalSearchScope
 
 public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {

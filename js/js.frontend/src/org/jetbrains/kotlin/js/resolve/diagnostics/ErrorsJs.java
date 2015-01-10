@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 

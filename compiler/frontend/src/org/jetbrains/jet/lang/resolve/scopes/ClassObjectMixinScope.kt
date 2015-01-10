@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.scopes
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 
 import java.util.Collections
 

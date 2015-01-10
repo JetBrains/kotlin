@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.storage.StorageManager

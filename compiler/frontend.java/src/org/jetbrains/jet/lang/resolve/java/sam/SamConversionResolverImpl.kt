@@ -17,19 +17,19 @@
 package org.jetbrains.jet.lang.resolve.java.sam
 
 import org.jetbrains.jet.lang.resolve.java.resolver.SamConversionResolver
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.descriptor.*
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor? {

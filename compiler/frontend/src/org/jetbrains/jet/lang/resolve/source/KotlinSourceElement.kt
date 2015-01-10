@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.source
 
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceElement
 import com.intellij.psi.PsiElement
 
 public class KotlinSourceElement(override val psi: JetElement) : PsiSourceElement

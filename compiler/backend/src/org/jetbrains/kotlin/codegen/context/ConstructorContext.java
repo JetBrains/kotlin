@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE;
 

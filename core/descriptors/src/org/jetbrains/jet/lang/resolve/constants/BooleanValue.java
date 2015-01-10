@@ -17,9 +17,9 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
+import org.jetbrains.kotlin.types.JetType;
 
 public class BooleanValue extends CompileTimeConstant<Boolean> {
 

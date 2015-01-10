@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations
 
 import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 public trait PackageMemberDeclarationProvider : DeclarationProvider {
     public fun getAllDeclaredSubPackages(): Collection<FqName>

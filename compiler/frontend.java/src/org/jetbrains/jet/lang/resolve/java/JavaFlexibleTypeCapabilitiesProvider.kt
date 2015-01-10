@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java
 
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
-import org.jetbrains.jet.lang.types.FlexibleTypeCapabilities
+import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 
 public class JavaFlexibleTypeCapabilitiesProvider : FlexibleTypeCapabilitiesProvider() {

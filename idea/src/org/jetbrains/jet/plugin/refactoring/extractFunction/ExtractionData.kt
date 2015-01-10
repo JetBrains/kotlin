@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.extractFunction
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.project.Project
@@ -37,15 +37,15 @@ import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import java.util.ArrayList
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetClassInitializer

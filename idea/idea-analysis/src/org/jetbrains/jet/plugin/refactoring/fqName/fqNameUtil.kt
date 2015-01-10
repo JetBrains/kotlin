@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.refactoring.fqName
 
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetElement

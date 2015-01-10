@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.kotlin
 
 import kotlin.platform.platformStatic
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures

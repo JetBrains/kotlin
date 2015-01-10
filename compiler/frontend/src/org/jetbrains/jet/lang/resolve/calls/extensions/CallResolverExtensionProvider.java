@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.calls.extensions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 
 import java.lang.ref.WeakReference;
 import java.util.*;

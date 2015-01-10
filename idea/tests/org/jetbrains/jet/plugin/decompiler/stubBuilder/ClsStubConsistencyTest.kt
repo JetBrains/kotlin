@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
 import com.intellij.psi.search.GlobalSearchScope

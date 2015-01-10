@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.jvmSignature
 
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public trait KotlinToJvmSignatureMapper {
     public fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature

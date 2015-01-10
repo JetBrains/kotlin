@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 

@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage;
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
-import org.jetbrains.jet.lang.descriptors.SourceElement;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

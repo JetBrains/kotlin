@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberDeclarationProvider) : PackageMemberDeclarationProvider {

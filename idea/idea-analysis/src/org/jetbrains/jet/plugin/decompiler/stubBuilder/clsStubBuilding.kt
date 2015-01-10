@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.JetPackageDirective
@@ -25,9 +25,9 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.jet.lang.resolve.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.serialization.Flags
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import java.util.ArrayList

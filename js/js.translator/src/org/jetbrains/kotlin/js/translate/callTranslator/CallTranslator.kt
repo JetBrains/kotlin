@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*

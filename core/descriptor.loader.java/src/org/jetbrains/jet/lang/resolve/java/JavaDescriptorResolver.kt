@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.scopes.JetScope

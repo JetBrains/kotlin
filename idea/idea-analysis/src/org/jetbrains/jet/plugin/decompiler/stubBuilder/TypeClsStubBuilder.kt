@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetParameterList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetNullableType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.psi.JetTypeConstraintList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeConstraintStubImpl
-import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.kotlin.name.ClassId
 import java.util.ArrayList
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind

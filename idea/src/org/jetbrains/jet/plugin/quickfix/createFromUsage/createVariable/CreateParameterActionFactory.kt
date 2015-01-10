@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getTypeParameters
-import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.psi.JetClassOrObject

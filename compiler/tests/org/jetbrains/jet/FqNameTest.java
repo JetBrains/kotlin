@@ -17,10 +17,10 @@
 package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.NamePackage;
 import org.junit.Assert;
 import org.junit.Test;
 

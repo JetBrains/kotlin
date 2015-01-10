@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.calls.callUtil
 
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.psi.*
@@ -30,7 +30,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 // resolved call
 

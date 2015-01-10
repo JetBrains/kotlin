@@ -17,13 +17,13 @@
 package org.jetbrains.jet.lang.reflect
 
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.*
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import java.util.ArrayList
 
 private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")

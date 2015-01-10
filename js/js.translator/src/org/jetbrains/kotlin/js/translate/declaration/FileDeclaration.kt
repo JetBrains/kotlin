@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetClass
 import com.google.dart.compiler.backend.js.ast.JsFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.*
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.util.SmartList
 
 class FileDeclarationVisitor(

@@ -17,16 +17,16 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.name.*;
+import org.jetbrains.kotlin.name.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.name.SpecialNames.isClassObjectName;
+import static org.jetbrains.kotlin.name.SpecialNames.isClassObjectName;
 
 public class DeserializedResolverUtils {
     private DeserializedResolverUtils() {

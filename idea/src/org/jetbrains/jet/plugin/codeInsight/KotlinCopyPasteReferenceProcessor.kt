@@ -26,7 +26,7 @@ import com.intellij.codeInsight.editorActions.ReferenceTransferableData
 import com.intellij.codeInsight.daemon.impl.CollectHighlightsUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.project.DumbService
@@ -36,14 +36,14 @@ import java.awt.datatransfer.Transferable
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.jet.plugin.references.JetMultiReference

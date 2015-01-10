@@ -18,8 +18,8 @@ package org.jetbrains.jet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.junit.Test;
 
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassName;

@@ -22,7 +22,7 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
         val psiElement: T,

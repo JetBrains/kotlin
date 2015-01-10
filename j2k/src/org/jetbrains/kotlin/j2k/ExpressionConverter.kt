@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.asJava.KotlinLightField
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

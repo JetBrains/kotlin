@@ -58,7 +58,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
@@ -66,8 +66,8 @@ import org.jetbrains.jet.plugin.util.string.collapseSpaces
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.caches.resolve.analyze
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

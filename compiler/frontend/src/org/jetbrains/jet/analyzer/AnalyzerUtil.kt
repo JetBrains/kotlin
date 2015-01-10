@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.types.JetTypeInfo
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.types.JetTypeInfo
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.BindingTrace

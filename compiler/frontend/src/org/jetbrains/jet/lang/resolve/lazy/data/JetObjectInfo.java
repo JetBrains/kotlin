@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy.data;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.psi.JetClassObject;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.JetParameter;

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;

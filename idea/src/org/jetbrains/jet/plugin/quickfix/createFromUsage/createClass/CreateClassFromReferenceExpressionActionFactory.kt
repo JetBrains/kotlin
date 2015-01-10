@@ -24,8 +24,8 @@ import java.util.Arrays
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.isDotReceiver
 import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.name.FqName
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 

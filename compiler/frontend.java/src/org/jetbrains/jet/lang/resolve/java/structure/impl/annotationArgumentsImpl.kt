@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl
 
 import com.intellij.psi.*
 import org.jetbrains.jet.lang.resolve.java.structure.*
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 
 abstract class JavaAnnotationArgumentImpl(
         override val name: Name?

@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.JetType;
 
 public class AnalyzerScriptParameter {
     @NotNull

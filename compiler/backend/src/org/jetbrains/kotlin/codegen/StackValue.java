@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;

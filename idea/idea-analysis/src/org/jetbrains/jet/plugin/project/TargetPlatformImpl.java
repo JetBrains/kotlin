@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
-import org.jetbrains.jet.lang.types.DynamicTypesSettings;
+import org.jetbrains.kotlin.types.DynamicTypesSettings;
 
 public class TargetPlatformImpl implements TargetPlatform {
     @NotNull private final String platformName;

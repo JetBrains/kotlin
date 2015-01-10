@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
-import org.jetbrains.jet.lang.types.FlexibleTypeCapabilities
-import org.jetbrains.jet.lang.types
+import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
+import org.jetbrains.kotlin.types
 
 object JavaFlexibleTypeCapabilitiesDeserializer : FlexibleTypeCapabilitiesDeserializer {
     override fun capabilitiesById(id: String): FlexibleTypeCapabilities? {

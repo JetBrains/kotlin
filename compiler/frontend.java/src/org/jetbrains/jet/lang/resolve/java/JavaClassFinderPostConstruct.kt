@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import javax.inject.Inject
 import javax.annotation.PostConstruct
 import org.jetbrains.jet.lang.resolve.BindingTrace

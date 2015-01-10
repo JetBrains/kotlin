@@ -23,9 +23,9 @@ import java.io.File
 import org.junit.Assert.*
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.typeBinding.*
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.utils.Printer

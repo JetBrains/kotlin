@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.PackageData;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

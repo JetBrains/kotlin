@@ -17,10 +17,10 @@
 package org.jetbrains.jet.plugin.caches
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.plugin.stubindex.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope

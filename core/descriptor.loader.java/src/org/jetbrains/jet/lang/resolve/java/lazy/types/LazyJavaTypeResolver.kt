@@ -17,12 +17,12 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.types
 
 import org.jetbrains.jet.lang.resolve.java.structure.*
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
-import org.jetbrains.jet.lang.types.Variance.*
-import org.jetbrains.jet.lang.types.*
+import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.utils.sure
@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.lazy.*
 import org.jetbrains.kotlin.storage.*
 import java.util.HashSet
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.resolve.java.lazy.types.JavaTypeFlexibility.*
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import kotlin.platform.platformStatic
 

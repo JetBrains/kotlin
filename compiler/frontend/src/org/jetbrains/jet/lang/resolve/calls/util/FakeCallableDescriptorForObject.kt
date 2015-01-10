@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.calls.util
 
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import java.util.Collections
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
-import org.jetbrains.jet.lang.descriptors.SourceElement
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 
 public class FakeCallableDescriptorForObject(

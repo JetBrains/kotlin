@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.JetTypeArgumentList

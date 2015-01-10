@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.psi.JetEnumEntry;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.KotlinFinderMarker;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.NamePackage;
 
 import java.util.Collection;
 import java.util.List;

@@ -17,25 +17,25 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
 import com.google.common.collect.Lists
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.dataClassUtils.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.DeferredType
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.DeferredType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 import java.util.*
 
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter

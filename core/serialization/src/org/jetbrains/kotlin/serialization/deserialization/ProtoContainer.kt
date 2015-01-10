@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.FqNameUnsafe
 
 public data class ProtoContainer(val classProto: ProtoBuf.Class?, val packageFqName: FqName?) {
     {

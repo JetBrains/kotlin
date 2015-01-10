@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve.scopes
 
 import com.google.common.collect.Multimap
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 
 public trait WritableScope : JetScope {
     public enum class LockLevel {

@@ -26,9 +26,9 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {

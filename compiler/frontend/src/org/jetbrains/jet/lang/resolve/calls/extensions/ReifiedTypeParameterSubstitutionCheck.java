@@ -18,16 +18,16 @@ package org.jetbrains.jet.lang.resolve.calls.extensions;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.extensions.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.typeUtil.TypeUtilPackage;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.Map;
 

@@ -27,8 +27,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor;
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter;
 import org.jetbrains.org.objectweb.asm.util.CheckSignatureAdapter;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.Variance;
 
 import java.util.ArrayList;
 import java.util.List;

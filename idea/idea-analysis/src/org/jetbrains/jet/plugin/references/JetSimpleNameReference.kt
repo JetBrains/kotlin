@@ -20,7 +20,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.refactoring.fqName.changeQualifiedName
@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch

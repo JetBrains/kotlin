@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.lang.evaluate
 
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.constants.*
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
 import java.math.BigInteger

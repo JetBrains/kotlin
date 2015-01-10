@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.search.usagesSearch
 
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
+import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetSingleValueToken

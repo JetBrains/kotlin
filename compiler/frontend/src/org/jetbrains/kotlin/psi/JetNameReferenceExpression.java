@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 import static org.jetbrains.kotlin.lexer.JetTokens.*;

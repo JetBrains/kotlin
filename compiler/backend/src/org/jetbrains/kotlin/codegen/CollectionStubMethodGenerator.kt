@@ -17,22 +17,22 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.jet.lang.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.*
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import java.util.ArrayList
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
 

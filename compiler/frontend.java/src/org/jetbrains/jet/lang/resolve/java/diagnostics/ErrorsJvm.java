@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.diagnostics;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;

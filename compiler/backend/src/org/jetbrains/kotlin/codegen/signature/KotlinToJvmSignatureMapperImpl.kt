@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.signature
 
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.KotlinToJvmSignatureMapper
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature

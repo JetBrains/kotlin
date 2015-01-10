@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.descriptor
 
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 
 public class SamConstructorDescriptor(

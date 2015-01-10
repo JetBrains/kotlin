@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.ImmutableBiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 
 public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {

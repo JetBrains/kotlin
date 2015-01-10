@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.resolve
 
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.name.FqName
 import java.util.HashMap
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 
 public class MutablePackageFragmentProvider(public val module: ModuleDescriptor) : PackageFragmentProvider {
 

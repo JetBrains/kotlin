@@ -16,24 +16,23 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.constants.*
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.types.Variance
 
 public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val builtIns: KotlinBuiltIns

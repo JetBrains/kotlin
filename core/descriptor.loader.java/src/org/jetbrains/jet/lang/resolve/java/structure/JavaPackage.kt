@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 public trait JavaPackage : JavaElement {
     public fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>

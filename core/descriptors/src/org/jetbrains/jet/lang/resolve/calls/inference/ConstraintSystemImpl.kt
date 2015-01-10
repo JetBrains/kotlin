@@ -16,20 +16,20 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind
-import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure
-import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedureCallbacks
-import org.jetbrains.jet.lang.types.TypeConstructor
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
+import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.LinkedHashMap
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
@@ -39,8 +39,8 @@ import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
-import org.jetbrains.jet.lang.types.getCustomTypeVariable
-import org.jetbrains.jet.lang.types.isFlexible
+import org.jetbrains.kotlin.types.getCustomTypeVariable
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound
 
 public class ConstraintSystemImpl : ConstraintSystem {

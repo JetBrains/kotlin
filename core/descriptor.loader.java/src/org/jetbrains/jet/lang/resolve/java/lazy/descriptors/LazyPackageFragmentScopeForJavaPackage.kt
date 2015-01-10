@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass

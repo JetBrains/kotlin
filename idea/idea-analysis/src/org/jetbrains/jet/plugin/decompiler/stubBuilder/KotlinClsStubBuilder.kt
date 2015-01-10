@@ -31,7 +31,7 @@ import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassDataFinder
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.jet.plugin.decompiler.isKotlinInternalCompiledFile
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 public class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1

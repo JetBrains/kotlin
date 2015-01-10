@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
@@ -38,12 +38,12 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragm
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.io.File;
 
-import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
-import static org.jetbrains.jet.lang.descriptors.Modality.FINAL;
+import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
+import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 
 public class JvmCodegenUtil {
 

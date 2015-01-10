@@ -17,9 +17,9 @@
 package org.jetbrains.jet.lang.resolve.lazy.data
 
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 public class JetScriptInfo(
         val script: JetScript

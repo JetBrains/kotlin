@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.plugin.decompiler.isKotlinWithCompatibleAbiVersion
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil

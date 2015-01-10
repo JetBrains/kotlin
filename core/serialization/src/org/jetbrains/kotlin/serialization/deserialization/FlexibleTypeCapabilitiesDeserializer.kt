@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.jet.lang.types.FlexibleTypeCapabilities
+import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
 
 trait FlexibleTypeCapabilitiesDeserializer {
     object ThrowException : FlexibleTypeCapabilitiesDeserializer {

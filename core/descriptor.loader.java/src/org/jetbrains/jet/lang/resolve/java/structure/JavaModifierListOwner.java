@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.kotlin.descriptors.Visibility;
 
 public interface JavaModifierListOwner extends JavaElement {
     boolean isAbstract();

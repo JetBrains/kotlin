@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.calls
 
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
@@ -42,9 +42,9 @@ import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.callUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext
-import org.jetbrains.jet.lang.types.expressions.DataFlowUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowUtils
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS

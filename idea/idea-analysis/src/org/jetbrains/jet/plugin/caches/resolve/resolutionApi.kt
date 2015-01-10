@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.analyzer.AnalysisResult
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 public fun JetElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))

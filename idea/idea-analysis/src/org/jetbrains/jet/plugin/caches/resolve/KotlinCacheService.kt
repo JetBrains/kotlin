@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())

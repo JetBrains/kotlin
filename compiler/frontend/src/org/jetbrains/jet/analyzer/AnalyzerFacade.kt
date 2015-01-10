@@ -17,15 +17,15 @@
 package org.jetbrains.jet.analyzer
 
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.util.HashMap
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.search.GlobalSearchScope

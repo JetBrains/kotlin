@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.Modality
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind
-import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.kotlin.descriptors.SourceElement
 
 public class DeserializedPropertyDescriptor(
         containingDeclaration: DeclarationDescriptor,

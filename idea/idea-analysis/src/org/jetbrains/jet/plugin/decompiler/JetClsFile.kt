@@ -20,7 +20,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText

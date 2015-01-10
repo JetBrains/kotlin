@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 

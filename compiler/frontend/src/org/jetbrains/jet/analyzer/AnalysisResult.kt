@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.analyzer
 
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import kotlin.platform.platformStatic
 
 public data open class AnalysisResult protected (

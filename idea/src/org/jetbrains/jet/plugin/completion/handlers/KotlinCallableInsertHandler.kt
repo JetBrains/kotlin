@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.openapi.editor.Document
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory

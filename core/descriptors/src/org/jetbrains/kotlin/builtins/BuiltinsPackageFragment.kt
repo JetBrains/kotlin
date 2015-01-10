@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
-import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.jet.lang.resolve.name.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents

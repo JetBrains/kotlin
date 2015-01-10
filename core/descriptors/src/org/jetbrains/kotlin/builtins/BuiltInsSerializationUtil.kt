@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.jet.lang.resolve.name.*
+import org.jetbrains.kotlin.name.*
 import kotlin.platform.platformStatic
 
 public object BuiltInsSerializationUtil {

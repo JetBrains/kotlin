@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetTypeParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.kotlin.types.Variance;
 
 import java.io.IOException;
 

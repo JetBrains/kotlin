@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
-import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import kotlin.properties.Delegates
 
 class LazyJavaPackageFragment(

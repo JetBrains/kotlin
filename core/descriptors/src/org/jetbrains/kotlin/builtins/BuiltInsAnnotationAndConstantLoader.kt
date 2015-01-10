@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.builtins
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 class BuiltInsAnnotationAndConstantLoader(

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.builtins;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collections;
 import java.util.EnumSet;

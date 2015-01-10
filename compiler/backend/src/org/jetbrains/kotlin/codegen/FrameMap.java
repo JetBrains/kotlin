@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Trinity;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;

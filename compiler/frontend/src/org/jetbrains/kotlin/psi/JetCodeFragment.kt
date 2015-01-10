@@ -26,7 +26,7 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetFileType
 import java.util.HashSet
 import com.intellij.openapi.util.Key
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 
 public abstract class JetCodeFragment(
         private val _project: Project,

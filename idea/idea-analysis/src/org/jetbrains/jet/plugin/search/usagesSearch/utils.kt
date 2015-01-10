@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.search.usagesSearch
 
 import com.intellij.psi.PsiConstructorCall
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext

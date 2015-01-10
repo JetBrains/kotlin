@@ -16,20 +16,20 @@
 
 package org.jetbrains.jet.plugin.decompiler.textBuilder
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
-import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.types.ErrorUtils.createErrorType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 
 private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 
 /**
  * This represents the receiver of hasNext and next() in for-loops

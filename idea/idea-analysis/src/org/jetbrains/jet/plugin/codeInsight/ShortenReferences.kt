@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;

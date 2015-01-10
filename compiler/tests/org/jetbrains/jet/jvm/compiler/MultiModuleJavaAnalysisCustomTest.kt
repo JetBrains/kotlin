@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.*
 import org.junit.Assert
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
@@ -39,7 +39,7 @@ import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleInfo
 import java.util.HashMap
 import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 

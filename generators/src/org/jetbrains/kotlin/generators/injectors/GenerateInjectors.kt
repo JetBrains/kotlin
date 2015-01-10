@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.generators.injectors
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.context.GlobalContextImpl
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
@@ -29,10 +29,10 @@ import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.generators.di.*
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -49,8 +49,8 @@ import org.jetbrains.jet.lang.resolve.java.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolverPostConstruct
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider
 import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
-import org.jetbrains.jet.lang.types.DynamicTypesAllowed
-import org.jetbrains.jet.lang.types.DynamicTypesSettings
+import org.jetbrains.kotlin.types.DynamicTypesAllowed
+import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.

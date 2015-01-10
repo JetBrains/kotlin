@@ -19,10 +19,10 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -30,16 +30,16 @@ import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.TYPE_ARGUMENT;
-import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
+import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
 public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     private static boolean strictMode = false;

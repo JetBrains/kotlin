@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import java.util.*
 import com.intellij.psi.CommonClassNames.*
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
+import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
 
-class Converter private(private val elementToConvert: PsiElement,
-                        val settings: ConverterSettings,
-                        val conversionScope: ConversionScope,
-                        val referenceSearcher: ReferenceSearcher,
-                        val resolverForConverter: ResolverForConverter,
-                        private val postProcessor: PostProcessor?,
-                        private val commonState: Converter.CommonState,
-                        private val personalState: Converter.PersonalState) {
+class Converter private(
+        private val elementToConvert: PsiElement,
+        val settings: ConverterSettings,
+        val conversionScope: ConversionScope,
+        val referenceSearcher: ReferenceSearcher,
+        val resolverForConverter: ResolverForConverter,
+        private val postProcessor: PostProcessor?,
+        private val commonState: Converter.CommonState,
+        private val personalState: Converter.PersonalState
+) {
 
     // state which is shared between all converter's based on this one
     private class CommonState(val usageProcessingsCollector: (UsageProcessing) -> Unit) {

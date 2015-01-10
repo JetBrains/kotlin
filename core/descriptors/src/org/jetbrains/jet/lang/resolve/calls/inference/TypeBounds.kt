@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 
 public trait TypeBounds {

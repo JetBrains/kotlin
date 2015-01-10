@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic

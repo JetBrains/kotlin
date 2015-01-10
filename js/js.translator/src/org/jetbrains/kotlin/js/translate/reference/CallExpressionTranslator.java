@@ -27,7 +27,7 @@ import com.google.gwt.dev.js.rhino.EvaluatorException;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory2;
 import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic;
 import org.jetbrains.kotlin.psi.JetCallExpression;

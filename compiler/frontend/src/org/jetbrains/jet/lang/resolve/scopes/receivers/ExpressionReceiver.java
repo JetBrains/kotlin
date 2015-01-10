@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 
 public class ExpressionReceiver extends AbstractReceiverValue implements ReceiverValue {
 

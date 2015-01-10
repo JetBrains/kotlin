@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression

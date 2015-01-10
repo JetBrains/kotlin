@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 
 import java.util.HashMap;

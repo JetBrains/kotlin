@@ -26,16 +26,16 @@ import org.jetbrains.jet.plugin.completion.ItemPriority
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.plugin.completion.PositionalArgumentExpectedInfo
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.assignPriority
 import com.intellij.codeInsight.lookup.Lookup
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                                     val smartCastTypes: (VariableDescriptor) -> Collection<JetType>) {

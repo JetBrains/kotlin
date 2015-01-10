@@ -20,11 +20,11 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isAssignment;

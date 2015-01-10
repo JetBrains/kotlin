@@ -16,22 +16,22 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.CommonSupertypes
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.CommonSupertypes
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.jet.lang.types.singleBestRepresentative
-import org.jetbrains.jet.lang.types.typeUtil.cannotBeReified
+import org.jetbrains.kotlin.types.singleBestRepresentative
+import org.jetbrains.kotlin.types.typeUtil.cannotBeReified
 
 public class TypeBoundsImpl(
         override val typeVariable: TypeParameterDescriptor,

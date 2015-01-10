@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.*

@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.scopes.receivers
 
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.BindingContext.*
 import org.jetbrains.jet.lang.diagnostics.Errors.*
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.kotlin.psi.JetExpression

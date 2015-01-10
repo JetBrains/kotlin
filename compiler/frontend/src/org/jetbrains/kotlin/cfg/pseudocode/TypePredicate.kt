@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 
 public trait TypePredicate: (JetType) -> Boolean {
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]

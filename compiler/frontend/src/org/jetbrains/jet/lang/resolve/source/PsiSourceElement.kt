@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.source
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceElement
 
 public trait PsiSourceElement : SourceElement {
     public val psi: PsiElement?

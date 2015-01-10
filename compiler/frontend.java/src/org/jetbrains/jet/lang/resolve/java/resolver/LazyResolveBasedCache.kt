@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.name.tail
-import org.jetbrains.jet.lang.resolve.name.each
+import org.jetbrains.kotlin.name.tail
+import org.jetbrains.kotlin.name.each
 
 public class LazyResolveBasedCache() : JavaResolverCache {
     class object {

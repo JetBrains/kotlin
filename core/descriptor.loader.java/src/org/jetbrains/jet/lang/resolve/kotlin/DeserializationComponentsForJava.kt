@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.

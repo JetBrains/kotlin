@@ -26,9 +26,9 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.psi.JetConstantExpression;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Set;

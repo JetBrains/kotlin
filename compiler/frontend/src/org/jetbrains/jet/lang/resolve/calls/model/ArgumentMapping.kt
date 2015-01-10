@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.model
 
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
 public trait ArgumentMapping {
     public fun isError(): Boolean

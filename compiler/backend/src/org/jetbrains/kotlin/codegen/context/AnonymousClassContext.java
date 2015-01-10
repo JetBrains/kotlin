@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 public class AnonymousClassContext extends ClassContext {
 

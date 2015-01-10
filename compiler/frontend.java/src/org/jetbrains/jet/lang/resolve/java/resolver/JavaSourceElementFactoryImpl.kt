@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementImpl
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElementFactory
-import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
 
 private class JavaSourceElementImpl(override val javaElement: JavaElement) : PsiSourceElement, JavaSourceElement {

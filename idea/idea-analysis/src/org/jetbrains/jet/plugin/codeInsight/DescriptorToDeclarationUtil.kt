@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.codeInsight
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.decompiler.navigation.DecompiledNavigationUtils
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
 import java.util.HashSet
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.kotlin.utils.addIfNotNull

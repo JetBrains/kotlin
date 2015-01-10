@@ -22,19 +22,19 @@ import org.jetbrains.jet.ConfigurationKind
 import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.Variance.*
-import org.jetbrains.jet.lang.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.lang.resolve.calls.inference.createCapturedType
 import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.types.typesApproximation.approximateCapturedTypesIfNecessary
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
 import java.util.ArrayList
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 public class CapturedTypeApproximationTest() : JetLiteFixture() {
 

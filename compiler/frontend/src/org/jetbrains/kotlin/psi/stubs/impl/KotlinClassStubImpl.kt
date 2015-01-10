@@ -21,7 +21,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetClassElementType
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 import java.util.ArrayList
 import com.intellij.psi.PsiElement

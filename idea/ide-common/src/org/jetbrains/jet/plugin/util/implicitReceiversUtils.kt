@@ -17,10 +17,10 @@
 package org.jetbrains.jet.plugin.util
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import java.util.HashSet
 
 public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDescriptor> {

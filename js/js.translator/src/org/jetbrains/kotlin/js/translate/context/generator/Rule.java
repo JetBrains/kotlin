@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.context.generator;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 
 public interface Rule<V> {
     @Nullable

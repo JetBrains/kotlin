@@ -25,10 +25,10 @@ import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl

@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 

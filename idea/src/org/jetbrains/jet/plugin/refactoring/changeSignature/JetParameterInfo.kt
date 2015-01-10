@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature
 import com.intellij.lang.ASTNode
 import com.intellij.refactoring.changeSignature.ParameterInfo
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetModifierList

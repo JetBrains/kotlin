@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetProperty;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
+import org.jetbrains.kotlin.types.JetType;
 
 public interface DiagnosticParameters {
     DiagnosticParameter<JetKeywordToken> MODIFIER = new DiagnosticParameterImpl<JetKeywordToken>("MODIFIER");

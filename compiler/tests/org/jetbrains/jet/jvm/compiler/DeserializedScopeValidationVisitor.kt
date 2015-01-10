@@ -18,16 +18,16 @@ package org.jetbrains.jet.jvm.compiler
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.Collections
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import com.intellij.testFramework.UsefulTestCase
 import java.util.ArrayList
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.test.util.DescriptorValidator
 import org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : DescriptorValidator.ValidationVisitor() {

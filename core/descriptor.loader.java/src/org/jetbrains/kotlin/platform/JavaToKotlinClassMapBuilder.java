@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.platform;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.lang.annotation.Annotation;

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public class CreateParameterFromUsageFix(
         val functionDescriptor: FunctionDescriptor,

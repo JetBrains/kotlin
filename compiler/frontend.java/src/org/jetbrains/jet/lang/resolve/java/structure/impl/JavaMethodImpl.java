@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.Name;
 
 import java.util.List;
 

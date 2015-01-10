@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 
 public interface AccessorForCallableDescriptor<T extends CallableMemberDescriptor> {
     @NotNull

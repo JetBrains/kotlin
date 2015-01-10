@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetBlockCodeFragment
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.debugger.DebuggerManagerEx
 import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import com.intellij.util.concurrency.Semaphore
 import java.util.concurrent.atomic.AtomicReference
 import com.intellij.openapi.progress.ProgressManager

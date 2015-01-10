@@ -20,9 +20,9 @@ import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.JetFileType
@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.Collections
-import org.jetbrains.jet.lang.resolve.name.isImported
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.name.isImported
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import com.intellij.psi.PsiElement
@@ -56,9 +56,9 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)

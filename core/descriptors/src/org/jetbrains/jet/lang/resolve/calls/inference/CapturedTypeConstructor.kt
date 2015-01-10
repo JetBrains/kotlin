@@ -16,20 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference
 
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.Variance.*
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.SubtypingRepresentatives
-import org.jetbrains.jet.lang.types.AbstractJetType
-import org.jetbrains.jet.lang.types.DelegatingType
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.TypeUtils
 
 public class CapturedTypeConstructor(
         public val typeProjection: TypeProjection

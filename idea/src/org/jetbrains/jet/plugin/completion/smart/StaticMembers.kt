@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
-import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.plugin.completion.isVisible

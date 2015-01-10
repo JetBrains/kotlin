@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
+import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
 public class CommandLineScriptUtils {
     private static final Name ARGS_NAME = Name.identifier("args");

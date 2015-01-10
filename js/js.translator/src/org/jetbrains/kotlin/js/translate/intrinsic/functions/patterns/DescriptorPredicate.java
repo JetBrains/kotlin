@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns;
 
 import com.google.common.base.Predicate;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
 public interface DescriptorPredicate extends Predicate<FunctionDescriptor> {
     @Override

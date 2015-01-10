@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 trait LightClassData
 

@@ -16,20 +16,20 @@
 
 package org.jetbrains.jet.plugin.util
 
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.CollectionClassMapping
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
-import org.jetbrains.jet.lang.types.isFlexible
-import org.jetbrains.jet.lang.types.flexibility
+import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.flexibility
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.types.isDynamic
-import org.jetbrains.jet.lang.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)

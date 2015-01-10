@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure
 
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 
 public trait JavaAnnotationArgument {
     public val name: Name?

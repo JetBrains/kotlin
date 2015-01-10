@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diff.DiffManager
 import com.intellij.openapi.diff.SimpleDiffRequest
@@ -44,7 +44,7 @@ import com.intellij.openapi.ui.Messages
 import javax.swing.SwingUtilities
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.JetBlockExpression

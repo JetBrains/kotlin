@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.*
 import org.jetbrains.jet.lang.resolve.calls.model.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.OverridingUtil
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.getResultingDescriptor()

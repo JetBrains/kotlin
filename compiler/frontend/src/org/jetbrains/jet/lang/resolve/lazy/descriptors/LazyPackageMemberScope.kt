@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageMemberScope(

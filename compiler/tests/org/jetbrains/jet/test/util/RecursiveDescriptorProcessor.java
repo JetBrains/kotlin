@@ -18,8 +18,8 @@ package org.jetbrains.jet.test.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.kotlin.types.*;
 
 /**
  * Bare types are somewhat like raw types, but in Kotlin they are only allowed on the right-hand side of is/as.

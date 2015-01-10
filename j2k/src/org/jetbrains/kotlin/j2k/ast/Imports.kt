@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k.ast
 import com.intellij.psi.PsiImportStatementBase
 import org.jetbrains.kotlin.j2k.*
 import com.intellij.psi.PsiImportList
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage

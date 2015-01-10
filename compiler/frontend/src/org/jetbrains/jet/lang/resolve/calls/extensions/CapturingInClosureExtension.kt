@@ -16,21 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.calls.extensions
 
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE
-import org.jetbrains.jet.lang.types.expressions.CaptureKind
+import org.jetbrains.kotlin.types.expressions.CaptureKind
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.*
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 
 class CapturingInClosureExtension : CallResolverExtension {

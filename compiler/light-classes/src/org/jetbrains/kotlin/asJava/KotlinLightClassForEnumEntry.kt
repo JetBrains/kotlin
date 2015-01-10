@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiManager
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.PsiEnumConstant

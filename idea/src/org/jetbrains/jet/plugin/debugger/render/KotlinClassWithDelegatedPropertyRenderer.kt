@@ -35,7 +35,7 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
 import com.sun.jdi.Method
 import org.jetbrains.kotlin.codegen.PropertyCodegen
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import com.intellij.debugger.engine.evaluation.EvaluateException
 
 public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {

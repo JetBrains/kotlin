@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.plugin.util
 
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import java.util.LinkedHashMap
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
 fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {

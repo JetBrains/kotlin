@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 public trait CodeAnalyzerInitializer {
     public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?)

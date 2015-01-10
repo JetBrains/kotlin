@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.serialization;
 
 import com.google.protobuf.Internal;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.kotlin.descriptors.*;
 
 public class Flags {
     private Flags() {}

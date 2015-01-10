@@ -28,7 +28,7 @@ import com.intellij.codeInsight.template.TextResult
 import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager

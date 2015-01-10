@@ -2,24 +2,24 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.JetType
 import kotlin.properties.Delegates
 import com.intellij.util.ArrayUtil
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.supertypes
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.

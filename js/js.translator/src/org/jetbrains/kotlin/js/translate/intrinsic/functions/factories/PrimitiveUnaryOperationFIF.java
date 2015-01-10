@@ -21,10 +21,7 @@ import com.google.common.base.Predicates;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.DescriptorPredicate;
@@ -32,6 +29,9 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.NamePredic
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.List;
 

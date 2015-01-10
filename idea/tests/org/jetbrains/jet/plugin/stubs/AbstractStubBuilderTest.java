@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
 

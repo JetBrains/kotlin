@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.*;

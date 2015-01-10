@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import kotlin.platform.platformStatic
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils

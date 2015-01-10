@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.Modality
-import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 
 fun memberKind(memberKind: ProtoBuf.Callable.MemberKind) = when (memberKind) {
     ProtoBuf.Callable.MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION

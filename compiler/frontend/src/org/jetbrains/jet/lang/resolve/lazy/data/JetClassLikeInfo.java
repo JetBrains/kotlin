@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.List;
 

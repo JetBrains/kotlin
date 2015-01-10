@@ -39,7 +39,7 @@ import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.codegen.ClassFileFactory
@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.JavaPsiFacade
@@ -71,7 +71,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.jet.lang.types.Flexibility
+import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment

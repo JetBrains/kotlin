@@ -18,14 +18,14 @@ package org.jetbrains.jet.lang.resolve.bindingContextUtil
 
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET
 import org.jetbrains.jet.lang.resolve.BindingContext.FUNCTION
 import org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext

@@ -25,13 +25,13 @@ import kotlin.test.assertNotNull
 import java.util.regex.Pattern
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.lang.resolve.constants.StringValue
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
 import java.util.HashMap
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 
 public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 

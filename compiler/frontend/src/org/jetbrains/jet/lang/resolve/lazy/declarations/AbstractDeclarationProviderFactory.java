@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable;
 import org.jetbrains.kotlin.storage.StorageManager;

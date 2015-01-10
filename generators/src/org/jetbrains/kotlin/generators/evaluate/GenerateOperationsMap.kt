@@ -21,10 +21,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.JetType
 
 val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/jet/lang/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")

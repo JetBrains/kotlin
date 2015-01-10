@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.context
 
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.psi.JetExpression

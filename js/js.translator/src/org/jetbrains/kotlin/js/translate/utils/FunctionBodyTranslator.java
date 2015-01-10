@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
 import java.util.List;

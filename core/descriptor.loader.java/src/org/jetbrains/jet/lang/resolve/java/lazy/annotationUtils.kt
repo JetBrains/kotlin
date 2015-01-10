@@ -18,9 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.lazy
 
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.resolveAnnotation
 

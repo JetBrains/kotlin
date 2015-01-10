@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo

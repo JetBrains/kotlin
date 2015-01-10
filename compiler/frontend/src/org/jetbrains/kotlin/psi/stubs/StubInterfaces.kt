@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi.stubs
 
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.PsiFileStub
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken

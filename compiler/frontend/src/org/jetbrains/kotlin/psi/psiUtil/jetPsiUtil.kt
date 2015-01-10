@@ -33,7 +33,7 @@ import com.intellij.psi.PsiPackage
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace

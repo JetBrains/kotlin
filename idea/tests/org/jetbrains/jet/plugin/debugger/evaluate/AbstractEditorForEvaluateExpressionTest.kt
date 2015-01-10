@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully

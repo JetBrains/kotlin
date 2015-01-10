@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.references
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPropertyDelegate
 import org.jetbrains.jet.lang.resolve.BindingContext

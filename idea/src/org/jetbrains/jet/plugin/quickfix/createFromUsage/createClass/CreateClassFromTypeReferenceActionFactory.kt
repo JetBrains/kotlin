@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList

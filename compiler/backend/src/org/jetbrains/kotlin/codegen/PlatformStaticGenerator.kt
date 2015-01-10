@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.jet.lang.resolve.java.diagnostics.Synthetic
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import kotlin.platform.platformStatic
 
 class PlatformStaticGenerator(

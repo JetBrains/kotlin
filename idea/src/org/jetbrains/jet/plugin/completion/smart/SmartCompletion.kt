@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.plugin.completion.smart
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.types.*
+import org.jetbrains.kotlin.types.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
 import java.util.*
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.jet.plugin.util.FuzzyType
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor

@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
-import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
-import org.jetbrains.jet.lang.types.DynamicTypesAllowed
+import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 public class JsResolverForModule(
         override val lazyResolveSession: ResolveSession

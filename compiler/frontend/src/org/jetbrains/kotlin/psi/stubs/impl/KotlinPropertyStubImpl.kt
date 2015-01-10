@@ -21,7 +21,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
 public class KotlinPropertyStubImpl(

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.JetLexer
 import com.intellij.lang.cacheBuilder.WordOccurrence
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.lang.cacheBuilder.SimpleWordsScanner
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KotlinWordsScanner() : WordsScanner {
     private val lexer = JetLexer()

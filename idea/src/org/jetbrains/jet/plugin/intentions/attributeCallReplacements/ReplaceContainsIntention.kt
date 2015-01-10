@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions.attributeCallReplacements
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil

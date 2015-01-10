@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils

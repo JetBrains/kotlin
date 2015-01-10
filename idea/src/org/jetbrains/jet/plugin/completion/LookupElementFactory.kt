@@ -21,7 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -32,10 +32,10 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import org.jetbrains.jet.plugin.util.nullability
 import org.jetbrains.jet.plugin.util.TypeNullability

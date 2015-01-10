@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
 import org.jetbrains.jet.JetTestUtils
 import java.util.ArrayList
@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.lang.types.DynamicTypesSettings
+import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
     protected open fun getDescriptor(declaration: JetDeclaration, resolveSession: ResolveSession): DeclarationDescriptor {

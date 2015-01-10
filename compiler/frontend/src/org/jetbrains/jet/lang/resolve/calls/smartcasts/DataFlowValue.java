@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls.smartcasts;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 public class DataFlowValue {

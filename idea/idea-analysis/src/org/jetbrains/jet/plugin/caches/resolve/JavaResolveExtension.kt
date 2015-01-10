@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.resolve.java.resolveMethod
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl

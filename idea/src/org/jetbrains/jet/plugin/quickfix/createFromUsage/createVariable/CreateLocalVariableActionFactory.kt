@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createBuilder
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallablePlacement

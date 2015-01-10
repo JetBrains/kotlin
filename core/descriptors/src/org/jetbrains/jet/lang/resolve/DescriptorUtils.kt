@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.descriptorUtil
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.ClassKind.*
+import org.jetbrains.kotlin.descriptors.ClassKind.*
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
     val classObjectDescriptor = getClassObjectDescriptor()

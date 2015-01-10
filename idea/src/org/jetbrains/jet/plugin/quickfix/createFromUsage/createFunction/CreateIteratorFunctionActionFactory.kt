@@ -7,12 +7,12 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.Collections
-import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {

@@ -19,10 +19,10 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {

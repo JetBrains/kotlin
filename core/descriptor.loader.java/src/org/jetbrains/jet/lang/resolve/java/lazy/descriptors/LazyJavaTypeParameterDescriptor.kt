@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
-import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceElement
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContext,

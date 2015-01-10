@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.util;
 
 import kotlin.Function1;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 

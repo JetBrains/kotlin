@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.util.psi.patternMatching
 
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.*
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.Status.*
 import java.util.HashMap
@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.Call
@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.psi.JetIfExpression
@@ -48,12 +48,12 @@ import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.psi.JetLabelReferenceExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils
 import com.intellij.lang.ASTNode
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
@@ -64,21 +64,21 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Empty
 import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
 import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.psi.JetTypeParameterListOwner

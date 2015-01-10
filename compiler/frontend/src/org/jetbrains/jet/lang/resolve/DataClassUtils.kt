@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.dataClassUtils
 
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import java.util.regex.Pattern
 
 private val COMPONENT_FUNCTION_NAME_PREFIX = "component"

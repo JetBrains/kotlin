@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.typeBinding
 
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetTypeElement
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
@@ -25,9 +25,9 @@ import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetTypeReference
 import java.util.AbstractList
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 
 trait TypeBinding<out P : PsiElement> {

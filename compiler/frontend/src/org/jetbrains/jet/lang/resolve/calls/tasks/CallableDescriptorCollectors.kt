@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.calls.tasks.collectors
 
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
 
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isStaticNestedClass

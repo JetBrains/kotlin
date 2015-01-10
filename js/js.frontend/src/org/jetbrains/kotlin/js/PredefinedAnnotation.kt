@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js
 
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 
 public enum class PredefinedAnnotation(fqName: String) {
     LIBRARY : PredefinedAnnotation("kotlin.js.library")

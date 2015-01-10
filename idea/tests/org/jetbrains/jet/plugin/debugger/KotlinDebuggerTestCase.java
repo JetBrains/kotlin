@@ -39,7 +39,7 @@ import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;

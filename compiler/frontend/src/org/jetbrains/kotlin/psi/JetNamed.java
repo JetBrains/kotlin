@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.kotlin.name.Name;
 
 public interface JetNamed {
     @Nullable

@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.checkers
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.descriptors.Named
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.Named
 import java.util.IdentityHashMap
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaTypeImpl
@@ -29,10 +29,10 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaNamedElement
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap
-import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.kotlin.types.JetTypeImpl
 import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
 import org.jetbrains.kotlin.renderer.DescriptorRenderer

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ast.*

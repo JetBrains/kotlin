@@ -19,20 +19,20 @@ package org.jetbrains.jet.lang.resolve.calls.tasks
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.intellij.openapi.progress.ProgressIndicatorProvider
-import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
 import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext
 
