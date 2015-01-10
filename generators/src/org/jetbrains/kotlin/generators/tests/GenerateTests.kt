@@ -25,7 +25,7 @@ import java.util.regex.Pattern
 import junit.framework.TestCase
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest
 import org.jetbrains.jet.resolve.AbstractResolveTest
-import org.jetbrains.jet.parsing.AbstractJetParsingTest
+import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.AbstractTopLevelMembersInvocationTest

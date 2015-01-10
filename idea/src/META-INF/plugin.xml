@@ -163,8 +163,8 @@
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer"
                       serviceImplementation="org.jetbrains.jet.lang.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
-                    serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"/>
@@ -217,7 +217,7 @@
 
     <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
-    <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
+    <lang.parserDefinition language="jet" implementationClass="org.jetbrains.kotlin.parsing.JetParserDefinition"/>
     <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
     <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.jet.plugin.structureView.JetStructureViewFactory"/>
     <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.jet.plugin.structureView.JetClsStructureViewBuilderProvider"/>

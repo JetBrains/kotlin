@@ -23,7 +23,7 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.parsing.JetParser;
+import org.jetbrains.kotlin.parsing.JetParser;
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileElementType;
 
 public class JetTypeCodeFragmentType extends JetFileElementType {

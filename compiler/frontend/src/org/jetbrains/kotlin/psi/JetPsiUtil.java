@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
-import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
+import org.jetbrains.kotlin.parsing.JetExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;

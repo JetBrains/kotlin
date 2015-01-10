@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.JetScriptDefinition;
+import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
 

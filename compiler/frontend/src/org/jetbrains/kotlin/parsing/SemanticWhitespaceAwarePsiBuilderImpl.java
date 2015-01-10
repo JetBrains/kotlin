@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.parsing;
-
+package org.jetbrains.kotlin.parsing;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.PsiBuilderAdapter;
@@ -23,12 +22,10 @@ import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
-
-import com.intellij.util.containers.Stack;
-
 
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 

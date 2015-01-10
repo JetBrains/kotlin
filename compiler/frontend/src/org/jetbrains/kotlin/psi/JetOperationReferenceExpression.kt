@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.jet.lang.parsing.JetExpressionParsing
+import org.jetbrains.kotlin.parsing.JetExpressionParsing
 
 public class JetOperationReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node) {
     override fun getReferencedNameElement() = findChildByType(JetExpressionParsing.ALL_OPERATIONS) ?: this

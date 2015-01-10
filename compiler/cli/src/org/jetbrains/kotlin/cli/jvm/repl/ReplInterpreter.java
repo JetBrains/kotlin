@@ -42,7 +42,7 @@ import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.kotlin.parsing.JetParserDefinition;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;

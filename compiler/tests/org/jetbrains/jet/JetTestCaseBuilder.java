@@ -21,7 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.kotlin.parsing.JetParserDefinition;
 
 import java.io.File;
 import java.io.FileFilter;

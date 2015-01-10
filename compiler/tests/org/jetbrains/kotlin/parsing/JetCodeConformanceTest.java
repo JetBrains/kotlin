@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.parsing;
+package org.jetbrains.kotlin.parsing;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,11 +47,11 @@ public class JetCodeConformanceTest extends TestCase {
             new File("docs"),
             new File("ideaSDK"),
             new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
-            new File("compiler/tests/org/jetbrains/jet/parsing/JetCodeConformanceTest.java"));
+            new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java"));
     public static final Pattern JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
 
     public void testParserCode() throws Exception {
-        for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/jet/lang/parsing"))) {
+        for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/kotlin/parsing"))) {
             String source = FileUtil.loadFile(sourceFile, true);
 
             Pattern atPattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE);

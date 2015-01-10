@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.parsing;
+package org.jetbrains.kotlin.parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
@@ -31,8 +31,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
-import static org.jetbrains.jet.lang.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ALLOW_SHORTS;
-import static org.jetbrains.jet.lang.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ALLOW_SHORTS;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class JetExpressionParsing extends AbstractJetParsing {

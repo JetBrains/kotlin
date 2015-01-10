@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.config;
 
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 
 import java.util.List;
 

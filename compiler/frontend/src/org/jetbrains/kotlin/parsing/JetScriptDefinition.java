@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.parsing;
+package org.jetbrains.kotlin.parsing;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 
@@ -35,7 +34,7 @@ public class JetScriptDefinition {
     }
 
     private static List<ImportPath> importPaths(List<String> imports) {
-        ArrayList<ImportPath> paths = new ArrayList<ImportPath>(imports.size());
+        List<ImportPath> paths = new ArrayList<ImportPath>(imports.size());
         for (String anImport : imports) {
             paths.add(new ImportPath(anImport));
         }
