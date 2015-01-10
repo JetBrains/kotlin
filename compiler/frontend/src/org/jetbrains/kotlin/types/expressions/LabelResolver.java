@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.Name;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.LABEL_NAME_CLASH;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH;
+import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 

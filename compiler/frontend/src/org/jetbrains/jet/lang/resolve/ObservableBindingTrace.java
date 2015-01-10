@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 

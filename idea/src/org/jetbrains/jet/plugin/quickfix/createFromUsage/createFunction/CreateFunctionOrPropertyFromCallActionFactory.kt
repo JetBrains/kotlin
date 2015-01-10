@@ -1,7 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.Variance
@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetExpression
 import java.util.Collections

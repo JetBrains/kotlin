@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.checkers.CheckerTestUtil.DiagnosedRange;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;

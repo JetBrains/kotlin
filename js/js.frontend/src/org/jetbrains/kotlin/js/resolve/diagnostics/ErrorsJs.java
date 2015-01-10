@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory2;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
-import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
-import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
+import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
+import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
+import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsJs {
     DiagnosticFactory1<JetElement, JetType> NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);

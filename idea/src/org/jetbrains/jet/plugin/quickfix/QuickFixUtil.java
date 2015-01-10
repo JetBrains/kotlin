@@ -30,7 +30,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;

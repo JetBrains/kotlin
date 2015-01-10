@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.openapi.util.ModificationTracker
 
 public trait Diagnostics : Iterable<Diagnostic> {

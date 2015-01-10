@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve
 
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 public trait AnnotationChecker {

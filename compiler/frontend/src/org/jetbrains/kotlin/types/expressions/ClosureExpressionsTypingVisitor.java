@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;

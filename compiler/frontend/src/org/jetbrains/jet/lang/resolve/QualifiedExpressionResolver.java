@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.AbstractScopeAdapter;
@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
     private static final Predicate<DeclarationDescriptor> CLASSIFIERS_AND_PACKAGE_VIEWS = new Predicate<DeclarationDescriptor>() {

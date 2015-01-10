@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -54,7 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
+import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 

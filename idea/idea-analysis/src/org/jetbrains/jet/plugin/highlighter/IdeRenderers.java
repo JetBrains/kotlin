@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.plugin.highlighter.renderersUtil.RenderersUtilPackage.renderResolvedCall;
 
 public class IdeRenderers {

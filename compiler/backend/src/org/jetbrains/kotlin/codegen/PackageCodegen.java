@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetCallableDeclaration;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;

@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
-import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext

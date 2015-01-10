@@ -28,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
-import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.sortedDiagnostics;
+import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics;
 
 public final class AnalyzerWithCompilerReport {
 

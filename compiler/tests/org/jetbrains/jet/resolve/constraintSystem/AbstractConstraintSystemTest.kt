@@ -22,7 +22,7 @@ import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.Variance

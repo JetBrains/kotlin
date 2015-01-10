@@ -57,7 +57,7 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.utils.*

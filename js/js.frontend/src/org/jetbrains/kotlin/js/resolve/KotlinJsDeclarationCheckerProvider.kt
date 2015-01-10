@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs

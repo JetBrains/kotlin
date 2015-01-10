@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction

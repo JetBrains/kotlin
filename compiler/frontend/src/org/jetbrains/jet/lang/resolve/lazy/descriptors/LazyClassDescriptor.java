@@ -58,8 +58,8 @@ import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
+import static org.jetbrains.kotlin.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
+import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.kotlin.name.SpecialNames.getClassObjectName;

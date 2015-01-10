@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.analyzer.AnalysisResult
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.util.containers.SLRUCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.openapi.project.DumbService

@@ -23,7 +23,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;

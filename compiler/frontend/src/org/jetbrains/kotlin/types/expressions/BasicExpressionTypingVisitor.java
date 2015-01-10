@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -70,7 +70,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;

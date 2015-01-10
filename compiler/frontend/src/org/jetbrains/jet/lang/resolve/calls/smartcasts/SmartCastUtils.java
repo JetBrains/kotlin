@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
+import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.SMARTCAST;
 

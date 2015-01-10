@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;

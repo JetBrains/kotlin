@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;

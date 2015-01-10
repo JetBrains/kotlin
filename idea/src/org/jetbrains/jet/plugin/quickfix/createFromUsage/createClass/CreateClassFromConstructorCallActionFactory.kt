@@ -1,6 +1,6 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetTypeReference

@@ -50,8 +50,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
-import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
+import static org.jetbrains.kotlin.diagnostics.Errors.NOT_A_CLASS;
+import static org.jetbrains.kotlin.diagnostics.Errors.NO_CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;

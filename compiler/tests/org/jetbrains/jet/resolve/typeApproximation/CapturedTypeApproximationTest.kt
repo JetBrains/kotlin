@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.lang.resolve.calls.inference.createCapturedType
-import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
 import java.util.ArrayList
 import org.jetbrains.kotlin.types.TypeProjection

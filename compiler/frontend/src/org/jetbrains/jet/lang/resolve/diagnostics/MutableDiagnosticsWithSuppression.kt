@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.diagnostics
 
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList
 import com.intellij.openapi.util.CompositeModificationTracker
 import com.intellij.util.CachedValueImpl

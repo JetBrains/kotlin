@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
@@ -47,8 +47,8 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNUSED_PARAMETER;
+import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH;
+import static org.jetbrains.kotlin.diagnostics.Errors.UNUSED_PARAMETER;
 
 public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiElement> {
     protected final PsiElement context;

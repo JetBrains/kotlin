@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.utils;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 
 public final class ErrorReportingUtils {

@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.kotlin.cfg.JetControlFlowBuilder.PredefinedOperation.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 

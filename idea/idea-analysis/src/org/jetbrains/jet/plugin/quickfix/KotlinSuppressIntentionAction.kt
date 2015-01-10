@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.BindingContext

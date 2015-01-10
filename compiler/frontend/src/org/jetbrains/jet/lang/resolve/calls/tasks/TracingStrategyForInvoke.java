@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.FUNCTION_EXPECTED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.NO_RECEIVER_ALLOWED;
+import static org.jetbrains.kotlin.diagnostics.Errors.FUNCTION_EXPECTED;
+import static org.jetbrains.kotlin.diagnostics.Errors.NO_RECEIVER_ALLOWED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 

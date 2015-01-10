@@ -1,7 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import java.util.Collections

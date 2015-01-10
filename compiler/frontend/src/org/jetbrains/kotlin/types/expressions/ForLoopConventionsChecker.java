@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -41,7 +41,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import javax.inject.Inject;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 

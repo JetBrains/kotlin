@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.resolve.java.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
-import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
+import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
+import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
 
 public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS =

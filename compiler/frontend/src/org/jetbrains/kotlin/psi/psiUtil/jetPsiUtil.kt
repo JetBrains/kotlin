@@ -34,7 +34,7 @@ import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
@@ -47,7 +47,7 @@ public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
 
     return when (calleeExpression) {
         is JetSimpleNameExpression -> calleeExpression
-        is JetConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression() as? JetSimpleNameExpression
+        is JetConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression()
         else -> null
     }
 }
@@ -129,7 +129,7 @@ public fun JetBlockExpression.prependElement(element: JetElement): JetElement =
         addBefore(element, getLBrace()!!.getNextSibling()!!)!! as JetElement
 
 public fun JetElement.wrapInBlock(): JetBlockExpression {
-    val block = JetPsiFactory(this).createEmptyBody() as JetBlockExpression
+    val block = JetPsiFactory(this).createEmptyBody()
     block.appendElement(this)
     return block
 }
@@ -219,7 +219,7 @@ public fun PsiElement.deleteElementAndCleanParent() {
 
     JetPsiUtil.deleteElementWithDelimiters(this)
     [suppress("UNCHECKED_CAST")]
-    JetPsiUtil.deleteChildlessElement(parent, this.javaClass as Class<PsiElement>)
+    JetPsiUtil.deleteChildlessElement(parent, this.javaClass)
 }
 
 public fun PsiElement.parameterIndex(): Int {

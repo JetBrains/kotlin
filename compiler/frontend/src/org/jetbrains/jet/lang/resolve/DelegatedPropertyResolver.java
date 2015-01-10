@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -44,7 +44,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getCalleeExpressionIfAny;

@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
+import static org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
+import static org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
 import static org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver.deparenthesizeArgument;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
+import static org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION;
 
 public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
     private final BindingTrace trace;

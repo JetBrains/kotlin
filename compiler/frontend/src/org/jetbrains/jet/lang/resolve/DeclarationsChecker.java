@@ -22,7 +22,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.SubstitutionUtils;
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveAbstractMembers;

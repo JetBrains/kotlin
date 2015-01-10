@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.java.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 

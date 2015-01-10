@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.MemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;

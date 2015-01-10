@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
@@ -47,7 +47,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
+import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {

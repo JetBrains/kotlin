@@ -48,7 +48,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveAbstractMembers;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 

@@ -37,7 +37,7 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import java.util.Collection;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
-import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
+import static org.jetbrains.kotlin.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class BindingContextUtils {

@@ -41,7 +41,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 

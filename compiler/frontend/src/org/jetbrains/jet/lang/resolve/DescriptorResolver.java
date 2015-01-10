@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.psi.*;
@@ -54,7 +54,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;

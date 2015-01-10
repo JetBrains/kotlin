@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality

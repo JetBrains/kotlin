@@ -54,7 +54,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.hasError;
+import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.js.facade.FacadeUtils.parseString;
 

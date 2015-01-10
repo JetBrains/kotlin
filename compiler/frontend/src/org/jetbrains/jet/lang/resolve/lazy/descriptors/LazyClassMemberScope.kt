@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.dataClassUtils.*

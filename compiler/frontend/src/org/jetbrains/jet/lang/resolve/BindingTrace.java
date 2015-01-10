@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 

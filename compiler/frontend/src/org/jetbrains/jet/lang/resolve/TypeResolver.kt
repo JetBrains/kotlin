@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-import org.jetbrains.jet.lang.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.jet.lang.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider

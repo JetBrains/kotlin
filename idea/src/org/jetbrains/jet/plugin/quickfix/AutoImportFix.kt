@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
@@ -51,7 +51,7 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.jet.plugin.completion.isVisible
 import org.jetbrains.kotlin.utils.CachedValueProperty

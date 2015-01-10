@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetUnaryExpression
 import org.jetbrains.kotlin.psi.JetProperty

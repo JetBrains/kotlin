@@ -34,10 +34,10 @@ import com.intellij.psi.PsiReference
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetReferenceExpression

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.varianceChecker
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.EnrichedProjectionKind.*
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl

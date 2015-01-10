@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 

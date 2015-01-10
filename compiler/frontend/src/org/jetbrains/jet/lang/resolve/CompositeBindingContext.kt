@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice
 import org.jetbrains.jet.util.slicedmap.WritableSlice
 import com.google.common.collect.ImmutableMap
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics

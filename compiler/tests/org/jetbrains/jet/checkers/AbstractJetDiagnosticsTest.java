@@ -33,7 +33,7 @@ import org.jetbrains.jet.context.SimpleGlobalContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
 

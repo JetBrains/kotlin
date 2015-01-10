@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,

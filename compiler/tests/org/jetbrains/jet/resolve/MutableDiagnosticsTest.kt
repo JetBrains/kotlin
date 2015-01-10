@@ -19,7 +19,7 @@ package org.jetbrains.jet.resolve
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.junit.Assert
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment

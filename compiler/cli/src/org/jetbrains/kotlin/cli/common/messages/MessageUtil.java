@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 

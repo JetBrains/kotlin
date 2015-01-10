@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression

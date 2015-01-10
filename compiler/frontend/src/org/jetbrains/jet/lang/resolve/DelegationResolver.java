@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
+import static org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public final class DelegationResolver<T extends CallableMemberDescriptor> {

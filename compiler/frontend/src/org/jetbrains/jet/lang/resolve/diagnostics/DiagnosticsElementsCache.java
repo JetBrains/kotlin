@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 
 import java.util.Collection;
 

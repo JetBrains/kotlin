@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetModifierListOwner;
 import org.jetbrains.kotlin.psi.JetPropertyAccessor;

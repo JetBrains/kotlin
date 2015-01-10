@@ -40,8 +40,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
+import static org.jetbrains.kotlin.diagnostics.Errors.MANY_CLASS_OBJECTS;
+import static org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED;
 
 public class LazyTopDownAnalyzer {
     private BindingTrace trace;

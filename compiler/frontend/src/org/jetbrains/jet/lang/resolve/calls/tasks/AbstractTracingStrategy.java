@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameFromTopLevelClass;

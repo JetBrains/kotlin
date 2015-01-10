@@ -19,12 +19,12 @@ package org.jetbrains.jet.plugin.highlighter
 import com.intellij.codeInspection.SuppressableProblemGroup
 import com.intellij.psi.PsiElement
 import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.Severity
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.quickfix.AnnotationHostKind
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class KotlinSuppressableWarningProblemGroup(

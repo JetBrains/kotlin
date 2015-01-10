@@ -17,9 +17,9 @@
 package org.jetbrains.jet.plugin.debugger
 
 import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.codeFragmentUtil.skipVisibilityCheck
 
 public class DiagnosticSuppressorForDebugger : DiagnosticsWithSuppression.DiagnosticSuppressor {

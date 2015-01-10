@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.PossiblyBareType;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.NO_TYPE_ARGUMENTS_ON_RHS;
+import static org.jetbrains.kotlin.diagnostics.Errors.NO_TYPE_ARGUMENTS_ON_RHS;
 
 public class TypeReconstructionUtil {
     @NotNull

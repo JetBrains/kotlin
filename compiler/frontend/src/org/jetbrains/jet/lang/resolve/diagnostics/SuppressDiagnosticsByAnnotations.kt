@@ -17,16 +17,16 @@
 package org.jetbrains.jet.lang.resolve.diagnostics
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 
 public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor>> =
         listOf(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, Errors.NON_MEMBER_FUNCTION_NO_BODY, Errors.FINAL_FUNCTION_WITH_NO_BODY)

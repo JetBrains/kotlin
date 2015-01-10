@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.diagnostics.PositioningStrategy
+import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2
-import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic
 
 public object JsCodePositioningStrategy : PositioningStrategy<PsiElement>() {
     override fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out PsiElement>): List<TextRange> {

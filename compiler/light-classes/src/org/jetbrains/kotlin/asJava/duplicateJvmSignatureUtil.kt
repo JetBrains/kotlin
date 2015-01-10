@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
-import org.jetbrains.jet.lang.diagnostics.Errors.*
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import kotlin.properties.Delegates
 
 private val DIAGNOSTIC_FACTORY_TO_RENDERER by Delegates.lazy {

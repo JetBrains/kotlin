@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.PossiblyBareType;
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.isIntersectionEmpty;

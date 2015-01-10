@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
 
 public class ImportsResolver {

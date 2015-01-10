@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 
 public class CompilationException extends RuntimeException {
     private final PsiElement element;

@@ -21,8 +21,8 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.psi.JetConstantExpression;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class CompileTimeConstantChecker {
     private static final Set<DiagnosticFactory<?>> errorsThatDependOnExpectedType =

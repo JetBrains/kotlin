@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetModifierListOwner;
 import org.jetbrains.kotlin.psi.JetParameter;

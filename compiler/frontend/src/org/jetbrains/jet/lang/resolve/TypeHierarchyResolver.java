@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.DFS;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;

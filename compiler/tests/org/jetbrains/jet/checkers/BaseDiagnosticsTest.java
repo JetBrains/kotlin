@@ -33,7 +33,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;

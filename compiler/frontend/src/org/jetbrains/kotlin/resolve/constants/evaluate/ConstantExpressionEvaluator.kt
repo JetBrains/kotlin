@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
 import java.math.BigInteger
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 

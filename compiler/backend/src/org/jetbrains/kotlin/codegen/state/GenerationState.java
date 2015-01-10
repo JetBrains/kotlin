@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.when.MappingsClassesForWhenByEnum;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils

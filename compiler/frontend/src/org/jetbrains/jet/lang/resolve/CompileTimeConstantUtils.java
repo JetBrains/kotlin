@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
-import static org.jetbrains.jet.lang.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
+import static org.jetbrains.kotlin.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
+import static org.jetbrains.kotlin.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VALUE_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 

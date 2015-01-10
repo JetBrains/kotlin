@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.storage
 
 import com.intellij.util.containers.ConcurrentWeakValueHashMap
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice

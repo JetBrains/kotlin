@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.PackageLikeBuilder;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
+import static org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION;
 import static org.jetbrains.jet.lang.resolve.ScriptHeaderResolver.resolveScriptDeclarations;
 
 public class DeclarationResolver {

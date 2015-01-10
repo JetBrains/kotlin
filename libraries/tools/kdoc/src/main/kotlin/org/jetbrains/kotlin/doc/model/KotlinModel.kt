@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.LineAndColumn
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
