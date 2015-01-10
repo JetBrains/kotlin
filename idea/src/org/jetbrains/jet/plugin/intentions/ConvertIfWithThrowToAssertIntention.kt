@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class ConvertIfWithThrowToAssertIntention :

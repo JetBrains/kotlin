@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.AnnotationResolver
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider

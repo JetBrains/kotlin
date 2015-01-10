@@ -33,7 +33,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors

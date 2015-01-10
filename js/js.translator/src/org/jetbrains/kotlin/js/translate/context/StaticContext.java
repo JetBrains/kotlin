@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;

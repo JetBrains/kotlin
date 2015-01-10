@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {

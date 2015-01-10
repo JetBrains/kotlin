@@ -20,11 +20,11 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
+import org.jetbrains.kotlin.psi.JetCallExpression;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public abstract class AbstractCallExpressionTranslator extends AbstractTranslator {
 

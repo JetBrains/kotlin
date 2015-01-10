@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.ArrayList
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.calls.inference.CapturedTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeSubstitution
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.LazyType
-import org.jetbrains.jet.lang.resolve.calls.inference.isCaptured
+import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 
 public data class ApproximationBounds<T>(
         public val lower: T,

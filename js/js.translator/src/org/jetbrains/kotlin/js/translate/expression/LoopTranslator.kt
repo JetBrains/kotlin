@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.expression.loopTranslator
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator

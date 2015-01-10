@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;

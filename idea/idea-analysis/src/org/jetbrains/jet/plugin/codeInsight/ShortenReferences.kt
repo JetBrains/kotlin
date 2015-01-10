@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.Collections
 import org.jetbrains.jet.analyzer.analyzeInContext
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement

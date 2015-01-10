@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.generators.di.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.jet.lang.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver

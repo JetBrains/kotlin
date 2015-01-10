@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;

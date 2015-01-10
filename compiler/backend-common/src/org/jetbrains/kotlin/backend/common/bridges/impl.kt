@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.common.bridges
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.OverrideResolver
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
 import org.jetbrains.kotlin.types.TypeUtils
 
 public fun <Signature> generateBridgesForFunctionDescriptor(

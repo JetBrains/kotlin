@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {

@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
 import org.jetbrains.kotlin.psi.Call.CallType
 import kotlin.test.assertNotNull
 

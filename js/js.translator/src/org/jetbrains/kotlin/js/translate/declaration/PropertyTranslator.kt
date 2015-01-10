@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer.*
 import org.jetbrains.kotlin.js.translate.utils.ast.*
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 /**

@@ -19,7 +19,7 @@ package org.jetbrains.jet.analyzer
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.kotlin.di.InjectorForMacros
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor

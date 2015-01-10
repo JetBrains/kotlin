@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
-import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
-
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
     val COMPARE_TO_CHAR = pattern("Int|Short|Byte|Double|Float.compareTo(Char)")

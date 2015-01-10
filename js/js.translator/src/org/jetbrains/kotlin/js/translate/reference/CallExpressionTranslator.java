@@ -27,23 +27,23 @@ import com.google.gwt.dev.js.rhino.EvaluatorException;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.InlineStrategy;
+import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
-import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.builtins.InlineStrategy;
-import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder;
+import org.jetbrains.kotlin.psi.JetCallExpression;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
+import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -52,8 +52,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.gwt.dev.js.rhino.Utils.isEndOfLine;
-import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 

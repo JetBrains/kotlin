@@ -21,17 +21,17 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.

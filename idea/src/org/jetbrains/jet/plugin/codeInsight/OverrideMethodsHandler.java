@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.HashSet;

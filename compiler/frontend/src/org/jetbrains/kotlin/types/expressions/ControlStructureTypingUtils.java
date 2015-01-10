@@ -32,17 +32,16 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
-import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.inference.*;
+import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
@@ -52,7 +51,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
-import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);

@@ -20,21 +20,21 @@ import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor

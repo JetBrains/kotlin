@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 
 public class JetTypeInfo {
-
     @NotNull
     public static JetTypeInfo create(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
         return new JetTypeInfo(type, dataFlowInfo);

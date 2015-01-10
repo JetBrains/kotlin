@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.isDynamic
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {

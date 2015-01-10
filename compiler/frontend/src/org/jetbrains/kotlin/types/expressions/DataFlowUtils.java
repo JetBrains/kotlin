@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public class DataFlowUtils {

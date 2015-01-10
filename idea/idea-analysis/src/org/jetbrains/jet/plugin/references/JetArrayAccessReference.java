@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
 import org.jetbrains.kotlin.psi.JetContainerNode;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.ArrayList;

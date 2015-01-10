@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.calls.callUtil.*
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils

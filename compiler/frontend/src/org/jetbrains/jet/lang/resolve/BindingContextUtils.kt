@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()

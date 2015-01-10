@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
-import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Iterator;
 import java.util.List;

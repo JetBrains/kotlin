@@ -27,7 +27,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
 public class RenameDynamicMemberHandler: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {

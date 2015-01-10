@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;

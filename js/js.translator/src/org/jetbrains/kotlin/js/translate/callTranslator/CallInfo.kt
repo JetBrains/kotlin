@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
-import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsConditional
 import com.google.dart.compiler.backend.js.ast.JsBlock
-
 
 trait CallInfo {
     val context: TranslationContext

@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetFunction

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntr
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.kotlin.js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.kotlin.js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;

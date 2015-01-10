@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 

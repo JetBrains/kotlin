@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
-import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
+import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import com.intellij.openapi.util.TextRange
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferencePackage;
+import org.jetbrains.kotlin.resolve.calls.inference.InferencePackage;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;

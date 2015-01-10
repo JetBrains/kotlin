@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;

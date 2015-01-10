@@ -24,14 +24,14 @@ import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetUnaryExpression;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CachedAccessTranslator;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetUnaryExpression;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.List;
 

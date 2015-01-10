@@ -21,7 +21,7 @@ import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 

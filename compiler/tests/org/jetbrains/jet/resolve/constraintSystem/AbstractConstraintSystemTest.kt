@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.regex.Pattern
@@ -33,7 +33,7 @@ import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.M
 import java.util.ArrayList
 import java.util.LinkedHashMap
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""

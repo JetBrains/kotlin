@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch

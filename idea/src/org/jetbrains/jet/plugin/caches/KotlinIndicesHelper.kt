@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable

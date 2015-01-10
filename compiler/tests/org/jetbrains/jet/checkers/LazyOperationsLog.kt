@@ -34,11 +34,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap
 import org.jetbrains.kotlin.types.JetTypeImpl
 import java.util.regex.Pattern
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Method
 import java.lang.reflect.Constructor

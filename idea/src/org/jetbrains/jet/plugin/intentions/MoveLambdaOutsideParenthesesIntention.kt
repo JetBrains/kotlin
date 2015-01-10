@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetLabeledExpression
 import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
 public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(
         "move.lambda.outside.parentheses", javaClass()) {

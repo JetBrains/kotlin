@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.inference.*;
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -46,10 +46,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
-import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
-import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
+import static org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
+import static org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 
 public class Renderers {
     private static final Logger LOG = Logger.getInstance(Renderers.class);

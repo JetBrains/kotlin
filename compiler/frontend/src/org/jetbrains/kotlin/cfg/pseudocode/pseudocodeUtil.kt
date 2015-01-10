@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.*
-import org.jetbrains.jet.lang.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.*
