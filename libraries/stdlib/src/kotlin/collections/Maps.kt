@@ -264,3 +264,35 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
  * Converts this [Map] to a [LinkedHashMap] so future insertion orders are maintained
  */
 public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)
+
+/**
+ * Create a new immutable map from a map and a single new key-value pair
+ */
+public fun <K, V> Map<K, V>.plus( pair : Pair<K, V> ) : Map<K, V> {
+    val newMap = this.toLinkedMap()
+    newMap.put(pair.first, pair.second)
+    return newMap
+}
+
+/**
+ * Create a new immutable map from a map and a list new key-value pair
+ */
+public fun <K, V> Map<K, V>.plus( pairs : List<Pair<K, V>> ) : Map<K, V> {
+    val newMap = this.toLinkedMap()
+    newMap.putAll(pairs)
+    return newMap
+}
+
+/**
+ * Create a new immutable map by removing a key
+ */
+public fun <K, V> Map<K, V>.minus( key : K ) : Map<K, V> {
+    return this.filterKeys { key != it }
+}
+
+/**
+ * Create a new immutable map by removing a list of keys
+ */
+public fun <K, V> Map<K, V>.minus( keys : List<K> ) : Map<K, V> {
+    return this.filterKeys { !keys.contains(it) }
+}
