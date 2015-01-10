@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.resolve.kotlin.SignatureDeserializer;
+import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;

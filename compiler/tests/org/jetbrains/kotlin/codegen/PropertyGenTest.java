@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.*;

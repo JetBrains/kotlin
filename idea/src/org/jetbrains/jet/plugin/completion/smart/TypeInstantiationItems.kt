@@ -37,7 +37,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import com.intellij.psi.PsiClass
@@ -47,14 +47,14 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.PossiblyBareType
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap
+import org.jetbrains.kotlin.resolve.jvm.types.KotlinToJavaTypesMap
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.kotlin.types.TypeProjectionImpl

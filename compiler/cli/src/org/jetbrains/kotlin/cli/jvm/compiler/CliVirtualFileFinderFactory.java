@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
 
 public final class CliVirtualFileFinderFactory implements VirtualFileFinderFactory {
     private final ClassPath classPath;

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.kotlin.utils.KotlinPaths;

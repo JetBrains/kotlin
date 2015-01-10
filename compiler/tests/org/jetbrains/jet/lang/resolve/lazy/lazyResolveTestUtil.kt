@@ -20,10 +20,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
 
 public fun createResolveSessionForFiles(

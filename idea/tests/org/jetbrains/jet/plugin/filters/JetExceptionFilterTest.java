@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassName;
-import static org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils.getPackagePartFqName;
+import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName;
+import static org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName;
 
 public class JetExceptionFilterTest extends MultiFileTestCase {
     private VirtualFile rootDir;

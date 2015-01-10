@@ -22,10 +22,10 @@ import java.io.File
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles

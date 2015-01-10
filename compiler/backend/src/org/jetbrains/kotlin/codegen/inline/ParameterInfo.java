@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.jet.lang.resolve.java.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 
 class ParameterInfo {

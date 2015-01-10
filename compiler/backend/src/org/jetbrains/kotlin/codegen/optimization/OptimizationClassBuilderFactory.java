@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory;
 import org.jetbrains.kotlin.codegen.ClassBuilderMode;
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 
 public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
     private final ClassBuilderFactory delegate;

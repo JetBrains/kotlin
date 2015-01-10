@@ -28,20 +28,20 @@ import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import java.util.Arrays
 import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import java.util.HashMap
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.security.MessageDigest
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.builders.storage.StorageProvider
 import java.io.IOException
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 

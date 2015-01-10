@@ -25,7 +25,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.kotlin.utils.PathUtil;

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 

@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     public void doTest(@NotNull String filename) {

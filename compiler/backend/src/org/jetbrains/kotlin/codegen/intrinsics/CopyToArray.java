@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypes.getType;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
 
 public class CopyToArray extends IntrinsicMethod {
     @NotNull

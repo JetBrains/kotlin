@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.decompiler.textBuilder
 
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
+import org.jetbrains.kotlin.load.java.components.ErrorReporter
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import com.intellij.openapi.diagnostic.Logger
 
 class LoggingErrorReporter(private val log: Logger) : ErrorReporter {

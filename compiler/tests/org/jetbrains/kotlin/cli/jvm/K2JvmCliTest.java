@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm;
 
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.cli.CliBaseTest;
 import org.junit.Assert;

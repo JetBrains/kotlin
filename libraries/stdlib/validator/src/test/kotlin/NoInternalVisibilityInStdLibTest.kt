@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashSet
 import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig

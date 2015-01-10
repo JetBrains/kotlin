@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.org.objectweb.asm.Type;
 

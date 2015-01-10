@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 
 public class IdentityEquals extends LazyIntrinsicMethod {
     @NotNull

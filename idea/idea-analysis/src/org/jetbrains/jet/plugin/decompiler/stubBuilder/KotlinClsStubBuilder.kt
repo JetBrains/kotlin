@@ -22,8 +22,8 @@ import com.intellij.util.indexing.FileContent
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LocalClassFinder

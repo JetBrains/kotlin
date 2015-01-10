@@ -41,13 +41,13 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.coverage.JavaCoverageAnnotator
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import com.intellij.openapi.vfs.LocalFileSystem
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import com.intellij.openapi.util.io.FileUtilRt
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {

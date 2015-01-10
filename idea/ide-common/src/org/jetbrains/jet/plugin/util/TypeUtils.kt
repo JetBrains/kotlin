@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.CollectionClassMapping
+import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.CollectionClassMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.flexibility
 import java.util.LinkedHashSet

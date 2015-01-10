@@ -17,9 +17,9 @@
 package org.jetbrains.jet.plugin.project
 
 import org.jetbrains.jet.analyzer.AnalyzerFacade
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ResolverForModule
-import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.jet.plugin.caches.resolve.JsAnalyzerFacade
 
 public object AnalyzerFacadeProvider {

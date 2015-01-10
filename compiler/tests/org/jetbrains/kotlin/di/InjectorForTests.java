@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
+import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;

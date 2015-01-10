@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 
 import org.jetbrains.kotlin.codegen.AsmUtil.genEqualsForExpressionsOnStack
-import org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
 public class Equals : LazyIntrinsicMethod() {
     override fun generateImpl(

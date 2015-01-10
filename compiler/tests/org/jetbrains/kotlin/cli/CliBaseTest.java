@@ -23,7 +23,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.cli.common.CLICompiler;

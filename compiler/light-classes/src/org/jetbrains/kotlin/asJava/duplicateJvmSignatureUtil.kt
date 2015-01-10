@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.*
-import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
 import org.jetbrains.kotlin.psi.JetParameter

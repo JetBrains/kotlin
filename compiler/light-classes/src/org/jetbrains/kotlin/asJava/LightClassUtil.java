@@ -37,11 +37,11 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.utils.KotlinVfsUtil;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 

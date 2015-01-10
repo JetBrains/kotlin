@@ -25,10 +25,10 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
+import org.jetbrains.kotlin.load.java.components.PsiBasedExternalAnnotationResolver;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
 
 class KotlinSignatureUtil {
     private KotlinSignatureUtil() {

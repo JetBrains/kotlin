@@ -29,7 +29,7 @@ import com.intellij.xdebugger.settings.XDebuggerSettingsManager
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAbi
 import com.sun.jdi.Field
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type

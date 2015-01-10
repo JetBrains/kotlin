@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.asJava.KotlinLightField
 import org.jetbrains.kotlin.psi.JetObjectDeclaration

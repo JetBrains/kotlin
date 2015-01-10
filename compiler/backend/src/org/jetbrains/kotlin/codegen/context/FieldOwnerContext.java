@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 
 import java.util.HashMap;
 import java.util.Map;

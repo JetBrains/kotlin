@@ -22,16 +22,16 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAbi
 import com.intellij.psi.PsiManager
 import org.junit.Assert
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.PsiCompiledFile
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
 
 public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {

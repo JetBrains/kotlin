@@ -27,12 +27,12 @@ import org.jetbrains.jet.ConfigurationKind
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
+import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment

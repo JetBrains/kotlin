@@ -21,7 +21,7 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;

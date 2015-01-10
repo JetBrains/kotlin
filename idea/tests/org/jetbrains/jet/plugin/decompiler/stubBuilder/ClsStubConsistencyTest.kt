@@ -18,8 +18,8 @@ package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor

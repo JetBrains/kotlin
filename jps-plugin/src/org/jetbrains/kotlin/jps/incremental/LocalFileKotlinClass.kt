@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.jet.lang.resolve.kotlin.FileBasedKotlinClass
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import java.io.File
 

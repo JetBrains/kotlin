@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.jet.lang.resolve.java.diagnostics.Synthetic
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.backend.common.CodegenUtil

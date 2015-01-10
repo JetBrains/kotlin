@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.debugger
 
 import com.intellij.psi.search.FilenameIndex
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -35,7 +35,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.module.impl.scopes.JdkScope
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 

@@ -20,10 +20,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.jet.lang.resolve.java.diagnostics.MemberKind
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.jet.lang.resolve.java.diagnostics.RawSignature
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 
 public abstract class SignatureCollectingClassBuilderFactory(
         private val delegate: ClassBuilderFactory

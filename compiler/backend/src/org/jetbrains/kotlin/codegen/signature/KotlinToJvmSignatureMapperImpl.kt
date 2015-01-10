@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.KotlinToJvmSignatureMapper
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 public class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
     // We use empty BindingContext, because it is only used by JetTypeMapper for purposes irrelevant to the needs of this class

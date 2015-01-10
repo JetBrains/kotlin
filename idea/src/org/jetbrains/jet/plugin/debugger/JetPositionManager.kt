@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.builtins.InlineStrategy
 import org.jetbrains.kotlin.builtins.InlineUtil

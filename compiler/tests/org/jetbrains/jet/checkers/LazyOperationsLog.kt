@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.Named
 import java.util.IdentityHashMap
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaTypeImpl
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.jet.lang.resolve.java.structure.JavaNamedElement
+import org.jetbrains.kotlin.load.java.structure.JavaNamedElement
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext

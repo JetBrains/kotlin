@@ -26,7 +26,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.ExternalIntegerKeyDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
+import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 
 /**
  * Important! This is not a stub-based index. And it has its own version

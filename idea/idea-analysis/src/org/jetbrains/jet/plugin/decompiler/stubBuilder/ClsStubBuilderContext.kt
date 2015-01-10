@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
-import org.jetbrains.jet.lang.resolve.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.java.components.ErrorReporter
+import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.SpecialNames
 
 

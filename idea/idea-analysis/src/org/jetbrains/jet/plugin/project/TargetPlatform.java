@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
-import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider;
+import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesAllowed;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider;

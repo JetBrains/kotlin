@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.analyzer.ModuleInfo
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
+import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys

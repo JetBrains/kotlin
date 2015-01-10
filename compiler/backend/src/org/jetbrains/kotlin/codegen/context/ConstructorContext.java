@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 
 public class ConstructorContext extends MethodContext {
     private static final StackValue LOCAL_1 = StackValue.local(1, OBJECT_TYPE);

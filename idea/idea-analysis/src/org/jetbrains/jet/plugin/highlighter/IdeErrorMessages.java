@@ -28,8 +28,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
 import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
 import static org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
 

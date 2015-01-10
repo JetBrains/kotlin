@@ -27,7 +27,7 @@ import com.intellij.debugger.impl.DebuggerContextUtil
 import com.sun.jdi.ReferenceType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.sun.jdi.AbsentInformationException

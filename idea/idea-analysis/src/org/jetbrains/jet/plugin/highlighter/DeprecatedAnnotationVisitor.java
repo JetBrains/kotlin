@@ -34,14 +34,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 

@@ -36,11 +36,11 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.kotlin.load.java.JavaBindingContext;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 
 import java.util.Collection;
 import java.util.List;

@@ -38,7 +38,7 @@ import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.psi.JetNamedFunction
@@ -62,12 +62,12 @@ import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.StackValue

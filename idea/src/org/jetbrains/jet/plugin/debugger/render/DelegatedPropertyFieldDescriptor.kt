@@ -2,7 +2,7 @@ package org.jetbrains.jet.plugin.debugger.render
 
 import com.intellij.openapi.project.Project
 import com.sun.jdi.Field
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAbi
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.sun.jdi.Value
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl

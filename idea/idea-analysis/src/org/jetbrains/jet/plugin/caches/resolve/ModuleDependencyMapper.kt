@@ -22,14 +22,14 @@ import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.LibraryOrderEntry
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.jet.analyzer.AnalyzerFacade
 import org.jetbrains.jet.analyzer.ResolverForModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.storage.ExceptionTracker
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.analyzer.EmptyResolverForProject

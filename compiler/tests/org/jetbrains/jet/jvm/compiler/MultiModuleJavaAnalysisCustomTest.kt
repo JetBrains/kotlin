@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.jvm.compiler
 
-import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 import com.intellij.psi.search.GlobalSearchScope
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.java.JvmResolverForModule
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.jet.analyzer.ModuleInfo
 import java.util.HashMap

@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.kotlin.j2k.ast.*
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 

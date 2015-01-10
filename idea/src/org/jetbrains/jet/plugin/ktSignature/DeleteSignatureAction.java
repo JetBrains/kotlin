@@ -26,8 +26,8 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
 
 public class DeleteSignatureAction extends AnAction {
     private final PsiModifierListOwner annotationOwner;

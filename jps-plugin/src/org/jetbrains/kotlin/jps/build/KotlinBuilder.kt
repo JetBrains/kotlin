@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
@@ -172,7 +172,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
                 { className ->
-                    className.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
+                    className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.cache.")
                     || className == "org.jetbrains.kotlin.config.Services"
                 },
                 compilerServices
