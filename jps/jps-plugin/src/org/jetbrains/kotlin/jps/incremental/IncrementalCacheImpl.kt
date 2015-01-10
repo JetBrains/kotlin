@@ -22,7 +22,7 @@ import com.intellij.util.io.PersistentHashMap
 import java.io.DataOutput
 import com.intellij.util.io.IOUtil
 import java.io.DataInput
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import java.util.Arrays

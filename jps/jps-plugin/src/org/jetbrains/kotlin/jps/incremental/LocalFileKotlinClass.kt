@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.jet.lang.resolve.kotlin.FileBasedKotlinClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.kotlin.name.ClassId
 import java.io.File
 
 class LocalFileKotlinClass private(
