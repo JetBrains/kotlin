@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.jet.analyzer.AnalyzerFacade
-import org.jetbrains.jet.analyzer.ResolverForModule
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
+import org.jetbrains.kotlin.analyzer.ResolverForModule
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.jet.analyzer.PlatformAnalysisParameters
-import org.jetbrains.jet.analyzer.ResolverForProject
+import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.context.GlobalContext
+import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.jet.analyzer.ModuleInfo
-import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope

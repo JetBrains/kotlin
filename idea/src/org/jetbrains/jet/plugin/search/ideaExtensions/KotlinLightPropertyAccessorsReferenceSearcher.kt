@@ -23,7 +23,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.psi.JetProperty
 

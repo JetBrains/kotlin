@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.highlighter
 
 import com.intellij.codeInsight.daemon.ProblemHighlightFilter
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.ide.projectView.impl.ProjectRootsUtil
 
 class KotlinProblemHighlightFilter : ProblemHighlightFilter() {

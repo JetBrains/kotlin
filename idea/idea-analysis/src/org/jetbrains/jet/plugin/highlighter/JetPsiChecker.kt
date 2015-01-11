@@ -33,7 +33,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity

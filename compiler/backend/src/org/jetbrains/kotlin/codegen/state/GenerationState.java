@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.state;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
+import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 
 import java.io.File;
 import java.util.Collection;

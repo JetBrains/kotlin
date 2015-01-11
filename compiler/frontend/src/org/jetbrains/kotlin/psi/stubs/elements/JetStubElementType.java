@@ -27,11 +27,11 @@ import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetElementImplStub;
 import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.JetProperty;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

@@ -23,9 +23,9 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;
 

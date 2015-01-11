@@ -17,20 +17,20 @@
 package org.jetbrains.jet.plugin.caches.resolve
 
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.jet.analyzer.ResolverForModule
-import org.jetbrains.jet.analyzer.PlatformAnalysisParameters
-import org.jetbrains.jet.analyzer.AnalyzerFacade
+import org.jetbrains.kotlin.analyzer.ResolverForModule
+import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.analyzer.ResolverForProject
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.jet.analyzer.ModuleInfo
-import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.js.resolve.KotlinJsDeclarationCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 

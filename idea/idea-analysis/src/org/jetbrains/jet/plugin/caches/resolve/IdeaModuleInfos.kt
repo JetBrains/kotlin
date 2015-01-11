@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEntry

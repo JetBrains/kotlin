@@ -24,10 +24,10 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
  * This class serves as a workaround for usages of {@link JavaElementFinder#findClasses} which eventually only need names of files

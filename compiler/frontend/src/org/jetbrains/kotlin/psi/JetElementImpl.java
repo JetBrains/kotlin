@@ -25,7 +25,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 
 public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
     public JetElementImpl(@NotNull ASTNode node) {

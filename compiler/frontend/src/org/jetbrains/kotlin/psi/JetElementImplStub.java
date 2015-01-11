@@ -21,15 +21,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementType;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.Arrays;
 import java.util.List;

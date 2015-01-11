@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.plugin.JetLanguage
 import kotlin.properties.Delegates
 
 public class JetClassFileViewProvider(

@@ -21,10 +21,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
 
 import java.util.Collections;
 import java.util.List;

@@ -21,9 +21,9 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.JetTypeParameter;
 import org.jetbrains.kotlin.psi.JetTypeParameterListOwner;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KotlinLightTypeParameter
         extends AbstractLightClass implements PsiTypeParameter, KotlinLightElement<JetTypeParameter, PsiTypeParameter> {

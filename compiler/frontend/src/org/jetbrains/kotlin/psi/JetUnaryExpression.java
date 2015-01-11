@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.kotlin.JetNodeTypes;
 
 public abstract class JetUnaryExpression extends JetExpressionImpl implements JetOperationExpression {
     public JetUnaryExpression(ASTNode node) {

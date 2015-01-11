@@ -30,14 +30,14 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeType;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.kotlin.JetNodeType;
+import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.lexer.JetLexer;
+import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.kotlin.lexer.JetLexer;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 public class JetParserDefinition implements ParserDefinition {
     public static final String STD_SCRIPT_SUFFIX = "kts";

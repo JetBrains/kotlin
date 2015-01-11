@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;

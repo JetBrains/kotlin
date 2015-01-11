@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.jet.JetNodeTypes.SELF_TYPE;
+import static org.jetbrains.kotlin.JetNodeTypes.SELF_TYPE;
 
 public interface JetStubElementTypes {
     JetFileElementType FILE = new JetFileElementType();

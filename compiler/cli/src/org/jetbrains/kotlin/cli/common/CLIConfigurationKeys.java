@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cli.common;
 
-import org.jetbrains.jet.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 
 import java.util.List;
 

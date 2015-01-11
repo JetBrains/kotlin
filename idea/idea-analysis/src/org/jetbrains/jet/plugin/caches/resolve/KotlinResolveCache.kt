@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.util.containers.SLRUCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.openapi.project.DumbService
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.context.SimpleGlobalContext
+import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.util.CachedValueProvider
@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.analyzer.analyzeInContext
+import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope

@@ -42,7 +42,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {

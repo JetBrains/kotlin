@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.util.slicedmap.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
+import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
 

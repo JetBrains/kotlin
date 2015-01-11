@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.kotlin.JetNodeTypes;
 
 public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl implements JetOperationExpression {
     public JetBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {

@@ -23,7 +23,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Pair
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetElement

@@ -28,7 +28,7 @@ import com.intellij.testFramework.UsefulTestCase
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.jet.context.GlobalContext
+import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport

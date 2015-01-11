@@ -29,7 +29,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
-import org.jetbrains.jet.analyzer.analyzeInContext
+import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.resolve.ImportPath

@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.JetNodeTypes
-import com.intellij.psi.JavaCodeFragment
-import com.intellij.psi.PsiType
-import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.JetNodeTypes
 
 public class JetExpressionCodeFragment(
         project: Project,

@@ -30,7 +30,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings;
 import org.jetbrains.kotlin.js.JavaScript;
 

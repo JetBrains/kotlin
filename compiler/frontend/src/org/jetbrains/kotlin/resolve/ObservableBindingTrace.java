@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Map;

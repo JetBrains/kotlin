@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;

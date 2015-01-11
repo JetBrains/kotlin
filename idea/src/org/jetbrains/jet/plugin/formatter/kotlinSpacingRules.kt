@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.plugin.formatter
 
-import org.jetbrains.jet.JetNodeTypes.*
+import org.jetbrains.kotlin.JetNodeTypes.*
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.plugin.JetLanguage
 import com.intellij.formatting.Spacing
 import com.intellij.lang.ASTNode
 import com.intellij.formatting.ASTBlock

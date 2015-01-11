@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.kotlin.JetNodeTypes;
 
 public class JetBinaryExpression extends JetExpressionImpl implements JetOperationExpression {
     public JetBinaryExpression(@NotNull ASTNode node) {

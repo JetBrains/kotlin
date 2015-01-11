@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import com.intellij.openapi.progress.ProcessCanceledException

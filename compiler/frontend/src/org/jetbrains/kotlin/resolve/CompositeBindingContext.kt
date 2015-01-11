@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice
-import org.jetbrains.jet.util.slicedmap.WritableSlice
+import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement

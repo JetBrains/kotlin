@@ -22,7 +22,7 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
+import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

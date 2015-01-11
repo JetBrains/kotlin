@@ -30,7 +30,7 @@ import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.ANNOTA
 
 /**
  * Type reference element.
- * Underlying token is {@link org.jetbrains.jet.JetNodeTypes#TYPE_REFERENCE}
+ * Underlying token is {@link org.jetbrains.kotlin.JetNodeTypes#TYPE_REFERENCE}
  */
 public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> {
 

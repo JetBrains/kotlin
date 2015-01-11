@@ -16,13 +16,10 @@
 
 package org.jetbrains.jet.testing;
 
-import com.intellij.lang.Language;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Pair;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

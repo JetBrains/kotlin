@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.kotlin.JetNodeTypes
 
 public class JetBlockCodeFragment(
         project: Project,

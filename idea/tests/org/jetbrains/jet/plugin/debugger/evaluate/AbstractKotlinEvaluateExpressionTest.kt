@@ -24,7 +24,7 @@ import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.SuspendContextImpl
 import org.jetbrains.jet.plugin.debugger.*
 import org.junit.Assert
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jet.InTextDirectivesUtils

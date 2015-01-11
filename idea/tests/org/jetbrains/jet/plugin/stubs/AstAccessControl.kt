@@ -20,7 +20,7 @@ import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.PsiManager
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.VfsUtilCore

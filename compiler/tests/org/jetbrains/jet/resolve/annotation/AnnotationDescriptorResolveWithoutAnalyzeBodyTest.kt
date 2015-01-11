@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.resolve.annotation
 
-import org.jetbrains.jet.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.JetTestUtils
 

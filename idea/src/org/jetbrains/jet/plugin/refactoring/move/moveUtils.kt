@@ -25,7 +25,7 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor

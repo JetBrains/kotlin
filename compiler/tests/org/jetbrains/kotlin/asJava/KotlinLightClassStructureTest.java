@@ -24,7 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 
 import java.io.File;
 import java.util.Arrays;

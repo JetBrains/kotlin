@@ -28,10 +28,10 @@ import kotlin.Function2;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.plugin.JetFileType;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.io.File;
 import java.util.ArrayList;

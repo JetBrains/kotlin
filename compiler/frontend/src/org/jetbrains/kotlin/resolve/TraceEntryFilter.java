@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 public interface TraceEntryFilter {
     boolean accept(@Nullable WritableSlice<?, ?> slice, Object key);

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.kotlin.JetNodeTypes
 import java.math.BigInteger
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall

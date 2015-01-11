@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin;
 
-import org.jetbrains.jet.OperationMode;
-import org.jetbrains.jet.OperationModeProvider;
+import org.jetbrains.kotlin.OperationMode;
+import org.jetbrains.kotlin.OperationModeProvider;
 
 public class IdeModeProvider implements OperationModeProvider {
     public static final OperationMode IDE_MODE = new OperationMode("IDE mode");

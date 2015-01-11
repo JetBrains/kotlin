@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.kotlin.JetNodeType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

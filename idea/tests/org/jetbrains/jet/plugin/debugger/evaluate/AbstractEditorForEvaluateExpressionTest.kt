@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.debugger.evaluate
 
-import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.psi.PsiElement

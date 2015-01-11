@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;

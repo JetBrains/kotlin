@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.jet.context.LazinessToken
+import org.jetbrains.kotlin.context.LazinessToken
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull

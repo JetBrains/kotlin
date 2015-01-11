@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
 /**

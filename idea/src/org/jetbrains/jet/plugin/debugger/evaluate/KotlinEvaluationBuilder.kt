@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.plugin.JetLanguage
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.PsiFileFactory

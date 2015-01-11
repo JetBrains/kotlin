@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.util.slicedmap.*;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -42,11 +40,13 @@ import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
+import org.jetbrains.kotlin.util.Box;
+import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
+import static org.jetbrains.kotlin.util.slicedMap.RewritePolicy.DO_NOTHING;
 
 public interface BindingContext {
     BindingContext EMPTY = new BindingContext() {

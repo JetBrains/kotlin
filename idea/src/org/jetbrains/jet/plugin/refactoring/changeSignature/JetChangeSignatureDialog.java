@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.psi.JetTypeCodeFragment;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import javax.swing.*;

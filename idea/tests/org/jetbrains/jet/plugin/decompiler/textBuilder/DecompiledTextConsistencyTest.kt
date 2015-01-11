@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.jet.context.GlobalContext
+import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.KotlinClsStubBuilder

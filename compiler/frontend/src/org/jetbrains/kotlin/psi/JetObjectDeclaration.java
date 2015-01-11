@@ -24,11 +24,11 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.kotlin.JetNodeTypes;
 
 public class JetFinallySection extends JetElementImpl implements JetStatementExpression {
     public JetFinallySection(@NotNull ASTNode node) {

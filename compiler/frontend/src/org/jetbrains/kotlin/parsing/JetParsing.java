@@ -22,15 +22,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.kotlin.JetNodeType;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.JetNodeTypes.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
+import static org.jetbrains.kotlin.JetNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
 
 public class JetParsing extends AbstractJetParsing {
     private static final Logger LOG = Logger.getInstance(JetParsing.class);

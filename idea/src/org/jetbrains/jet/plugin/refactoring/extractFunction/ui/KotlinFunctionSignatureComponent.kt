@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.extractFunction.ui
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.refactoring.ui.MethodSignatureComponent
 
 public class KotlinFunctionSignatureComponent(

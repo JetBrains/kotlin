@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEval
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl;
 import org.jetbrains.kotlin.load.java.components.JavaSourceElementFactoryImpl;
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider;
-import org.jetbrains.jet.context.LazyResolveToken;
+import org.jetbrains.kotlin.context.LazyResolveToken;
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct;
 import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.jet.lang.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;

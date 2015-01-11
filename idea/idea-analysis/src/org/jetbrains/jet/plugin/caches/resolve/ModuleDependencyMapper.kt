@@ -25,15 +25,15 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.jet.analyzer.AnalyzerFacade
-import org.jetbrains.jet.analyzer.ResolverForModule
+import org.jetbrains.kotlin.analyzer.AnalyzerFacade
+import org.jetbrains.kotlin.analyzer.ResolverForModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.jet.analyzer.ResolverForProject
-import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.jet.analyzer.EmptyResolverForProject
-import org.jetbrains.jet.context.GlobalContextImpl
+import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.context.GlobalContextImpl
 
 fun createModuleResolverProvider(
         project: Project,

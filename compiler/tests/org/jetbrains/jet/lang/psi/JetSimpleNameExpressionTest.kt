@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi
 import org.junit.Assert
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 

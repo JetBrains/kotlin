@@ -19,12 +19,9 @@ package org.jetbrains.jet.plugin.navigation;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.plugin.JetFileType;
 
-import java.io.File;
 import java.util.List;
 
 public abstract class AbstractGotoSuperTest extends LightCodeInsightFixtureTestCase {

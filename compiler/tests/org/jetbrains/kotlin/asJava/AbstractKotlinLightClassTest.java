@@ -22,7 +22,7 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.checkers.KotlinMultiFileTestWithWithJava;
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;

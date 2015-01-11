@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.generators.injectors
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.resolve.*
@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.load.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
-import org.jetbrains.jet.context.LazyResolveToken
+import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
@@ -144,7 +144,7 @@ private fun generatorForJavaDescriptorResolver() =
             parameter<BindingTrace>()
 
             publicField<GlobalContextImpl>(useAsContext = true,
-                        init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
+                        init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"))
             publicField<ModuleDescriptorImpl>(name = "module",
                         init = GivenExpression(javaClass<TopDownAnalyzerFacadeForJVM>().getName() + ".createJavaModule(\"<fake-jdr-module>\")"))
             publicField<JavaDescriptorResolver>()
@@ -215,7 +215,7 @@ private fun generatorForMacro() =
             publicField<CallResolver>()
 
             field<GlobalContext>(useAsContext = true,
-                  init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
+                  init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"))
 
             field<AdditionalCheckerProvider.Empty>()
         }
@@ -230,7 +230,7 @@ private fun generatorForTests() =
             publicField<ExpressionTypingUtils>()
             publicField<TypeResolver>()
 
-            field<GlobalContext>(init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"),
+            field<GlobalContext>(init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"),
                   useAsContext = true)
 
             field<JavaDeclarationCheckerProvider>()

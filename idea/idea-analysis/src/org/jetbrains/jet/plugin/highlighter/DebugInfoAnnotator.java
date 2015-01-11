@@ -21,7 +21,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.checkers.DebugInfoUtil;
+import org.jetbrains.kotlin.checkers.DebugInfoUtil;
 import org.jetbrains.kotlin.psi.JetCodeFragment;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;

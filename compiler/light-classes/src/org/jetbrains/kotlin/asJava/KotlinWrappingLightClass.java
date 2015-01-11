@@ -33,9 +33,9 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.plugin.JetLanguage;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.lexer;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 
 public class JetToken extends IElementType {
     public JetToken(@NotNull @NonNls String debugName) {

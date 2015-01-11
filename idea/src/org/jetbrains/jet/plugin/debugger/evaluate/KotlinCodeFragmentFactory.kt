@@ -21,7 +21,7 @@ import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaCodeFragment
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import org.jetbrains.kotlin.psi.JetExpressionCodeFragment
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind

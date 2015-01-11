@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import java.io.File
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.descriptors.*
@@ -27,16 +27,16 @@ import java.io.ByteArrayOutputStream
 import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.jet.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles

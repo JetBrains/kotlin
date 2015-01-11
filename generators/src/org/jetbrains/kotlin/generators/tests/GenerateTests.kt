@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.generators.tests.generator.SimpleTestClassModel
 import java.io.File
 import java.util.regex.Pattern
 import junit.framework.TestCase
-import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest
+import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTest
 import org.jetbrains.jet.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
@@ -40,8 +40,8 @@ import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
-import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
-import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractJetJsCheckerTest
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
 import org.jetbrains.jet.completion.AbstractJSBasicCompletionTest
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest
@@ -84,7 +84,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
-import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
+import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
@@ -129,7 +129,7 @@ import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTes
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
-import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
+import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest

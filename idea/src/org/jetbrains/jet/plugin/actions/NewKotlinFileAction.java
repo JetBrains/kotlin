@@ -31,7 +31,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 

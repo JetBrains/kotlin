@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.plugin.JetLanguage
 import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker

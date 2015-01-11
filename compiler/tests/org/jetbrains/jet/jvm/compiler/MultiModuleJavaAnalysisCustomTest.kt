@@ -17,7 +17,7 @@
 package org.jetbrains.jet.jvm.compiler
 
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.jet.context.GlobalContext
+import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.*
 import org.junit.Assert
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
-import org.jetbrains.jet.analyzer.ResolverForProject
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import java.util.HashMap
-import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles

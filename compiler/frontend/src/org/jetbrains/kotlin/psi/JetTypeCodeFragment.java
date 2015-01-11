@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.types.JetType;
 
 public class JetTypeCodeFragment extends JetCodeFragment {
     public JetTypeCodeFragment(Project project, String name, CharSequence text, PsiElement context) {

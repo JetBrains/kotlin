@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.plugin.MainFunctionDetector;
+import org.jetbrains.kotlin.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;

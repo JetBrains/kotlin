@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.psi.JetLoopExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
