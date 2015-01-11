@@ -24,14 +24,14 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetEnumEntry;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 
 import java.io.IOException;
 import java.util.List;

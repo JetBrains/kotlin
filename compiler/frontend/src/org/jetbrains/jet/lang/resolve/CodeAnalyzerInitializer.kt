@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve
 
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor

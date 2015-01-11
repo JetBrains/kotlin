@@ -25,7 +25,7 @@ import com.intellij.testFramework.TestDataFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
 import java.io.IOException;

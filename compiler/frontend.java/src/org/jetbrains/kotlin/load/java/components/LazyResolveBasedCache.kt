@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.name.FqName
 import javax.inject.Inject
 import kotlin.properties.Delegates

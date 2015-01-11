@@ -28,7 +28,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.jet.plugin.completion.isAfterDot
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {

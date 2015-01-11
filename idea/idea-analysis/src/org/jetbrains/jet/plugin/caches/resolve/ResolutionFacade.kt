@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public trait ResolutionFacade {
 

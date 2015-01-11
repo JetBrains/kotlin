@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.typeBinding.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jet.test.util.trimIndent

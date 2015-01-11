@@ -32,7 +32,7 @@ import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.M
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {

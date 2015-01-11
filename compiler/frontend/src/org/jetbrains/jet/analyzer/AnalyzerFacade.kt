@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.analyzer
 
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.util.HashMap

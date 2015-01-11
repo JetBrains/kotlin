@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.jet.analyzer.AnalyzerFacade
 import org.jetbrains.jet.analyzer.ResolverForModule
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.jet.analyzer.PlatformAnalysisParameters
 import org.jetbrains.jet.analyzer.ResolverForProject
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider

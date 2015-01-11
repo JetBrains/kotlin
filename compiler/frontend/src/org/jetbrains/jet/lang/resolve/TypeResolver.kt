@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvi
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.jet.context.LazinessToken
-import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
-import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.LazyEntity
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.lexer.JetTokens
 

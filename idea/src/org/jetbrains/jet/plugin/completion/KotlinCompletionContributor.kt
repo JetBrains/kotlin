@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class KotlinCompletionContributor : CompletionContributor() {
 

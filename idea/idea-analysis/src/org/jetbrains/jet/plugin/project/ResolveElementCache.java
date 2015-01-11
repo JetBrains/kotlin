@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.*;
+import org.jetbrains.kotlin.resolve.lazy.*;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex;
 import org.jetbrains.kotlin.storage.LazyResolveStorageManager;

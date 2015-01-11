@@ -62,10 +62,10 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import com.intellij.openapi.project.IndexNotReadyException
 import org.jetbrains.kotlin.psi.JetBlockExpression
 

@@ -23,12 +23,13 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 
 import java.io.IOException;
 

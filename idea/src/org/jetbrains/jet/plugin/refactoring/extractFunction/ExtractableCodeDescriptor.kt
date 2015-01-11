@@ -58,7 +58,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Expressi
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil

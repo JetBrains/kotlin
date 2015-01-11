@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
-import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;

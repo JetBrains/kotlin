@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetPropertyDelegate
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.name.FqName
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor

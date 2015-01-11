@@ -38,7 +38,7 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 

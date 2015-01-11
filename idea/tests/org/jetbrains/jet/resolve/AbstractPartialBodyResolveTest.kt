@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.jet.plugin.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 
