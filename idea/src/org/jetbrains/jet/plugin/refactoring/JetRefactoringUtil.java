@@ -52,7 +52,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.plugin.util.string.StringPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;

@@ -26,15 +26,15 @@ import com.intellij.codeInsight.completion.*
 import java.util.*
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.plugin.util.makeNullable
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.makeNullable
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.jet.plugin.util.FuzzyType
-import org.jetbrains.jet.plugin.util.fuzzyReturnType
+import org.jetbrains.kotlin.plugin.util.FuzzyType
+import org.jetbrains.kotlin.plugin.util.fuzzyReturnType
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
@@ -42,15 +42,17 @@ trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
 }
 
-class SmartCompletion(val expression: JetExpression,
-                      val resolutionFacade: ResolutionFacade,
-                      val moduleDescriptor: ModuleDescriptor,
-                      val bindingContext: BindingContext,
-                      val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-                      val prefixMatcher: PrefixMatcher,
-                      val inheritorSearchScope: GlobalSearchScope,
-                      val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-                      val lookupElementFactory: LookupElementFactory) {
+class SmartCompletion(
+        val expression: JetExpression,
+        val resolutionFacade: ResolutionFacade,
+        val moduleDescriptor: ModuleDescriptor,
+        val bindingContext: BindingContext,
+        val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        val prefixMatcher: PrefixMatcher,
+        val inheritorSearchScope: GlobalSearchScope,
+        val toFromOriginalFileMapper: ToFromOriginalFileMapper,
+        val lookupElementFactory: LookupElementFactory
+) {
     private val project = expression.getProject()
 
     public class Result(

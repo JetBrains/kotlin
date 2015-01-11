@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

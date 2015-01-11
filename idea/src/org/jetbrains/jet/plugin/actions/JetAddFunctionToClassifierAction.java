@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
 import java.util.ArrayList;

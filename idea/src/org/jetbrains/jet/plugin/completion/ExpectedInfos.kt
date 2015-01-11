@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.JetContainerNode
 import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
 import org.jetbrains.kotlin.psi.JetWhenConditionWithExpression
 import org.jetbrains.kotlin.psi.JetWhenEntry
 import org.jetbrains.kotlin.psi.JetWhenExpression

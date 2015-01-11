@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.JetLanguage
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import java.util.HashMap
 import kotlin.properties.Delegates
 

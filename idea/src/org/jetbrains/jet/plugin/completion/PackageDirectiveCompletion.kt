@@ -22,7 +22,7 @@ import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 
 /**

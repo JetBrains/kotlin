@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import javax.swing.*;

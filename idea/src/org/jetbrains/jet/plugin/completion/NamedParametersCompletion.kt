@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 

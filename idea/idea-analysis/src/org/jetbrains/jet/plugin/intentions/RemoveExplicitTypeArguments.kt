@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.plugin.util.approximateFlexibleTypes
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

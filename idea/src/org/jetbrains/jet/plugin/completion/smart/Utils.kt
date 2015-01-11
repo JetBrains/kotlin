@@ -40,22 +40,22 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.ArrayList
 import java.util.HashMap
-import org.jetbrains.jet.plugin.util.FuzzyType
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.plugin.util.nullability
-import org.jetbrains.jet.plugin.util.TypeNullability
+import org.jetbrains.kotlin.plugin.util.FuzzyType
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.nullability
+import org.jetbrains.kotlin.plugin.util.TypeNullability
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val offset = context.getEditor().getCaretModel().getOffset()
-        val startOffset = offset - item.getLookupString().length
+        val startOffset = offset - item.getLookupString().length()
         context.getDocument().deleteString(startOffset, offset) // delete inserted lookup string
         context.getDocument().insertString(startOffset, textBeforeCaret + textAfterCaret)
-        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length)
+        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length())
 
         if (shortenRefs) {
-            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length + textAfterCaret.length)
+            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length() + textAfterCaret.length())
         }
     }
 }
@@ -66,8 +66,8 @@ fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: In
 }
 
 fun mergeTails(tails: Collection<Tail?>): Tail? {
-    if (tails.size == 1) return tails.single()
-    return if (HashSet(tails).size == 1) tails.first() else null
+    if (tails.size() == 1) return tails.single()
+    return if (HashSet(tails).size() == 1) tails.first() else null
 }
 
 fun LookupElement.addTail(tail: Tail?): LookupElement {

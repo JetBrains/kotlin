@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import com.intellij.codeInsight.completion.PrefixMatcher
 import org.jetbrains.kotlin.name.Name
 import com.intellij.codeInsight.lookup.LookupElementPresentation
@@ -53,10 +53,10 @@ import org.jetbrains.kotlin.psi.JetValueArgumentList
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import java.util.ArrayList
-import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.plugin.util.getImplicitReceiversWithInstance
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.util.FuzzyType
+import org.jetbrains.kotlin.plugin.util.FuzzyType
 import org.jetbrains.kotlin.psi.JetLabeledExpression
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.parents

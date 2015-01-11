@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {

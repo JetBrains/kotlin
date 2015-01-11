@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.types.Variance
 
 private fun getTypeSubstitution(baseType: JetType, derivedType: JetType): LinkedHashMap<TypeConstructor, TypeProjection>? {

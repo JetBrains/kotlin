@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.util
+package org.jetbrains.kotlin.plugin.util
 
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -24,7 +24,6 @@ import java.util.HashSet
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import java.util.LinkedHashMap
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.util
+package org.jetbrains.kotlin.plugin.util
 
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.JetTypeImpl
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.CollectionClassMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.types.flexibility
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)

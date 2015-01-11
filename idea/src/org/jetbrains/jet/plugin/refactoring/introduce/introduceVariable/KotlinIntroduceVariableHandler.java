@@ -59,7 +59,7 @@ import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.PatternMatchingPackage;

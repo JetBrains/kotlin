@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
-import org.jetbrains.jet.plugin.util.CallType
-import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.plugin.util.substituteExtensionIfCallable
+import org.jetbrains.kotlin.plugin.util.CallType
+import org.jetbrains.kotlin.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.plugin.util.getImplicitReceiversWithInstance
 
 public class KotlinIndicesHelper(
         private val project: Project,

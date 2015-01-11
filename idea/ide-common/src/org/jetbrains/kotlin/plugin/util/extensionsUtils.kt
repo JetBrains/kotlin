@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.util
+package org.jetbrains.kotlin.plugin.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -31,21 +31,23 @@ public enum class CallType {
 
     INFIX {
         override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1
+                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
     }
 
     UNARY {
         override fun canCall(descriptor: DeclarationDescriptor)
-                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 0
+                = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
     }
 
     public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallable(receivers: Collection<ReceiverValue>,
-                                                  context: BindingContext,
-                                                  dataFlowInfo: DataFlowInfo,
-                                                  callType: CallType): Collection<CallableDescriptor> {
+public fun CallableDescriptor.substituteExtensionIfCallable(
+        receivers: Collection<ReceiverValue>,
+        context: BindingContext,
+        dataFlowInfo: DataFlowInfo,
+        callType: CallType
+): Collection<CallableDescriptor> {
     val stream = receivers.stream().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo).stream() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return stream.firstOrNull()?.let { listOf(it) } ?: listOf()

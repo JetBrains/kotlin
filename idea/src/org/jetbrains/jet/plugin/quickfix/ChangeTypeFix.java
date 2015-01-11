@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetTypeReference;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

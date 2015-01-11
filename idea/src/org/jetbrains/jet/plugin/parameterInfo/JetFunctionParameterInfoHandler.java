@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper;
+import org.jetbrains.kotlin.plugin.codeInsight.ReferenceVariantsHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.awt.*;

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 

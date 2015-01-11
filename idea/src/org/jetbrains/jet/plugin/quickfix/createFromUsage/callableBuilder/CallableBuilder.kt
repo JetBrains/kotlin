@@ -48,7 +48,6 @@ import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
-import org.jetbrains.jet.plugin.util.isUnit
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -62,12 +61,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import java.util.LinkedHashMap
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.jet.plugin.util.isAny
+import org.jetbrains.kotlin.plugin.util.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.jet.plugin.refactoring.getLineCount
+import org.jetbrains.kotlin.plugin.util.isUnit
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"

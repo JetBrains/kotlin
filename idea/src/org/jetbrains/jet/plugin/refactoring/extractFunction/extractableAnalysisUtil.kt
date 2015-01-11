@@ -64,7 +64,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

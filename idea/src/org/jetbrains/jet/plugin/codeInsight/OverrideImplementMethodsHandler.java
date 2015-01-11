@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.quickfix.QuickfixPackage;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 

@@ -88,7 +88,7 @@ import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 
 public trait UnificationResult {

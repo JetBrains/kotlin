@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.util.UtilPackage;
+import org.jetbrains.kotlin.plugin.util.UtilPackage;
 import org.jetbrains.kotlin.di.InjectorForMacros;
 
 import java.util.ArrayList;

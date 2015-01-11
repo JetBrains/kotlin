@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
 import java.awt.*;

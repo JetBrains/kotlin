@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.util.UtilPackage;
+import org.jetbrains.kotlin.plugin.util.UtilPackage;
 
 import java.util.Collections;
 import java.util.LinkedList;

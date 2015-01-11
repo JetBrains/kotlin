@@ -41,17 +41,8 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.CommonSupertypes
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.JetTypeImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import java.util.Collections
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ExpressionValue
@@ -62,11 +53,10 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.util.isUnit
+import org.jetbrains.kotlin.plugin.util.isUnit
 
 trait Parameter {
     val argumentText: String

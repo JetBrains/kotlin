@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import java.util.LinkedList;
 import java.util.List;

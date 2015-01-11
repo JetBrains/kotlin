@@ -21,7 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {

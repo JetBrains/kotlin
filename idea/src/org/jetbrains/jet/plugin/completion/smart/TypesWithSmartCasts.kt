@@ -30,7 +30,7 @@ import java.util.HashSet
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
 
 class TypesWithSmartCasts(val bindingContext: BindingContext) {
     public fun calculate(expression: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {

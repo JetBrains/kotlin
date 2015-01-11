@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(

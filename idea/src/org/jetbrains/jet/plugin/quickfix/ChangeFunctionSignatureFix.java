@@ -42,7 +42,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import java.util.List;
 

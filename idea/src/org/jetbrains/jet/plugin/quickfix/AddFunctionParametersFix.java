@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.refactoring.SimpleCollectingValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import java.util.ArrayList;
 import java.util.Collection;

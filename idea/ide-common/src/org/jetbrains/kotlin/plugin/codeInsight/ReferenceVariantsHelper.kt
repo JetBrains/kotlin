@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight
+package org.jetbrains.kotlin.plugin.codeInsight
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-
 import java.util.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.name.Name
@@ -36,9 +35,9 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.plugin.util.CallType
-import org.jetbrains.jet.plugin.util.substituteExtensionIfCallable
-import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.plugin.util.CallType
+import org.jetbrains.kotlin.plugin.util.substituteExtensionIfCallable
+import org.jetbrains.kotlin.plugin.util.getImplicitReceiversWithInstance
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,

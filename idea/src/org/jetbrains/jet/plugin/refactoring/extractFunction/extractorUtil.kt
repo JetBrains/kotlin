@@ -56,7 +56,7 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.StronglyMatched
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
