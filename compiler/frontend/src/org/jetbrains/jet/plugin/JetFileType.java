@@ -31,7 +31,7 @@ public class JetFileType extends LanguageFileType {
         @NotNull
         @Override
         protected Icon compute() {
-            return IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_file.png");
+            return IconLoader.getIcon("/org/jetbrains/kotlin/plugin/icons/kotlin_file.png");
         }
     };
 

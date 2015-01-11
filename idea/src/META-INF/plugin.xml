@@ -81,7 +81,7 @@
       <add-to-group group-id="EditorGutterPopupMenu" anchor="last"/>
     </group>
 
-    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
+    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/plugin/icons/kotlin13.png"
            class="org.jetbrains.jet.plugin.actions.KotlinActionGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
@@ -443,7 +443,7 @@
     <toolWindow id="Kotlin Bytecode"
                 factoryClass="org.jetbrains.jet.plugin.internal.KotlinBytecodeToolWindow$Factory"
                 anchor="right"
-                icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
+                icon="/org/jetbrains/kotlin/plugin/icons/kotlin13.png"
                 canCloseContents="true"
         />
 
