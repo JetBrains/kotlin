@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -179,8 +178,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         File libraryOut = new File(tmpdir, "libraryOut");
         compileKotlinWithJava(
-                Arrays.asList(librarySrc.listFiles(JetTestCaseBuilder.filterByExtension("java"))),
-                Arrays.asList(librarySrc.listFiles(JetTestCaseBuilder.filterByExtension("kt"))),
+                FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), librarySrc),
+                FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), librarySrc),
                 libraryOut,
                 getTestRootDisposable()
         );

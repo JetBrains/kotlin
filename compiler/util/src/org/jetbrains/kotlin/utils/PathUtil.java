@@ -129,11 +129,11 @@ public class PathUtil {
 
     @NotNull
     public static File getPathUtilJar() {
-        return getJarPathForClass(PathUtil.class);
+        return getResourcePathForClass(PathUtil.class);
     }
 
     @NotNull
-    public static File getJarPathForClass(@NotNull Class aClass) {
+    public static File getResourcePathForClass(@NotNull Class aClass) {
         String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
         return new File(resourceRoot).getAbsoluteFile();
     }
