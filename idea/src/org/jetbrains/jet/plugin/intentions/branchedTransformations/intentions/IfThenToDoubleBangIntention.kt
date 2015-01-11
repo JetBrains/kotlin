@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.inlineBaseExpressionIfApplicableWithPrompt
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
 import org.jetbrains.kotlin.psi.JetThrowExpression
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpressionOrEmptyBlock
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement

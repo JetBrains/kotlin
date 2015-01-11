@@ -42,7 +42,7 @@ import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 
 public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 

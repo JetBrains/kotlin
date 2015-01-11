@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetConstantExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetStringTemplateEntry;
 import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

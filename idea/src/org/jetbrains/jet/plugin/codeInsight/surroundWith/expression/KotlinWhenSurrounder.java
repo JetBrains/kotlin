@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetWhenCondition;
 import org.jetbrains.kotlin.psi.JetWhenEntry;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;

@@ -26,7 +26,7 @@ import org.jetbrains.jet.plugin.intentions.JetTypeLookupExpression
 import com.intellij.codeInsight.template.TemplateEditingAdapter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.Template
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.introduceValueForCondition

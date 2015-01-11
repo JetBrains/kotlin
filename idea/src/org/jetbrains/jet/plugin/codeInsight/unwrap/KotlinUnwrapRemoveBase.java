@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetBlockExpression;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import java.util.List;

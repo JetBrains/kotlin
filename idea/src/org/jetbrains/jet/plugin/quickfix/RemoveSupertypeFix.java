@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 public class RemoveSupertypeFix extends JetIntentionAction<JetDelegationSpecifier> {
     private final JetDelegationSpecifier superClass;

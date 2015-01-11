@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import com.intellij.psi.PsiElement
 
 public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntention<JetPrefixExpression>("simplify.negated.binary.expression", javaClass()) {
 

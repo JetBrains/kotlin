@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import com.intellij.codeInsight.intention.IntentionAction
 

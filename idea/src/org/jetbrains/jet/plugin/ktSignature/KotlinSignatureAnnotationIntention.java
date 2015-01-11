@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;

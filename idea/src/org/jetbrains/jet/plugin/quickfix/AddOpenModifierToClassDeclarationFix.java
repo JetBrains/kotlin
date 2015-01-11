@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
     private JetClass classDeclaration;

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetModifierListOwner;
 import org.jetbrains.kotlin.psi.JetPropertyAccessor;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
 

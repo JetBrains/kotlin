@@ -22,7 +22,7 @@ import javax.swing.JPanel
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod

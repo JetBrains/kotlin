@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.usages.UsageTarget
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProviderEx
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum.*
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {

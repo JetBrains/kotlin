@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.highlighter.markers
 import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.PsiMethod

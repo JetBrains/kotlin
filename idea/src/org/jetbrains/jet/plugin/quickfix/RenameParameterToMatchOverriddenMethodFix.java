@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionAction<JetParameter>{

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.quickfix.JetIntentionAction
 
 public abstract class CreateFromUsageFixBase(element: PsiElement) : JetIntentionAction<PsiElement>(element) {

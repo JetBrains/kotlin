@@ -34,7 +34,7 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import javax.swing.*;

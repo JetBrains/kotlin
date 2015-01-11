@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetConstantExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.LinkedList
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law", javaClass()

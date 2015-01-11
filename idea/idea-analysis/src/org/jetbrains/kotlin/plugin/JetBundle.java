@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.kotlin.plugin;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
@@ -29,23 +29,23 @@ public class JetBundle {
     private static Reference<ResourceBundle> ourBundle;
 
     @NonNls
-    private static final String BUNDLE = "org.jetbrains.jet.plugin.JetBundle";
+    private static final String BUNDLE = "org.jetbrains.kotlin.plugin.JetBundle";
 
     private JetBundle() {
     }
 
     @NotNull
-    public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE)String key, Object... params) {
-      return CommonBundle.message(getBundle(), key, params);
+    public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
+        return CommonBundle.message(getBundle(), key, params);
     }
 
     private static ResourceBundle getBundle() {
-      ResourceBundle bundle = null;
-      if (ourBundle != null) bundle = ourBundle.get();
-      if (bundle == null) {
-        bundle = ResourceBundle.getBundle(BUNDLE);
-        ourBundle = new SoftReference<ResourceBundle>(bundle);
-      }
-      return bundle;
+        ResourceBundle bundle = null;
+        if (ourBundle != null) bundle = ourBundle.get();
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(BUNDLE);
+            ourBundle = new SoftReference<ResourceBundle>(bundle);
+        }
+        return bundle;
     }
 }

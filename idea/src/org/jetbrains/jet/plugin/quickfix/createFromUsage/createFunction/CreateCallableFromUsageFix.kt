@@ -3,7 +3,7 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.resolve.DescriptorUtils

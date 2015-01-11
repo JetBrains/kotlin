@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetModifierKeywordToken modifier;
