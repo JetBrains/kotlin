@@ -900,6 +900,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("FunctionAnnotation1.kt")
+            public void testFunctionAnnotation1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/FunctionAnnotation1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FunctionAnnotation2.kt")
+            public void testFunctionAnnotation2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/FunctionAnnotation2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoParameterAnnotationAutoPopup1.kt")
             public void testNoParameterAnnotationAutoPopup1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/NoParameterAnnotationAutoPopup1.kt");
@@ -948,6 +960,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("ParameterAnnotation7.kt")
+            public void testParameterAnnotation7() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation7.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterAnnotation8.kt")
             public void testParameterAnnotation8() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotation8.kt");
@@ -975,6 +993,42 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("ParameterAnnotationAutoPopup2.kt")
             public void testParameterAnnotationAutoPopup2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/ParameterAnnotationAutoPopup2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotation1.kt")
+            public void testTopLevelAnnotation1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotation1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotation2.kt")
+            public void testTopLevelAnnotation2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotation2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotation3.kt")
+            public void testTopLevelAnnotation3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotation3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotation4.kt")
+            public void testTopLevelAnnotation4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotation4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotationArg1.kt")
+            public void testTopLevelAnnotationArg1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotationArg1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelAnnotationArg2.kt")
+            public void testTopLevelAnnotationArg2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/annotations/TopLevelAnnotationArg2.kt");
                 doTest(fileName);
             }
         }
