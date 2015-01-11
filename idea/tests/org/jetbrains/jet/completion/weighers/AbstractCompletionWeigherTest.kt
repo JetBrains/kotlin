@@ -17,11 +17,11 @@
 package org.jetbrains.jet.completion.weighers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.testng.Assert
-import org.jetbrains.jet.test.util.configureWithExtraFile
+import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor

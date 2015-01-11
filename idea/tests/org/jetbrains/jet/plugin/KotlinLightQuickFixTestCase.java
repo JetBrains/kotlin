@@ -18,8 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 abstract public class KotlinLightQuickFixTestCase extends LightQuickFixTestCase {
     @Override

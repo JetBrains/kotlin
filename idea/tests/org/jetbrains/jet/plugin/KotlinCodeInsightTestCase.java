@@ -18,8 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     @Override

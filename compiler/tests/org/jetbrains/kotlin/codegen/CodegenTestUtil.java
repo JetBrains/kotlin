@@ -22,8 +22,6 @@ import com.intellij.psi.PsiFile;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
@@ -34,6 +32,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;

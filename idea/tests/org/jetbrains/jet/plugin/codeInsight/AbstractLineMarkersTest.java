@@ -29,7 +29,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;

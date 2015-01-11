@@ -29,12 +29,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.KotlinLightQuickFixTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import org.junit.Assert;
 

@@ -27,9 +27,6 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.util.DescriptorValidator;
-import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.context.GlobalContext;
@@ -54,14 +51,17 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.util.DescriptorValidator;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
-import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 

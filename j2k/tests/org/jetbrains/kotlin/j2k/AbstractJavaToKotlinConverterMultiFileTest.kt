@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import java.io.File
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor

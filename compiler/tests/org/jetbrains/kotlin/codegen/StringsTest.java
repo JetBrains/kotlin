@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -21,8 +21,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
@@ -34,6 +32,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;

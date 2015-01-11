@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.fail
 
 public object AstAccessControl {

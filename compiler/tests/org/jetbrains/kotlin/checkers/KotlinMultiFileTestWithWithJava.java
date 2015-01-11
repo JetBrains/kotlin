@@ -21,14 +21,14 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetLiteFixture;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;

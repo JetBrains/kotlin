@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.decompiler.stubBuilder
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import java.io.File
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
 
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {

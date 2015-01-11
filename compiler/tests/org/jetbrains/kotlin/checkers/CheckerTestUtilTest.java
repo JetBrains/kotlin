@@ -21,14 +21,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetLiteFixture;
 
 import java.io.File;
 import java.util.Collections;

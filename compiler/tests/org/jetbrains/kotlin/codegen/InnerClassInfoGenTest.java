@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;

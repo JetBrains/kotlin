@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;

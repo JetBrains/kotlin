@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

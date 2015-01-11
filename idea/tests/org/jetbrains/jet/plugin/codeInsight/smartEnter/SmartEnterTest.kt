@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.codeInsight.smartEnter
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.plugin.JetFileType
-import org.jetbrains.jet.test.util.trimIndent
+import org.jetbrains.kotlin.test.util.trimIndent
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 

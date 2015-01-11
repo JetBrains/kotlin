@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.caches.resolve
 
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import org.jetbrains.jet.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.command.WriteCommandAction
 import java.io.File

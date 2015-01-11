@@ -19,13 +19,12 @@ package org.jetbrains.jet.plugin.refactoring.nameSuggester;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
-import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import java.util.Arrays;

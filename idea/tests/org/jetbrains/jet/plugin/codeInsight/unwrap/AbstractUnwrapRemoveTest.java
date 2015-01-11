@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.List;

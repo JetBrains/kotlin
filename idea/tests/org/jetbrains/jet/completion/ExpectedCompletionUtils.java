@@ -31,7 +31,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.stubs.AstAccessControl;
 import org.junit.Assert;

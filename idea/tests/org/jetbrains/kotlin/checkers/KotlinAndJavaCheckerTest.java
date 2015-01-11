@@ -21,7 +21,7 @@ import com.intellij.codeInspection.nullable.NullableStuffInspection;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 

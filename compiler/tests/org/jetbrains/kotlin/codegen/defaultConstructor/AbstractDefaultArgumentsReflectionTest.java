@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.codegen.defaultConstructor;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
 
 public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTestCase {
 

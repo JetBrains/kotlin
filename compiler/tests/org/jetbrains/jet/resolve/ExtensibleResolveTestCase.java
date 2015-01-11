@@ -18,11 +18,11 @@ package org.jetbrains.jet.resolve;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetLiteFixture;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.util.List;

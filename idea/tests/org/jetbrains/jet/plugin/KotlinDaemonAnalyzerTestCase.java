@@ -18,8 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCase {
     @Override

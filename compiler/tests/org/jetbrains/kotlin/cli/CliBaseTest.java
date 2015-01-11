@@ -22,14 +22,14 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.jet.test.Tmpdir;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.Tmpdir;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 

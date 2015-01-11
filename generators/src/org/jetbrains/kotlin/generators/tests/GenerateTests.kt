@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.codegen.AbstractTopLevelMembersInvocationTest
 import org.jetbrains.kotlin.codegen.AbstractCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
-import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
-import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
-import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
-import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
+import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
-import org.jetbrains.jet.repl.AbstractReplInterpreterTest
+import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJetJsCheckerTest
@@ -70,7 +70,7 @@ import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractOutOfBlockModificationTest
 import org.jetbrains.jet.completion.AbstractDataFlowValueRenderingTest
 import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest
-import org.jetbrains.jet.evaluate.AbstractEvaluateExpressionTest
+import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
 import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.generators.tests.generator.SingleClassTestModel
@@ -131,7 +131,7 @@ import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
 import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
-import org.jetbrains.jet.types.AbstractJetTypeBindingTest
+import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractDynamicTest

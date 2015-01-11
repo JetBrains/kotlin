@@ -25,7 +25,7 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import kotlin.test.assertEquals
 import java.io.File
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"

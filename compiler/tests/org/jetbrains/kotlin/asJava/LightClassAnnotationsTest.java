@@ -21,9 +21,9 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.util.Collections;

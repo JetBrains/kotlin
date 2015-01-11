@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.generators.tests.generator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;

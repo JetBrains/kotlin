@@ -30,12 +30,12 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.test.Tmpdir;
-import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.Tmpdir;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
 

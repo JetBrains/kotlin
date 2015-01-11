@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
 import org.junit.Assert
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor

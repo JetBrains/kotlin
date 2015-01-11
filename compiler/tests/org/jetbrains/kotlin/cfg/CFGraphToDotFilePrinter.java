@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cfg;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor;
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitIn
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

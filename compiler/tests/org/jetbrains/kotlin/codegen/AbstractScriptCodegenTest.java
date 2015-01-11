@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.ScriptNameUtil;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.lang.reflect.Constructor;

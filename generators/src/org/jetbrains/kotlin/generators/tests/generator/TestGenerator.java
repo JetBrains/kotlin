@@ -22,10 +22,13 @@ import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.utils.Printer;
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil;
+import org.jetbrains.kotlin.test.InnerTestClasses;
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.utils.Printer;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +44,6 @@ public class TestGenerator {
         JVM,
         JS
     }
-
-    public static final String NAVIGATION_METADATA = "navigationMetadata";
 
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
     private static final Class RUNNER = JUnit3RunnerWithInners.class;
@@ -80,11 +81,11 @@ public class TestGenerator {
         p.println("package ", suiteClassPackage, ";");
         p.println();
         p.println("import com.intellij.testFramework.TestDataPath;");
+        p.println("import " + InnerTestClasses.class.getCanonicalName() + ";");
         p.println("import ", RUNNER.getCanonicalName(), ";");
-        p.println("import org.jetbrains.jet.JetTestUtils;");
-        p.println("import org.jetbrains.jet.test.InnerTestClasses;");
-        p.println("import org.jetbrains.jet.test.TestMetadata;");
-        p.println("import org.junit.runner.RunWith;");
+        p.println("import " + JetTestUtils.class.getCanonicalName() + ";");
+        p.println("import " + TestMetadata.class.getCanonicalName() + ";");
+        p.println("import " + RunWith.class.getCanonicalName() + ";");
         p.println();
         p.println("import java.io.File;");
         p.println("import java.util.regex.Pattern;");

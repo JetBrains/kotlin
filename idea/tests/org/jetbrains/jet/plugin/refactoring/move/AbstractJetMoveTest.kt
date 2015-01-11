@@ -33,24 +33,19 @@ import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.openapi.util.Computable
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.MoveHandler
-import org.jetbrains.jet.getString
-import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
@@ -58,7 +53,6 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKo
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.testing.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 

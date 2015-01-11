@@ -1,7 +1,7 @@
 package test;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class AddingNullability {
     @ExpectLoadError("Auto type 'kotlin.Int' is not-null, while type in alternative signature is nullable: 'Int?'")

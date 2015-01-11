@@ -27,7 +27,7 @@ import org.junit.Assert
 import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.ObjectValue

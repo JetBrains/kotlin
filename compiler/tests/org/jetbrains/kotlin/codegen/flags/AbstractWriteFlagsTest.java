@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.codegen.flags;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -33,8 +33,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
-import static org.jetbrains.jet.InTextDirectivesUtils.findStringWithPrefixes;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes;
 
 /*
  * Test correctness of written flags in class file

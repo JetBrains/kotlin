@@ -21,9 +21,9 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;

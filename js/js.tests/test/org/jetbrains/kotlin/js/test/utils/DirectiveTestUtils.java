@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
 import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectInstances;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
 import static org.junit.Assert.*;
 
 public class DirectiveTestUtils {

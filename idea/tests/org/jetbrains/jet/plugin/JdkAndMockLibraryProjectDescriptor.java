@@ -22,7 +22,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
-import org.jetbrains.jet.MockLibraryUtil;
+import org.jetbrains.kotlin.test.MockLibraryUtil;
 
 import java.io.File;
 

@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.kotlin.serialization.ClassData;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.serialization.ClassData;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

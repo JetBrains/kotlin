@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
 

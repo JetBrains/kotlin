@@ -19,7 +19,7 @@ package org.jetbrains.jet.search;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.searches.AnnotatedMembersSearch;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;

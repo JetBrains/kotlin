@@ -20,7 +20,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.renderDataFlowValue
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase

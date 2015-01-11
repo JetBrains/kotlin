@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override

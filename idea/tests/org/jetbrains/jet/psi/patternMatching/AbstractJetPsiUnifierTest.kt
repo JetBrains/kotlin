@@ -27,12 +27,12 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import java.io.File
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.psi.JetWhenCondition
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.jet.testing.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 

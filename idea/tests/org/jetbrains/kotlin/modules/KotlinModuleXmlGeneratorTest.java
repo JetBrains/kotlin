@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.util.Arrays;

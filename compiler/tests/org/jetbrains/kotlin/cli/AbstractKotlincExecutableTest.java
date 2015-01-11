@@ -20,10 +20,10 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.util.List;

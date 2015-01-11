@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.debugger.evaluate
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
 public abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {

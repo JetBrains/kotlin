@@ -22,7 +22,6 @@ import java.io.File
 import org.junit.Assert
 import com.google.gson.JsonParser
 import com.google.gson.JsonObject
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
@@ -38,13 +37,12 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.isSubpackageOf
-import org.jetbrains.jet.getString
-import org.jetbrains.jet.getNullableString
+import org.jetbrains.jet.plugin.refactoring.move.getString
+import org.jetbrains.jet.plugin.refactoring.move.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils

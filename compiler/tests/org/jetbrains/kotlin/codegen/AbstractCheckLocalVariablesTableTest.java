@@ -23,12 +23,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;

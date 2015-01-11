@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

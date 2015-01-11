@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.resolve.typeApproximation
 
-import org.jetbrains.jet.JetLiteFixture
+import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.ConfigurationKind
+import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.diagnostics.Severity

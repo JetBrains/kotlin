@@ -21,8 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.name.Name;
@@ -31,6 +29,8 @@ import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.Variance;
 

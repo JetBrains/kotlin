@@ -3,7 +3,7 @@ package test;
 import java.util.*;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class WrongTypeParameterBoundStructure2 {
     //@ExpectLoadError("'kotlin.List<kotlin.Cloneable>?' type in method signature has 1 type arguments, while 'List' in alternative signature has 0 of them")

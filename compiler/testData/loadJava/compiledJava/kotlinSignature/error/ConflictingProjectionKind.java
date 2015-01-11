@@ -4,7 +4,7 @@ import java.lang.Number;
 import java.util.*;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class ConflictingProjectionKind {
     @ExpectLoadError("Projection kind 'in' is conflicting with variance of kotlin.List")

@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.JetTypeReference
@@ -37,7 +37,7 @@ import org.jetbrains.jet.completion.ExpectedCompletionUtils
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.completion.handlers.AbstractCompletionHandlerTest
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {

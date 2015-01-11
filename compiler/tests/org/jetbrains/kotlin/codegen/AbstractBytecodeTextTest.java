@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;

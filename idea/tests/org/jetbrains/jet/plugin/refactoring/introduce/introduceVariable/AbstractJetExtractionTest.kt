@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
@@ -26,9 +26,9 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.selectElements
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import com.intellij.psi.PsiComment
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase

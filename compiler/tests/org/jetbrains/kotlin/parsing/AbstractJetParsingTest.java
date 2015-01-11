@@ -24,12 +24,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.psi.IfNotParsed;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.resolve.constraintSystem
 
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.di.InjectorForTests
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor

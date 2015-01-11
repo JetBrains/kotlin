@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
 
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
+import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCase {
     protected void doTest(String testFileName) throws Exception {

@@ -3,7 +3,7 @@ package test;
 import org.jetbrains.annotations.NotNull;
 import java.lang.CharSequence;
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public interface AddNullabilitySameJavaType {
 

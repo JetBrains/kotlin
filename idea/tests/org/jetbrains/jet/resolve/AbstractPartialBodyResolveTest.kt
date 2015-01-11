@@ -20,12 +20,12 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.HashSet
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.junit.Assert

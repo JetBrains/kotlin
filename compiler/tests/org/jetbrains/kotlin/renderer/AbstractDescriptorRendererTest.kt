@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.util.ArrayList
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.ConfigurationKind
+import org.jetbrains.kotlin.test.ConfigurationKind
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession

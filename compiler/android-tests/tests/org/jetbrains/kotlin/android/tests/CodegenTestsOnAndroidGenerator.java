@@ -22,8 +22,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
@@ -33,6 +31,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 

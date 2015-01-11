@@ -25,8 +25,8 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 
