@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod

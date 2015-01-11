@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.kotlin.resolve.constants.EnumValue;
 
 import java.util.HashMap;
 import java.util.Map;

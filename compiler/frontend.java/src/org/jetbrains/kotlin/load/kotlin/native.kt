@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
 
-import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -28,9 +26,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
-import org.jetbrains.jet.lang.resolve.diagnostics.SuppressDiagnosticsByAnnotations
-import org.jetbrains.jet.lang.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
+import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
+import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 

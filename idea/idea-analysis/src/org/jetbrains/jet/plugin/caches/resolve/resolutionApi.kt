@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor

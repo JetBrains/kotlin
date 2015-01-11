@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess

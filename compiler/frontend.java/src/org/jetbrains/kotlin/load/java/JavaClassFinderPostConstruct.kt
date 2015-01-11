@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import javax.inject.Inject
 import javax.annotation.PostConstruct
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 
 public open class JavaClassFinderPostConstruct {
     PostConstruct public open fun postCreate() {}

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.List;
 

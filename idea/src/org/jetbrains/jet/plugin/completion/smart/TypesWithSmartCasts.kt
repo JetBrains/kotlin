@@ -27,9 +27,9 @@ import java.util.HashMap
 import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class TypesWithSmartCasts(val bindingContext: BindingContext) {

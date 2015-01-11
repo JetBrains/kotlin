@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.kotlin.name.Name;
 
 public class LazyScriptClassDescriptor extends LazyClassDescriptor {
     public LazyScriptClassDescriptor(

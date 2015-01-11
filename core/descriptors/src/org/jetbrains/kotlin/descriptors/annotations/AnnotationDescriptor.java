@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors.annotations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Map;

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 public class JavaVisibilities {
     private JavaVisibilities() {

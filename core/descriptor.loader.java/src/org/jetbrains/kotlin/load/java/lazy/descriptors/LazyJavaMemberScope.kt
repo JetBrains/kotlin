@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude.NonExtensions
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContext,

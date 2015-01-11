@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;

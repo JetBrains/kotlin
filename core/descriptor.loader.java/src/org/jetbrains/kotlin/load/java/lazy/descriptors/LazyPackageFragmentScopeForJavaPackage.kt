@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.lazy.findClassInJava
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageFragmentScopeForJavaPackage(
         c: LazyJavaResolverContext,

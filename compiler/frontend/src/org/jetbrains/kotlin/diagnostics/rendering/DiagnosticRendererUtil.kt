@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject
 import org.jetbrains.kotlin.renderer.DescriptorRendererImpl
 
 public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter

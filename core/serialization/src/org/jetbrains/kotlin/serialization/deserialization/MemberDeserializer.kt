@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.*
 

@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.resolve.OverrideResolver
-import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.name.Name
 import java.util.ArrayList

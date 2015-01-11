@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.psi.JetStringTemplateEntry
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetBlockExpression

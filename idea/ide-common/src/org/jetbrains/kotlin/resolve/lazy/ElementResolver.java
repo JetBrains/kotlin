@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
@@ -48,7 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
+import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
 public abstract class ElementResolver {
 

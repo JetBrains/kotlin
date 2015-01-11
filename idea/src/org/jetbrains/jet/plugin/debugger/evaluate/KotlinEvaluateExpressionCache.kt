@@ -27,7 +27,7 @@ import java.util.ArrayList
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
 import org.jetbrains.jet.plugin.util.application.runReadAction

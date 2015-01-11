@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import java.util.Set;

@@ -3,11 +3,11 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetTypeConstraint
 import org.jetbrains.kotlin.psi.JetMultiDeclarationEntry
 import org.jetbrains.kotlin.psi.JetParameter
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetPropertyDelegate

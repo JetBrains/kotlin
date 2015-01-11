@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 
 public class ClassObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull

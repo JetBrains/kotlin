@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.ArrayList;

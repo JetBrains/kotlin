@@ -19,7 +19,7 @@ package org.jetbrains.jet.resolve
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.JetExpression

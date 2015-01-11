@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.debugText.*
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.Importer
-import org.jetbrains.jet.lang.resolve.ImportsResolver
-import org.jetbrains.jet.lang.resolve.JetModuleUtil
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.Importer
+import org.jetbrains.kotlin.resolve.ImportsResolver
+import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.utils.Printer
 
-import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import java.util.LinkedHashSet
 
 public class LazyImportScope(private val resolveSession: ResolveSession,

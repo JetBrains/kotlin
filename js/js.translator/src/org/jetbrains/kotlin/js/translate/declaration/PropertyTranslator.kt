@@ -21,7 +21,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.context.Namer.*
 import org.jetbrains.kotlin.js.translate.utils.ast.*
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 /**
  * Translates single property /w accessors.

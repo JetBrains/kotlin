@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -57,7 +57,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.unwrapFakeOverride;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.unwrapFakeOverride;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private static final File BUILT_INS_COMPILABLE_SRC_DIR =

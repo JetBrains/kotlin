@@ -21,18 +21,18 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
-import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 
 public class LabelResolver {
     

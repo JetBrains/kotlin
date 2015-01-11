@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.List;
 

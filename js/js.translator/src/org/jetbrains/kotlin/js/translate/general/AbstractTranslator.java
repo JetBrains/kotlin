@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 public abstract class AbstractTranslator {
 

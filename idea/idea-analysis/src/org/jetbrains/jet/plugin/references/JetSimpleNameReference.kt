@@ -31,10 +31,10 @@ import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 

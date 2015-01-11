@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;

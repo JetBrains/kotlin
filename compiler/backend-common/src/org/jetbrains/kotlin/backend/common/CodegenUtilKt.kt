@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.types.JetType
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.MemberComparator
 import java.util.Comparator
 import org.jetbrains.kotlin.types.isDynamic
 

@@ -24,7 +24,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetModifierList
 

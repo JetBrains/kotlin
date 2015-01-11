@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.*
 import com.intellij.debugger.engine.evaluation.expression.*
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -55,7 +55,7 @@ import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache.*
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
@@ -69,7 +69,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.kotlin.psi.JetElement

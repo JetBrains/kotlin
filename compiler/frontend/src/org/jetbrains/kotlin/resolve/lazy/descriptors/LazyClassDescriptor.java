@@ -28,14 +28,16 @@ import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.ModifiersChecker;
-import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ModifiersChecker;
+import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -44,26 +46,24 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.SyntheticClassObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
-import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.kotlin.name.SpecialNames.getClassObjectName;
-import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject;
+import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
+import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {

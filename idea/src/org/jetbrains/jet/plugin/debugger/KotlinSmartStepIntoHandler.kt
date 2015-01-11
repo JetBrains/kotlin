@@ -23,7 +23,7 @@ import java.util.Collections
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
@@ -37,7 +37,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

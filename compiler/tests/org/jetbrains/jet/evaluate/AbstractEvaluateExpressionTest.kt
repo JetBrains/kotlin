@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.evaluate
 
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.resolve.annotation.AbstractAnnotationDescriptorResolveTest
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
@@ -24,13 +24,13 @@ import org.jetbrains.jet.InTextDirectivesUtils
 import kotlin.test.assertNotNull
 import java.util.regex.Pattern
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.lang.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
+import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant
 import java.util.HashMap
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.types.TypeUtils
 
 public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {

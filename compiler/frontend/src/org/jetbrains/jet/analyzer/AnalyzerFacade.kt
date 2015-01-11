@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.util.HashMap
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext

@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElementResolveResult
 import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil

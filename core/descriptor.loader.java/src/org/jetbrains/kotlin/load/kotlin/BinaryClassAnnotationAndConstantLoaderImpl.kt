@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.constants.ArrayValue
-import org.jetbrains.jet.lang.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue
-import org.jetbrains.jet.lang.resolve.constants.createCompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
+import org.jetbrains.kotlin.resolve.constants.createCompileTimeConstant
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 
 public class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,

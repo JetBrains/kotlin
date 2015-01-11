@@ -40,7 +40,7 @@ import org.jetbrains.jet.analyzer.ModuleInfo
 import java.util.HashMap
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.jet.lang.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {

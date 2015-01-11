@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.jet.plugin.MainFunctionDetector;

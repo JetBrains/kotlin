@@ -62,7 +62,7 @@ import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

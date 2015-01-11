@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class DeserializedAnnotations(
         storageManager: StorageManager,

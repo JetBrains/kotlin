@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.types;
 import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.kotlin.storage.NotNullLazyValue;
-import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.storage.NotNullLazyValue;
+import org.jetbrains.kotlin.storage.StorageManager;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
+import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 
 public class DeferredType extends DelegatingType implements LazyType {
 

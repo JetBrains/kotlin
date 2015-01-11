@@ -38,7 +38,7 @@ import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 

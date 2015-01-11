@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
@@ -34,10 +32,12 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 
 import javax.inject.Inject;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class TraceBasedJavaResolverCache implements JavaResolverCache {
     private BindingTrace trace;

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 
 public class DeserializationComponents(

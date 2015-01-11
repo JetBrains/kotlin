@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.Named
 import java.util.IdentityHashMap
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import java.util.ArrayList
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.HashMap
 import org.jetbrains.kotlin.types.JetTypeImpl
 import java.util.regex.Pattern

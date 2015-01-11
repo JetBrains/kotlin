@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.context
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isAncestor
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope

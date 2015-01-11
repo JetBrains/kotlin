@@ -16,17 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 public trait VariableAsFunctionResolvedCall {
     public val functionCall: ResolvedCall<FunctionDescriptor>

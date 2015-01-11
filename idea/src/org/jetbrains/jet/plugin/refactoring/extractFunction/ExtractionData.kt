@@ -27,7 +27,7 @@ import kotlin.properties.Delegates
 import java.util.HashMap
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetBlockExpression
@@ -38,7 +38,7 @@ import java.util.ArrayList
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.JetSuperExpression
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

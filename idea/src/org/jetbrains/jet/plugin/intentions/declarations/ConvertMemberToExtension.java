@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -43,7 +43,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 public class ConvertMemberToExtension extends BaseIntentionAction {
 

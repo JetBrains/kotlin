@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo

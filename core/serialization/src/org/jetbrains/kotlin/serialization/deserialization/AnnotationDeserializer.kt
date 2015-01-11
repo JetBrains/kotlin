@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId

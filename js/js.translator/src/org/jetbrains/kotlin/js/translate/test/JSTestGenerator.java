@@ -22,12 +22,12 @@ import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.JetTestFunctionDetector;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Collection;
 import java.util.Collections;

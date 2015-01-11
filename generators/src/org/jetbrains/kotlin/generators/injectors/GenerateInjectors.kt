@@ -21,7 +21,7 @@ import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.jet.lang.resolve.*
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.load.java.components.*

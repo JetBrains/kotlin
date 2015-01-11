@@ -21,29 +21,29 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnonymousObject;
 import static org.jetbrains.kotlin.js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject;
 
 public final class TranslationUtils {
 

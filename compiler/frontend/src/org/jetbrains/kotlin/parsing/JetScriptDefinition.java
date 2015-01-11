@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.parsing;
 
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.resolve.ImportPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;

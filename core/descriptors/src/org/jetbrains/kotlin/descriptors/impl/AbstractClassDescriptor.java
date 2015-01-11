@@ -21,17 +21,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.types.*;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;

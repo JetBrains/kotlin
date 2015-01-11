@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object CallableReferenceTranslator {
 

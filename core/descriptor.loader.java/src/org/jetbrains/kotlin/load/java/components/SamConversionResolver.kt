@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.java.components
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.load.java.structure.JavaMethod

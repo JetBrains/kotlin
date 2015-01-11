@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.jet.lang.resolve.AnnotationResolver
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.AnnotationResolver
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.BindingContext
 
 abstract class LazyAnnotationsContext(
          val annotationResolver: AnnotationResolver,

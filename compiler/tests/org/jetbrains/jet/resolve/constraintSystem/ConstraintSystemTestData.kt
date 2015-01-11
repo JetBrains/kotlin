@@ -20,12 +20,12 @@ import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.project.Project
 import java.util.regex.Pattern
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 

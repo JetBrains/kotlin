@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil

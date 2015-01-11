@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public trait DeclarationProvider {
     public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>

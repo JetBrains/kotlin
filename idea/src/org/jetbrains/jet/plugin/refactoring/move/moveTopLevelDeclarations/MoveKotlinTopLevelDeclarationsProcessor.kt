@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.jet.plugin.refactoring.getUsageContext
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import com.intellij.psi.PsiModifierListOwner

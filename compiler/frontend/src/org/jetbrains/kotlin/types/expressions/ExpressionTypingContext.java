@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtension;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCacheImpl;
+import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtension;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {

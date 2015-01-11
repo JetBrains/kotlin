@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.kotlin.resolve.constants.*;
+import org.jetbrains.kotlin.resolve.constants.StringValue;
 
 public abstract class DefaultAnnotationArgumentVisitor<R, D> implements AnnotationArgumentVisitor<R, D> {
     public abstract R visitValue(@NotNull CompileTimeConstant<?> value, D data);

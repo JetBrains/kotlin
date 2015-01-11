@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.plugin.caches.resolve.*

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
+import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor

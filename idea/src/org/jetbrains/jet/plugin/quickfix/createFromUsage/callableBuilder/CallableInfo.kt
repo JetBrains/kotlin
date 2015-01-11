@@ -8,7 +8,7 @@ import kotlin.properties.Delegates
 import com.intellij.util.ArrayUtil
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.supertypes
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

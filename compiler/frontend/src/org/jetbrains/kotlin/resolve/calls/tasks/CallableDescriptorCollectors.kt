@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-import org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isStaticNestedClass
+import org.jetbrains.kotlin.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
 
 public trait CallableDescriptorCollector<D : CallableDescriptor> {
 

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;

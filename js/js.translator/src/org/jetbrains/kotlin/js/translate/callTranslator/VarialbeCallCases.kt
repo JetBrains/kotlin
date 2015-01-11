@@ -23,7 +23,7 @@ import com.google.dart.compiler.backend.js.ast.JsInvocation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import java.util.Collections
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure
+import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
 
 

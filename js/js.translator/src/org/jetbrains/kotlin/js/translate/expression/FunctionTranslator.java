@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.js.translate.context.AliasingContext;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Collections;
 import java.util.List;

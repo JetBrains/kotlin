@@ -39,7 +39,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD;
 
 public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {

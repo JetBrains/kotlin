@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.jet.lang.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.utils.valuesToMap
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.resolveTopLevelClass
 import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 

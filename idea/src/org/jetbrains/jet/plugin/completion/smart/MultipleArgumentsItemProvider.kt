@@ -23,9 +23,9 @@ import com.intellij.ui.LayeredIcon
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.completion.Tail
 import org.jetbrains.jet.plugin.completion.ItemPriority
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.kotlin.descriptors.VariableDescriptor

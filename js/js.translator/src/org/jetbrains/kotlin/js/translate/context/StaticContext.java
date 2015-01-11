@@ -23,12 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
@@ -36,16 +32,20 @@ import org.jetbrains.kotlin.js.translate.context.generator.Generator;
 import org.jetbrains.kotlin.js.translate.context.generator.Rule;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension;
 import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getMangledName;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
 
 /**
  * Aggregates all the static parts of the context.

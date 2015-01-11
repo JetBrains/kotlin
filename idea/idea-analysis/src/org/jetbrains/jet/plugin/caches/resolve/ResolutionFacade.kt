@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.caches.resolve
 
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration

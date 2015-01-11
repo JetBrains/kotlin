@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex

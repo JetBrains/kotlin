@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor

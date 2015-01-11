@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
 
 /*package*/ class ValueArgumentsToParametersMapper {

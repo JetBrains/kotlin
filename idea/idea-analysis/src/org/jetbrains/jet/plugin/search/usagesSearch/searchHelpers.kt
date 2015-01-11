@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.references.*

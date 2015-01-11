@@ -21,7 +21,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERR
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(

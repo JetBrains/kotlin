@@ -27,7 +27,7 @@ import java.util.Collections
 import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,

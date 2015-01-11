@@ -22,7 +22,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.kotlin.resolve.ImportPath;
 
 import javax.inject.Inject;
 import java.util.Collection;

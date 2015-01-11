@@ -17,13 +17,13 @@
 package org.jetbrains.jet.plugin.references
 
 import org.jetbrains.kotlin.psi.JetMultiDeclaration
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import java.util.Collections
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
-import org.jetbrains.jet.lang.resolve.source.getPsi
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.psi.JetNamedFunction

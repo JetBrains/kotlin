@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 abstract class AfterAnalysisHighlightingVisitor extends HighlightingVisitor {
     protected BindingContext bindingContext;

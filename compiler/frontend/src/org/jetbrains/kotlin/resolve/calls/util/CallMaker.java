@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.Call.CallType;
 import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collections;
 import java.util.List;

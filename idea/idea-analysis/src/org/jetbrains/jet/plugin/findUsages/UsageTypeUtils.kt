@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.plugin.references.JetArrayAccessReference
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.references.JetInvokeFunctionReference
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.psi.JetAnnotationEntry

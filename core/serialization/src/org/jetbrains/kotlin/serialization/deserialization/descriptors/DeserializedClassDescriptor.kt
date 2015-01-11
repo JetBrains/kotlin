@@ -23,17 +23,17 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorFactory
-import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
+import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.name.SpecialNames.getClassObjectName
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import java.util.*
 
 public class DeserializedClassDescriptor(

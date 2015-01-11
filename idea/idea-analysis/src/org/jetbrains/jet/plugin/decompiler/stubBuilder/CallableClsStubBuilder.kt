@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.FlagsToModifiers.*
 

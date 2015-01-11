@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,

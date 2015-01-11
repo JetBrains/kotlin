@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.structure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 
 public interface JavaPropertyInitializerEvaluator {
     @Nullable

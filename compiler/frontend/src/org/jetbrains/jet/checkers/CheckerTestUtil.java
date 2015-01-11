@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.*;
 import java.util.regex.Matcher;

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collections;
 import java.util.List;

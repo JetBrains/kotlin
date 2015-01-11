@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.types.TypeConstructor;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
@@ -50,6 +49,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSuper
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction;
 import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.generateDelegateCall;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 
 /**

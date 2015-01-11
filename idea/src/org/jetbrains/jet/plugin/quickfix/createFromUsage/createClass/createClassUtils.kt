@@ -9,7 +9,7 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.noSubstitutions
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix

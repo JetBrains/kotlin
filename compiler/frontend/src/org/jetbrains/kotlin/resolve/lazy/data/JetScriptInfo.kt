@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.data
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.jet.lang.resolve.ScriptNameUtil
+import org.jetbrains.kotlin.resolve.ScriptNameUtil
 import org.jetbrains.kotlin.name.FqName
 
 public class JetScriptInfo(

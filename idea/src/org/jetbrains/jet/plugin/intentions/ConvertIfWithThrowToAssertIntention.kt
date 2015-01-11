@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPrefixExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
 import org.jetbrains.kotlin.psi.JetThrowExpression

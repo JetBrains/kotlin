@@ -22,25 +22,25 @@ import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.jet.lang.resolve.ScriptParameterResolver
-import org.jetbrains.jet.lang.resolve.ScriptBodyResolver
+import org.jetbrains.kotlin.resolve.ScriptParameterResolver
+import org.jetbrains.kotlin.resolve.ScriptBodyResolver
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
 import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope
+import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
+import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.resolve.source.toSourceElement
+import org.jetbrains.kotlin.resolve.source.toSourceElement
 
 public class LazyScriptDescriptor(
         private val resolveSession: ResolveSession,

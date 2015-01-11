@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -31,7 +31,7 @@ import java.util.Collection;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
     private final JetReferenceExpression reference;

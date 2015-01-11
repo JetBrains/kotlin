@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.JetNodeTypes

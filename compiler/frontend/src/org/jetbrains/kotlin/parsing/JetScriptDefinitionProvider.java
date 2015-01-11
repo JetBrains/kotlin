@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
 import java.util.*;
 

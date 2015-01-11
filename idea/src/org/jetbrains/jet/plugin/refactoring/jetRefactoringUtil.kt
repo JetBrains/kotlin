@@ -55,7 +55,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -68,7 +68,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage

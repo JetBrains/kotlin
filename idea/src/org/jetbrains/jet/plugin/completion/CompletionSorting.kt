@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.name.isValidJavaFqName
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.ImportPath
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY

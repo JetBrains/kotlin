@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.NamePackage;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.Collection;
 import java.util.Collections;

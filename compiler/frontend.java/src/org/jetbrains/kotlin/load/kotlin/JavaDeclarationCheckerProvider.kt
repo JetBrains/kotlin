@@ -16,28 +16,28 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
-import org.jetbrains.jet.lang.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
+import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.lang.resolve.annotations.hasPlatformStaticAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
 import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetTypeParameter
-import org.jetbrains.jet.lang.resolve.annotations.hasIntrinsicAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor

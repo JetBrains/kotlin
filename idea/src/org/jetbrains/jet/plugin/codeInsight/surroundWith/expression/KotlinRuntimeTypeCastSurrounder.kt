@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.jet.plugin.JetBundle

@@ -19,31 +19,31 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
+import org.jetbrains.jet.util.slicedmap.Slices;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
-import org.jetbrains.jet.util.slicedmap.Slices;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
-import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
+import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();

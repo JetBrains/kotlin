@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.awt.*;

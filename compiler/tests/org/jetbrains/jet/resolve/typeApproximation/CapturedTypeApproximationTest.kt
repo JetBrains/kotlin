@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.ConfigurationKind
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

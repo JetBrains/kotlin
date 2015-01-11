@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.j2k.ast.Element
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.diagnostic.Logger
 import java.util.ArrayList
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing

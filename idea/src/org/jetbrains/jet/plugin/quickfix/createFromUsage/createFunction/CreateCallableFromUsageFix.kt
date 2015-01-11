@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary

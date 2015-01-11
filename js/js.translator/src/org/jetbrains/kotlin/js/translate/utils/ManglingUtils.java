@@ -20,18 +20,18 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.getJetTypeFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class ManglingUtils {
     private ManglingUtils() {}

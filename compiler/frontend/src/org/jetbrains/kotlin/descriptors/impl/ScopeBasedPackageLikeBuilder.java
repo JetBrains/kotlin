@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 
 public class ScopeBasedPackageLikeBuilder implements PackageLikeBuilder {
     private final DeclarationDescriptor containingDeclaration;

@@ -20,31 +20,31 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.InlineUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.builtins.InlineUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
-import static org.jetbrains.jet.lang.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
+import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.allowsNonLocalReturns;
+import static org.jetbrains.kotlin.resolve.InlineDescriptorUtils.checkNonLocalReturnUsage;
 
 public class InlineCallResolverExtension implements CallResolverExtension {
 

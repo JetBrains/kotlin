@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.*
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

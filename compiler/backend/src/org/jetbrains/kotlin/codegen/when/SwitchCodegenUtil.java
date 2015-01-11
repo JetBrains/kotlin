@@ -22,11 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
-import org.jetbrains.jet.lang.resolve.constants.NullValue;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant;
+import org.jetbrains.kotlin.resolve.constants.NullValue;
+import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;

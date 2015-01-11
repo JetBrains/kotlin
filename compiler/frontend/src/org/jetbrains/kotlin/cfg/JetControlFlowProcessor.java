@@ -27,37 +27,37 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.pseudocode.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
-import org.jetbrains.kotlin.resolve.calls.model.*;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
+import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.cfg.JetControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class JetControlFlowProcessor {
 

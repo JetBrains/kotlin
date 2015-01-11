@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
 import org.jetbrains.kotlin.psi.Call.CallType
 import kotlin.test.assertNotNull

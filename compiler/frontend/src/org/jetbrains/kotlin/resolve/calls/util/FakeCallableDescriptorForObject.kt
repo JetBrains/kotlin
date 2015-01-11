@@ -25,10 +25,9 @@ import java.util.Collections
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.jet.lang.resolve.descriptorUtil.getClassObjectReferenceTarget
+import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 
 public class FakeCallableDescriptorForObject(
         private val classDescriptor: ClassDescriptor

@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

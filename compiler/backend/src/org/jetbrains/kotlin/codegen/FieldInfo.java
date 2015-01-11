@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class FieldInfo {

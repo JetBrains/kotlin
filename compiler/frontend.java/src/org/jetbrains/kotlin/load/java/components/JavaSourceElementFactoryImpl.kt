@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl

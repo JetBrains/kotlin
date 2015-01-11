@@ -21,23 +21,23 @@ import kotlin.KotlinPackage;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.utils.DFS;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 
 public class TypeUtils {
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");

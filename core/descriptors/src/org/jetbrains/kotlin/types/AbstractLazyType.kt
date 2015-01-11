@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractJetType(), LazyType {

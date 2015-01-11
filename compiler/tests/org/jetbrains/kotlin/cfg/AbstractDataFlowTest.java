@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collections;
 import java.util.List;

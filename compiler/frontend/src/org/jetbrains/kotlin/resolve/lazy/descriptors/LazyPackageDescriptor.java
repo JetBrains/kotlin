@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
     private final JetScope memberScope;

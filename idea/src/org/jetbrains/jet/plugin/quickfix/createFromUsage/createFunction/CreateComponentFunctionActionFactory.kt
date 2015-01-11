@@ -3,7 +3,7 @@ package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.resolve.dataClassUtils.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetMultiDeclaration

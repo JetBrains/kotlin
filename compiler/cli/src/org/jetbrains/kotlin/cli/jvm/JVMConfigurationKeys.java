@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.jvm;
 
 import org.jetbrains.jet.config.CompilerConfigurationKey;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
 import java.io.File;
 import java.util.List;

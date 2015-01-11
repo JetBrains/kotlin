@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public final class WhenChecker {
     private WhenChecker() {

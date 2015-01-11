@@ -20,13 +20,13 @@ import com.intellij.psi.PsiConstructorCall
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.jet.lang.resolve.OverrideResolver
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.references.*
 import org.jetbrains.jet.plugin.findUsages.UsageTypeUtils
 import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum

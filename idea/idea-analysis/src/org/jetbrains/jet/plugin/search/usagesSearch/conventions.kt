@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .builder<JetToken>()

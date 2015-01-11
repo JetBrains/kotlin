@@ -25,7 +25,7 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.resolve.lazy;
 import com.google.common.collect.*;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.JetImportDirective;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 

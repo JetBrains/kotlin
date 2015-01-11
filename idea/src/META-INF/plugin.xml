@@ -160,8 +160,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer"
-                      serviceImplementation="org.jetbrains.jet.lang.resolve.DummyCodeAnalyzerInitializer"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
+                      serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"/>

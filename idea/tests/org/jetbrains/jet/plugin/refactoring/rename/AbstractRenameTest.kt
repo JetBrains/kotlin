@@ -35,10 +35,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -47,7 +47,7 @@ import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.load.java.lazy.*
 import org.jetbrains.kotlin.storage.*
 import java.util.HashSet

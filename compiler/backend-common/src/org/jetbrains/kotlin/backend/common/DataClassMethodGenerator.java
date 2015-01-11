@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 

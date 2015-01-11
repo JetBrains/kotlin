@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.asJava;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 public class LightClassConstructionContext {
     private final BindingContext bindingContext;

@@ -21,12 +21,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.resolve.ImportPath;
 
 public class JetImportDirective extends JetElementImplStub<KotlinImportDirectiveStub> {
 

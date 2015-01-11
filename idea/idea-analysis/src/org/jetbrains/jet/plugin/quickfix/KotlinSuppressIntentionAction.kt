@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences

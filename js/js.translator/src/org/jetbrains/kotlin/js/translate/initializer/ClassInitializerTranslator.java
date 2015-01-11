@@ -23,6 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
+import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
+import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall;
@@ -30,21 +36,15 @@ import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
-import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull

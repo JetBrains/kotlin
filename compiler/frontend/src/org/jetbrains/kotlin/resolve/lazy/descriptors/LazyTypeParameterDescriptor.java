@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.lexer.JetTokens;
 
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
+import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
     private final ResolveSession resolveSession;

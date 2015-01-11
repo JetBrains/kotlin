@@ -18,21 +18,21 @@ package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.psi.JetTypeProjection
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.di.InjectorForMacros
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.analyze

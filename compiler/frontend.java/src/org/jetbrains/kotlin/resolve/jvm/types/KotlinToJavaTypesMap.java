@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.resolve.jvm.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMapBuilder;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashMap;

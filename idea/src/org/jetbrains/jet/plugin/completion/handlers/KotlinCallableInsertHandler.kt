@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.openapi.editor.Document
 import org.jetbrains.kotlin.types.JetType

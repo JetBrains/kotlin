@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.results;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 

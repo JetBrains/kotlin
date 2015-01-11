@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
-import org.jetbrains.jet.lang.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope
 
 public class JvmResolverForModule(

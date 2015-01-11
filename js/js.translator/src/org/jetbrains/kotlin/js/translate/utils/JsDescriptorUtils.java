@@ -20,24 +20,24 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.

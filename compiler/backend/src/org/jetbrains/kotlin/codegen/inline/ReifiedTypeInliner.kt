@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 

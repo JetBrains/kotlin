@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.jvm.compiler
 
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.Collections
@@ -28,7 +28,7 @@ import org.jetbrains.jet.test.util.DescriptorValidator
 import org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : DescriptorValidator.ValidationVisitor() {
     override fun validateScope(scope: JetScope, collector: DescriptorValidator.DiagnosticCollector) {

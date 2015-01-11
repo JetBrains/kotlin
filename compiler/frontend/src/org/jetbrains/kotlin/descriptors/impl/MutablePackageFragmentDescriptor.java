@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 
 public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorImpl {
     private final WritableScope scope;

@@ -38,8 +38,8 @@ import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import javax.swing.*;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.OverrideResolver.filterOutOverridden;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getAllOverriddenDeclarations;
+import static org.jetbrains.kotlin.resolve.OverrideResolver.filterOutOverridden;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getAllOverriddenDeclarations;
 import static org.jetbrains.kotlin.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
 
 class KotlinStructureElementPresentation implements ColoredItemPresentation, LocationPresentation {

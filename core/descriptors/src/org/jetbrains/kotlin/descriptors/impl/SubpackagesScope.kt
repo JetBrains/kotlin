@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.descriptors.impl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.*
 
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class SubpackagesScope(private val containingDeclaration: PackageViewDescriptor) : JetScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {

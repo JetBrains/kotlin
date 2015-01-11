@@ -17,7 +17,7 @@
 package org.jetbrains.jet.util.slicemap;
 
 import junit.framework.TestCase;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;

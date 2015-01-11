@@ -21,8 +21,8 @@ import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {

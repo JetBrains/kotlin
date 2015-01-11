@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import java.util.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind

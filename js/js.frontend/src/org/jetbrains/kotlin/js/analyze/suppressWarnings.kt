@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
-import org.jetbrains.jet.lang.resolve.diagnostics.SuppressDiagnosticsByAnnotations
-import org.jetbrains.jet.lang.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
-import org.jetbrains.jet.lang.resolve.diagnostics.PROPERTY_NOT_INITIALIZED_ERRORS
+import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression
+import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
+import org.jetbrains.kotlin.resolve.diagnostics.PROPERTY_NOT_INITIALIZED_ERRORS
 
 private val NATIVE_ANNOTATIONS = array(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 

@@ -26,21 +26,19 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
-import java.util.ArrayList
-
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 
 public class TaskPrioritizer(private val storageManager: StorageManager) {
 

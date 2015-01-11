@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.ImportPath
 
 public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     return when {

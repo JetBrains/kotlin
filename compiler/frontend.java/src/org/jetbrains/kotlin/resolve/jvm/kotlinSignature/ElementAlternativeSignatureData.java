@@ -20,14 +20,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.JetTypeElement;
 import org.jetbrains.kotlin.psi.JetTypeReference;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 import java.util.Map;

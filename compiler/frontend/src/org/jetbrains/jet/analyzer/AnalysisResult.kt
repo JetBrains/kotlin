@@ -17,7 +17,7 @@
 package org.jetbrains.jet.analyzer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 import kotlin.platform.platformStatic
 

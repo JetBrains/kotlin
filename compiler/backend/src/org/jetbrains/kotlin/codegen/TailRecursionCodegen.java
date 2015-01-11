@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -26,14 +27,13 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.cfg.TailRecursionKind;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
+import static org.jetbrains.kotlin.resolve.BindingContext.TAIL_RECURSION_CALL;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class TailRecursionCodegen {

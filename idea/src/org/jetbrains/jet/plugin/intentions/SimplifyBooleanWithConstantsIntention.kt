@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.copied

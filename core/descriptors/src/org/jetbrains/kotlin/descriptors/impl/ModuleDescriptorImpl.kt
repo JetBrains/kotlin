@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates

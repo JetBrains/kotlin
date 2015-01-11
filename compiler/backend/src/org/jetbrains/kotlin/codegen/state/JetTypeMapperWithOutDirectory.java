@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.state;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilderMode;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.io.File;
 

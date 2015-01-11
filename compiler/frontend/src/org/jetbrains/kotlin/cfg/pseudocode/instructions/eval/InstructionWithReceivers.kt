@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public trait InstructionWithReceivers: Instruction {
     public val receiverValues: Map<PseudoValue, ReceiverValue>

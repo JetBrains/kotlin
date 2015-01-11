@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.results;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;

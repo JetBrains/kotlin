@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.psi.JetCatchClause
 import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator

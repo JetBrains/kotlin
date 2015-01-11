@@ -30,7 +30,7 @@ import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer

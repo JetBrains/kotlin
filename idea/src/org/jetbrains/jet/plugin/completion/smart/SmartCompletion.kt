@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.completion.smart
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.jet.lang.resolve.*
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.types.*

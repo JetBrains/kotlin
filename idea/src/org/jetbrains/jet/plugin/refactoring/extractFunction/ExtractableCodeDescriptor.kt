@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
@@ -65,7 +65,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.isUnit
 
 trait Parameter {

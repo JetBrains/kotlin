@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -21,7 +21,7 @@ import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry

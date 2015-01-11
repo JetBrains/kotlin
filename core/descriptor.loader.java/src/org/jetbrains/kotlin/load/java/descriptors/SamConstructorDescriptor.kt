@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.descriptors
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 
 public class SamConstructorDescriptor(
         containingDeclaration: DeclarationDescriptor,

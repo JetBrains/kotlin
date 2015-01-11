@@ -24,7 +24,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.SLRUCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider
 import org.jetbrains.jet.plugin.project.TargetPlatform

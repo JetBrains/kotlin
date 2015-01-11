@@ -23,7 +23,7 @@ import java.util.HashMap
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.JetType
 import com.intellij.util.containers.ContainerUtil
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetTypeReference
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import com.intellij.lang.ASTNode
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Empty
@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.JetFile

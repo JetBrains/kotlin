@@ -34,7 +34,7 @@ import java.util.HashSet
 import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 class TypeConverter(val converter: Converter) {

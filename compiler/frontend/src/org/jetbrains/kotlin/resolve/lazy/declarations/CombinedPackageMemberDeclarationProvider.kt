@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class CombinedPackageMemberDeclarationProvider(val providers: Collection<PackageMemberDeclarationProvider>) : PackageMemberDeclarationProvider {
     override fun getAllDeclaredSubPackages() = providers.flatMap { it.getAllDeclaredSubPackages() }

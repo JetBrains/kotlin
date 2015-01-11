@@ -20,7 +20,7 @@ import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.List;

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
 import org.jetbrains.kotlin.psi.JetContainerNode;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
+import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
 
 public class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpression> implements MultiRangeReference {
 

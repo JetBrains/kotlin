@@ -27,7 +27,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider
+import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider
 import org.jetbrains.kotlin.psi.psiUtil.isProbablyNothing
 
 //TODO: do resolve anonymous object's body

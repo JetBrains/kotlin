@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.storage
 import com.intellij.util.containers.ConcurrentWeakValueHashMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice
 import org.jetbrains.jet.util.slicedmap.WritableSlice
-import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
 public class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
     override fun <K, V> createWeaklyRetainedMemoizedFunction(compute: Function1<K, V>) =

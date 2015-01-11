@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.dataClassUtils.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -36,10 +36,10 @@ import java.util.*
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
+import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 
 public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   declarationProvider: ClassMemberDeclarationProvider,

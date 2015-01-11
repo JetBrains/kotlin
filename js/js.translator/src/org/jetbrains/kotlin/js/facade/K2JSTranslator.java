@@ -32,14 +32,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
@@ -48,6 +44,10 @@ import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor;
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.utils.fileUtils.FileUtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,8 +55,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.js.facade.FacadeUtils.parseString;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 /**
  * An entry point of translator.

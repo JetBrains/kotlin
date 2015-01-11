@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.decompiler.textBuilder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.imports
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {

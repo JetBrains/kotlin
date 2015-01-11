@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.decompiler.DecompilerPackage;
 import org.jetbrains.jet.plugin.decompiler.JetClsFile;
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public final class DecompiledNavigationUtils {
 

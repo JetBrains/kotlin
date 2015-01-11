@@ -18,8 +18,8 @@ package org.jetbrains.jet.plugin.refactoring.move
 
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
@@ -54,7 +54,7 @@ import com.intellij.openapi.util.Comparing
 import java.util.Comparator
 import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor

@@ -7,7 +7,7 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass

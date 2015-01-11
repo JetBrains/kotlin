@@ -22,7 +22,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.HashSet

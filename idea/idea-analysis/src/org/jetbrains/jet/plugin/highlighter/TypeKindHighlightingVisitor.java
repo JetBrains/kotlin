@@ -23,7 +23,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     TypeKindHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {

@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.actions.JetAddImportAction
@@ -49,7 +49,7 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
