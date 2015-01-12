@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.constraintSystem
+package org.jetbrains.kotlin.resolve.constraintSystem
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetLiteFixture
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.regex.Pattern
-import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
-import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
+import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
+import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import java.util.LinkedHashMap
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -146,6 +146,3 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
     private fun getConstraintsText(text: String) = text.substring(0, text.indexOf("type parameter bounds"))
 }
-
-
-

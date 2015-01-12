@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve
+package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.junit.Assert
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -69,15 +66,15 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         middle.reportDiagnostic()
         derived.reportDiagnostic()
 
-        Assert.assertEquals(1, base.diagnostics.all().size)
-        Assert.assertEquals(2, middle.diagnostics.all().size)
-        Assert.assertEquals(3, derived.diagnostics.all().size)
+        Assert.assertEquals(1, base.diagnostics.all().size())
+        Assert.assertEquals(2, middle.diagnostics.all().size())
+        Assert.assertEquals(3, derived.diagnostics.all().size())
 
         middle.clear()
 
-        Assert.assertEquals(1, base.diagnostics.all().size)
-        Assert.assertEquals(1, middle.diagnostics.all().size)
-        Assert.assertEquals(2, derived.diagnostics.all().size)
+        Assert.assertEquals(1, base.diagnostics.all().size())
+        Assert.assertEquals(1, middle.diagnostics.all().size())
+        Assert.assertEquals(2, derived.diagnostics.all().size())
     }
 
     fun testCaching() {

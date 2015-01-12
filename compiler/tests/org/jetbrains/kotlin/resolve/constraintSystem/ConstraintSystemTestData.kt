@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.constraintSystem
+package org.jetbrains.kotlin.resolve.constraintSystem
 
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.annotation
+package org.jetbrains.kotlin.resolve.annotation
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -27,7 +27,7 @@ public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescri
         val packageView = getPackage(fileText)
         val classDescriptor = AbstractAnnotationDescriptorResolveTest.getClassDescriptor(packageView, "MyClass")
 
-        val expected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// EXPECTED: ").makeString(", ")
+        val expected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// EXPECTED: ").joinToString(", ")
         val actual = AbstractAnnotationDescriptorResolveTest.getAnnotations(classDescriptor)
 
         JetTestUtils.assertEqualsToFile(File(path), fileText.replace(expected, actual))

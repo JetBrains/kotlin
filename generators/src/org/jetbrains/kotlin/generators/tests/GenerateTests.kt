@@ -24,7 +24,7 @@ import java.io.File
 import java.util.regex.Pattern
 import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTest
-import org.jetbrains.jet.resolve.AbstractResolveTest
+import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
@@ -69,9 +69,9 @@ import org.jetbrains.jet.formatter.AbstractJetFormatterTest
 import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractOutOfBlockModificationTest
 import org.jetbrains.jet.completion.AbstractDataFlowValueRenderingTest
-import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest
+import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
-import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
+import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.generators.tests.generator.SingleClassTestModel
 import org.jetbrains.kotlin.generators.tests.generator.TestClassModel
@@ -81,7 +81,7 @@ import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil
 import org.jetbrains.kotlin.plugin.resolve.AbstractAdditionalResolveDescriptorRendererTest
 import org.jetbrains.kotlin.plugin.resolve.AbstractReferenceResolveInLibrarySourcesTest
-import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest
+import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithStdLib

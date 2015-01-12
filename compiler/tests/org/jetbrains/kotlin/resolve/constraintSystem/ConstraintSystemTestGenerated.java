@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.constraintSystem;
+package org.jetbrains.kotlin.resolve.constraintSystem;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.InnerTestClasses;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.typeApproximation
+package org.jetbrains.kotlin.resolve.typeApproximation
 
 import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment

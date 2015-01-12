@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve.annotation;
-
+package org.jetbrains.kotlin.resolve.annotation;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -47,9 +46,9 @@ import java.util.List;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
-                                                                                    .setVerbose(true)
-                                                                                    .setShortNames(true)
-                                                                                    .build();
+            .setVerbose(true)
+            .setShortNames(true)
+            .build();
 
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 
