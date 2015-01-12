@@ -22,9 +22,9 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.psi.JetExpression

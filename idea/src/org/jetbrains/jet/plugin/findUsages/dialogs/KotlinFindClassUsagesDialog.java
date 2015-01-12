@@ -27,7 +27,7 @@ import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.idea.JetBundle;
 

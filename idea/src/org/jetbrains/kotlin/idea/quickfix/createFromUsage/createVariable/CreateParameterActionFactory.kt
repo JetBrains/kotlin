@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessT
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetFunction
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils

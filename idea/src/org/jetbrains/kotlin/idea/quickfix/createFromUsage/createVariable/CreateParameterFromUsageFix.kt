@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public class CreateParameterFromUsageFix(

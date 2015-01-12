@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext

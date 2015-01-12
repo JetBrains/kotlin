@@ -25,7 +25,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.findUsages.KotlinFunctionFindUsagesOptions;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.JetBundle;
 
 import javax.swing.*;

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.PropertyInfo
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS

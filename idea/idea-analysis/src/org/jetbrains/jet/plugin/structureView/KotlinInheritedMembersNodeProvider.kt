@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.structureView
 import com.intellij.ide.util.InheritedMembersNodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor

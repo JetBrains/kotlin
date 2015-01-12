@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.jet.plugin.caches.resolve.analyze

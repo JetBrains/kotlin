@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.JetType
 import kotlin.properties.Delegates
 import com.intellij.util.ArrayUtil
-import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
-import org.jetbrains.jet.plugin.refactoring.EmptyValidator
+import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.refactoring.EmptyValidator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.types.ErrorUtils

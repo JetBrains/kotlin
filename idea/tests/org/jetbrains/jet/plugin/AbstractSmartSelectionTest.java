@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

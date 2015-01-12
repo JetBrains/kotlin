@@ -21,7 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.template.Template
-import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
 import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.TextResult
@@ -38,7 +38,7 @@ import org.jetbrains.jet.plugin.completion.ExpectedInfos
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
-import org.jetbrains.jet.plugin.refactoring.EmptyValidator
+import org.jetbrains.kotlin.idea.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode

@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.jet.plugin.caches.resolve.IdeaModuleInfo
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.util.DebuggerUtils
 import org.jetbrains.org.objectweb.asm.Type
 

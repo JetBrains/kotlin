@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ConstructorInfo
@@ -34,14 +34,14 @@ import java.util.Collections
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.createBuilder
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
-import org.jetbrains.jet.plugin.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import com.intellij.psi.PsiPackage
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.ide.util.DirectoryChooserUtil
 import java.util.HashMap
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.plugin.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")

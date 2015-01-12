@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
+import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.util.makeNotNullable

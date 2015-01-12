@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindMemberUsagesHandler
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.kotlin.psi.JetTypeParameter

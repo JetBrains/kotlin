@@ -96,7 +96,7 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="ExtractFunction" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionAction"
+    <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractFunctionAction"
             text="Extract _Function..." use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
     </action>
@@ -125,7 +125,7 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
+    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractFunctionToScopeAction"
             text="Extract Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
@@ -229,28 +229,28 @@
                              implementationClass="org.jetbrains.kotlin.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.jet.plugin.findUsages.KotlinDeclarationGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule"/>
-    <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.JetRefactoringSupportProvider"/>
     <lang.surroundDescriptor language="jet"
-                             implementationClass="org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinExpressionSurroundDescriptor"/>
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinExpressionSurroundDescriptor"/>
     <lang.surroundDescriptor language="jet"
-                             implementationClass="org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinStatementSurroundDescriptor"/>
-    <lang.unwrapDescriptor language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.unwrap.KotlinUnwrapDescriptor"/>
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinStatementSurroundDescriptor"/>
+    <lang.unwrapDescriptor language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.unwrap.KotlinUnwrapDescriptor"/>
     <quoteHandler fileType="Kotlin" className="org.jetbrains.jet.plugin.editor.KotlinQuoteHandler"/>
-    <refactoring.helper implementation="org.jetbrains.jet.plugin.codeInsight.KotlinShortenReferencesRefactoringHelper"/>
+    <refactoring.helper implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinShortenReferencesRefactoringHelper"/>
     <refactoring.moveHandler
         id="kotlin.moveFilesOrDirectories"
-        implementation="org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories.KotlinMoveFilesOrDirectoriesHandler"/>
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveFilesOrDirectoriesHandler"/>
     <refactoring.moveHandler
         id="kotlin.moveTopLevelDeclarations"
-        implementation="org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
-    <moveFileHandler implementation="org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
+    <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <refactoring.moveInnerClassUsagesHandler
-        implementationClass="org.jetbrains.jet.plugin.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
+        implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
         language="jet" />
-    <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
-    <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
-    <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler"/>
+    <refactoring.copyHandler implementation="org.jetbrains.kotlin.idea.refactoring.copy.JetCopyClassHandler"/>
+    <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
+    <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
     <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
 
     <colorSettingsPage implementation="org.jetbrains.jet.plugin.highlighter.JetColorSettingsPage"/>
@@ -269,8 +269,8 @@
 
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
-    <codeInsight.gotoSuper language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.GotoSuperActionHandler"/>
-    <typeDeclarationProvider implementation="org.jetbrains.jet.plugin.codeInsight.JetTypeDeclarationProvider"/>
+    <codeInsight.gotoSuper language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler"/>
+    <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.JetTypeDeclarationProvider"/>
 
     <completion.contributor language="jet"
                             id="JetCompletionContributor"
@@ -287,16 +287,16 @@
     <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
-                               implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameJetClassProcessor"
+                               implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJetClassProcessor"
                                order="first"/>
-    <renamePsiElementProcessor implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinFunctionProcessor"
+    <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinFunctionProcessor"
                                id="KotlinFunction"
                                order="first"/>
-    <renamePsiElementProcessor implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinPropertyProcessor"
+    <renamePsiElementProcessor implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor"
                                id="KotlinProperty"
                                order="first"/>
-    <renameHandler implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameKotlinImplicitLambdaParameter"/>
-    <renameHandler implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameDynamicMemberHandler"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameDynamicMemberHandler"/>
 
     <spellchecker.support implementationClass="org.jetbrains.jet.plugin.KotlinSpellcheckingStrategy" language="jet"/>
 
@@ -335,7 +335,7 @@
     <backspaceHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
-    <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.codeInsight.KotlinCopyPasteReferenceProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
 
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.jet.plugin.JetQuickDocumentationProvider" order="first"/>
     <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
@@ -364,12 +364,12 @@
     <usageTypeProvider implementation="org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider"/>
     <refactoring.safeDeleteProcessor
         id="kotlinProcessor"
-        implementation="org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor"
+        implementation="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinSafeDeleteProcessor"
         order="before javaProcessor"/>
     <refactoring.safeDelete.JavaSafeDeleteDelegate
         id="kotlinJavaSafeDeleteDelegate"
         language="jet"
-        implementationClass="org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinJavaSafeDeleteDelegate"/>
+        implementationClass="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinJavaSafeDeleteDelegate"/>
     <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler"/>
     <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
     <debugger.codeFragmentFactory implementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinCodeFragmentFactory"/>
@@ -379,8 +379,8 @@
     <debugger.sourcePositionProvider implementation="org.jetbrains.jet.plugin.debugger.KotlinSourcePositionProvider"/>
     <xdebugger.settings implementation="org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings"/>
 
-    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
-    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler"/>
+    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
 
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JSFrameworkType"/>
@@ -452,11 +452,11 @@
     <editorAppearanceConfigurable instance="org.jetbrains.jet.plugin.editor.JetSettingEditorConfigurable"/>
 
     <statementUpDownMover id="jetExpression"
-                          implementation="org.jetbrains.jet.plugin.codeInsight.upDownMover.JetExpressionMover"
+                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetExpressionMover"
                           order="before declaration" />
 
     <statementUpDownMover id="jetDeclaration"
-                          implementation="org.jetbrains.jet.plugin.codeInsight.upDownMover.JetDeclarationMover"
+                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetDeclarationMover"
                           order="before jetExpression" />
 
     <joinLinesHandler implementation="org.jetbrains.jet.plugin.joinLines.JoinDeclarationAndAssignmentHandler"/>

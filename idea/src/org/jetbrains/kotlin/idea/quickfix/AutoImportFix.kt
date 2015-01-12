@@ -45,7 +45,7 @@ import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.kotlin.asJava.unwrapped

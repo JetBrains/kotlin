@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetParameter
 import java.util.HashSet
-import org.jetbrains.jet.plugin.refactoring.CollectingValidator
+import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import java.util.Collections
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor

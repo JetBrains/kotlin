@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
+import org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler;
 
 import java.util.HashMap;
 import java.util.Map;

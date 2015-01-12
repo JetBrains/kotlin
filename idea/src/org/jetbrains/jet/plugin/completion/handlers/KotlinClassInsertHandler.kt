@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode

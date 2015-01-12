@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
@@ -44,7 +44,7 @@ import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.psi.PsiPackage
-import org.jetbrains.jet.plugin.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
 

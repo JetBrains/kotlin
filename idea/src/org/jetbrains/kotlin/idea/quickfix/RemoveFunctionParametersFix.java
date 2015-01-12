@@ -21,18 +21,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
+import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final ValueParameterDescriptor parameterToRemove;

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.psi.NavigatablePsiElement
 import java.awt.event.MouseEvent
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer
+import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
 import org.jetbrains.annotations.TestOnly
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import java.util.ArrayList

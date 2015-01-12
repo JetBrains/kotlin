@@ -25,15 +25,15 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.SimpleCollectingValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.refactoring.JetNameValidator;
+import org.jetbrains.kotlin.idea.refactoring.SimpleCollectingValidator;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.JetCallElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
+import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final JetCallElement callElement;

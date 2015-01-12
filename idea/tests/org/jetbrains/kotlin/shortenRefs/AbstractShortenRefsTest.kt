@@ -21,7 +21,7 @@ import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import java.io.File
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.CodeInsightSettings

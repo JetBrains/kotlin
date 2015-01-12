@@ -34,7 +34,7 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.sun.jdi.Location
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils

@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.BindingContextUtils

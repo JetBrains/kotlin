@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.PsiWhiteSpace
