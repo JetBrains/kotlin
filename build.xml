@@ -66,7 +66,7 @@
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
-    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
+    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
@@ -390,7 +390,7 @@
 
     <target name="serialize-builtins">
         <cleandir dir="${output}/builtins"/>
-        <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage"
+        <java classname="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"
               classpath="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"
               failonerror="true"
               fork="true">
