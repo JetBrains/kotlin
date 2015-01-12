@@ -35,9 +35,9 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.util.Arrays;

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.jet.plugin.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.LocalFileSystem

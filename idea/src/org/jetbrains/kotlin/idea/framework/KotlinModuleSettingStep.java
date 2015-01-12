@@ -35,7 +35,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 import javax.swing.*;
 import java.util.ArrayList;

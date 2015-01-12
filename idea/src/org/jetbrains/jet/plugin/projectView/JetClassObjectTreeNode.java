@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.projectView;
+package org.jetbrains.kotlin.idea.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.JetPsiUtil;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.canRepresentPsiElement;
-import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.getClassOrObjectChildren;
+import static org.jetbrains.kotlin.idea.projectView.JetProjectViewUtil.canRepresentPsiElement;
+import static org.jetbrains.kotlin.idea.projectView.JetProjectViewUtil.getClassOrObjectChildren;
 
 public class JetClassObjectTreeNode extends AbstractPsiBasedNode<JetClassObject> {
     protected JetClassObjectTreeNode(Project project, JetClassObject classObject, ViewSettings viewSettings) {

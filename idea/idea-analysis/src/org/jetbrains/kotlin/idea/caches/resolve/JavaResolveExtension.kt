@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import com.intellij.openapi.project.Project

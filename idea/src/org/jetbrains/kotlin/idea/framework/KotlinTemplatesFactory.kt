@@ -20,7 +20,7 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.jet.plugin.JetIcons
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 
 public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     class object {

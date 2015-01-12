@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.utils.PathUtil;
 

@@ -22,7 +22,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public abstract class AbstractCompiledKotlinInJavaCompletionTest extends JetFixtureCompletionBaseTestCase {
     @Override

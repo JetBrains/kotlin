@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetImportDirective
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetQualifiedExpression

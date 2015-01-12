@@ -21,7 +21,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.LibraryOrderEntry
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.roots.JdkOrderEntry

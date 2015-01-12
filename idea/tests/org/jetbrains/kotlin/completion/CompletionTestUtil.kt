@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.completion.util
 
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.junit.Assert
 import org.jetbrains.kotlin.completion.ExpectedCompletionUtils
 import com.intellij.codeInsight.CodeInsightSettings

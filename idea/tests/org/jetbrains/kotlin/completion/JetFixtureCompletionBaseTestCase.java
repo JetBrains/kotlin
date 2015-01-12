@@ -22,9 +22,9 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.kotlin.completion.util.UtilPackage;
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 import java.io.File;
 

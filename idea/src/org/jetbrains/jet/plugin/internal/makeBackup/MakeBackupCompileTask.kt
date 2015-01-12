@@ -24,7 +24,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.compiler.CompilerWorkspaceConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings
 
 val random = Random()
 

@@ -26,11 +26,11 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider
-import org.jetbrains.jet.plugin.project.TargetPlatform
-import org.jetbrains.jet.plugin.project.TargetPlatform.*
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import org.jetbrains.jet.plugin.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
+import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform.*
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker

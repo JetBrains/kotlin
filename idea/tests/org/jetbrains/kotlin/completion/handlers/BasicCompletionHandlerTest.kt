@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
 deprecated("All tests from here to be moved to the generated test")

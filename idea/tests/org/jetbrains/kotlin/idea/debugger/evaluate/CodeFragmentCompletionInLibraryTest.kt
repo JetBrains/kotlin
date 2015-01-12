@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.completion.util.testCompletion
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.jet.plugin.PluginTestCaseBase

@@ -21,7 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public abstract class AbstractJSBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull

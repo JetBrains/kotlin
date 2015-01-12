@@ -21,7 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public abstract class AbstractJvmSmartCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull

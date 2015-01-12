@@ -33,8 +33,8 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.resolve.LibrarySourceHacks
-import org.jetbrains.jet.plugin.project.TargetPlatform
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
-import org.jetbrains.jet.plugin.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.JetScope

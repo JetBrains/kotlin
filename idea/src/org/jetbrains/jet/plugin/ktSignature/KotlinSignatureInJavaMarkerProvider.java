@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.util.attachment.AttachmentPackage;
 
 import java.awt.event.MouseEvent;

@@ -34,11 +34,11 @@ import com.intellij.openapi.vfs.newvfs.events.*;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.kotlin.idea.configuration.AbsentSdkAnnotationsNotificationManager;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.NotificationsPackage;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 
 import java.util.Collection;
 import java.util.List;

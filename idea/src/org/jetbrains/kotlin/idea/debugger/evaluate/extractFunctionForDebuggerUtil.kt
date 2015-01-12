@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.generateDeclaration
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 
 fun getFunctionForExtractedFragment(

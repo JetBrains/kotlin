@@ -19,7 +19,7 @@
 
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.compiler.JetCompilerManager</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver</implementation-class>
@@ -50,16 +50,16 @@
 
   <module-components>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.project.K2JSModuleComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.project.K2JSModuleComponent</implementation-class>
     </component>
   </module-components>
 
   <actions>
-    <action id="Kotlin.NewFile" class="org.jetbrains.jet.plugin.actions.NewKotlinFileAction">
+    <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
 
-    <action id="ShowKotlinExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
+    <action id="ShowKotlinExpressionType" class="org.jetbrains.kotlin.idea.actions.ShowExpressionTypeAction"
             text="Show Expression Type">
       <keyboard-shortcut keymap="$default" first-keystroke="alt EQUALS"/>
 
@@ -70,7 +70,7 @@
       <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="alt EQUALS" remove="true"/>
       <add-to-group group-id="CodeEditorViewGroup" anchor="last"/>
     </action>
-    <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
+    <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
@@ -82,16 +82,16 @@
     </group>
 
     <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-           class="org.jetbrains.jet.plugin.actions.KotlinActionGroup">
+           class="org.jetbrains.kotlin.idea.actions.KotlinActionGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
 
-    <action id="ConfigureKotlinInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinInProjectAction"
+    <action id="ConfigureKotlinInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinInProjectAction"
             text="Configure Kotlin in Project">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="ConfigureKotlinJsInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinJsInProjectAction"
+    <action id="ConfigureKotlinJsInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJsInProjectAction"
             text="Configure Kotlin (JavaScript) in Project">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
@@ -101,23 +101,23 @@
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
     </action>
 
-    <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.internal.CopyAsDiagnosticTestAction"
+    <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
             text="Copy Current File As Diagnostic Test">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="CheckPartialBodyResolve" class="org.jetbrains.jet.plugin.actions.internal.CheckPartialBodyResolveAction"
+    <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
           text="Check Partial Body Resolve">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="FindImplicitNothingAction" class="org.jetbrains.jet.plugin.actions.internal.FindImplicitNothingAction"
+    <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
           text="Find Implicit Nothing Calls">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="KotlinInternalMode" class="org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction">
+    <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
@@ -169,19 +169,19 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
 
-    <projectService serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"
                     serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"/>
@@ -213,7 +213,7 @@
 
     <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-plugin.jar"/>
     <compiler.task execute="BEFORE" implementation="org.jetbrains.jet.plugin.internal.makeBackup.MakeBackupCompileTask"/>
-    <buildProcess.parametersProvider implementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinBuildProcessParametersProvider"/>
+    <buildProcess.parametersProvider implementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinBuildProcessParametersProvider"/>
 
     <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
@@ -223,7 +223,7 @@
     <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.jet.plugin.structureView.JetClsStructureViewBuilderProvider"/>
 
     <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
-    <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
+    <lang.formatter language="jet" implementationClass="org.jetbrains.kotlin.idea.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.findUsages.JetFindUsagesProvider"/>
     <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.JetStringTemplateExpression"
                              implementationClass="org.jetbrains.kotlin.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
@@ -251,21 +251,21 @@
     <refactoring.copyHandler implementation="org.jetbrains.kotlin.idea.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
-    <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
+    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider"/>
 
     <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.JetColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
 
-    <codeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetCodeStyleSettingsProvider"/>
-    <langCodeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.JetLanguageCodeStyleSettingsProvider"/>
 
-    <projectConfigurable instance="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerConfigurableTab"
+    <projectConfigurable instance="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab"
                          id="project.kotlinCompiler"
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
 
-    <qualifiedNameProvider implementation="org.jetbrains.jet.plugin.actions.KotlinQualifiedNameProvider"/>
+    <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 

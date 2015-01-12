@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;

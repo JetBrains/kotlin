@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.completion
 import org.jetbrains.kotlin.completion.util.*
 import org.jetbrains.jet.plugin.KotlinCompletionTestCase
 import org.jetbrains.jet.plugin.PluginTestCaseBase
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.jet.plugin.stubs.AstAccessControl
 
 public abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {

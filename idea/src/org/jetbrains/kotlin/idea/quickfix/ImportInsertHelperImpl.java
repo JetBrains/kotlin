@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.NamePackage;

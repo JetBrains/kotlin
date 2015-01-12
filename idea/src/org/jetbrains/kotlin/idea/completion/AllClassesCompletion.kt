@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope

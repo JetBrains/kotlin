@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.jet.plugin.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import kotlin.platform.platformStatic
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider

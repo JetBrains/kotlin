@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.project.ResolveElementCache;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.idea.project.ResolveElementCache;
 import org.jetbrains.kotlin.psi.JetClassInitializer;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPsiUtil;

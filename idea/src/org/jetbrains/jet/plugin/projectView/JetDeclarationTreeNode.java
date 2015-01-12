@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.projectView;
+package org.jetbrains.kotlin.idea.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
+import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings;
 
 import java.util.Collection;
 import java.util.Collections;
