@@ -546,10 +546,6 @@
                         public protected *;
                     }
 
-                    -keep class org.jetbrains.jet.** {
-                        public protected *;
-                    }
-
                     -keep class org.jetbrains.kotlin.** {
                         public protected *;
                     }
