@@ -20,7 +20,7 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.debugger.filter.FilterPackage;
-import org.jetbrains.jet.plugin.quickfix.QuickFixRegistrar;
+import org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 public class PluginStartupComponent implements ApplicationComponent {

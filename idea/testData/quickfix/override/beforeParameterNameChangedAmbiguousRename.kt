@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.RenameParameterToMatchOverriddenMethodFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.RenameParameterToMatchOverriddenMethodFix" "false"
 
 abstract class A {
     abstract fun foo(arg : Int) : Int;

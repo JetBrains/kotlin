@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.highlighter
 
 import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension
 import com.intellij.codeInsight.intention.EmptyIntentionAction
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
@@ -26,14 +25,11 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiReference
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -46,10 +42,8 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
-import org.jetbrains.jet.plugin.quickfix.QuickFixes
+import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 

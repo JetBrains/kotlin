@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.ChangeMemberFunctionSignatureFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ChangeMemberFunctionSignatureFix" "false"
 // ERROR: 'f' overrides nothing
 open class A {
     open fun foo() {}

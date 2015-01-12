@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.imports;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public class OptimizeImportsOnFlyTest extends LightDaemonAnalyzerTestCase {
 

@@ -1,2 +1,2 @@
-// "class org.jetbrains.jet.plugin.quickfix.AddOpenModifierToClassDeclarationFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddOpenModifierToClassDeclarationFix" "false"
 class A<T : String<caret>> {}

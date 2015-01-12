@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.AddStarProjectionsFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddStarProjectionsFix" "false"
 // ERROR: 2 type arguments expected
 public fun foo(a: Any) {
     a is Map<Int>

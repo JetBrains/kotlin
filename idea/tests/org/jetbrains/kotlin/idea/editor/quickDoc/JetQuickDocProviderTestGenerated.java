@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;

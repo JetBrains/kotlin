@@ -23,7 +23,7 @@ import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons
-import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext

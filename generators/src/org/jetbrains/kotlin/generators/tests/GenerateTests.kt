@@ -42,14 +42,14 @@ import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJetJsCheckerTest
-import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.completion.AbstractJSBasicCompletionTest
 import org.jetbrains.kotlin.completion.AbstractKeywordCompletionTest
 import org.jetbrains.kotlin.completion.AbstractJvmSmartCompletionTest
 import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.completion.AbstractJvmWithLibBasicCompletionTest
 import org.jetbrains.jet.plugin.navigation.AbstractGotoSuperTest
-import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest

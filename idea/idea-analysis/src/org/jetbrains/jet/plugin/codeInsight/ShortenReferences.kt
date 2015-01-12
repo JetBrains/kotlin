@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil

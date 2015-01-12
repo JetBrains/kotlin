@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.AddFunctionParametersFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddFunctionParametersFix" "false"
 //ERROR: Too many arguments for internal final fun component1(): kotlin.Int defined in Data
 
 data class Data(val i: Int) {}

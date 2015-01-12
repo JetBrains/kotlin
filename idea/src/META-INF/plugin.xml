@@ -145,8 +145,8 @@
     <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
 
-    <applicationService serviceInterface="org.jetbrains.jet.plugin.quickfix.ImportInsertHelper"
-                        serviceImplementation="org.jetbrains.jet.plugin.quickfix.ImportInsertHelperImpl"/>
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper"
+                        serviceImplementation="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.jet.plugin.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
@@ -426,7 +426,7 @@
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
+    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 

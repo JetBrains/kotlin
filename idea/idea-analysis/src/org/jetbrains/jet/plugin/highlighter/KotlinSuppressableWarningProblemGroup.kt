@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.codeInspection.SuppressIntentionAction
 import org.jetbrains.kotlin.diagnostics.Severity
 import java.util.Collections
-import org.jetbrains.jet.plugin.quickfix.KotlinSuppressIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.plugin.quickfix.AnnotationHostKind
+import org.jetbrains.kotlin.idea.quickfix.AnnotationHostKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 

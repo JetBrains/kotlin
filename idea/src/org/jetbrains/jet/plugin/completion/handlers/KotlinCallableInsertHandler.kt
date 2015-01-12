@@ -29,7 +29,7 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
 import com.intellij.openapi.editor.Document
 import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.util.TextRange
