@@ -47,10 +47,10 @@ import com.intellij.ui.EditorNotifications;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
-import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator;
-import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.JetFileType;
 
 import javax.swing.*;

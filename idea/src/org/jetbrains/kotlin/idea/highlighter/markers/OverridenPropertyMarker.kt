@@ -30,7 +30,7 @@ import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
 import com.intellij.psi.PsiElement
 import java.awt.event.MouseEvent
 import com.intellij.openapi.project.DumbService
-import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.codeInsight.daemon.impl.MarkerType

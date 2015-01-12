@@ -20,7 +20,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.plugin.util.application.runReadAction
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
+import org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory

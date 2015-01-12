@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveWithLibTest
 import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
-import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest
+import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageTest
 import org.jetbrains.kotlin.idea.codeInsight.AbstractOutOfBlockModificationTest

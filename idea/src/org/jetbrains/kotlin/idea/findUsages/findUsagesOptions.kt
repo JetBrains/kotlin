@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.findUsages
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.openapi.project.Project
 import com.intellij.find.findUsages.JavaClassFindUsagesOptions
-import org.jetbrains.jet.plugin.search.usagesSearch.ClassUsagesSearchHelper
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget
+import org.jetbrains.kotlin.idea.search.usagesSearch.ClassUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchLocation
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
 import com.intellij.find.findUsages.FindUsagesOptions
-import org.jetbrains.jet.plugin.search.usagesSearch.PropertyUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.plugin.search.usagesSearch.ClassDeclarationsUsagesSearchHelper
-import org.jetbrains.jet.plugin.search.usagesSearch.FunctionUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.ClassDeclarationsUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 
 public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {

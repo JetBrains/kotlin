@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 import org.jetbrains.kotlin.idea.references.JetReference;
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 import java.util.Collections;

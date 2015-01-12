@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.findUsages.dialogs;
 
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 

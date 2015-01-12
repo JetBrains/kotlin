@@ -38,9 +38,9 @@ import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
-import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;

@@ -25,9 +25,9 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
-import org.jetbrains.jet.plugin.search.usagesSearch.DefaultSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.jet.plugin.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class KotlinTypeParameterFindUsagesHandler(

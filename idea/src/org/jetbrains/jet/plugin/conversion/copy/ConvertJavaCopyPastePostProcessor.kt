@@ -28,7 +28,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.editor.JetEditorOptions
+import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager

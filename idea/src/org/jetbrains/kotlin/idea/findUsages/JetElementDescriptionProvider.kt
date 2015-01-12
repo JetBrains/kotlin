@@ -24,7 +24,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import com.intellij.refactoring.util.CommonRefactoringUtil
 

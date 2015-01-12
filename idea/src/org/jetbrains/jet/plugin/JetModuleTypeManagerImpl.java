@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
+import org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager;
 
 public class JetModuleTypeManagerImpl extends JetModuleTypeManager {
     @Override

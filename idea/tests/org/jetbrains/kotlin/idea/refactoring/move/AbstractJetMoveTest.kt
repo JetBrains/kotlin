@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveD
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 

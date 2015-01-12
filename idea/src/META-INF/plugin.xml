@@ -28,13 +28,13 @@
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComponent</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
     </component>
   </project-components>
 
@@ -142,7 +142,7 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
-    <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper"
@@ -166,8 +166,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"
-                    serviceImplementation="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
+                    serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
                     serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
@@ -235,7 +235,7 @@
     <lang.surroundDescriptor language="jet"
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinStatementSurroundDescriptor"/>
     <lang.unwrapDescriptor language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.unwrap.KotlinUnwrapDescriptor"/>
-    <quoteHandler fileType="Kotlin" className="org.jetbrains.jet.plugin.editor.KotlinQuoteHandler"/>
+    <quoteHandler fileType="Kotlin" className="org.jetbrains.kotlin.idea.editor.KotlinQuoteHandler"/>
     <refactoring.helper implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinShortenReferencesRefactoringHelper"/>
     <refactoring.moveHandler
         id="kotlin.moveFilesOrDirectories"
@@ -320,19 +320,19 @@
     <annotator language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStatementGroupSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinCodeBlockSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDocCommentSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinDeclarationSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinListSelectioner"/>
-    <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStringLiteralSelectioner"/>
-    <basicWordSelectionFilter implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinWordSelectionFilter"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinStatementGroupSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinCodeBlockSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinDocCommentSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinDeclarationSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinListSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinStringLiteralSelectioner"/>
+    <basicWordSelectionFilter implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinWordSelectionFilter"/>
 
-    <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>
-    <enterHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinEnterHandler"
+    <typedHandler implementation="org.jetbrains.kotlin.idea.editor.KotlinTypedHandler"/>
+    <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinEnterHandler"
                           id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
-    <lang.smartEnterProcessor language="jet" implementationClass="org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler"/>
-    <backspaceHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinBackspaceHandler"/>
+    <lang.smartEnterProcessor language="jet" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
@@ -382,13 +382,13 @@
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
 
-    <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaFrameworkType"/>
-    <framework.type implementation="org.jetbrains.jet.plugin.framework.JSFrameworkType"/>
-    <projectTemplatesFactory implementation="org.jetbrains.jet.plugin.framework.KotlinTemplatesFactory" />
+    <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
+    <framework.type implementation="org.jetbrains.kotlin.idea.framework.JSFrameworkType"/>
+    <projectTemplatesFactory implementation="org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory" />
 
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JsHeaderLibraryPresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JsHeaderLibraryPresentationProvider"/>
 
     <typeHierarchyProvider language="jet" implementationClass="org.jetbrains.jet.plugin.hierarchy.KotlinTypeHierarchyProvider"/>
     <callHierarchyProvider
@@ -432,11 +432,11 @@
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
 
-    <referencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinReferencesSearcher"/>
-    <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
-    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher"/>
-    <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
-    <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
+    <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
+    <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
+    <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
+    <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
 
@@ -447,9 +447,9 @@
                 canCloseContents="true"
         />
 
-    <applicationService serviceInterface="org.jetbrains.jet.plugin.editor.JetEditorOptions"
-                        serviceImplementation="org.jetbrains.jet.plugin.editor.JetEditorOptions"/>
-    <editorAppearanceConfigurable instance="org.jetbrains.jet.plugin.editor.JetSettingEditorConfigurable"/>
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.JetEditorOptions"
+                        serviceImplementation="org.jetbrains.kotlin.idea.editor.JetEditorOptions"/>
+    <editorAppearanceConfigurable instance="org.jetbrains.kotlin.idea.editor.JetSettingEditorConfigurable"/>
 
     <statementUpDownMover id="jetExpression"
                           implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetExpressionMover"
@@ -464,7 +464,7 @@
 
     <targetElementEvaluator
         language="jet"
-        implementationClass="org.jetbrains.jet.plugin.search.ideaExtensions.JetTargetElementEvaluator" />
+        implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.JetTargetElementEvaluator" />
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction</className>

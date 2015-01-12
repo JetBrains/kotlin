@@ -64,7 +64,7 @@ import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiModifier
 import com.intellij.util.VisibilityUtil
 import com.intellij.openapi.util.Ref
-import org.jetbrains.jet.plugin.search.projectScope
+import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages

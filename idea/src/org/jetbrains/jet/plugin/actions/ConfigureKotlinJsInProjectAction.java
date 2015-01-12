@@ -21,9 +21,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
-import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
-import org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 public class ConfigureKotlinJsInProjectAction extends AnAction {
 

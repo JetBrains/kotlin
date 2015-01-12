@@ -26,7 +26,7 @@ import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.framework.JSLibraryStdDescription;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.test.ConfigLibraryUtil;
 
 public class JetStdJSProjectDescriptor implements LightProjectDescriptor {

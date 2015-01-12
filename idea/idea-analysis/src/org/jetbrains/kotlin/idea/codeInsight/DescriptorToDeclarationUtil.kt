@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import java.util.HashSet
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public object DescriptorToDeclarationUtil {

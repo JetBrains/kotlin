@@ -22,7 +22,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.editor.JetEditorOptions;
+import org.jetbrains.kotlin.idea.editor.JetEditorOptions;
 
 public abstract class AbstractJavaToKotlinCopyPasteConversionTest extends LightCodeInsightFixtureTestCase {
 

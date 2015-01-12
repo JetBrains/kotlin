@@ -39,11 +39,11 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
-import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
-import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
-import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 

@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindClassUsagesDialog
-import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.jet.plugin.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
 import org.jetbrains.kotlin.idea.findUsages.toClassHelper
 import org.jetbrains.kotlin.idea.findUsages.toClassDeclarationsHelper
-import org.jetbrains.jet.plugin.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import java.util.Collections
 import com.intellij.find.findUsages.JavaFindUsagesHandler

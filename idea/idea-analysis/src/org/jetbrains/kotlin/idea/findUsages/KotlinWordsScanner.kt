@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
-import org.jetbrains.jet.plugin.search.usagesSearch.*
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.lexer.JetLexer

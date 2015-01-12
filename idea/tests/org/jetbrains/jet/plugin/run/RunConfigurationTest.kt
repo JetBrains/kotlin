@@ -37,7 +37,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.module.Module
 import java.io.File
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
