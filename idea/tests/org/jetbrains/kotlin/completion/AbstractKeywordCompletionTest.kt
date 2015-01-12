@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.completion
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
-import org.jetbrains.jet.plugin.completion.KeywordLookupObject
+import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
 import org.jetbrains.jet.plugin.project.TargetPlatform
 
 public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTestCase() {

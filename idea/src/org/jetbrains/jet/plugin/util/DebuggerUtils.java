@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.debugger.DebuggerPackage;
+import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
 
 import java.util.Collection;
 

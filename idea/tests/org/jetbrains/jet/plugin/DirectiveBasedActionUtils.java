@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
+import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -149,7 +149,7 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
-                        serviceImplementation="org.jetbrains.jet.plugin.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
+                        serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>
@@ -186,8 +186,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"
                     serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForPackage$FileStubCache"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"
-                    serviceImplementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.jet.plugin.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
@@ -215,7 +215,7 @@
     <compiler.task execute="BEFORE" implementation="org.jetbrains.jet.plugin.internal.makeBackup.MakeBackupCompileTask"/>
     <buildProcess.parametersProvider implementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinBuildProcessParametersProvider"/>
 
-    <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
     <lang.parserDefinition language="jet" implementationClass="org.jetbrains.kotlin.parsing.JetParserDefinition"/>
     <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
@@ -253,7 +253,7 @@
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
     <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
 
-    <colorSettingsPage implementation="org.jetbrains.jet.plugin.highlighter.JetColorSettingsPage"/>
+    <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.JetColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
 
@@ -275,14 +275,14 @@
     <completion.contributor language="jet"
                             id="JetCompletionContributor"
                             order="first"
-                            implementationClass="org.jetbrains.jet.plugin.completion.KotlinCompletionContributor"/>
+                            implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor"/>
 
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"
-                           implementationClass="org.jetbrains.jet.plugin.completion.confidence.UnfocusedPossibleFunctionParameter"/>
+                           implementationClass="org.jetbrains.kotlin.idea.completion.confidence.UnfocusedPossibleFunctionParameter"/>
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
 
-    <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.KotlinCompletionCharFilter"/>
+    <lookup.charFilter implementation="org.jetbrains.kotlin.idea.completion.KotlinCompletionCharFilter"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
@@ -313,12 +313,12 @@
     <liveTemplateMacro implementation="org.jetbrains.jet.plugin.liveTemplates.macro.JetSuggestVariableNameMacro"/>
     <liveTemplateOptionalProcessor implementation="org.jetbrains.jet.plugin.liveTemplates.KotlinShortenFQNamesProcessor"/>
 
-    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiCheckerAndHighlightingUpdater"/>
-    <highlightRangeExtension implementation="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
+    <annotator language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetPsiCheckerAndHighlightingUpdater"/>
+    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.highlighter.JetPsiChecker"/>
 
-    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>
-    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DuplicateJvmSignatureAnnotator"/>
-    <problemHighlightFilter implementation="org.jetbrains.jet.plugin.highlighter.KotlinProblemHighlightFilter"/>
+    <annotator language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
+    <annotator language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
+    <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinStatementGroupSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.KotlinCodeBlockSelectioner"/>
@@ -343,7 +343,7 @@
     <configurationType implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSBrowserProgramRunner"/>
     <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
-    <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="JAVA"
                                     implementationClass="org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerProvider"/>
     <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
@@ -370,14 +370,14 @@
         id="kotlinJavaSafeDeleteDelegate"
         language="jet"
         implementationClass="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinJavaSafeDeleteDelegate"/>
-    <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler"/>
-    <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
-    <debugger.codeFragmentFactory implementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinCodeFragmentFactory"/>
-    <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider"/>
-    <debuggerClassFilterProvider implementation="org.jetbrains.jet.plugin.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
-    <debugger.nodeRenderer implementation="org.jetbrains.jet.plugin.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
-    <debugger.sourcePositionProvider implementation="org.jetbrains.jet.plugin.debugger.KotlinSourcePositionProvider"/>
-    <xdebugger.settings implementation="org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings"/>
+    <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler"/>
+    <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.JetPositionManagerFactory"/>
+    <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
+    <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider"/>
+    <debuggerClassFilterProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
+    <debugger.nodeRenderer implementation="org.jetbrains.kotlin.idea.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
+    <debugger.sourcePositionProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinSourcePositionProvider"/>
+    <xdebugger.settings implementation="org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
@@ -421,14 +421,14 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
-    <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.decompiler.JetClassFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
     
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>
 
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
+    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
 

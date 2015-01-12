@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.coverage.CoverageSuitesBundle
 import java.io.File
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.debugger.JetPositionManager
+import org.jetbrains.kotlin.idea.debugger.JetPositionManager
 import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.openapi.roots.ProjectRootManager

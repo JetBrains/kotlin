@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.jet.plugin.completion.isVisible
+import org.jetbrains.kotlin.idea.completion.isVisible
 import org.jetbrains.kotlin.utils.CachedValueProperty
 
 /**

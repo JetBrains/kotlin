@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.project.Project
 import com.intellij.ide.structureView.StructureViewBuilder
 import com.intellij.psi.PsiManager
-import org.jetbrains.jet.plugin.decompiler.JetClsFile
+import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 
 //TODO: workaround for bug in JavaClsStructureViewBuilderProvider, remove when IDEA api is updated
 public class JetClsStructureViewBuilderProvider : StructureViewBuilderProvider {

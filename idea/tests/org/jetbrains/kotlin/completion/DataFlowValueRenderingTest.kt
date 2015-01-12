@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.completion
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.plugin.completion.renderDataFlowValue
+import org.jetbrains.kotlin.idea.completion.renderDataFlowValue
 import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File

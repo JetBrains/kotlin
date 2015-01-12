@@ -1,5 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.jetbrains">
-    <javaScriptBreakpointAware implementation="org.jetbrains.jet.plugin.debugger.KotlinJavaScriptBreakpointAware"/>
+    <javaScriptBreakpointAware implementation="org.jetbrains.kotlin.idea.debugger.KotlinJavaScriptBreakpointAware"/>
   </extensions>
 </idea-plugin>

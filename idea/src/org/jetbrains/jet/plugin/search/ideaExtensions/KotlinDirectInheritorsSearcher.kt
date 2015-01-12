@@ -22,7 +22,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.Processor
-import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper
+import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex
 import org.jetbrains.jet.plugin.search.fileScope
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
