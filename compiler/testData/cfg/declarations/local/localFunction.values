@@ -1,0 +1,17 @@
+== test ==
+fun test(): Int {
+    val j = 1
+    fun local() = 1
+    return local()
+}
+---------------------
+1                                              <v0>: Int   NEW: r(1) -> <v0>
+local()                                        <v1>: Int   NEW: call(local(), local) -> <v1>
+return local()                                 !<v2>: *
+{ val j = 1 fun local() = 1 return local() }   !<v2>: *    COPY
+=====================
+== local ==
+fun local() = 1
+---------------------
+1   <v0>: Int   NEW: r(1) -> <v0>
+=====================

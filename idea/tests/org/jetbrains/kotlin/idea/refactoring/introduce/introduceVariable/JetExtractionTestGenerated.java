@@ -414,6 +414,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("localFunctionInTheMiddleSimpleControlFlow.kt")
+            public void testLocalFunctionInTheMiddleSimpleControlFlow() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunctionInTheMiddleSimpleControlFlow.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("localFunctionInTheMiddleUnusedVar.kt")
+            public void testLocalFunctionInTheMiddleUnusedVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunctionInTheMiddleUnusedVar.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("localFunctionInTheMiddleUsedVar.kt")
+            public void testLocalFunctionInTheMiddleUsedVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunctionInTheMiddleUsedVar.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("localFunctionRef.kt")
             public void testLocalFunctionRef() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");
