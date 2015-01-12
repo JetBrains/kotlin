@@ -287,7 +287,10 @@ private fun makeCall(
                 )
 
             is Jump -> {
-                if (outputValue.conditional) {
+                if (outputValue.elementToInsertAfterCall == null) {
+                    Collections.singletonList(psiFactory.createExpression(callText))
+                }
+                else if (outputValue.conditional) {
                     Collections.singletonList(
                             psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.getText()}")
                     )

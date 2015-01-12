@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
@@ -45,7 +44,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
@@ -152,9 +151,37 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     return resultType to expressions
 }
 
-private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): Boolean {
-    if (mapTo(HashSet<Label?>()) { it.targetLabel }.size > 1) return false
-    return !checkPsi || mapTo(HashSet<String?>()) { it.element.getText() }.size <= 1
+private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): Instruction? {
+    val singleSuccessorCheckingVisitor = object: InstructionVisitorWithResult<Boolean>() {
+        var target: Instruction? = null
+
+        override fun visitInstructionWithNext(instruction: InstructionWithNext): Boolean {
+            return when (instruction) {
+                is LoadUnitValueInstruction,
+                is MergeInstruction,
+                is MarkInstruction -> {
+                    instruction.next?.accept(this) ?: true
+                }
+                else -> visitInstruction(instruction)
+            }
+        }
+
+        override fun visitJump(instruction: AbstractJumpInstruction): Boolean {
+            return when (instruction) {
+                is ConditionalJumpInstruction -> visitInstruction(instruction)
+                else -> instruction.resolvedTarget?.accept(this) ?: true
+            }
+        }
+
+        override fun visitInstruction(instruction: Instruction): Boolean {
+            if (target != null && target != instruction) return false
+            target = instruction
+            return true
+        }
+    }
+
+    if (instructions.flatMap { it.nextInstructions }.any { !it.accept(singleSuccessorCheckingVisitor) }) return null
+    return singleSuccessorCheckingVisitor.target ?: instructions.firstOrNull()?.owner?.getSinkInstruction()
 }
 
 private fun JetType.isMeaningful(): Boolean {
@@ -295,7 +322,7 @@ private fun ExtractionData.analyzeControlFlow(
             return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
         }
 
-        if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
+        if (getCommonNonTrivialSuccessorIfAny(valuedReturnExits) == null) return multipleExitsError
         outputValues.add(ExpressionValue(true, valuedReturnExpressions, returnValueType))
     }
 
@@ -326,12 +353,14 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     if (jumpExits.isNotEmpty()) {
-        if (!jumpExits.checkEquivalence(true)) return multipleExitsError
+        val jumpTarget = getCommonNonTrivialSuccessorIfAny(jumpExits)
+        if (jumpTarget == null) return multipleExitsError
 
+        val singleExit = getCommonNonTrivialSuccessorIfAny(defaultExits) == jumpTarget
+        val conditional = !singleExit && defaultExits.isNotEmpty()
         val elements = jumpExits.map { it.element as JetExpression }
-        return controlFlow.copy(
-                outputValues = Collections.singletonList(Jump(elements, elements.first(), defaultExits.isNotEmpty()))
-        ) to null
+        val elementToInsertAfterCall = if (singleExit) null else elements.first()
+        return controlFlow.copy(outputValues = Collections.singletonList(Jump(elements, elementToInsertAfterCall, conditional))) to null
     }
 
     return controlFlow to null

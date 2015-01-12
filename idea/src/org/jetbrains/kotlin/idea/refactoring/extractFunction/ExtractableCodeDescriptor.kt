@@ -132,7 +132,7 @@ trait OutputValue {
 
     class Jump(
             val elementsToReplace: List<JetExpression>,
-            val elementToInsertAfterCall: JetElement,
+            val elementToInsertAfterCall: JetElement?,
             val conditional: Boolean
     ): OutputValue {
         override val originalExpressions: List<JetExpression> get() = elementsToReplace

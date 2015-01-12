@@ -501,7 +501,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
 
         @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.Initializer.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
+        @InnerTestClasses({ControlFlow.ConditionalJumps.class, ControlFlow.Default.class, ControlFlow.DefiniteReturns.class, ControlFlow.EvaluateExpression.class, ControlFlow.ExitPointEquivalence.class, ControlFlow.Initializer.class, ControlFlow.OutputValues.class, ControlFlow.Throws.class, ControlFlow.Unextractable.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ControlFlow extends AbstractJetExtractionTest {
             public void testAllFilesPresentInControlFlow() throws Exception {
@@ -744,6 +744,63 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("trailingLambdaNonEmptyArgListWithNamedArgs.kt")
                 public void testTrailingLambdaNonEmptyArgListWithNamedArgs() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgListWithNamedArgs.kt");
+                    doExtractFunctionTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ExitPointEquivalence extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInExitPointEquivalence() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("breakAndReturn.kt")
+                public void testBreakAndReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/breakAndReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("breakContinueAndDefault.kt")
+                public void testBreakContinueAndDefault() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/breakContinueAndDefault.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("continueAndReturn.kt")
+                public void testContinueAndReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/continueAndReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("defaultAndBreak.kt")
+                public void testDefaultAndBreak() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/defaultAndBreak.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("defaultAndContinue.kt")
+                public void testDefaultAndContinue() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/defaultAndContinue.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("defaultAndReturn.kt")
+                public void testDefaultAndReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/defaultAndReturn.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("defaultAndReturnInWhen.kt")
+                public void testDefaultAndReturnInWhen() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/defaultAndReturnInWhen.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("multipleBreaks.kt")
+                public void testMultipleBreaks() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/exitPointEquivalence/multipleBreaks.kt");
                     doExtractFunctionTest(fileName);
                 }
             }
