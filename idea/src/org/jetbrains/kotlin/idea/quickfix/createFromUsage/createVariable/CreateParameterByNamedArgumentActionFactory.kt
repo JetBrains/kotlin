@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

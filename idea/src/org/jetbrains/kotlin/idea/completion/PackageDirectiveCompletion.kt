@@ -21,9 +21,9 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by

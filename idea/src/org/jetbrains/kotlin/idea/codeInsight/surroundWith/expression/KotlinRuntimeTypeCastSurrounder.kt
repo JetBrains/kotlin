@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker

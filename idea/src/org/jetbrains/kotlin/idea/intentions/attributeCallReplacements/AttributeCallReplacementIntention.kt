@@ -32,7 +32,7 @@ import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (

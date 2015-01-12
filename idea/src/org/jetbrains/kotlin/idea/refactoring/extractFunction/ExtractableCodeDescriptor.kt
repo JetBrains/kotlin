@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.util.containers.MultiMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.JetThisExpression
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetTypeParameter

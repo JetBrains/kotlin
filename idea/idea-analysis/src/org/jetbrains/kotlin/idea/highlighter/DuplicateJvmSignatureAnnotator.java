@@ -22,17 +22,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
-import static org.jetbrains.jet.plugin.caches.resolve.ResolvePackage.getModuleInfo;
+import static org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage.getModuleInfo;
 
 public class DuplicateJvmSignatureAnnotator implements Annotator {
     @Override

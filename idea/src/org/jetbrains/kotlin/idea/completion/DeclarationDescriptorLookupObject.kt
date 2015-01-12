@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.

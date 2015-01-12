@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.idea.codeInsight;
 
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;

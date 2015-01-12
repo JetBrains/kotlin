@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
     specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))

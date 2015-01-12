@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
+import static org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
 public class DebuggerUtils {
     private DebuggerUtils() {

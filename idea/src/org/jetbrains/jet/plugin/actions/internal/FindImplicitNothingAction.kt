@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.Messages
 import javax.swing.SwingUtilities
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

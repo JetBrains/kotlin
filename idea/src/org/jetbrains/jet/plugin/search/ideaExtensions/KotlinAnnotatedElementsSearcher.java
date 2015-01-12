@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 
 import java.util.ArrayList;

@@ -36,9 +36,9 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
-import org.jetbrains.jet.plugin.references.JetReference;
+import org.jetbrains.kotlin.idea.references.JetReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 

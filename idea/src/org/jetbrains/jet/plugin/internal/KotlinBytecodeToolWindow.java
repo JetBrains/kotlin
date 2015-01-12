@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;

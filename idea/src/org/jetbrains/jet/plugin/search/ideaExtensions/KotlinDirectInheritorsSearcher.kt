@@ -23,9 +23,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
-import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex
+import org.jetbrains.kotlin.idea.stubindex.JetSuperClassIndex
 import org.jetbrains.jet.plugin.search.fileScope
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 
 public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
     public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {

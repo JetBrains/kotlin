@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.references.*
-import org.jetbrains.jet.plugin.findUsages.UsageTypeUtils
-import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.idea.findUsages.UsageTypeUtils
+import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)

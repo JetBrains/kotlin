@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.psi.patternMatching.matches
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.operator.assign.intention", javaClass()) {
 

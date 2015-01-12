@@ -44,7 +44,7 @@ import java.util.Collections
 import java.util.HashMap
 import java.util.ArrayList
 import java.util.Properties
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.refactoring.CollectingValidator

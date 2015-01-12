@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.jet.plugin.actions.JetAddImportAction
-import org.jetbrains.jet.plugin.caches.JetShortNamesCache
-import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
+import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList

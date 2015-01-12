@@ -44,7 +44,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import com.intellij.openapi.diagnostic.Logger
@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
+import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.resolve.DescriptorUtils

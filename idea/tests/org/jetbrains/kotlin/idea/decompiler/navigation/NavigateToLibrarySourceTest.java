@@ -28,7 +28,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
-import org.jetbrains.jet.plugin.references.JetReference;
+import org.jetbrains.kotlin.idea.references.JetReference;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.util.Collection;

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.ArrayList
 import java.util.HashMap

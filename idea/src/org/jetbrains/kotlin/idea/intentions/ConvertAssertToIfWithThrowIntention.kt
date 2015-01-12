@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {

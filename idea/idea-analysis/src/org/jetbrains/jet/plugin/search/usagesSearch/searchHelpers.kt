@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.plugin.references.*
+import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 

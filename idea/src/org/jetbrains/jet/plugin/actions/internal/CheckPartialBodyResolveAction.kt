@@ -45,8 +45,8 @@ import javax.swing.SwingUtilities
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetContainerNode

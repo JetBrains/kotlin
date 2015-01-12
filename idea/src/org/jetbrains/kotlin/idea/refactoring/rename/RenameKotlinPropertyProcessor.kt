@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty

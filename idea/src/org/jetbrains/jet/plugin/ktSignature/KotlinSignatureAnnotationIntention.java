@@ -34,7 +34,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
+import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;

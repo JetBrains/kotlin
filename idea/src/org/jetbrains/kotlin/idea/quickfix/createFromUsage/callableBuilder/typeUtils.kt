@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetVariableDeclaration
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.refactoring.psi.SearchUtils
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import java.util.HashSet
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils

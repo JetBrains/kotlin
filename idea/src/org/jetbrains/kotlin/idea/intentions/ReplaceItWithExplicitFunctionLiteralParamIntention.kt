@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {

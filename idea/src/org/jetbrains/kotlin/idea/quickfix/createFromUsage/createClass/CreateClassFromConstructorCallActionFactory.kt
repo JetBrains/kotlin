@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import java.util.Collections

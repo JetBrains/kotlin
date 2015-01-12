@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.Collections
 import org.jetbrains.kotlin.types.JetTypeImpl

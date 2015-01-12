@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.jetbrains.jet.plugin.parameterInfo;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetValueArgumentList;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 
 public abstract class AbstractFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     @Override

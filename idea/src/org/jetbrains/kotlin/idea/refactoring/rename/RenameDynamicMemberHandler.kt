@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.actionSystem.DataContext
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 

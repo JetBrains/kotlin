@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 val NULL_PTR_EXCEPTION = "NullPointerException"
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ConvertIfWithThrowToAssertIntention :
         JetSelfTargetingIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {

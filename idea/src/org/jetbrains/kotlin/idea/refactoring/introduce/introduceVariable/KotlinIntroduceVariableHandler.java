@@ -34,7 +34,6 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.PatternMatchingPackage;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.plugin.util.psiModificationUtil.PsiModificationUtilPack
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction;

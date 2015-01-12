@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
@@ -46,7 +46,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
+import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,

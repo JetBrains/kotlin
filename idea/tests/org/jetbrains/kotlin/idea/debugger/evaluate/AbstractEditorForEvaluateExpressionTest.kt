@@ -29,7 +29,7 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.resolve.BindingContext

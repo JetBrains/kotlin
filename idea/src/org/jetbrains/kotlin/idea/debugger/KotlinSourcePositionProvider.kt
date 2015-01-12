@@ -36,7 +36,7 @@ import com.intellij.debugger.ui.tree.FieldDescriptor
 import com.intellij.debugger.ui.tree.LocalVariableDescriptor
 import com.intellij.debugger.impl.PositionUtil
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression

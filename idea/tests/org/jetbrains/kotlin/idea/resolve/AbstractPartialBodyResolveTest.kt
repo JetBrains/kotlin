@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor

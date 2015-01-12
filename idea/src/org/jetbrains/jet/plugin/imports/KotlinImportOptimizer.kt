@@ -24,7 +24,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper

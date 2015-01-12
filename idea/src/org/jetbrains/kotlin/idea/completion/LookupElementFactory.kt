@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.kotlin.types.TypeUtils
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer

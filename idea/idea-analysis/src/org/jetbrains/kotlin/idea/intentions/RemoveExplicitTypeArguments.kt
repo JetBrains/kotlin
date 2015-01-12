@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
-import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {

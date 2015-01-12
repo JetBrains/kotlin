@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import java.io.File
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.util.application.runWriteAction
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import java.util.ArrayList

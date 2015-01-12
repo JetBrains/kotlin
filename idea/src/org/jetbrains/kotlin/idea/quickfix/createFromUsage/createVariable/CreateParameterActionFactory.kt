@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {

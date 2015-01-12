@@ -29,7 +29,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.completion.CompletionParameters
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,

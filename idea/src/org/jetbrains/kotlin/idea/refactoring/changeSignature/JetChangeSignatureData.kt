@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 

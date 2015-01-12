@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(
         "make.type.explicit.in.lambda", javaClass()) {

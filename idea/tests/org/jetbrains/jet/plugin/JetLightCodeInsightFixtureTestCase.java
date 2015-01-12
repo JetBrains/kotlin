@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestCaseBuilder;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;

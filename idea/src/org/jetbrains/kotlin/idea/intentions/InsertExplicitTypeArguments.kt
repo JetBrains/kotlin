@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {

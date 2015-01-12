@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.qualifiedNameForSourceCode
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType

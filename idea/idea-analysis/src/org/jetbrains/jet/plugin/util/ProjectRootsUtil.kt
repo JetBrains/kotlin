@@ -25,7 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.ide.highlighter.JavaClassFileType
-import org.jetbrains.jet.plugin.caches.resolve.JsProjectDetector
+import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 
 public object ProjectRootsUtil {
     platformStatic

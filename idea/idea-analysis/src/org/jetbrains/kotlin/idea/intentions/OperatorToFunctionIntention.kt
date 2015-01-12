@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>("operator.to.function", javaClass()) {
     class object {

@@ -26,7 +26,7 @@ import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange

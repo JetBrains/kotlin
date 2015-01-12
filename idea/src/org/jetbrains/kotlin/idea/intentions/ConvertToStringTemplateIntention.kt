@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 
 public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {

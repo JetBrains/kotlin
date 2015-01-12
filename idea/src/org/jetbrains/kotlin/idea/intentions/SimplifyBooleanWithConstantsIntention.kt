@@ -28,7 +28,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<JetBinaryExpression>(
         "simplify.boolean.with.constants", javaClass()) {

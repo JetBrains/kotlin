@@ -47,14 +47,14 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.builtins.InlineUtil
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.util.DebuggerUtils
 
 import java.util.*
 
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
-import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {

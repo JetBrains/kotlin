@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.completion
 import org.jetbrains.kotlin.psi.JetValueArgument
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons

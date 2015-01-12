@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.idea.refactoring.move.getString
 import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException

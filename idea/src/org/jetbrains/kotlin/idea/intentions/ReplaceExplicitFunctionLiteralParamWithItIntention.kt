@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 

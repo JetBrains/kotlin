@@ -68,7 +68,7 @@ import org.jetbrains.jet.plugin.search.projectScope
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.idea.refactoring.move.MoveRenameUsageInfoForExtension
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName

@@ -33,7 +33,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import kotlin.test.assertTrue
-import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
 
 public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     public fun testJdkClass() {

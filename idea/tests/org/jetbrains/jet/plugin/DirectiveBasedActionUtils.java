@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Severity;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.util.Arrays;
 import java.util.Collection;

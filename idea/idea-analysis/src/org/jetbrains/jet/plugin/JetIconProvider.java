@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinLightClassForDecompiledDeclaration;
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 

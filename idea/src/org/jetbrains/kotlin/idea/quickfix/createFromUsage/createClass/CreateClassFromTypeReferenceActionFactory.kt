@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {

@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.JetClassOrObject
 

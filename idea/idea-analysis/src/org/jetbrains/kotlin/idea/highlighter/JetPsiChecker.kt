@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import kotlin.platform.platformStatic
 

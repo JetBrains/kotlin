@@ -25,7 +25,7 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {

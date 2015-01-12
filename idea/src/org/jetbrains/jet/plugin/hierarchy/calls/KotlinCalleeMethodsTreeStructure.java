@@ -26,7 +26,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 
 import java.util.ArrayList;

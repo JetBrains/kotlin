@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {

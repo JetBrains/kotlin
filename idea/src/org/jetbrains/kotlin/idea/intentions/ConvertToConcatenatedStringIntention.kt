@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {

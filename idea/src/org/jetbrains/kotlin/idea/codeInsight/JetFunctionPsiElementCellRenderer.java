@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.codeInsight;
 
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 

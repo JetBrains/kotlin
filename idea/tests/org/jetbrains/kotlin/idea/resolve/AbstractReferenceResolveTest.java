@@ -29,7 +29,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestCaseBuilder;

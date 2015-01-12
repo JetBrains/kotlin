@@ -36,7 +36,7 @@ import java.util.ArrayList
 import com.intellij.util.Function
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
     override fun `fun`(jetDeclaration: JetDeclaration?): String? {

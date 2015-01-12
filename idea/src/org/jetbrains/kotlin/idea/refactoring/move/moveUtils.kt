@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetElement
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.util.MoveRenameUsageInfo
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetImportDirective
@@ -48,7 +48,7 @@ import com.intellij.refactoring.util.NonCodeUsageInfo
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.psi.JetThisExpression
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.Comparing
 import java.util.Comparator

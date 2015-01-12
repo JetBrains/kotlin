@@ -1,5 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
-// FILTERING_RULES: org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule
+// FILTERING_RULES: org.jetbrains.kotlin.idea.findUsages.JetImportFilteringRule
 // OPTIONS: usages, constructorUsages
 
 package testing

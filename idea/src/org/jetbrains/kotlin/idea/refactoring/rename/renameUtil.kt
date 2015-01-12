@@ -22,7 +22,7 @@ import java.util.ArrayList
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import org.jetbrains.jet.plugin.references.AbstractJetReference
+import org.jetbrains.kotlin.idea.references.AbstractJetReference
 
 fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
     val usagesToAdd = ArrayList<UsageInfo>()

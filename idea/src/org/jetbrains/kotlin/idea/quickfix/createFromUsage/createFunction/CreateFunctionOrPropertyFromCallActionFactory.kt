@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

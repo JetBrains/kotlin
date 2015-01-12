@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {

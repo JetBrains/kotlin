@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.Collections
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import java.util.LinkedHashMap
 

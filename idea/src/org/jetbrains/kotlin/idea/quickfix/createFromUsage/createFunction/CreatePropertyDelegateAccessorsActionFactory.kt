@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 object CreatePropertyDelegateAccessorsActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

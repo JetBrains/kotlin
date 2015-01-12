@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;

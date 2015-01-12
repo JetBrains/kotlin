@@ -23,11 +23,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile

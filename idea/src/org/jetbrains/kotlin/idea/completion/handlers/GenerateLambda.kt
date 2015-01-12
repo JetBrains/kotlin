@@ -36,7 +36,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.completion.ExpectedInfos
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers

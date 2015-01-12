@@ -26,7 +26,7 @@ import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
 import org.jetbrains.kotlin.analyzer.analyzeInContext
@@ -35,7 +35,7 @@ import java.util.LinkedHashSet
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public object ShortenReferences {

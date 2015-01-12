@@ -65,7 +65,7 @@ import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil

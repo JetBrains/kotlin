@@ -37,7 +37,7 @@ import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 
 private val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.debugger")
 

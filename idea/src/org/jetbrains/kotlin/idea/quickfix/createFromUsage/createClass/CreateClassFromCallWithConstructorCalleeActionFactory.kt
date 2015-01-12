@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import java.util.Collections
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

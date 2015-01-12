@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
-import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class AllClassesCompletion(val parameters: CompletionParameters,

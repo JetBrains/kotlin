@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStrea
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.test.assertTrue
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase

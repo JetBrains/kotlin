@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 trait InheritanceItemsSearcher {

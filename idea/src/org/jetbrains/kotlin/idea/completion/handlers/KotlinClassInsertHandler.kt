@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.completion.isAfterDot

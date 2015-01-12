@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetLanguage
-import org.jetbrains.jet.plugin.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import java.util.HashMap

@@ -64,8 +64,8 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstruction
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValueBoxer.AsList
 import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.util.makeNullable

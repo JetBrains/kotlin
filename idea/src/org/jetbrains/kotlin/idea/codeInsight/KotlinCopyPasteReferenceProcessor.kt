@@ -35,7 +35,7 @@ import com.intellij.openapi.application.ApplicationManager
 import java.awt.datatransfer.Transferable
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import java.util.Collections
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.jet.plugin.references.JetMultiReference
+import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.psi.JetSuperExpression

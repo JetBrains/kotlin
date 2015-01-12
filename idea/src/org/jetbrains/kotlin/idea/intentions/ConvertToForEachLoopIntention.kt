@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
     private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {

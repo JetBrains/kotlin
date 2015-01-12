@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetReference
 import java.util.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.deleteElementAndCleanParent
-import org.jetbrains.jet.plugin.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
