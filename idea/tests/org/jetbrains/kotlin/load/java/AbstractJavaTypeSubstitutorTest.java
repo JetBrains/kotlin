@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.jvm;
+package org.jetbrains.kotlin.load.java;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;

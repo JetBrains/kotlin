@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.kotlin.plugin.resolve;
+
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractReferenceToJavaWithWrongFileStructureTest extends AbstractReferenceResolveTest {
     @Override
-    protected void doTest(String path) {
+    protected void doTest(@NotNull String path) {
         //this line intentionally creates wrong file structure for java file
         myFixture.configureByFile(path.replace(".kt", ".java"));
         myFixture.configureByFile(path);

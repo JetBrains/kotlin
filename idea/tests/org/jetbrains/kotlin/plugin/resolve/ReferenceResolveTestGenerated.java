@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.kotlin.plugin.resolve;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.InnerTestClasses;

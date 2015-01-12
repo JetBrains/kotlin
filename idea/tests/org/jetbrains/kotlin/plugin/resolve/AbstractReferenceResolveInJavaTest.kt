@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve
+package org.jetbrains.kotlin.plugin.resolve
 
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 
 private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() +  "/resolve/referenceInJava/dependencies.kt"
 
 public abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
-
     protected override fun doTest(path: String) {
         assert(path.endsWith(".java")) { path }
-        myFixture!!.configureByFile(FILE_WITH_KOTLIN_CODE)
-        myFixture!!.configureByFile(path)
+        myFixture.configureByFile(FILE_WITH_KOTLIN_CODE)
+        myFixture.configureByFile(path)
         performChecks()
     }
 }

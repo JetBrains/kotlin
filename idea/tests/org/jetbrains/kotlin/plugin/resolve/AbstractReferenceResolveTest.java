@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.kotlin.plugin.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -27,6 +27,7 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -179,7 +180,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
         }
     }
 
-    @NotNull
+    @Nullable
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
