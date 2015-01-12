@@ -22,14 +22,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

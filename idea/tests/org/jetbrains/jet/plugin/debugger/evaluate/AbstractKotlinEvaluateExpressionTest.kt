@@ -24,7 +24,7 @@ import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.SuspendContextImpl
 import org.jetbrains.jet.plugin.debugger.*
 import org.junit.Assert
-import org.jetbrains.kotlin.plugin.JetFileType
+import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -59,7 +59,6 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SourcePositionProvider

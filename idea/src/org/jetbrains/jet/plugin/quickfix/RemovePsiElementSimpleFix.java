@@ -23,9 +23,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.plugin.JetBundle;
+import org.jetbrains.kotlin.psi.*;
 
 public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
     val baseDeclaration: PsiElement

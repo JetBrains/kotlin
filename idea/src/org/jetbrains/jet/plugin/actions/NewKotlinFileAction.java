@@ -30,10 +30,10 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.JetFileType;
 
 import java.util.Map;
 

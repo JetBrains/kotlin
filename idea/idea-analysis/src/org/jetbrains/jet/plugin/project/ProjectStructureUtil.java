@@ -35,10 +35,10 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
+import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.psi.JetFile;
 
 import java.util.HashSet;
 import java.util.Set;

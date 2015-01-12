@@ -26,12 +26,12 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.plugin.JetBundle;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.types.Variance;
 
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetModifierKeywordToken modifier;

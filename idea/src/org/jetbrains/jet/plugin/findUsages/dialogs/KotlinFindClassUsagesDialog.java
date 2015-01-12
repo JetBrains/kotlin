@@ -26,10 +26,10 @@ import com.intellij.psi.PsiClass;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.idea.JetBundle;
 
 import javax.swing.*;
 

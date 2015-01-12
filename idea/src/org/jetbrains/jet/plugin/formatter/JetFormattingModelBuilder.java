@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.plugin.JetLanguage;
+import org.jetbrains.kotlin.idea.JetLanguage;
 
 public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull

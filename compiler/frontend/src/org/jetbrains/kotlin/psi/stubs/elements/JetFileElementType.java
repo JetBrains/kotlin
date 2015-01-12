@@ -28,8 +28,8 @@ import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.parsing.JetParser;
-import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl;
 

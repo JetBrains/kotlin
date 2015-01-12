@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.navigation;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.plugin.JetFileType;
 
 import java.util.List;
 

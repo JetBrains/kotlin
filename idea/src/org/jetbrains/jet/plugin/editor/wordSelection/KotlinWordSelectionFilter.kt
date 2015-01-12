@@ -20,8 +20,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.JetNodeTypes.*
 import org.jetbrains.kotlin.psi.JetContainerNode
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.plugin.JetLanguage
+import org.jetbrains.kotlin.idea.JetLanguage
 
 public class KotlinWordSelectionFilter : Condition<PsiElement>{
     override fun value(e: PsiElement): Boolean {

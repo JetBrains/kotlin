@@ -22,10 +22,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.psi.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

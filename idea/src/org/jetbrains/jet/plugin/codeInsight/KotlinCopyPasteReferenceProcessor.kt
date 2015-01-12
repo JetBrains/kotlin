@@ -61,10 +61,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor

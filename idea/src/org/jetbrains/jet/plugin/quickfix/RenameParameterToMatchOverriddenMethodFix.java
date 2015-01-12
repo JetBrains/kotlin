@@ -24,14 +24,14 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionAction<JetParameter>{
     private final JetParameter parameter;

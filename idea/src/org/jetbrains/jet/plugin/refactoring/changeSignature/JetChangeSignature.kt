@@ -25,7 +25,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*

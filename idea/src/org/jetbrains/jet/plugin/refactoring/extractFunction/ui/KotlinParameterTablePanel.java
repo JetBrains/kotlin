@@ -30,10 +30,10 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.Parameter;
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.types.JetType;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

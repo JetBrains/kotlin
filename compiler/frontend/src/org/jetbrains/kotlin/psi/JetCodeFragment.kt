@@ -23,7 +23,7 @@ import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.plugin.JetFileType
+import org.jetbrains.kotlin.idea.JetFileType
 import java.util.HashSet
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.types.JetType

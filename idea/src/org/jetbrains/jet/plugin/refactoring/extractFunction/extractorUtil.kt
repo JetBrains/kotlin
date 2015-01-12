@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.HashMap
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.psi.PsiElement
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.util.LinkedHashMap
 import java.util.Collections
 import org.jetbrains.kotlin.psi.psiUtil.isFunctionLiteralOutsideParentheses
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.psi.psiUtil.appendElement
@@ -56,7 +54,7 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.StronglyMatched
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

@@ -23,8 +23,8 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.plugin.JetFileType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

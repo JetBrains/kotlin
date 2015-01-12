@@ -1,7 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFile

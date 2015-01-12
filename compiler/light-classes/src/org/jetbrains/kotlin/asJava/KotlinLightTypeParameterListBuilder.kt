@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.plugin.JetLanguage
+import org.jetbrains.kotlin.idea.JetLanguage
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.ResolveState

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.jet.plugin.actions.JetAddImportAction
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper

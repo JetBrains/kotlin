@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.plugin.JetLanguage
+import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import java.util.HashMap
 import kotlin.properties.Delegates
 

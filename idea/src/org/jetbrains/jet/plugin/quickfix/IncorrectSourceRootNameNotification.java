@@ -33,8 +33,8 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.kotlin.idea.JetFileType;
 
 import java.io.IOException;
 

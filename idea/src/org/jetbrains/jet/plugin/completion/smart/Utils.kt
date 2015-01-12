@@ -40,10 +40,10 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.ArrayList
 import java.util.HashMap
-import org.jetbrains.kotlin.plugin.util.FuzzyType
-import org.jetbrains.kotlin.plugin.util.makeNotNullable
-import org.jetbrains.kotlin.plugin.util.nullability
-import org.jetbrains.kotlin.plugin.util.TypeNullability
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.TypeNullability
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{

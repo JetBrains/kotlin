@@ -22,16 +22,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetWhenCondition;
 import org.jetbrains.kotlin.psi.JetWhenEntry;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

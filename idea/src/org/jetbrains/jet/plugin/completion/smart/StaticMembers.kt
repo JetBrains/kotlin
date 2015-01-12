@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.plugin.util.fuzzyReturnType
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.jet.plugin.completion.isVisible
 

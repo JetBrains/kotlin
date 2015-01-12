@@ -25,12 +25,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 

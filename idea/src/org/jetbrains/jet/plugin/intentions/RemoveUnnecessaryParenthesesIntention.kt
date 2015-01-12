@@ -16,17 +16,9 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.plugin.JetBundle
 
 public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<JetParenthesizedExpression>(
         "remove.unnecessary.parentheses", javaClass()

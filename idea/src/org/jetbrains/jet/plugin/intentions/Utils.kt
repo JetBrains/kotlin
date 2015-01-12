@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {

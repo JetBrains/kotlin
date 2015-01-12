@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.kotlin.plugin.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.plugin.refactoring.comparePossiblyOverridingDescriptors
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.plugin.util.makeNotNullable
-import org.jetbrains.kotlin.plugin.util.CallType
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import com.intellij.patterns.StandardPatterns

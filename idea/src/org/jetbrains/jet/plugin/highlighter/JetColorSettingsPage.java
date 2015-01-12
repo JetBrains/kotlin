@@ -23,9 +23,9 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.kotlin.plugin.JetLanguage;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.JetLanguage;
 
 import javax.swing.*;
 import java.lang.reflect.Field;

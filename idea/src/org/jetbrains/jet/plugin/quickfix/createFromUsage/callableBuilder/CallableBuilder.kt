@@ -61,12 +61,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import java.util.LinkedHashMap
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.plugin.util.isAny
+import org.jetbrains.kotlin.idea.util.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.plugin.util.isUnit
+import org.jetbrains.kotlin.idea.util.isUnit
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"

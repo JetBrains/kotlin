@@ -21,8 +21,8 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairProcessor;
-import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.JetFileType;
 
 public class KotlinJavaScriptBreakpointAware implements PairProcessor<VirtualFile, Project> {
     @Override

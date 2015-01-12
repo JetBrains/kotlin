@@ -33,20 +33,20 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
-import org.jetbrains.kotlin.plugin.JetBundle;
-import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
+import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 
 import javax.swing.*;
 

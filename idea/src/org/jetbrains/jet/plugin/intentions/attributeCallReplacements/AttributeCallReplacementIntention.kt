@@ -24,7 +24,7 @@ import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.jet.plugin.util.Maybe

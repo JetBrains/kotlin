@@ -56,7 +56,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.plugin.util.isUnit
+import org.jetbrains.kotlin.idea.util.isUnit
 
 trait Parameter {
     val argumentText: String

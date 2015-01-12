@@ -27,7 +27,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.plugin.JetFileType
+import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.utils.LibraryUtils
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"

@@ -37,8 +37,8 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.kotlin.types.TypeUtils
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
-import org.jetbrains.kotlin.plugin.util.nullability
-import org.jetbrains.kotlin.plugin.util.TypeNullability
+import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.TypeNullability
 
 public class LookupElementFactory(
         private val receiverTypes: Collection<JetType>

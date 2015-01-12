@@ -22,7 +22,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import org.jetbrains.kotlin.plugin.JetLanguage
+import org.jetbrains.kotlin.idea.JetLanguage
 import com.intellij.formatting.Spacing
 import com.intellij.lang.ASTNode
 import com.intellij.formatting.ASTBlock

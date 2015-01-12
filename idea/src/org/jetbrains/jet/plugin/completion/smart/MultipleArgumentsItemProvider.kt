@@ -31,7 +31,7 @@ import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.plugin.completion.PositionalArgumentExpectedInfo
 import java.util.ArrayList
-import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.assignPriority
 import com.intellij.codeInsight.lookup.Lookup
 import org.jetbrains.kotlin.types.JetType

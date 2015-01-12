@@ -26,7 +26,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
 import org.jetbrains.jet.plugin.quickfix.DelegatingIntentionAction
-import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.plugin.refactoring.canRefactor
 
