@@ -13,4 +13,6 @@ fun test() : Unit {
   x <!USELESS_CAST!>as? Int?<!> : Int?
   y <!USELESS_CAST_STATIC_ASSERT_IS_FINE!>as? Int?<!> : Int?
   Unit
+
+  x as <!UNRESOLVED_REFERENCE!>UnresolvedType<!>
 }
