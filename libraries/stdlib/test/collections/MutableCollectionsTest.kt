@@ -9,7 +9,7 @@ import org.junit.Test as test
 class MutableCollectionTest {
 
     test fun fromIterable() {
-        val data: Iterable<String> = arrayListOf("foo", "bar")
+        val data: Iterable<String> = listOf("foo", "bar")
 
         val collection = ArrayList<String>()
         collection.addAll(data)
@@ -18,7 +18,7 @@ class MutableCollectionTest {
     }
 
     test fun fromStream() {
-        val list = arrayListOf("foo", "bar")
+        val list = listOf("foo", "bar")
         val collection = ArrayList<String>()
 
         collection.addAll(list.stream())

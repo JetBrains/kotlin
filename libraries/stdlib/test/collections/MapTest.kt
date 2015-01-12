@@ -51,7 +51,7 @@ class MapTest {
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-   
+
     test fun iterate() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
@@ -98,7 +98,7 @@ class MapTest {
         val m1 = mapOf("beverage" to "beer", "location" to "Mells")
         val list = m1.map { it.value + " rocks" }
 
-        assertEquals(arrayListOf("beer rocks", "Mells rocks"), list)
+        assertEquals(listOf("beer rocks", "Mells rocks"), list)
     }
 
     test fun mapValues() {
@@ -132,7 +132,7 @@ class MapTest {
     }
 
     test fun createWithSelector() {
-        val map = listOf("a", "bb", "ccc").toMap { it.length }
+        val map = listOf("a", "bb", "ccc").toMap { it.length() }
         assertEquals(3, map.size())
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
@@ -140,7 +140,7 @@ class MapTest {
     }
 
     test fun createWithSelectorAndOverwrite() {
-        val map = listOf("aa", "bb", "ccc").toMap { it.length }
+        val map = listOf("aa", "bb", "ccc").toMap { it.length() }
         assertEquals(2, map.size())
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))
@@ -158,7 +158,7 @@ class MapTest {
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
         assertEquals(3, map["c"])
-        assertEquals(arrayListOf("c", "b", "a"), map.keySet().toList())
+        assertEquals(listOf("c", "b", "a"), map.keySet().toList())
     }
 
     test fun filter() {

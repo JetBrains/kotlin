@@ -40,14 +40,14 @@ class ArraysJVMTest {
         expect(-4.toLong()) { longArray(1, 2, 3) reduce { a, b -> a - b } }
         expect(-4.toFloat()) { floatArray(1.toFloat(), 2.toFloat(), 3.toFloat()) reduce { a, b -> a - b } }
         expect(-4.0) { doubleArray(1.0, 2.0, 3.0) reduce { a, b -> a - b } }
-        expect('3') { charArray('1', '3', '2') reduce { a, b -> if(a > b) a else b } }
+        expect('3') { charArray('1', '3', '2') reduce { a, b -> if (a > b) a else b } }
         expect(false) { booleanArray(true, true, false) reduce { a, b -> a && b } }
         expect(true) { booleanArray(true, true) reduce { a, b -> a && b } }
         expect(0.toByte()) { byteArray(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
         expect(0.toShort()) { shortArray(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
 
         failsWith (javaClass<UnsupportedOperationException>()) {
-            intArray().reduce { a, b -> a + b}
+            intArray().reduce { a, b -> a + b }
         }
     }
 
@@ -56,14 +56,14 @@ class ArraysJVMTest {
         expect(2.toLong()) { longArray(1, 2, 3) reduceRight { a, b -> a - b } }
         expect(2.toFloat()) { floatArray(1.toFloat(), 2.toFloat(), 3.toFloat()) reduceRight { a, b -> a - b } }
         expect(2.0) { doubleArray(1.0, 2.0, 3.0) reduceRight { a, b -> a - b } }
-        expect('3') { charArray('1', '3', '2') reduceRight { a, b -> if(a > b) a else b } }
+        expect('3') { charArray('1', '3', '2') reduceRight { a, b -> if (a > b) a else b } }
         expect(false) { booleanArray(true, true, false) reduceRight { a, b -> a && b } }
         expect(true) { booleanArray(true, true) reduceRight { a, b -> a && b } }
         expect(2.toByte()) { byteArray(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
         expect(2.toShort()) { shortArray(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
 
         failsWith (javaClass<UnsupportedOperationException>()) {
-            intArray().reduceRight { a, b -> a + b}
+            intArray().reduceRight { a, b -> a + b }
         }
     }
 

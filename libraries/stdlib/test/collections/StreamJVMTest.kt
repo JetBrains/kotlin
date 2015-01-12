@@ -6,21 +6,21 @@ import kotlin.test.assertEquals
 class StreamJVMTest {
 
     test fun filterIsInstance() {
-        val src: Stream<Any> = listOf(1,2,3.toDouble(), "abc", "cde").stream()
+        val src: Stream<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde").stream()
 
-        val ints: Stream<Int> = src.filterIsInstance<Int>()
-        assertEquals(arrayListOf(1,2), ints.toArrayList())
+        val intValues: Stream<Int> = src.filterIsInstance<Int>()
+        assertEquals(listOf(1, 2), intValues.toArrayList())
 
-        val doubles: Stream<Double> = src.filterIsInstance<Double>()
-        assertEquals(arrayListOf(3.0), doubles.toArrayList())
+        val doubleValues: Stream<Double> = src.filterIsInstance<Double>()
+        assertEquals(listOf(3.0), doubleValues.toArrayList())
 
-        val strings: Stream<String> = src.filterIsInstance<String>()
-        assertEquals(arrayListOf("abc", "cde"), strings.toArrayList())
+        val stringValues: Stream<String> = src.filterIsInstance<String>()
+        assertEquals(listOf("abc", "cde"), stringValues.toArrayList())
 
-        val anys: Stream<Any> = src.filterIsInstance<Any>()
-        assertEquals(src.toList(), anys.toArrayList())
+        val anyValues: Stream<Any> = src.filterIsInstance<Any>()
+        assertEquals(src.toList(), anyValues.toArrayList())
 
-        val chars: Stream<Char> = src.filterIsInstance<Char>()
-        assertEquals(0, chars.toArrayList().size())
+        val charValues: Stream<Char> = src.filterIsInstance<Char>()
+        assertEquals(0, charValues.toArrayList().size())
     }
 }
