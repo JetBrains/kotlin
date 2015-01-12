@@ -47,7 +47,7 @@ import static org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private final Function1<JetType, JetType> typeNormalizer;
-    private final boolean shortNames;
+    private final NameShortness nameShortness;
     private final boolean withDefinedIn;
     private final Set<DescriptorRenderer.Modifier> modifiers;
     private final boolean startFromName;
@@ -79,7 +79,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final Set<FqName> excludedAnnotationClasses;
 
     /* package */ DescriptorRendererImpl(
-            boolean shortNames,
+            NameShortness nameShortness,
             boolean withDefinedIn,
             Set<Modifier> modifiers,
             boolean startFromName,
@@ -106,7 +106,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean renderDefaultValues,
             boolean flexibleTypesForCode
     ) {
-        this.shortNames = shortNames;
+        this.nameShortness = nameShortness;
         this.withDefinedIn = withDefinedIn;
         this.modifiers = modifiers;
         this.startFromName = startFromName;
@@ -271,31 +271,42 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return buf.toString();
     }
 
+    @Override
     @NotNull
-    private String renderClassName(@NotNull ClassDescriptor klass) {
+    public String renderClassifierName(@NotNull ClassifierDescriptor klass) {
         if (klass instanceof MissingDependencyErrorClass) {
             return ((MissingDependencyErrorClass) klass).getFullFqName().asString();
         }
         if (ErrorUtils.isError(klass)) {
             return klass.getTypeConstructor().toString();
         }
-        if (shortNames) {
-            List<Name> qualifiedNameElements = new ArrayList<Name>();
+        switch (nameShortness) {
+            case SHORT: {
+                List<Name> qualifiedNameElements = new ArrayList<Name>();
 
-            // for nested classes qualified name should be used
-            DeclarationDescriptor current = klass;
-            do {
-                if (((ClassDescriptor) current).getKind() != ClassKind.CLASS_OBJECT) {
-                    qualifiedNameElements.add(current.getName());
+                // for nested classes qualified name should be used
+                DeclarationDescriptor current = klass;
+                do {
+                    if (((ClassDescriptor) current).getKind() != ClassKind.CLASS_OBJECT) {
+                        qualifiedNameElements.add(current.getName());
+                    }
+                    current = current.getContainingDeclaration();
                 }
-                current = current.getContainingDeclaration();
-            }
-            while (current instanceof ClassDescriptor);
+                while (current instanceof ClassDescriptor);
 
-            Collections.reverse(qualifiedNameElements);
-            return renderFqName(qualifiedNameElements);
+                Collections.reverse(qualifiedNameElements);
+                return renderFqName(qualifiedNameElements);
+            }
+
+            case FULLY_QUALIFIED:
+                return renderFqName(DescriptorUtils.getFqName(klass));
+
+            case SOURCE_CODE_QUALIFIED:
+                return RendererPackage.qualifiedNameForSourceCode(klass);
+
+            default:
+                throw new IllegalArgumentException();
         }
-        return renderFqName(DescriptorUtils.getFqName(klass));
     }
 
     /* TYPES RENDERING */
@@ -319,7 +330,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                                                         TypesPackage.flexibility(type).getUpperBound());
             }
             else if (flexibleTypesForCode) {
-                String prefix = shortNames ? "" : Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString() + ".";
+                String prefix = nameShortness == NameShortness.SHORT ? "" : Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString() + ".";
                 return prefix + Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName()
                        + lt()
                        + renderNormalizedType(TypesPackage.flexibility(type).getLowerBound()) + ", "
@@ -378,7 +389,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return lowerRendered + "!";
         }
 
-        String kotlinPrefix = !shortNames ? "kotlin." : "";
+        String kotlinPrefix = nameShortness != NameShortness.SHORT ? "kotlin." : "";
         String mutablePrefix = "Mutable";
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         String simpleCollection = replacePrefixes(
@@ -458,7 +469,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return renderName(cd.getName());
         }
         else if (cd instanceof ClassDescriptor) {
-            return renderClassName((ClassDescriptor) cd);
+            return renderClassifierName((ClassDescriptor) cd);
         }
         else {
             assert cd == null: "Unexpected classifier: " + cd.getClass();

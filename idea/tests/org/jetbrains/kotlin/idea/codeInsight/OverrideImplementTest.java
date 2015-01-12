@@ -193,4 +193,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testMultipleSupers() {
         doMultiOverrideFileTest();
     }
+
+    public void testLocalClass() {
+        doImplementFileTest();
+    }
 }

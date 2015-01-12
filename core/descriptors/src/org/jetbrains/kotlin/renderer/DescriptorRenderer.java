@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.renderer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -37,7 +38,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer COMPACT_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setModifiers()
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setIncludeSynthesizedParameterNames(false).build();
 
     DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererBuilder()
@@ -48,7 +49,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer ONLY_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setModifiers()
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setWithoutTypeParameters(true)
             .setWithoutFunctionParameterNames(true)
             .setReceiverAfterName(true)
@@ -58,9 +59,12 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();
 
-    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setShortNames(true).setIncludeSynthesizedParameterNames(false).build();
+    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setNameShortness(NameShortness.SHORT).setIncludeSynthesizedParameterNames(false).build();
 
-    DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder().setDebugMode(true).build();
+    DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder()
+            .setDebugMode(true)
+            .setNameShortness(NameShortness.FULLY_QUALIFIED)
+            .build();
 
     DescriptorRenderer FLEXIBLE_TYPES_FOR_CODE = new DescriptorRendererBuilder()
             .setFlexibleTypesForCode(true)
@@ -72,7 +76,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer HTML_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setRenderClassObjectName(true)
             .setTextFormat(TextFormat.HTML).build();
 
@@ -81,7 +85,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer HTML_FOR_UNINFERRED_TYPE_PARAMS = new DescriptorRendererBuilder()
             .setUninferredTypeParameterAsName(true)
             .setModifiers()
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setTextFormat(TextFormat.HTML).build();
 
     @NotNull
@@ -89,6 +93,9 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     @NotNull
     String renderTypeArguments(@NotNull List<TypeProjection> typeArguments);
+
+    @NotNull
+    String renderClassifierName(@NotNull ClassifierDescriptor klass);
 
     @NotNull
     String renderAnnotation(@NotNull AnnotationDescriptor annotation);

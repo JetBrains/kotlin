@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -51,6 +52,7 @@ public class RecursiveDescriptorComparator {
             .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
             .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
             .setIncludePropertyConstant(true)
+            .setNameShortness(NameShortness.FULLY_QUALIFIED)
             .setVerbose(true).build();
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false,

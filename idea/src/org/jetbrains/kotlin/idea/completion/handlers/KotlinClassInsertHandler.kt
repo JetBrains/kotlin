@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.idea.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.completion.qualifiedNameForSourceCode
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.completion.isAfterDot
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -52,7 +52,7 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
                 if (nameRef != null) {
                     val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
-                    if (target != null && qualifiedNameForSourceCode(target) == qualifiedName) return
+                    if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return
                 }
 
                 val tempPrefix = if (nameRef != null)
@@ -83,7 +83,7 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     private fun qualifiedNameToInsert(item: LookupElement): String {
         val lookupObject = item.getObject()
         return when (lookupObject) {
-            is DeclarationDescriptorLookupObject -> qualifiedNameForSourceCode(lookupObject.descriptor as ClassDescriptor)!!
+            is DeclarationDescriptorLookupObject -> IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassDescriptor)
             is PsiClass -> lookupObject.getQualifiedName()!!
             else -> error("Unknown object in LookupElement with KotlinClassInsertHandler: $lookupObject")
         }

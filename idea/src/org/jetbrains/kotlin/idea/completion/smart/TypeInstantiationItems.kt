@@ -164,7 +164,7 @@ class TypeInstantiationItems(
         var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
+        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
         if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis

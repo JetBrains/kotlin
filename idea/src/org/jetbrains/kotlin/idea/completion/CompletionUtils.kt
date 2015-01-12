@@ -22,10 +22,6 @@ import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.CompletionProgressIndicator
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import com.intellij.codeInsight.completion.PrefixMatcher
@@ -66,6 +62,8 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.psi.JetLoopExpression
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
+import org.jetbrains.kotlin.renderer.NameShortness
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -107,21 +105,6 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
     }
 
     return exception
-}
-
-fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String? {
-    val name = descriptor.getName()
-    if (name.isSpecial()) return null
-    val nameString = IdeDescriptorRenderers.SOURCE_CODE.renderName(name)
-    val qualifier = qualifierName(descriptor.getContainingDeclaration())
-    return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
-}
-
-private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
-    is ClassDescriptor -> if (descriptor.getKind() != ClassKind.CLASS_OBJECT) qualifiedNameForSourceCode(descriptor) else qualifierName(descriptor.getContainingDeclaration())
-    is PackageViewDescriptor -> IdeDescriptorRenderers.SOURCE_CODE.renderFqName(descriptor.getFqName())
-    is PackageFragmentDescriptor -> IdeDescriptorRenderers.SOURCE_CODE.renderFqName(descriptor.fqName)
-    else -> null
 }
 
 fun PrefixMatcher.asNameFilter() = { (name: Name) -> !name.isSpecial() && prefixMatches(name.getIdentifier()) }

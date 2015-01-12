@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             .setRenderDefaultValues(false)
             .setModifiers(DescriptorRenderer.Modifier.OVERRIDE)
             .setWithDefinedIn(false)
-            .setShortNames(false)
+            .setNameShortness(NameShortness.SOURCE_CODE_QUALIFIED)
             .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
             .setUnitReturnType(false)
             .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)

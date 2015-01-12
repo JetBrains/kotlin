@@ -129,7 +129,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
         })
 
-        val renderedDescriptors = descriptors.map { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }.joinToString(separator = "\n")
+        val renderer = DescriptorRendererBuilder().setNameShortness(NameShortness.FULLY_QUALIFIED).build()
+        val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(psiFile.getText())
         UsefulTestCase.assertSameLines(JetTestUtils.getLastCommentedLines(document), renderedDescriptors.toString())

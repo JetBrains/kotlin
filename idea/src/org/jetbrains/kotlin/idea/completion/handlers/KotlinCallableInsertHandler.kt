@@ -43,11 +43,11 @@ import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.completion.qualifiedNameForSourceCode
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
 import com.intellij.codeInsight.lookup.Lookup
 import org.jetbrains.kotlin.idea.completion.isAfterDot
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -257,7 +257,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
             val project = context.getProject()
 
             val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()
-            val fqName = qualifiedNameForSourceCode(thisObj.getType().getConstructor().getDeclarationDescriptor())
+            val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj.getType().getConstructor().getDeclarationDescriptor())
 
             val parentCast = JetPsiFactory(project).createExpression("(expr as $fqName)") as JetParenthesizedExpression
             val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS

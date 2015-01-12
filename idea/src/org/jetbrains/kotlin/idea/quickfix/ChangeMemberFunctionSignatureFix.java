@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.VisibilityUtil;
@@ -65,7 +66,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
             .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
             .setWithDefinedIn(false)
             .setModifiers()
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setUnitReturnType(false).build();
 
     private final List<FunctionDescriptor> possibleSignatures;

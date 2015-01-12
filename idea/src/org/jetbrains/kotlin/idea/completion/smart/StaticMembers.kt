@@ -25,8 +25,6 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
-import org.jetbrains.kotlin.idea.completion.qualifiedNameForSourceCode
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.idea.completion.isVisible
+import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 
 // adds java static members, enum members and members from class object
 class StaticMembers(
@@ -103,7 +102,7 @@ class StaticMembers(
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
         val lookupElement = lookupElementFactory.createLookupElement(memberDescriptor, resolutionFacade, bindingContext, false)
         val qualifierPresentation = classDescriptor.getName().asString()
-        val qualifierText = qualifiedNameForSourceCode(classDescriptor)
+        val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getAllLookupStrings(): Set<String> {

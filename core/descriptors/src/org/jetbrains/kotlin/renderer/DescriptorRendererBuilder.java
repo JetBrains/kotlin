@@ -28,7 +28,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class DescriptorRendererBuilder {
-    private boolean shortNames = false;
+    private NameShortness nameShortness = NameShortness.SOURCE_CODE_QUALIFIED;
     private boolean withDefinedIn = true;
     private Set<DescriptorRenderer.Modifier> modifiers = EnumSet.allOf(DescriptorRenderer.Modifier.class);
     private boolean startFromName = false;
@@ -69,8 +69,8 @@ public class DescriptorRendererBuilder {
     }
 
     @NotNull
-    public DescriptorRendererBuilder setShortNames(boolean shortNames) {
-        this.shortNames = shortNames;
+    public DescriptorRendererBuilder setNameShortness(NameShortness shortness) {
+        this.nameShortness = shortness;
         return this;
     }
 
@@ -230,7 +230,7 @@ public class DescriptorRendererBuilder {
     @NotNull
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(
-                shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
+                nameShortness, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
