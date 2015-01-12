@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -67,7 +68,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
             if (method.getParameterTypes().length > 0) continue;
 
             Class<?> declaringClass = method.getDeclaringClass();
-            if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
+            if (!declaringClass.getName().startsWith("org.jetbrains.kotlin")) continue;
 
             Object result = method.invoke(elem);
             if (result == null) {
@@ -96,7 +97,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
-        myFileExt = FileUtil.getExtension(PathUtil.getFileName(filePath));
+        myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));
         myFile = createFile(filePath, fileType);
 
         myFile.acceptChildren(new JetVisitorVoid() {
