@@ -53,7 +53,7 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKo
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.testing.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {

@@ -2,14 +2,14 @@
   <configuration default="false" name="Smart Completion Tests" type="JUnit" factoryName="JUnit">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="org.jetbrains.jet.completion.handlers.*" />
+        <option name="PATTERN" value="org.jetbrains.kotlin.completion.handlers.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
     <module name="idea" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
-    <option name="PACKAGE_NAME" value="org.jetbrains.jet.completion.handlers" />
+    <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.completion.handlers" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="pattern" />
@@ -23,11 +23,11 @@
     </option>
     <envs />
     <patterns>
-      <pattern testClass="org.jetbrains.jet.completion.JvmSmartCompletionTestGenerated" />
-      <pattern testClass="org.jetbrains.jet.completion.handlers.SmartCompletionHandlerTestGenerated" />
-      <pattern testClass="org.jetbrains.jet.completion.handlers.SmartCompletionMultifileHandlerTest" />
-      <pattern testClass="org.jetbrains.jet.completion.weighers.SmartCompletionWeigherTestGenerated" />
-      <pattern testClass="org.jetbrains.jet.completion.MultiFileSmartCompletionTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.completion.JvmSmartCompletionTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.completion.handlers.SmartCompletionHandlerTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.completion.handlers.SmartCompletionMultifileHandlerTest" />
+      <pattern testClass="org.jetbrains.kotlin.completion.weighers.SmartCompletionWeigherTestGenerated" />
+      <pattern testClass="org.jetbrains.kotlin.completion.MultiFileSmartCompletionTestGenerated" />
     </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

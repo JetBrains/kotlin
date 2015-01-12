@@ -30,7 +30,7 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.kotlin.test.JetTestCaseBuilder
-import org.jetbrains.jet.testing.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk

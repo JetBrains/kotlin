@@ -29,14 +29,14 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
-import org.jetbrains.jet.testing.ReferenceUtils;
-import org.jetbrains.jet.testing.TagsTestDataUtil;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.ReferenceUtils;
+import org.jetbrains.kotlin.test.TagsTestDataUtil;
 import org.junit.Assert;
 
 import java.io.File;

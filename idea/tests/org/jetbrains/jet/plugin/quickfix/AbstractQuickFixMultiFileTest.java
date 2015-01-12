@@ -31,13 +31,13 @@ import junit.framework.ComparisonFailure;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.ConfigLibraryUtil;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 import java.io.File;
 import java.io.FilenameFilter;

@@ -24,11 +24,11 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.ConfigLibraryUtil;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 
 import java.io.File;

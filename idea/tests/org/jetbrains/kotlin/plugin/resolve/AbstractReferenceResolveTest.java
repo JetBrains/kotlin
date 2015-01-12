@@ -28,13 +28,13 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.ReferenceUtils;
 import org.jetbrains.kotlin.test.util.UtilPackage;
-import org.jetbrains.jet.testing.ReferenceUtils;
 import org.junit.Assert;
 
 import java.util.List;

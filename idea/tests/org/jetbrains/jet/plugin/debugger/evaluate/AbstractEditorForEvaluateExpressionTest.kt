@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.debugger.evaluate
 
 import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
-import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
+import org.jetbrains.kotlin.completion.AbstractJvmBasicCompletionTest
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.io.FileUtil
@@ -33,11 +33,10 @@ import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.completion.ExpectedCompletionUtils
+import org.jetbrains.kotlin.completion.ExpectedCompletionUtils
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.completion.handlers.AbstractCompletionHandlerTest
+import org.jetbrains.kotlin.completion.handlers.AbstractCompletionHandlerTest
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {

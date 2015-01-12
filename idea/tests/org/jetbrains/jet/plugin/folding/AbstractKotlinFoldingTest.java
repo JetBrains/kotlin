@@ -28,7 +28,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.testing.SettingsConfigurator;
+import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
 
 import javax.annotation.Nullable;

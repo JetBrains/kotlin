@@ -29,7 +29,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.testing.ConfigLibraryUtil;
+import org.jetbrains.kotlin.test.ConfigLibraryUtil;
 
 import java.io.File;
 

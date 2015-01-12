@@ -36,7 +36,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractableCodeDescriptor
-import org.jetbrains.jet.testing.ConfigLibraryUtil
+import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions

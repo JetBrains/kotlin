@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.LocalFileSystemUtils;
+import org.jetbrains.kotlin.test.LocalFileSystemUtils;
 
 public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest {
     @Override
