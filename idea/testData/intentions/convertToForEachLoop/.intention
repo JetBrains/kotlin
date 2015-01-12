@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.ConvertToForEachLoopIntention
+org.jetbrains.kotlin.idea.intentions.ConvertToForEachLoopIntention

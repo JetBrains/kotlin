@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.Name

@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.plugin.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
+import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler

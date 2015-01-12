@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetProperty
 import java.util.HashSet
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetObjectDeclaration

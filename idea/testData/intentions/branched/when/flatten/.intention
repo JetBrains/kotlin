@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FlattenWhenIntention
+org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FlattenWhenIntention

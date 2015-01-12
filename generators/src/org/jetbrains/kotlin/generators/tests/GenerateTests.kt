@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest
-import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
+import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.jet.plugin.AbstractSmartSelectionTest
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest
@@ -113,7 +113,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
-import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
+import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest

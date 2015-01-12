@@ -25,7 +25,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.codeInspection.ProblemDescriptor
-import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.Editor

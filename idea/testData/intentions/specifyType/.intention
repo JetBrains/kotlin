@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction
+org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction

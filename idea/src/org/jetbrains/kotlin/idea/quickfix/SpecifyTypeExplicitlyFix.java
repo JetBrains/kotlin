@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.types.JetType;
 
-import static org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction.addTypeAnnotation;
-import static org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction.getTypeForDeclaration;
+import static org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction.addTypeAnnotation;
+import static org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction.getTypeForDeclaration;
 
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {

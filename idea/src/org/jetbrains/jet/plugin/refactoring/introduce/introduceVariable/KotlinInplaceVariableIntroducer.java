@@ -34,7 +34,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
+import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetExpression;

@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.SimplifyBooleanWithConstantsIntention
+org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsIntention

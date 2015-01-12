@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldPropertyToWhenIntention
+org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldPropertyToWhenIntention

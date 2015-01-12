@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange

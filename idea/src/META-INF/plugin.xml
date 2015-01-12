@@ -467,17 +467,17 @@
         implementationClass="org.jetbrains.jet.plugin.search.ideaExtensions.JetTargetElementEvaluator" />
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>
+      <className>org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToExpressionBodyAction</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyAction</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -487,307 +487,307 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldIfToAssignmentIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceGetIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceGetIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceContainsIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceContainsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceInvokeIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceInvokeIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceBinaryInfixIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceBinaryInfixIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldIfToReturnIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldWhenToAssignmentIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldWhenToAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldWhenToReturnIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldWhenToReturnIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldAssignmentToIfIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldAssignmentToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldPropertyToIfIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldPropertyToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldAssignmentToWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldAssignmentToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldPropertyToWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldPropertyToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldReturnToIfIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldReturnToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.UnfoldReturnToWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.UnfoldReturnToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.DoubleBangToIfThenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.DoubleBangToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToDoubleBangIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToDoubleBangIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.ElvisToIfThenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.ElvisToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToElvisIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.SafeAccessToIfThenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.SafeAccessToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfToWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.WhenToIfIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.WhenToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FlattenWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FlattenWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IntroduceWhenSubjectIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.EliminateWhenSubjectIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.EliminateWhenSubjectIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.MergeWhenIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.MergeWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.SimplifyNegatedBinaryExpressionIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.RemoveUnnecessaryParenthesesIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveUnnecessaryParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.RemoveExplicitTypeArguments</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.RemoveCurlyBracesFromTemplateIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.InsertCurlyBracesToTemplateIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.InsertCurlyBracesToTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.MoveLambdaInsideParenthesesIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveLambdaInsideParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments</className>
+      <className>org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.MoveLambdaOutsideParenthesesIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.MoveLambdaOutsideParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.declarations.SplitPropertyDeclarationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension</className>
+      <className>org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtension</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReconstructTypeInCastOrIsAction</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReconstructTypeInCastOrIsAction</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithInfixFunctionCallIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithInfixFunctionCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceExplicitFunctionLiteralParamWithItIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceExplicitFunctionLiteralParamWithItIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.RemoveBracesIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveBracesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.AddBracesIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.AddBracesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertNegatedBooleanSequenceIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertNegatedBooleanSequenceIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertNegatedExpressionWithDemorgansLawIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertNegatedExpressionWithDemorgansLawIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.SimplifyBooleanWithConstantsIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
+      <className>org.jetbrains.kotlin.idea.intentions.SwapBinaryExpression</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.SplitIfIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.SplitIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithOperatorAssignIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithTraditionalAssignmentIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithTraditionalAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertAssertToIfWithThrowIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertAssertToIfWithThrowIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertIfWithThrowToAssertIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertIfWithThrowToAssertIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.MakeTypeExplicitInLambdaIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.MakeTypeExplicitInLambdaIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.MakeTypeImplicitInLambdaIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.MakeTypeImplicitInLambdaIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToForEachLoopIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToForEachLoopIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToForEachFunctionCallIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToForEachFunctionCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToStringTemplateIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ConvertToConcatenatedStringIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertToConcatenatedStringIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

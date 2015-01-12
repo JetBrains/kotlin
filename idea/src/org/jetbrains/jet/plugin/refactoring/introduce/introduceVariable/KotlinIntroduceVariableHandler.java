@@ -37,8 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction;
-import org.jetbrains.jet.plugin.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -51,6 +49,8 @@ import org.jetbrains.jet.plugin.util.psiModificationUtil.PsiModificationUtilPack
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction;
+import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;

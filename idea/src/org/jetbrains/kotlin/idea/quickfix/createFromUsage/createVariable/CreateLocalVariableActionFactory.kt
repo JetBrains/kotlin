@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction
+import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.psi.JetClassBody

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.j2k
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.jet.plugin.intentions.RemoveExplicitTypeArguments
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import java.util.ArrayList
 import com.intellij.psi.PsiElement
