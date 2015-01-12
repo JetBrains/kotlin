@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.bare
+package org.jetbrains.kotlin.idea.bare
 
 import com.intellij.compiler.server.CompileServerPlugin
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.extensions.Extensions
