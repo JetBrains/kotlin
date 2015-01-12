@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.jet.plugin.conversion.copy.*
+import org.jetbrains.kotlin.idea.conversion.copy.*
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
 import com.intellij.openapi.diagnostic.Logger
@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
-import org.jetbrains.jet.plugin.imports.*
+import org.jetbrains.kotlin.idea.imports.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension

@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import com.intellij.openapi.roots.libraries.Library
 import java.io.File
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ContentEntry

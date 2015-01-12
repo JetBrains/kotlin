@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -73,9 +73,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
+import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
-import org.jetbrains.jet.plugin.util.attachment.mergeAttachments
+import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvocationException
 

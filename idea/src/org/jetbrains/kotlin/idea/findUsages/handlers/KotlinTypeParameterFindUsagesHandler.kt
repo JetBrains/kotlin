@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public class KotlinTypeParameterFindUsagesHandler(
         element: JetNamedDeclaration,

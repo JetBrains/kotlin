@@ -24,9 +24,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
     /**

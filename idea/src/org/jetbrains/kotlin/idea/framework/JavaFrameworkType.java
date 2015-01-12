@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.framework;
 import com.intellij.framework.FrameworkTypeEx;
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.kotlin.idea.JetIcons;
 
 import javax.swing.*;
 

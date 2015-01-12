@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestUtil;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.LocalFileSystemUtils;
 
 public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest {

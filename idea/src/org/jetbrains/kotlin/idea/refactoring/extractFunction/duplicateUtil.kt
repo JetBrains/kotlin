@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.extractFunction
 
-import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.project.Project
@@ -32,7 +32,7 @@ import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.codeInsight.folding.CodeFoldingManager
 import com.intellij.ui.ReplacePromptDialog
 import com.intellij.find.FindManager
-import org.jetbrains.jet.plugin.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
 

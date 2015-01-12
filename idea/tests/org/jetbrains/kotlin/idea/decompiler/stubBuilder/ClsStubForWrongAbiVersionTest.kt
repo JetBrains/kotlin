@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import java.io.File
 import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParentheses
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParentheses
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
 public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(

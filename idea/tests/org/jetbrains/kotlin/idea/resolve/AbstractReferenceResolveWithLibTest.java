@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.resolve;
 
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 public abstract class AbstractReferenceResolveWithLibTest extends AbstractReferenceResolveTest {
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceWithLib";

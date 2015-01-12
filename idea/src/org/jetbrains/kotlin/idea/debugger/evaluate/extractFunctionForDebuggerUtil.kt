@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Stat
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.validate
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionOptions
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.generateDeclaration
-import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 

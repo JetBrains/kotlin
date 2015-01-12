@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.OrderRootType

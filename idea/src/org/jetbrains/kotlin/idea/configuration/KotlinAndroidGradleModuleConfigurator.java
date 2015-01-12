@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.kotlin.idea.JetPluginUtil;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
 

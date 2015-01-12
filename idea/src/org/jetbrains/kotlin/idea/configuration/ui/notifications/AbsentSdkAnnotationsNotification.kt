@@ -20,7 +20,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
 import javax.swing.event.HyperlinkEvent
 import org.jetbrains.kotlin.idea.configuration.ui.AbsentJdkAnnotationsComponent
 

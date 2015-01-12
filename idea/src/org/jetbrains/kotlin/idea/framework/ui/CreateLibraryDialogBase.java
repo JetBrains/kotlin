@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.SeparatorWithText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.kotlin.idea.JetPluginUtil;
 
 import javax.swing.*;
 import java.awt.*;

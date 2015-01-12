@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.java.JvmAbi
 import com.intellij.psi.PsiManager

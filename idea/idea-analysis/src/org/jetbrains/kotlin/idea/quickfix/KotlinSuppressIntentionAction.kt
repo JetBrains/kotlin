@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.jet.plugin.util.JetPsiPrecedences
+import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinSuppressIntentionAction(

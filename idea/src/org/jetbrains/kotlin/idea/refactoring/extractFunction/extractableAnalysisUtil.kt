@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.utils.DFS
@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ParameterUpdate
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ExpressionValue

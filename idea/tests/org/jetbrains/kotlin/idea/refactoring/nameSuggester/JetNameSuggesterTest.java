@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.nameSuggester;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.refactoring.EmptyValidator;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;

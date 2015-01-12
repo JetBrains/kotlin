@@ -41,13 +41,13 @@ import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
+import org.jetbrains.kotlin.idea.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility

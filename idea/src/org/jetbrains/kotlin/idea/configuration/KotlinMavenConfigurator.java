@@ -42,8 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
+import org.jetbrains.kotlin.idea.JetPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
 import java.util.List;

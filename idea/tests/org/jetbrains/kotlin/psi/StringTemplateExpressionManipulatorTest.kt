@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
 import com.intellij.psi.ElementManipulators
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange

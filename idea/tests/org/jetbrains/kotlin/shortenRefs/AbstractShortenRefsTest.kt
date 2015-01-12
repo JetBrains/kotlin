@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.shortenRefs
 
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import java.io.File
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.test.JetTestCaseBuilder
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.CodeInsightSettings
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 

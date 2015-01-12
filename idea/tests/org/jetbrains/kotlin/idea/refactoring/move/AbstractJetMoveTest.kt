@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import java.io.File
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFi
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
-import org.jetbrains.jet.plugin.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {

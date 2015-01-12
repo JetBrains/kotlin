@@ -34,11 +34,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.util.projectStructure.ProjectStructurePackage;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
+import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructurePackage;
 
 import javax.swing.*;
 import java.io.File;

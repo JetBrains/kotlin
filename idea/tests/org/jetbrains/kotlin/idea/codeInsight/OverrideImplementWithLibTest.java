@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.codeInsight;
 
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 public final class OverrideImplementWithLibTest extends AbstractOverrideImplementTest {
     private static final String TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib";

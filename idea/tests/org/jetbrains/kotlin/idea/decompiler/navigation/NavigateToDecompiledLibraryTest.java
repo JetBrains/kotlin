@@ -33,7 +33,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;

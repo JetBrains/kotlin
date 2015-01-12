@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream
 import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.test.assertTrue
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import java.io.File
 
 public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {

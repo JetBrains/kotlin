@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.references;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ResolveTestCase;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 import java.util.ArrayList;
 import java.util.Collection;

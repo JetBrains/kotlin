@@ -31,13 +31,13 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import kotlin.test.assertEquals
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractableCodeDescriptor
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionData
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractionOptions
 import org.jetbrains.kotlin.psi.JetDeclaration

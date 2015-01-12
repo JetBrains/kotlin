@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.roots.ModuleRootManager
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {

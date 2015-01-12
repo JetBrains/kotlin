@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
-import org.jetbrains.jet.plugin.util.string.collapseSpaces
+import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {

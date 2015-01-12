@@ -25,8 +25,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import java.util.Collections
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
-import org.jetbrains.jet.plugin.util.psi.patternMatching.matches
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 

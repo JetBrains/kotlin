@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.HashSet
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.plugin.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.PositionalArgumentExpectedInfo
 import java.util.ArrayList

@@ -28,7 +28,7 @@ import com.intellij.psi.stubs.StubElement
 import com.google.common.io.Files
 import com.intellij.openapi.vfs.VirtualFile
 import org.junit.Assert
-import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
+import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import java.util.LinkedHashSet
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.utils.addIfNotNull

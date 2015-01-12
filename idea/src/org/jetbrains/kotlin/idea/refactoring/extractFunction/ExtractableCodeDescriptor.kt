@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.isUnit
 

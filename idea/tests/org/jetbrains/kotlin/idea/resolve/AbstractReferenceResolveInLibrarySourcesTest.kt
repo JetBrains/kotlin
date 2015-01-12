@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.jet.plugin.navigation.NavigationTestUtils
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.junit.Assert
 import junit.framework.AssertionFailedError
 

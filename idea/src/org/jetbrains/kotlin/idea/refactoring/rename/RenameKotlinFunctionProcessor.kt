@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import kotlin.properties.Delegates
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance by Delegates.lazy {

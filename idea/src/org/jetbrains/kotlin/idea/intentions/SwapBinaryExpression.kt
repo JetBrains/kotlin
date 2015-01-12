@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.jet.plugin.util.JetPsiPrecedences
+import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 

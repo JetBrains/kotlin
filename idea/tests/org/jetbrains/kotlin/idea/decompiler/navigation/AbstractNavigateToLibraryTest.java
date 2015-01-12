@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.navigation;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 public abstract class AbstractNavigateToLibraryTest extends LightCodeInsightFixtureTestCase {
     protected static final String PACKAGE = "testData.libraries";

@@ -49,13 +49,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.builtins.InlineUtil
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.jet.plugin.util.DebuggerUtils
+import org.jetbrains.kotlin.idea.util.DebuggerUtils
 
 import java.util.*
 
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {
     private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()

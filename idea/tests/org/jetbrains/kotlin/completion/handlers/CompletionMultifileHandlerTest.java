@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.completion.handlers;
 
-import org.jetbrains.jet.plugin.KotlinCompletionTestCase;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.KotlinCompletionTestCase;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 import java.io.File;
 

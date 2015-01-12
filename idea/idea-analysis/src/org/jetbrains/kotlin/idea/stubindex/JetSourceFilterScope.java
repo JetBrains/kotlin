@@ -23,8 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector;
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull

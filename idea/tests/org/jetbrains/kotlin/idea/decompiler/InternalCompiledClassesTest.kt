@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
 

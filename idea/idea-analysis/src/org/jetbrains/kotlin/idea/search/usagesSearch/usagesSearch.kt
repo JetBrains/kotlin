@@ -46,7 +46,7 @@ import java.util.Collections
 import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.psi.impl.cache.impl.id.IdIndex
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.psi.search.TextOccurenceProcessor
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx

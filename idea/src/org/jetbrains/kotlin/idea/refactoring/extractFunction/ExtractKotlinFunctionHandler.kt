@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
-import org.jetbrains.jet.plugin.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import kotlin.test.fail
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
@@ -45,7 +45,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.openapi.ui.popup.Balloon.Position
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 

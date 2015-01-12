@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.junit.Assert
-import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

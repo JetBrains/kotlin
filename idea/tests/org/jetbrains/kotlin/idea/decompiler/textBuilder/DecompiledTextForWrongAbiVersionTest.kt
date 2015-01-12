@@ -20,7 +20,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
 import org.junit.Assert
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest

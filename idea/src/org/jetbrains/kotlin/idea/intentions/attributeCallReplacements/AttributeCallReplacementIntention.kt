@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.jet.plugin.util.Maybe
-import org.jetbrains.jet.plugin.util.MaybeError
-import org.jetbrains.jet.plugin.util.MaybeValue
+import org.jetbrains.kotlin.idea.util.Maybe
+import org.jetbrains.kotlin.idea.util.MaybeError
+import org.jetbrains.kotlin.idea.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze

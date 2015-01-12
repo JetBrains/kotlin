@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.plugin.JetIcons
+import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.lookup.LookupElement
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetValueArgumentName
 import com.intellij.psi.filters.position.ParentElementFilter
 import com.intellij.psi.filters.OrFilter
 import com.intellij.psi.filters.ClassFilter
-import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
+import org.jetbrains.kotlin.idea.util.FirstChildInParentFilter
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler

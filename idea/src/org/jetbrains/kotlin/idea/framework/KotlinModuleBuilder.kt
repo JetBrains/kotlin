@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.SettingsStep
-import org.jetbrains.jet.plugin.JetIcons
+import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.ide.util.projectWizard.WizardContext

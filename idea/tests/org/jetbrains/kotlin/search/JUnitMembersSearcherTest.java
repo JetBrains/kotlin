@@ -23,8 +23,8 @@ import com.intellij.psi.search.searches.AnnotatedMembersSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;

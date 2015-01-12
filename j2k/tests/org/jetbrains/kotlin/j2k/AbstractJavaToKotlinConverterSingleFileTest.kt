@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
 import org.jetbrains.kotlin.test.util.trimIndent
-import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")

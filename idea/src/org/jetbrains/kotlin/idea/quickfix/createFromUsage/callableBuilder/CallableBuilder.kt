@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.idea.refactoring.CollectingValidator
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.jet.plugin.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import com.intellij.psi.SmartPointerManager

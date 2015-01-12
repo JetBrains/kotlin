@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinEvaluateExpressionCache(val project: Project) {
 

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.MethodFilter
-import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.roots.libraries.LibraryUtil
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.debugger.SourcePosition

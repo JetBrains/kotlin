@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin
+package org.jetbrains.kotlin.idea
 
 import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy
 import com.intellij.psi.PsiElement

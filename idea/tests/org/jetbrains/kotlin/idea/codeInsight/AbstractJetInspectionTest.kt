@@ -22,7 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.ex.InspectionManagerEx

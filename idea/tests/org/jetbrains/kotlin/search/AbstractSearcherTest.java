@@ -24,7 +24,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;

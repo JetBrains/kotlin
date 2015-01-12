@@ -34,13 +34,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import java.io.IOException
 import com.intellij.openapi.ui.ex.MessagesEx
-import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
+import org.jetbrains.kotlin.idea.ProjectDescriptorWithStdlibSources;
 
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**
