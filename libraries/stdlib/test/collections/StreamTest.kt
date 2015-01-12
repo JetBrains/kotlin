@@ -66,6 +66,13 @@ public class StreamTest {
         }
     }
 
+    test fun withIndex() {
+        val data = streamOf("foo", "bar")
+        val indexed = data.withIndex().map { it.value.substring(0..it.index) }.toList()
+        assertEquals(2, indexed.size())
+        assertEquals(listOf("f", "ba"), indexed)
+    }
+
     test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(listOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
     }
@@ -99,6 +106,7 @@ public class StreamTest {
 
     test fun dropWhile() {
         assertEquals("233, 377, 610", fibonacci().dropWhile { it < 200 }.take(3).joinToString(limit = 10))
+        assertEquals("", streamOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
     test fun merge() {

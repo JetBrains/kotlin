@@ -184,6 +184,38 @@ class MapTest {
         assertEquals(2, filteredByValue2["a"])
     }
 
+    test fun any() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertTrue(map.any())
+        assertFalse(emptyMap<String, Int>().any())
+
+        assertTrue(map.any { it.key == "b" })
+        assertFalse(emptyMap<String, Int>().any { it.key == "b" })
+
+        assertTrue(map.any { it.value == 2 })
+        assertFalse(map.any { it.value == 5 })
+    }
+
+    test fun all() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertTrue(map.all { it.key != "d" })
+        assertTrue(emptyMap<String, Int>().all { it.key == "d" })
+
+        assertTrue(map.all { it.value > 0 })
+        assertFalse(map.all { it.value == 2 })
+    }
+
+    test fun countBy() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertEquals(3, map.count())
+
+        val filteredByKey = map.count { it.key == "b" }
+        assertEquals(1, filteredByKey)
+
+        val filteredByValue = map.count { it.value == 2 }
+        assertEquals(2, filteredByValue)
+    }
+
     test fun filterNot() {
         val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
         val filteredByKey = map.filterNot { it.key == "b" }
