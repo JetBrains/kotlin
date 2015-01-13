@@ -1,6 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="5545662"/>
-    <property name="public.buildserver.build.id" value="377195"/>
+    <property name="ideaVersion" value="139.1038.6"/>
 
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
@@ -22,10 +21,34 @@
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
+        <loadresource property="public.buildserver.build.id">
+            <url url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt410,status:SUCCESS,lookupLimit:1,branch:idea/${ideaVersion}"/>
+            <filterchain>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+
+        <echo message="IDEA build id: ${public.buildserver.build.id}"/>
+
         <execute_update base.url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:${public.buildserver.build.id}"/>
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
+        <loadresource property="jb.buildserver.build.id">
+            <url url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/?locator=buildType:bt3498,status:SUCCESS,lookupLimit:1,branch:/idea/${ideaVersion}"/>
+            <filterchain>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="^(.*)\sid=&quot;(\d+)&quot;(.*)$" replace="\2" flags="s"/>
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+
+        <echo message="IDEA build id: ${jb.buildserver.build.id}"/>
+
         <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/id:${jb.buildserver.build.id}"/>
     </target>
 
