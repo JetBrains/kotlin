@@ -213,6 +213,13 @@ public class StreamTest {
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
+    test
+    fun flatten() {
+        val data = streamOf(1, 2).map { streamOf(0..it) }
+        assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
+    }
+
+
     /*
     test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)

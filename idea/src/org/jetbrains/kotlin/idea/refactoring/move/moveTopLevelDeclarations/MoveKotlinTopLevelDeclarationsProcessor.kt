@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.getFileNameAfterMove
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.asJava.toLightElements
 import java.util.HashMap
-import org.jetbrains.kotlin.utils.flatten
 import java.util.ArrayList
 import java.util.HashSet
 import com.intellij.psi.PsiReference
@@ -119,7 +118,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
         fun collectUsages(): List<UsageInfo> {
-            return kotlinToLightElements.values().flatten().flatMap { lightElement ->
+            return kotlinToLightElements.values().flatMap { it }.flatMap { lightElement ->
                 val newFqName = StringUtil.getQualifiedName(newPackageName, lightElement.getName())
 
                 val foundReferences = HashSet<PsiReference>()

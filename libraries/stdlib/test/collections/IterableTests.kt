@@ -165,6 +165,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     Test
+    fun flatten() {
+        assertEquals(listOf(0, 1, 2, 3, 0, 1, 2, 3), data.map { 0..it.length() }.flatten())
+    }
+
+    Test
     fun mapIndexed() {
         val shortened = data.mapIndexed {(index, value) -> value.substring(0..index) }
         assertEquals(2, shortened.size())
