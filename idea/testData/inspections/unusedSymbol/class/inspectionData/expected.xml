@@ -31,4 +31,20 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
     <description>Class 'UsedInTextByShortName' is never used</description>
   </problem>
+  <problem>
+    <file>usedOnlyInImport.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/usedOnlyInImport.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Class 'A' is never used</description>
+  </problem>
+  <problem>
+    <file>usedOnlyInImport.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/usedOnlyInImport.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Class 'B' is never used</description>
+  </problem>
 </problems>
