@@ -203,6 +203,15 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     Test
+    fun sumBy() {
+        expect(6) { data.sumBy { it.length() } }
+        expect(0) { empty.sumBy { it.length() } }
+
+        expect(3.0) { data.sumByDouble { it.length().toDouble() / 2 } }
+        expect(0.0) { empty.sumByDouble { it.length().toDouble() / 2 } }
+    }
+
+    Test
     fun withIndices() {
         var index = 0
         for ((i, d) in data.withIndex()) {
