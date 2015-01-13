@@ -58,10 +58,10 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
-import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -280,21 +280,32 @@ public class JetTestUtils {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
+    @NotNull
+    public static String getTestDataPathBase() {
+        return getHomeDirectory() + "/compiler/testData";
+    }
+
+    @NotNull
+    public static String getHomeDirectory() {
+        File resourceRoot = PathUtil.getResourcePathForClass(JetTestUtils.class);
+        return FileUtil.toSystemIndependentName(resourceRoot.getParentFile().getParentFile().getParent());
+    }
+
     public static File findMockJdkRtJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
+        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
     public static File findAndroidApiJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/android.jar");
+        return new File(getHomeDirectory(), "dependencies/android.jar");
     }
 
     public static File getAnnotationsJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
+        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
 
     @NotNull
     public static File getJdkAnnotationsJar() {
-        File jdkAnnotations = new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/annotations/kotlin-jdk-annotations.jar");
+        File jdkAnnotations = new File(getHomeDirectory(), "dependencies/annotations/kotlin-jdk-annotations.jar");
         if (!jdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
         }
@@ -303,7 +314,7 @@ public class JetTestUtils {
 
     @NotNull
     public static File getAndroidSdkAnnotationsJar() {
-        File androidSdkAnnotations = new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/annotations/kotlin-android-sdk-annotations.jar");
+        File androidSdkAnnotations = new File(getHomeDirectory(), "dependencies/annotations/kotlin-android-sdk-annotations.jar");
         if (!androidSdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin Android SDK annotations jar not found; please run 'ant dist' to build it");
         }

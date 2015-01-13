@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -53,11 +52,6 @@ public class JetOverridingTest extends JetLiteFixture {
     protected void tearDown() throws Exception {
         descriptorResolver = null;
         super.tearDown();
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public void testBasic() throws Exception {

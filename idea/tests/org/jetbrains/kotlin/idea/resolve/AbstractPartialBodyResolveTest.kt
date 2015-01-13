@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.idea.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -46,7 +45,7 @@ import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
+    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     public fun doTest(testPath: String) {

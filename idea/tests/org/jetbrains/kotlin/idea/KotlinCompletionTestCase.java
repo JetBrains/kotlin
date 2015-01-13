@@ -18,18 +18,18 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
         super.tearDown();
     }
 }

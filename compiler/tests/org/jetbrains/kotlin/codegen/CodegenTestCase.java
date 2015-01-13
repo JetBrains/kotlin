@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.ClassReader;
@@ -86,7 +85,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + name);
+        return loadFileByFullPath(JetTestUtils.getTestDataPathBase() + "/codegen/" + name);
     }
 
     @NotNull

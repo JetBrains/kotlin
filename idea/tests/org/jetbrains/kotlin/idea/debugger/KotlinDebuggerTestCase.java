@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 
@@ -75,7 +74,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         UsefulTestCase.edt(new Runnable() {
             @Override
@@ -111,7 +110,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
         super.tearDown();
     }
 

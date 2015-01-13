@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
 import org.junit.Assert
 import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
@@ -29,11 +28,12 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Ki
 import org.jetbrains.kotlin.idea.decompiler.AbstractInternalCompiledClassesTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JetJdkAndLibraryProjectDescriptor(File(JetTestCaseBuilder.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
+        return JetJdkAndLibraryProjectDescriptor(File(JetTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
     }
 
     fun testPackagePartIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(PACKAGE_PART)

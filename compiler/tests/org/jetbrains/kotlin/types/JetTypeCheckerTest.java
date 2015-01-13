@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -92,11 +91,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         builtIns = null;
 
         super.tearDown();
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public void testConstants() throws Exception {

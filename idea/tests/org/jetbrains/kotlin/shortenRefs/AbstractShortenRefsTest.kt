@@ -22,13 +22,13 @@ import com.intellij.openapi.application.ApplicationManager
 import java.io.File
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.codeInsight.CodeInsightSettings
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractShortenRefsTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
+    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {

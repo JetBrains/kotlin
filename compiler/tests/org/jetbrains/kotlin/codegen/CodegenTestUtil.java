@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -133,7 +132,7 @@ public class CodegenTestUtil {
                     "-d", javaClassesTempDirectory.getPath()
             );
 
-            File javaFile = new File(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + filename);
+            File javaFile = new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + filename);
             JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
             return javaClassesTempDirectory;

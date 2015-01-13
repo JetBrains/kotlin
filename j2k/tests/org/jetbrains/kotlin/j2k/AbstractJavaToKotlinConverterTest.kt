@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
 
         addFile("KotlinApi.kt", "kotlinApi")
         addFile("JavaApi.java", "javaApi")
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
         super.tearDown()
     }
     

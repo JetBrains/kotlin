@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
         super.tearDown()
     }
 }

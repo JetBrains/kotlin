@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.IfNotParsed;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.psi.JetVisitorVoid;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -45,7 +45,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBuilder.getHomeDirectory();
+        return JetTestUtils.getHomeDirectory();
     }
 
     public AbstractJetParsingTest() {

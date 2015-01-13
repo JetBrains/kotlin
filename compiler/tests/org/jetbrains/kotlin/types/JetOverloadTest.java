@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.OverloadUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -55,13 +54,7 @@ public class JetOverloadTest extends JetLiteFixture {
         super.tearDown();
     }
 
-    @Override
-    protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
-    }
-
     public void testBasic() throws Exception {
-
         assertNotOverloadable(
                 "fun a() : Int",
                 "fun a() : Int");

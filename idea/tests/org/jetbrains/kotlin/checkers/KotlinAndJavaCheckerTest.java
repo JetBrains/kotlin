@@ -23,7 +23,6 @@ import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 
 public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
     @Override
@@ -42,7 +41,7 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/kotlinAndJavaChecker/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/";
     }
 
     public void testName() throws Exception {

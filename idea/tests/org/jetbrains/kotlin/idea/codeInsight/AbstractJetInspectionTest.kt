@@ -29,12 +29,12 @@ import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import org.apache.commons.lang.SystemUtils;
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
@@ -50,7 +50,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
         val srcDir = inspectionsTestDir.getParentFile()!!
 
         with(myFixture) {
-            setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/$srcDir")
+            setTestDataPath("${JetTestUtils.getHomeDirectory()}/$srcDir")
 
             val psiFiles = srcDir
                     .listFiles { it.getName().endsWith(".kt") }!!

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -199,6 +199,6 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBuilder.getHomeDirectory() + "/";
+        return JetTestUtils.getHomeDirectory() + "/";
     }
 }

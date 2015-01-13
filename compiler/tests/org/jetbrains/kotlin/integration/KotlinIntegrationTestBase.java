@@ -32,7 +32,6 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -47,7 +46,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected static final File INTEGRATION_TEST_DATA_BASE_DIR = new File(JetTestCaseBuilder.getTestDataPathBase(), "integration");
+    protected static final File INTEGRATION_TEST_DATA_BASE_DIR = new File(JetTestUtils.getTestDataPathBase(), "integration");
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();

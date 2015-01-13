@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
@@ -138,7 +137,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         val afterFile = File("$path.after")
         val conflictFile = File("$path.conflicts")
 
-        fixture.setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/${mainFile.getParent()}")
+        fixture.setTestDataPath("${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}")
 
         val file = fixture.configureByFile(mainFile.getName()) as JetFile
 

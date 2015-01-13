@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.types.JetType;
@@ -91,8 +90,8 @@ public class TestlibTest extends UsefulTestCase {
         assertTrue(junitJar.exists());
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
 
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getHomeDirectory() + "/libraries/stdlib/test");
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getHomeDirectory() + "/libraries/kunit/src");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestUtils.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                           new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 

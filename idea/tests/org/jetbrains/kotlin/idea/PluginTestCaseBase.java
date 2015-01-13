@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static String getTestDataPathBase() {
-        return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+        return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     private static Sdk getSdk(String sdkHome) {
