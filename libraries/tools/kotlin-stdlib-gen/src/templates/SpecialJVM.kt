@@ -151,5 +151,30 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+    templates add f("asList()") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns a list that wraps the original array" }
+        returns("List<T>")
+        body(ArraysOfObjects) {
+            """
+            return Arrays.asList(*this)
+            """
+        }
+
+        body(ArraysOfPrimitives) {
+            """
+            return object : AbstractList<T>(), RandomAccess {
+                override fun size(): Int = this@asList.size()
+                override fun isEmpty(): Boolean = this@asList.isEmpty()
+                override fun contains(o: Any?): Boolean = this@asList.contains(o as T)
+                override fun iterator(): Iterator<T> = this@asList.iterator()
+                override fun get(index: Int): T = this@asList[index]
+                override fun indexOf(o: Any?): Int = this@asList.indexOf(o as T)
+                override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as T)
+            }
+            """
+        }
+    }
+
     return templates
 }

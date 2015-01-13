@@ -303,4 +303,68 @@ class ArraysJVMTest {
         expect(listOf("a"), { array("a", null).filterNotNull() })
     }
 
+    test fun asListPrimitives() {
+        // Array of primitives
+        val arr = intArray(1, 2, 3, 4, 2, 5)
+        val list = arr.asList()
+        assertEquals(list, arr.toList())
+
+        assertTrue(2 in list)
+        assertFalse(0 in list)
+        assertTrue(list.containsAll(listOf(5, 4, 3)))
+        assertFalse(list.containsAll(listOf(5, 6, 3)))
+
+        expect(1) { list.indexOf(2) }
+        expect(4) { list.lastIndexOf(2) }
+        expect(-1) { list.indexOf(6) }
+
+        assertEquals(list.subList(3, 5), listOf(4, 2))
+
+        val iter = list.listIterator(2)
+        expect(2) { iter.nextIndex() }
+        expect(1) { iter.previousIndex() }
+        expect(3) {
+            iter.next()
+            iter.previous()
+            iter.next()
+        }
+
+        arr[2] = 4
+        assertEquals(list, arr.toList())
+
+        assertEquals(IntArray(0).asList(), emptyList<Int>())
+    }
+
+    test fun asListObjects() {
+        val arr = array("a", "b", "c", "d", "b", "e")
+        val list = arr.asList()
+
+        assertEquals(list, arr.toList())
+
+        assertTrue("b" in list)
+        assertFalse("z" in list)
+
+        expect(1) { list.indexOf("b") }
+        expect(4) { list.lastIndexOf("b") }
+        expect(-1) { list.indexOf("x") }
+
+        assertTrue(list.containsAll(listOf("e", "d", "c")))
+        assertFalse(list.containsAll(listOf("e", "x", "c")))
+
+        assertEquals(list.subList(3, 5), listOf("d", "b"))
+
+        val iter = list.listIterator(2)
+        expect(2) { iter.nextIndex() }
+        expect(1) { iter.previousIndex() }
+        expect("c") {
+            iter.next()
+            iter.previous()
+            iter.next()
+        }
+
+        arr[2] = "xx"
+        assertEquals(list, arr.toList())
+
+        assertEquals(Array(0, { "" }).asList(), emptyList<String>())
+    }
 }
