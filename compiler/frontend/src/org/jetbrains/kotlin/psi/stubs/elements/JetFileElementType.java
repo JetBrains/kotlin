@@ -36,10 +36,12 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl;
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 34;
+    public static final int STUB_VERSION = 35;
+
+    private static final String NAME = "kotlin.FILE";
 
     public JetFileElementType() {
-        super("jet.FILE", JetLanguage.INSTANCE);
+        super(NAME, JetLanguage.INSTANCE);
     }
 
     protected JetFileElementType(@NonNls String debugName) {
@@ -59,7 +61,7 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
     @NotNull
     @Override
     public String getExternalId() {
-        return "jet.FILE";
+        return NAME;
     }
 
     @Override

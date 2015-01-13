@@ -85,7 +85,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @NotNull
     @Override
     public String getExternalId() {
-        return "jet." + toString();
+        return "kotlin." + toString();
     }
 
     @Override
