@@ -92,7 +92,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
 
-        p.print(FileUtil.loadFile(new File("generators/injector-generator/copyright.txt")));
+        p.print(FileUtil.loadFile(new File("license/LICENSE.txt")));
         p.println("package " + testClassPackage + ";");
         p.println();
         p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";");
