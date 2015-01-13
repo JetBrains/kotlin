@@ -44,6 +44,12 @@ class PairTest {
         assertEquals(2, s.size())
         assertTrue(s.contains(p))
     }
+
+    test fun pairToList() {
+        assertEquals(listOf(1, 2), (1 to 2).toList())
+        assertEquals(listOf(1, null), (1 to null).toList())
+        assertEquals(listOf(1, "2"), (1 to "2").toList())
+    }
 }
 
 class TripleTest {
@@ -88,5 +94,11 @@ class TripleTest {
         val s = hashSetOf(Triple(1, "a", 0.07), Triple(1, "b", 0.07), Triple(1, "a", 0.07))
         assertEquals(2, s.size())
         assertTrue(s.contains(t))
+    }
+
+    test fun tripleToList() {
+        assertEquals(listOf(1, 2, 3), (Triple(1, 2, 3)).toList())
+        assertEquals(listOf(1, null, 3), (Triple(1, null, 3)).toList())
+        assertEquals(listOf(1, 2, "3"), (Triple(1, 2, "3")).toList())
     }
 }

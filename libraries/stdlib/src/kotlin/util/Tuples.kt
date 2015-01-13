@@ -27,6 +27,11 @@ public data class Pair<out A, out B>(
 }
 
 /**
+ * Converts pair into a list
+ */
+public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
+
+/**
  * Represents a triad of values
  *
  * There is no meaning attached to values in this class, it can be used for any purpose.
@@ -49,3 +54,8 @@ public data class Triple<out A, out B, out C>(
      */
     public override fun toString(): String = "($first, $second, $third)"
 }
+
+/**
+ * Converts triple into a list
+ */
+public fun <T> Triple<T, T, T>.toList(): List<T> = listOf(first, second, third)
