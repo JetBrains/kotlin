@@ -39,7 +39,6 @@ public class JetCodeConformanceTest extends TestCase {
             new File("core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections"),
             new File("libraries/tools/runtime/target/copied-sources"),
             new File("dependencies"),
-            new File("examples"),
             new File("js/js.translator/qunit/qunit.js"),
             new File("libraries/tools/kotlin-js-tests/src/test/web/qunit.js"),
             new File("out"),
@@ -48,7 +47,7 @@ public class JetCodeConformanceTest extends TestCase {
             new File("ideaSDK"),
             new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
             new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java"));
-    public static final Pattern JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
+    public static final Pattern AUTHOR_JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
 
     public void testParserCode() throws Exception {
         for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/kotlin/parsing"))) {
@@ -68,7 +67,7 @@ public class JetCodeConformanceTest extends TestCase {
             @Override
             public Boolean invoke(String source) {
                 // .contains() is invoked for optimization
-                return source.contains("@author") && JAVADOC_PATTERN.matcher(source).find();
+                return source.contains("@author") && AUTHOR_JAVADOC_PATTERN.matcher(source).find();
             }
         });
 
@@ -92,6 +91,21 @@ public class JetCodeConformanceTest extends TestCase {
                 "Most probably you meant to use Guava's Lists, Maps or Sets instead. Please change references in these files to " +
                 "com.google.common.collect: " + filesWithJCommander,
                 filesWithJCommander.isEmpty()
+        );
+    }
+
+    public void testNoOrgJetbrainsJet() throws IOException {
+        List<File> filesWithOrgJetbrainsJet = filterSourceFiles(new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String source) {
+                return source.contains("org.jetbrains.jet");
+            }
+        });
+
+        Assert.assertTrue(
+                "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
+                "Please consider changing the package in these files: " + filesWithOrgJetbrainsJet,
+                filesWithOrgJetbrainsJet.isEmpty()
         );
     }
 
