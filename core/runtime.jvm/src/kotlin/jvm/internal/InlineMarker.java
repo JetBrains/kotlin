@@ -25,4 +25,8 @@ public class InlineMarker {
     public static void afterInlineCall() {
 
     }
+
+    public static void goToTryCatchBlockEnd() {
+
+    }
 }

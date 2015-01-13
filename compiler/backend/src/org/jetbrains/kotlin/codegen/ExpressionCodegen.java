@@ -1746,6 +1746,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (tryCatchBlockEnd != null) {
+            if (context.isInlineFunction()) {
+                InlineCodegenUtil.generateGoToTryCatchBlockEndMarker(v);
+            }
             v.goTo(tryCatchBlockEnd);
         }
 
