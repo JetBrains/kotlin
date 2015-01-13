@@ -45,7 +45,8 @@ public class AsmTypes {
 
     public static final String REFLECTION_INTERNAL_PACKAGE = reflectInternal("InternalPackage").getInternalName();
 
-    public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
+    public static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
+    public static final Type OBJECT_REF_TYPE = Type.getObjectType(REF_TYPE_PREFIX + "ObjectRef");
 
     @NotNull
     private static Type reflectInternal(@NotNull String className) {

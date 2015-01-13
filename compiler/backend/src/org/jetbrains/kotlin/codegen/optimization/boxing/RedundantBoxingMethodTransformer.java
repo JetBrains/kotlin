@@ -154,6 +154,14 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         int from = insnList.indexOf(localVariableNode.start) + 1;
         int to = insnList.indexOf(localVariableNode.end) - 1;
 
+        Frame<BasicValue> frameForFromInstr = frames[from];
+        if (frameForFromInstr != null) {
+            BasicValue localVarValue = frameForFromInstr.getLocal(localVariableNode.index);
+            if (localVarValue != null) {
+                values.add(localVarValue);
+            }
+        }
+
         for (int i = from; i <= to; i++) {
             if (i < 0 || i >= insnList.size()) continue;
 

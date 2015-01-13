@@ -294,6 +294,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("frameLocalVariable.kt")
+            public void testFrameLocalVariable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameLocalVariable.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("frameObject.kt")
             public void testFrameObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameObject.kt");

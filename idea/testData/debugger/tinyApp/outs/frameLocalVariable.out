@@ -1,0 +1,20 @@
+LineBreakpoint created at frameLocalVariable.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameLocalVariable.FrameLocalVariablePackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameLocalVariable.kt:6
+package frameLocalVariable
+
+fun main(args: Array<String>) {
+    val val1 = 1
+    //Breakpoint!
+    val val2 = 1
+}
+
+// PRINT_FRAME
+ frame    = main():6, FrameLocalVariablePackage$@packagePartHASH {frameLocalVariable}
+   static   = static = frameLocalVariable.FrameLocalVariablePackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameLocalVariable.kt, 3)
+   local    = val1: int = 1 (sp = frameLocalVariable.kt, 4)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
