@@ -16,26 +16,28 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import org.jetbrains.kotlin.idea.findUsages.toClassHelper
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.ClassUsagesSearchHelper
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -61,7 +63,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun classIsEntryPoint(klass: JetClass): Boolean {
-        val lightClass = LightClassUtil.getPsiClass(klass)
+        val lightClass = klass.toLightClass()
         if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return true
         return false
     }
@@ -84,10 +86,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
-        val project = declaration.getProject()
-
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
-            is JetClass -> KotlinClassFindUsagesOptions(project).toClassHelper()
+            is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             else -> return false
         }
 
@@ -95,17 +95,6 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
         val query = UsagesSearch.search(request)
 
-        var foundNonTrivialUsage = false
-        query.forEach(Processor {
-            usage ->
-            if (declaration.isAncestor(usage.getElement())) {
-                true
-            } else {
-                foundNonTrivialUsage = true
-                false
-            }
-        })
-
-        return foundNonTrivialUsage
+        return query.any { !declaration.isAncestor(it.getElement()) }
     }
 }
