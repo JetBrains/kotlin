@@ -53,7 +53,7 @@ public fun JetPsiRange.preview(project: Project, editor: Editor): RangeHighlight
                 CodeFoldingManager.getInstance(project)
                         .getFoldRegionsAtOffset(editor, startOffset)
                         .filter { !it.isExpanded() }
-        if (!foldedRegions.empty) {
+        if (!foldedRegions.isEmpty()) {
             editor.getFoldingModel().runBatchFoldingOperation { foldedRegions.forEach { it.setExpanded(true) } }
         }
         editor.getScrollingModel().scrollTo(editor.offsetToLogicalPosition(startOffset), ScrollType.MAKE_VISIBLE)
@@ -67,7 +67,7 @@ public fun processDuplicates(
         project: Project,
         editor: Editor
 ) {
-    val size = duplicateReplacers.size
+    val size = duplicateReplacers.size()
     if (size == 0) return
 
     if (size == 1) {
@@ -90,7 +90,7 @@ public fun processDuplicates(
     if (answer != Messages.YES) return
 
     var showAll = false
-    for ((i, entry) in duplicateReplacers.entrySet().withIndices()) {
+    for ((i, entry) in duplicateReplacers.entrySet().withIndex()) {
         val (pattern, replacer) = entry
         if (!pattern.isValid()) continue
 

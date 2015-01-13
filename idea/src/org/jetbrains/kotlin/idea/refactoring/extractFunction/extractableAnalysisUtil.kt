@@ -299,7 +299,7 @@ private fun ExtractionData.analyzeControlFlow(
             parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortBy { it.nameForRef }
     val outDeclarations =
             declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
-    val modifiedValueCount = outParameters.size + outDeclarations.size
+    val modifiedValueCount = outParameters.size() + outDeclarations.size()
 
     val outputValues = ArrayList<OutputValue>()
 
@@ -316,9 +316,9 @@ private fun ExtractionData.analyzeControlFlow(
 
         if (defaultExits.isNotEmpty()) {
             if (modifiedValueCount != 0) return outputAndExitsError
-            if (valuedReturnExits.size != 1) return multipleExitsError
+            if (valuedReturnExits.size() != 1) return multipleExitsError
 
-            val element = valuedReturnExits.first!!.element as JetExpression
+            val element = valuedReturnExits.first().element as JetExpression
             return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
         }
 
@@ -336,7 +336,7 @@ private fun ExtractionData.analyzeControlFlow(
         if (jumpExits.isNotEmpty()) return outputAndExitsError
 
         val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
-            outputValues.size > 3 -> {
+            outputValues.size() > 3 -> {
                 if (!options.enableListBoxing) {
                     val outValuesStr =
                             (outParameters.map { it.originalDescriptor.renderForMessage() }
@@ -581,9 +581,9 @@ private fun ExtractionData.inferParametersInfo(
             when (it) {
                 is ClassDescriptor ->
                     when(it.getKind()) {
-                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassDescriptor
+                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
                         ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
-                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it as ClassDescriptor else null
+                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it : ClassDescriptor else null
                     }
 
                 is ConstructorDescriptor -> it.getContainingDeclaration()
@@ -648,7 +648,7 @@ private fun ExtractionData.inferParametersInfo(
 
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getNonStrictParentOfType<JetExpression>(),
-            originalElements.first,
+            originalElements.firstOrNull(),
             JetNameValidatorImpl.Target.PROPERTIES
     )
 
@@ -717,7 +717,7 @@ fun ExtractionData.isVisibilityApplicable(): Boolean {
 }
 
 fun ExtractionData.performAnalysis(): AnalysisResult {
-    if (originalElements.empty) {
+    if (originalElements.isEmpty()) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
     }
 
@@ -793,7 +793,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
-    val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
+    val receiverParameter = if (receiverCandidates.size() == 1) receiverCandidates.first() else null
     receiverParameter?.let { adjustedParameters.remove(it) }
 
     return AnalysisResult(
@@ -806,9 +806,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     receiverParameter,
                     paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
                     paramsInfo.replacementMap,
-                    if (messages.empty) controlFlow else controlFlow.toDefault()
+                    if (messages.isEmpty()) controlFlow else controlFlow.toDefault()
             ),
-            if (messages.empty) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
+            if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
 }
