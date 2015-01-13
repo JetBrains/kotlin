@@ -1,9 +1,9 @@
 fun bar() {
-    val handler = { <caret>
+    val handler = { p<caret>
         foo()
     }
 }
 
 // INVOCATION_COUNT: 0
-// EXIST: bar
-// EXIST: null
+// ELEMENT: *
+// CHAR: ' '

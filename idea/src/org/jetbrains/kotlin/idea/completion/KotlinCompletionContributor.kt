@@ -248,9 +248,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
         // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
         if (invocationCount == 0 && isInExtensionReceiver(position)) return true
 
-        // no auto-popup on typing in the very beginning of function literal where name of the first parameter can be
-        if (invocationCount == 0 && isInFunctionLiteralStart(position)) return true
-
         return false
     }
 
@@ -265,16 +262,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
             is JetProperty -> typeRef == parent.getReceiverTypeReference()
             else -> false
         }
-    }
-
-    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
-        var prev = position.prevLeafSkipWhitespacesAndComments()
-        if (prev?.getNode()?.getElementType() == JetTokens.LPAR) {
-            prev = prev?.prevLeafSkipWhitespacesAndComments()
-        }
-        if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
-        val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
-        return functionLiteral.getLBrace() == prev
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {

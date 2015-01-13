@@ -126,6 +126,24 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionLiteralParameter1.kt")
+    public void testFunctionLiteralParameter1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/FunctionLiteralParameter1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunctionLiteralParameter2.kt")
+    public void testFunctionLiteralParameter2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/FunctionLiteralParameter2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunctionLiteralParameter3.kt")
+    public void testFunctionLiteralParameter3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/FunctionLiteralParameter3.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionWithLambdaArg1.kt")
     public void testFunctionWithLambdaArg1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/FunctionWithLambdaArg1.kt");
