@@ -18,7 +18,7 @@ fun test() {
     val mapperFunction = {(i: Int)-> }
     SomeTemplate().query(mapperFunction)
 
-    // TYPE_MISMATCH: Required Class<[ERROR: CANT_INFER]>, Found (jet.Int) -> Unit
+    // TYPE_MISMATCH: Required Class<[ERROR: CANT_INFER]>, Found (kotlin.Int) -> Unit
     SomeTemplate().query {(i: Int)-> }
     SomeTemplate().query1 {(i: Int)-> }
 }

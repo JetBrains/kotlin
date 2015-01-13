@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class JetRunConfigurationSettingsFormatConverterProvider extends ConverterProvider {
     protected JetRunConfigurationSettingsFormatConverterProvider() {
-        super("jet-run-configuration-should-store-its-settings-as-java-app-configuration");
+        super("kotlin-run-configuration-should-store-its-settings-as-java-run-configuration");
     }
 
     @NotNull

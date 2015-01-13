@@ -67,7 +67,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
             List<JetParameter> parameters = function.getValueParameters();
             if (parameters.size() != 1) return false;
             JetTypeReference parameterType = parameters.iterator().next().getTypeReference();
-            return parameterType != null && ("Any?".equals(parameterType.getText()) || "jet.Any?".equals(parameterType.getText()));
+            return parameterType != null && "Any?".equals(parameterType.getText());
         }
 
         if ("hashCode".equals(name) || "toString".equals(name)) {
@@ -99,7 +99,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public AddOverrideToEqualsHashCodeToStringFix createAction(Diagnostic diagnostic) {
+            public AddOverrideToEqualsHashCodeToStringFix createAction(@NotNull Diagnostic diagnostic) {
                 return new AddOverrideToEqualsHashCodeToStringFix(diagnostic.getPsiElement());
             }
         };

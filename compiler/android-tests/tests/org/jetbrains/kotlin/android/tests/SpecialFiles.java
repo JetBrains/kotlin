@@ -91,8 +91,8 @@ public class SpecialFiles {
         excludedFiles.add("kt529.kt");  // Bug
         excludedFiles.add("kt344.kt");  // Bug
 
-        excludedFiles.add("comparisonWithNullCallsFun.kt"); // java.lang.NoClassDefFoundError: jet.Nothing
-        excludedFiles.add("kt3574.kt"); // java.lang.NoClassDefFoundError: jet.Nothing
+        excludedFiles.add("comparisonWithNullCallsFun.kt"); // java.lang.NoClassDefFoundError: kotlin.Nothing
+        excludedFiles.add("kt3574.kt"); // java.lang.NoClassDefFoundError: kotlin.Nothing
 
         excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
         excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
