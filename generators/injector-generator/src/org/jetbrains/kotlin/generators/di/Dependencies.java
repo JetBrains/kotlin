@@ -158,14 +158,25 @@ public class Dependencies {
         // Find arguments
         ConstructorCall dependency = new ConstructorCall(publicConstructor);
         Type[] parameterTypes = publicConstructor.getGenericParameterTypes();
-        for (Type parameterType : parameterTypes) {
-            Field fieldForParameter = findDependencyOfType(
-                    DiType.fromReflectionType(parameterType),
-                    "constructor: " + publicConstructor + ", parameter: " + parameterType,
-                    neededFor.prepend(field)
+        try {
+            for (Type parameterType : parameterTypes) {
+                Field fieldForParameter = findDependencyOfType(
+                        DiType.fromReflectionType(parameterType),
+                        "constructor: " + publicConstructor + ", parameter: " + parameterType,
+                        neededFor.prepend(field)
+                );
+                used.add(fieldForParameter);
+                dependency.getConstructorArguments().add(fieldForParameter);
+            }
+        }
+        catch (InstantiationFailedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            throw new InstantiationFailedException(
+                    "Could not instantiate '" + field + "' by calling " + publicConstructor + "\nneeded for " + neededFor,
+                    e
             );
-            used.add(fieldForParameter);
-            dependency.getConstructorArguments().add(fieldForParameter);
         }
 
         field.setInitialization(dependency);
