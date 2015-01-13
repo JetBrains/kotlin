@@ -20,6 +20,7 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -32,6 +33,12 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @NotNull
+    @Override
+    public TargetPlatform getTargetPlatform() {
+        return TargetPlatform.JS;
     }
 
     @NotNull

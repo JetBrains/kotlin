@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "maven";
@@ -40,5 +41,11 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     protected void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module) {
         createExecution(virtualFile, kotlinPlugin, module, false);
         createExecution(virtualFile, kotlinPlugin, module, true);
+    }
+
+    @NotNull
+    @Override
+    public TargetPlatform getTargetPlatform() {
+        return TargetPlatform.JVM;
     }
 }

@@ -86,7 +86,7 @@
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
 
-    <action id="ConfigureKotlinInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinInProjectAction"
+    <action id="ConfigureKotlinInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJavaInProjectAction"
             text="Configure Kotlin in Project">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>

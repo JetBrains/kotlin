@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -88,6 +89,12 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @NotNull
+    @Override
+    public TargetPlatform getTargetPlatform() {
+        return TargetPlatform.JVM;
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.project.TargetPlatform;
 
 public interface KotlinProjectConfigurator {
     ExtensionPointName<KotlinProjectConfigurator> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.projectConfigurator");
@@ -33,4 +34,7 @@ public interface KotlinProjectConfigurator {
     @NotNull String getPresentableText();
 
     @NotNull String getName();
+
+    @NotNull
+    TargetPlatform getTargetPlatform();
 }
