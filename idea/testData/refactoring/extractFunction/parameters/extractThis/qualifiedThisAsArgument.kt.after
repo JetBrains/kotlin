@@ -1,0 +1,18 @@
+// PARAM_TYPES: A
+// PARAM_TYPES: B
+// PARAM_DESCRIPTOR: internal final class A defined in root package
+// PARAM_DESCRIPTOR: internal final fun B.foo(): Int defined in A
+// SIBLING:
+class A {
+    val a = 1
+
+    fun B.foo() = i(this@A, this)
+}
+
+private fun i(a1: A, b: B): Int {
+    return a1.a + b.b
+}
+
+class B {
+    val b = 1
+}
