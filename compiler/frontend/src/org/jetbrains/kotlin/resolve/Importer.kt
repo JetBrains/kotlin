@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.Lists
-import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
+import java.util.ArrayList
 
 public trait Importer {
     public fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap)
@@ -41,17 +40,12 @@ public trait Importer {
         }
 
         protected fun importDeclarationAlias(descriptor: DeclarationDescriptor, aliasName: Name) {
-            if (descriptor is ClassifierDescriptor) {
-                fileScope.importClassifierAlias(aliasName, descriptor)
-            }
-            else if (descriptor is PackageViewDescriptor) {
-                fileScope.importPackageAlias(aliasName, descriptor)
-            }
-            else if (descriptor is FunctionDescriptor) {
-                fileScope.importFunctionAlias(aliasName, descriptor)
-            }
-            else if (descriptor is VariableDescriptor) {
-                fileScope.importVariableAlias(aliasName, descriptor)
+            when (descriptor) {
+                is ClassifierDescriptor -> fileScope.importClassifierAlias(aliasName, descriptor)
+                is PackageViewDescriptor -> fileScope.importPackageAlias(aliasName, descriptor)
+                is FunctionDescriptor -> fileScope.importFunctionAlias(aliasName, descriptor)
+                is VariableDescriptor -> fileScope.importVariableAlias(aliasName, descriptor)
+                else -> error("Unknown descriptor")
             }
         }
 
@@ -73,16 +67,18 @@ public trait Importer {
         private fun createFilteringScope(scope: JetScope, descriptor: PackageViewDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap): JetScope {
             val kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor)
             if (kotlinAnalogsForClassesInside.isEmpty()) return scope
-            return FilteringScope(scope) { descriptor -> !kotlinAnalogsForClassesInside.any { it.getName() == descriptor.getName() } }
+            return FilteringScope(scope) { descriptor -> kotlinAnalogsForClassesInside.all { it.getName() != descriptor.getName() } }
         }
     }
 
     public class DelayedImporter(fileScope: WritableScope) : StandardImporter(fileScope) {
         private trait DelayedImportEntry
-        private class AllUnderImportEntry(first: DeclarationDescriptor, second: PlatformToKotlinClassMap?) : Pair<DeclarationDescriptor, PlatformToKotlinClassMap>(first, second), DelayedImportEntry
-        private class AliasImportEntry(first: DeclarationDescriptor, second: Name) : Pair<DeclarationDescriptor, Name>(first, second), DelayedImportEntry
 
-        private val imports = Lists.newArrayList<DelayedImportEntry>()
+        private class AllUnderImportEntry(val first: DeclarationDescriptor, val second: PlatformToKotlinClassMap) : DelayedImportEntry
+
+        private class AliasImportEntry(val first: DeclarationDescriptor, val second: Name) : DelayedImportEntry
+
+        private val imports = ArrayList<DelayedImportEntry>()
 
         override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
             imports.add(AllUnderImportEntry(descriptor, platformToKotlinClassMap))
@@ -95,24 +91,21 @@ public trait Importer {
         public fun processImports() {
             for (anImport in imports) {
                 if (anImport is AllUnderImportEntry) {
-                    val allUnderImportEntry = anImport as AllUnderImportEntry
-                    importAllUnderDeclaration(allUnderImportEntry.getFirst(), allUnderImportEntry.getSecond())
+                    importAllUnderDeclaration(anImport.first, anImport.second)
                 }
                 else {
-                    val aliasImportEntry = anImport as AliasImportEntry
-                    importDeclarationAlias(aliasImportEntry.getFirst(), aliasImportEntry.getSecond())
+                    anImport as AliasImportEntry
+                    importDeclarationAlias(anImport.first, anImport.second)
                 }
             }
         }
     }
 
-    class object {
-        public val DO_NOTHING: Importer = object : Importer {
-            override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
-            }
+    object DoNothingImporter : Importer {
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+        }
 
-            override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
-            }
+        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
         }
     }
 }
