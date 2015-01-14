@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.NoDataException
-import com.intellij.debugger.PositionManager
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.requests.ClassPrepareRequestor
@@ -60,9 +59,10 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import com.intellij.debugger.MultiRequestPositionManager
+import java.util.Collections
 
-
-public class JetPositionManager(private val myDebugProcess: DebugProcess) : PositionManager {
+public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
     private val myTypeMappers = WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>()
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
@@ -139,19 +139,14 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         val referenceInternalName: String
         try {
             if (location.declaringType().availableStrata().contains("Kotlin")) {
-                referenceInternalName = location.sourcePath()
+                //replace is required for windows
+                referenceInternalName = location.sourcePath().replace('\\','/')
             } else {
-                //no stratum or source path => use default one
-                val referenceFqName = location.declaringType().name()
-                // JDI names are of form "package.Class$InnerClass"
-                referenceInternalName = referenceFqName.replace('.', '/')
+                referenceInternalName = defaultInternalName(location)
             }
         }
         catch (e: AbsentInformationException) {
-            //no stratum or source path => use default one
-            val referenceFqName = location.declaringType().name()
-            // JDI names are of form "package.Class$InnerClass"
-            referenceInternalName = referenceFqName.replace('.', '/')
+            referenceInternalName = defaultInternalName(location)
         }
 
         val className = JvmClassName.byInternalName(referenceInternalName)
@@ -161,6 +156,13 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         if (DumbService.getInstance(project).isDumb()) return null
 
         return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1)
+    }
+
+    private fun defaultInternalName(location: Location): String {
+        //no stratum or source path => use default one
+        val referenceFqName = location.declaringType().name()
+        // JDI names are of form "package.Class$InnerClass"
+        return referenceFqName.replace('.', '/')
     }
 
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
@@ -239,20 +241,31 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Posi
         }
     }
 
+    [deprecated("Since Idea 14.0.3 use createPrepareRequests fun")]
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
+        if (sourcePosition.getFile() !is JetFile) {
+            throw NoDataException()
+        }
+        val className = classNameForPosition(sourcePosition)
+        if (className == null) {
+            return null
+        }
+        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
+    }
+
+    override fun createPrepareRequests(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): MutableList<ClassPrepareRequest> {
         if (sourcePosition.getFile() !is JetFile) {
             throw NoDataException()
         }
         val classNames = classNameForPositionAndInlinedOnes(sourcePosition)
         if (classNames.isEmpty()) {
-            return null
+            return Collections.emptyList()
         }
-        val classPrepareRequest = myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, classNames.first().replace('/', '.'))
-//        classNames.subList(1, classNames.size()).forEach {
-//            classPrepareRequest.addClassFilter(it.replace('/', '.'))
-//        }
-
-        return classPrepareRequest
+        val requests = arrayListOf<ClassPrepareRequest>()
+        for (className in classNames) {
+            requests.add(myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.')))
+        }
+        return requests
     }
 
     TestOnly
