@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
+import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
+import org.jetbrains.kotlin.idea.search.usagesSearch.INVOKE_OPERATION_NAME
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -68,6 +70,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 if (function.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
                 if (isEntryPoint(function)) return
+                if (isConventionalName(function)) return
                 if (hasNonTrivialUsages(function)) return
 
                 holder.registerProblem(
@@ -103,6 +106,11 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return hasTextUsages
+    }
+
+    private fun isConventionalName(namedDeclaration: JetNamedDeclaration): Boolean {
+        val name = namedDeclaration.getNameAsName()
+        return name.getOperationSymbolsToSearch().isNotEmpty() || name == INVOKE_OPERATION_NAME
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
