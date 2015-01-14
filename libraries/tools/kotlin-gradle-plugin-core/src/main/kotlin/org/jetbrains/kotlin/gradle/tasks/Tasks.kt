@@ -10,7 +10,6 @@ import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
-import org.apache.commons.io.FilenameUtils
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.common.messages.MessageCollector
@@ -20,7 +19,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.io.FileUtils
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.gradle.api.Project
 import org.jetbrains.jet.config.Services
 import org.jetbrains.jet.cli.js.K2JSCompiler
@@ -32,6 +30,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.utils.LibraryUtils
 
+val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -41,51 +40,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     abstract protected fun populateTargetSpecificArgs(args: T)
 
     public var kotlinOptions: T = createBlankArgs()
-    val srcDirsSources = HashSet<SourceDirectorySet>()
-
     public var kotlinDestinationDir: File? = getDestinationDir()
 
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
-
-    // override setSource to track source directory sets
-    override fun setSource(source: Any?) {
-        srcDirsSources.clear()
-        if (source is SourceDirectorySet) {
-            srcDirsSources.add(source)
-        }
-        super.setSource(source)
-    }
-
-    // override source to track source directory sets
-    override fun source(vararg sources: Any?): SourceTask? {
-        for (source in sources) {
-            if (source is SourceDirectorySet) {
-                srcDirsSources.add(source)
-            }
-        }
-        return super.source(sources)
-    }
-
-    fun findSrcDirRoot(file: File): File? {
-        val absPath = file.getAbsolutePath()
-        for (source in srcDirsSources) {
-            for (root in source.getSrcDirs()) {
-                val rootAbsPath = root.getAbsolutePath()
-                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
-                    return root
-                }
-            }
-        }
-        return null
-    }
 
     [TaskAction]
     override fun compile() {
         getLogger().debug("Starting ${javaClass} task")
         val args = createBlankArgs()
         val sources = getKotlinSources()
-        if (sources.empty) {
+        if (sources.isEmpty()) {
             getLogger().warn("No Kotlin files found, skipping Kotlin compiler task")
             return
         }
@@ -126,8 +91,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
 public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     override val compiler = K2JVMCompiler()
-
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
+
+    val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
@@ -171,6 +137,36 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
     }
+
+    // override setSource to track source directory sets
+    override fun setSource(source: Any?) {
+        srcDirsSources.clear()
+        if (source is SourceDirectorySet) {
+            srcDirsSources.add(source)
+        }
+        super.setSource(source)
+    }
+
+    // override source to track source directory sets
+    override fun source(vararg sources: Any?): SourceTask? {
+        for (source in sources) {
+            if (source is SourceDirectorySet) {
+                srcDirsSources.add(source)
+            }
+        }
+        return super.source(sources)
+    }
+
+    fun findSrcDirRoot(file: File): File? {
+        for (source in srcDirsSources) {
+            for (root in source.getSrcDirs()) {
+                if (FileUtils.directoryContains(root, file)) {
+                    return root
+                }
+            }
+        }
+        return null
+    }
 }
 
 public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>() {
@@ -191,17 +187,22 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         addLibraryFiles(*strs)
     }
 
-    fun outputFile(): String? = kotlinOptions.outputFile
+    public val outputFile: String?
+            get() = kotlinOptions.outputFile
 
-    public fun sourceMapDestinationDir(): File = File(outputFile()).directory
+    public val sourceMapDestinationDir: File
+            get() = File(outputFile).directory
+
+    public val sourceMap: Boolean
+            get() = kotlinOptions.sourceMap
 
     {
-        getOutputs().file(MethodClosure(this, "outputFile"))
+        getOutputs().file(MethodClosure(this, "getOutputFile"))
     }
 
     override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
         args.noStdlib = true
-        args.outputFile = outputFile()
+        args.outputFile = outputFile
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
 
@@ -251,7 +252,7 @@ public open class KDoc() : SourceTask() {
 
         val kdocOptions = kdocArgs.docConfig
 
-        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length == 0) && (destinationDir != null)) {
+        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length() == 0) && (destinationDir != null)) {
             destinationDir!!.path
         } else {
             kdocOptions.docOutputDir
@@ -275,7 +276,7 @@ public open class KDoc() : SourceTask() {
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.makeString(File.pathSeparator)
+        args.annotations = allAnnotations.joinToString(File.pathSeparator)
 
         args.noStdlib = true
         args.noJdkAnnotations = true
@@ -295,6 +296,7 @@ public open class KDoc() : SourceTask() {
 }
 
 fun getAnnotations(project: Project, logger: Logger): Collection<File> {
+    [suppress("UNCHECKED_CAST")]
     val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
     if (!annotations.isEmpty()) {

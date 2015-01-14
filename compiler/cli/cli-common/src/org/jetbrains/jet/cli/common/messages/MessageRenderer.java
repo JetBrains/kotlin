@@ -25,7 +25,7 @@ import java.io.File;
 
 public interface MessageRenderer {
 
-    MessageRenderer TAGS = new MessageRenderer() {
+    MessageRenderer XML = new MessageRenderer() {
         @Override
         public String renderPreamble() {
             return "<MESSAGES>";
@@ -58,7 +58,7 @@ public interface MessageRenderer {
         }
     };
 
-    MessageRenderer PLAIN = new PlainText() {
+    MessageRenderer PLAIN_FULL_PATHS = new PlainText() {
         @Nullable
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
@@ -66,7 +66,7 @@ public interface MessageRenderer {
         }
     };
 
-    MessageRenderer PLAIN_WITH_RELATIVE_PATH = new PlainText() {
+    MessageRenderer PLAIN_RELATIVE_PATHS = new PlainText() {
         private final File cwd = new File(".").getAbsoluteFile();
 
         @Nullable
@@ -102,6 +102,8 @@ public interface MessageRenderer {
     }
 
     String renderPreamble();
+
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
+
     String renderConclusion();
 }

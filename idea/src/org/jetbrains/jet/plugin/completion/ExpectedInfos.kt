@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension
+import org.jetbrains.jet.lang.resolve.calls.extensions.CompositeExtension
 import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor

@@ -57,4 +57,6 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     @NotNull
     ClassKind getClassKind();
 
+    @NotNull
+    List<JetAnnotationEntry> getDanglingAnnotations();
 }

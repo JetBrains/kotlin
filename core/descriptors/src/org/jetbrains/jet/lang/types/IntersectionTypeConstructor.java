@@ -30,6 +30,8 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
 
     public IntersectionTypeConstructor(Annotations annotations, Collection<JetType> typesToIntersect) {
         super(annotations);
+        assert !typesToIntersect.isEmpty() : "Attempt to create an empty intersection";
+
         this.intersectedTypes = new LinkedHashSet<JetType>(typesToIntersect);
         this.hashCode = intersectedTypes.hashCode();
     }

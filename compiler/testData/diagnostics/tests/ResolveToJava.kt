@@ -6,6 +6,7 @@ import <!UNRESOLVED_REFERENCE!>utils<!>.*
 
 import java.io.PrintStream
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
+import java.util
 
 val l : MutableList<in Int> = ArrayList<Int>()
 

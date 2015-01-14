@@ -28,7 +28,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
@@ -49,7 +50,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
 import static org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver.deparenthesizeArgument;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -124,6 +125,7 @@ public class CandidateResolver {
             for (JetTypeProjection projection : jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                    ModifiersChecker.checkIncompatibleVarianceModifiers(projection.getModifierList(), context.trace);
                 }
                 JetType type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), context.scope, context.trace,
@@ -159,15 +161,7 @@ public class CandidateResolver {
             candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
         }
 
-        task.performAdvancedChecks(candidate, context.trace, context.tracing);
-
-        // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
-        // See TaskPrioritizer for more
-        JetSuperExpression superExpression = getReceiverSuper(candidateCall.getExtensionReceiver());
-        if (superExpression != null) {
-            context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
-            candidateCall.addStatus(OTHER_ERROR);
-        }
+        checkAbstractAndSuper(context);
     }
 
     private static boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
@@ -203,6 +197,38 @@ public class CandidateResolver {
         if (candidateThis == null || candidateThis.getKind().isSingleton()) return true;
 
         return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
+    }
+
+    private static <D extends CallableDescriptor> void checkAbstractAndSuper(@NotNull CallCandidateResolutionContext<D> context) {
+        MutableResolvedCall<D> candidateCall = context.candidateCall;
+        CallableDescriptor descriptor = candidateCall.getCandidateDescriptor();
+        JetExpression expression = context.candidateCall.getCall().getCalleeExpression();
+
+        if (expression instanceof JetSimpleNameExpression) {
+            // 'B' in 'class A: B()' is JetConstructorCalleeExpression
+            if (descriptor instanceof ConstructorDescriptor) {
+                Modality modality = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getModality();
+                if (modality == Modality.ABSTRACT) {
+                    context.tracing.instantiationOfAbstractClass(context.trace);
+                }
+            }
+        }
+
+        JetSuperExpression superDispatchReceiver = getReceiverSuper(candidateCall.getDispatchReceiver());
+        if (superDispatchReceiver != null) {
+            if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).getModality() == Modality.ABSTRACT) {
+                context.tracing.abstractSuperCall(context.trace);
+                candidateCall.addStatus(OTHER_ERROR);
+            }
+        }
+
+        // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
+        // See TaskPrioritizer for more
+        JetSuperExpression superExtensionReceiver = getReceiverSuper(candidateCall.getExtensionReceiver());
+        if (superExtensionReceiver != null) {
+            context.trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(superExtensionReceiver, superExtensionReceiver.getText()));
+            candidateCall.addStatus(OTHER_ERROR);
+        }
     }
 
     @Nullable

@@ -31,12 +31,9 @@ fun JsObject.put(a: String, v: Any?): Unit = noImpl
 object t{}
 
 native
-val undefined: Any = noImpl
-
-native
 fun getTestObject(): JsObject = noImpl
 
-fun test(obj: JsObject, key: String, oldValue: Any, newValue: Any) {
+fun test(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj[key])
     obj[key] = newValue
     assertEquals(newValue, obj[key])
@@ -44,7 +41,7 @@ fun test(obj: JsObject, key: String, oldValue: Any, newValue: Any) {
     assertEquals(null, obj[key])
 }
 
-fun test(obj: JsObject, key: Int, oldValue: Any, newValue: Any) {
+fun test(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj.take(key))
     obj.put(key, newValue)
     assertEquals(newValue, obj.take(key))
@@ -52,7 +49,7 @@ fun test(obj: JsObject, key: Int, oldValue: Any, newValue: Any) {
     assertEquals(null, obj.take(key))
 }
 
-fun testExtensions(obj: JsObject, key: Int, oldValue: Any, newValue: Any) {
+fun testExtensions(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj[key])
     obj[key] = newValue
     assertEquals(newValue, obj[key])
@@ -60,7 +57,7 @@ fun testExtensions(obj: JsObject, key: Int, oldValue: Any, newValue: Any) {
     assertEquals(null, obj[key])
 }
 
-fun testExtensions(obj: JsObject, key: String, oldValue: Any, newValue: Any) {
+fun testExtensions(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj.take(key))
     obj.put(key, newValue)
     assertEquals(newValue, obj.take(key))

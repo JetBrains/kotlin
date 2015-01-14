@@ -1,6 +1,12 @@
 <component name="ArtifactManager">
   <artifact name="KotlinBarePlugin">
     <output-path>$PROJECT_DIR$/out/artifacts/BareKotlin</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/idea-runner/runner.xml</file>
+        <target>copy-runtime-for-idea-plugin</target>
+      </options>
+    </properties>
     <root id="root">
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
@@ -16,7 +22,6 @@
         <element id="directory" name="jps">
           <element id="artifact" artifact-name="KotlinJpsPlugin" />
         </element>
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
       </element>
     </root>
   </artifact>

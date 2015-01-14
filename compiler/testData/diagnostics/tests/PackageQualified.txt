@@ -1,7 +1,8 @@
 package
 
 package foobar {
-    internal val x1: java.util.List<kotlin.Int>? = null
+    internal val x1: [ERROR : <ERROR PROPERTY TYPE>]
+    internal val x2: java.util.List<kotlin.Int>? = null
     internal val y1: kotlin.List<kotlin.Int>? = null
     internal fun </*0*/ O> done(/*0*/ result: O): foobar.Iteratee<kotlin.Any?, O>
 
@@ -58,7 +59,8 @@ package foobar {
 
     package foobar.a {
         internal val a: java.util.List<kotlin.Int>? = null
-        internal val a1: [ERROR : ArrayList<Int>]?
+        internal val a2: [ERROR : util.List<Int>]?
+        internal val a3: [ERROR : ArrayList<Int>]?
         internal val b: kotlin.List<kotlin.Int>? = null
         internal val b1: [ERROR : util.List<Int>]?
     }

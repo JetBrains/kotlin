@@ -20,6 +20,8 @@ internal final class A {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             kotlin.js.nativeSetter() internal final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
             kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
+            kotlin.js.nativeSetter() internal final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+            kotlin.js.nativeSetter() internal final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             internal class object <class-object-for-A> {
@@ -90,6 +92,7 @@ internal final class A {
             kotlin.js.nativeSetter() internal final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
             kotlin.js.nativeSetter() internal final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String
             kotlin.js.nativeSetter() internal final fun kotlin.Int.set3(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String?): kotlin.String
+            kotlin.js.nativeSetter() internal final fun kotlin.Int.set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number
         }
 
         internal object obj {

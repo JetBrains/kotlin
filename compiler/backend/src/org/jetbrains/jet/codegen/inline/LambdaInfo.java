@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
@@ -151,7 +151,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
     public Parameters addAllParameters(FieldRemapper remapper) {
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         //add skipped this cause inlined lambda doesn't have it
-        builder.addThis(AsmTypeConstants.OBJECT_TYPE, true).setLambda(this);
+        builder.addThis(AsmTypes.OBJECT_TYPE, true).setLambda(this);
 
         List<ValueParameterDescriptor> valueParameters = getFunctionDescriptor().getValueParameters();
         for (ValueParameterDescriptor parameter : valueParameters) {

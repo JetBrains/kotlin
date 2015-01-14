@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Returns a set containing all distinct elements from the given collection.
  */

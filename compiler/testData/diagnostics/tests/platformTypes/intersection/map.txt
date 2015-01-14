@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ p1: kotlin.(Mutable)Map<kotlin.Int, kotlin.String>!, /*1*/ p2: kotlin.Map<kotlin.Int, kotlin.String>): kotlin.Boolean
+internal fun foo(/*0*/ p1: kotlin.String!, /*1*/ p2: kotlin.String): kotlin.Boolean

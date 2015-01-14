@@ -68,10 +68,6 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testUndefined() throws Exception {
-        fooBoxTest();
-    }
-
     public void testKt1519() throws Exception {
         fooBoxTest();
     }
@@ -141,6 +137,18 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testNativeGetterAndNativeSetter() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testEval() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testUndefined() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testTypeof() throws Exception {
         checkFooBoxIsOk();
     }
 }

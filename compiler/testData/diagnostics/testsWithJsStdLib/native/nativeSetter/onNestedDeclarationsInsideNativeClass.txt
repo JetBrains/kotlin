@@ -20,6 +20,8 @@ kotlin.js.native() internal final class A {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             kotlin.js.nativeSetter() internal final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
             kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
+            kotlin.js.nativeSetter() internal final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+            kotlin.js.nativeSetter() internal final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             internal class object <class-object-for-A> {
@@ -29,6 +31,8 @@ kotlin.js.native() internal final class A {
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 kotlin.js.nativeSetter() internal final fun put(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String): kotlin.Unit
                 kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any?): kotlin.Any?
+                kotlin.js.nativeSetter() internal final fun set4(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Any
+                kotlin.js.nativeSetter() internal final fun set5(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.CharSequence
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
         }
@@ -86,6 +90,7 @@ kotlin.js.native() internal final class A {
             kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A): kotlin.Any?
             kotlin.js.nativeSetter() internal final fun set(/*0*/ a: A.B.A, /*1*/ v: kotlin.Any?): kotlin.Unit
             kotlin.js.nativeSetter() internal final fun set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Any, /*2*/ v2: kotlin.Any): kotlin.Unit
+            kotlin.js.nativeSetter() internal final fun set6(/*0*/ a: kotlin.Double, /*1*/ v: kotlin.String): kotlin.Number
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             kotlin.js.nativeSetter() internal final fun kotlin.Int.set(/*0*/ a: kotlin.String, /*1*/ v: kotlin.Int): kotlin.Unit
             kotlin.js.nativeSetter() internal final fun kotlin.Int.set2(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String?): kotlin.String

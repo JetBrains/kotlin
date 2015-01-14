@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
@@ -75,7 +74,7 @@ import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -361,7 +360,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void getSuperClass() {
-        superClassAsmType = AsmTypeConstants.OBJECT_TYPE;
+        superClassAsmType = OBJECT_TYPE;
         superClassType = null;
 
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
@@ -548,16 +547,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Label ne = new Label();
 
             iv.load(0, OBJECT_TYPE);
-            iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+            iv.load(1, OBJECT_TYPE);
             iv.ifacmpeq(eq);
 
-            iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+            iv.load(1, OBJECT_TYPE);
             iv.instanceOf(classAsmType);
             iv.ifeq(ne);
 
-            iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+            iv.load(1, OBJECT_TYPE);
             iv.checkcast(classAsmType);
-            iv.store(2, AsmTypeConstants.OBJECT_TYPE);
+            iv.store(2, OBJECT_TYPE);
 
             for (PropertyDescriptor propertyDescriptor : properties) {
                 Type asmType = typeMapper.mapType(propertyDescriptor);

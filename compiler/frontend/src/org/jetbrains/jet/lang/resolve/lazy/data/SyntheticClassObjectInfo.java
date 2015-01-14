@@ -98,6 +98,12 @@ public class SyntheticClassObjectInfo implements JetClassLikeInfo {
 
     @NotNull
     @Override
+    public List<JetAnnotationEntry> getDanglingAnnotations() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
     public List<JetDeclaration> getDeclarations() {
         // There can be no declarations in a synthetic class object, all its members are fake overrides
         return Collections.emptyList();

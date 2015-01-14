@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will

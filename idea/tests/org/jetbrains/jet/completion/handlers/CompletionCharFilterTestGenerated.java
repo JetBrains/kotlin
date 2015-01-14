@@ -168,6 +168,12 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
         doTest(fileName);
     }
 
+    @TestMetadata("QualifiedThis.kt")
+    public void testQualifiedThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/QualifiedThis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("RangeTyping.kt")
     public void testRangeTyping() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/RangeTyping.kt");

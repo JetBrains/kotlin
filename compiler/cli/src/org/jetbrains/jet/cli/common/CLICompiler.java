@@ -49,13 +49,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_WITH_RELATIVE_PATH, args);
+        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
-    public ExitCode execAndOutputHtml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
-        return exec(errStream, services, MessageRenderer.TAGS, args);
+    public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
+        return exec(errStream, services, MessageRenderer.XML, args);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Used via reflection in KotlinCompilerBaseTask
+    @NotNull
+    public ExitCode execFullPathsInMessages(@NotNull PrintStream errStream, @NotNull String[] args) {
+        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args);
     }
 
     @Nullable

@@ -34,7 +34,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
         if (lookup.getPsiFile() !is JetFile) return null
         if (!lookup.isCompletion()) return null
 
-        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/) {
+        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/ || c == '@') {
             return CharFilter.Result.ADD_TO_PREFIX
         }
 

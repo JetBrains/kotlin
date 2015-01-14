@@ -104,6 +104,7 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
         QuickFixes.factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         QuickFixes.factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
+        QuickFixes.factories.put(REPEATED_MODIFIER, removeModifierFactory);
 
         JetSingleIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);

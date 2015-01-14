@@ -32,13 +32,10 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -166,48 +163,6 @@ public class ExpressionTypingUtils {
         }
         else {
             throw new IllegalArgumentException("Unsupported constant type: " + constantType);
-        }
-    }
-
-    private static boolean isCapturedInInline(
-            @NotNull BindingContext context,
-            @NotNull DeclarationDescriptor scopeContainer,
-            @NotNull DeclarationDescriptor variableParent
-    ) {
-        PsiElement scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer);
-        if (!(scopeDeclaration instanceof JetFunctionLiteral)) {
-            return false;
-        }
-
-        PsiElement parent = scopeDeclaration.getParent();
-        assert parent instanceof JetFunctionLiteralExpression : "parent of JetFunctionLiteral is " + parent;
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getParentResolvedCall((JetFunctionLiteralExpression) parent, context, true);
-        if (resolvedCall == null) {
-            return false;
-        }
-
-        CallableDescriptor callable = resolvedCall.getResultingDescriptor();
-        if (callable instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) callable).getInlineStrategy().isInline()) {
-            DeclarationDescriptor scopeContainerParent = scopeContainer.getContainingDeclaration();
-            assert scopeContainerParent != null : "parent is null for " + scopeContainer;
-            return scopeContainerParent == variableParent || isCapturedInInline(context, scopeContainerParent, variableParent);
-        }
-        else {
-            return false;
-        }
-    }
-
-    public static void checkCapturingInClosure(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
-        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
-        if (variable != null) {
-            DeclarationDescriptor variableParent = variable.getContainingDeclaration();
-            DeclarationDescriptor scopeContainer = scope.getContainingDeclaration();
-            if (scopeContainer != variableParent && variableParent instanceof CallableDescriptor) {
-                if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
-                    boolean inline = isCapturedInInline(trace.getBindingContext(), scopeContainer, variableParent);
-                    trace.record(CAPTURED_IN_CLOSURE, variable, inline ? CaptureKind.INLINE_ONLY : CaptureKind.NOT_INLINE);
-                }
-            }
         }
     }
 

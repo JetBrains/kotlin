@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.jet.codegen.ExpressionCodegen
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetCallExpression
@@ -26,14 +25,16 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lexer.JetTokens
 
 import org.jetbrains.jet.codegen.AsmUtil.genEqualsForExpressionsOnStack
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE
+import org.jetbrains.jet.lang.resolve.java.AsmTypes.OBJECT_TYPE
 
 public class Equals : LazyIntrinsicMethod() {
-    override fun generateImpl(codegen: ExpressionCodegen,
-                              returnType: Type,
-                              element: PsiElement?,
-                              arguments: List<JetExpression>,
-                              receiver: StackValue): StackValue {
+    override fun generateImpl(
+            codegen: ExpressionCodegen,
+            returnType: Type,
+            element: PsiElement?,
+            arguments: List<JetExpression>,
+            receiver: StackValue
+    ): StackValue {
         val leftExpr: StackValue
         val rightExpr: JetExpression
         if (element is JetCallExpression) {

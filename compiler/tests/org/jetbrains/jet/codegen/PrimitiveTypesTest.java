@@ -261,12 +261,6 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(6L, main.invoke(null, 2L));
     }
 
-    public void testDecrementAsStatement() throws Exception {
-        loadFile("bottles.kt");
-        Method main = generateFunction();
-        main.invoke(null);  // ensure no exception
-    }
-
     private void binOpTest(String text, Object arg1, Object arg2, Object expected) throws Exception {
         loadText(text);
         Method main = generateFunction();

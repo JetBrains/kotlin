@@ -33,7 +33,9 @@ enum class Modifier(val name: String) {
 
 val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE)
 
-class Modifiers(val modifiers: Collection<Modifier>) : Element() {
+class Modifiers(modifiers: Collection<Modifier>) : Element() {
+    val modifiers = modifiers.toSet()
+
     override fun generateCode(builder: CodeBuilder) {
         builder.append(modifiers.sortBy { it.ordinal() }.map { it.toKotlin() }.joinToString(" "))
     }
@@ -44,10 +46,8 @@ class Modifiers(val modifiers: Collection<Modifier>) : Element() {
     fun with(modifier: Modifier?): Modifiers = if (modifier != null) Modifiers(modifiers + listOf(modifier)).assignPrototypesFrom(this) else this
 
     fun without(modifier: Modifier?): Modifiers {
-        if (modifier == null) return this
-        val set = HashSet(modifiers)
-        set.remove(modifier)
-        return Modifiers(set).assignPrototypesFrom(this)
+        if (modifier == null || !modifiers.contains(modifier)) return this
+        return Modifiers(modifiers.filter { it != modifier }).assignPrototypesFrom(this)
     }
 
     fun contains(modifier: Modifier): Boolean = modifiers.contains(modifier)

@@ -39,7 +39,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class, Annotations.PlatformStatic.class})
+    @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class, Annotations.AnnotationWithVarargParameter.class, Annotations.PlatformStatic.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
@@ -108,6 +108,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/vararg.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AnnotationWithVarargParameter extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInAnnotationWithVarargParameter() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("javaAnnotationWithVarargArgument.kt")
+            public void testJavaAnnotationWithVarargArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter/javaAnnotationWithVarargArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinAnnotationWithVarargArgument.kt")
+            public void testKotlinAnnotationWithVarargArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter/kotlinAnnotationWithVarargArgument.kt");
                 doTest(fileName);
             }
         }
@@ -541,6 +562,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("memberFromTopLevel.kt")
             public void testMemberFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/memberFromTopLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("samePriorityForFunctionsAndProperties.kt")
+            public void testSamePriorityForFunctionsAndProperties() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/samePriorityForFunctionsAndProperties.kt");
                 doTest(fileName);
             }
 

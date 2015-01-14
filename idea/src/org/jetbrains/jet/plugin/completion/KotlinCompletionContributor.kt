@@ -272,7 +272,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val chars = document.getCharsSequence()
         while (i < chars.length()) {
             val c = chars.charAt(i)
-            if (c == '\n' || c == 'r') return true
+            if (c == '\n') return true
             if (!Character.isWhitespace(c)) return false
             i++
         }

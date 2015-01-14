@@ -26,7 +26,7 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun retainAll(c: Collection<Any?>): Boolean = noImpl
 
     override fun clear(): Unit = noImpl
-    override fun size(): Int = noImpl
+    abstract override fun size(): Int
 
     override fun hashCode(): Int = noImpl
     override fun equals(other: Any?): Boolean = noImpl
@@ -34,7 +34,7 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
 
 library
 public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E> {
-    override fun get(index: Int): E = noImpl
+    abstract override fun get(index: Int): E
     override fun set(index: Int, element: E): E = noImpl
 
     override fun add(e: E): Boolean = noImpl
@@ -60,6 +60,8 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 
 library
 public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>() {
+    override fun get(index: Int): E = noImpl
+    override fun size(): Int = noImpl
 }
 
 library
@@ -78,7 +80,9 @@ public open class LinkedList<E>() : AbstractList<E>() {
 library
 public open class HashSet<E>(
         initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
-) : AbstractCollection<E>(), MutableSet<E>
+) : AbstractCollection<E>(), MutableSet<E> {
+    override fun size(): Int = noImpl
+}
 
 library
 public trait SortedSet<E> : Set<E> {
@@ -86,12 +90,15 @@ public trait SortedSet<E> : Set<E> {
 
 library
 public open class TreeSet<E>() : AbstractCollection<E>(), MutableSet<E>, SortedSet<E> {
+    override fun size(): Int = noImpl
 }
 
 library
 public open class LinkedHashSet<E>(
         initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
-) : HashSet<E>(initialCapacity, loadFactor), MutableSet<E>
+) : HashSet<E>(initialCapacity, loadFactor), MutableSet<E> {
+    override fun size(): Int = noImpl
+}
 
 library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {

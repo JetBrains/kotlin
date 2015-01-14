@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
  */

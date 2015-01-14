@@ -25,8 +25,8 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.Diagnostics
-import org.jetbrains.jet.lang.resolve.MutableDiagnosticsWithSuppression
+import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
+import org.jetbrains.jet.lang.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {

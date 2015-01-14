@@ -8,4 +8,4 @@ fun Outer.foo() {
 }
 
 // ABSENT: Nested
-// ABSENT: Inner
+// EXIST: { itemText: "Inner", tailText: "()", typeText: "Outer.Inner" }

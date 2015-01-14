@@ -31,22 +31,20 @@ public class ArgumentUtils {
     private ArgumentUtils() {}
 
     @NotNull
-    public static <T extends CommonCompilerArguments> List<String> convertArgumentsToStringList(
-            @NotNull T arguments,
-            @NotNull T defaultArguments
-    ) {
+    public static List<String> convertArgumentsToStringList(@NotNull CommonCompilerArguments arguments)
+            throws InstantiationException, IllegalAccessException {
         List<String> result = new ArrayList<String>();
-        convertArgumentsToStringList(arguments, defaultArguments, arguments.getClass(), result);
+        convertArgumentsToStringList(arguments, arguments.getClass().newInstance(), arguments.getClass(), result);
         result.addAll(arguments.freeArgs);
         return result;
     }
 
-    private static <T extends CommonCompilerArguments> void convertArgumentsToStringList(
-            @NotNull T arguments,
-            @NotNull T defaultArguments,
+    private static void convertArgumentsToStringList(
+            @NotNull CommonCompilerArguments arguments,
+            @NotNull CommonCompilerArguments defaultArguments,
             @NotNull Class<?> clazz,
             @NotNull List<String> result
-    ) {
+    ) throws IllegalAccessException, InstantiationException {
         for (Field field : clazz.getDeclaredFields()) {
             Argument argument = field.getAnnotation(Argument.class);
             if (argument == null) continue;

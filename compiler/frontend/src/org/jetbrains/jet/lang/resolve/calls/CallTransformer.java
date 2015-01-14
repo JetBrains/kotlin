@@ -91,7 +91,9 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
     }
 
 
-    public static CallTransformer<VariableDescriptor, VariableDescriptor> PROPERTY_CALL_TRANSFORMER = new CallTransformer<VariableDescriptor, VariableDescriptor>();
+    public static CallTransformer<CallableDescriptor, CallableDescriptor> MEMBER_CALL_TRANSFORMER = new CallTransformer<CallableDescriptor, CallableDescriptor>();
+
+    public static CallTransformer<VariableDescriptor, VariableDescriptor> VARIABLE_CALL_TRANSFORMER = new CallTransformer<VariableDescriptor, VariableDescriptor>();
 
     public static CallTransformer<CallableDescriptor, FunctionDescriptor> FUNCTION_CALL_TRANSFORMER = new CallTransformer<CallableDescriptor, FunctionDescriptor>() {
         @NotNull

@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 
 import java.util.*
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.utils.toReadOnlyList
 
 public class CompositePackageFragmentProvider(// can be modified from outside
         private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {
@@ -31,8 +32,7 @@ public class CompositePackageFragmentProvider(// can be modified from outside
         for (provider in providers) {
             result.addAll(provider.getPackageFragments(fqName))
         }
-        result.trimToSize()
-        return result
+        return result.toReadOnlyList()
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {

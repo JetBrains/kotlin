@@ -1,0 +1,11 @@
+package
+
+A(arg = {IntegerValueType(1), "b"}: kotlin.Array<???>) internal fun test(): kotlin.Unit
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ vararg arg: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public abstract fun arg(): kotlin.Array<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

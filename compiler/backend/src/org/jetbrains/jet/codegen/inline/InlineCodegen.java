@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
@@ -51,7 +51,10 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
@@ -418,7 +421,7 @@ public class InlineCodegen extends CallGenerator {
         List<JvmMethodParameterSignature> valueParameters = jvmSignature.getValueParameters();
 
         if (!isStaticMethod(functionDescriptor, context)) {
-            invocationParamBuilder.addNextParameter(AsmTypeConstants.OBJECT_TYPE, false, null);
+            invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false, null);
         }
 
         for (JvmMethodParameterSignature param : valueParameters) {

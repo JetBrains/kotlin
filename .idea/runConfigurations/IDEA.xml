@@ -10,7 +10,7 @@
     <option name="ENABLE_SWING_INSPECTOR" value="false" />
     <option name="ENV_VARIABLES" />
     <option name="PASS_PARENT_ENVS" value="true" />
-    <module name="idea_runner" />
+    <module name="idea-runner" />
     <envs />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />
@@ -43,7 +43,7 @@
       <option name="BuildArtifacts" enabled="true">
         <artifact name="KotlinPlugin" />
       </option>
-      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/idea_runner/runner.xml" target="force_enable_kotlin_plugin" />
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/idea-runner/runner.xml" target="force-enable-kotlin-plugin" />
     </method>
   </configuration>
 </component>

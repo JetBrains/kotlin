@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Returns a single list of all elements yielded from results of *transform* function being invoked on each element of original collection
  */

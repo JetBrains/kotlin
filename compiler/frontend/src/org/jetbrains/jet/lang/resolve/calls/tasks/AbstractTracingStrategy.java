@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage;
@@ -66,14 +67,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-        JetElement reportOn;
-        JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-        if (valueArgumentList != null) {
-            reportOn = valueArgumentList;
-        }
-        else {
-            reportOn = reference;
-        }
+        JetElement reportOn = CallUtilPackage.getValueArgumentListOrElement(call);
         trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
     }
 
@@ -130,6 +124,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     @Override
     public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
         trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallElement()));
+    }
+
+    @Override
+    public void abstractSuperCall(@NotNull BindingTrace trace) {
+        trace.report(ABSTRACT_SUPER_CALL.on(reference));
     }
 
     @Override
@@ -220,7 +219,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
                     ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION.position());
-            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
+                    declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";

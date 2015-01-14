@@ -1,0 +1,12 @@
+package
+
+kotlin.js.nativeGetter() internal fun kotlin.String.bar(/*0*/ n: kotlin.Int): kotlin.Int?
+kotlin.js.nativeGetter() internal fun kotlin.String.foo(/*0*/ n: kotlin.Int): kotlin.Int?
+
+kotlin.js.native() internal trait T {
+    kotlin.js.nativeGetter() internal open fun bar(/*0*/ d: kotlin.Double): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.js.nativeGetter() internal abstract fun foo(/*0*/ d: kotlin.Double): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -3,7 +3,7 @@ package jquery
 import org.w3c.dom.Element
 
 native
-public public class JQuery() {
+public class JQuery() {
     public fun addClass(className: String): JQuery = noImpl;
     public fun addClass(f: Element.(Int, String) -> String): JQuery = noImpl;
 

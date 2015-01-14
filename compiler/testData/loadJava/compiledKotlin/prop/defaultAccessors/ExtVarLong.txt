@@ -3,15 +3,9 @@ package test
 internal var kotlin.Long.date1: kotlin.Any
     internal fun kotlin.Long.<get-date1>(): kotlin.Any
     internal fun kotlin.Long.<set-date1>(/*0*/ value: kotlin.Any): kotlin.Unit
-public var kotlin.Long.date10: java.util.Date
-    public fun kotlin.Long.<get-date10>(): java.util.Date
-    protected fun kotlin.Long.<set-date10>(/*0*/ value: java.util.Date): kotlin.Unit
 public var kotlin.Long.date11: java.util.Date
     public fun kotlin.Long.<get-date11>(): java.util.Date
     public fun kotlin.Long.<set-date11>(/*0*/ value: java.util.Date): kotlin.Unit
-internal var kotlin.Long.date2: kotlin.Any
-    internal fun kotlin.Long.<get-date2>(): kotlin.Any
-    protected fun kotlin.Long.<set-date2>(/*0*/ value: kotlin.Any): kotlin.Unit
 internal var kotlin.Long.date3: kotlin.Any
     internal fun kotlin.Long.<get-date3>(): kotlin.Any
     private fun kotlin.Long.<set-date3>(/*0*/ value: kotlin.Any): kotlin.Unit

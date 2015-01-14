@@ -18,13 +18,13 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
+import org.jetbrains.org.objectweb.asm.Type;
 
 class ParameterInfo {
 
-    public static final ParameterInfo STUB = new ParameterInfo(AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
+    public static final ParameterInfo STUB = new ParameterInfo(AsmTypes.OBJECT_TYPE, true, -1, -1);
 
     protected final int index;
 

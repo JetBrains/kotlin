@@ -1,6 +1,6 @@
 // No supertype at all
 class A1 {
     fun test() {
-        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>.identityEquals(null) // Call to an extension function
+        <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.identityEquals(null) // Call to an extension function
     }
 }

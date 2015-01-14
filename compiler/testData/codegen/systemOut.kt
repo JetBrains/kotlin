@@ -1,1 +1,0 @@
-fun f() : Any? { return System.out; }

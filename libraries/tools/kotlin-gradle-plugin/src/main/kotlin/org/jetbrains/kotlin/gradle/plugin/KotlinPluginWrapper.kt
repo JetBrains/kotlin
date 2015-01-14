@@ -10,6 +10,8 @@ import java.util.Properties
 import java.io.FileNotFoundException
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.invocation.Gradle
+import java.lang.reflect.Method
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
     val log = Logging.getLogger(this.javaClass)
@@ -27,23 +29,13 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
         val pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
+        val plugin = getPlugin(pluginClassLoader, sourceBuildScript)
+        plugin.apply(project)
 
-        val cls = Class.forName(getPluginClassName(), true, pluginClassLoader)
-        log.debug("Plugin class loaded")
-
-        val constructor = cls.getConstructor(javaClass<ScriptHandler>())
-        val method = cls.getMethod("apply", javaClass<Project>())
-        log.debug("'apply' method found, invoking...")
-
-        val plugin = constructor.newInstance(sourceBuildScript)
-        log.debug("Plugin class instantiated")
-
-        method?.invoke(plugin, project)
-        log.debug("'apply' method invoked successfully")
-
-        val gradle = project.javaClass.getMethod("getGradle").invoke(project) as Gradle
-        gradle.addBuildListener(FinishBuildListener(pluginClassLoader))
+        project.getGradle().addBuildListener(FinishBuildListener(pluginClassLoader))
     }
+
+    protected abstract fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
 
     private fun createPluginIsolatedClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): ParentLastURLClassLoader {
         val dependencyHandler: DependencyHandler = sourceBuildScript.getDependencies()
@@ -81,8 +73,6 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         return projectVersion
     }
 
-    public abstract fun getPluginClassName():String
-
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
         log.debug("Looking for proper script handler")
         var curProject = project
@@ -102,20 +92,14 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
 }
 
 open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
-    public override fun getPluginClassName():String {
-        return "org.jetbrains.kotlin.gradle.plugin.KotlinPlugin"
-    }
+    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
-open class KotlinAndriodPluginWrapper: KotlinBasePluginWrapper() {
-    public override fun getPluginClassName():String {
-        return "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin"
-    }
+open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
+    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
 open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
-    public override fun getPluginClassName():String {
-        return "org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin"
-    }
+    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 

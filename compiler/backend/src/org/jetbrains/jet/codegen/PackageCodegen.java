@@ -67,8 +67,8 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.AsmUtil.method;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.K_PACKAGE_IMPL_TYPE;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.K_PACKAGE_IMPL_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.getType;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -304,13 +304,17 @@ public class PackageCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                if (state.getGenerateDeclaredClassFilter().shouldProcess(classOrObject)) {
+                if (state.getGenerateDeclaredClassFilter().shouldProcessClass(classOrObject)) {
                     generateClassOrObject(classOrObject);
                 }
             }
             else if (declaration instanceof JetScript) {
+                JetScript script = (JetScript) declaration;
+
                // SCRIPT: generate script code, should be separate execution branch
-               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packagePartContext).generate();
+                if (state.getGenerateDeclaredClassFilter().shouldProcessScript(script)) {
+                    ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
+                }
             }
         }
 

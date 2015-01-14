@@ -47,6 +47,7 @@ import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import com.intellij.codeInsight.lookup.Lookup
+import org.jetbrains.jet.plugin.completion.isAfterDot
 
 public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -69,8 +70,8 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
             if (file is JetFile && o is DeclarationDescriptorLookupObject) {
                 val descriptor = o.descriptor as? CallableDescriptor
                 if (descriptor != null) {
-                    if (element.getStrictParentOfType<JetQualifiedExpression>() != null &&
-                        descriptor.getExtensionReceiverParameter() == null) {
+                    // for completion after dot, import insertion may be required only for extensions
+                    if (context.isAfterDot() && descriptor.getExtensionReceiverParameter() == null) {
                         return@runReadAction
                     }
 

@@ -1,9 +1,12 @@
 // FILE: a.kt
 package example.ns
+
 val y : Any? = 2
 
 // FILE: b.kt
 package example
+
+import example.ns
 
 object Obj {
     val y : Any? = 2

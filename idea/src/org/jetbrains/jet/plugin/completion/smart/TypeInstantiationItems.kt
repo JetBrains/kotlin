@@ -141,6 +141,9 @@ class TypeInstantiationItems(
             return lookupElement.addTail(tail)
         }
 
+        // not all inner classes can be instantiated and we handle them via constructors returned by ReferenceVariantsHelper
+        if (classifier.isInner()) return null
+
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
         val allConstructors = classifier.getConstructors()
         val visibleConstructors = allConstructors.filter {

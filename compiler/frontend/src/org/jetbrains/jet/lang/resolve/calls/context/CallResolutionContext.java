@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.extensions.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;

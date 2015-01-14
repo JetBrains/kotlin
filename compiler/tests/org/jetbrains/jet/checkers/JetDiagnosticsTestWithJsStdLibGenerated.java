@@ -228,7 +228,7 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Native.NativeGetter.class, Native.NativeInvoke.class, Native.NativeSetter.class})
+    @InnerTestClasses({Native.NativeGetter.class, Native.NativeInvoke.class, Native.NativeSetter.class, Native.OptionlBody.class, Native.UnusedParam.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Native extends AbstractJetDiagnosticsTestWithJsStdLib {
         public void testAllFilesPresentInNative() throws Exception {
@@ -438,6 +438,72 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             @TestMetadata("onToplevelOtherDeclarations.kt")
             public void testOnToplevelOtherDeclarations() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onToplevelOtherDeclarations.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OptionlBody extends AbstractJetDiagnosticsTestWithJsStdLib {
+            public void testAllFilesPresentInOptionlBody() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("native.kt")
+            public void testNative() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/native.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeGetter.kt")
+            public void testNativeGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeInvoke.kt")
+            public void testNativeInvoke() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeInvoke.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeSetter.kt")
+            public void testNativeSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeSetter.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnusedParam extends AbstractJetDiagnosticsTestWithJsStdLib {
+            public void testAllFilesPresentInUnusedParam() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("native.kt")
+            public void testNative() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/native.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeGetter.kt")
+            public void testNativeGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeInvoke.kt")
+            public void testNativeInvoke() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeInvoke.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeSetter.kt")
+            public void testNativeSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeSetter.kt");
                 doTest(fileName);
             }
         }

@@ -29,24 +29,25 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.makeNullable
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 import org.jetbrains.jet.plugin.util.FuzzyType
 import org.jetbrains.jet.plugin.util.fuzzyReturnType
+import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
 }
 
-class SmartCompletion(val expression: JetSimpleNameExpression,
+class SmartCompletion(val expression: JetExpression,
                       val resolutionFacade: ResolutionFacade,
                       val moduleDescriptor: ModuleDescriptor,
                       val bindingContext: BindingContext,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+                      val prefixMatcher: PrefixMatcher,
                       val inheritorSearchScope: GlobalSearchScope,
                       val toFromOriginalFileMapper: ToFromOriginalFileMapper,
                       val lookupElementFactory: LookupElementFactory) {
@@ -99,7 +100,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val receiver = expression.getReceiverExpression()
+        val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
         val expressionWithType = if (receiver != null) {
             expression.getParent() as? JetExpression ?: return null
         }
@@ -146,13 +147,15 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory)
                     .addTo(additionalItems, inheritanceSearchers, expectedInfos)
 
-            StaticMembers(bindingContext, resolutionFacade, lookupElementFactory).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
+            if (expression is JetSimpleNameExpression) {
+                StaticMembers(bindingContext, resolutionFacade, lookupElementFactory).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
+            }
 
-            ThisItems(bindingContext).addToCollection(additionalItems, expressionWithType, expectedInfos)
+            additionalItems.addThisItems(expression, expectedInfos)
 
             LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
 
-            KeywordValues.addToCollection(additionalItems, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
+            KeywordValues.addToCollection(additionalItems, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expression)
 
             MultipleArgumentsItemProvider(bindingContext, smartCastTypes).addToCollection(additionalItems, expectedInfos, expression)
         }
@@ -166,6 +169,18 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         else
             null
         return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
+    }
+
+    private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
+        if (shouldCompleteThisItems(prefixMatcher)) {
+            val items = thisExpressionItems(bindingContext, place)
+            for ((factory, type) in items) {
+                val classifier = { (expectedInfo: ExpectedInfo) -> type.classifyExpectedInfo(expectedInfo) }
+                addLookupElements(null, expectedInfos, classifier) {
+                    factory().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
+                }
+            }
+        }
     }
 
     private fun DeclarationDescriptor.fuzzyTypes(smartCastTypes: (VariableDescriptor) -> Collection<JetType>): Collection<FuzzyType> {

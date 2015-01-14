@@ -366,6 +366,18 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("InnerClassInstantiation1.kt")
+    public void testInnerClassInstantiation1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/InnerClassInstantiation1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InnerClassInstantiation2.kt")
+    public void testInnerClassInstantiation2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/InnerClassInstantiation2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaEnumMemberInsertsImport.kt")
     public void testJavaEnumMemberInsertsImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/JavaEnumMemberInsertsImport.kt");
@@ -519,6 +531,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("QualifiedThisKeywordName2.kt")
     public void testQualifiedThisKeywordName2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/QualifiedThisKeywordName2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReplaceArgument.kt")
+    public void testReplaceArgument() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/ReplaceArgument.kt");
         doTest(fileName);
     }
 

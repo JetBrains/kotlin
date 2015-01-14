@@ -61,8 +61,7 @@ class LinkedHashMapTest : MapJsTest() {
 }
 
 abstract class MapJsTest {
-    //TODO: replace `array(...).toList()` to `listOf(...)`
-    val KEYS = array("zero", "one", "two", "three").toList()
+    val KEYS = listOf("zero", "one", "two", "three")
     val VALUES = array(0, 1, 2, 3).toList()
 
     val SPECIAL_NAMES = array("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
@@ -104,7 +103,6 @@ abstract class MapJsTest {
         assertEquals(null, map.get("foo"))
     }
 
-    /* TODO: fix after switch to use compiled stdlib (need drop js.Map<K,V>.set(V))
     test fun mapPut() {
         val map = emptyMutableMap()
 
@@ -120,7 +118,6 @@ abstract class MapJsTest {
         assertEquals(0, map["foo"])
         assertEquals(2, map["bar"])
     }
-    */
 
     test fun sizeAndEmptyForEmptyMap() {
         val data = emptyMap()
@@ -251,9 +248,6 @@ abstract class MapJsTest {
         assertEquals(null, map.remove(KEY))
         assertTrue(map.isEmpty())
     }
-    /*
-
-    TODO fix bug with .set() on Map...
 
     test fun setViaIndexOperators() {
         val map = HashMap<String, String>()
@@ -266,7 +260,6 @@ abstract class MapJsTest {
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-    */
 
     test fun createUsingPairs() {
         val map = mapOf(Pair("a", 1), Pair("b", 2))

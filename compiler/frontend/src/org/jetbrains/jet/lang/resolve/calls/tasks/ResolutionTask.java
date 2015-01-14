@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.extensions.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
@@ -40,7 +40,6 @@ import java.util.Collection;
 public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext<ResolutionTask<D, F>> {
     private final Function0<Collection<ResolutionCandidate<D>>> lazyCandidates;
     private final Collection<MutableResolvedCall<F>> resolvedCalls;
-    private DescriptorCheckStrategy checkingStrategy;
     public final TracingStrategy tracing;
 
     private ResolutionTask(
@@ -106,17 +105,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         return resolvedCalls;
     }
 
-    public void setCheckingStrategy(DescriptorCheckStrategy strategy) {
-        checkingStrategy = strategy;
-    }
-
-    public boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
-        if (checkingStrategy != null && !checkingStrategy.performAdvancedChecks(descriptor, trace, tracing)) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     protected ResolutionTask<D, F> create(
             @NotNull BindingTrace trace,
@@ -127,12 +115,10 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ResolutionResultsCache resolutionResultsCache,
             boolean collectAllCandidates
     ) {
-        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
+        return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callResolverExtension, resolvedCalls, isAnnotationContext,
                 collectAllCandidates);
-        newTask.setCheckingStrategy(checkingStrategy);
-        return newTask;
     }
 
     public ResolutionTask<D, F> replaceContext(@NotNull BasicCallResolutionContext newContext) {

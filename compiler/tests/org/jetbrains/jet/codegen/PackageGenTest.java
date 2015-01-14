@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.awt.*;
@@ -36,9 +37,9 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testPSVM() throws Exception {
-        loadFile("PSVM.kt");
+        loadText("fun main(args: Array<String>) { }");
         Method main = generateFunction();
-        Object[] args = new Object[] { new String[0] };
+        Object[] args = new Object[] {ArrayUtil.EMPTY_STRING_ARRAY};
         main.invoke(null, args);
     }
 
@@ -53,13 +54,6 @@ public class PackageGenTest extends CodegenTestCase {
         loadText("fun foo(a : Int) = a");
         Method main = generateFunction();
         Object returnValue = main.invoke(null, 50);
-        assertEquals(new Integer(50), returnValue);
-    }
-
-    public void testLocalProperty() throws Exception {
-        loadFile("localProperty.kt");
-        Method main = generateFunction();
-        Object returnValue = main.invoke(null, 76);
         assertEquals(new Integer(50), returnValue);
     }
 
@@ -79,22 +73,10 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testSystemOut() throws Exception {
-        loadFile("systemOut.kt");
+        loadText("fun f() : Any? { return System.out; }");
         Method main = generateFunction();
         Object returnValue = main.invoke(null);
         assertEquals(returnValue, System.out);
-    }
-
-    public void testHelloWorld() throws Exception {
-        loadFile("helloWorld.kt");
-        generateFunction();  // assert that it can be verified
-    }
-
-    public void testAssign() throws Exception {
-        loadFile("assign.kt");
-
-        Method main = generateFunction();
-        assertEquals(2, main.invoke(null));
     }
 
     public void testBoxedInt() throws Exception {
@@ -172,12 +154,6 @@ public class PackageGenTest extends CodegenTestCase {
         assertTrue(hadException);
     }
 
-    public void testBottles2() throws Exception {
-        loadFile("bottles2.kt");
-        Method main = generateFunction();
-        main.invoke(null);  // ensure no exception
-    }
-
     public void testJavaConstructor() throws Exception {
         loadText("fun foo(): StringBuilder = StringBuilder()");
         Method main = generateFunction();
@@ -237,12 +213,6 @@ public class PackageGenTest extends CodegenTestCase {
         String s2 = new String("kotlin");
         assertEquals(Boolean.FALSE, main.invoke(null, s1, s1));
         assertEquals(Boolean.TRUE, main.invoke(null, s1, s2));
-    }
-
-    public void testFunctionCall() throws Exception {
-        loadFile("functionCall.kt");
-        Method main = generateFunction("f");
-        assertEquals("foo", main.invoke(null));
     }
 
     public void testStringPlus() throws Exception {

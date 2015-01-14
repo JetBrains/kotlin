@@ -214,7 +214,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitObjectDeclaration(declaration);
         }
         else {
-            if (!filter.shouldProcess(declaration)) return;
+            if (!filter.shouldProcessClass(declaration)) return;
 
             ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
             // working around a problem with shallow analysis
@@ -233,7 +233,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitClass(@NotNull JetClass klass) {
-        if (!filter.shouldProcess(klass)) return;
+        if (!filter.shouldProcessClass(klass)) return;
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, klass);
         // working around a problem with shallow analysis

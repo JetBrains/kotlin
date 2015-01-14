@@ -111,6 +111,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, Collection<JetModifierKeywordToken>> INCOMPATIBLE_MODIFIERS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> ILLEGAL_MODIFIER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetModifierKeywordToken> REPEATED_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
@@ -418,6 +419,7 @@ public interface Errors {
     // Super calls
 
     DiagnosticFactory1<JetSuperExpression, String> SUPER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetSuperExpression, String> SUPER_CANT_BE_EXTENSION_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> SUPER_NOT_AVAILABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory0.create(ERROR);

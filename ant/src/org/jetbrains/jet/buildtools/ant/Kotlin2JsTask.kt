@@ -17,13 +17,10 @@
 package org.jetbrains.jet.buildtools.ant
 
 import org.apache.tools.ant.types.Path
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.jet.cli.js.K2JSCompiler
 import java.io.File
 
-public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
-    override val arguments = K2JSCompilerArguments()
-    override val compiler = K2JSCompiler()
+public class Kotlin2JsTask : KotlinCompilerBaseTask() {
+    override val compilerFqName = "org.jetbrains.jet.cli.js.K2JSCompiler"
 
     public var library: Path? = null
     public var outputPrefix: File? = null
@@ -48,19 +45,31 @@ public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
     }
 
     override fun fillSpecificArguments() {
-        arguments.outputFile = output!!.canonicalPath
-
-        arguments.noStdlib = noStdlib
+        args.add("-output")
+        args.add(output!!.canonicalPath)
 
         // TODO: write test
         library?.let {
-            arguments.libraryFiles = it.list().map { File(it).canonicalPath }.copyToArray()
+            args.add("-library-files")
+            args.add(it.list().map { File(it).canonicalPath }.join(separator = ","))
         }
 
-        arguments.outputPrefix = outputPrefix?.canonicalPath
-        arguments.outputPostfix = outputPostfix?.canonicalPath
+        outputPrefix?.let {
+            args.add("-output-prefix")
+            args.add(it.canonicalPath)
+        }
 
-        arguments.main = main
-        arguments.sourceMap = sourceMap
+        outputPostfix?.let {
+            args.add("-output-postfix")
+            args.add(it.canonicalPath)
+        }
+
+        main?.let {
+            args.add("-main")
+            args.add(it)
+        }
+
+        if (noStdlib) args.add("-no-stdlib")
+        if (sourceMap) args.add("-source-map")
     }
 }

@@ -78,9 +78,27 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
+    @TestMetadata("BreakContinue.kt")
+    public void testBreakContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/BreakContinue.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("BreakWithLabel.kt")
+    public void testBreakWithLabel() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/BreakWithLabel.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CommaExpected.kt")
     public void testCommaExpected() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/CommaExpected.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ContinueWithLabel.kt")
+    public void testContinueWithLabel() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/ContinueWithLabel.kt");
         doTest(fileName);
     }
 
@@ -228,15 +246,39 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("LabeledLambdaThis.kt")
+    public void testLabeledLambdaThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/LabeledLambdaThis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("LineComment.kt")
     public void testLineComment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/LineComment.kt");
         doTest(fileName);
     }
 
+    @TestMetadata("NoBreak1.kt")
+    public void testNoBreak1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoBreak1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoBreak2.kt")
+    public void testNoBreak2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoBreak2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoCompletionForCapitalPrefix.kt")
     public void testNoCompletionForCapitalPrefix() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoCompletionForCapitalPrefix.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoContinue.kt")
+    public void testNoContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoContinue.kt");
         doTest(fileName);
     }
 
@@ -273,6 +315,78 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("PropertySetter.kt")
     public void testPropertySetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertySetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("QualifiedThis.kt")
+    public void testQualifiedThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/QualifiedThis.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return1.kt")
+    public void testReturn1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return2.kt")
+    public void testReturn2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return3.kt")
+    public void testReturn3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return4.kt")
+    public void testReturn4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return5.kt")
+    public void testReturn5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return5.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return6.kt")
+    public void testReturn6() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return6.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return7.kt")
+    public void testReturn7() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return7.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return8.kt")
+    public void testReturn8() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return8.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Return9.kt")
+    public void testReturn9() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/Return9.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("This.kt")
+    public void testThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/This.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ThisPrefixMatching.kt")
+    public void testThisPrefixMatching() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/ThisPrefixMatching.kt");
         doTest(fileName);
     }
 

@@ -18,9 +18,6 @@ val EXPECTED_NEWLINE_FOR_EACH = """Hello
 """
 
 native
-fun eval(code: String): Any? = noImpl
-
-native
 var buffer: String = noImpl
 
 fun test(expected: String, initCode: String, getResult: () -> String) {

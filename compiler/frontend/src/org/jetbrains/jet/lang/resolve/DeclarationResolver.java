@@ -32,12 +32,12 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -51,13 +51,9 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
 import static org.jetbrains.jet.lang.resolve.ScriptHeaderResolver.resolveScriptDeclarations;
 
 public class DeclarationResolver {
-    @NotNull
     private AnnotationResolver annotationResolver;
-    @NotNull
     private ImportsResolver importsResolver;
-    @NotNull
     private DescriptorResolver descriptorResolver;
-    @NotNull
     private BindingTrace trace;
 
 
@@ -87,6 +83,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders(c);
         resolveAnnotationStubsOnClassesAndConstructors(c);
         resolveFunctionAndPropertyHeaders(c);
+        resolveDanglingAnnotationsInClasses(c);
         resolveAnnotationsOnFiles(c.getFileScopes());
 
         // SCRIPT: Resolve script declarations
@@ -94,7 +91,7 @@ public class DeclarationResolver {
 
         createFunctionsForDataClasses(c);
         importsResolver.processMembersImports(c);
-        CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
+        ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
     }
@@ -115,6 +112,7 @@ public class DeclarationResolver {
             JetFile file = entry.getKey();
             JetScope fileScope = entry.getValue();
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace);
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace);
         }
     }
 
@@ -219,6 +217,19 @@ public class DeclarationResolver {
                     }
                 }
             });
+        }
+    }
+
+    private void resolveDanglingAnnotationsInClasses(TopDownAnalysisContext c) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+            JetClassBody body = entry.getKey().getBody();
+            if (body != null) {
+                annotationResolver.resolveAnnotationsWithArguments(
+                        entry.getValue().getScopeForMemberDeclarationResolution(),
+                        body.getDanglingAnnotations(),
+                        trace
+                );
+            }
         }
     }
 

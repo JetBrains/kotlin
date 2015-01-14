@@ -1,7 +1,7 @@
 package testing.rename2
 
 import testing.rename.First
-import testing.*
+import testing.rename
 import java.util.ArrayList
 
 // Extends testing.rename.First

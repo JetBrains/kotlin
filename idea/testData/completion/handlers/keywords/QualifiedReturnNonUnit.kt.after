@@ -1,0 +1,10 @@
+fun foo() {
+    takeHandler1 {
+        takeHandler2({ return@takeHandler2 <caret> })
+    }
+}
+
+inline fun takeHandler1(handler: () -> Unit){}
+inline fun takeHandler2(handler: () -> String){}
+
+// ELEMENT: return@takeHandler2

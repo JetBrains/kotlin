@@ -27,9 +27,7 @@ public class MessageCollectorPlainTextToStream implements MessageCollector {
 
     public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR = new MessageCollectorPlainTextToStream(System.err, NON_VERBOSE);
 
-    @NotNull
     private final PrintStream stream;
-    @NotNull
     private final Set<CompilerMessageSeverity> severitiesToPrint;
 
     public MessageCollectorPlainTextToStream(@NotNull PrintStream stream, @NotNull Set<CompilerMessageSeverity> severities) {
@@ -40,8 +38,7 @@ public class MessageCollectorPlainTextToStream implements MessageCollector {
     @Override
     public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
         if (severitiesToPrint.contains(severity)) {
-            stream.println(MessageRenderer.PLAIN.render(severity, message, location));
+            stream.println(MessageRenderer.PLAIN_FULL_PATHS.render(severity, message, location));
         }
     }
-
 }

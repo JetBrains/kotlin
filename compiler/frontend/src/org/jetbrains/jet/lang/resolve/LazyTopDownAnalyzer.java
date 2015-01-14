@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
@@ -44,41 +44,23 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 
 public class LazyTopDownAnalyzer {
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private BindingTrace trace = null;
+    private BindingTrace trace;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private DeclarationResolver declarationResolver = null;
+    private DeclarationResolver declarationResolver;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private OverrideResolver overrideResolver = null;
+    private OverrideResolver overrideResolver;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private OverloadResolver overloadResolver = null;
+    private OverloadResolver overloadResolver;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private VarianceChecker varianceChecker = null;
+    private VarianceChecker varianceChecker;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private ModuleDescriptor moduleDescriptor = null;
+    private ModuleDescriptor moduleDescriptor;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private KotlinCodeAnalyzer resolveSession = null;
+    private KotlinCodeAnalyzer resolveSession;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private BodyResolver bodyResolver = null;
+    private BodyResolver bodyResolver;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    private TopDownAnalyzer topDownAnalyzer = null;
+    private TopDownAnalyzer topDownAnalyzer;
 
     @Inject
     public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
@@ -315,7 +297,7 @@ public class LazyTopDownAnalyzer {
         declarationResolver.checkRedeclarationsInPackages(resolveSession, topLevelFqNames);
         declarationResolver.checkRedeclarationsInInnerClassNames(c);
 
-        CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
+        ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
 
         overrideResolver.check(c);
 

@@ -1,22 +1,20 @@
 package foo
 
-/*function g should return 0 if a parameter is undefined 1 if parameter is 1 and 3 if parameter is 3*/
-native
-fun f(g: (Int?) -> Int): Boolean = noImpl
+fun box(): String {
+    assertEquals(eval("undefined"), undefined)
+    assertEquals(js("undefined"), undefined)
 
+    assertNotEquals(1, undefined)
+    assertNotEquals("sss", undefined)
+    assertNotEquals(object {}, undefined)
 
-fun  box(): Boolean {
-    val b = {
-        (a: Int?) ->
-        if (a == null) {
-            0
-        }
-        else if (a == 1) {
-            1
-        }
-        else {
-            3
-        }
-    }
-    return f(b)
+    val a: dynamic = 1
+    assertEquals(a.foo, undefined)
+    assertNotEquals(a.toString, undefined)
+
+    val b: dynamic = object {val bar = ""}
+    assertEquals(b.foo, undefined)
+    assertNotEquals(b.bar, undefined)
+
+    return "OK"
 }

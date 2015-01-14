@@ -267,6 +267,7 @@ public class DeclarationsChecker {
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
+        checkConstructorParameters(aClass);
         if (c.getTopDownAnalysisParameters().isLazy()) {
             checkTypeParameters(aClass);
         }
@@ -286,6 +287,15 @@ public class DeclarationsChecker {
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        }
+    }
+
+    private void checkConstructorParameters(JetClass aClass) {
+        for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
+            PropertyDescriptor propertyDescriptor = trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+            if (propertyDescriptor != null) {
+                modifiersChecker.checkModifiersForDeclaration(parameter, propertyDescriptor);
+            }
         }
     }
 
@@ -514,6 +524,9 @@ public class DeclarationsChecker {
 
     private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
+            PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
+            assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
+            modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
             modifiersChecker.checkIllegalModalityModifiers(accessor);
         }
         JetPropertyAccessor getter = property.getGetter();

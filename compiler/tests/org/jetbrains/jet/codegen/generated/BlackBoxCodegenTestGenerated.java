@@ -1770,6 +1770,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("bottles.kt")
+        public void testBottles() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/bottles.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compareBoxedIntegerToZero.kt")
         public void testCompareBoxedIntegerToZero() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/compareBoxedIntegerToZero.kt");
@@ -3212,6 +3218,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3969.kt")
         public void testKt3969() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt3969.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt4228.kt")
+        public void testKt4228() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt4228.kt");
             doTest(fileName);
         }
 
@@ -6871,6 +6883,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt581.kt")
         public void testKt581() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/vararg/kt581.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt6192.kt")
+        public void testKt6192() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/vararg/kt6192.kt");
             doTest(fileName);
         }
 

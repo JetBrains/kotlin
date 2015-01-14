@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetValueArgumentList
 
 // resolved call
 
@@ -94,6 +95,8 @@ public fun Call.hasUnresolvedArguments(context: BindingContext): Boolean {
 public fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
 public fun JetCallExpression.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
+
+public fun Call.getValueArgumentListOrElement(): JetElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 
 [suppress("UNCHECKED_CAST")]
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>

@@ -33,11 +33,9 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -65,6 +63,62 @@ public class ModifiersChecker {
         }
     }
 
+    public static void checkIncompatibleModifiers(
+            @Nullable JetModifierList modifierList,
+            @NotNull BindingTrace trace,
+            @NotNull Collection<JetModifierKeywordToken> availableModifiers,
+            @NotNull Collection<JetModifierKeywordToken>... availableCombinations
+    ) {
+        if (modifierList == null) return;
+        Collection<JetModifierKeywordToken> presentModifiers = Sets.newLinkedHashSet();
+        for (JetModifierKeywordToken modifier : availableModifiers) {
+            if (modifierList.hasModifier(modifier)) {
+                presentModifiers.add(modifier);
+            }
+        }
+        checkRepeatedModifiers(modifierList, trace, availableModifiers);
+
+        if (presentModifiers.size() == 1) {
+            return;
+        }
+        for (Collection<JetModifierKeywordToken> combination : availableCombinations) {
+            if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
+                return;
+            }
+        }
+        for (JetModifierKeywordToken token : presentModifiers) {
+            trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
+        }
+    }
+
+    private static void checkRepeatedModifiers(
+            @NotNull JetModifierList modifierList,
+            @NotNull BindingTrace trace,
+            @NotNull Collection<JetModifierKeywordToken> availableModifiers
+    ) {
+        for (JetModifierKeywordToken token : availableModifiers) {
+            if (!modifierList.hasModifier(token)) continue;
+
+            List<ASTNode> nodesOfRepeatedTokens = Lists.newArrayList();
+            ASTNode node = modifierList.getNode().getFirstChildNode();
+            while (node != null) {
+                if (node.getElementType() == token) {
+                    nodesOfRepeatedTokens.add(node);
+                }
+                node = node.getTreeNext();
+            }
+            if (nodesOfRepeatedTokens.size() > 1) {
+                for (ASTNode repeatedToken : nodesOfRepeatedTokens) {
+                    trace.report(REPEATED_MODIFIER.on(repeatedToken.getPsi(), token));
+                }
+            }
+        }
+    }
+
+    public static void checkIncompatibleVarianceModifiers(@Nullable JetModifierList modifierList, @NotNull BindingTrace trace) {
+        checkIncompatibleModifiers(modifierList, trace, Arrays.asList(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD));
+    }
+
     @NotNull
     private final BindingTrace trace;
     @NotNull
@@ -87,6 +141,7 @@ public class ModifiersChecker {
             checkInnerModifier(modifierListOwner, descriptor);
             checkModalityModifiers(modifierListOwner);
             checkVisibilityModifiers(modifierListOwner, descriptor);
+            checkVarianceModifiersOfTypeParameters(modifierListOwner);
         }
         checkPlatformNameApplicability(descriptor);
         runAnnotationCheckers(modifierListOwner, descriptor);
@@ -172,16 +227,6 @@ public class ModifiersChecker {
     }
 
     private void checkPlatformNameApplicability(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            if (propertyDescriptor.getGetter() != null) {
-                checkPlatformNameApplicability(propertyDescriptor.getGetter());
-            }
-            if (propertyDescriptor.getSetter() != null) {
-                checkPlatformNameApplicability(propertyDescriptor.getSetter());
-            }
-        }
-
         AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
         if (annotation == null) return;
 
@@ -205,24 +250,7 @@ public class ModifiersChecker {
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {
-        if (modifierList == null) return;
-        Collection<JetModifierKeywordToken> presentModifiers = Sets.newLinkedHashSet();
-        for (JetModifierKeywordToken modifier : availableModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                presentModifiers.add(modifier);
-            }
-        }
-        if (presentModifiers.size() == 1) {
-            return;
-        }
-        for (Collection<JetModifierKeywordToken> combination : availableCombinations) {
-            if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
-                return;
-            }
-        }
-        for (JetModifierKeywordToken token : presentModifiers) {
-            trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
-        }
+        checkIncompatibleModifiers(modifierList, trace, availableModifiers, availableCombinations);
     }
 
     private void checkRedundantModifier(@NotNull JetModifierList modifierList, Pair<JetModifierKeywordToken, JetModifierKeywordToken>... redundantBundles) {
@@ -315,6 +343,15 @@ public class ModifiersChecker {
     private void runAnnotationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
         for (AnnotationChecker checker : additionalCheckerProvider.getAnnotationCheckers()) {
             checker.check(declaration, descriptor, trace);
+        }
+    }
+
+    public void checkVarianceModifiersOfTypeParameters(@NotNull JetModifierListOwner modifierListOwner) {
+        if (!(modifierListOwner instanceof JetTypeParameterListOwner)) return;
+        List<JetTypeParameter> typeParameters = ((JetTypeParameterListOwner) modifierListOwner).getTypeParameters();
+        for (JetTypeParameter typeParameter : typeParameters) {
+            JetModifierList modifierList = typeParameter.getModifierList();
+            checkIncompatibleVarianceModifiers(modifierList, trace);
         }
     }
 }

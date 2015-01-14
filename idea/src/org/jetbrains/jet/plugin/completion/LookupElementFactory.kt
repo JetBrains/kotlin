@@ -141,13 +141,22 @@ public class LookupElementFactory(
             return createLookupElementForJavaClass(declaration)
         }
 
+        // for constructor use name and icon of containing class
+        val nameAndIconDescriptor: DeclarationDescriptor
+        val iconDeclaration: PsiElement?
+        if (descriptor is ConstructorDescriptor) {
+            nameAndIconDescriptor = descriptor.getContainingDeclaration()
+            iconDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(nameAndIconDescriptor)
+        }
+        else {
+            nameAndIconDescriptor = descriptor
+            iconDeclaration = declaration
+        }
+        val name = nameAndIconDescriptor.getName().asString()
+        val icon = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, Iconable.ICON_FLAG_VISIBILITY)
 
-        val name = if (descriptor is ConstructorDescriptor)
-            descriptor.getContainingDeclaration().getName().asString()
-        else
-            descriptor.getName().asString()
         var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, resolutionFacade, declaration), name)
-                .withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
+                .withIcon(icon)
 
         when (descriptor) {
             is FunctionDescriptor -> {

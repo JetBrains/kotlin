@@ -24,9 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,7 +86,7 @@ public interface Importer {
         protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
             List<JetScope> scopesToImport = new ArrayList<JetScope>(3);
             if (descriptor instanceof PackageViewDescriptor) {
-                scopesToImport.add(((PackageViewDescriptor) descriptor).getMemberScope());
+                scopesToImport.add(new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor));
             }
             else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;

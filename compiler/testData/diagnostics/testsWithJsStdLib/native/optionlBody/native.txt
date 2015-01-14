@@ -1,0 +1,74 @@
+package 
+
+kotlin.js.native() internal val baz: kotlin.Int
+kotlin.js.native() internal val boo: kotlin.Int
+kotlin.js.native() internal val kotlin.Int.baz: kotlin.Int
+kotlin.js.native() internal fun bar(): kotlin.Unit
+kotlin.js.native() internal fun foo(): kotlin.Unit
+internal fun test(): kotlin.Unit
+kotlin.js.native() internal fun kotlin.String.bar(): kotlin.Int
+kotlin.js.native() internal fun kotlin.String.foo(): kotlin.Int
+
+kotlin.js.native() internal final class C {
+    public constructor C()
+    internal final val baz: kotlin.Int
+    internal final val boo: kotlin.Int
+    internal final fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal class object <class-object-for-C> {
+        private constructor <class-object-for-C>()
+        internal final val baz: kotlin.Int
+        internal final val boo: kotlin.Int
+        internal final fun bar(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+kotlin.js.native() internal object O {
+    private constructor O()
+    internal final val baz: kotlin.Int
+    internal final val boo: kotlin.Int
+    internal final fun bar(/*0*/ s: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(/*0*/ s: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public class object <class-object-for-O> : O {
+        private constructor <class-object-for-O>()
+        internal final override /*1*/ /*fake_override*/ val baz: kotlin.Int
+        internal final override /*1*/ /*fake_override*/ val boo: kotlin.Int
+        internal final override /*1*/ /*fake_override*/ fun bar(/*0*/ s: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ s: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+kotlin.js.native() internal trait T {
+    internal abstract val baz: kotlin.Int
+    internal open fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal class object <class-object-for-T> {
+        private constructor <class-object-for-T>()
+        internal final val baz: kotlin.Int
+        internal final val boo: kotlin.Int
+        internal final fun bar(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

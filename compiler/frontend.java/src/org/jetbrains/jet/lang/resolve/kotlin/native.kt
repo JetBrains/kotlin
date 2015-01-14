@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations
 
-import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression
+import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -30,6 +29,8 @@ import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
+import org.jetbrains.jet.lang.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.jet.lang.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 
@@ -37,20 +38,7 @@ public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
     return getAnnotations().findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
 }
 
-class SuppressNoBodyErrorsForNativeDeclarations : DiagnosticsWithSuppression.SuppressStringProvider {
-    override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
-        val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.getType())
-        if (NATIVE_ANNOTATION_CLASS_NAME.asString() == DescriptorUtils.getFqName(descriptor).asString()) {
-            return listOf(
-                    Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.getName().toLowerCase(),
-                    Errors.NON_MEMBER_FUNCTION_NO_BODY.getName().toLowerCase(),
-                    Errors.FINAL_FUNCTION_WITH_NO_BODY.getName().toLowerCase()
-            )
-        }
-
-        return listOf()
-    }
-}
+public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
 public class NativeFunChecker : AnnotationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {

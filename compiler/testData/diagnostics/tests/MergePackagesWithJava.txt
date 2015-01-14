@@ -7381,7 +7381,7 @@ package java {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.PACKAGE, ElementType.PARAMETER, ElementType.TYPE}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class Deprecated : kotlin.Annotation {
+        java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.PACKAGE, ElementType.PARAMETER, ElementType.TYPE}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class Deprecated : kotlin.Annotation {
             public constructor Deprecated()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -7870,7 +7870,7 @@ package java {
             private open fun registerNatives(): kotlin.Unit
         }
 
-        java.lang.annotation.Target(value = {ElementType.METHOD}: kotlin.Array<java.lang.annotation.ElementType>) java.lang.annotation.Retention(value = RetentionPolicy.SOURCE: java.lang.annotation.RetentionPolicy) public final annotation class Override : kotlin.Annotation {
+        java.lang.annotation.Target(value = {ElementType.METHOD}: kotlin.Array<out java.lang.annotation.ElementType>) java.lang.annotation.Retention(value = RetentionPolicy.SOURCE: java.lang.annotation.RetentionPolicy) public final annotation class Override : kotlin.Annotation {
             public constructor Override()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -8202,8 +8202,8 @@ package java {
             public/*package*/ final val serialVersionUID: kotlin.Long = 4383685877147921099.toLong()
         }
 
-        java.lang.annotation.Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE}: kotlin.Array<java.lang.annotation.ElementType>) java.lang.annotation.Retention(value = RetentionPolicy.SOURCE: java.lang.annotation.RetentionPolicy) public final annotation class SuppressWarnings : kotlin.Annotation {
-            public constructor SuppressWarnings(/*0*/ vararg value: kotlin.String /*kotlin.Array<kotlin.String>*/)
+        java.lang.annotation.Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE}: kotlin.Array<out java.lang.annotation.ElementType>) java.lang.annotation.Retention(value = RetentionPolicy.SOURCE: java.lang.annotation.RetentionPolicy) public final annotation class SuppressWarnings : kotlin.Annotation {
+            public constructor SuppressWarnings(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -8747,7 +8747,7 @@ package java {
                 private final val serialVersionUID: kotlin.Long = 8125925355765570191.toLong()
             }
 
-            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class Documented : kotlin.Annotation {
+            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class Documented : kotlin.Annotation {
                 public constructor Documented()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -8945,14 +8945,14 @@ package java {
                 private final val serialVersionUID: kotlin.Long = 8445097402741811912.toLong()
             }
 
-            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class Inherited : kotlin.Annotation {
+            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class Inherited : kotlin.Annotation {
                 public constructor Inherited()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class Retention : kotlin.Annotation {
+            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class Retention : kotlin.Annotation {
                 public constructor Retention(/*0*/ value: java.lang.annotation.RetentionPolicy)
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9034,8 +9034,8 @@ package java {
                 public final /*synthesized*/ fun values(): kotlin.Array<java.lang.annotation.RetentionPolicy>
             }
 
-            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<java.lang.annotation.ElementType>) public final annotation class Target : kotlin.Annotation {
-                public constructor Target(/*0*/ vararg value: java.lang.annotation.ElementType /*kotlin.Array<java.lang.annotation.ElementType>*/)
+            java.lang.annotation.Documented() java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class Target : kotlin.Annotation {
+                public constructor Target(/*0*/ vararg value: java.lang.annotation.ElementType /*kotlin.Array<out java.lang.annotation.ElementType>*/)
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

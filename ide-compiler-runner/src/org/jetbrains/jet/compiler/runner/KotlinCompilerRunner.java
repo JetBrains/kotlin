@@ -22,25 +22,28 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.jet.compiler.CompilerSettings;
 
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
 
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
     private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
-    private static final K2JVMCompilerArguments DEFAULT_K2JVM_ARGUMENTS = new K2JVMCompilerArguments();
-    private static final K2JSCompilerArguments DEFAULT_K2JS_ARGUMENTS = new K2JSCompilerArguments();
+    private static final String INTERNAL_ERROR = ExitCode.INTERNAL_ERROR.toString();
 
     public static void runK2JvmCompiler(
             CommonCompilerArguments commonArguments,
@@ -54,8 +57,7 @@ public class KotlinCompilerRunner {
         K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
         setupK2JvmArguments(moduleFile, arguments);
 
-        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.getAdditionalArguments(),
-                    DEFAULT_K2JVM_ARGUMENTS, messageCollector, collector, environment);
+        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
     }
 
     public static void runK2JsCompiler(
@@ -72,51 +74,69 @@ public class KotlinCompilerRunner {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments);
 
-        runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(),
-                    DEFAULT_K2JS_ARGUMENTS, messageCollector, collector, environment);
+        runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
     }
 
     private static void runCompiler(
-            final String compilerClassName,
+            String compilerClassName,
             CommonCompilerArguments arguments,
             String additionalArguments,
-            CommonCompilerArguments defaultArguments,
-            final MessageCollector messageCollector,
+            MessageCollector messageCollector,
             OutputItemsCollector collector,
-            final CompilerEnvironment environment
+            CompilerEnvironment environment
     ) {
-        final List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments, defaultArguments);
-        argumentsList.addAll(StringUtil.split(additionalArguments, " "));
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(stream);
 
-        CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
-            @Override
-            public Integer fun(PrintStream stream) {
-                return execCompiler(compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, stream, messageCollector);
-            }
-        });
+        String exitCode = execCompiler(compilerClassName, arguments, additionalArguments, environment, out, messageCollector);
+
+        BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
+        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector);
+
+        if (INTERNAL_ERROR.equals(exitCode)) {
+            messageCollector.report(ERROR, "Compiler terminated with internal error", NO_LOCATION);
+        }
     }
 
-    private static int execCompiler(
+    @NotNull
+    private static String execCompiler(
             String compilerClassName,
-            String[] arguments,
+            CommonCompilerArguments arguments,
+            String additionalArguments,
             CompilerEnvironment environment,
             PrintStream out,
             MessageCollector messageCollector
     ) {
         try {
-            messageCollector.report(CompilerMessageSeverity.INFO,
-                                    "Using kotlin-home = " + environment.getKotlinPaths().getHomePath(),
-                                    CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(INFO, "Using kotlin-home = " + environment.getKotlinPaths().getHomePath(), NO_LOCATION);
 
-            Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment,
-                                                            messageCollector, out, /*usePreloader=*/true);
-            // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
+            List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments);
+            argumentsList.addAll(StringUtil.split(additionalArguments, " "));
+
+            Object rc = CompilerRunnerUtil.invokeExecMethod(
+                    compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, messageCollector, out
+            );
+
+            // exec() returns an ExitCode object, class of which is loaded with a different class loader,
             // so we take it's contents through reflection
-            return CompilerRunnerUtil.getReturnCodeFromObject(rc);
+            return getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
             MessageCollectorUtil.reportException(messageCollector, e);
-            return -1;
+            return INTERNAL_ERROR;
+        }
+    }
+
+    @NotNull
+    private static String getReturnCodeFromObject(@Nullable Object rc) throws Exception {
+        if (rc == null) {
+            return INTERNAL_ERROR;
+        }
+        else if (ExitCode.class.getName().equals(rc.getClass().getName())) {
+            return rc.toString();
+        }
+        else {
+            throw new IllegalStateException("Unexpected return: " + rc);
         }
     }
 

@@ -41,9 +41,11 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.util.Collection;
@@ -111,6 +113,19 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, functionDescriptor);
             assert declaration instanceof PsiMethod : "PsiMethod expected: " + functionDescriptor;
             ChangeSignatureUtil.invokeChangeSignatureOn((PsiMethod) declaration, project);
+            return;
+        }
+
+        if (TasksPackage.isDynamic(functionDescriptor)) {
+            if (editor != null) {
+                CodeInsightUtils.showErrorHint(
+                        project,
+                        editor,
+                        "Change signature is not applicable to dynamically invoked functions",
+                        "Change Signature",
+                        null
+                );
+            }
             return;
         }
 

@@ -44,6 +44,28 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.jet.lang.psi.JetValueArgument
+import org.jetbrains.jet.lang.psi.JetValueArgumentList
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.jet.lang.psi.JetExpression
+import java.util.ArrayList
+import org.jetbrains.jet.plugin.util.getImplicitReceiversWithInstance
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.plugin.util.FuzzyType
+import org.jetbrains.jet.lang.psi.JetLabeledExpression
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.psiUtil.parents
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.psi.JetLoopExpression
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -170,3 +192,164 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     }
     return false
 }
+
+fun InsertionContext.isAfterDot(): Boolean {
+    var offset = getStartOffset()
+    val chars = getDocument().getCharsSequence()
+    while (offset > 0) {
+        offset--
+        val c = chars.charAt(offset)
+        if (!Character.isWhitespace(c)) {
+            return c == '.'
+        }
+    }
+    return false
+}
+
+// do not complete this items by prefix like "is"
+fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
+    val prefix = prefixMatcher.getPrefix()
+    val s = "this@"
+    return prefix.startsWith(s) || s.startsWith(prefix)
+}
+
+data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)
+
+fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression): Collection<ThisItemInfo> {
+    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return listOf()
+
+    val result = ArrayList<ThisItemInfo>()
+    for ((i, receiver) in scope.getImplicitReceiversWithInstance().withIndex()) {
+        val thisType = receiver.getType()
+        val fuzzyType = FuzzyType(thisType, listOf())
+        val label = if (i == 0) null else (thisQualifierName(receiver) ?: continue)
+
+        fun createLookupElement(): LookupElement {
+            var element = createKeywordWithLabelElement("this", label)
+            element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
+            return element
+        }
+
+        result.add(ThisItemInfo({ createLookupElement() }, fuzzyType))
+    }
+    return result
+}
+
+private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
+    val descriptor = receiver.getContainingDeclaration()
+    val name = descriptor.getName()
+    if (!name.isSpecial()) {
+        return name.asString()
+    }
+
+    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral ?: return null
+    return functionLiteralLabel(functionLiteral)
+}
+
+private fun functionLiteralLabel(functionLiteral: JetFunctionLiteral): String?
+        = functionLiteralLabelAndCall(functionLiteral).first
+
+private fun functionLiteralLabelAndCall(functionLiteral: JetFunctionLiteral): Pair<String?, JetCallExpression?> {
+    val literalParent = (functionLiteral.getParent() as JetFunctionLiteralExpression).getParent()
+
+    fun JetValueArgument.callExpression(): JetCallExpression? {
+        val parent = getParent()
+        return (if (parent is JetValueArgumentList) parent else this).getParent() as? JetCallExpression
+    }
+
+    when (literalParent) {
+        is JetLabeledExpression -> {
+            val callExpression = (literalParent.getParent() as? JetValueArgument)?.callExpression()
+            return Pair(literalParent.getLabelName(), callExpression)
+        }
+
+        is JetValueArgument -> {
+            val callExpression = literalParent.callExpression()
+            val label = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+            return Pair(label, callExpression)
+        }
+
+        else -> {
+            return Pair(null, null)
+        }
+    }
+}
+
+fun returnExpressionItems(bindingContext: BindingContext, position: JetElement): Collection<LookupElement> {
+    val result = ArrayList<LookupElement>()
+    for (parent in position.parents()) {
+        if (parent is JetDeclarationWithBody) {
+            val returnsUnit = returnsUnit(parent, bindingContext)
+            if (parent is JetFunctionLiteral) {
+                val (label, call) = functionLiteralLabelAndCall(parent)
+                if (label != null) {
+                    result.add(createKeywordWithLabelElement("return", label, addSpace = !returnsUnit))
+                }
+
+                // check if the current function literal is inlined and stop processing outer declarations if it's not
+                val callee = call?.getCalleeExpression() as? JetReferenceExpression ?: break // not inlined
+                val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] as? SimpleFunctionDescriptor ?: break // not inlined
+                if (!target.getInlineStrategy().isInline()) break // not inlined
+            }
+            else {
+                if (parent.hasBlockBody()) {
+                    result.add(createKeywordWithLabelElement("return", null, addSpace = !returnsUnit))
+                }
+                break
+            }
+        }
+    }
+    return result
+}
+
+private fun returnsUnit(declaration: JetDeclarationWithBody, bindingContext: BindingContext): Boolean {
+    val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return true
+    val returnType = callable.getReturnType() ?: return true
+    return KotlinBuiltIns.isUnit(returnType)
+}
+
+private fun createKeywordWithLabelElement(keyword: String, label: String?, addSpace: Boolean): LookupElement {
+    val element = createKeywordWithLabelElement(keyword, label)
+    return if (addSpace) {
+        object: LookupElementDecorator<LookupElement>(element) {
+            override fun handleInsert(context: InsertionContext) {
+                WithTailInsertHandler.spaceTail().handleInsert(context, getDelegate())
+            }
+        }
+    }
+    else {
+        element
+    }
+}
+
+private fun createKeywordWithLabelElement(keyword: String, label: String?): LookupElementBuilder {
+    var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$label")
+    element = element.withPresentableText(keyword)
+    element = element.withBoldness(true)
+    if (label != null) {
+        element = element.withTailText("@$label", false)
+    }
+    return element
+}
+
+fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String): Collection<LookupElement> {
+    val result = ArrayList<LookupElement>()
+    for (parent in position.parents()) {
+        when (parent) {
+            is JetLoopExpression -> {
+                if (result.isEmpty()) {
+                    result.add(createKeywordWithLabelElement(breakOrContinue, null))
+                }
+
+                val label = (parent.getParent() as? JetLabeledExpression)?.getLabelName()
+                if (label != null) {
+                    result.add(createKeywordWithLabelElement(breakOrContinue, label))
+                }
+            }
+
+            is JetDeclarationWithBody -> break //TODO: support non-local break's&continue's when they are supported by compiler
+        }
+    }
+    return result
+}
+

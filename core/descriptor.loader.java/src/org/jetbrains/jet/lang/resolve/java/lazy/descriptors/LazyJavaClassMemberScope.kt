@@ -171,16 +171,13 @@ public class LazyJavaClassMemberScope(
             val jReturnType = method.getReturnType() ?: throw AssertionError("Annotation method has no return type: " + method)
 
             val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false)
-            val varargElementType =
-                if (index == methods.size() - 1 && jReturnType is JavaArrayType) {
-                    c.typeResolver.transformJavaType(
-                            jReturnType.getComponentType(),
-                            attr
-                    )
-                }
-                else null
 
-            val returnType = c.typeResolver.transformJavaType(jReturnType, attr)
+            val (returnType, varargElementType) =
+                    if (index == methods.size() - 1 && jReturnType is JavaArrayType)
+                        Pair(c.typeResolver.transformArrayType(jReturnType, attr, isVararg = true),
+                             c.typeResolver.transformJavaType(jReturnType.getComponentType(), attr))
+                    else
+                        Pair(c.typeResolver.transformJavaType(jReturnType, attr), null)
 
             result.add(ValueParameterDescriptorImpl(
                     constructor,

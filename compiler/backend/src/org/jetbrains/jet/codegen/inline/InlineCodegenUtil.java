@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
@@ -51,7 +51,6 @@ import org.jetbrains.org.objectweb.asm.util.Textifier;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -312,7 +311,7 @@ public class InlineCodegenUtil {
             case Opcodes.DRETURN: return Type.DOUBLE_TYPE;
             case Opcodes.FRETURN: return Type.FLOAT_TYPE;
             case Opcodes.LRETURN: return Type.LONG_TYPE;
-            default: return AsmTypeConstants.OBJECT_TYPE;
+            default: return AsmTypes.OBJECT_TYPE;
         }
     }
 

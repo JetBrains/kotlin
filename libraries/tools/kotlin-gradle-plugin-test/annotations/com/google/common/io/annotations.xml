@@ -1,5 +1,0 @@
-<root>
-    <item name='com.google.common.io.Files java.io.File createTempDir()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

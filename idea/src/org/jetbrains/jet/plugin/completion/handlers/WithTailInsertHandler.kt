@@ -90,6 +90,6 @@ class WithTailInsertHandler(val tailText: String,
         fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
         fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
         fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
-        fun spaceTail() = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false)
+        fun spaceTail() = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false, overwriteText = false)
     }
 }

@@ -4,6 +4,8 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <defaultErrorMessages implementation="org.jetbrains.k2js.resolve.diagnostics.DefaultErrorMessagesJs"/>
         <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
+        <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressNoBodyErrorsForNativeDeclarations"/>
+        <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressUninitializedErrorsForNativeDeclarations"/>
         <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
     </extensions>
 </idea-plugin>

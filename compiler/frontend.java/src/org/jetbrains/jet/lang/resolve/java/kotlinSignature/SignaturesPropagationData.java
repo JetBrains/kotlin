@@ -368,34 +368,17 @@ public class SignaturesPropagationData {
             return new VarargCheckResult(originalType, originalVarargElementType != null);
         }
 
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        // todo simplify (with respect to platform types)
         if (someSupersVararg && originalVarargElementType == null) {
             // convert to vararg
 
             assert isArrayType(originalType);
-
-            if (KotlinBuiltIns.isPrimitiveArray(originalType)) {
-                // replace IntArray? with IntArray
-                return new VarargCheckResult(TypeUtils.makeNotNullable(originalType), true);
-            }
-
-            // replace Array<out Foo>? with Array<Foo>
-            JetType varargElementType = builtIns.getArrayElementType(originalType);
-            return new VarargCheckResult(builtIns.getArrayType(INVARIANT, varargElementType), true);
+            return new VarargCheckResult(TypeUtils.makeNotNullable(originalType), true);
         }
         else if (someSupersNotVararg && originalVarargElementType != null) {
             // convert to non-vararg
 
             assert isArrayType(originalType);
-
-            if (KotlinBuiltIns.isPrimitiveArray(originalType)) {
-                // replace IntArray with IntArray?
-                return new VarargCheckResult(TypeUtils.makeNullable(originalType), false);
-            }
-
-            // replace Array<Foo> with Array<out Foo>?
-            return new VarargCheckResult(TypeUtils.makeNullable(builtIns.getArrayType(OUT_VARIANCE, originalVarargElementType)), false);
+            return new VarargCheckResult(TypeUtils.makeNullable(originalType), false);
         }
         return new VarargCheckResult(originalType, originalVarargElementType != null);
     }

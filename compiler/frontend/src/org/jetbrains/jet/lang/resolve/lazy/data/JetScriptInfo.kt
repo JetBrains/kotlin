@@ -36,6 +36,7 @@ public class JetScriptInfo(
     override fun getClassKind() = ClassKind.CLASS
     override fun getDeclarations() = script.getDeclarations()
             .filter(::shouldBeScriptClassMember)
+    override fun getDanglingAnnotations() = listOf<JetAnnotationEntry>()
 }
 
 public fun shouldBeScriptClassMember(declaration: JetDeclaration): Boolean {

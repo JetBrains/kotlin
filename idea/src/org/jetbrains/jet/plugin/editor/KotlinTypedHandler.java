@@ -115,6 +115,10 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             case '.':
                 autoPopupMemberLookup(project, editor);
                 return Result.CONTINUE;
+
+            case '@':
+                autoPopupLabelLookup(project, editor);
+                return Result.CONTINUE;
         }
 
         return Result.CONTINUE;
@@ -133,6 +137,31 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 return ".".equals(text) || "?.".equals(text);
             }
         });
+    }
+
+    private static void autoPopupLabelLookup(Project project, final Editor editor) {
+        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, new Condition<PsiFile>() {
+            @Override
+            public boolean value(PsiFile file) {
+                int offset = editor.getCaretModel().getOffset();
+
+                CharSequence chars = editor.getDocument().getCharsSequence();
+                if (!endsWith(chars, offset, "this@")
+                    && !endsWith(chars, offset, "return@")
+                    && !endsWith(chars, offset, "break@")
+                    && !endsWith(chars, offset, "continue@")) return false;
+
+                PsiElement lastElement = file.findElementAt(offset - 1);
+                if (lastElement == null) return false;
+
+                return lastElement.getNode().getElementType() == JetTokens.LABEL_IDENTIFIER;
+            }
+        });
+    }
+
+    private static boolean endsWith(CharSequence chars, int offset, String text) {
+        if (offset < text.length()) return false;
+        return chars.subSequence(offset - text.length(), offset).toString().equals(text);
     }
 
     @Override

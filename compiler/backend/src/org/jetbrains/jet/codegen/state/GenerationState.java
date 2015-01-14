@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -42,11 +43,17 @@ import java.util.List;
 
 public class GenerationState {
     public interface GenerateClassFilter {
-        boolean shouldProcess(JetClassOrObject classOrObject);
+        boolean shouldProcessClass(JetClassOrObject classOrObject);
+        boolean shouldProcessScript(JetScript script);
 
         GenerateClassFilter GENERATE_ALL = new GenerateClassFilter() {
             @Override
-            public boolean shouldProcess(JetClassOrObject classOrObject) {
+            public boolean shouldProcessClass(JetClassOrObject classOrObject) {
+                return true;
+            }
+
+            @Override
+            public boolean shouldProcessScript(JetScript script) {
                 return true;
             }
         };

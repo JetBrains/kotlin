@@ -19,25 +19,41 @@ package org.jetbrains.k2js.analyze
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression
-import org.jetbrains.k2js.PredefinedAnnotation
+import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
+import org.jetbrains.k2js.PredefinedAnnotation.*
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.k2js.config.LibrarySourcesConfig
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression
+import org.jetbrains.jet.lang.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.jet.lang.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
+import org.jetbrains.jet.lang.resolve.diagnostics.PROPERTY_NOT_INITIALIZED_ERRORS
 
-class SuppressUnusedParameterForJsNative : DiagnosticsWithSuppression.SuppressStringProvider {
-    override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
-        val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.getType())
-        if (PredefinedAnnotation.NATIVE.fqName.asString() == DescriptorUtils.getFqName(descriptor).asString()) {
-            return listOf(Errors.UNUSED_PARAMETER.getName().toLowerCase())
-        }
+private val NATIVE_ANNOTATIONS = array(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 
-        return listOf()
+public class SuppressUnusedParameterForJsNative : SuppressDiagnosticsByAnnotations(listOf(Errors.UNUSED_PARAMETER), *NATIVE_ANNOTATIONS)
+
+public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
+
+public class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticsWithSuppression.DiagnosticSuppressor {
+    override fun isSuppressed(diagnostic: Diagnostic): Boolean {
+        if (diagnostic.getFactory() != Errors.UNINITIALIZED_VARIABLE) return false
+
+        [suppress("UNCHECKED_CAST")]
+        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetSimpleNameExpression, VariableDescriptor>
+
+        val variableDescriptor = diagnosticWithParameters.getA()
+
+        return AnnotationsUtils.isNativeObject(variableDescriptor)
     }
 }
 
-class SuppressWarningsFromExternalModules : DiagnosticsWithSuppression.DiagnosticSuppressor {
+public class SuppressWarningsFromExternalModules : DiagnosticsWithSuppression.DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
         val file = diagnostic.getPsiFile()
         return diagnostic.getSeverity() == Severity.WARNING &&

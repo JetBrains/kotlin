@@ -101,7 +101,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CallExpressionResolver callExpressionResolver = components.expressionTypingServices.getCallExpressionResolver();
         JetTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
-        ExpressionTypingUtils.checkCapturingInClosure(expression, context.trace, context.scope);
         return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
     }
 
@@ -639,41 +638,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull boolean[] result
     ) {
         Call call = CallMaker.makeCall(reference, receiver, null, reference, ThrowingList.<ValueArgument>instance());
-
-        TemporaryTraceAndCache funTrace = TemporaryTraceAndCache.create(context, "trace to resolve callable reference as function",
+        TemporaryTraceAndCache temporaryTrace = TemporaryTraceAndCache.create(context, "trace to resolve callable reference as function",
                                                                         reference);
-        ResolvedCall<FunctionDescriptor> function = components.expressionTypingServices.getCallExpressionResolver()
-                .getResolvedCallForFunction(call, reference, context.replaceTraceAndCache(funTrace).replaceExpectedType(NO_EXPECTED_TYPE),
-                                            CheckValueArgumentsMode.DISABLED, result);
-        if (result[0]) {
-            funTrace.commit();
 
-            if (function instanceof VariableAsFunctionResolvedCall) {
-                context.trace.report(UNSUPPORTED.on(reference, "References to variables aren't supported yet"));
-                return null;
-            }
-
-            return function != null ? function.getResultingDescriptor() : null;
-        }
-
-        TemporaryTraceAndCache varTrace = TemporaryTraceAndCache.create(context, "trace to resolve callable reference as variable",
-                                                                        reference);
-        OverloadResolutionResults<VariableDescriptor> variableResults =
-                components.expressionTypingServices.getCallResolver().resolveSimpleProperty(
-                        BasicCallResolutionContext.create(context.replaceTraceAndCache(varTrace).replaceExpectedType(NO_EXPECTED_TYPE),
-                                                          call, CheckValueArgumentsMode.DISABLED)
-                );
-        if (!variableResults.isNothing()) {
-            ResolvedCall<VariableDescriptor> variable =
-                    OverloadResolutionResultsUtil.getResultingCall(variableResults, context.contextDependency);
-
-            varTrace.commit();
-            if (variable != null) {
-                result[0] = true;
-                return variable.getResultingDescriptor();
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
+                context.replaceTraceAndCache(temporaryTrace).replaceExpectedType(NO_EXPECTED_TYPE), call, CheckValueArgumentsMode.DISABLED);
+        OverloadResolutionResults<CallableDescriptor> results =
+                components.expressionTypingServices.getCallResolver().resolveCallForMember(reference, callResolutionContext);
+        if (!results.isNothing()) {
+            temporaryTrace.commit();
+            result[0] = true;
+            ResolvedCall<CallableDescriptor> callable =
+                    OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
+            if (callable != null) {
+                return callable.getResultingDescriptor();
             }
         }
-
         return null;
     }
 

@@ -1,3 +1,5 @@
 fun t() {
-    brea<caret>
+    while (true) {
+        brea<caret>
+    }
 }

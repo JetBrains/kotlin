@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genInvokeAppendMethod;
 import static org.jetbrains.jet.codegen.AsmUtil.genStringBuilderConstructor;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypes.JAVA_STRING_TYPE;
 
 public class Concat extends IntrinsicMethod {
     @NotNull
@@ -50,7 +50,7 @@ public class Concat extends IntrinsicMethod {
         }
         else {
             // LHS.plus(RHS)
-            receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+            receiver.put(AsmTypes.OBJECT_TYPE, v);
             genStringBuilderConstructor(v);
             v.swap();
             genInvokeAppendMethod(v, returnType);

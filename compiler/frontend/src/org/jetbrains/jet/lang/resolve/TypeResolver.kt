@@ -35,6 +35,7 @@ import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.lexer.JetTokens
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -256,6 +257,7 @@ public class TypeResolver(
             val (i, argumentElement) = it
 
             val projectionKind = argumentElement.getProjectionKind()
+            ModifiersChecker.checkIncompatibleVarianceModifiers(argumentElement.getModifierList(), c.trace)
             if (projectionKind == JetProjectionKind.STAR) {
                 val parameters = constructor.getParameters()
                 if (parameters.size() > i) {

@@ -30,6 +30,7 @@ import org.jetbrains.k2js.PredefinedAnnotation
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
 
 public object KotlinJsDeclarationCheckerProvider : AdditionalCheckerProvider {
     override val annotationCheckers: List<AnnotationChecker> = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker())
@@ -76,7 +77,7 @@ private abstract class AbstractNativeIndexerChecker(
             if (firstParamClassDescriptor != KotlinBuiltIns.getInstance().getString() &&
                 !DescriptorUtils.isSubclass(firstParamClassDescriptor, KotlinBuiltIns.getInstance().getNumber())
             ) {
-                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.getValueParameters().first, indexerKind))
+                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.getValueParameters().firstOrNull(), indexerKind))
             }
         }
 
@@ -102,4 +103,19 @@ public class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnnota
     }
 }
 
-public class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_SETTER, "setter", requiredParametersCount = 2)
+public class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_SETTER, "setter", requiredParametersCount = 2) {
+    override fun additionalCheck(declaration: JetNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
+        super.additionalCheck(declaration, descriptor, diagnosticHolder)
+
+        val returnType = descriptor.getReturnType()
+        if (KotlinBuiltIns.isUnit(returnType)) return
+
+        val parameters = descriptor.getValueParameters()
+        if (parameters.size() < 2) return
+
+        val secondParameterType = parameters.get(1).getType()
+        if (secondParameterType isSubtypeOf returnType) return
+
+        diagnosticHolder.report(ErrorsJs.NATIVE_SETTER_WRONG_RETURN_TYPE.on(declaration))
+    }
+}

@@ -62,7 +62,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     private final MemoizedFunctionToNotNull<JetScript, LazyScriptDescriptor> scriptDescriptors;
 
-    private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> annotations;
+    private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> fileAnnotations;
+    private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> danglingAnnotations;
 
     private ScopeProvider scopeProvider;
 
@@ -168,14 +169,25 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 }
         );
 
-        annotations = storageManager.createMemoizedFunction(new Function1<JetFile, LazyAnnotations>() {
+        fileAnnotations = storageManager.createMemoizedFunction(new Function1<JetFile, LazyAnnotations>() {
             @Override
             public LazyAnnotations invoke(JetFile file) {
-                JetScope scope = getScopeProvider().getFileScope(file);
-                LazyAnnotationsContextImpl lazyAnnotationContext = new LazyAnnotationsContextImpl(annotationResolve, storageManager, trace, scope);
-                return new LazyAnnotations(lazyAnnotationContext, file.getAnnotationEntries());
+                return createAnnotations(file, file.getAnnotationEntries());
             }
         });
+
+        danglingAnnotations = storageManager.createMemoizedFunction(new Function1<JetFile, LazyAnnotations>() {
+            @Override
+            public LazyAnnotations invoke(JetFile file) {
+                return createAnnotations(file, file.getDanglingAnnotations());
+            }
+        });
+    }
+
+    private LazyAnnotations createAnnotations(JetFile file, List<JetAnnotationEntry> annotationEntries) {
+        JetScope scope = getScopeProvider().getFileScope(file);
+        LazyAnnotationsContextImpl lazyAnnotationContext = new LazyAnnotationsContextImpl(annotationResolve, storageManager, trace, scope);
+        return new LazyAnnotations(lazyAnnotationContext, annotationEntries);
     }
 
     @Override
@@ -429,6 +441,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
+            public DeclarationDescriptor visitScript(@NotNull JetScript script, Void data) {
+                return scriptDescriptors.invoke(script);
+            }
+
+            @Override
             public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    JetPsiUtil.getElementTextWithContext(element));
@@ -443,7 +460,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @NotNull
     public Annotations getFileAnnotations(@NotNull JetFile file) {
-        return annotations.invoke(file);
+        return fileAnnotations.invoke(file);
+    }
+
+    @NotNull
+    public Annotations getDanglingAnnotations(@NotNull JetFile file) {
+        return danglingAnnotations.invoke(file);
     }
 
     @NotNull

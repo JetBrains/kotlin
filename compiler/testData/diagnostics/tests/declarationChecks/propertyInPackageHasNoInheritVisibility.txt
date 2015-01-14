@@ -2,5 +2,6 @@ package
 
 package d {
     internal val f: () -> kotlin.Int
+    internal var g: kotlin.Int
     internal fun test(): kotlin.Unit
 }

@@ -2,12 +2,12 @@ package test
 
 public trait EmptyArrayInParam {
 
-    test.EmptyArrayInParam.MyAnnotation(value = {}: kotlin.Array<kotlin.String>) public open class A {
+    test.EmptyArrayInParam.MyAnnotation(value = {}: kotlin.Array<out kotlin.String>) public open class A {
         public constructor A()
     }
 
     public final annotation class MyAnnotation : kotlin.Annotation {
-        public constructor MyAnnotation(/*0*/ vararg value: kotlin.String /*kotlin.Array<kotlin.String>*/)
+        public constructor MyAnnotation(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
         public abstract fun value(): kotlin.Array<kotlin.String>
     }
 }

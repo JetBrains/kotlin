@@ -1,5 +1,6 @@
 import `java::java`java.*
 import java.`java::java.util`util.*
+import java.util
 
 fun foo(~a~a : `kotlin::Array`Array<`kotlin::Int`Int>) : `java::java.util.ArrayList`ArrayList {
   `a`a.`kotlin::Array.get(Int)`get(1)

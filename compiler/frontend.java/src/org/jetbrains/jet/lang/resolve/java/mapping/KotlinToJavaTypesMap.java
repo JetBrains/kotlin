@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.resolve.java.mapping;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypes;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
             FqName fqName = DescriptorUtils.getFqNameSafe(kotlinDescriptor);
-            register(fqName, AsmTypeConstants.getType(javaClass));
+            register(fqName, AsmTypes.getType(javaClass));
             registerFqName(fqName, new FqName(javaClass.getCanonicalName()));
         }
     }

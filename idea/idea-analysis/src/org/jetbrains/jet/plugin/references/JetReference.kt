@@ -72,7 +72,8 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
     override fun isSoft(): Boolean = false
 
     private fun resolveToPsiElements(): Collection<PsiElement> {
-        return resolveToPsiElements(expression.analyze(), getTargetDescriptors(expression.analyze()))
+        val bindingContext = expression.analyze()
+        return resolveToPsiElements(bindingContext, getTargetDescriptors(bindingContext))
     }
 
     override fun resolveToDescriptors(): Collection<DeclarationDescriptor> {

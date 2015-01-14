@@ -7,6 +7,8 @@ package kotlin
 
 import java.util.*
 
+import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
+
 /**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */

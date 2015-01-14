@@ -17,28 +17,15 @@
 package org.jetbrains.jet.preloading;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@SuppressWarnings("unchecked")
 public class ClassPreloadingUtils {
-
-    public static abstract class ClassHandler {
-        public byte[] instrument(String resourceName, byte[] data) {
-            return data;
-        }
-
-        public void beforeDefineClass(String name, int sizeInBytes) {}
-        public void afterDefineClass(String name) {}
-
-        public void beforeLoadJar(File jarFile) {}
-        public void afterLoadJar(File jarFile) {}
-    }
-
     /**
      * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
      *
@@ -59,9 +46,14 @@ public class ClassPreloadingUtils {
             ClassCondition classesToLoadByParent,
             ClassHandler handler
     ) throws IOException {
-        Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
+        Map<String, Object> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
-        return createMemoryBasedClassLoader(parentClassLoader, entries, handler, classesToLoadByParent);
+        Collection<File> classpath = mergeClasspathFromManifests(entries);
+        if (!classpath.isEmpty()) {
+            parentClassLoader = preloadClasses(classpath, classCountEstimation, parentClassLoader, null, handler);
+        }
+
+        return new MemoryBasedClassLoader(classesToLoadByParent, parentClassLoader, entries, handler);
     }
 
     public static ClassLoader preloadClasses(
@@ -70,102 +62,54 @@ public class ClassPreloadingUtils {
         return preloadClasses(jarFiles, classCountEstimation, parentClassLoader, classesToLoadByParent, null);
     }
 
-    private static ClassLoader createMemoryBasedClassLoader(
-            final ClassLoader parent,
-            final Map<String, ResourceData> preloadedResources,
-            final ClassHandler handler,
-            final ClassCondition classesToLoadByParent
-    ) {
-        return new ClassLoader(null) {
-            @Override
-            public Class<?> loadClass(String name) throws ClassNotFoundException {
-                if (classesToLoadByParent != null && classesToLoadByParent.accept(name)) {
-                    if (parent == null) {
-                        return super.loadClass(name);
-                    }
-
-                    try {
-                        return parent.loadClass(name);
-                    }
-                    catch (ClassNotFoundException e) {
-                        return super.loadClass(name);
-                    }
-                }
-
-                // Look in this class loader and then in the parent one
-                Class<?> aClass = super.loadClass(name);
-                if (aClass == null) {
-                    if (parent == null) {
-                        throw new ClassNotFoundException("Class not available in preloader: " + name);
-                    }
-                    return parent.loadClass(name);
-                }
-                return aClass;
+    private static Collection<File> mergeClasspathFromManifests(Map<String, Object> preloadedResources) throws IOException {
+        Object manifest = preloadedResources.get(JarFile.MANIFEST_NAME);
+        if (manifest instanceof ResourceData) {
+            return extractManifestClasspath((ResourceData) manifest);
+        }
+        else if (manifest instanceof ArrayList) {
+            List<File> result = new ArrayList<File>();
+            for (ResourceData data : (ArrayList<ResourceData>) manifest) {
+                result.addAll(extractManifestClasspath(data));
             }
-
-            @Override
-            protected Class<?> findClass(String name) throws ClassNotFoundException {
-                String internalName = name.replace('.', '/').concat(".class");
-                ResourceData resourceData = preloadedResources.get(internalName);
-                if (resourceData == null) return null;
-
-                int sizeInBytes = resourceData.bytes.length;
-                if (handler != null) {
-                    handler.beforeDefineClass(name, sizeInBytes);
-                }
-
-                Class<?> definedClass = defineClass(name, resourceData.bytes, 0, sizeInBytes);
-
-                if (handler != null) {
-                    handler.afterDefineClass(name);
-                }
-
-                return definedClass;
-            }
-
-            @Override
-            public URL getResource(String name) {
-                URL resource = super.getResource(name);
-                if (resource == null && parent != null) {
-                    return parent.getResource(name);
-                }
-                return resource;
-            }
-
-            @Override
-            protected URL findResource(String name) {
-                ResourceData resourceData = preloadedResources.get(name);
-                if (resourceData == null) return null;
-                return resourceData.getURL();
-            }
-
-            @Override
-            public Enumeration<URL> getResources(String name) throws IOException {
-                Enumeration<URL> resources = super.getResources(name);
-                if (!resources.hasMoreElements() && parent != null) {
-                    return parent.getResources(name);
-                }
-                return resources;
-            }
-
-            @Override
-            protected Enumeration<URL> findResources(String name) throws IOException {
-                URL resource = findResource(name);
-                if (resource == null) {
-                    return Collections.enumeration(Collections.<URL>emptyList());
-                }
-                // Only the first resource is loaded
-                return Collections.enumeration(Collections.singletonList(resource));
-            }
-        };
+            return result;
+        }
+        else {
+            assert manifest == null : "Resource map should contain ResourceData or ArrayList<ResourceData>: " + manifest;
+            return Collections.emptyList();
+        }
     }
 
-    private static Map<String, ResourceData> loadAllClassesFromJars(
+    private static Collection<File> extractManifestClasspath(ResourceData manifestData) throws IOException {
+        Manifest manifest = new Manifest(new ByteArrayInputStream(manifestData.bytes));
+        String classpathSpaceSeparated = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
+        if (classpathSpaceSeparated == null) return Collections.emptyList();
+
+        Collection<File> classpath = new ArrayList<File>(1);
+        for (String jar : classpathSpaceSeparated.split(" ")) {
+            if (".".equals(jar)) continue;
+
+            if (!jar.endsWith(".jar")) {
+                throw new UnsupportedOperationException("Class-Path attribute should only contain paths to JAR files: " + jar);
+            }
+
+            classpath.add(new File(manifestData.jarFile.getParent(), jar));
+        }
+
+        return classpath;
+    }
+
+    /**
+     * @return a map of name to resources. Each value is either a ResourceData if there's only one instance (in the vast majority of cases)
+     * or a non-empty ArrayList of ResourceData if there's many
+     */
+    private static Map<String, Object> loadAllClassesFromJars(
             Collection<File> jarFiles,
             int classNumberEstimate,
             ClassHandler handler
     ) throws IOException {
-        Map<String, ResourceData> resources = new HashMap<String, ResourceData>(classNumberEstimate);
+        // 0.75 is HashMap.DEFAULT_LOAD_FACTOR
+        Map<String, Object> resources = new HashMap<String, Object>((int) (classNumberEstimate / 0.75));
 
         for (File jarFile : jarFiles) {
             if (handler != null) {
@@ -180,8 +124,6 @@ public class ClassPreloadingUtils {
                     ZipEntry entry = stream.getNextEntry();
                     if (entry == null) break;
                     if (entry.isDirectory()) continue;
-                    String name = entry.getName();
-                    if (resources.containsKey(name)) continue; // Only the first resource is stored
 
                     int size = (int) entry.getSize();
                     int effectiveSize = size < 0 ? 32 : size;
@@ -192,12 +134,28 @@ public class ClassPreloadingUtils {
                         bytes.write(buffer, 0, count);
                     }
 
+                    String name = entry.getName();
                     byte[] data = bytes.toByteArray();
                     if (handler != null) {
                         data = handler.instrument(name, data);
                     }
+                    ResourceData resourceData = new ResourceData(jarFile, name, data);
 
-                    resources.put(name, new ResourceData(jarFile, name, data));
+                    Object previous = resources.get(name);
+                    if (previous == null) {
+                        resources.put(name, resourceData);
+                    }
+                    else if (previous instanceof ResourceData) {
+                        List<ResourceData> list = new ArrayList<ResourceData>();
+                        list.add((ResourceData) previous);
+                        list.add(resourceData);
+                        resources.put(name, list);
+                    }
+                    else {
+                        assert previous instanceof ArrayList :
+                                "Resource map should contain ResourceData or ArrayList<ResourceData>: " + name;
+                        ((ArrayList<ResourceData>) previous).add(resourceData);
+                    }
                 }
             }
             finally {
@@ -213,43 +171,13 @@ public class ClassPreloadingUtils {
                 handler.afterLoadJar(jarFile);
             }
         }
+
+        for (Object value : resources.values()) {
+            if (value instanceof ArrayList) {
+                ((ArrayList) value).trimToSize();
+            }
+        }
+
         return resources;
-    }
-
-    private static class ResourceData {
-        private final File jarFile;
-        private final String resourceName;
-        private final byte[] bytes;
-
-        public ResourceData(File jarFile, String resourceName, byte[] bytes) {
-            this.jarFile = jarFile;
-            this.resourceName = resourceName;
-            this.bytes = bytes;
-        }
-
-        public URL getURL() {
-            try {
-                String path = "file:" + jarFile + "!/" + resourceName;
-                return new URL("jar", null, 0, path, new URLStreamHandler() {
-                    @Override
-                    protected URLConnection openConnection(URL u) throws IOException {
-                        return new URLConnection(u) {
-                            @Override
-                            public void connect() throws IOException {}
-
-                            @Override
-                            public InputStream getInputStream() throws IOException {
-                                return new ByteArrayInputStream(bytes);
-                            }
-                        };
-                    }
-                });
-            }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
     }
 }

@@ -141,24 +141,8 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         return type == null ? ErrorUtils.createErrorType("null type") : type;
     }
 
-    public static void addTypeAnnotation(Project project, @Nullable Editor editor, @NotNull JetCallableDeclaration declaration, @NotNull JetType exprType) {
-        if (editor != null) {
-            addTypeAnnotationWithTemplate(project, editor, declaration, exprType);
-        }
-        else {
-            declaration.setTypeReference(anyTypeRef(project));
-        }
-    }
-
-    private static void addTypeAnnotationWithTemplate(
-            @NotNull Project project,
-            @NotNull Editor editor,
-            @NotNull final JetCallableDeclaration declaration,
-            @NotNull JetType exprType
-    ) {
-        assert !exprType.isError() : "Unexpected error type, should have been checked before: "
-                                     + JetPsiUtil.getElementTextWithContext(declaration) + ", type = " + exprType;
-
+    @NotNull
+    public static Expression createTypeExpressionForTemplate(JetType exprType) {
         ClassifierDescriptor descriptor = exprType.getConstructor().getDeclarationDescriptor();
         boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor);
 
@@ -166,7 +150,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         List<JetType> types = isAnonymous ? new ArrayList<JetType>() : Lists.newArrayList(exprType);
         types.addAll(allSupertypes);
 
-        Expression expression = new JetTypeLookupExpression<JetType>(
+        return new JetTypeLookupExpression<JetType>(
                 types,
                 types.iterator().next(),
                 JetBundle.message("specify.type.explicitly.add.action.name")
@@ -181,6 +165,39 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 return IdeDescriptorRenderers.SOURCE_CODE.renderType(element);
             }
         };
+    }
+
+    public static void addTypeAnnotation(Project project, @Nullable Editor editor, @NotNull JetCallableDeclaration declaration, @NotNull JetType exprType) {
+        if (editor != null) {
+            addTypeAnnotationWithTemplate(project, editor, declaration, exprType);
+        }
+        else {
+            declaration.setTypeReference(anyTypeRef(project));
+        }
+    }
+
+    public static TemplateEditingAdapter createTypeReferencePostprocessor(final JetCallableDeclaration declaration) {
+        return new TemplateEditingAdapter() {
+            @Override
+            public void templateFinished(Template template, boolean brokenOff) {
+                JetTypeReference typeRef = declaration.getTypeReference();
+                if (typeRef != null) {
+                    ShortenReferences.INSTANCE$.process(typeRef);
+                }
+            }
+        };
+    }
+
+    private static void addTypeAnnotationWithTemplate(
+            @NotNull Project project,
+            @NotNull Editor editor,
+            @NotNull JetCallableDeclaration declaration,
+            @NotNull JetType exprType
+    ) {
+        assert !exprType.isError() : "Unexpected error type, should have been checked before: "
+                                     + JetPsiUtil.getElementTextWithContext(declaration) + ", type = " + exprType;
+
+        Expression expression = createTypeExpressionForTemplate(exprType);
 
         declaration.setTypeReference(anyTypeRef(project));
 
@@ -195,15 +212,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         editor.getCaretModel().moveToOffset(newTypeRef.getNode().getStartOffset());
 
         TemplateManagerImpl manager = new TemplateManagerImpl(project);
-        manager.startTemplate(editor, builder.buildInlineTemplate(), new TemplateEditingAdapter() {
-            @Override
-            public void templateFinished(Template template, boolean brokenOff) {
-                JetTypeReference typeRef = declaration.getTypeReference();
-                if (typeRef != null) {
-                    ShortenReferences.INSTANCE$.process(typeRef);
-                }
-            }
-        });
+        manager.startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration));
     }
 
     private static JetTypeReference anyTypeRef(@NotNull Project project) {

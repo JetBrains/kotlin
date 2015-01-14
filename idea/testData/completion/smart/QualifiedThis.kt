@@ -1,7 +1,13 @@
-class Foo{
-    fun String.foo(){
-        val foo : Foo = <caret>
+class Outer {
+    inner class Inner {
+        fun String.foo() {
+            val v: Any = this@<caret>
+        }
     }
 }
 
-// EXIST: { lookupString:"this@Foo", typeText:"Foo" }
+// ABSENT: this
+// ABSENT: "this@foo"
+// EXIST: { lookupString: "this@Inner", itemText: "this", tailText: "@Inner", typeText: "Outer.Inner", attributes: "bold" }
+// EXIST: { lookupString: "this@Outer", itemText: "this", tailText: "@Outer", typeText: "Outer", attributes: "bold" }
+// NUMBER: 2

@@ -186,7 +186,7 @@ public class Preloader {
         System.exit(1);
     }
 
-    private static class Handler extends ClassPreloadingUtils.ClassHandler {
+    private static class Handler extends ClassHandler {
         public void done() {}
     }
 }

@@ -1,7 +1,6 @@
 package foo
 
 class Fail(val message: String) : Exception(message)
-native fun eval(arg: String): Any? = noImpl
 
 fun test(testName: String, actual: Any, expectedAsString: String) {
     val expected = eval("[$expectedAsString]")

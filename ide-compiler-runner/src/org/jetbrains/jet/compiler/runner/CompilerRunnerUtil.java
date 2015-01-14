@@ -16,24 +16,18 @@
 
 package org.jetbrains.jet.compiler.runner;
 
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.ref.SoftReference;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -42,107 +36,59 @@ public class CompilerRunnerUtil {
 
     private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
-    public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
-        File libs = paths.getLibPath();
-
-        if (!libs.exists() || libs.isFile()) {
-            messageCollector.report(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", NO_LOCATION);
-            return Collections.emptyList();
-        }
-
-        ArrayList<File> answer = new ArrayList<File>();
-        answer.add(new File(libs, "kotlin-compiler.jar"));
-        answer.add(new File(libs, "kotlin-runtime.jar"));
-        return answer;
-    }
-
     @NotNull
-    public static ClassLoader getOrCreatePreloader(
-            @NotNull KotlinPaths paths,
-            @Nullable ClassLoader parentClassLoader,
-            @Nullable ClassCondition classToLoadByParent,
-            @NotNull MessageCollector messageCollector
-    ) {
-        ClassLoader answer = ourClassLoaderRef.get();
-        if (answer == null) {
-            try {
-                int estimatedClassNumber = 4096;
-                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentClassLoader, classToLoadByParent);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
+    private static synchronized ClassLoader getOrCreateClassLoader(
+            @NotNull CompilerEnvironment environment,
+            @NotNull File libPath
+    ) throws IOException {
+        ClassLoader classLoader = ourClassLoaderRef.get();
+        if (classLoader == null) {
+            classLoader = ClassPreloadingUtils.preloadClasses(
+                    Collections.singletonList(new File(libPath, "kotlin-compiler.jar")),
+                    /* estimatedClassNumber = */ 4096,
+                    CompilerRunnerUtil.class.getClassLoader(),
+                    environment.getClassesToLoadByParent()
+            );
+            ourClassLoaderRef = new SoftReference<ClassLoader>(classLoader);
         }
-        return answer;
+        return classLoader;
     }
 
-    public static ClassLoader getOrCreateClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
-        ClassLoader answer = ourClassLoaderRef.get();
-        if (answer == null) {
-            answer = createClassLoader(paths, messageCollector);
-            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
-        }
-        return answer;
+    @Nullable
+    private static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
+        File libs = paths.getLibPath();
+        if (libs.exists() && !libs.isFile()) return libs;
+
+        messageCollector.report(
+                ERROR,
+                "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed",
+                NO_LOCATION
+        );
+
+        return null;
     }
 
-    private static URLClassLoader createClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
-        List<File> jars = kompilerClasspath(paths, messageCollector);
-        URL[] urls = new URL[jars.size()];
-        for (int i = 0; i < urls.length; i++) {
-            try {
-                urls[i] = jars.get(i).toURI().toURL();
-            }
-            catch (MalformedURLException e) {
-                throw new RuntimeException(e); // Checked exceptions are great! I love them, and I love brilliant library designers too!
-            }
-        }
-        return new URLClassLoader(urls, null);
-    }
-
-    static void handleProcessTermination(int exitCode, MessageCollector messageCollector) {
-        if (exitCode != 0 && exitCode != 1) {
-            messageCollector.report(ERROR, "Compiler terminated with exit code: " + exitCode, NO_LOCATION);
-        }
-    }
-
-    public static int getReturnCodeFromObject(Object rc) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if ("org.jetbrains.jet.cli.common.ExitCode".equals(rc.getClass().getCanonicalName())) {
-            return (Integer)rc.getClass().getMethod("getCode").invoke(rc);
-        }
-        else {
-            throw new IllegalStateException("Unexpected return: " + rc);
-        }
-    }
-
+    @Nullable
     public static Object invokeExecMethod(
-            String compilerClassName, String[] arguments, CompilerEnvironment environment,
-            MessageCollector messageCollector, PrintStream out, boolean usePreloader
+            @NotNull String compilerClassName,
+            @NotNull String[] arguments,
+            @NotNull CompilerEnvironment environment,
+            @NotNull MessageCollector messageCollector,
+            @NotNull PrintStream out
     ) throws Exception {
-        ClassLoader loader = usePreloader
-                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentClassLoader(),
-                                                    environment.getClassesToLoadByParent(), messageCollector)
-                             : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
+        File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
+        if (libPath == null) return null;
 
-        Class<?> kompiler = Class.forName(compilerClassName, true, loader);
+        ClassLoader classLoader = getOrCreateClassLoader(environment, libPath);
+
+        Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
         Method exec = kompiler.getMethod(
-                "execAndOutputHtml",
+                "execAndOutputXml",
                 PrintStream.class,
-                Class.forName("org.jetbrains.jet.config.Services", true, loader), String[].class);
+                Class.forName("org.jetbrains.jet.config.Services", true, classLoader),
+                String[].class
+        );
 
         return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
-    }
-
-    public static void outputCompilerMessagesAndHandleExitCode(@NotNull MessageCollector messageCollector,
-            @NotNull OutputItemsCollector outputItemsCollector,
-            @NotNull Function<PrintStream, Integer> compilerRun) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outputStream);
-
-        int exitCode = compilerRun.fun(out);
-
-        BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, outputItemsCollector);
-        handleProcessTermination(exitCode, messageCollector);
     }
 }

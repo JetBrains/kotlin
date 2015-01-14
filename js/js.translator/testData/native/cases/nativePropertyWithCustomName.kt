@@ -2,7 +2,6 @@ package foo
 
 val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
 
-native fun eval(e: String): Any? = noImpl
 fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
 
 native("\"O\"") val foo: String = noImpl
