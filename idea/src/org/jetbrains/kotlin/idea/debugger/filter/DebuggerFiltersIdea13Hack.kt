@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.debugger.filter
+package org.jetbrains.kotlin.idea.debugger.filter
 
 import com.intellij.ui.classFilter.ClassFilter
 import com.intellij.debugger.settings.DebuggerSettings

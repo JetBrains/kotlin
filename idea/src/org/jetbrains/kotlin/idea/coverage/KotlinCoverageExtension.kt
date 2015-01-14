@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.idea.coverage
 
+/*
+Not supported in idea 13
+
 import com.intellij.coverage.JavaCoverageEngineExtension
 import com.intellij.execution.configurations.RunConfigurationBase
 import org.jetbrains.kotlin.idea.run.JetRunConfiguration
@@ -187,3 +190,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
         }
     }
 }
+
+*/
+
+public class KotlinCoverageExtension() {}

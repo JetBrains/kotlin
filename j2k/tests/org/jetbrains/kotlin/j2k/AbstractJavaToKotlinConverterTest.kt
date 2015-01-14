@@ -34,14 +34,14 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     override fun setUp() {
         super.setUp()
 
-        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VirtualDirectoryImpl.allowRootAccess(JetTestUtils.getHomeDirectory())
 
         addFile("KotlinApi.kt", "kotlinApi")
         addFile("JavaApi.java", "javaApi")
     }
 
     override fun tearDown() {
-        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        VirtualDirectoryImpl.disallowRootAccess(JetTestUtils.getHomeDirectory())
         super.tearDown()
     }
     

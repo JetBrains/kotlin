@@ -50,7 +50,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VirtualDirectoryImpl.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
         KotlinInternalMode.OBJECT$.setEnabled(true);
@@ -59,7 +59,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     @Override
     protected void tearDown() throws Exception {
         KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
-        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VirtualDirectoryImpl.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();

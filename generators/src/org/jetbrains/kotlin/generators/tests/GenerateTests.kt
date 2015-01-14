@@ -133,7 +133,6 @@ import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
-import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractDynamicTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractMultiModuleTest
 import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
@@ -665,9 +664,13 @@ fun main(args: Array<String>) {
             model("debugger/selectExpression")
         }
 
+        /*
+        No coverage in idea 13
+
         testClass(javaClass<AbstractKotlinCoverageOutputFilesTest>()) {
             model("coverage/outputFiles")
         }
+        */
     }
 
     testGroup("idea/tests", "compiler/testData") {

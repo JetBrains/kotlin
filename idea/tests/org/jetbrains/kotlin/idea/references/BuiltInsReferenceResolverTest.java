@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.references;
 
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ResolveTestCase;
@@ -36,12 +36,12 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        VirtualDirectoryImpl.allowRootAccess(JetTestUtils.getHomeDirectory());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
+        VirtualDirectoryImpl.disallowRootAccess(JetTestUtils.getHomeDirectory());
         super.tearDown();
     }
 

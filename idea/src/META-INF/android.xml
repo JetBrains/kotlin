@@ -1,7 +1,7 @@
 <idea-plugin>
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.jet.android.OutputParserInitializer</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.android.OutputParserInitializer</implementation-class>
         </component>
     </application-components>
     <extensions defaultExtensionNs="com.intellij">

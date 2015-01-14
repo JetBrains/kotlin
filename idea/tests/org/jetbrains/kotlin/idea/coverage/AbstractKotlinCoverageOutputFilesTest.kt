@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/*
+No coverage in Idea 13
+
 package org.jetbrains.kotlin.idea.coverage
 
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
@@ -62,3 +65,5 @@ private fun createEmptyFile(dir: VirtualFile, relativePath: String) {
         }
     }
 }
+
+*/

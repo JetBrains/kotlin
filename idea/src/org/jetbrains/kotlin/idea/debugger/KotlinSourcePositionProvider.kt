@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-package org.jetbrains.jet.plugin.debugger
+package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.SourcePositionProvider
 import com.intellij.debugger.ui.tree.NodeDescriptor

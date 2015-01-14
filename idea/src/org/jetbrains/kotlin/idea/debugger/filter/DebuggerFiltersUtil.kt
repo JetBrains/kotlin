@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.filter
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.ui.classFilter.ClassFilter
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
-import org.jetbrains.kotlin.idea.debugger.filter.setSteppingFilters
 
 private val KOTLIN_STDLIB_FILTER = "kotlin.*"
 

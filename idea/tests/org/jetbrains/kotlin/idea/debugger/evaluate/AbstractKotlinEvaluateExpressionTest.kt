@@ -248,8 +248,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val curIndent = " ".repeat(indent)
             when (descriptor) {
                 is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
-                is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label"
-                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
+                is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label\n")
