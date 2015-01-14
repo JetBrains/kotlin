@@ -60,7 +60,8 @@ public abstract class KotlinIntegrationTestBase {
     protected abstract File getTestDataDir();
 
     protected int runJava(String logName, String... arguments) throws Exception {
-        GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(getTestDataDir());
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        commandLine.setWorkDirectory(getTestDataDir());
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 

@@ -18,12 +18,20 @@ package org.jetbrains.kotlin.resolve.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList
-import com.intellij.openapi.util.CompositeModificationTracker
 import com.intellij.util.CachedValueImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.jet.lang.resolve.SimpleModificationTracker
+
+//NOTE: copied to support changes depending on IDEA 14 branch
+private class CompositeModificationTracker(val additionalTracker: ModificationTracker) : SimpleModificationTracker() {
+    override fun getModificationCount(): Long {
+        return super.getModificationCount() + additionalTracker.getModificationCount()
+    }
+}
 
 public class MutableDiagnosticsWithSuppression(
         private val bindingContext: BindingContext,

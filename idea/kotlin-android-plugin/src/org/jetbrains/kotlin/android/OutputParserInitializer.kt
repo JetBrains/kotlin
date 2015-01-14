@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android
+package org.jetbrains.kotlin.android
 
 import com.intellij.openapi.components.ProjectComponent
 import java.lang.reflect.Modifier
@@ -64,5 +64,5 @@ public class OutputParserInitializer : ProjectComponent {
     override fun disposeComponent() {
     }
 
-    override fun getComponentName() = "org.jetbrains.jet.android.OutputParserInitializer"
+    override fun getComponentName() = "org.jetbrains.kotlin.android.OutputParserInitializer"
 }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.jps.build;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.android.AndroidPackage;
+import org.jetbrains.kotlin.android.AndroidPackage;
 import org.jetbrains.jps.incremental.BuilderService;
 import org.jetbrains.jps.incremental.ModuleLevelBuilder;
 
