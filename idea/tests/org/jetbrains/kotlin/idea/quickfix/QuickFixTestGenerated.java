@@ -2417,6 +2417,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeParameterFromClassDelegationSpecifier.kt")
+                public void testParameterFromClassDelegationSpecifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeParameterFromClassDelegationSpecifier.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeParameterFromEnumEntryDelegationSpecifier.kt")
+                public void testParameterFromEnumEntryDelegationSpecifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeParameterFromEnumEntryDelegationSpecifier.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeParameterFromObjectDelegationSpecifier.kt")
+                public void testParameterFromObjectDelegationSpecifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeParameterFromObjectDelegationSpecifier.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeQualifiedInFun.kt")
                 public void testQualifiedInFun() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeQualifiedInFun.kt");
