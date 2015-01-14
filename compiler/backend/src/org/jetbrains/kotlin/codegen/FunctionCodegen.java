@@ -79,20 +79,26 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Ot
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class FunctionCodegen extends ParentCodegenAware {
+public class FunctionCodegen {
+    public final GenerationState state;
+    private final JetTypeMapper typeMapper;
+    private final BindingContext bindingContext;
     private final CodegenContext owner;
-
     private final ClassBuilder v;
+    private final MemberCodegen<?> memberCodegen;
 
     public FunctionCodegen(
             @NotNull CodegenContext owner,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
-            MemberCodegen<?> parentCodegen
+            @NotNull MemberCodegen<?> memberCodegen
     ) {
-        super(state, parentCodegen);
         this.owner = owner;
         this.v = v;
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
+        this.memberCodegen = memberCodegen;
     }
 
     public void gen(@NotNull JetNamedFunction function) {
@@ -166,8 +172,8 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         boolean staticInClassObject = AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor);
         if (staticInClassObject) {
-            MemberCodegen<?> codegen = getParentCodegen().getParentCodegen();
-            ((ImplementationBodyCodegen) codegen).addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
+            ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
+            parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
@@ -186,14 +192,14 @@ public class FunctionCodegen extends ParentCodegenAware {
         }
 
         if (!isNative) {
-            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
         else if (staticInClassObject) {
             // native platformStatic foo() in class object should delegate to the static native function moved to the outer class
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =
-                    typeMapper.mapSignature(getParentCodegen().getContext().accessibleFunctionDescriptor(staticFunctionDescriptor));
+                    typeMapper.mapSignature(memberCodegen.getContext().accessibleFunctionDescriptor(staticFunctionDescriptor));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
             generateDelegateToMethodBody(false, mv, jvmMethodSignature.getAsmMethod(), owningType.getInternalName());
         }
@@ -642,7 +648,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             @Nullable JetNamedFunction function
     ) {
         mv.visitCode();
-        generateDefaultImplBody(methodContext, signature, functionDescriptor, isStatic, mv, loadStrategy, function, getParentCodegen(), state);
+        generateDefaultImplBody(methodContext, signature, functionDescriptor, isStatic, mv, loadStrategy, function, memberCodegen, state);
         endVisit(mv, "default method", callableDescriptorToDeclaration(functionDescriptor));
     }
 

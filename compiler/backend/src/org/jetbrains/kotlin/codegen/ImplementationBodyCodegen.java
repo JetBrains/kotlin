@@ -190,7 +190,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isEnum) {
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (declaration instanceof JetEnumEntry) {
-                    if (enumEntryNeedSubclass(state.getBindingContext(), (JetEnumEntry) declaration)) {
+                    if (enumEntryNeedSubclass(bindingContext, (JetEnumEntry) declaration)) {
                         access &= ~ACC_FINAL;
                     }
                 }
@@ -1166,7 +1166,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (isClassObjectWithBackingFieldsInOuter(descriptor)) {
-            final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
+            final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             //generate OBJECT$
             parentCodegen.generateClassObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
@@ -1248,7 +1248,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
-                    JetType expressionType = state.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                    JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);
@@ -1599,7 +1599,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.aconst(enumConstant.getName());
         iv.iconst(ordinal);
 
-        if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
+        if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumConstant)) {
             JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
             if (!(specifier instanceof JetDelegatorToSuperCall)) {
                 throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
@@ -1626,7 +1626,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((JetDelegatorByExpressionSpecifier) specifier);
                 generateDelegateField(field);
                 JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                JetType delegateExpressionType = state.getBindingContext().get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+                JetType delegateExpressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
                 generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }
         }

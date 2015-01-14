@@ -76,7 +76,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             @NotNull ClassContext context,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @NotNull FunctionGenerationStrategy strategy,
-            @Nullable MemberCodegen<?> parentCodegen,
+            @NotNull MemberCodegen<?> parentCodegen,
             @NotNull ClassBuilder classBuilder,
             @NotNull Type asmType
     ) {

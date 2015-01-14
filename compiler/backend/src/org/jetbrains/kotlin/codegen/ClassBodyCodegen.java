@@ -40,16 +40,16 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
     protected final ClassDescriptor descriptor;
 
     protected ClassBodyCodegen(
-            @NotNull JetClassOrObject aClass,
+            @NotNull JetClassOrObject myClass,
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
             @Nullable MemberCodegen<?> parentCodegen
     ) {
-        super(state, parentCodegen, context, aClass, v);
-        myClass = aClass;
-        kind = context.getContextKind();
-        descriptor = bindingContext.get(BindingContext.CLASS, aClass);
+        super(state, parentCodegen, context, myClass, v);
+        this.myClass = myClass;
+        this.kind = context.getContextKind();
+        this.descriptor = bindingContext.get(BindingContext.CLASS, myClass);
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             genFunctionOrProperty(declaration);
         }
         else if (declaration instanceof JetClassOrObject) {
-            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(state.getBindingContext(), (JetEnumEntry) declaration)) {
+            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(bindingContext, (JetEnumEntry) declaration)) {
                 return;
             }
 
@@ -108,7 +108,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
         boolean isAnnotation = origin instanceof JetClass && ((JetClass) origin).isAnnotation();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVarNode()) {
-                PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
+                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
                         propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);

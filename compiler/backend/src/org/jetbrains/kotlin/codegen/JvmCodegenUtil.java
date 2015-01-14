@@ -194,14 +194,6 @@ public class JvmCodegenUtil {
         return file != null && CodeFragmentUtilPackage.getSuppressDiagnosticsInDebugMode(file);
     }
 
-    @NotNull
-    public static ImplementationBodyCodegen getParentBodyCodegen(@Nullable MemberCodegen<?> classBodyCodegen) {
-        assert classBodyCodegen != null && classBodyCodegen.getParentCodegen() instanceof ImplementationBodyCodegen
-                : "Class object should have appropriate parent BodyCodegen";
-
-        return (ImplementationBodyCodegen) classBodyCodegen.getParentCodegen();
-    }
-
     @Nullable
     public static ClassDescriptor getDispatchReceiverParameterForConstructorCall(
             @NotNull ConstructorDescriptor descriptor,
