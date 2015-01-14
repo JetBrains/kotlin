@@ -40,7 +40,7 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected open fun getPackage(): String = "kotlin"
 
     final fun generate() {
-        out.println(File("generators/injector-generator/copyright.txt").readText())
+        out.println(File("license/LICENSE.txt").readText())
         // Don't include generator class name in the message: these are built-in sources,
         // and we don't want to scare users with any internal information about our project
         out.println("// Auto-generated file. DO NOT EDIT!")

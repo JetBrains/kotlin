@@ -1,5 +1,5 @@
 // MOVE: up
-// MOVER_CLASS: org.jetbrains.jet.plugin.codeInsight.upDownMover.JetExpressionMover
+// MOVER_CLASS: org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetExpressionMover
 // IS_APPLICABLE: false
 class A {
     fun foo<T,

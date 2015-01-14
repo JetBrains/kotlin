@@ -28,18 +28,20 @@ import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.parsing.JetParser;
-import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl;
 
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
-    public static final int STUB_VERSION = 34;
+    public static final int STUB_VERSION = 35;
+
+    private static final String NAME = "kotlin.FILE";
 
     public JetFileElementType() {
-        super("jet.FILE", JetLanguage.INSTANCE);
+        super(NAME, JetLanguage.INSTANCE);
     }
 
     protected JetFileElementType(@NonNls String debugName) {
@@ -59,7 +61,7 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
     @NotNull
     @Override
     public String getExternalId() {
-        return "jet.FILE";
+        return NAME;
     }
 
     @Override

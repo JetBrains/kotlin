@@ -664,10 +664,10 @@ public abstract class StackValue {
             left.put(this.operandType, v);
             right.put(this.operandType, v);
             int opcode;
-            if (opToken == JetTokens.EQEQ) {
+            if (opToken == JetTokens.EQEQ || opToken == JetTokens.EQEQEQ) {
                 opcode = jumpIfFalse ? IFNE : IFEQ;
             }
-            else if (opToken == JetTokens.EXCLEQ) {
+            else if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
                 opcode = jumpIfFalse ? IFEQ : IFNE;
             }
             else if (opToken == JetTokens.GT) {

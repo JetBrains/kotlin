@@ -2,7 +2,7 @@
   <configuration default="false" name="All Tests" type="JUnit" factoryName="JUnit">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="org.jetbrains.jet.*" />
+        <option name="PATTERN" value="org.jetbrains.kotlin.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

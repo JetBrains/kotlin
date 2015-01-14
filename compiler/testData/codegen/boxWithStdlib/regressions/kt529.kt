@@ -4,7 +4,7 @@ import java.io.*
 import java.util.*
 
 fun box() : String {
-    val input = StringReader("/Users/abreslav/work/jet/docs/luhnybin/src/test")
+    val input = StringReader("/aaa/bbb/ccc/ddd")
 
     val luhny = Luhny()
     input.forEachChar {
@@ -81,7 +81,7 @@ class Luhny() {
             kotlin.io.print('X')
             toBeMasked--
         } else {
-            kotlin.io.print(c)
+            // kotlin.io.print(c)
         }
     }
 }

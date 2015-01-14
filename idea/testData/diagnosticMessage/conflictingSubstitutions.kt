@@ -1,6 +1,6 @@
 // !DIAGNOSTICS_NUMBER: 2
 // !DIAGNOSTICS: TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS
-// see org.jetbrains.jet.plugin.highlighter.DiagnosticMessageTest
+// see DiagnosticMessageTest
 
 import java.io.Closeable
 

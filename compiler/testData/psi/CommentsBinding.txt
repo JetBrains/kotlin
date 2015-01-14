@@ -1,5 +1,5 @@
 JetFile: CommentsBinding.kt
-  PsiComment(BLOCK_COMMENT)('/*\n * Copyright 2010-2014 JetBrains s.r.o.\n */')
+  PsiComment(BLOCK_COMMENT)('/*\n * Copyright JetBrains s.r.o.\n */')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')

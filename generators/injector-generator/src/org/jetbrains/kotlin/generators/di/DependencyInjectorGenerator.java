@@ -130,9 +130,7 @@ public class DependencyInjectorGenerator {
     }
 
     private static void generatePreamble(String injectorPackageName, Printer p) throws IOException {
-        String copyright = "generators/injector-generator/copyright.txt";
-        p.println(FileUtil.loadFile(new File(copyright)));
-
+        p.println(FileUtil.loadFile(new File("license/LICENSE.txt")));
         p.println("package " + injectorPackageName + ";");
         p.println();
     }

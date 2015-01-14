@@ -1,6 +1,6 @@
 @echo off
 
-rem Copyright 2010-2014 JetBrains s.r.o.
+rem Copyright 2010-2015 JetBrains s.r.o.
 rem
 rem Licensed under the Apache License, Version 2.0 (the "License");
 rem you may not use this file except in compliance with the License.

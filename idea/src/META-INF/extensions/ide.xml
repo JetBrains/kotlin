@@ -1,14 +1,14 @@
 <idea-plugin>
     <extensionPoints>
         <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
-        <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
+        <extensionPoint name="projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator"/>
 
         <!-- diagnosticSuppressor decelerated in common.xml -->
-        <diagnosticSuppressor implementation="org.jetbrains.jet.plugin.debugger.DiagnosticSuppressorForDebugger"/>
+        <diagnosticSuppressor implementation="org.jetbrains.kotlin.idea.debugger.DiagnosticSuppressorForDebugger"/>
     </extensions>
 </idea-plugin>

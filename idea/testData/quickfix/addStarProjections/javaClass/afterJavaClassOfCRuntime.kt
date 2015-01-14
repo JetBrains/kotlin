@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.AddStarProjectionsFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddStarProjectionsFix" "false"
 class C
 
 fun test() {

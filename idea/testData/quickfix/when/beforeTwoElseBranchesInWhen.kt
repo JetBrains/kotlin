@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.MoveWhenElseBranchFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.MoveWhenElseBranchFix" "false"
 // ERROR: 'else' entry must be the last one in a when-expression
 // ERROR: 'else' entry must be the last one in a when-expression
 // WARNING: Unreachable code

@@ -2,9 +2,9 @@
 // PARAM_DESCRIPTOR: internal fun <T> kotlin.Array<T>.test(): kotlin.Unit defined in root package
 // SIBLING:
 fun <T> Array<T>.test() {
-    unit()
+    __dummyTestFun__()
 }
 
-private fun <T> Array<T>.unit() {
+private fun <T> Array<T>.__dummyTestFun__() {
     this.isEmpty()
 }

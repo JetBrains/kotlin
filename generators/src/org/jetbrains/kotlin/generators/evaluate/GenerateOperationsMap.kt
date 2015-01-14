@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(FileUtil.loadFile(File("generators/injector-generator/copyright.txt")))
+    p.println(File("license/LICENSE.txt").readText())
     p.println("package org.jetbrains.kotlin.resolve.constants.evaluate")
     p.println()
     p.println("import java.math.BigInteger")

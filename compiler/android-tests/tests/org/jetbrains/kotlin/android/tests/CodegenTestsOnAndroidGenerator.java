@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
-import org.jetbrains.kotlin.plugin.JetFileType;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -92,7 +92,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
 
-        p.print(FileUtil.loadFile(new File("generators/injector-generator/copyright.txt")));
+        p.print(FileUtil.loadFile(new File("license/LICENSE.txt")));
         p.println("package " + testClassPackage + ";");
         p.println();
         p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";");

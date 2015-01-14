@@ -26,8 +26,8 @@ import com.intellij.openapi.util.Computable
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.test.JetTestCaseBuilder
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
 
 public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {

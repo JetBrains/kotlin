@@ -18,7 +18,7 @@ package org.jetbrains.kotlin;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.kotlin.plugin.JetLanguage;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 

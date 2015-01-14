@@ -20,10 +20,10 @@ import com.intellij.lang.Language;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.plugin.JetLanguage;
 
 public class KDocImpl extends LazyParseablePsiElement implements KDoc {
     public KDocImpl(CharSequence buffer) {

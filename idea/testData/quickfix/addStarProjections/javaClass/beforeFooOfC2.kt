@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.AddStarProjectionsFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AddStarProjectionsFix" "false"
 // ERROR: Type argument expected
 class C2<T>
 

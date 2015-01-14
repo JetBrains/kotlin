@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.parsing.JetParser;
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileElementType;
 
 public class JetExpressionCodeFragmentType extends JetFileElementType {
-    private static final String NAME = "jet.EXPRESSION_CODE_FRAGMENT";
+    private static final String NAME = "kotlin.EXPRESSION_CODE_FRAGMENT";
 
     public JetExpressionCodeFragmentType() {
         super(NAME);
@@ -47,4 +47,3 @@ public class JetExpressionCodeFragmentType extends JetFileElementType {
         return JetParser.parseExpressionCodeFragment(builder).getFirstChildNode();
     }
 }
-

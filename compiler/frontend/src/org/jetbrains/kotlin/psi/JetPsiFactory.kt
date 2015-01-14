@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.lexer.JetKeywordToken
-import org.jetbrains.kotlin.plugin.JetFileType
+import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
 import com.intellij.openapi.util.Key
 import java.io.PrintWriter

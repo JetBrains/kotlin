@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.WhenToIfIntention
+org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.WhenToIfIntention

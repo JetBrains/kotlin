@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.junit.Assert;
 
@@ -45,7 +44,7 @@ public class CompileEnvironmentTest extends TestCase {
             File resultJar = new File(tempDir, "result.jar");
             ExitCode rv = new K2JVMCompiler().exec(
                     System.out,
-                    "-module", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.ktm",
+                    "-module", JetTestUtils.getTestDataPathBase() + "/compiler/smoke/Smoke.ktm",
                     "-d", resultJar.getAbsolutePath(),
                     "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath(),
@@ -82,7 +81,7 @@ public class CompileEnvironmentTest extends TestCase {
             File jdkAnnotations = JetTestUtils.getJdkAnnotationsJar();
             ExitCode exitCode = new K2JVMCompiler().exec(
                     System.out,
-                    JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
+                    JetTestUtils.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
                     "-d", out.getAbsolutePath(),
                     "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath(),

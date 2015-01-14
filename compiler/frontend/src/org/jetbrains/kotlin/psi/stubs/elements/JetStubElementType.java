@@ -27,7 +27,7 @@ import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.plugin.JetLanguage;
+import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetElementImplStub;
 import org.jetbrains.kotlin.psi.JetFunction;
@@ -85,7 +85,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @NotNull
     @Override
     public String getExternalId() {
-        return "jet." + toString();
+        return "kotlin." + toString();
     }
 
     @Override

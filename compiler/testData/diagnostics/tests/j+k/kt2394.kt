@@ -1,4 +1,4 @@
-//KT-2394 java.lang.Iterable<T> should be visible as jet.Iterable<out T>
+//KT-2394 java.lang.Iterable<T> should be visible as kotlin.Iterable<out T>
 package d
 
 fun foo(iterable: Iterable<Int>, iterator: Iterator<Int>, comparable: Comparable<Any>) {

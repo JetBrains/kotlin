@@ -32,9 +32,9 @@ class C: AImpl(), B {
 fun foo(c: C) {
     c.doA()
     c.doB()
-    unit(c)
+    __dummyTestFun__(c)
 }
 
-private fun unit(c: C) {
+private fun __dummyTestFun__(c: C) {
     c.doC()
 }

@@ -4,5 +4,5 @@ class A {
 
 fun box(): String {
     val a = A()
-    return a.f() // does not work: (in runtime) ClassCastException: A cannot be cast to jet.Function0
+    return a.f() // does not work: (in runtime) ClassCastException: A cannot be cast to kotlin.Function0
 }

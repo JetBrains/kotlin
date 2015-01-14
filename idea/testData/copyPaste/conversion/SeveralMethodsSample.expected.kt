@@ -21,7 +21,7 @@ class A {
     }
 
     protected fun getDimensionServiceKey(): String {
-        return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog"
+        return "#org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinOverridingDialog"
     }
 
     public fun getSelected(): ArrayList<UsageInfo> {

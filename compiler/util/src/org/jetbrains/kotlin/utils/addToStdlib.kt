@@ -16,20 +16,8 @@
 
 package org.jetbrains.kotlin.utils.addToStdlib
 
-import java.util.HashMap
 import java.util.Collections
 import java.util.NoSuchElementException
-
-deprecated("Replace with filterKeys when bootstrapped")
-public fun <K, V> Map<K, V>.filterKeys_tmp(predicate: (K)->Boolean): Map<K, V> {
-    val result = HashMap<K, V>()
-    for ((k, v) in this) {
-        if (predicate(k)) {
-            result[k] = v
-        }
-    }
-    return result
-}
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
 

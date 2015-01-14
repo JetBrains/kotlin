@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.ConvertToStringTemplateIntention
+org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention

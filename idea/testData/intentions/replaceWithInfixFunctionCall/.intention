@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.TestableReplaceWithInfixFunctionCallIntention
+org.jetbrains.kotlin.idea.intentions.TestableReplaceWithInfixFunctionCallIntention

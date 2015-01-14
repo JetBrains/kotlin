@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.plugin.JetFileType;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 

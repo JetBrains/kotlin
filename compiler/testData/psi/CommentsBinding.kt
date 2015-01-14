@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright JetBrains s.r.o.
  */
 package foo.bar // package directive
 

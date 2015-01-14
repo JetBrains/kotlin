@@ -4,7 +4,7 @@ import java.io.*
 import java.util.*
 
 fun box() : String {
-    val input = StringReader("/Users/abreslav/work/jet/docs/luhnybin/src/test")
+    val input = StringReader("/aaa/bbb/ccc/ddd")
 
     val luhny = Luhny()
     input.forEachChar {
@@ -79,7 +79,7 @@ class Luhny() {
             toBeMasked--
         }
         else {
-            print(c)
+            // print(c)
         }
     }
 }

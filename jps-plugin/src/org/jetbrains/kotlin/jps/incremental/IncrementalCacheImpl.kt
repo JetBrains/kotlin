@@ -42,63 +42,59 @@ import java.io.IOException
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.jps.incremental.storage.BuildDataManager
+import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
-public class CacheFormatVersion(val baseDir: File) {
+private val CACHE_DIRECTORY_NAME = "kotlin"
+
+
+class CacheFormatVersion(targetDataRoot: File) {
     class object {
         // Change this when incremental cache format changes
         private val INCREMENTAL_CACHE_OWN_VERSION = 1
-        val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
-        val FORMAT_VERSION_TXT: String = "format-version.txt"
+        private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
+        val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
 
-    private fun getFile(): File {
-        return File(baseDir, "format-version.txt")
-    }
+    private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
     public fun isIncompatible(): Boolean {
-        val version = load()
-        return version != -1 && version != CACHE_FORMAT_VERSION
-    }
+        if (!file.exists()) return false
 
-    private fun load(): Int {
-        val versionFile = getFile()
-        if (!versionFile.exists()) return -1
-
-        return versionFile.readText().toInt()
+        return file.readText().toInt() != CACHE_FORMAT_VERSION
     }
 
     fun saveIfNeeded() {
-        val versionFile = getFile()
-        if (!versionFile.exists()) {
-            versionFile.writeText(CACHE_FORMAT_VERSION.toString())
+        if (!file.exists()) {
+            file.writeText(CACHE_FORMAT_VERSION.toString())
         }
     }
 
     fun clean() {
-        getFile().delete()
+        file.delete()
     }
 }
 
-public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalCache {
+public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, IncrementalCache {
     class object {
-        val DIRECTORY_NAME = "kotlin"
-
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
     }
 
+    private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
     private val protoMap =  ProtoMap()
     private val constantsMap =  ConstantsMap()
     private val inlineFunctionsMap =  InlineFunctionsMap()
     private val packagePartMap =  PackagePartMap()
 
-    private val maps =  listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
+    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
-    private val cacheFormatVersion = CacheFormatVersion(baseDir)
+    private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
@@ -510,11 +506,15 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
     }
 }
 
-public object IncrementalCacheStorageProvider : StorageProvider<IncrementalCacheImpl>() {
-    override fun createStorage(targetDataDir: File?): IncrementalCacheImpl {
-        return IncrementalCacheImpl(File(targetDataDir, IncrementalCacheImpl.DIRECTORY_NAME))
+private val storageProvider = object: StorageProvider<IncrementalCacheImpl>() {
+    override fun createStorage(targetDataDir: File): IncrementalCacheImpl {
+        return IncrementalCacheImpl(targetDataDir)
     }
 }
+
+public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
+
+public fun BuildDataManager.getKotlinCache(target: BuildTarget<*>): IncrementalCacheImpl = getStorage(target, storageProvider)
 
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!
@@ -530,8 +530,8 @@ private fun ByteArray.md5(): Long {
 }
 
 private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
-    override fun save(out: DataOutput, value: ByteArray?) {
-        out.writeInt(value!!.size)
+    override fun save(out: DataOutput, value: ByteArray) {
+        out.writeInt(value.size())
         out.write(value)
     }
 

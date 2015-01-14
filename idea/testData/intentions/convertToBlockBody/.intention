@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction
+org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyAction

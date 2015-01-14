@@ -2,7 +2,7 @@
 rem based on scalac.bat from the Scala distribution
 rem ##########################################################################
 rem # Copyright 2002-2011, LAMP/EPFL
-rem # Copyright 2011-2014, JetBrains
+rem # Copyright 2011-2015, JetBrains
 rem #
 rem # This is free software; see the distribution for copying conditions.
 rem # There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A

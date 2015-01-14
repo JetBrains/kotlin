@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
+import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.JetStdJSProjectDescriptor;
 
 public abstract class AbstractJetJsCheckerTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull

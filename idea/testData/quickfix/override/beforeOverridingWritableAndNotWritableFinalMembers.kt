@@ -1,4 +1,4 @@
-// "class org.jetbrains.jet.plugin.quickfix.MakeOverriddenMemberOpenFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.MakeOverriddenMemberOpenFix" "false"
 // ERROR: This type is final, so it cannot be inherited from
 // ERROR: Cannot access '<init>': it is 'private' in 'E'
 // ERROR: 'ordinal' in 'E' is final and cannot be overridden

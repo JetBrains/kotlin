@@ -1,4 +1,4 @@
-// java.lang.ClassNotFoundException: jet.Nothing
+// java.lang.ClassNotFoundException: kotlin.Nothing
 
 var currentAccountId: Int? by SessionAccessor()
 class SessionAccessor<T> {

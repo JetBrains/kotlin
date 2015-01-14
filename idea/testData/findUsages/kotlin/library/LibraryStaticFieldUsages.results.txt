@@ -1,0 +1,1 @@
+Receiver (6: 12) System.out.println()

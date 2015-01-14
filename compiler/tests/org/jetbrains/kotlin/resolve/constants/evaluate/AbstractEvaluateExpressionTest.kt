@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
-import org.jetbrains.jet.resolve.annotation.AbstractAnnotationDescriptorResolveTest
+import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationDescriptorResolveTest
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil

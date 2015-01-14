@@ -191,7 +191,7 @@ public class JvmCodegenUtil {
 
     private static boolean isDebuggerContext(@NotNull MethodContext context) {
         JetFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilPackage.getSkipVisibilityCheck(file);
+        return file != null && CodeFragmentUtilPackage.getSuppressDiagnosticsInDebugMode(file);
     }
 
     @NotNull

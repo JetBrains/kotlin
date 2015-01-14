@@ -3,10 +3,10 @@
 // SIBLING:
 fun main(args: Array<String>) {
     val (a, b) = Data(1, 2)
-    unit(a)
+    __dummyTestFun__(a)
 }
 
-private fun unit(a: Int) {
+private fun __dummyTestFun__(a: Int) {
     a
 }
 

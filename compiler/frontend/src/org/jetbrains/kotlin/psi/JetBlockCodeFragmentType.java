@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.parsing.JetParser;
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileElementType;
 
 public class JetBlockCodeFragmentType extends JetFileElementType {
-    private static final String NAME = "jet.BLOCK_CODE_FRAGMENT";
+    private static final String NAME = "kotlin.BLOCK_CODE_FRAGMENT";
 
     public JetBlockCodeFragmentType() {
         super(NAME);

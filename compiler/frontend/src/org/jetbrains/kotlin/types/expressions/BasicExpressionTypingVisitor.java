@@ -205,7 +205,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType targetType,
             ExpressionTypingContext context
     ) {
-        if (actualType == null || noExpectedType(targetType)) return;
+        if (actualType == null || noExpectedType(targetType) || targetType.isError()) return;
 
         if (TypesPackage.isDynamic(targetType)) {
             JetTypeReference right = expression.getRight();

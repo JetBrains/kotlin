@@ -6,11 +6,11 @@ fun foo() = 1
 // SIBLING:
 class MyClass {
     fun test() {
-        unit()
+        __dummyTestFun__()
     }
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     foo()
     a
 }

@@ -31,10 +31,10 @@ class C: AImpl(), B {
 // SIBLING:
 fun foo(c: C) {
     c.doA()
-    unit(c)
+    __dummyTestFun__(c)
     c.doC()
 }
 
-private fun unit(c: C) {
+private fun __dummyTestFun__(c: C) {
     c.doB()
 }

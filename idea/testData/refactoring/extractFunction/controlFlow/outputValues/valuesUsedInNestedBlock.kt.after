@@ -2,10 +2,10 @@ class T(val n: Int)
 
 // SIBLING:
 fun foo() {
-    unit()
+    __dummyTestFun__()
 }
 
-private fun unit() {
+private fun __dummyTestFun__() {
     if (true) {
         val k = 1
         T().n + k + 1

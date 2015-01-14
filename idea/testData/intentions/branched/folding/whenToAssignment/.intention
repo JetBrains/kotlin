@@ -1,1 +1,1 @@
-org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldWhenToAssignmentIntention
+org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldWhenToAssignmentIntention

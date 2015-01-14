@@ -122,7 +122,7 @@ fun ModuleBuilder.defineModules() {
 
   // Standard extensions are registered, adding custom ones
   source mask "*.jav" language java // Non-standard extension for Java
-  source mask "*.jet" language kotlin
+  source mask "*.kt" language kotlin
   resource mask "*.bundle"
 
   module ("org.example.mymodule") {

@@ -11,10 +11,10 @@ class X<T> {
 // SIBLING:
 fun foo(s: String?, x: X<Any?>) {
     when {
-        s != null -> unit(s, x)
+        s != null -> __dummyTestFun__(s, x)
     }
 }
 
-private fun unit(s: String?, x: X<Any?>) {
+private fun __dummyTestFun__(s: String?, x: X<Any?>) {
     x.add(s)
 }

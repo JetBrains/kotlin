@@ -13,9 +13,9 @@ fun foo(a: A) {
 // SIBLING:
 fun test() {
     val x = object: A() { }
-    unit(x)
+    __dummyTestFun__(x)
 }
 
-private fun unit(x: A) {
+private fun __dummyTestFun__(x: A) {
     foo(x)
 }

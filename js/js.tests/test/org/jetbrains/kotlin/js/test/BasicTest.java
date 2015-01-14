@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.js.facade.Status;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.plugin.JetFileType;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;

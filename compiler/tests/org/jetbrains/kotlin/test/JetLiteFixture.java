@@ -48,7 +48,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     }
 
     protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
+        return JetTestUtils.getTestDataPathBase();
     }
 
     @Override

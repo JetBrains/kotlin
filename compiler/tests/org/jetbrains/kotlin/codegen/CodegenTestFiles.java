@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.test.JetTestCaseBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.Variance;
@@ -85,7 +84,7 @@ public class CodegenTestFiles {
         ArrayList<JetFile> files = new ArrayList<JetFile>();
         for (String name : names) {
             try {
-                String content = JetTestUtils.doLoadFile(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/", name);
+                String content = JetTestUtils.doLoadFile(JetTestUtils.getTestDataPathBase() + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 //name = name.substring(i+1);
                 JetFile file = JetTestUtils.createFile(name, content, project);

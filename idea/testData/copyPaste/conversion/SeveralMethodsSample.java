@@ -25,7 +25,7 @@ class A {
 
     @Override
     protected String getDimensionServiceKey() {
-        return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog";
+        return "#org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinOverridingDialog";
     }
 
     public ArrayList<UsageInfo> getSelected() {

@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -50,7 +53,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase() + "/lineNumber";
+        return JetTestUtils.getTestDataPathBase() + "/lineNumber";
     }
 
     @NotNull
