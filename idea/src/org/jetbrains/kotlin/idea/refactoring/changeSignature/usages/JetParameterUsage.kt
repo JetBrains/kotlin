@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class JetParameterUsage extends JetUsageInfo<JetSimpleNameExpression> {
-    private final JetParameterInfo parameterInfo;
-    private final JetFunctionDefinitionUsage containingFunction;
-
-    public JetParameterUsage(
-            @NotNull JetSimpleNameExpression element,
-            @NotNull JetParameterInfo parameterInfo,
-            @NotNull JetFunctionDefinitionUsage containingFunction
-    ) {
-        super(element);
-        this.parameterInfo = parameterInfo;
-        this.containingFunction = containingFunction;
-    }
-
-    @Override
-    public boolean processUsage(JetChangeInfo changeInfo, JetSimpleNameExpression element) {
-        String newName = parameterInfo.getInheritedName(containingFunction);
-        element.replace(JetPsiFactory(element.getProject()).createSimpleName(newName));
-        return false;
+public class JetParameterUsage(
+        element: JetSimpleNameExpression,
+        private val parameterInfo: JetParameterInfo,
+        private val containingFunction: JetFunctionDefinitionUsage<*>
+) : JetUsageInfo<JetSimpleNameExpression>(element) {
+    override fun processUsage(changeInfo: JetChangeInfo, element: JetSimpleNameExpression): Boolean {
+        val newName = parameterInfo.getInheritedName(containingFunction)
+        element.replace(JetPsiFactory(element.getProject()).createSimpleName(newName))
+        return false
     }
 }

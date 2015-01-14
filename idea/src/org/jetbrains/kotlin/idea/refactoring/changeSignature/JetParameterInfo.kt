@@ -73,7 +73,7 @@ public class JetParameterInfo(
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
     }
 
-    public fun getInheritedName(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+    public fun getInheritedName(inheritedFunction: JetFunctionDefinitionUsage<*>): String {
         if (!inheritedFunction.isInherited()) return name
 
         val baseFunction = inheritedFunction.getBaseFunction()
