@@ -170,12 +170,12 @@ public class ImportsResolver {
     public static void reportUselessImport(
         @NotNull JetImportDirective importDirective,
         @NotNull JetScope fileScope,
-        @Nullable Collection<? extends DeclarationDescriptor> resolvedDirectives,
+        @Nullable Collection<? extends DeclarationDescriptor> resolvedTo,
         @NotNull BindingTrace trace
     ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || resolvedDirectives == null) {
+        if (importedReference == null || resolvedTo == null) {
             return;
         }
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
@@ -184,18 +184,18 @@ public class ImportsResolver {
         }
 
         boolean uselessHiddenImport = true;
-        for (DeclarationDescriptor wasResolved : resolvedDirectives) {
+        for (DeclarationDescriptor target : resolvedTo) {
             DeclarationDescriptor isResolved = null;
-            if (wasResolved instanceof ClassDescriptor) {
+            if (target instanceof ClassDescriptor) {
                 isResolved = fileScope.getClassifier(aliasName);
             }
-            else if (wasResolved instanceof VariableDescriptor) {
+            else if (target instanceof VariableDescriptor) {
                 isResolved = fileScope.getLocalVariable(aliasName);
             }
-            else if (wasResolved instanceof PackageViewDescriptor) {
+            else if (target instanceof PackageViewDescriptor) {
                 isResolved = fileScope.getPackage(aliasName);
             }
-            if (isResolved == null || isResolved.equals(wasResolved)) {
+            if (isResolved == null || isResolved.equals(target)) {
                 uselessHiddenImport = false;
             }
         }
