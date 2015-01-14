@@ -14,147 +14,104 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Pair;
-import kotlin.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
-import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
+import com.google.common.collect.Lists
+import com.intellij.openapi.util.Pair
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.resolve.scopes.FilteringScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.WritableScope
 
-import java.util.Collection;
-import java.util.List;
+public trait Importer {
+    public fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap)
 
-public interface Importer {
-    void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap);
+    public fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name)
 
-    void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName);
+    public open class StandardImporter(private val fileScope: WritableScope) : Importer {
 
-    Importer DO_NOTHING = new Importer() {
-        @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+            importAllUnderDeclaration(descriptor, platformToKotlinClassMap)
         }
 
-        @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-        }
-    };
-
-    class StandardImporter implements Importer {
-        private final WritableScope fileScope;
-
-        public StandardImporter(WritableScope fileScope) {
-            this.fileScope = fileScope;
+        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
+            importDeclarationAlias(descriptor, aliasName)
         }
 
-        @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            importAllUnderDeclaration(descriptor, platformToKotlinClassMap);
-        }
-
-        @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-            importDeclarationAlias(descriptor, aliasName);
-        }
-
-        protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-            if (descriptor instanceof ClassifierDescriptor) {
-                fileScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
+        protected fun importDeclarationAlias(descriptor: DeclarationDescriptor, aliasName: Name) {
+            if (descriptor is ClassifierDescriptor) {
+                fileScope.importClassifierAlias(aliasName, descriptor)
             }
-            else if (descriptor instanceof PackageViewDescriptor) {
-                fileScope.importPackageAlias(aliasName, (PackageViewDescriptor) descriptor);
+            else if (descriptor is PackageViewDescriptor) {
+                fileScope.importPackageAlias(aliasName, descriptor)
             }
-            else if (descriptor instanceof FunctionDescriptor) {
-                fileScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
+            else if (descriptor is FunctionDescriptor) {
+                fileScope.importFunctionAlias(aliasName, descriptor)
             }
-            else if (descriptor instanceof VariableDescriptor) {
-                fileScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
+            else if (descriptor is VariableDescriptor) {
+                fileScope.importVariableAlias(aliasName, descriptor)
             }
         }
 
-        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            if (descriptor instanceof PackageViewDescriptor) {
-                NoSubpackagesInPackageScope scope = new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor);
-                fileScope.importScope(createFilteringScope(scope, (PackageViewDescriptor) descriptor, platformToKotlinClassMap));
+        protected fun importAllUnderDeclaration(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+            if (descriptor is PackageViewDescriptor) {
+                val scope = NoSubpackagesInPackageScope(descriptor)
+                fileScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap))
             }
-            else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                fileScope.importScope(classDescriptor.getStaticScope());
-                fileScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
-                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+            else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
+                fileScope.importScope(descriptor.getStaticScope())
+                fileScope.importScope(descriptor.getUnsubstitutedInnerClassesScope())
+                val classObjectDescriptor = descriptor.getClassObjectDescriptor()
                 if (classObjectDescriptor != null) {
-                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
+                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
                 }
             }
         }
 
-        @NotNull
-        private static JetScope createFilteringScope(
-                @NotNull JetScope scope,
-                @NotNull PackageViewDescriptor descriptor,
-                @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
-        ) {
-            final Collection<ClassDescriptor> kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor);
-            if (kotlinAnalogsForClassesInside.isEmpty()) return scope;
-            return new FilteringScope(scope, new Function1<DeclarationDescriptor, Boolean>() {
-                @Override
-                public Boolean invoke(DeclarationDescriptor descriptor) {
-                    for (ClassDescriptor kotlinAnalog : kotlinAnalogsForClassesInside) {
-                        if (kotlinAnalog.getName().equals(descriptor.getName())) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            });
+        private fun createFilteringScope(scope: JetScope, descriptor: PackageViewDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap): JetScope {
+            val kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor)
+            if (kotlinAnalogsForClassesInside.isEmpty()) return scope
+            return FilteringScope(scope) { descriptor -> !kotlinAnalogsForClassesInside.any { it.getName() == descriptor.getName() } }
         }
     }
 
-    class DelayedImporter extends StandardImporter {
-        private interface DelayedImportEntry {}
-        private static class AllUnderImportEntry extends Pair<DeclarationDescriptor, PlatformToKotlinClassMap> implements DelayedImportEntry {
-            public AllUnderImportEntry(@NotNull DeclarationDescriptor first, @Nullable PlatformToKotlinClassMap second) {
-                super(first, second);
-            }
-        }
-        private static class AliasImportEntry extends Pair<DeclarationDescriptor, Name> implements DelayedImportEntry {
-            public AliasImportEntry(DeclarationDescriptor first, Name second) {
-                super(first, second);
-            }
+    public class DelayedImporter(fileScope: WritableScope) : StandardImporter(fileScope) {
+        private trait DelayedImportEntry
+        private class AllUnderImportEntry(first: DeclarationDescriptor, second: PlatformToKotlinClassMap?) : Pair<DeclarationDescriptor, PlatformToKotlinClassMap>(first, second), DelayedImportEntry
+        private class AliasImportEntry(first: DeclarationDescriptor, second: Name) : Pair<DeclarationDescriptor, Name>(first, second), DelayedImportEntry
+
+        private val imports = Lists.newArrayList<DelayedImportEntry>()
+
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+            imports.add(AllUnderImportEntry(descriptor, platformToKotlinClassMap))
         }
 
-        private final List<DelayedImportEntry> imports = Lists.newArrayList();
-
-        public DelayedImporter(@NotNull WritableScope fileScope) {
-            super(fileScope);
+        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
+            imports.add(AliasImportEntry(descriptor, aliasName))
         }
 
-        @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            imports.add(new AllUnderImportEntry(descriptor, platformToKotlinClassMap));
-        }
-
-        @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-            imports.add(new AliasImportEntry(descriptor, aliasName));
-        }
-
-        public void processImports() {
-            for (DelayedImportEntry anImport : imports) {
-                if (anImport instanceof AllUnderImportEntry) {
-                    AllUnderImportEntry allUnderImportEntry = (AllUnderImportEntry) anImport;
-                    importAllUnderDeclaration(allUnderImportEntry.getFirst(), allUnderImportEntry.getSecond());
+        public fun processImports() {
+            for (anImport in imports) {
+                if (anImport is AllUnderImportEntry) {
+                    val allUnderImportEntry = anImport as AllUnderImportEntry
+                    importAllUnderDeclaration(allUnderImportEntry.getFirst(), allUnderImportEntry.getSecond())
                 }
                 else {
-                    AliasImportEntry aliasImportEntry = (AliasImportEntry) anImport;
-                    importDeclarationAlias(aliasImportEntry.getFirst(), aliasImportEntry.getSecond());
+                    val aliasImportEntry = anImport as AliasImportEntry
+                    importDeclarationAlias(aliasImportEntry.getFirst(), aliasImportEntry.getSecond())
                 }
+            }
+        }
+    }
+
+    class object {
+        public val DO_NOTHING: Importer = object : Importer {
+            override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+            }
+
+            override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
             }
         }
     }
