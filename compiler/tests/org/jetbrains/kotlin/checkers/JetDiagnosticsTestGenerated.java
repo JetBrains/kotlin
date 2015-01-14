@@ -9444,6 +9444,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassImportsConflicting.kt")
+            public void testClassImportsConflicting() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ClassImportsConflicting.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DontImportRootScope.kt")
             public void testDontImportRootScope() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/DontImportRootScope.kt");
@@ -9501,12 +9507,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ImportsUselessSimpleImport2.kt")
             public void testImportsUselessSimpleImport2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportsUselessSimpleImport2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("Imports-hidden.kt")
-            public void testImports_hidden() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/Imports-hidden.kt");
                 doTest(fileName);
             }
 
