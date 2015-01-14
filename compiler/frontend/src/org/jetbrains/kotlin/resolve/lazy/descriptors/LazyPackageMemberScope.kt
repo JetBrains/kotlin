@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageMemberScope(
-        resolveSession: ResolveSession,
+        private val resolveSession: ResolveSession,
         declarationProvider: PackageMemberDeclarationProvider,
         thisPackage: PackageFragmentDescriptor)
 : AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace()) {

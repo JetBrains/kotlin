@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ScriptNameUtil
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.name.Name
@@ -35,14 +33,16 @@ import java.util.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(
-        protected val resolveSession: ResolveSession,
+        protected val c: LazyClassContext,
         protected val declarationProvider: DP,
         protected val thisDescriptor: D,
         protected val trace: BindingTrace) : JetScope {
 
-    protected val storageManager: StorageManager = resolveSession.getStorageManager()
+    protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
     private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
     private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
@@ -51,9 +51,9 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         return declarationProvider.getClassOrObjectDeclarations(name).map {
             // SCRIPT: Creating a script class
             if (it is JetScriptInfo)
-                LazyScriptClassDescriptor(resolveSession, thisDescriptor, name, it)
+                LazyScriptClassDescriptor(c as ResolveSession, thisDescriptor, name, it)
             else
-                LazyClassDescriptor(resolveSession, thisDescriptor, name, it)
+                LazyClassDescriptor(c, thisDescriptor, name, it)
         }.toReadOnlyList()
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {
             val resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration)
-            result.add(resolveSession.getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
+            result.add(c.descriptorResolver.resolveFunctionDescriptorWithAnnotationArguments(
                     thisDescriptor,
                     resolutionScope,
                     functionDeclaration,
@@ -96,7 +96,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         val declarations = declarationProvider.getPropertyDeclarations(name)
         for (propertyDeclaration in declarations) {
             val resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration)
-            val propertyDescriptor = resolveSession.getDescriptorResolver().resolvePropertyDescriptor(
+            val propertyDescriptor = c.descriptorResolver.resolvePropertyDescriptor(
                     thisDescriptor,
                     resolutionScope,
                     propertyDeclaration,
