@@ -63,6 +63,37 @@ public interface Importer {
             importDeclarationAlias(descriptor, aliasName);
         }
 
+        protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
+            if (descriptor instanceof ClassifierDescriptor) {
+                fileScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
+            }
+            else if (descriptor instanceof PackageViewDescriptor) {
+                fileScope.importPackageAlias(aliasName, (PackageViewDescriptor) descriptor);
+            }
+            else if (descriptor instanceof FunctionDescriptor) {
+                fileScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
+            }
+            else if (descriptor instanceof VariableDescriptor) {
+                fileScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
+            }
+        }
+
+        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+            if (descriptor instanceof PackageViewDescriptor) {
+                NoSubpackagesInPackageScope scope = new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor);
+                fileScope.importScope(createFilteringScope(scope, (PackageViewDescriptor) descriptor, platformToKotlinClassMap));
+            }
+            else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                fileScope.importScope(classDescriptor.getStaticScope());
+                fileScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
+                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+                if (classObjectDescriptor != null) {
+                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
+                }
+            }
+        }
+
         @NotNull
         private static JetScope createFilteringScope(
                 @NotNull JetScope scope,
@@ -83,38 +114,6 @@ public interface Importer {
                 }
             });
         }
-
-        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            if (descriptor instanceof PackageViewDescriptor) {
-                NoSubpackagesInPackageScope scope = new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor);
-                fileScope.importScope(createFilteringScope(scope, (PackageViewDescriptor) descriptor, platformToKotlinClassMap));
-            }
-            else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                fileScope.importScope(classDescriptor.getStaticScope());
-                fileScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
-                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-                if (classObjectDescriptor != null) {
-                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
-                }
-            }
-        }
-
-        protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-            if (descriptor instanceof ClassifierDescriptor) {
-                fileScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
-            }
-            else if (descriptor instanceof PackageViewDescriptor) {
-                fileScope.importPackageAlias(aliasName, (PackageViewDescriptor) descriptor);
-            }
-            else if (descriptor instanceof FunctionDescriptor) {
-                fileScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
-            }
-            else if (descriptor instanceof VariableDescriptor) {
-                fileScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
-            }
-        }
-
     }
 
     class DelayedImporter extends StandardImporter {
