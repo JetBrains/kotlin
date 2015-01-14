@@ -39,6 +39,7 @@ public class ExpressionTypingComponents {
     /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
+    /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -93,6 +94,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
         this.builtIns = builtIns;
+    }
+
+    @Inject
+    public void setLocalClassifierAnalyzer(@NotNull LocalClassifierAnalyzer localClassifierAnalyzer) {
+        this.localClassifierAnalyzer = localClassifierAnalyzer;
     }
 
     @NotNull

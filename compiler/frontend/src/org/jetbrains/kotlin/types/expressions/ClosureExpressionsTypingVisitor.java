@@ -86,7 +86,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        LocalClassifierAnalyzer.processClassOrObject(components.globalContext,
+        components.localClassifierAnalyzer.processClassOrObject(components.globalContext,
                                                      null, // don't need to add classifier of object literal to any scope
                                                      context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                                      context.scope.getContainingDeclaration(),
