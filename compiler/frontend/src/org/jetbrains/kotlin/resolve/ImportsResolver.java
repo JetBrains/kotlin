@@ -175,13 +175,10 @@ public class ImportsResolver {
     ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || resolvedTo == null) {
-            return;
-        }
+        if (importedReference == null || resolvedTo == null) return;
+
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
-        if (aliasName == null) {
-            return;
-        }
+        if (aliasName == null) return;
 
         boolean uselessHiddenImport = true;
         for (DeclarationDescriptor target : resolvedTo) {
@@ -201,6 +198,23 @@ public class ImportsResolver {
         }
         if (uselessHiddenImport) {
             trace.report(USELESS_HIDDEN_IMPORT.on(importedReference));
+        }
+        else {
+            if (resolvedTo.size() == 1) {
+                DeclarationDescriptor target = resolvedTo.iterator().next();
+                if (target instanceof ClassDescriptor) {
+                    if (fileScope.getClassifier(aliasName) == null) {
+                        trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
+                        return;
+                    }
+                }
+                else if (target instanceof PackageViewDescriptor) {
+                    if (fileScope.getPackage(aliasName) == null) {
+                        trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
+                        return;
+                    }
+                }
+            }
         }
 
         if (!importDirective.isAllUnder() &&

@@ -4739,6 +4739,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExplicitPackageImportsAmbiguity.kt")
+            public void testExplicitPackageImportsAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitPackageImportsAmbiguity.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importFunctionWithAllUnderImport.kt")
             public void testImportFunctionWithAllUnderImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/importFunctionWithAllUnderImport.kt");
