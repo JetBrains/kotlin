@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetTypeParameter
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetTypeParameter
 // OPTIONS: usages
 open class A<<caret>T>(foo: T, list: List<T>) {
     {

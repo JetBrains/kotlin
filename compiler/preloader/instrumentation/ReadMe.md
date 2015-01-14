@@ -8,21 +8,21 @@ But as a side effect, we got a chance to support instrumenting the compiler's co
 To run Preloader with instrumentation, pass ```instrument=...``` on the command line:
 
 ```
-org.jetbrains.jet.preloading.Preloader \
+org.jetbrains.kotlin.preloading.Preloader \
              dist/kotlinc/lib/kotlin-compiler.jar \
-             org.jetbrains.jet.cli.jvm.K2JVMCompiler \
+             org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
              5000 \
-             instrument=out/artifacts/instrumentation_jar/instrumentation.jar \
+             instrument=out/artifacts/Instrumentation/instrumentation.jar \
              <compiler's command-line args>
 ```
 
 This example uses an artifact already configured in our project.
-In this artifact, what to instrument is configured in the ```org.jetbrains.jet.preloading.ProfilingInstrumenterExample``` class.
-This is determined by the ```src/META-INF/services/org.jetbrains.jet.preloading.instrumentation.Instrumenter``` file (see JavaDoc for ```java.util.ServiceLoader```).
+In this artifact, what to instrument is configured in the ```org.jetbrains.kotlin.preloading.ProfilingInstrumenterExample``` class.
+This is determined by the ```src/META-INF/services/org.jetbrains.kotlin.preloading.instrumentation.Instrumenter``` file (see JavaDoc for ```java.util.ServiceLoader```).
 
 ## More structured description
 
-**Instrumenter** is any implementation of ```org.jetbrains.jet.preloading.instrumentation.Instrumenter``` interface.
+**Instrumenter** is any implementation of ```org.jetbrains.kotlin.preloading.instrumentation.Instrumenter``` interface.
 
 Preloader loads the **first** instrumenter service found on the class path.
 Services are provided through the [standard JDK mechanism](http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html).
@@ -32,7 +32,7 @@ Every preloaded class is run through the instrumenter. Before exiting the progra
 
 The ```instrumentation``` module provides a convenient way to define useful instrumenters:
 
-* Derive your class from ```org.jetbrains.jet.preloading.instrumentation.InterceptionInstrumenterAdaptor```
+* Derive your class from ```org.jetbrains.kotlin.preloading.instrumentation.InterceptionInstrumenterAdaptor```
 * In this class define public static fields with ```@MethodInterceptor``` annotation
 
 Whatever the type of the field, if it has methods named by the convention defined below, they will be called as follows:
@@ -50,4 +50,4 @@ If any of the methods above, except for ```dump.*```, have parameters, they are 
 * ```@MethodDesc``` - this parameter receives the JVM descriptor of the instrumented method, like ```(ILjava/lang/Object;)V```, must be a ```String```
 * ```@AllArgs``` - this parameter receives an array of all arguments of the instrumented method, must be of type ```Object[]```
 
-See ```org.jetbrains.jet.preloading.ProfilingInstrumenterExample```.
+See ```org.jetbrains.kotlin.preloading.ProfilingInstrumenterExample```.

@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetExpressionImpl
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetExpressionImpl
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
 import com.intellij.lang.ASTNode
-import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.kotlin.JetNodeTypes
 import com.intellij.psi.PsiWhiteSpace
 
 public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("add.braces", javaClass()) {

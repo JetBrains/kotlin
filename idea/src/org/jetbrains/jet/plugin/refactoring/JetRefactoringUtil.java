@@ -37,26 +37,26 @@ import com.intellij.util.containers.ContainerUtil;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.AsJavaPackage;
-import org.jetbrains.jet.asJava.KotlinLightMethod;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.plugin.util.string.StringPackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -396,7 +396,7 @@ public class JetRefactoringUtil {
             return getSmartSelectSuggestions(file, offset - 1);
         }
 
-        ArrayList<JetExpression> expressions = new ArrayList<JetExpression>();
+        List<JetExpression> expressions = new ArrayList<JetExpression>();
         while (element != null && !(element instanceof JetBlockExpression && !(element.getParent() instanceof JetFunctionLiteral)) &&
                !(element instanceof JetNamedFunction)
                && !(element instanceof JetClassBody)) {
@@ -466,7 +466,7 @@ public class JetRefactoringUtil {
         
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(@NotNull JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 JetExpression element = (JetExpression) value;
                 if (element.isValid()) {
@@ -478,12 +478,12 @@ public class JetRefactoringUtil {
 
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(@NotNull ListSelectionEvent e) {
                 highlighter.dropHighlight();
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex < 0) return;
                 JetExpression expression = (JetExpression) model.get(selectedIndex);
-                ArrayList<PsiElement> toExtract = new ArrayList<PsiElement>();
+                List<PsiElement> toExtract = new ArrayList<PsiElement>();
                 toExtract.add(expression);
                 highlighter.highlight(expression, toExtract);
             }
@@ -526,12 +526,13 @@ public class JetRefactoringUtil {
     }
 
     public static class IntroduceRefactoringException extends Exception {
-        private String myMessage;
+        private final String myMessage;
 
         public IntroduceRefactoringException(String message) {
             myMessage = message;
         }
 
+        @Override
         public String getMessage() {
             return myMessage;
         }

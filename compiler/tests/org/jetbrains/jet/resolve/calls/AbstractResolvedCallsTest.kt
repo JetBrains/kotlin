@@ -16,30 +16,30 @@
 
 package org.jetbrains.jet.resolve.calls
 
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
-import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.lang.psi.ValueArgument
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getParentResolvedCall
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)

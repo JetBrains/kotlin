@@ -23,12 +23,12 @@ import java.util.Collections
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.util.containers.OrderedSet
 import com.intellij.util.Range
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.asJava.LightClassUtil
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
@@ -36,8 +36,8 @@ import com.sun.jdi.Location
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 

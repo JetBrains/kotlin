@@ -21,7 +21,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.debugger.actions.MethodSmartStepTarget
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase

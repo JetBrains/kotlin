@@ -23,20 +23,20 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.decompiler.DecompilerPackage;
 import org.jetbrains.jet.plugin.decompiler.JetClsFile;
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public final class DecompiledNavigationUtils {
 

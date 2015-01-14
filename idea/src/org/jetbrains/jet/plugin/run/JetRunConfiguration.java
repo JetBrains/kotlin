@@ -41,17 +41,17 @@ import kotlin.KotlinPackage;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
-import org.jetbrains.jet.asJava.KotlinLightMethod;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.MainFunctionDetector;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 
 import java.util.*;
 
@@ -209,7 +209,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         return state;
     }
 
-    private class MyJavaCommandLineState extends JavaCommandLineState {
+    private static class MyJavaCommandLineState extends JavaCommandLineState {
 
         private final JetRunConfiguration myConfiguration;
 

@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.plugin.imports
 
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {

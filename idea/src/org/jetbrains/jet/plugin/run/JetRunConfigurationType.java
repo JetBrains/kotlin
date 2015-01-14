@@ -20,7 +20,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 
 public class JetRunConfigurationType extends ConfigurationTypeBase {
     public static JetRunConfigurationType getInstance() {

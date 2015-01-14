@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>("split.if", javaClass()) {
     override fun isApplicableTo(element: JetExpression): Boolean {

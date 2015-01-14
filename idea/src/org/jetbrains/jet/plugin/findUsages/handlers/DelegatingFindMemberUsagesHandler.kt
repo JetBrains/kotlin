@@ -23,7 +23,7 @@ import com.intellij.util.Processor
 import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.psi.PsiMethod
 import com.intellij.find.findUsages.JavaFindUsagesHandler
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions

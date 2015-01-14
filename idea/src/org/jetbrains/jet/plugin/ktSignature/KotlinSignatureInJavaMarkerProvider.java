@@ -38,14 +38,14 @@ import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaPackage;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.load.java.JavaBindingContext;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
+import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
@@ -148,14 +148,14 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) member;
             if (method.isConstructor()) {
-                return JavaPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
+                return JvmPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
             }
             else {
-                return JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
+                return JvmPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
             }
         }
         else if (member instanceof PsiField) {
-            return JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));
+            return JvmPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));
         }
         return null;
     }

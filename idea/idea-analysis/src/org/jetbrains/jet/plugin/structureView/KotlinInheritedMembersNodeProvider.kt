@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.structureView
 
 import com.intellij.ide.util.InheritedMembersNodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
-import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {

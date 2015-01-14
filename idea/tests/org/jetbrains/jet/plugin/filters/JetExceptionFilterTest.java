@@ -30,15 +30,15 @@ import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassName;
-import static org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils.getPackagePartFqName;
+import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName;
+import static org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName;
 
 public class JetExceptionFilterTest extends MultiFileTestCase {
     private VirtualFile rootDir;

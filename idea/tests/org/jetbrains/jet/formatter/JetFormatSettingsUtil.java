@@ -19,7 +19,7 @@ package org.jetbrains.jet.formatter;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightPlatformTestCase;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 import org.jetbrains.jet.testing.SettingsConfigurator;
 

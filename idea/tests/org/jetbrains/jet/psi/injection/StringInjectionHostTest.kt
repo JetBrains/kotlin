@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.psi.injection
 
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange
 import java.util.HashMap
-import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.ConfigurationKind
+import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.ConfigurationKind
 
 public class StringInjectionHostTest: JetLiteFixture() {
     public fun testRegular() {

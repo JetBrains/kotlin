@@ -33,23 +33,23 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
 import org.jetbrains.jet.plugin.quickfix.QuickFixes
 import kotlin.platform.platformStatic
-import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
+import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="ant-1.7" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="preloader" />
   </component>
 </module>

@@ -16,22 +16,20 @@
 
 package org.jetbrains.jet.plugin.refactoring.safeDelete
 
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.psi.JetModifierListOwner
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetModifierListOwner
+import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.jet.asJava.unwrapped
-import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 public fun PsiElement.canDeleteElement(): Boolean {
     if (isObjectLiteral()) return false
@@ -54,7 +52,7 @@ fun PsiElement.removeOverrideModifier() {
             (this as JetModifierListOwner).getModifierList()?.getModifier(JetTokens.OVERRIDE_KEYWORD)?.delete()
         }
         is PsiMethod -> {
-            getModifierList().getAnnotations().find {
+            getModifierList().getAnnotations().firstOrNull {
                 annotation -> annotation.getQualifiedName() == "java.lang.Override"
             }?.delete()
         }

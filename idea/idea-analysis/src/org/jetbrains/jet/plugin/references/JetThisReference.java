@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.references;
 
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
+import org.jetbrains.kotlin.psi.JetThisReferenceExpression;
 
 public class JetThisReference extends JetSimpleReference<JetThisReferenceExpression> {
     public JetThisReference(JetThisReferenceExpression expression) {

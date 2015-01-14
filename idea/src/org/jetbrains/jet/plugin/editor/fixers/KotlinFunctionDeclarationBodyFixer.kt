@@ -20,13 +20,13 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 
 public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {

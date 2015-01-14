@@ -25,10 +25,10 @@ import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
 import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.ui.Queryable.PrintInfo
-import org.jetbrains.jet.test.util.configureWithExtraFile
+import org.jetbrains.kotlin.test.util.configureWithExtraFile
 
 public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"

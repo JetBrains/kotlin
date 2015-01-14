@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public class CreateParameterFromUsageFix(
         val functionDescriptor: FunctionDescriptor,

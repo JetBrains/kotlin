@@ -18,18 +18,18 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.STRING;
-import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING;
+import static org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
 import static org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
 

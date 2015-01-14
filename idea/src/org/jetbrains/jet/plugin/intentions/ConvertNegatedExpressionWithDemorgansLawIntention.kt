@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
+import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPrefixExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetConstantExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetConstantExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import java.util.LinkedList
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law", javaClass()

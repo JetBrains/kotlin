@@ -18,7 +18,7 @@ package org.jetbrains.jet.resolve
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.junit.Assert

@@ -22,7 +22,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
 import org.jetbrains.jet.plugin.search.usagesSearch.DefaultSearchHelper

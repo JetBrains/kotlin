@@ -18,10 +18,10 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetImportDirective;
+import org.jetbrains.kotlin.resolve.ImportPath;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.List;
 

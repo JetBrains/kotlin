@@ -26,9 +26,9 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.findUsages.KotlinPropertyFindUsagesOptions;
 
 import javax.swing.*;

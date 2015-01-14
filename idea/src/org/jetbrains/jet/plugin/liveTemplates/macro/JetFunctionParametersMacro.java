@@ -22,9 +22,9 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.psi.JetFunction;
+import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.editor.fixers
 
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetWhileExpression
+import org.jetbrains.kotlin.psi.JetWhileExpression
 
 public class KotlinWhileConditionFixer: MissingConditionFixer<JetWhileExpression>() {
     override val keyword = "while"

@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.resolve.constraintSystem
 
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.project.Project
 import java.util.regex.Pattern
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public class ConstraintSystemTestData(
         context: BindingContext,

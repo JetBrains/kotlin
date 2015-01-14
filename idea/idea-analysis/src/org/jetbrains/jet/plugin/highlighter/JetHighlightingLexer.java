@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.jet.kdoc.lexer.KDocLexer;
-import org.jetbrains.jet.lexer.JetLexer;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.kdoc.lexer.KDocLexer;
+import org.jetbrains.kotlin.lexer.JetLexer;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class JetHighlightingLexer extends LayeredLexer {
     public JetHighlightingLexer() {

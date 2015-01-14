@@ -20,13 +20,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.jet.plugin.decompiler.textBuilder.descriptorToKey
-import org.jetbrains.jet.utils.concurrent.block.LockedClearableLazyValue
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.psi.JetFile
 
 public class JetClsFile(val provider: JetClassFileViewProvider) : JetFile(provider, true) {
     private val decompiledText = LockedClearableLazyValue(Any()) {

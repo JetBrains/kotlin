@@ -29,7 +29,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 
 import java.util.*;
 

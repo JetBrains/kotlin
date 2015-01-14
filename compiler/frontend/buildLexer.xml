@@ -34,15 +34,15 @@
     </macrodef>
 
     <target name="lexer">
-        <flex flexfile="${home}/src/org/jetbrains/jet/lexer/Jet.flex"
-              destdir="${home}/src/org/jetbrains/jet/lexer/"/>
+        <flex flexfile="${home}/src/org/jetbrains/kotlin/lexer/Kotlin.flex"
+              destdir="${home}/src/org/jetbrains/kotlin/lexer/"/>
 
         <!-- This is a hack, but we don't want to alter the skeleton we are using now, because being in sync with IDEA is more important-->
-        <replaceregexp file="${home}/src/org/jetbrains/jet/lexer/_JetLexer.java"
+        <replaceregexp file="${home}/src/org/jetbrains/kotlin/lexer/_JetLexer.java"
                        match="throw new KotlinLexerException\(message\);"
                        replace="throw new KotlinLexerException(message + &quot;\\\\n at '&quot; + yytext() + &quot;'\\\\n&quot; + zzBuffer);"/>
 
-        <flex flexfile="${home}/src/org/jetbrains/jet/kdoc/lexer/KDoc.flex"
-              destdir="${home}/src/org/jetbrains/jet/kdoc/lexer/"/>
+        <flex flexfile="${home}/src/org/jetbrains/kotlin/kdoc/lexer/KDoc.flex"
+              destdir="${home}/src/org/jetbrains/kotlin/kdoc/lexer/"/>
     </target>
 </project>

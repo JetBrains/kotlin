@@ -1,7 +1,7 @@
 package test;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class ReturnTypeMissing {
     @ExpectLoadError("Return type in alternative signature is missing, while in real signature it is 'kotlin.Int'")

@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it

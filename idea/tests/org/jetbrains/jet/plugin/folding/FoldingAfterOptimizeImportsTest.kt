@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.FoldRegion
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import java.io.File
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest.doTestWithSettings
 import org.jetbrains.jet.plugin.imports.KotlinImportOptimizer

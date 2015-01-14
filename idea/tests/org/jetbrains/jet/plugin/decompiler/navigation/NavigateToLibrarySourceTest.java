@@ -26,7 +26,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
 import org.jetbrains.jet.plugin.references.JetReference;

@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 final class JetLtGtTypingUtils {
     private static final TokenSet INVALID_INSIDE_REFERENCE = TokenSet.create(JetTokens.SEMICOLON, JetTokens.LBRACE, JetTokens.RBRACE);

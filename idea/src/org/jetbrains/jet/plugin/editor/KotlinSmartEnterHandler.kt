@@ -24,19 +24,19 @@ import com.intellij.util.text.CharArrayUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetForExpression
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.JetNodeTypes
-import org.jetbrains.jet.lang.psi.JetLoopExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.psi.JetLoopExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     {

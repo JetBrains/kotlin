@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.intentions.declarations
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 
 public class SplitPropertyDeclarationIntention : JetSelfTargetingIntention<JetProperty>("split.property.declaration", javaClass()) {

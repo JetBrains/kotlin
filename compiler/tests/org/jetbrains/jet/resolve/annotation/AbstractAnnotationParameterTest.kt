@@ -17,9 +17,9 @@
 package org.jetbrains.jet.resolve.annotation
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {

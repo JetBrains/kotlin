@@ -20,15 +20,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.JetCodeFragment
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import java.util.ArrayList
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
 import org.jetbrains.jet.plugin.util.application.runReadAction
 

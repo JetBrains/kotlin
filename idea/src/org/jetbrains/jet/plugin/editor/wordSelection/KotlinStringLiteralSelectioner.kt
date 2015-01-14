@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression
 
 public class KotlinStringLiteralSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement) = e is JetStringTemplateExpression

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.versions
 
 import com.intellij.openapi.components.ApplicationComponent
-import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.ide.util.PropertiesComponent
 import org.jetbrains.jet.plugin.JetPluginUtil

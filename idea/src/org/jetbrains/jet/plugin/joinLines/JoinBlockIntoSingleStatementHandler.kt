@@ -19,13 +19,13 @@ package org.jetbrains.jet.plugin.joinLines
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetContainerNode
-import org.jetbrains.jet.lang.psi.JetWhenEntry
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetContainerNode
+import org.jetbrains.kotlin.psi.JetWhenEntry
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {

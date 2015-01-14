@@ -28,14 +28,14 @@ import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAbi
 import com.sun.jdi.Field
 import com.intellij.debugger.engine.DebuggerUtils
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
 import com.sun.jdi.Method
-import org.jetbrains.jet.codegen.PropertyCodegen
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.codegen.PropertyCodegen
+import org.jetbrains.kotlin.name.Name
 import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException

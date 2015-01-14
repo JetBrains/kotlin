@@ -1,21 +1,21 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import java.util.Collections
 
 public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionActionFactory() {

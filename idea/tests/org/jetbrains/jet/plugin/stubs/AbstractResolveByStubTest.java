@@ -25,20 +25,20 @@ import com.intellij.util.Consumer;
 import kotlin.Function0;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
 
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
+import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCase {
     protected void doTest(String testFileName) throws Exception {

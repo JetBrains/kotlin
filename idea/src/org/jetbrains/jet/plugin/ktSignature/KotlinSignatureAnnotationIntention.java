@@ -33,24 +33,24 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaPackage;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
+import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
 
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
@@ -154,12 +154,12 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             PsiMethod psiMethod = (PsiMethod) analyzableAnnotationOwner;
             if (psiMethod.isConstructor()) {
                 ConstructorDescriptor constructorDescriptor =
-                        JavaPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(psiMethod));
+                        JvmPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(psiMethod));
                 assert constructorDescriptor != null: "Couldn't find constructor descriptor for " + renderMember(psiMethod);
                 return getDefaultConstructorAnnotation(constructorDescriptor);
             }
             else {
-                FunctionDescriptor functionDescriptor = JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
+                FunctionDescriptor functionDescriptor = JvmPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
                 assert functionDescriptor != null: "Couldn't find function descriptor for " + renderMember(psiMethod);
                 return RENDERER.render(functionDescriptor);
             }
@@ -167,7 +167,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
         if (analyzableAnnotationOwner instanceof PsiField) {
             VariableDescriptor variableDescriptor =
-                    JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) analyzableAnnotationOwner));
+                    JvmPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) analyzableAnnotationOwner));
             assert variableDescriptor != null : "Couldn't find variable descriptor for field " + renderMember(analyzableAnnotationOwner);
             return RENDERER.render(variableDescriptor);
         }

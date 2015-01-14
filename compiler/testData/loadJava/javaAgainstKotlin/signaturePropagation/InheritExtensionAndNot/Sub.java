@@ -1,6 +1,6 @@
 package test;
 
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public interface Sub extends Super1, Super2 {
     @ExpectLoadError("Incompatible super methods: some are extension functions, some are not")

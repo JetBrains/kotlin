@@ -2,7 +2,7 @@ package test;
 
 import java.util.*;
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class WrongTypeName2 {
     @ExpectLoadError("Alternative signature type mismatch, expected: Something.String, actual: kotlin.String")

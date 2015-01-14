@@ -17,17 +17,17 @@
 package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.*
-import org.jetbrains.jet.asJava.KotlinLightClass
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class AllClassesCompletion(val parameters: CompletionParameters,
                            val lookupElementFactory: LookupElementFactory,

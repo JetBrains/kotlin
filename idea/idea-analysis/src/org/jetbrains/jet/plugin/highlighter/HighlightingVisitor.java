@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.psi.JetVisitorVoid;
 
 abstract class HighlightingVisitor extends JetVisitorVoid {
     protected AnnotationHolder holder;

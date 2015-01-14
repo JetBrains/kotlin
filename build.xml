@@ -89,7 +89,7 @@
         <include name="core/descriptors/src"/>
         <include name="core/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
-        <include name="core/serialization.java/src"/>
+        <include name="core/serialization.jvm/src"/>
         <include name="core/util.runtime/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
@@ -98,7 +98,7 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
-        <include name="compiler/jet.as.java.psi/src"/>
+        <include name="compiler/light-classes/src"/>
         <include name="compiler/builtins-serializer/src"/>
         <include name="js/js.dart-ast/src"/>
         <include name="js/js.translator/src"/>
@@ -114,14 +114,14 @@
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
-        <include name="serialization.java/**"/>
+        <include name="serialization.jvm/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
-        <include name="jet.as.java.psi/**"/>
+        <include name="light-classes/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -178,7 +178,7 @@
             <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="core/serialization/src"/>
-            <fileset dir="core/serialization.java/src"/>
+            <fileset dir="core/serialization.jvm/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>
@@ -187,7 +187,7 @@
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/util/src"/>
-            <fileset dir="compiler/jet.as.java.psi/src"/>
+            <fileset dir="compiler/light-classes/src"/>
             <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="js/js.dart-ast/src"/>
             <fileset dir="js/js.translator/src"/>
@@ -256,7 +256,7 @@
 
             <pathconvert property="src.line" refid="src.path" pathsep=" "/>
 
-            <java classname="org.jetbrains.jet.cli.js.K2JSCompiler" failonerror="true" fork="true">
+            <java classname="org.jetbrains.kotlin.cli.js.K2JSCompiler" failonerror="true" fork="true">
                 <classpath>
                     <file file="${bootstrap.runtime}"/>
                     <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -383,7 +383,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.preloader}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.jet.preloading.Preloader"/>
+                <attribute name="Main-Class" value="org.jetbrains.kotlin.preloading.Preloader"/>
             </manifest>
         </jar>
     </target>
@@ -408,15 +408,6 @@
         <attribute name="compress" default="true"/>
 
         <sequential>
-            <!-- TODO: temporary, remove after bootstrap. Needed for proguard -->
-            <if>
-                <available file="${bootstrap.runtime.minimal}"/>
-                <then/>
-                <else>
-                    <copy file="${bootstrap.runtime}" tofile="${bootstrap.runtime.minimal}"/>
-                </else>
-            </if>
-
             <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
@@ -450,7 +441,7 @@
                     <attribute name="Implementation-Version" value="${build.number}"/>
 
                     <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
-                    <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+                    <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
                 </manifest>
             </jar>
         </sequential>
@@ -555,11 +546,11 @@
                         public protected *;
                     }
 
-                    -keep class org.jetbrains.k2js.** {
+                    -keep class org.jetbrains.jet.** {
                         public protected *;
                     }
 
-                    -keep class org.jetbrains.jet.** {
+                    -keep class org.jetbrains.kotlin.** {
                         public protected *;
                     }
 
@@ -623,7 +614,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+                <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
             </manifest>
         </jar>
     </target>
@@ -641,7 +632,8 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <file file="${kotlin-home}/lib/${compiler.manifest.class.path}"/>
-                <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
+                <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
         </javac2>
 
@@ -657,7 +649,7 @@
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.ant.task}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
+                <attribute name="Class-Path" value="${compiler.manifest.class.path} kotlin-preloader.jar"/>
             </manifest>
         </jar>
     </target>
@@ -701,7 +693,7 @@
             <!-- Classpath separated by the system path separator -->
             <pathconvert property="classpath.paths" refid="classpath.path"/>
 
-            <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
+            <java classname="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
                 <classpath>
                     <file file="${bootstrap.runtime}"/>
                     <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import javax.swing.*;

@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.configuration;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenConstants;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 
 import java.io.File;

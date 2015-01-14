@@ -27,20 +27,20 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetCallableDeclaration;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
+import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD;
 
 public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {
     private final List<JetCallableDeclaration> overriddenNonOverridableMembers = new ArrayList<JetCallableDeclaration>();

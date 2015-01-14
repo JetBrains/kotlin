@@ -17,6 +17,6 @@
 package org.jetbrains.jet.plugin.inspections
 
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToElvisIntention
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 
 public class IfThenToElvisInspection : IntentionBasedInspection<JetIfExpression>(IfThenToElvisIntention())

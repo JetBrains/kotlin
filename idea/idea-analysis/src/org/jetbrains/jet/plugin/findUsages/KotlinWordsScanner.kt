@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.findUsages
 import org.jetbrains.jet.plugin.search.usagesSearch.*
 import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.util.Processor
-import org.jetbrains.jet.lexer.JetLexer
+import org.jetbrains.kotlin.lexer.JetLexer
 import com.intellij.lang.cacheBuilder.WordOccurrence
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.lang.cacheBuilder.SimpleWordsScanner
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KotlinWordsScanner() : WordsScanner {
     private val lexer = JetLexer()

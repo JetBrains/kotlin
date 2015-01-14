@@ -18,21 +18,21 @@ package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import java.util.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
-import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.jet.lang.types.isFlexible
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
-import org.jetbrains.jet.lang.types.flexibility
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.types.flexibility
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"

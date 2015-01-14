@@ -1,15 +1,7 @@
-<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-<!-- http://evgeny-goldin.org/javadoc/ant/Types/antlib.html -->
-<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
+<!-- NOTE: this Antlib is deprecated. Use org/jetbrains/kotlin/ant/antlib.xml instead -->
+<!-- TODO: delete this file -->
 <antlib>
-    <taskdef
-        name      = "kotlinc"
-        classname = "org.jetbrains.jet.buildtools.ant.Kotlin2JvmTask"/>
-    <taskdef
-        name      = "kotlin2js"
-        classname = "org.jetbrains.jet.buildtools.ant.Kotlin2JsTask"/>
-    <typedef
-        name      = "withKotlin"
-        classname = "org.jetbrains.jet.buildtools.ant.KotlinCompilerAdapter"/>
+    <taskdef name="kotlinc" classname="org.jetbrains.kotlin.ant.Kotlin2JvmTask"/>
+    <taskdef name="kotlin2js" classname="org.jetbrains.kotlin.ant.Kotlin2JsTask"/>
+    <typedef name="withKotlin" classname="org.jetbrains.kotlin.ant.KotlinCompilerAdapter"/>
 </antlib>

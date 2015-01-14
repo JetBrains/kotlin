@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetTokens
 
 public enum class JetValVar(val name: String) {
     None: JetValVar("none")

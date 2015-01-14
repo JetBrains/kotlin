@@ -7,24 +7,24 @@ import com.intellij.codeInsight.template.TextResult
 import com.intellij.codeInsight.lookup.LookupElement
 import java.util.LinkedHashSet
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetParameter
 import java.util.HashSet
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import java.util.Collections
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetParameterList
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.

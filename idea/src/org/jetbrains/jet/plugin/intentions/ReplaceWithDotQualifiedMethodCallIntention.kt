@@ -17,11 +17,11 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetParenthesizedExpression
+import org.jetbrains.kotlin.lexer.JetTokens
 
 public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {

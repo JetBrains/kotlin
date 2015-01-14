@@ -17,7 +17,7 @@
 package com.google.dart.compiler.backend.js.ast.metadata
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.jet.lang.types.lang.InlineStrategy
+import org.jetbrains.kotlin.builtins.InlineStrategy
 import kotlin.properties.Delegates
 
 public var JsName.staticRef: JsNode? by MetadataProperty(default = null)

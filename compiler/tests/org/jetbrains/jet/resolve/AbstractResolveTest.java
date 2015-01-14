@@ -17,7 +17,7 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
 

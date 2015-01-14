@@ -28,14 +28,14 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import com.intellij.refactoring.HelpID
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ui.KotlinExtractFunctionDialog
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.psi.psiUtil.getOutermostParentContainedIn
+import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
 import org.jetbrains.jet.plugin.util.application.executeWriteCommand
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
 import kotlin.test.fail
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -44,7 +44,7 @@ import javax.swing.event.HyperlinkEvent
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.openapi.ui.popup.Balloon.Position
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers

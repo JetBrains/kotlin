@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin;
 
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 public class JetWithJdkAndRuntimeLightProjectDescriptor extends JetJdkAndLibraryProjectDescriptor {
     protected JetWithJdkAndRuntimeLightProjectDescriptor() {

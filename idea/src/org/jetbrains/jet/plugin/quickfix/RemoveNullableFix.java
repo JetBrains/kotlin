@@ -20,11 +20,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNullableType;
-import org.jetbrains.jet.lang.psi.JetTypeElement;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetNullableType;
+import org.jetbrains.kotlin.psi.JetTypeElement;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
     public enum NullableKind {

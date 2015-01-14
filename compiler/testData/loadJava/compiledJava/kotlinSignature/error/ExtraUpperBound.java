@@ -1,7 +1,7 @@
 package test;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class ExtraUpperBound {
     @ExpectLoadError("Upper bound number mismatch for A. Expected 1, but found 2")

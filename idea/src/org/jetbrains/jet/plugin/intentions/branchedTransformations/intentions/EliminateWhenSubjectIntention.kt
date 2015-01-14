@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
-import org.jetbrains.jet.lang.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
 
 public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>("eliminate.when.subject", javaClass()) {

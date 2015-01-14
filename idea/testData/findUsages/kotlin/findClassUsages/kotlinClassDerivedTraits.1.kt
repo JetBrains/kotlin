@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetClass
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
 // OPTIONS: derivedInterfaces
 open class B: A() {
 

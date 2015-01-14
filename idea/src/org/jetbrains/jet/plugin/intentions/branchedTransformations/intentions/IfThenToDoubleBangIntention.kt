@@ -18,19 +18,19 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.comparesNonNullToNull
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.getNonNullExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.replace
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.jet.lang.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.inlineBaseExpressionIfApplicableWithPrompt
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
-import org.jetbrains.jet.lang.psi.JetThrowExpression
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpressionOrEmptyBlock
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStatement

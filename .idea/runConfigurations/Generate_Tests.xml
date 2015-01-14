@@ -2,11 +2,11 @@
   <configuration default="false" name="Generate Tests" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="org.jetbrains.jet.generators.tests.*" />
+        <option name="PATTERN" value="org.jetbrains.kotlin.generators.tests.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="MAIN_CLASS_NAME" value="org.jetbrains.jet.generators.tests.TestsPackage" />
+    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.generators.tests.TestsPackage" />
     <option name="VM_PARAMETERS" value="-ea" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.refactoring.safeDelete
 
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class SafeDeleteImportDirectiveUsageInfo(

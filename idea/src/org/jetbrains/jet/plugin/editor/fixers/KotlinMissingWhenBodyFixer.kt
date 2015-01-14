@@ -20,7 +20,7 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.jet.plugin.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.JetWhenExpression
 
 public class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {

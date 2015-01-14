@@ -22,10 +22,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import com.intellij.refactoring.util.CommonRefactoringUtil
 
 public class JetElementDescriptionProvider : ElementDescriptionProvider {

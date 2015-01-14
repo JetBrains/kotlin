@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.project;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope;
 

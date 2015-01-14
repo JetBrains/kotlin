@@ -16,33 +16,33 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations
 
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetThrowExpression
-import org.jetbrains.jet.lang.psi.JetPostfixExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.JetPostfixExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 val NULL_PTR_EXCEPTION = "NullPointerException"

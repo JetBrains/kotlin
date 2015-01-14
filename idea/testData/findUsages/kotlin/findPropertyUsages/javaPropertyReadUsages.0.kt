@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetProperty
 // OPTIONS: usages, skipWrite
 package server
 

@@ -26,13 +26,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
 public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
     private JetClass classDeclaration;

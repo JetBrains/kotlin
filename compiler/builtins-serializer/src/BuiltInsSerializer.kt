@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.utils.builtinsSerializer
+package org.jetbrains.kotlin.serialization.builtins
 
 import java.io.File
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.serialization.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import java.io.ByteArrayOutputStream
-import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil
+import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
 import com.intellij.openapi.Disposable
-import org.jetbrains.jet.cli.common.CLIConfigurationKeys
-import org.jetbrains.jet.config.CommonConfigurationKeys
-import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.utils.recursePostOrder
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.recursePostOrder
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.resolve.java.JvmAnalyzerFacade
-import org.jetbrains.jet.context.GlobalContext
-import org.jetbrains.jet.analyzer.ModuleInfo
-import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
-import org.jetbrains.jet.analyzer.ModuleContent
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.analyzer.ModuleContent
+import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 
 private object BuiltInsSerializerExtension : SerializerExtension() {
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
@@ -111,7 +111,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
     }
 
-    fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>, extraClassPath: Collection<File>) {
+    private fun serialize(disposable: Disposable, destDir: File, srcDirs: Collection<File>, extraClassPath: Collection<File>) {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
@@ -149,7 +149,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
     }
 
-    fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
+    private fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
         val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
 
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
@@ -159,13 +159,12 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
-        ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
-            override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
-                val stream = ByteArrayOutputStream()
-                classProto.writeTo(stream)
-                write(destDir, getFileName(classDescriptor), stream)
-            }
-        })
+        serializeClasses(classifierDescriptors, serializer) {
+            (classDescriptor, classProto) ->
+            val stream = ByteArrayOutputStream()
+            classProto.writeTo(stream)
+            write(destDir, getFileName(classDescriptor), stream)
+        }
 
         val packageStream = ByteArrayOutputStream()
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
@@ -178,7 +177,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream)
     }
 
-    fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
+    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
         totalSize += stream.size()
         totalFiles++
         val file = File(destDir, fileName)
@@ -186,7 +185,35 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         file.writeBytes(stream.toByteArray())
     }
 
-    fun getFileName(classDescriptor: ClassDescriptor): String {
+    private fun serializeClass(
+            classDescriptor: ClassDescriptor,
+            serializer: DescriptorSerializer,
+            writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
+    ) {
+        val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
+        writeClass(classDescriptor, classProto)
+
+        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getDescriptors(), serializer, writeClass)
+
+        val classObjectDescriptor = classDescriptor.getClassObjectDescriptor()
+        if (classObjectDescriptor != null) {
+            serializeClass(classObjectDescriptor, serializer, writeClass)
+        }
+    }
+
+    private fun serializeClasses(
+            descriptors: Collection<DeclarationDescriptor>,
+            serializer: DescriptorSerializer,
+            writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
+    ) {
+        for (descriptor in descriptors) {
+            if (descriptor is ClassDescriptor) {
+                serializeClass(descriptor, serializer, writeClass)
+            }
+        }
+    }
+
+    private fun getFileName(classDescriptor: ClassDescriptor): String {
         return BuiltInsSerializationUtil.getClassMetadataPath(DeserializedResolverUtils.getClassId(classDescriptor))!!
     }
 }

@@ -30,10 +30,10 @@ import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.jet.compiler.CompilerSettings;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.plugin.JetBundle;
+import org.jetbrains.kotlin.config.CompilerSettings;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

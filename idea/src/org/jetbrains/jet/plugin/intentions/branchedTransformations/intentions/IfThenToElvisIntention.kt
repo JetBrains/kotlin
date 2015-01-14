@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.extractExpressionIfSingle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.comparesNonNullToNull
@@ -30,9 +30,9 @@ import org.jetbrains.jet.plugin.intentions.branchedTransformations.replace
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.inlineLeftSideIfApplicableWithPrompt
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
-import org.jetbrains.jet.lang.psi.JetThrowExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetExpression
 
 public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.elvis", javaClass()) {
 

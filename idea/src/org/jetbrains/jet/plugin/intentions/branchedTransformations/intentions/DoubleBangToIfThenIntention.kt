@@ -18,19 +18,19 @@ package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetPostfixExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.jet.plugin.intentions.JetTypeLookupExpression
 import com.intellij.codeInsight.template.TemplateEditingAdapter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.Template
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.convertToIfNotNullExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.jet.lang.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.JetThrowExpression
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava

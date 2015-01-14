@@ -17,14 +17,14 @@
 package org.jetbrains.jet.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassInitializer;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.psi.JetClassInitializer;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetPsiUtil;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.project.ResolveElementCache;
-import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest;
+import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest;
 
 public abstract class AbstractAdditionalResolveDescriptorRendererTest extends AbstractDescriptorRendererTest {
     @NotNull

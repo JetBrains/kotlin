@@ -31,7 +31,7 @@ import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.util.Condition
 import java.util.LinkedHashSet
 import com.intellij.openapi.roots.RootPolicy
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.ModuleSourceOrderEntry

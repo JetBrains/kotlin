@@ -21,14 +21,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.resolve.name.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 

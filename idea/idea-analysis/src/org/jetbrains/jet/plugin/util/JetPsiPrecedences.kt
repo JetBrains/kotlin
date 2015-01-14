@@ -18,10 +18,10 @@ package org.jetbrains.jet.plugin.util
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.lang.parsing.JetExpressionParsing
+import org.jetbrains.kotlin.parsing.JetExpressionParsing
 import java.util.HashMap
-import org.jetbrains.jet.lang.parsing.JetExpressionParsing.Precedence.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.parsing.JetExpressionParsing.Precedence.*
+import org.jetbrains.kotlin.psi.*
 
 public object JetPsiPrecedences {
 

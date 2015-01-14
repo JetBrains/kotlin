@@ -16,24 +16,24 @@
 
 package org.jetbrains.jet.resolve.constraintSystem
 
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.di.InjectorForTests
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
-import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.di.InjectorForTests
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.regex.Pattern
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""

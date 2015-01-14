@@ -10,7 +10,7 @@
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="module" module-name="jet.as.java.psi" />
+    <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="library" name="jline" level="project" />
@@ -18,7 +18,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" />
     <orderEntry type="module" module-name="serialization" />
-    <orderEntry type="module" module-name="serialization.java" />
+    <orderEntry type="module" module-name="serialization.jvm" />
   </component>
 </module>
-

@@ -17,26 +17,26 @@
 package org.jetbrains.jet.plugin.debugger
 
 import com.intellij.psi.search.FilenameIndex
-import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.openapi.module.impl.scopes.LibraryScope
 import com.intellij.openapi.roots.LibraryOrderEntry
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.module.impl.scopes.JdkScope
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import org.jetbrains.jet.lang.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 private val LOG = Logger.getInstance("org.jetbrains.jet.plugin.debugger")
@@ -92,8 +92,8 @@ fun findPackagePartInternalNameForLibraryFile(elementAt: JetElement): String? {
     }
 
     val proto = deserializedDescriptor.proto
-    if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-        val name = deserializedDescriptor.nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName)!!)
+    if (proto.hasExtension(JvmProtoBuf.implClassName)) {
+        val name = deserializedDescriptor.nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName)!!)
         return JvmClassName.byFqNameWithoutInnerClasses(packageFqName.child(name)).getInternalName()
     }
 

@@ -17,15 +17,15 @@
 package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
 import org.junit.Assert
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION
 import org.jetbrains.jet.plugin.decompiler.AbstractInternalCompiledClassesTest
 import org.jetbrains.jet.plugin.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.jet.plugin.decompiler.JetClsFile

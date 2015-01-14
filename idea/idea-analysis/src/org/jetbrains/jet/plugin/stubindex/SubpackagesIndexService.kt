@@ -17,14 +17,14 @@
 package org.jetbrains.jet.plugin.stubindex
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.search.GlobalSearchScope
 import java.util.HashSet
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import com.intellij.openapi.components.ServiceManager
 
 public class SubpackagesIndexService(private val project: Project) {

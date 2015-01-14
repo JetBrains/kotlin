@@ -4,7 +4,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 
 class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
 

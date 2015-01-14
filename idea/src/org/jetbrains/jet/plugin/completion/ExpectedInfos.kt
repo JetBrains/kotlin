@@ -16,59 +16,59 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetValueArgument
-import org.jetbrains.jet.lang.psi.JetValueArgumentList
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.JetValueArgumentList
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import com.intellij.lang.ASTNode
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
-import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.jet.lang.resolve.calls.extensions.CompositeExtension
-import org.jetbrains.jet.di.InjectorForMacros
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.extensions.CompositeExtension
+import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetContainerNode
-import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
-import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.lang.psi.JetWhenConditionWithExpression
-import org.jetbrains.jet.lang.psi.JetWhenEntry
-import org.jetbrains.jet.lang.psi.JetWhenExpression
-import org.jetbrains.jet.lang.psi.JetCallElement
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.lang.psi.JetPrefixExpression
-import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.psi.JetReturnExpression
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.psi.JetContainerNode
+import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.psi.JetWhenConditionWithExpression
+import org.jetbrains.kotlin.psi.JetWhenEntry
+import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
+import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.jet.plugin.completion.smart.toList
-import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 enum class Tail {
     COMMA
@@ -117,8 +117,8 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
         val functionLiteralArgument = expressionWithType.getParent() as? JetFunctionLiteralArgument
         val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression
         if (callExpression != null) {
-            if (callExpression.getFunctionLiteralArguments().head?.getArgumentExpression() == expressionWithType) {
-                return calculateForArgument(callExpression, callExpression.getValueArguments().size - 1, true)
+            if (callExpression.getFunctionLiteralArguments().firstOrNull()?.getArgumentExpression() == expressionWithType) {
+                return calculateForArgument(callExpression, callExpression.getValueArguments().size() - 1, true)
             }
         }
         return null
@@ -185,7 +185,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
 
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
-            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
+            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size() > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()
 
                 val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
@@ -346,5 +346,5 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
     }
 
     private fun String.fromPlural()
-            = if (endsWith("s")) substring(0, length - 1) else this
+            = if (endsWith("s")) substring(0, length() - 1) else this
 }

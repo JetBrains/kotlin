@@ -16,21 +16,21 @@
 
 package org.jetbrains.jet.plugin.completion.smart
 
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.Collections
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import java.util.HashMap
 import com.google.common.collect.SetMultimap
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
 
 class TypesWithSmartCasts(val bindingContext: BindingContext) {
     public fun calculate(expression: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {

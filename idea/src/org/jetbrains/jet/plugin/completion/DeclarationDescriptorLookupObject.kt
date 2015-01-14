@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.completion
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 /**

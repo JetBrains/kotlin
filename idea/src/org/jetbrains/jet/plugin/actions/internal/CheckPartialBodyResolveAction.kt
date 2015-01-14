@@ -23,17 +23,17 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.progress.ProgressManager
-import org.jetbrains.jet.lang.psi.JetVisitorVoid
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.diff.DiffManager
 import com.intellij.openapi.diff.SimpleDiffRequest
 import com.intellij.openapi.diff.SimpleContent
@@ -42,18 +42,18 @@ import com.intellij.openapi.diff.impl.DiffPanelImpl
 import com.intellij.openapi.diff.ex.DiffPanelOptions
 import com.intellij.openapi.ui.Messages
 import javax.swing.SwingUtilities
-import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.psi.JetContainerNode
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
-import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetContainerNode
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class CheckPartialBodyResolveAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {

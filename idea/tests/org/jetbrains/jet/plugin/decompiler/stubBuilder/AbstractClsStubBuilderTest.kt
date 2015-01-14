@@ -17,10 +17,10 @@
 package org.jetbrains.jet.plugin.decompiler.stubBuilder
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import org.jetbrains.jet.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.psi.PsiElement
@@ -31,7 +31,7 @@ import org.junit.Assert
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import java.util.LinkedHashSet
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {

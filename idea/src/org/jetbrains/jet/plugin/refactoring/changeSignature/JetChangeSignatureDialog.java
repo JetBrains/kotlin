@@ -50,11 +50,11 @@ import com.intellij.util.ui.table.JBTableRow;
 import com.intellij.util.ui.table.JBTableRowEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.psi.JetTypeCodeFragment;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.descriptors.Visibilities;
+import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.psi.JetTypeCodeFragment;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import javax.swing.*;
@@ -66,7 +66,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         JetParameterInfo,

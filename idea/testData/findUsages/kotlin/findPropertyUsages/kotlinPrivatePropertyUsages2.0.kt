@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetParameter
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetParameter
 // OPTIONS: usages
 package server
 

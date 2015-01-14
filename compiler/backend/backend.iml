@@ -13,9 +13,8 @@
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="library" name="protobuf-java" level="project" />
-    <orderEntry type="module" module-name="serialization.java" />
+    <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" exported="" />
   </component>
 </module>
-

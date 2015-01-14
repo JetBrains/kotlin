@@ -20,13 +20,13 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.completion.CompletionParameters
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade

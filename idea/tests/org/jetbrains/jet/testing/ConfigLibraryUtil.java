@@ -26,7 +26,7 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 /**
  * Helper for configuring kotlin runtime in tested project.

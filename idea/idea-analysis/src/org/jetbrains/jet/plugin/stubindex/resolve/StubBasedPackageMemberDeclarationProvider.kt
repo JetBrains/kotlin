@@ -18,17 +18,17 @@ package org.jetbrains.jet.plugin.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertyByPackageIndex

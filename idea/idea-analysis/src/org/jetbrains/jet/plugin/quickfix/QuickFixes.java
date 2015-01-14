@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 
 import java.util.Collection;
 

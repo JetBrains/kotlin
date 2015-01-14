@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.insertLambdaTemplate
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.plugin.completion.KotlinCompletionCharFilter

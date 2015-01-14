@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEntry
@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.kotlin.name.Name
 import java.util.LinkedHashSet
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.Library
@@ -34,7 +34,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope

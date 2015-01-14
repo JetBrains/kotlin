@@ -31,12 +31,12 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestCaseBuilder;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
-import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.references
 
 import com.intellij.psi.*
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PlatformPatterns
 

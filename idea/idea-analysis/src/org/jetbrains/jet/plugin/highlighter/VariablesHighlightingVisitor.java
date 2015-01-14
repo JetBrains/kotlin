@@ -19,18 +19,18 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.CaptureKind;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.expressions.CaptureKind;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     VariablesHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {

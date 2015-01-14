@@ -28,19 +28,19 @@ import com.intellij.codeInsight.template.TextResult
 import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfos
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
-import org.jetbrains.jet.lang.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)

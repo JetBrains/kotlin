@@ -3,7 +3,7 @@ package test;
 import java.util.*;
 
 import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public class WrongTypeParameterBoundStructure1 {
     //@ExpectLoadError("'java.lang.Runnable?' type in method signature has 0 type arguments, while 'Runnable<Int>' in alternative signature has 1 of them")

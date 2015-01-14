@@ -17,10 +17,10 @@
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.lang.ASTNode;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetPsiFactory;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinChangePropertyActions {
     private KotlinChangePropertyActions() {

@@ -18,17 +18,17 @@ package org.jetbrains.jet.plugin.caches.resolve
 
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.java.JvmResolverForModule
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.asJava.KotlinLightMethod
-import org.jetbrains.jet.lang.resolve.java.resolveMethod
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl
-import org.jetbrains.jet.lang.resolve.java.resolveConstructor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.resolve.jvm.resolveMethod
+import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl
+import org.jetbrains.kotlin.resolve.jvm.resolveConstructor
 
 public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDescriptorResolver, BindingContext>> {
     override val platform: TargetPlatform = TargetPlatform.JVM

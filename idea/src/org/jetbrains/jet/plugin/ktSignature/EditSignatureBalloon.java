@@ -43,9 +43,9 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.plugin.JetFileType;
 
 import javax.swing.*;
 import java.awt.*;

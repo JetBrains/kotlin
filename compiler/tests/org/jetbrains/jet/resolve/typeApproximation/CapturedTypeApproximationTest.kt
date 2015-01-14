@@ -16,27 +16,25 @@
 
 package org.jetbrains.jet.resolve.typeApproximation
 
-import org.jetbrains.jet.JetLiteFixture
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.ConfigurationKind
+import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
-import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.Variance.*
-import org.jetbrains.jet.lang.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.calls.inference.CapturedTypeConstructor
-import org.jetbrains.jet.lang.resolve.calls.inference.createCapturedType
-import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.types.typesApproximation.approximateCapturedTypesIfNecessary
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
 import java.util.ArrayList
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 public class CapturedTypeApproximationTest() : JetLiteFixture() {
 

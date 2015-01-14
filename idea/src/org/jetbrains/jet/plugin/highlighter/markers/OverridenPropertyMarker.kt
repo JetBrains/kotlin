@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.highlighter.markers
 
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.PsiMethod
 import com.intellij.util.AdapterProcessor
 import com.intellij.util.CommonProcessors

@@ -23,10 +23,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> {

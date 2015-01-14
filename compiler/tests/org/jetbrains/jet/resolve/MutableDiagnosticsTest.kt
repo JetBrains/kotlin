@@ -16,18 +16,18 @@
 
 package org.jetbrains.jet.resolve
 
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.junit.Assert
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.diagnostics.Diagnostics
-import org.jetbrains.jet.lang.resolve.diagnostics.MutableDiagnosticsWithSuppression
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): JetCoreEnvironment? {

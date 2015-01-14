@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.*;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
 public class QuickFixRegistrar {
     public static void registerQuickFixes() {

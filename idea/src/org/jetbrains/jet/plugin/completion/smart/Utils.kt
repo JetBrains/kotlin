@@ -20,42 +20,42 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import java.util.HashSet
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.plugin.completion.*
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import com.intellij.openapi.util.Key
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.ArrayList
 import java.util.HashMap
-import org.jetbrains.jet.plugin.util.FuzzyType
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.plugin.util.nullability
-import org.jetbrains.jet.plugin.util.TypeNullability
+import org.jetbrains.kotlin.plugin.util.FuzzyType
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.nullability
+import org.jetbrains.kotlin.plugin.util.TypeNullability
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val offset = context.getEditor().getCaretModel().getOffset()
-        val startOffset = offset - item.getLookupString().length
+        val startOffset = offset - item.getLookupString().length()
         context.getDocument().deleteString(startOffset, offset) // delete inserted lookup string
         context.getDocument().insertString(startOffset, textBeforeCaret + textAfterCaret)
-        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length)
+        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length())
 
         if (shortenRefs) {
-            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length + textAfterCaret.length)
+            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length() + textAfterCaret.length())
         }
     }
 }
@@ -66,8 +66,8 @@ fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: In
 }
 
 fun mergeTails(tails: Collection<Tail?>): Tail? {
-    if (tails.size == 1) return tails.single()
-    return if (HashSet(tails).size == 1) tails.first() else null
+    if (tails.size() == 1) return tails.single()
+    return if (HashSet(tails).size() == 1) tails.first() else null
 }
 
 fun LookupElement.addTail(tail: Tail?): LookupElement {

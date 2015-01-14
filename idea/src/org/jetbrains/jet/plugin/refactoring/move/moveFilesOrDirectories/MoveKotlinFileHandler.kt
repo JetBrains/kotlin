@@ -23,11 +23,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiCompiledElement
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
 import org.jetbrains.jet.plugin.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages

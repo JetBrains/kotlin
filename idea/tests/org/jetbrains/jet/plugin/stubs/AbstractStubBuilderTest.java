@@ -20,10 +20,10 @@ import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
 

@@ -32,18 +32,18 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodU
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.asJava.*
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.descriptors.Modality
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.*
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.jet.lang.psi.psiUtil.deleteElementAndCleanParent
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.deleteElementAndCleanParent
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
@@ -80,7 +80,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteOverrideAnnotation ->
                         usageInfo.getSmartPointer().getElement()?.let { usageElement ->
-                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().size == 0 }) {
+                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().size() == 0 }) {
                                 KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.getReferencedElement())
                             }
                             else null

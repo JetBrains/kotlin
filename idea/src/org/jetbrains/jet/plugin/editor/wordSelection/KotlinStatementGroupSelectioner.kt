@@ -21,14 +21,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetWhenEntry
-import org.jetbrains.jet.lang.psi.JetWhenExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetWhenEntry
+import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.lexer.JetTokens
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
 
 /**

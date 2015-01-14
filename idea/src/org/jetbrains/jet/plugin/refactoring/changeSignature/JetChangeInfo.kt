@@ -17,34 +17,27 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature
 
 import com.intellij.lang.Language
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Function
 import com.intellij.util.VisibilityUtil
-import com.intellij.util.containers.ContainerUtil
-import kotlin.Function1
-import kotlin.Pair
-import org.jetbrains.jet.asJava.*
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.descriptors.Visibility
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.plugin.JetLanguage
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import java.util.HashMap
 import kotlin.properties.Delegates
 
@@ -197,7 +190,7 @@ public class JetChangeInfo(
             else
                 PsiModifier.PACKAGE_LOCAL
 
-            val newJavaParameters = newParameters.withIndices().map { pair ->
+            val newJavaParameters = newParameters.withIndex().map { pair ->
                 val (i, info) = pair
                 val type = if (isPrimaryMethodUpdated)
                     currentPsiMethod.getParameterList().getParameters()[i].getType()
@@ -241,7 +234,7 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
     //noinspection ConstantConditions
     val originalParameterDescriptors = originalChangeSignatureDescriptor.baseDescriptor.getValueParameters()
 
-    val newParameters = getNewParameters().withIndices().map { pair ->
+    val newParameters = getNewParameters().withIndex().map { pair ->
         val (i, info) = pair
         val oldIndex = info.getOldIndex()
         val currentType = parameterDescriptors[i].getType()

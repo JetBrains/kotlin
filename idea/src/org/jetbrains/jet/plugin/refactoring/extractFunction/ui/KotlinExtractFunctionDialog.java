@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.*;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

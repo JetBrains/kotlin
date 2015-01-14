@@ -19,28 +19,28 @@ package org.jetbrains.jet.plugin.completion
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionSorter
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.plugin.completion.*
-import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
-import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.resolve.ImportPath
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
 import com.intellij.psi.PsiClass
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!

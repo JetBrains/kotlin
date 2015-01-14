@@ -21,8 +21,8 @@ import com.intellij.codeInsight.navigation.GotoTargetRendererProvider;
 import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
+import org.jetbrains.kotlin.asJava.KotlinLightClass;
 
 public class JetGotoTargetRenderProvider implements GotoTargetRendererProvider {
     @Nullable

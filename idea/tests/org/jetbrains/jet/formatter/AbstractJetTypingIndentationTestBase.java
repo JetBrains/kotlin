@@ -18,14 +18,12 @@ package org.jetbrains.jet.formatter;
 
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.jet.testing.SettingsConfigurator;
 
 import java.io.File;

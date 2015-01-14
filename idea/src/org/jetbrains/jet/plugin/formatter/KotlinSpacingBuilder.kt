@@ -21,7 +21,7 @@ import com.intellij.formatting.*
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import java.util.ArrayList
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.kotlin.plugin.JetLanguage
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.lang.ASTNode
 import com.intellij.formatting.DependentSpacingRule.Trigger

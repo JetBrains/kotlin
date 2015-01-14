@@ -1,4 +1,4 @@
-// java.lang.VerifyError: (class: org/jetbrains/jet/plugin/completion/handlers/NotImplemented, method: get signature: (Ljava/lang/Object;Ljet/PropertyMetadata;)Ljava/lang/Object;) Unable to pop operand off an empty stack
+// java.lang.VerifyError: (class: NotImplemented, method: get signature: (Ljava/lang/Object;Ljet/PropertyMetadata;)Ljava/lang/Object;) Unable to pop operand off an empty stack
 
 class NotImplemented<T>(){
     fun get(thisRef: Any?, prop: PropertyMetadata): T = notImplemented()

@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.actions
 
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.jetbrains.jet.lang.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.JetVisitorVoid
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import com.intellij.ide.actions.CopyReferenceAction
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import java.util.ArrayList
 import kotlin.test.assertEquals
 

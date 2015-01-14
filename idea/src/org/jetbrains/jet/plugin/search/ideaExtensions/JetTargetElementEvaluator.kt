@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.search.ideaExtensions
 
 import com.intellij.codeInsight.TargetElementEvaluator
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.psiUtil.isAbstract
+import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.kotlin.psi.JetClass
 
 public class JetTargetElementEvaluator : TargetElementEvaluator {
     override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is JetClass && element.isAbstract())

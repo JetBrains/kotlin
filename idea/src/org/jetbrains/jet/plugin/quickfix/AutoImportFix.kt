@@ -26,16 +26,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.psiUtil.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.plugin.JetBundle
 import org.jetbrains.jet.plugin.actions.JetAddImportAction
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
@@ -43,18 +43,18 @@ import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
-import org.jetbrains.jet.asJava.unwrapped
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.jet.plugin.completion.isVisible
-import org.jetbrains.jet.utils.CachedValueProperty
+import org.jetbrains.kotlin.utils.CachedValueProperty
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -67,9 +67,9 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private val suggestions: Collection<FqName> by CachedValueProperty(
             {
-                val fqnames = computeSuggestions(element)
-                anySuggestionFound = !fqnames.isEmpty()
-                fqnames
+                val fqNames = computeSuggestions(element)
+                anySuggestionFound = !fqNames.isEmpty()
+                fqNames
             },
             { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
 

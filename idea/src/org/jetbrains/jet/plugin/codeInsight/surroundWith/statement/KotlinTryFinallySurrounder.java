@@ -23,9 +23,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetFinallySection;
-import org.jetbrains.jet.lang.psi.JetTryExpression;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetFinallySection;
+import org.jetbrains.kotlin.psi.JetTryExpression;
 
 public class KotlinTryFinallySurrounder extends KotlinTrySurrounderBase {
 

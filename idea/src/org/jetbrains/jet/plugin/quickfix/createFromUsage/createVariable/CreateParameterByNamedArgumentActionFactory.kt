@@ -17,23 +17,23 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.jet.lang.psi.JetValueArgument
-import org.jetbrains.jet.lang.psi.JetCallElement
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.refactoring.canRefactor
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

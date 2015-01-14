@@ -16,19 +16,19 @@
 
 package org.jetbrains.jet.plugin.references
 
-import org.jetbrains.jet.lang.psi.JetMultiDeclaration
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import java.util.Collections
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.source.PsiSourceElement
-import org.jetbrains.jet.lang.resolve.source.getPsi
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
 class JetMultiDeclarationReference(element: JetMultiDeclaration) : JetMultiReference<JetMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {

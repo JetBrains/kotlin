@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.plugin.highlighter.renderersUtil
 
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.calls.callUtil.*
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.jet.plugin.highlighter.IdeRenderers
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
     val htmlRenderer = DescriptorRenderer.HTML_FOR_UNINFERRED_TYPE_PARAMS

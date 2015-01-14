@@ -17,14 +17,14 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo

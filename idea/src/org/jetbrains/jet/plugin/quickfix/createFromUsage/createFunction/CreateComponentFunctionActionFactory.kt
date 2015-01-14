@@ -1,14 +1,14 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.resolve.dataClassUtils.*
-import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.dataClassUtils.*
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
-import org.jetbrains.jet.lang.psi.JetMultiDeclaration
-import org.jetbrains.jet.lang.psi.JetForExpression
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 object CreateComponentFunctionActionFactory : JetSingleIntentionActionFactory() {

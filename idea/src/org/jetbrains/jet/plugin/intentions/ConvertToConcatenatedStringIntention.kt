@@ -1,16 +1,16 @@
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntry
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetIfExpression
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetStringTemplateEntry
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {

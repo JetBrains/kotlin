@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight
 
 import java.io.File
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -29,7 +29,7 @@ import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.kotlin.test.JetTestCaseBuilder
 import org.jetbrains.jet.testing.ConfigLibraryUtil
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.openapi.projectRoots.JavaSdk

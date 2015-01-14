@@ -16,22 +16,22 @@
 
 package org.jetbrains.jet.plugin.intentions.attributeCallReplacements
 
-import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.psi.ValueArgument
-import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.

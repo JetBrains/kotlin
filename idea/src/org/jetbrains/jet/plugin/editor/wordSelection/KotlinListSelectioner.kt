@@ -20,11 +20,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetTypeArgumentList
-import org.jetbrains.jet.lang.psi.JetTypeParameterList
-import org.jetbrains.jet.lang.psi.JetValueArgumentList
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetParameterList
+import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.psi.JetTypeParameterList
+import org.jetbrains.kotlin.psi.JetValueArgumentList
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {

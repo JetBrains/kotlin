@@ -17,17 +17,17 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetParenthesizedExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.psiUtil.copied
-import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.kotlin.psi.psiUtil.copied
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<JetBinaryExpression>(

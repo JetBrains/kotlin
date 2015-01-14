@@ -3,32 +3,32 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
 import org.gradle.api.GradleException
-import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.doc.KDocArguments
 import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-import org.jetbrains.jet.config.Services
-import org.jetbrains.jet.cli.js.K2JSCompiler
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.codehaus.groovy.runtime.MethodClosure
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.jet.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.utils.LibraryUtils
+import org.jetbrains.kotlin.plugin.JetFileType
+import org.jetbrains.kotlin.utils.LibraryUtils
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 

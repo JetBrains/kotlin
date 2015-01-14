@@ -43,9 +43,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(

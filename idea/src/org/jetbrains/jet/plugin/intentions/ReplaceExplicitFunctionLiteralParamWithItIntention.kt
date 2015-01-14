@@ -23,13 +23,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {

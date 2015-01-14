@@ -23,7 +23,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.util.Collection;

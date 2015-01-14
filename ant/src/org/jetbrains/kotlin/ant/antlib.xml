@@ -1,0 +1,5 @@
+<antlib>
+    <taskdef name="kotlinc" classname="org.jetbrains.kotlin.ant.Kotlin2JvmTask"/>
+    <taskdef name="kotlin2js" classname="org.jetbrains.kotlin.ant.Kotlin2JsTask"/>
+    <typedef name="withKotlin" classname="org.jetbrains.kotlin.ant.KotlinCompilerAdapter"/>
+</antlib>

@@ -5,6 +5,6 @@
         </component>
     </application-components>
     <extensions defaultExtensionNs="com.intellij">
-        <gotoDeclarationHandler implementation="org.jetbrains.jet.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
+        <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
     </extensions>
 </idea-plugin>

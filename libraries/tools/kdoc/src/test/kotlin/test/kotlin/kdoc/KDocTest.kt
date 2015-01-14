@@ -2,7 +2,7 @@ package test.kotlin.kdoc
 
 import java.io.File
 import kotlin.test.assertTrue
-import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.junit.Assert
 import org.junit.Test

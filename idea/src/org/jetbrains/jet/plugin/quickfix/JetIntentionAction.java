@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetCodeFragment;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetCodeFragment;
+import org.jetbrains.kotlin.psi.JetFile;
 
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
     protected @NotNull T element;

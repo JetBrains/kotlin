@@ -1,33 +1,33 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.JetTypeReference
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.JetReferenceExpression
 import java.util.Arrays
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.psiUtil.isDotReceiver
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.isDotReceiver
 import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.name.FqName
 import java.util.ArrayList
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {

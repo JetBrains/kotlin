@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetBlockExpression
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement): Boolean {
     // Inspired by GenerateMembersUtils.positionCaret()

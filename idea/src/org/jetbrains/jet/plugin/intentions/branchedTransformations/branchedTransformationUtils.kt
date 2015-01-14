@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations
 
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace

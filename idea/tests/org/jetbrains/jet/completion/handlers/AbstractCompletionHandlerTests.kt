@@ -17,11 +17,11 @@
 package org.jetbrains.jet.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 
-public abstract class AbstractCompletionHandlerTest() : CompletionHandlerTestBase() {
+public abstract class AbstractCompletionHandlerTest : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val LOOKUP_STRING_PREFIX = "ELEMENT:"
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"

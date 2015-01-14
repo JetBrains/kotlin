@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.resolve.annotation
 
-import org.jetbrains.jet.analyzer.AnalysisResult
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.test.JetTestUtils
 
 class AnnotationDescriptorResolveWithoutAnalyzeBodyTest : AnnotationDescriptorResolveTest() {
 

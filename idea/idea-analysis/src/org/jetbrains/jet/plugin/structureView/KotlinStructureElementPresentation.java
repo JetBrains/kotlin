@@ -28,19 +28,19 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassInitializer;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.psi.JetClassInitializer;
+import org.jetbrains.kotlin.psi.JetModifierListOwner;
+import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 
 import javax.swing.*;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.OverrideResolver.filterOutOverridden;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getAllOverriddenDeclarations;
-import static org.jetbrains.jet.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
+import static org.jetbrains.kotlin.resolve.OverrideResolver.filterOutOverridden;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getAllOverriddenDeclarations;
+import static org.jetbrains.kotlin.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
 
 class KotlinStructureElementPresentation implements ColoredItemPresentation, LocationPresentation {
     private final TextAttributesKey attributesKey;

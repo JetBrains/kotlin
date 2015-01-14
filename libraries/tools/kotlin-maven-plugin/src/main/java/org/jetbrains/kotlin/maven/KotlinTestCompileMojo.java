@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.maven;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.util.List;
 

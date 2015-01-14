@@ -21,10 +21,10 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.fileEditor.FileEditor
-import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.kotlin.plugin.JetFileType
 import com.intellij.psi.PsiManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.icons.AllIcons
 import com.intellij.ide.actions.ActivateToolWindowAction
 import com.intellij.notification.EventLog

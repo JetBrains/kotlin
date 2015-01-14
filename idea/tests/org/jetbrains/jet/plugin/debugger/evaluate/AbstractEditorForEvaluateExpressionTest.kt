@@ -16,28 +16,28 @@
 
 package org.jetbrains.jet.plugin.debugger.evaluate
 
-import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.InTextDirectivesUtils
-import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
-import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.completion.ExpectedCompletionUtils
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.completion.handlers.AbstractCompletionHandlerTest
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {

@@ -19,12 +19,12 @@ package org.jetbrains.jet.plugin.refactoring;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.HashSet;

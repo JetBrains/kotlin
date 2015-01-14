@@ -5,7 +5,7 @@ import kotlin.template.HtmlFormatter
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.jet.lexer.*
+import org.jetbrains.kotlin.lexer.*
 
 fun main(args: Array<String>) {
     val tool = SyntaxHighlighter()

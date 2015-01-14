@@ -1,18 +1,18 @@
 package test.kotlin
 
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.JetLanguage
-import org.jetbrains.jet.utils.PathUtil
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.plugin.JetLanguage
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.doc.highlighter2.splitPsi
 import org.junit.After
 import org.junit.Assert

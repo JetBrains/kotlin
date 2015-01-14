@@ -17,25 +17,25 @@
 package org.jetbrains.jet.plugin.completion.smart
 
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.ui.LayeredIcon
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.completion.Tail
 import org.jetbrains.jet.plugin.completion.ItemPriority
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.HashSet
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.jet.plugin.completion.PositionalArgumentExpectedInfo
 import java.util.ArrayList
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.assignPriority
 import com.intellij.codeInsight.lookup.Lookup
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                                     val smartCastTypes: (VariableDescriptor) -> Collection<JetType>) {

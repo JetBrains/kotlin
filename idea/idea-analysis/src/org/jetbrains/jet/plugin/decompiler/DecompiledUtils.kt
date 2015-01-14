@@ -17,10 +17,10 @@
 package org.jetbrains.jet.plugin.decompiler
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import com.intellij.psi.ClassFileViewProvider
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import com.intellij.ide.highlighter.JavaClassFileType
 
 public fun isKotlinCompiledFile(file: VirtualFile): Boolean {

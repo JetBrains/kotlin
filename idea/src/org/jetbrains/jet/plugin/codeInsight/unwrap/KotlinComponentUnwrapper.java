@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetExpression;
 
 public abstract class KotlinComponentUnwrapper extends KotlinUnwrapRemoveBase {
     public KotlinComponentUnwrapper(String key) {

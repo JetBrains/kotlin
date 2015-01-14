@@ -32,9 +32,9 @@ import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.SettingsConfigurator;
 

@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.intentions.attributeCallReplacements
 
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 
 public open class ReplaceContainsIntention : AttributeCallReplacementIntention("replace.contains.with.in") {
 

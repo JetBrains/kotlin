@@ -7,23 +7,23 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.LineAndColumn
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.highlighter.SyntaxHighlighter
 import org.jetbrains.kotlin.doc.templates.KDocTemplate
@@ -32,7 +32,7 @@ import org.pegdown.LinkRenderer
 import org.pegdown.LinkRenderer.Rendering
 import org.pegdown.PegDownProcessor
 import org.pegdown.ast.WikiLinkNode
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 
 /**
 * Returns the collection of functions with duplicate function names filtered out

@@ -3,10 +3,10 @@
 
     <extensionPoints>
         <extensionPoint name="defaultErrorMessages"
-                        interface="org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages$Extension"/>
+                        interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages$Extension"/>
         <extensionPoint name="suppressStringProvider"
-                        interface="org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression$SuppressStringProvider"/>
+                        interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
-                        interface="org.jetbrains.jet.lang.resolve.diagnostics.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
+                        interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
     </extensionPoints>
 </idea-plugin>

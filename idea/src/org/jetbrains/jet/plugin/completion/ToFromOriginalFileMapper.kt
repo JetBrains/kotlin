@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 
 class ToFromOriginalFileMapper(

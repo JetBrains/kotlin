@@ -34,7 +34,7 @@
     </macrodef>
 
     <target name="lexer">
-        <flex flexfile="${home}/src/org/jetbrains/jet/grammar/Grammar.flex"
-              destdir="${home}//src/org/jetbrains/jet/grammar/"/>
+        <flex flexfile="${home}/src/org/jetbrains/kotlin/grammar/Grammar.flex"
+              destdir="${home}//src/org/jetbrains/kotlin/grammar/"/>
     </target>
 </project>

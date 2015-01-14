@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.codeInsight.surroundWith.statement;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetTryExpression;
+import org.jetbrains.kotlin.psi.JetTryExpression;
 
 public class KotlinTryCatchSurrounder extends KotlinTrySurrounderBase {
 

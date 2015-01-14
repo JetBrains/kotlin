@@ -17,26 +17,26 @@
 package org.jetbrains.jet.plugin.codeInsight
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
-import org.jetbrains.jet.analyzer.analyzeInContext
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public object ShortenReferences {
     public fun process(element: JetElement) {

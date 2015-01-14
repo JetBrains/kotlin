@@ -19,23 +19,23 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
+import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
-import static org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
+import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 

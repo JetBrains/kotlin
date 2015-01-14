@@ -16,22 +16,22 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetUnaryExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetUnaryExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetToken
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.lang.psi.JetConstantExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lexer.JetSingleValueToken
-import org.jetbrains.jet.lexer.JetKeywordToken
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetConstantExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetParenthesizedExpression
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetBlockExpression
 
 public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpression>("invert.if.condition", javaClass()) {
     fun checkForNegation(element: JetUnaryExpression): Boolean {

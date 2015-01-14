@@ -8,7 +8,7 @@ One way to define Ant's {{*<kotlinc>*}} task is by using your local Kotlin setup
 
 {code:xml}
 <property environment="env"/>
-<taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
+<taskdef resource    = "org/jetbrains/kotlin/ant/antlib.xml">
     <classpath>
         <fileset dir = "${env.KOTLIN_HOME}/lib" includes = "*.jar"/>
     </classpath>

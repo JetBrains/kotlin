@@ -1,7 +1,7 @@
 package test;
 
 import java.util.List;
-import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public interface ReturnNotSubtype {
     interface Super<T> {

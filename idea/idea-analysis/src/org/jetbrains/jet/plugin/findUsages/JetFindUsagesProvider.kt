@@ -20,7 +20,7 @@ import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 
 public class JetFindUsagesProvider : FindUsagesProvider {
     public override fun canFindUsagesFor(psiElement: PsiElement): Boolean =

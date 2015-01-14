@@ -22,8 +22,8 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.LibraryUtils;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.LibraryUtils;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.IOException;
 import java.util.List;

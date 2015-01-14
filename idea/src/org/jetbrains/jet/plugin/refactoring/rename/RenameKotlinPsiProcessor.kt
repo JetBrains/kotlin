@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.refactoring.rename
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element is JetNamedDeclaration

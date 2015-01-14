@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {

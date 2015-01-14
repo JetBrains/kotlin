@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 
 import java.util.List;
 

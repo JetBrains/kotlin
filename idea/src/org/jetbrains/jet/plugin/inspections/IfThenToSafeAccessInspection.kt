@@ -17,6 +17,6 @@
 package org.jetbrains.jet.plugin.inspections
 
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
-import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetIfExpression
 
 public class IfThenToSafeAccessInspection : IntentionBasedInspection<JetIfExpression>(IfThenToSafeAccessIntention())

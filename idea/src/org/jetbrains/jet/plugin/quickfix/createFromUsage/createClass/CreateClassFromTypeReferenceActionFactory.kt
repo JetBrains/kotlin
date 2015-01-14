@@ -1,18 +1,18 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
 
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
-import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {

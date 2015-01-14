@@ -17,12 +17,12 @@
 package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences
-import org.jetbrains.jet.lexer.JetTokens.*
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(
         "swap.binary.expression", javaClass()

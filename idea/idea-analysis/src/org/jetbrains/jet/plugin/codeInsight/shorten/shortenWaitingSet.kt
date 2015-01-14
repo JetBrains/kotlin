@@ -18,10 +18,10 @@ package org.jetbrains.jet.plugin.codeInsight.shorten
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.UserDataProperty
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
-import org.jetbrains.jet.lang.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import java.util.HashSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager

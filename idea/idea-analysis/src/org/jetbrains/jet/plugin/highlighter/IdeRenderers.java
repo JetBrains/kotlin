@@ -17,19 +17,19 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData;
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.Renderer;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.plugin.highlighter.renderersUtil.RenderersUtilPackage.renderResolvedCall;
 
 public class IdeRenderers {

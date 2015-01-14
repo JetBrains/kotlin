@@ -23,10 +23,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.codeInsight.upDownMover.JetDeclarationMover;
 import org.jetbrains.jet.plugin.codeInsight.upDownMover.JetExpressionMover;
 

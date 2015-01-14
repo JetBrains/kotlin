@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinNotSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinStringTemplateSurrounder;

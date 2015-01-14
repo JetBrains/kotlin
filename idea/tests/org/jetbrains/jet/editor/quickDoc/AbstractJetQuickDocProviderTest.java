@@ -24,10 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
-import org.jetbrains.jet.test.util.UtilPackage;
+import org.jetbrains.kotlin.test.util.UtilPackage;
 import org.junit.Assert;
 
 import java.io.File;

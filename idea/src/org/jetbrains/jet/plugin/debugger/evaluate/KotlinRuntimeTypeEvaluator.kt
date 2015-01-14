@@ -35,11 +35,11 @@ import com.intellij.psi.PsiElement
 import com.sun.jdi.ClassType
 import com.sun.jdi.Value
 import org.jetbrains.eval4j.jdi.*
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.load.java.JvmAbi
 
 public abstract class KotlinRuntimeTypeEvaluator(
         editor: Editor?,

@@ -30,16 +30,16 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.kotlin.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings;
-import org.jetbrains.k2js.JavaScript;
+import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
-import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
+import static org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+import static org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
 
 public class JetCompilerManager implements ProjectComponent {
     private static final Logger LOG = Logger.getInstance(JetCompilerManager.class);

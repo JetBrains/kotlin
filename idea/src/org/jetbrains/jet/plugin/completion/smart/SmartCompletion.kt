@@ -16,41 +16,43 @@
 
 package org.jetbrains.jet.plugin.completion.smart
 
-import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.types.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.types.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
 import java.util.*
 import org.jetbrains.jet.plugin.completion.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.plugin.util.makeNullable
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.plugin.util.makeNotNullable
+import org.jetbrains.kotlin.plugin.util.makeNullable
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
-import org.jetbrains.jet.plugin.util.FuzzyType
-import org.jetbrains.jet.plugin.util.fuzzyReturnType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.plugin.util.FuzzyType
+import org.jetbrains.kotlin.plugin.util.fuzzyReturnType
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
 }
 
-class SmartCompletion(val expression: JetExpression,
-                      val resolutionFacade: ResolutionFacade,
-                      val moduleDescriptor: ModuleDescriptor,
-                      val bindingContext: BindingContext,
-                      val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-                      val prefixMatcher: PrefixMatcher,
-                      val inheritorSearchScope: GlobalSearchScope,
-                      val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-                      val lookupElementFactory: LookupElementFactory) {
+class SmartCompletion(
+        val expression: JetExpression,
+        val resolutionFacade: ResolutionFacade,
+        val moduleDescriptor: ModuleDescriptor,
+        val bindingContext: BindingContext,
+        val visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        val prefixMatcher: PrefixMatcher,
+        val inheritorSearchScope: GlobalSearchScope,
+        val toFromOriginalFileMapper: ToFromOriginalFileMapper,
+        val lookupElementFactory: LookupElementFactory
+) {
     private val project = expression.getProject()
 
     public class Result(

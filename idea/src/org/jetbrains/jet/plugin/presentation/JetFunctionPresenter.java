@@ -22,10 +22,10 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 

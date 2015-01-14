@@ -23,15 +23,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetModifierListOwner;
+import org.jetbrains.kotlin.psi.JetPropertyAccessor;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.plugin.JetBundle;
 
-import static org.jetbrains.jet.lexer.JetTokens.ABSTRACT_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
 
 public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @NotNull private final JetModifierKeywordToken modifier;

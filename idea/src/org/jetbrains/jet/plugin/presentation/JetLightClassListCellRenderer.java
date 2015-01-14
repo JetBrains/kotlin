@@ -18,12 +18,13 @@ package org.jetbrains.jet.plugin.presentation;
 
 import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.psi.presentation.java.ClassPresentationUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.kotlin.asJava.KotlinLightClass;
 
 public class JetLightClassListCellRenderer extends PsiElementListCellRenderer<KotlinLightClass> {
     @Override
-    public String getElementText(KotlinLightClass element) {
+    public String getElementText(@NotNull KotlinLightClass element) {
         return ClassPresentationUtil.getNameForClass(element, false);
     }
 

@@ -20,14 +20,14 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")

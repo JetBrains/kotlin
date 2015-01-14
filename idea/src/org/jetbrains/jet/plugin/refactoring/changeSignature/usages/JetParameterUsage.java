@@ -17,11 +17,11 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature.usages;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetParameterUsage extends JetUsageInfo<JetSimpleNameExpression> {
     private final JetParameterInfo parameterInfo;

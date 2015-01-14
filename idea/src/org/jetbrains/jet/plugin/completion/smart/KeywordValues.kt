@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.kotlin.psi.*
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
-import org.jetbrains.jet.lang.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 object KeywordValues {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {

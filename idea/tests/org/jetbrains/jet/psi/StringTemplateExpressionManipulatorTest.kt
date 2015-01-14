@@ -18,8 +18,8 @@ package org.jetbrains.jet.psi
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
-import org.jetbrains.jet.lang.psi.JetStringTemplateExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.ElementManipulators
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange

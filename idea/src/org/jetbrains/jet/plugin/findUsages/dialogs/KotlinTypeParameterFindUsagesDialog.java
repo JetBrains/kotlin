@@ -22,7 +22,7 @@ import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 
 public class KotlinTypeParameterFindUsagesDialog<T extends JetNamedDeclaration> extends CommonFindUsagesDialog {
     public KotlinTypeParameterFindUsagesDialog(

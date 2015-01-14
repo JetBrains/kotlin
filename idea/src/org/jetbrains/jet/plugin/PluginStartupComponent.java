@@ -21,7 +21,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.debugger.filter.FilterPackage;
 import org.jetbrains.jet.plugin.quickfix.QuickFixRegistrar;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 public class PluginStartupComponent implements ApplicationComponent {
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";

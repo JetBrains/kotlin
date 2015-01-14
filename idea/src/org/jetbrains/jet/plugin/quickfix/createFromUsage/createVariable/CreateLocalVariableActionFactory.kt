@@ -1,33 +1,33 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.kotlin.plugin.JetBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createBuilder
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.lang.psi.psiUtil.parents
-import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
-import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.PropertyInfo
-import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
-import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

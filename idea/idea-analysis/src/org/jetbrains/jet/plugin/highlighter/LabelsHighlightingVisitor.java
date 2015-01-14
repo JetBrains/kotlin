@@ -18,8 +18,8 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpressionWithLabel;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetExpressionWithLabel;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 
 class LabelsHighlightingVisitor extends HighlightingVisitor {
     LabelsHighlightingVisitor(AnnotationHolder holder) {

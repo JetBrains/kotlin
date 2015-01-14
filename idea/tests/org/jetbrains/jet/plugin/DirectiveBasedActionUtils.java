@@ -25,10 +25,10 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.Severity;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
 

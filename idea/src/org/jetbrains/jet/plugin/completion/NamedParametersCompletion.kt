@@ -16,30 +16,30 @@
 
 package org.jetbrains.jet.plugin.completion
 
-import org.jetbrains.jet.lang.psi.JetValueArgument
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.JetIcons
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
-import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.filters.AndFilter
-import org.jetbrains.jet.lang.psi.JetValueArgumentName
+import org.jetbrains.kotlin.psi.JetValueArgumentName
 import com.intellij.psi.filters.position.ParentElementFilter
 import com.intellij.psi.filters.OrFilter
 import com.intellij.psi.filters.ClassFilter
 import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
-import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
-import org.jetbrains.jet.lang.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(

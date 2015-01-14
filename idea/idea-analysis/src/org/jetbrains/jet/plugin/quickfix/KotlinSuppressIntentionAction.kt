@@ -19,11 +19,11 @@ package org.jetbrains.jet.plugin.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.plugin.JetBundle
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences
 import org.jetbrains.jet.plugin.caches.resolve.analyze
