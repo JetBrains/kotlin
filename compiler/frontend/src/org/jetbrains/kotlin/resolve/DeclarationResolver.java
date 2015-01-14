@@ -101,7 +101,7 @@ public class DeclarationResolver {
             Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
 
             ClassDescriptorWithResolutionScopes classObj = classDescriptor.getClassObjectDescriptor();
-            if (classObj != null) {
+            if (classObj != null && DescriptorUtils.isClassObject(classObj)) {
                 Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
                 if (!classObjDescriptors.isEmpty()) {
                     allDescriptors = Lists.newArrayList(allDescriptors);

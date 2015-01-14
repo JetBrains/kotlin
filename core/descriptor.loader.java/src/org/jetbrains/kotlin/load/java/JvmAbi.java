@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 public final class JvmAbi {
     /**
@@ -35,7 +36,7 @@ public final class JvmAbi {
     public static final String GETTER_PREFIX = "get";
     public static final String SETTER_PREFIX = "set";
 
-    public static final String CLASS_OBJECT_CLASS_NAME = "object";
+    public static final String CLASS_OBJECT_CLASS_NAME = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
@@ -43,7 +44,7 @@ public final class JvmAbi {
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
     public static final String INSTANCE_FIELD = "INSTANCE$";
-    public static final String CLASS_OBJECT_FIELD = "OBJECT$";
+    public static final String CLASS_OBJECT_FIELD = CLASS_OBJECT_CLASS_NAME;
 
     public static final FqName K_OBJECT = new FqName("kotlin.jvm.internal.KObject");
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";

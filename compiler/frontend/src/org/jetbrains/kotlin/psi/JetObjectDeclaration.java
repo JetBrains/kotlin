@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -50,6 +51,10 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         }
 
         JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
+        if (nameAsDeclaration == null && isClassObject()) {
+           //NOTE: a hack in PSI that simplifies writing frontend code
+            return SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.toString();
+        }
         return nameAsDeclaration == null ? null : nameAsDeclaration.getName();
     }
 

@@ -59,7 +59,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
@@ -242,9 +241,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         String outerClassInternalName =
                 containing instanceof ClassDescriptor ? typeMapper.mapClass((ClassDescriptor) containing).getInternalName() : null;
 
-        String innerName = isClassObject(innerClass)
-                           ? JvmAbi.CLASS_OBJECT_CLASS_NAME
-                           : innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
+        String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
 
         String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));

@@ -51,6 +51,9 @@ public final class JetNamedDeclarationUtil {
     @Nullable
     public static FqName getParentFqName(@NotNull JetNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();
+        if (parent instanceof JetClassObject) {
+            parent = parent.getParent();
+        }
         if (parent instanceof JetClassBody) {
             // One nesting to JetClassBody doesn't affect to qualified name
             parent = parent.getParent();
@@ -69,15 +72,7 @@ public final class JetNamedDeclarationUtil {
             }
         }
         else if (parent instanceof JetObjectDeclaration) {
-            if (parent.getParent() instanceof JetClassObject) {
-                JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
-                if (classOrObject != null) {
-                    return getFQName(classOrObject);
-                }
-            }
-            else {
-                return getFQName((JetNamedDeclaration) parent);
-            }
+             return getFQName((JetNamedDeclaration) parent);
         }
         return null;
     }

@@ -80,7 +80,8 @@ public final class PsiCodegenPredictor {
 
         if (declaration instanceof JetClassObject) {
             // Get parent and assign Class object prefix
-            return parentInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
+            //TODO_R: getName() nullable
+            return parentInternalName + "$" + ((JetClassObject) declaration).getObjectDeclaration().getName();
         }
 
         if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||

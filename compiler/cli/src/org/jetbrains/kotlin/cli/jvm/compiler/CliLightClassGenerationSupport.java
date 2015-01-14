@@ -120,25 +120,6 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        if (JvmAbi.isClassObjectFqName(fqName)) {
-            Collection<JetClassOrObject> parentClasses = findClassOrObjectDeclarations(fqName.parent(), searchScope);
-            return ContainerUtil.mapNotNull(
-                    parentClasses,
-                    new Function<JetClassOrObject, JetClassOrObject>() {
-                        @Override
-                        public JetClassOrObject fun(JetClassOrObject classOrObject) {
-                            if (classOrObject instanceof JetClass) {
-                                JetClassObject classObject = ((JetClass) classOrObject).getClassObject();
-                                if (classObject != null) {
-                                    return classObject.getObjectDeclaration();
-                                }
-                            }
-                            return null;
-                        }
-                    }
-            );
-        }
-
         Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(getModule(), fqName);
 
         return ContainerUtil.mapNotNull(classDescriptors, new Function<ClassDescriptor, JetClassOrObject>() {

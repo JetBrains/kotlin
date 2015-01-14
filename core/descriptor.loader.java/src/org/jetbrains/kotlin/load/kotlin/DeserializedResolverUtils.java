@@ -20,24 +20,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.name.*;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.jetbrains.kotlin.name.SpecialNames.isClassObjectName;
 
 public class DeserializedResolverUtils {
     private DeserializedResolverUtils() {
     }
 
+    //TODO_R: remove usages
     @NotNull
     public static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName) {
         List<Name> segments = kotlinFqName.pathSegments();
         List<String> correctedSegments = new ArrayList<String>(segments.size());
         for (Name segment : segments) {
-            correctedSegments.add(isClassObjectName(segment) ? JvmAbi.CLASS_OBJECT_CLASS_NAME : segment.getIdentifier());
+            correctedSegments.add(segment.getIdentifier());
         }
         return FqName.fromSegments(correctedSegments);
     }
@@ -47,6 +48,7 @@ public class DeserializedResolverUtils {
         return new ClassId(kotlinClassId.getPackageFqName(), kotlinFqNameToJavaFqName(kotlinClassId.getRelativeClassName()).toUnsafe());
     }
 
+    //TODO_R: remove usages
     @NotNull
     public static FqNameUnsafe javaFqNameToKotlinFqName(@NotNull FqName javaFqName) {
         if (javaFqName.isRoot()) {
@@ -56,14 +58,12 @@ public class DeserializedResolverUtils {
         List<Name> correctedSegments = new ArrayList<Name>(segments.size());
         correctedSegments.add(segments.get(0));
         for (int i = 1; i < segments.size(); i++) {
-            Name segment = segments.get(i);
-            boolean isClassObjectName = segment.asString().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME);
-            Name correctedSegment = isClassObjectName ? SpecialNames.getClassObjectName(segments.get(i - 1)) : segment;
-            correctedSegments.add(correctedSegment);
+            correctedSegments.add(segments.get(i));
         }
         return FqNameUnsafe.fromSegments(correctedSegments);
     }
 
+    //TODO_R: remove usages
     @NotNull
     public static ClassId javaClassIdToKotlinClassId(@NotNull ClassId javaClassId) {
         return new ClassId(javaClassId.getPackageFqName(), javaFqNameToKotlinFqName(javaClassId.getRelativeClassName().toSafe()));

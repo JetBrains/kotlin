@@ -201,11 +201,6 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         writeClass(classDescriptor, classProto)
 
         serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getDescriptors(), serializer, writeClass)
-
-        val classObjectDescriptor = classDescriptor.getClassObjectDescriptor()
-        if (classObjectDescriptor != null) {
-            serializeClass(classObjectDescriptor, serializer, writeClass)
-        }
     }
 
     private fun serializeClasses(

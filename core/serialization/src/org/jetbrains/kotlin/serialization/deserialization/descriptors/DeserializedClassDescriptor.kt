@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.serialization.deserialization
-import org.jetbrains.kotlin.name.SpecialNames.getClassObjectName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -111,18 +110,13 @@ public class DeserializedClassDescriptor(
     }
 
     private fun computeClassObjectDescriptor(): ClassDescriptor? {
-        if (!classProto.hasClassObject()) return null
-
-        if (getKind() == ClassKind.OBJECT) {
-            val classObjectProto = classProto.getClassObject()
-            if (!classObjectProto.hasData()) {
-                throw IllegalStateException("Object should have a serialized class object: $classId")
-            }
-
-            return DeserializedClassDescriptor(c, classObjectProto.getData(), c.nameResolver)
+        if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.CLASS_OBJECT) {
+            return this
         }
+        if (!classProto.hasClassObjectName()) return null
 
-        return c.components.deserializeClass(classId.createNestedClassId(getClassObjectName(getName())))
+        val classObjectName = c.nameResolver.getName(classProto.getClassObjectName())
+        return memberScope.getClassifier(classObjectName) as? ClassDescriptor
     }
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()

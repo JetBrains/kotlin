@@ -82,7 +82,7 @@ class QualifierReceiver (
             scopes.add(classifier.getStaticScope())
 
             val classObjectDescriptor = classifier.getClassObjectDescriptor()
-            if (classObjectDescriptor != null) {
+            if (classObjectDescriptor != null && DescriptorUtils.isClassObject(classObjectDescriptor)) {
                 // non-static members are resolved through class object receiver
                 scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
             }

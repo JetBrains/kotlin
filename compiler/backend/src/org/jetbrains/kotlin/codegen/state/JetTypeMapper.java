@@ -339,14 +339,7 @@ public class JetTypeMapper {
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
         String containerInternalName = computeAsmTypeImpl((ClassDescriptor) container);
-        switch (klass.getKind()) {
-            case ENUM_ENTRY:
-                return containerInternalName;
-            case CLASS_OBJECT:
-                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-            default:
-                return containerInternalName + "$" + name;
-        }
+        return klass.getKind() == ClassKind.ENUM_ENTRY ? containerInternalName : containerInternalName + "$" + name;
     }
 
     @NotNull

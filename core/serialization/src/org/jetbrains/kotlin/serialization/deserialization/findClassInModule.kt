@@ -22,22 +22,13 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-private fun findInnerClass(classDescriptor: ClassDescriptor, name: Name): ClassDescriptor? {
-    return if (SpecialNames.isClassObjectName(name)) {
-        classDescriptor.getClassObjectDescriptor()
-    }
-    else {
-        classDescriptor.getUnsubstitutedInnerClassesScope().getClassifier(name) as? ClassDescriptor
-    }
-}
-
 public fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? {
     val packageViewDescriptor = getPackage(classId.getPackageFqName()) ?: return null
     val segments = classId.getRelativeClassName().pathSegments()
     val topLevelClass = packageViewDescriptor.getMemberScope().getClassifier(segments.first()) as? ClassDescriptor ?: return null
     var result = topLevelClass
     for (name in segments.subList(1, segments.size())) {
-        result = findInnerClass(result, name) ?: return null
+        result = result.getUnsubstitutedInnerClassesScope().getClassifier(name) as? ClassDescriptor ?: return null
     }
     return result
 }

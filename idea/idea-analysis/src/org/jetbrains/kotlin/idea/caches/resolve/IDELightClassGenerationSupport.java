@@ -256,11 +256,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     private static FqName getClassRelativeName(@NotNull JetClassOrObject decompiledClassOrObject) {
         Name name = decompiledClassOrObject.getNameAsName();
-        if (name == null) {
-            assert decompiledClassOrObject instanceof JetObjectDeclaration &&
-                   ((JetObjectDeclaration) decompiledClassOrObject).isClassObject();
-            name = Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME);
-        }
+        assert name != null;
         JetClassOrObject parent = PsiTreeUtil.getParentOfType(decompiledClassOrObject, JetClassOrObject.class, true);
         if (parent == null) {
             assert decompiledClassOrObject.isTopLevel();

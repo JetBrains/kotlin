@@ -37,8 +37,9 @@ public class Importer {
         else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
             allUnderImportScopes.add(descriptor.getStaticScope())
             allUnderImportScopes.add(descriptor.getUnsubstitutedInnerClassesScope())
+
             val classObjectDescriptor = descriptor.getClassObjectDescriptor()
-            if (classObjectDescriptor != null) {
+            if (classObjectDescriptor != null && DescriptorUtils.isClassObject(classObjectDescriptor)) {
                 allUnderImportScopes.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
             }
         }

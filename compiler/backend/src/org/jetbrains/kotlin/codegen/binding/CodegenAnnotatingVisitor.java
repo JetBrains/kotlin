@@ -213,7 +213,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         assert classDescriptor != null : String.format("No class found in binding context for: \n---\n%s\n---\n",
                                                        JetPsiUtil.getElementTextWithContext(classObject));
 
-        String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
+        //TODO_R: remove visitClassObject
+        String name = getName(classDescriptor);
         recordClosure(classDescriptor, name);
 
         classStack.push(classDescriptor);

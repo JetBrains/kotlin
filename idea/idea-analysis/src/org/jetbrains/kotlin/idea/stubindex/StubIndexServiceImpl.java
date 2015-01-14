@@ -56,25 +56,11 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexObject(KotlinObjectStub stub, IndexSink sink) {
         String name = stub.getName();
-        FqName fqName = stub.getFqName();
-
-        if (stub.isClassObject()) {
-            StubElement parentClassStub = stub.getParentStub().getParentStub().getParentStub();
-            assert parentClassStub instanceof KotlinStubWithFqName<?>
-                    : "Something but a class/object is a parent to class object stub: " + parentClassStub;
-
-            name = JvmAbi.CLASS_OBJECT_CLASS_NAME;
-
-            FqName parentFqName = ((KotlinStubWithFqName<?>) parentClassStub).getFqName();
-            if (parentFqName != null) {
-                fqName = parentFqName.child(Name.identifier(name));
-            }
-        }
-
         if (name != null) {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
         }
 
+        FqName fqName = stub.getFqName();
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
 

@@ -29,8 +29,11 @@ public class PsiBasedClassMemberDeclarationProvider(
 
     override fun doCreateIndex(index: AbstractPsiBasedDeclarationProvider.Index) {
         for (declaration in classInfo.getDeclarations()) {
-            if (declaration !is JetClassObject) { // Do nothing for class object because it will be taken directly from the classInfo
+            if (declaration !is JetClassObject) {
                 index.putToIndex(declaration)
+            }
+            else {
+                index.putToIndex(declaration.getObjectDeclaration())
             }
         }
 

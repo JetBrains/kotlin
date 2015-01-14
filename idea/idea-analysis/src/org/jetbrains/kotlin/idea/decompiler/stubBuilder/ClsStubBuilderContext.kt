@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstant
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.name.SpecialNames
 
 
 class ClsStubBuilderComponents(
@@ -42,11 +41,11 @@ class ClsStubBuilderComponents(
     }
 }
 
+//TODO_R: remove?
 class MemberFqNameProvider(val fqName: FqName) {
     fun getMemberFqName(name: Name): FqName = fqName.child(name)
 
-    fun child(name: Name?): MemberFqNameProvider =
-            if (name == null || SpecialNames.isClassObjectName(name)) this else MemberFqNameProvider(fqName.child(name))
+    fun child(name: Name?): MemberFqNameProvider = if (name == null) this else MemberFqNameProvider(fqName.child(name))
 }
 
 trait TypeParameters {

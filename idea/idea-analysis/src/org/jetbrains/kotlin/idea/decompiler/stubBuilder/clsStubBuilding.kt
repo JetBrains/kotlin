@@ -97,8 +97,7 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<Jet
 }
 
 fun createStubForTypeName(typeClassId: ClassId, parent: StubElement<out PsiElement>): KotlinUserTypeStub {
-    //TODO: should go away with default objects
-    val segments = typeClassId.asSingleFqName().pathSegments().filter { !SpecialNames.isClassObjectName(it) }.toArrayList()
+    val segments = typeClassId.asSingleFqName().pathSegments().toArrayList()
     assert(segments.isNotEmpty())
     val iterator = segments.listIterator(segments.size())
 
