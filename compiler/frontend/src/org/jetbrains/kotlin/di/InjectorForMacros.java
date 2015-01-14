@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.Empty;
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtensionProvider;
 import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
@@ -61,7 +60,7 @@ public class InjectorForMacros {
     private final CallResolver callResolver;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
-    private final Empty empty;
+    private final DefaultProvider defaultProvider;
     private final AnnotationResolver annotationResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -71,7 +70,6 @@ public class InjectorForMacros {
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
-    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
@@ -95,7 +93,7 @@ public class InjectorForMacros {
         this.callResolver = new CallResolver();
         this.globalContext = org.jetbrains.kotlin.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
-        this.empty = Empty.INSTANCE$;
+        this.defaultProvider = DefaultProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
@@ -105,7 +103,6 @@ public class InjectorForMacros {
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver(), kotlinBuiltIns);
@@ -121,12 +118,11 @@ public class InjectorForMacros {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         this.expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
-        this.expressionTypingComponents.setAdditionalCheckerProvider(empty);
+        this.expressionTypingComponents.setAdditionalCheckerProvider(defaultProvider);
         this.expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
         this.expressionTypingComponents.setCallResolver(callResolver);
         this.expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
