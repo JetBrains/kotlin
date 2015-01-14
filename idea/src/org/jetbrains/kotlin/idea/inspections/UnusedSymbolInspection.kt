@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.ClassUsagesSearchHelper
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -104,13 +106,25 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
+        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.getProject())
+
+        val useScope = declaration.getUseScope()
+        if (useScope is GlobalSearchScope) {
+            val searchCostResult = psiSearchHelper.isCheapEnoughToSearch(declaration.getName(), useScope, null, null)
+
+            when (searchCostResult) {
+                ZERO_OCCURRENCES -> return false // function is surely unused
+                FEW_OCCURRENCES -> {} // do search (following code)
+                TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
+            }
+        }
+
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
             is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
             else -> return false
         }
 
-        val useScope = declaration.getUseScope()
         val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
         val query = UsagesSearch.search(request)
 
