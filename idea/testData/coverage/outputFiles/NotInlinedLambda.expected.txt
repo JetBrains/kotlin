@@ -1,2 +1,2 @@
-org/demo/coverage/Foo
-org/demo/coverage/Foo$bar$1
+org.demo.coverage.Foo
+org.demo.coverage.Foo$bar$1
