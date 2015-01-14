@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public interface Importer {
         @NotNull
         private static JetScope createFilteringScope(
                 @NotNull JetScope scope,
-                @NotNull DeclarationDescriptor descriptor,
+                @NotNull PackageViewDescriptor descriptor,
                 @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
         ) {
             final Collection<ClassDescriptor> kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor);
@@ -86,22 +85,18 @@ public interface Importer {
         }
 
         protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            List<JetScope> scopesToImport = new ArrayList<JetScope>(3);
             if (descriptor instanceof PackageViewDescriptor) {
-                scopesToImport.add(new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor));
+                NoSubpackagesInPackageScope scope = new NoSubpackagesInPackageScope((PackageViewDescriptor) descriptor);
+                fileScope.importScope(createFilteringScope(scope, (PackageViewDescriptor) descriptor, platformToKotlinClassMap));
             }
             else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                scopesToImport.add(classDescriptor.getStaticScope());
-                scopesToImport.add(classDescriptor.getUnsubstitutedInnerClassesScope());
+                fileScope.importScope(classDescriptor.getStaticScope());
+                fileScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
                 ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
                 if (classObjectDescriptor != null) {
-                    scopesToImport.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
+                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
                 }
-            }
-
-            for (JetScope scope : scopesToImport) {
-                fileScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap));
             }
         }
 
