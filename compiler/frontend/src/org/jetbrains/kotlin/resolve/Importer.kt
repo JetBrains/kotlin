@@ -25,14 +25,16 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import java.util.ArrayList
 
 public trait Importer {
-    public fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap)
-
+    public fun addAllUnderImport(descriptor: DeclarationDescriptor)
     public fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name)
 
-    public open class StandardImporter(private val fileScope: WritableScope) : Importer {
+    public open class StandardImporter(
+            private val fileScope: WritableScope,
+            private val platformToKotlinClassMap: PlatformToKotlinClassMap
+    ) : Importer {
 
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
-            importAllUnderDeclaration(descriptor, platformToKotlinClassMap)
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
+            importAllUnderDeclaration(descriptor)
         }
 
         override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
@@ -49,7 +51,7 @@ public trait Importer {
             }
         }
 
-        protected fun importAllUnderDeclaration(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+        protected fun importAllUnderDeclaration(descriptor: DeclarationDescriptor) {
             if (descriptor is PackageViewDescriptor) {
                 val scope = NoSubpackagesInPackageScope(descriptor)
                 fileScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap))
@@ -71,17 +73,21 @@ public trait Importer {
         }
     }
 
-    public class DelayedImporter(fileScope: WritableScope) : StandardImporter(fileScope) {
+    public class DelayedImporter(
+            fileScope: WritableScope,
+            platformToKotlinClassMap: PlatformToKotlinClassMap
+    ) : StandardImporter(fileScope, platformToKotlinClassMap) {
+
         private trait DelayedImportEntry
 
-        private class AllUnderImportEntry(val first: DeclarationDescriptor, val second: PlatformToKotlinClassMap) : DelayedImportEntry
+        private class AllUnderImportEntry(val descriptor: DeclarationDescriptor) : DelayedImportEntry
 
-        private class AliasImportEntry(val first: DeclarationDescriptor, val second: Name) : DelayedImportEntry
+        private class AliasImportEntry(val descriptor: DeclarationDescriptor, val name: Name) : DelayedImportEntry
 
         private val imports = ArrayList<DelayedImportEntry>()
 
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
-            imports.add(AllUnderImportEntry(descriptor, platformToKotlinClassMap))
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
+            imports.add(AllUnderImportEntry(descriptor))
         }
 
         override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
@@ -91,18 +97,18 @@ public trait Importer {
         public fun processImports() {
             for (anImport in imports) {
                 if (anImport is AllUnderImportEntry) {
-                    importAllUnderDeclaration(anImport.first, anImport.second)
+                    importAllUnderDeclaration(anImport.descriptor)
                 }
                 else {
                     anImport as AliasImportEntry
-                    importDeclarationAlias(anImport.first, anImport.second)
+                    importDeclarationAlias(anImport.descriptor, anImport.name)
                 }
             }
         }
     }
 
     object DoNothingImporter : Importer {
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap) {
+        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
         }
 
         override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {

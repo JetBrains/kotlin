@@ -99,7 +99,7 @@ public class ImportsResolver {
     ) {
         @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
-        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope);
+        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope, module.getPlatformToKotlinClassMap());
         if (lookupMode == LookupMode.EVERYTHING) {
             fileScope.clearImports();
         }
@@ -110,7 +110,7 @@ public class ImportsResolver {
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, delayedImporter,
-                                                               temporaryTrace, module, lookupMode);
+                                                               temporaryTrace, lookupMode);
         }
 
         Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives = Maps.newHashMap();
@@ -120,7 +120,7 @@ public class ImportsResolver {
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
                     qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, delayedImporter,
-                                                                       trace, module, lookupMode);
+                                                                       trace, lookupMode);
             if (!descriptors.isEmpty()) {
                 resolvedDirectives.put(importDirective, descriptors);
             }

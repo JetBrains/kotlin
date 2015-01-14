@@ -69,14 +69,14 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                     val directiveImportScope = WritableScopeImpl(JetScope.Empty, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
-                    val importer = Importer.StandardImporter(directiveImportScope)
+                    val importer = Importer.StandardImporter(directiveImportScope, resolveSession.getModuleDescriptor().platformToKotlinClassMap)
                     directiveUnderResolve = directive
 
                     val descriptors: Collection<DeclarationDescriptor>
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         descriptors = resolver.processImportReference(directive, rootScope, containingDeclaration.getMemberScope(),
-                                                                      importer, traceForImportResolve, resolveSession.getModuleDescriptor(), mode)
+                                                                      importer, traceForImportResolve, mode)
                         if (mode == LookupMode.EVERYTHING) {
                             ImportsResolver.checkPlatformTypesMappedToKotlin(containingDeclaration.getModule(), traceForImportResolve, directive, descriptors)
                         }

@@ -60,7 +60,6 @@ public class QualifiedExpressionResolver {
             @NotNull JetScope scopeToCheckVisibility,
             @NotNull Importer importer,
             @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor module,
             @NotNull LookupMode lookupMode
     ) {
         if (importDirective.isAbsoluteInRootPackage()) {
@@ -93,7 +92,7 @@ public class QualifiedExpressionResolver {
             }
 
             for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAllUnderImport(descriptor, module.getPlatformToKotlinClassMap());
+                importer.addAllUnderImport(descriptor);
             }
             return Collections.emptyList();
         }
