@@ -61,7 +61,6 @@ public class OperatorConventions {
             .put(JetTokens.MINUS, Name.identifier("minus"))
             .put(JetTokens.DIV, Name.identifier("div"))
             .put(JetTokens.PERC, Name.identifier("mod"))
-            .put(JetTokens.ARROW, Name.identifier("arrow"))
             .put(JetTokens.RANGE, Name.identifier("rangeTo"))
             .build();
 
