@@ -34,13 +34,14 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ResolvePackage;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.resolveTopLevelClass;
 
 public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase {
 
@@ -83,7 +84,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = ResolvePackage.resolveTopLevelClass(injector.getModule(), javaClass);
+                    ClassDescriptor topLevelClass = resolveTopLevelClass(injector.getModule(), javaClass);
                     PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
