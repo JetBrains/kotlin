@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.psi.*;
 import javax.swing.*;
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.JetIconUtil.*;
+
 public class JetIconProvider extends IconProvider implements DumbAware {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
@@ -62,10 +64,11 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         if (psiElement instanceof JetFile) {
             JetFile file = (JetFile) psiElement;
             JetClassOrObject mainClass = getMainClass(file);
-            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
+            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags)
+                                                                           : fileIcon(isLocked(psiElement, flags));
         }
 
-        Icon result = getBaseIcon(psiElement);
+        Icon result = getBaseIcon(psiElement, isLocked(psiElement, flags));
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
             JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
             result = createRowIcon(result, getVisibilityIcon(list));
@@ -96,13 +99,13 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         return PlatformIcons.PACKAGE_LOCAL_ICON;
     }
 
-    public static Icon getBaseIcon(PsiElement psiElement) {
+    public static Icon getBaseIcon(PsiElement psiElement, boolean locked) {
         if (psiElement instanceof JetPackageDirective) {
             return PlatformIcons.PACKAGE_ICON;
         }
 
         if (psiElement instanceof KotlinLightClassForPackage) {
-            return JetIcons.FILE;
+            return fileIcon(locked);
         }
 
         if (psiElement instanceof KotlinLightClassForDecompiledDeclaration) {
@@ -112,7 +115,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             }
             else {
                 //TODO (light classes for decompiled files): correct presentation
-                return JetIcons.CLASS;
+                return classIcon(locked);
             }
         }
 
@@ -143,20 +146,20 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
             if (jetClass.isTrait()) {
-                return JetIcons.TRAIT;
+                return JetIconUtil.traitIcon(locked);
             }
 
-            Icon icon = jetClass.isEnum() ? JetIcons.ENUM : JetIcons.CLASS;
+            Icon icon = jetClass.isEnum() ? enumIcon(locked) : classIcon(locked);
             if (jetClass instanceof JetEnumEntry) {
                 JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
                 if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = JetIcons.ENUM;
+                    icon = enumIcon(locked);
                 }
             }
             return icon;
         }
         if (psiElement instanceof JetObjectDeclaration || psiElement instanceof JetClassObject) {
-            return JetIcons.OBJECT;
+            return objectIcon(locked);
         }
         if (psiElement instanceof JetParameter) {
             JetParameter parameter = (JetParameter) psiElement;

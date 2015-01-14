@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.psi.JetElement;
 
 import javax.swing.*;
 
+import static org.jetbrains.kotlin.idea.JetIconUtil.*;
+
 public final class JetDescriptorIconProvider {
 
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.JetDescriptorIconProvider");
@@ -42,7 +44,7 @@ public final class JetDescriptorIconProvider {
             return declaration.getIcon(flags);
         }
 
-        Icon result = getBaseIcon(descriptor);
+        Icon result = getBaseIcon(descriptor, isLocked(declaration, flags));
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0) {
             RowIcon rowIcon = new RowIcon(2);
             rowIcon.setIcon(result, 0);
@@ -77,7 +79,7 @@ public final class JetDescriptorIconProvider {
         return null;
     }
 
-    private static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
+    private static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor, boolean locked) {
         if (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
             return PlatformIcons.PACKAGE_ICON;
         }
@@ -102,19 +104,19 @@ public final class JetDescriptorIconProvider {
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor) descriptor).getKind()) {
                 case TRAIT:
-                    return JetIcons.TRAIT;
+                    return traitIcon(locked);
                 case ENUM_CLASS:
-                    return JetIcons.ENUM;
+                    return enumIcon(locked);
                 case ENUM_ENTRY:
-                    return JetIcons.ENUM;
+                    return enumIcon(locked);
                 case ANNOTATION_CLASS:
                     return PlatformIcons.ANNOTATION_TYPE_ICON;
                 case OBJECT:
-                    return JetIcons.OBJECT;
+                    return objectIcon(locked);
                 case CLASS_OBJECT:
-                    return JetIcons.OBJECT;
+                    return objectIcon(locked);
                 case CLASS:
-                    return JetIcons.CLASS;
+                    return classIcon(locked);
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
