@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ScopeProvider {
+public class ScopeProvider implements DeclarationScopeProvider {
     public static class AdditionalFileScopeProvider {
         @NotNull
         public List<JetScope> scopes(@NotNull JetFile file) {
@@ -101,6 +101,7 @@ public class ScopeProvider {
                 "LazyFileScope for file " + file.getName());
     }
 
+    @Override
     @NotNull
     public JetScope getResolutionScopeForDeclaration(@NotNull PsiElement elementOfDeclaration) {
         JetDeclaration jetDeclaration = JetStubbedPsiUtil.getPsiOrStubParent(elementOfDeclaration, JetDeclaration.class, false);

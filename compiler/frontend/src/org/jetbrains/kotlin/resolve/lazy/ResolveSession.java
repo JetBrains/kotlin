@@ -26,6 +26,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -48,7 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ResolveSession implements KotlinCodeAnalyzer {
+public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final LazyResolveStorageManager storageManager;
     private final ExceptionTracker exceptionTracker;
 
@@ -221,13 +222,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    //@Override
+    @Override
     public LazyResolveStorageManager getStorageManager() {
         return storageManager;
     }
 
     @NotNull
-    //@Override
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;
     }
@@ -297,7 +297,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return (ClassDescriptor) classifier;
     }
 
-    @Override
     @NotNull
     public ScriptDescriptor getScriptDescriptor(@NotNull JetScript script) {
         return scriptDescriptors.invoke(script);
@@ -334,11 +333,13 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return trace.getBindingContext();
     }
 
+    @Override
     @NotNull
     public BindingTrace getTrace() {
         return trace;
     }
 
+    @Override
     @NotNull
     public DeclarationProviderFactory getDeclarationProviderFactory() {
         return declarationProviderFactory;
@@ -507,16 +508,19 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return jetImportFactory;
     }
 
+    @Override
     @NotNull
     public AnnotationResolver getAnnotationResolver() {
         return annotationResolve;
     }
 
+    @Override
     @NotNull
     public DescriptorResolver getDescriptorResolver() {
         return descriptorResolver;
     }
 
+    @Override
     @NotNull
     public TypeResolver getTypeResolver() {
         return typeResolver;

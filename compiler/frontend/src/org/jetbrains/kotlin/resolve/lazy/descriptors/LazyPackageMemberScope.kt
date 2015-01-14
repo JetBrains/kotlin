@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageMemberScope(
-        resolveSession: ResolveSession,
+        private val _resolveSession: ResolveSession,
         declarationProvider: PackageMemberDeclarationProvider,
         thisPackage: PackageFragmentDescriptor)
-: AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace()) {
+: AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(_resolveSession, declarationProvider, thisPackage, _resolveSession.getTrace()) {
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter)
@@ -36,7 +36,7 @@ public class LazyPackageMemberScope(
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration)
-            = resolveSession.getScopeProvider().getFileScope(declaration.getContainingJetFile())
+            = _resolveSession.getScopeProvider().getFileScope(declaration.getContainingJetFile())
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {
         // No extra functions

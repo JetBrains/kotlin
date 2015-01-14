@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.dataClassUtils.*
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -40,12 +39,14 @@ import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
 
-public open class LazyClassMemberScope(resolveSession: ResolveSession,
-                                  declarationProvider: ClassMemberDeclarationProvider,
-                                  thisClass: LazyClassDescriptor,
-                                  trace: BindingTrace)
-: AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(resolveSession, declarationProvider, thisClass, trace) {
+public open class LazyClassMemberScope(
+        c: LazyClassContext,
+        declarationProvider: ClassMemberDeclarationProvider,
+        thisClass: LazyClassDescriptor,
+        trace: BindingTrace
+) : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(c, declarationProvider, thisClass, trace) {
 
     private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
         computeDescriptorsFromDeclaredElements(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
@@ -86,7 +87,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
-            = resolveSession.getStorageManager().createNullableLazyValue { resolvePrimaryConstructor() }
+            = c.storageManager.createNullableLazyValue { resolvePrimaryConstructor() }
 
     override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): JetScope {
         if (declaration is JetProperty) {
@@ -219,7 +220,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
 
             val parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex())
             if (parameter.hasValOrVarNode()) {
-                val propertyDescriptor = resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                val propertyDescriptor = c.descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                         thisDescriptor, valueParameterDescriptor, thisDescriptor.getScopeForClassHeaderResolution(), parameter, trace)
                 result.add(propertyDescriptor)
             }
@@ -231,7 +232,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
             ?: return setOf() // Enum class objects do not have delegated members
 
         val lazyTypeResolver = DelegationResolver.TypeResolver { reference ->
-            resolveSession.getTypeResolver().resolveType(thisDescriptor.getScopeForClassHeaderResolution(), reference, trace, false)
+            c.typeResolver.resolveType(thisDescriptor.getScopeForClassHeaderResolution(), reference, trace, false)
         }
         val lazyMemberExtractor = DelegationResolver.MemberExtractor<T> {
             type -> extractor.extract(type, name)
@@ -274,7 +275,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
             if (!thisDescriptor.getKind().isSingleton()) {
                 assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
                 classOrObject as JetClass
-                val constructor = resolveSession.getDescriptorResolver().resolvePrimaryConstructorDescriptor(
+                val constructor = c.descriptorResolver.resolvePrimaryConstructorDescriptor(
                         thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
                 assert(constructor != null) { "No constructor created for $thisDescriptor" }
                 setDeferredReturnType(constructor)
@@ -290,7 +291,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     }
 
     protected fun setDeferredReturnType(descriptor: ConstructorDescriptorImpl) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getStorageManager(), trace, { thisDescriptor.getDefaultType() }))
+        descriptor.setReturnType(DeferredType.create(c.storageManager, trace, { thisDescriptor.getDefaultType() }))
     }
 
     // Do not add details here, they may compromise the laziness during debugging

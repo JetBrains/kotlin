@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
@@ -39,13 +40,15 @@ public class LazyScriptClassDescriptor extends LazyClassDescriptor {
     @NotNull
     @Override
     protected LazyScriptClassMemberScope createMemberScope(
-            @NotNull ResolveSession resolveSession, @NotNull ClassMemberDeclarationProvider declarationProvider
+            @NotNull LazyClassContext c,
+            @NotNull ClassMemberDeclarationProvider declarationProvider
     ) {
         return new LazyScriptClassMemberScope(
-                resolveSession,
+                // Must be a ResolveSession for scripts
+                (ResolveSession) c,
                 declarationProvider,
                 this,
-                TemporaryBindingTrace.create(resolveSession.getTrace(), "A trace for script class, needed to avoid rewrites on members")
+                TemporaryBindingTrace.create(c.getTrace(), "A trace for script class, needed to avoid rewrites on members")
         );
     }
 

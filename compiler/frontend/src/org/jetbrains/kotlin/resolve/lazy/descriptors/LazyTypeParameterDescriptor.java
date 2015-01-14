@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Set;
@@ -33,17 +33,17 @@ import java.util.Set;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
-    private final ResolveSession resolveSession;
+    private final LazyClassContext c;
 
     private final JetTypeParameter jetTypeParameter;
 
     public LazyTypeParameterDescriptor(
-            @NotNull ResolveSession resolveSession,
+            @NotNull LazyClassContext c,
             @NotNull LazyClassDescriptor containingDeclaration,
             @NotNull JetTypeParameter jetTypeParameter,
             int index) {
         super(
-                resolveSession.getStorageManager(),
+                c.getStorageManager(),
                 containingDeclaration,
                 jetTypeParameter.getNameAsSafeName(),
                 jetTypeParameter.getVariance(),
@@ -51,10 +51,10 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                 index,
                 toSourceElement(jetTypeParameter)
         );
-        this.resolveSession = resolveSession;
+        this.c = c;
         this.jetTypeParameter = jetTypeParameter;
 
-        this.resolveSession.getTrace().record(BindingContext.TYPE_PARAMETER, jetTypeParameter, this);
+        this.c.getTrace().record(BindingContext.TYPE_PARAMETER, jetTypeParameter, this);
     }
 
     @NotNull
@@ -72,7 +72,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         resolveUpperBoundsFromWhereClause(upperBounds);
 
         if (upperBounds.isEmpty()) {
-            upperBounds.add(resolveSession.getModuleDescriptor().getBuiltIns().getDefaultBound());
+            upperBounds.add(c.getModuleDescriptor().getBuiltIns().getDefaultBound());
         }
 
         return upperBounds;
@@ -83,12 +83,12 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
-                DescriptorResolver.reportUnsupportedClassObjectConstraint(resolveSession.getTrace(), jetTypeConstraint);
+                DescriptorResolver.reportUnsupportedClassObjectConstraint(c.getTrace(), jetTypeConstraint);
 
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
                     if (getName().equals(constrainedParameterName.getReferencedNameAsName())) {
-                        resolveSession.getTrace().record(BindingContext.REFERENCE_TARGET, constrainedParameterName, this);
+                        c.getTrace().record(BindingContext.REFERENCE_TARGET, constrainedParameterName, this);
 
                         JetTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
@@ -105,9 +105,9 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     }
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
-        return resolveSession.getTypeResolver()
+        return c.getTypeResolver()
                     .resolveType(getContainingDeclaration().getScopeForClassHeaderResolution(), boundTypeReference,
-                                 resolveSession.getTrace(), false);
+                                 c.getTrace(), false);
     }
 
     @NotNull

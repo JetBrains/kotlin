@@ -66,14 +66,14 @@ public class LazyScriptClassMemberScope protected(
 
         for (valueParameterDescriptor in primaryConstructor.getValueParameters()) {
             if (name == valueParameterDescriptor.getName()) {
-                result.add(ScriptDescriptorImpl.createPropertyFromScriptParameter(resolveSession.getScriptDescriptor(scriptInfo.script), valueParameterDescriptor))
+                result.add(ScriptDescriptorImpl.createPropertyFromScriptParameter((c as ResolveSession).getScriptDescriptor(scriptInfo.script), valueParameterDescriptor))
             }
         }
     }
 
     override fun resolvePrimaryConstructor(): ConstructorDescriptor? {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
-        val scriptDescriptor = resolveSession.getScriptDescriptor(scriptInfo.script)
+        val scriptDescriptor = (c as ResolveSession).getScriptDescriptor(scriptInfo.script)
         val constructor = ScriptDescriptorImpl.createConstructor(scriptDescriptor, scriptDescriptor.getScriptCodeDescriptor().getValueParameters())
         setDeferredReturnType(constructor)
         return constructor
