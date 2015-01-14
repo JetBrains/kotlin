@@ -5,7 +5,7 @@ package test
 import testing.first.*
 import testing.second.*
 
-val a1: `second`TestClass? = null
+val a1: `!`TestClass? = null
 
 //FILE:mainToFirst.kt
 //----------------------------------------------------------------------------------
@@ -14,16 +14,16 @@ package test
 import testing.second.*
 import testing.first.*
 
-val a2: `first`TestClass? = null
+val a2: `!`TestClass? = null
 
 //FILE:importFirst.kt
 //----------------------------------------------------------------------------------
 package testing.first
 
-class ~first~TestClass
+class TestClass
 
 //FILE:importSecond.kt
 //----------------------------------------------------------------------------------
 package testing.second
 
-class ~second~TestClass
+class TestClass

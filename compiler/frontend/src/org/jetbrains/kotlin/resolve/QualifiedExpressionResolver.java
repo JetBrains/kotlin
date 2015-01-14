@@ -58,7 +58,7 @@ public class QualifiedExpressionResolver {
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
             @NotNull JetScope scopeToCheckVisibility,
-            @NotNull Importer importer,
+            @Nullable Importer importer,
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
@@ -91,8 +91,10 @@ public class QualifiedExpressionResolver {
                 return Collections.emptyList();
             }
 
-            for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAllUnderImport(descriptor);
+            if (importer != null) {
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    importer.addAllUnderImport(descriptor);
+                }
             }
             return Collections.emptyList();
         }
@@ -102,8 +104,10 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
 
-        for (DeclarationDescriptor descriptor : descriptors) {
-            importer.addAliasImport(descriptor, aliasName);
+        if (importer != null) {
+            for (DeclarationDescriptor descriptor : descriptors) {
+                importer.addAliasImport(descriptor, aliasName);
+            }
         }
 
         return descriptors;

@@ -186,7 +186,6 @@ public class KotlinIndicesHelper(
     private fun analyzeImportReference(
             importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace
     ): Collection<DeclarationDescriptor> {
-        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, Importer.DoNothingImporter, trace,
-                                                                    LookupMode.EVERYTHING)
+        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, null, trace, LookupMode.EVERYTHING)
     }
 }

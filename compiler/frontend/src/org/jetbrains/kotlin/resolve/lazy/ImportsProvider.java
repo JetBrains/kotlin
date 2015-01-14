@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.lazy;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import kotlin.Function0;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetImportDirective;
@@ -25,8 +29,8 @@ import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 class ImportsProvider {
     private final List<JetImportDirective> importDirectives;
@@ -43,13 +47,19 @@ class ImportsProvider {
     }
 
     @NotNull
-    public List<JetImportDirective> getImports(@NotNull Name name) {
-        return importsCacheValue.invoke().getImports(name);
+    public List<JetImportDirective> getImports(@NotNull Name name, @NotNull LookupMode mode) {
+        return importsCacheValue.invoke().getImports(name, mode);
     }
 
     @NotNull
     public List<JetImportDirective> getAllImports() {
         return importDirectives;
+    }
+
+    public enum LookupMode {
+        CLASS,
+        PACKAGE,
+        FUNCTION_OR_PROPERTY
     }
 
     private static class NameToImportsCache {
@@ -61,47 +71,42 @@ class ImportsProvider {
             allUnderImports = imports;
         }
 
-        private List<JetImportDirective> getImports(@NotNull Name name) {
-            return nameToDirectives.containsKey(name) ? nameToDirectives.get(name) : allUnderImports;
+        private List<JetImportDirective> getImports(@NotNull Name name, @NotNull LookupMode mode) {
+            switch (mode) {
+                 case CLASS:
+                     return nameToDirectives.containsKey(name) ? nameToDirectives.get(name) : allUnderImports; // for class lookup explicit imports have priority
+
+                 case PACKAGE:
+                     return nameToDirectives.containsKey(name) ? nameToDirectives.get(name) : Collections.<JetImportDirective>emptyList(); // no packages import by all under imports
+
+                 case FUNCTION_OR_PROPERTY:
+                     return nameToDirectives.containsKey(name) ? KotlinPackage.plus(nameToDirectives.get(name), allUnderImports) : allUnderImports;
+
+                default:
+                    throw new IllegalArgumentException();
+            }
         }
 
         private static NameToImportsCache createIndex(List<JetImportDirective> importDirectives) {
             ImmutableListMultimap.Builder<Name, JetImportDirective> namesToRelativeImportsBuilder = ImmutableListMultimap.builder();
 
-            Set<Name> processedAliases = Sets.newHashSet();
-            List<JetImportDirective> processedAllUnderImports = Lists.newArrayList();
+            List<JetImportDirective> allUnderImports = Lists.newArrayList();
 
             for (JetImportDirective anImport : importDirectives) {
                 ImportPath path = anImport.getImportPath();
-                if (path == null) {
-                    // Could be some parse errors
-                    continue;
-                }
+                if (path == null) continue; // Could be some parse errors
 
                 if (path.isAllUnder()) {
-                    processedAllUnderImports.add(anImport);
-
-                    // All-Under import is relevant to all names found so far
-                    for (Name aliasName : processedAliases) {
-                        namesToRelativeImportsBuilder.put(aliasName, anImport);
-                    }
+                    allUnderImports.add(anImport);
                 }
                 else {
                     Name aliasName = path.getImportedName();
                     assert aliasName != null;
-
-                    if (!processedAliases.contains(aliasName)) {
-                        processedAliases.add(aliasName);
-
-                        // Add to relevant imports all all-under imports found by this moment
-                        namesToRelativeImportsBuilder.putAll(aliasName, processedAllUnderImports);
-                    }
-
                     namesToRelativeImportsBuilder.put(aliasName, anImport);
                 }
             }
 
-            return new NameToImportsCache(namesToRelativeImportsBuilder.build(), ImmutableList.copyOf(processedAllUnderImports));
+            return new NameToImportsCache(namesToRelativeImportsBuilder.build(), ImmutableList.copyOf(allUnderImports));
         }
     }
 }

@@ -99,7 +99,7 @@ public class ImportsResolver {
     ) {
         @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
-        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope, module.getPlatformToKotlinClassMap());
+        Importer importer = new Importer(module.getPlatformToKotlinClassMap());
         if (lookupMode == LookupMode.EVERYTHING) {
             fileScope.clearImports();
         }
@@ -109,7 +109,7 @@ public class ImportsResolver {
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
-            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, delayedImporter,
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, importer,
                                                                temporaryTrace, lookupMode);
         }
 
@@ -119,7 +119,7 @@ public class ImportsResolver {
 
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, delayedImporter,
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, importer,
                                                                        trace, lookupMode);
             if (!descriptors.isEmpty()) {
                 resolvedDirectives.put(importDirective, descriptors);
@@ -129,7 +129,7 @@ public class ImportsResolver {
                 checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }
-        delayedImporter.processImports();
+        importer.doImport(fileScope);
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {

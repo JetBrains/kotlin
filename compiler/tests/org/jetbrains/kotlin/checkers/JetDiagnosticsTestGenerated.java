@@ -4703,6 +4703,42 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("AllUnderImportsAmbiguity.kt")
+            public void testAllUnderImportsAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/AllUnderImportsAmbiguity.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AllUnderImportsLessPriority.kt")
+            public void testAllUnderImportsLessPriority() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/AllUnderImportsLessPriority.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AllUnderImportsSamePriorityForFunction.kt")
+            public void testAllUnderImportsSamePriorityForFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/AllUnderImportsSamePriorityForFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AllUnderImportsSamePriorityForProperty.kt")
+            public void testAllUnderImportsSamePriorityForProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/AllUnderImportsSamePriorityForProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExplicitImportsAmbiguity.kt")
+            public void testExplicitImportsAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExplicitImportsUnambiguityForFunction.kt")
+            public void testExplicitImportsUnambiguityForFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitImportsUnambiguityForFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importFunctionWithAllUnderImport.kt")
             public void testImportFunctionWithAllUnderImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/importFunctionWithAllUnderImport.kt");

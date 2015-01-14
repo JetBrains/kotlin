@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import java.util.LinkedHashSet
+import java.util.HashSet
 
 public class LazyImportScope(private val resolveSession: ResolveSession,
                              private val containingDeclaration: PackageViewDescriptor,
@@ -69,7 +69,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                     val directiveImportScope = WritableScopeImpl(JetScope.Empty, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
-                    val importer = Importer.StandardImporter(directiveImportScope, resolveSession.getModuleDescriptor().platformToKotlinClassMap)
+                    val importer = Importer(resolveSession.getModuleDescriptor().platformToKotlinClassMap)
                     directiveUnderResolve = directive
 
                     val descriptors: Collection<DeclarationDescriptor>
@@ -77,6 +77,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         descriptors = resolver.processImportReference(directive, rootScope, containingDeclaration.getMemberScope(),
                                                                       importer, traceForImportResolve, mode)
+                        importer.doImport(directiveImportScope)
                         if (mode == LookupMode.EVERYTHING) {
                             ImportsResolver.checkPlatformTypesMappedToKotlin(containingDeclaration.getModule(), traceForImportResolve, directive, descriptors)
                         }
@@ -109,29 +110,40 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
         }
     }
 
-    private fun <D : DeclarationDescriptor> selectFirstFromImports(name: Name, lookupMode: LookupMode, descriptorSelector: JetScopeSelectorUtil.ScopeByNameSelector<D>): D? {
+    private fun <D : DeclarationDescriptor> selectSingleFromImports(
+            name: Name,
+            lookupMode: LookupMode,
+            selectImportsMode: ImportsProvider.LookupMode,
+            descriptorSelector: JetScopeSelectorUtil.ScopeByNameSelector<D>
+    ): D? {
         fun compute(): D? {
-            for (directive in importsProvider.getImports(name)) {
-                if (directive == directiveUnderResolve) {
-                    // This is the recursion in imports analysis
-                    return null
-                }
-
-                val foundDescriptor = descriptorSelector.get(getImportScope(directive, lookupMode), name)
-                if (foundDescriptor != null) {
-                    return foundDescriptor
-                }
+            // for classes and packages it never returns a mix of explicit and all-under imports so they all have the same priority
+            val imports = importsProvider.getImports(name, selectImportsMode)
+            if (imports.contains(directiveUnderResolve)) {
+                // This is the recursion in imports analysis
+                return null
             }
 
-            return null
+            var target: D? = null
+            for (directive in imports) {
+                val resolved = descriptorSelector.get(getImportScope(directive, lookupMode), name) ?: continue
+                if (target != null && target != resolved) return null // ambiguity
+                target = resolved
+            }
+            return target
         }
         return resolveSession.getStorageManager().compute(::compute)
     }
 
-    private fun <D : DeclarationDescriptor> collectFromImports(name: Name, lookupMode: LookupMode, descriptorsSelector: JetScopeSelectorUtil.ScopeByNameMultiSelector<D>): Collection<D> {
+    private fun <D : DeclarationDescriptor> collectFromImports(
+            name: Name,
+            lookupMode: LookupMode,
+            selectImportsMode: ImportsProvider.LookupMode,
+            descriptorsSelector: JetScopeSelectorUtil.ScopeByNameMultiSelector<D>
+    ): Collection<D> {
         return resolveSession.getStorageManager().compute {
-            val descriptors = Sets.newHashSet<D>()
-            for (directive in importsProvider.getImports(name)) {
+            val descriptors = HashSet<D>()
+            for (directive in importsProvider.getImports(name, selectImportsMode)) {
                 if (directive == directiveUnderResolve) {
                     // This is the recursion in imports analysis
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
@@ -146,15 +158,15 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     private fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode) = importedScopesProvider(directive).scopeForMode(lookupMode)
 
-    override fun getClassifier(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
+    override fun getClassifier(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, ImportsProvider.LookupMode.CLASS, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
 
-    override fun getPackage(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
+    override fun getPackage(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, ImportsProvider.LookupMode.PACKAGE, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
 
-    override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
+    override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, ImportsProvider.LookupMode.FUNCTION_OR_PROPERTY, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
 
     override fun getLocalVariable(name: Name) = null
 
-    override fun getFunctions(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
+    override fun getFunctions(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, ImportsProvider.LookupMode.FUNCTION_OR_PROPERTY, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 

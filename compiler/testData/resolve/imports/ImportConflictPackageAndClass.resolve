@@ -16,7 +16,7 @@ import testing.second.TestClass
 import testing.first.*
 
 // Single import has priority over package import
-val a2: `first`TestClass? = null
+val a2: `second`TestClass? = null
 
 
 //FILE:importFirst.kt

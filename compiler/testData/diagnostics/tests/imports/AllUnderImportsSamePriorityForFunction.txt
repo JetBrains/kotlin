@@ -1,0 +1,13 @@
+package
+
+package a {
+    internal fun X(/*0*/ p: kotlin.Int): kotlin.Unit
+}
+
+package b {
+    internal fun X(): kotlin.Int
+}
+
+package c {
+    internal fun foo(): kotlin.Unit
+}

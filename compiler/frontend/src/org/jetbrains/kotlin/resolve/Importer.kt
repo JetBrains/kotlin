@@ -23,95 +23,84 @@ import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import java.util.ArrayList
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.Printer
 
-public trait Importer {
-    public fun addAllUnderImport(descriptor: DeclarationDescriptor)
-    public fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name)
+public class Importer(private val platformToKotlinClassMap: PlatformToKotlinClassMap) {
+    private val allUnderImportScopes = ArrayList<JetScope>()
+    private val explicitImports = ArrayList<Pair<DeclarationDescriptor, Name>>()
 
-    public open class StandardImporter(
-            private val fileScope: WritableScope,
-            private val platformToKotlinClassMap: PlatformToKotlinClassMap
-    ) : Importer {
-
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
-            importAllUnderDeclaration(descriptor)
+    public fun addAllUnderImport(descriptor: DeclarationDescriptor) {
+        if (descriptor is PackageViewDescriptor) {
+            val scope = NoSubpackagesInPackageScope(descriptor)
+            allUnderImportScopes.add(createFilteringScope(scope, descriptor, platformToKotlinClassMap))
         }
-
-        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
-            importDeclarationAlias(descriptor, aliasName)
+        else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
+            allUnderImportScopes.add(descriptor.getStaticScope())
+            allUnderImportScopes.add(descriptor.getUnsubstitutedInnerClassesScope())
+            val classObjectDescriptor = descriptor.getClassObjectDescriptor()
+            if (classObjectDescriptor != null) {
+                allUnderImportScopes.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
+            }
         }
+    }
 
-        protected fun importDeclarationAlias(descriptor: DeclarationDescriptor, aliasName: Name) {
+    private fun createFilteringScope(scope: JetScope, descriptor: PackageViewDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap): JetScope {
+        val kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor)
+        if (kotlinAnalogsForClassesInside.isEmpty()) return scope
+        return FilteringScope(scope) { descriptor -> kotlinAnalogsForClassesInside.all { it.getName() != descriptor.getName() } }
+    }
+
+    public fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
+        explicitImports.add(descriptor to aliasName)
+    }
+
+    public fun doImport(targetScope: WritableScope) {
+        // import all imports with '*' first because they have lower priority
+        targetScope.importScope(AllUnderImportsScope(allUnderImportScopes))
+
+        for ((descriptor, name) in explicitImports) {
             when (descriptor) {
-                is ClassifierDescriptor -> fileScope.importClassifierAlias(aliasName, descriptor)
-                is PackageViewDescriptor -> fileScope.importPackageAlias(aliasName, descriptor)
-                is FunctionDescriptor -> fileScope.importFunctionAlias(aliasName, descriptor)
-                is VariableDescriptor -> fileScope.importVariableAlias(aliasName, descriptor)
+                is ClassifierDescriptor -> targetScope.importClassifierAlias(name, descriptor)
+                is PackageViewDescriptor -> targetScope.importPackageAlias(name, descriptor)
+                is FunctionDescriptor -> targetScope.importFunctionAlias(name, descriptor)
+                is VariableDescriptor -> targetScope.importVariableAlias(name, descriptor)
                 else -> error("Unknown descriptor")
             }
         }
-
-        protected fun importAllUnderDeclaration(descriptor: DeclarationDescriptor) {
-            if (descriptor is PackageViewDescriptor) {
-                val scope = NoSubpackagesInPackageScope(descriptor)
-                fileScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap))
-            }
-            else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
-                fileScope.importScope(descriptor.getStaticScope())
-                fileScope.importScope(descriptor.getUnsubstitutedInnerClassesScope())
-                val classObjectDescriptor = descriptor.getClassObjectDescriptor()
-                if (classObjectDescriptor != null) {
-                    fileScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
-                }
-            }
-        }
-
-        private fun createFilteringScope(scope: JetScope, descriptor: PackageViewDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap): JetScope {
-            val kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor)
-            if (kotlinAnalogsForClassesInside.isEmpty()) return scope
-            return FilteringScope(scope) { descriptor -> kotlinAnalogsForClassesInside.all { it.getName() != descriptor.getName() } }
-        }
     }
 
-    public class DelayedImporter(
-            fileScope: WritableScope,
-            platformToKotlinClassMap: PlatformToKotlinClassMap
-    ) : StandardImporter(fileScope, platformToKotlinClassMap) {
-
-        private trait DelayedImportEntry
-
-        private class AllUnderImportEntry(val descriptor: DeclarationDescriptor) : DelayedImportEntry
-
-        private class AliasImportEntry(val descriptor: DeclarationDescriptor, val name: Name) : DelayedImportEntry
-
-        private val imports = ArrayList<DelayedImportEntry>()
-
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
-            imports.add(AllUnderImportEntry(descriptor))
+    private class AllUnderImportsScope(private val scopes: Collection<JetScope>) : JetScope {
+        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+            return scopes.flatMap { it.getDescriptors(kindFilter, nameFilter) }
         }
 
-        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
-            imports.add(AliasImportEntry(descriptor, aliasName))
+        override fun getClassifier(name: Name): ClassifierDescriptor? {
+            return scopes.stream().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
         }
 
-        public fun processImports() {
-            for (anImport in imports) {
-                if (anImport is AllUnderImportEntry) {
-                    importAllUnderDeclaration(anImport.descriptor)
-                }
-                else {
-                    anImport as AliasImportEntry
-                    importDeclarationAlias(anImport.descriptor, anImport.name)
-                }
-            }
-        }
-    }
-
-    object DoNothingImporter : Importer {
-        override fun addAllUnderImport(descriptor: DeclarationDescriptor) {
+        override fun getProperties(name: Name): Collection<VariableDescriptor> {
+            return scopes.flatMap { it.getProperties(name) }
         }
 
-        override fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {
+        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+            return scopes.flatMap { it.getFunctions(name) }
+        }
+
+        override fun getPackage(name: Name): PackageViewDescriptor? = null // packages are not imported by all under imports
+
+        override fun getLocalVariable(name: Name): VariableDescriptor? = null
+
+        override fun getContainingDeclaration(): DeclarationDescriptor = throw UnsupportedOperationException()
+
+        override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
+
+        override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
+
+        override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = listOf()
+
+        override fun printScopeStructure(p: Printer) {
+            p.println(javaClass.getSimpleName())
         }
     }
 }
