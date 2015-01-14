@@ -4727,6 +4727,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ClassImportsConflicting.kt")
+            public void testClassImportsConflicting() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ClassImportsConflicting.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("DontImportRootScope.kt")
+            public void testDontImportRootScope() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/DontImportRootScope.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExplicitImportsAmbiguity.kt")
             public void testExplicitImportsAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
@@ -4745,6 +4757,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportFromCurrentWithDifferentName.kt")
+            public void testImportFromCurrentWithDifferentName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importFunctionWithAllUnderImport.kt")
             public void testImportFunctionWithAllUnderImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/importFunctionWithAllUnderImport.kt");
@@ -4757,15 +4775,63 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportObjectAndUseAsSupertype.kt")
+            public void testImportObjectAndUseAsSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportObjectAndUseAsSupertype.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportObjectHidesCurrentPackage.kt")
+            public void testImportObjectHidesCurrentPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportObjectHidesCurrentPackage.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportResolutionOrder.kt")
             public void testImportResolutionOrder() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportResolutionOrder.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportTwoTimes.kt")
+            public void testImportTwoTimes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportTwoTimes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportTwoTimesStar.kt")
+            public void testImportTwoTimesStar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportTwoTimesStar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Imports.kt")
+            public void testImports() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/Imports.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportsConflicting.kt")
+            public void testImportsConflicting() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsConflicting.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportsHiddenByDefinitionInTheSameFile.kt")
             public void testImportsHiddenByDefinitionInTheSameFile() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsHiddenByDefinitionInTheSameFile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportsUselessSimpleImport.kt")
+            public void testImportsUselessSimpleImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsUselessSimpleImport.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportsUselessSimpleImport2.kt")
+            public void testImportsUselessSimpleImport2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsUselessSimpleImport2.kt");
                 doTest(fileName);
             }
 
@@ -9441,72 +9507,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("AmbiguousNonExtensions.kt")
             public void testAmbiguousNonExtensions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/AmbiguousNonExtensions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ClassImportsConflicting.kt")
-            public void testClassImportsConflicting() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ClassImportsConflicting.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("DontImportRootScope.kt")
-            public void testDontImportRootScope() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/DontImportRootScope.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportFromCurrentWithDifferentName.kt")
-            public void testImportFromCurrentWithDifferentName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportFromCurrentWithDifferentName.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportObjectAndUseAsSupertype.kt")
-            public void testImportObjectAndUseAsSupertype() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportObjectAndUseAsSupertype.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportObjectHidesCurrentPackage.kt")
-            public void testImportObjectHidesCurrentPackage() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportObjectHidesCurrentPackage.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportTwoTimes.kt")
-            public void testImportTwoTimes() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportTwoTimes.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportTwoTimesStar.kt")
-            public void testImportTwoTimesStar() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportTwoTimesStar.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("Imports.kt")
-            public void testImports() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/Imports.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsConflicting.kt")
-            public void testImportsConflicting() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportsConflicting.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsUselessSimpleImport.kt")
-            public void testImportsUselessSimpleImport() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportsUselessSimpleImport.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsUselessSimpleImport2.kt")
-            public void testImportsUselessSimpleImport2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/ImportsUselessSimpleImport2.kt");
                 doTest(fileName);
             }
 
