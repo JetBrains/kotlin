@@ -204,4 +204,37 @@ class MapTest {
         assertEquals(2, extended["c"])
         assertEquals(3, extended["b"])
     }
+
+    test fun plus() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + ("C" to 3)
+        assertTrue(extended["A"] == 1)
+        assertTrue(extended["B"] == 2)
+        assertTrue(extended["C"] == 3)
+    }
+
+    test fun plusList() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = original + listOf("C" to 3, "D" to 4)
+        assertTrue(extended["A"] == 1)
+        assertTrue(extended["B"] == 2)
+        assertTrue(extended["C"] == 3)
+        assertTrue(extended["D"] == 4)
+    }
+
+    test fun minus() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - "B"
+        assertTrue(shortened["A"] == 1)
+        assertFalse(shortened.contains("B"))
+    }
+
+    test fun minusList() {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = original - listOf("B", "C")
+        assertTrue(shortened["A"] == 1)
+        assertFalse(shortened.contains("B"))
+        assertFalse(shortened.contains("C"))
+    }
+
 }
