@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.util.makeNullable
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -567,13 +568,14 @@ private fun ExtractionData.inferParametersInfo(
             return info
         }
 
-        val receiverArgument = resolvedCall?.getExtensionReceiver()
-        val receiver = when(receiverArgument) {
-            ReceiverValue.NO_RECEIVER -> resolvedCall?.getDispatchReceiver()
-            else -> receiverArgument
-        } ?: ReceiverValue.NO_RECEIVER
+        val extensionReceiver = resolvedCall?.getExtensionReceiver()
+        val receiverToExtract = when {
+                           extensionReceiver == ReceiverValue.NO_RECEIVER,
+                           resolvedCall?.getCall() is CallTransformer.CallForImplicitInvoke -> resolvedCall?.getDispatchReceiver()
+                           else -> extensionReceiver
+                       } ?: ReceiverValue.NO_RECEIVER
 
-        val thisDescriptor = (receiver as? ThisReceiver)?.getDeclarationDescriptor()
+        val thisDescriptor = (receiverToExtract as? ThisReceiver)?.getDeclarationDescriptor()
         val hasThisReceiver = thisDescriptor != null
         val thisExpr = ref.getParent() as? JetThisExpression
 
@@ -611,7 +613,7 @@ private fun ExtractionData.inferParametersInfo(
             val extractParameter = extractThis || extractLocalVar
             if (extractParameter) {
                 val parameterType = when {
-                    receiver.exists() -> receiver.getType()
+                    receiverToExtract.exists() -> receiverToExtract.getType()
                     else -> bindingContext[BindingContext.SMARTCAST, originalRef]
                             ?: bindingContext[BindingContext.EXPRESSION_TYPE, originalRef]
                             ?: DEFAULT_PARAMETER_TYPE

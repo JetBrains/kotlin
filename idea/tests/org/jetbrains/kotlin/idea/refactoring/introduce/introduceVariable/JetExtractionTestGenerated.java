@@ -1694,6 +1694,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("extensionLambdaAsParameter.kt")
+                public void testExtensionLambdaAsParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/extensionLambdaAsParameter.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("innerClassObject.kt")
                 public void testInnerClassObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/innerClassObject.kt");
