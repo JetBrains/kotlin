@@ -392,13 +392,17 @@
 
     <target name="serialize-builtins">
         <cleandir dir="${output}/builtins"/>
-        <java classname="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"
-              classpath="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"
+        <java classname="org.jetbrains.kotlin.preloading.Preloader"
+              classpath="${bootstrap.compiler.home}/lib/kotlin-preloader.jar"
               failonerror="true"
               fork="true">
             <assertions>
                 <enable/>
             </assertions>
+            <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
+            <arg value="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"/>
+            <arg value="4096"/>
+            <arg value="notime"/>
             <arg value="${output}/builtins"/>
             <arg value="core/builtins/native"/>
             <arg value="core/builtins/src"/>
