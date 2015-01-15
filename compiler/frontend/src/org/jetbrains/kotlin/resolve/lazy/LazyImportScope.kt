@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.debugText.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -32,18 +30,49 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import java.util.LinkedHashSet
 import java.util.HashSet
+import com.google.common.collect.ListMultimap
+import kotlin.properties.Delegates
+import com.google.common.collect.ImmutableListMultimap
 
-public class LazyImportScope(private val resolveSession: ResolveSession,
-                             private val containingDeclaration: PackageViewDescriptor,
-                             imports: List<JetImportDirective>,
-                             private val traceForImportResolve: BindingTrace,
-                             private val debugName: String,
-                             inRootPackage: Boolean) : JetScope {
+trait IndexedImports {
+    val imports: List<JetImportDirective>
+    fun importsForName(name: Name): Collection<JetImportDirective>
+}
 
-    private val importsProvider = ImportsProvider(resolveSession.getStorageManager(), imports)
+class AllUnderImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedImports {
+    override val imports = allImports.filter { it.isAllUnder() }
+    override fun importsForName(name: Name) = imports
+}
+
+class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedImports {
+    override val imports = allImports.filter { !it.isAllUnder() }
+
+    private val nameToDirectives: ListMultimap<Name, JetImportDirective> by Delegates.lazy {
+        val builder = ImmutableListMultimap.builder<Name, JetImportDirective>()
+
+        for (directive in imports) {
+            val path = directive.getImportPath() ?: continue // can be some parse errors
+            builder.put(path.getImportedName()!!, directive)
+        }
+
+        builder.build()
+    }
+
+    override fun importsForName(name: Name) = nameToDirectives.get(name)
+}
+
+class LazyImportScope(
+        private val resolveSession: ResolveSession,
+        private val containingDeclaration: PackageViewDescriptor,
+        private val indexedImports: IndexedImports,
+        private val traceForImportResolve: BindingTrace,
+        private val debugName: String
+) : JetScope {
+
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
         (directive: JetImportDirective) -> ImportDirectiveResolveCache(directive)
     }
+    private val inRootPackage = containingDeclaration.getFqName().isRoot()
     private val rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), inRootPackage)
 
     private var directiveUnderResolve: JetImportDirective? = null
@@ -95,7 +124,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
     }
 
     public fun forceResolveAllContents() {
-        for (importDirective in importsProvider.getAllImports()) {
+        for (importDirective in indexedImports.imports) {
             forceResolveImportDirective(importDirective)
         }
     }
@@ -113,12 +142,10 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
     private fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
             lookupMode: LookupMode,
-            selectImportsMode: ImportsProvider.LookupMode,
             descriptorSelector: JetScopeSelectorUtil.ScopeByNameSelector<D>
     ): D? {
         fun compute(): D? {
-            // for classes and packages it never returns a mix of explicit and all-under imports so they all have the same priority
-            val imports = importsProvider.getImports(name, selectImportsMode)
+            val imports = indexedImports.importsForName(name)
             if (imports.contains(directiveUnderResolve)) {
                 // This is the recursion in imports analysis
                 return null
@@ -138,12 +165,11 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
     private fun <D : DeclarationDescriptor> collectFromImports(
             name: Name,
             lookupMode: LookupMode,
-            selectImportsMode: ImportsProvider.LookupMode,
             descriptorsSelector: JetScopeSelectorUtil.ScopeByNameMultiSelector<D>
     ): Collection<D> {
         return resolveSession.getStorageManager().compute {
             val descriptors = HashSet<D>()
-            for (directive in importsProvider.getImports(name, selectImportsMode)) {
+            for (directive in indexedImports.importsForName(name)) {
                 if (directive == directiveUnderResolve) {
                     // This is the recursion in imports analysis
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
@@ -158,22 +184,22 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     private fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode) = importedScopesProvider(directive).scopeForMode(lookupMode)
 
-    override fun getClassifier(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, ImportsProvider.LookupMode.CLASS, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
+    override fun getClassifier(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
 
-    override fun getPackage(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, ImportsProvider.LookupMode.PACKAGE, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
+    override fun getPackage(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
 
-    override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, ImportsProvider.LookupMode.FUNCTION_OR_PROPERTY, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
+    override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
 
     override fun getLocalVariable(name: Name) = null
 
-    override fun getFunctions(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, ImportsProvider.LookupMode.FUNCTION_OR_PROPERTY, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
+    override fun getFunctions(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return resolveSession.getStorageManager().compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
-            for (directive in importsProvider.getAllImports()) {
+            for (directive in indexedImports.imports) {
                 if (directive == directiveUnderResolve) {
                     // This is the recursion in imports analysis
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
@@ -209,22 +235,5 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
         p.popIndent()
         p.println("}")
-    }
-
-    class object {
-        public fun createImportScopeForFile(resolveSession: ResolveSession,
-                                            packageDescriptor: PackageViewDescriptor,
-                                            jetFile: JetFile,
-                                            traceForImportResolve: BindingTrace,
-                                            debugName: String): LazyImportScope {
-            val importDirectives: List<JetImportDirective> = if (jetFile is JetCodeFragment) {
-                jetFile.importsAsImportList()?.getImports() ?: listOf()
-            }
-            else {
-                jetFile.getImportDirectives()
-            }
-
-            return LazyImportScope(resolveSession, packageDescriptor, importDirectives.reverse(), traceForImportResolve, debugName, packageDescriptor.getFqName().isRoot())
-        }
     }
 }

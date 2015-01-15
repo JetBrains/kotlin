@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import kotlin.Function0;
 import kotlin.Function1;
@@ -50,9 +49,9 @@ public class ScopeProvider {
 
     private final ResolveSession resolveSession;
 
-    private final MemoizedFunctionToNotNull<JetFile, LazyImportScope> explicitImportScopes;
+    private final NotNullLazyValue<Collection<JetImportDirective>> defaultImports;
 
-    private final NotNullLazyValue<JetScope> defaultImportsScope;
+    private final MemoizedFunctionToNotNull<JetFile, LazyFileScope> importScopes;
 
     private final MemoizedFunctionToNotNull<JetFile, JetScope> fileScopes;
 
@@ -64,20 +63,29 @@ public class ScopeProvider {
         this.additionalFileScopeProvider = additionalFileScopeProvider;
     }
 
-    public ScopeProvider(@NotNull ResolveSession resolveSession) {
+    public ScopeProvider(@NotNull final ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
 
-        this.explicitImportScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, LazyImportScope>() {
+        this.defaultImports = resolveSession.getStorageManager().createLazyValue(new Function0<Collection<JetImportDirective>>() {
             @Override
-            public LazyImportScope invoke(@NotNull JetFile file) {
-                return createExplicitImportScope(file);
+            public Collection<JetImportDirective> invoke() {
+                PackageViewDescriptor rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
+                if (rootPackage == null) {
+                    throw new IllegalStateException("Root package not found");
+                }
+
+                JetImportsFactory importsFactory = resolveSession.getJetImportsFactory();
+                List<ImportPath> defaultImports = resolveSession.getModuleDescriptor().getDefaultImports();
+
+                return importsFactory.createImportDirectives(defaultImports);
             }
         });
 
-        this.defaultImportsScope = resolveSession.getStorageManager().createLazyValue(new Function0<JetScope>() {
+
+        this.importScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, LazyFileScope>() {
             @Override
-            public JetScope invoke() {
-                return createScopeWithDefaultImports();
+            public LazyFileScope invoke(@NotNull JetFile file) {
+                return createImportScope(file, defaultImports.invoke());
             }
         });
 
@@ -89,13 +97,16 @@ public class ScopeProvider {
         });
     }
 
-    private LazyImportScope createExplicitImportScope(@NotNull JetFile file) {
-        return LazyImportScope.OBJECT$.createImportScopeForFile(
+    private LazyFileScope createImportScope(@NotNull JetFile file, @NotNull Collection<JetImportDirective> defaultImports) {
+        TemporaryBindingTrace tempTrace = TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve");
+        return LazyFileScope.OBJECT$.create(
                 resolveSession,
                 getFilePackageDescriptor(file),
                 file,
+                defaultImports,
                 resolveSession.getTrace(),
-                "Lazy Imports Scope for file " + file.getName());
+                tempTrace,
+                "LazyFileScope for file " + file.getName());
     }
 
     @NotNull
@@ -114,36 +125,15 @@ public class ScopeProvider {
         List<JetScope> list = new ArrayList<JetScope>();
         list.add(new NoSubpackagesInPackageScope(getFilePackageDescriptor(file)));
         list.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()));
-        list.add(explicitImportScopes.invoke(file));
+        list.add(importScopes.invoke(file));
         list.addAll(additionalFileScopeProvider.scopes(file));
-        list.add(defaultImportsScope.invoke());
 
         return list.toArray(new JetScope[list.size()]);
     }
 
     @NotNull
-    public LazyImportScope getExplicitImportsScopeForFile(@NotNull JetFile file) {
-        return explicitImportScopes.invoke(file);
-    }
-
-    private JetScope createScopeWithDefaultImports() {
-        PackageViewDescriptor rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
-        if (rootPackage == null) {
-            throw new IllegalStateException("Root package not found");
-        }
-
-        JetImportsFactory importsFactory = resolveSession.getJetImportsFactory();
-        List<ImportPath> defaultImports = resolveSession.getModuleDescriptor().getDefaultImports();
-
-        Collection<JetImportDirective> defaultImportDirectives = importsFactory.createImportDirectives(defaultImports);
-
-        return new LazyImportScope(
-                resolveSession,
-                rootPackage,
-                Lists.reverse(Lists.newArrayList(defaultImportDirectives)),
-                TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve"),
-                "Lazy default imports scope",
-                false);
+    public LazyFileScope getScopeForFile(@NotNull JetFile file) {
+        return importScopes.invoke(file);
     }
 
     @NotNull
