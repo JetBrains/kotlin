@@ -1,1 +1,0 @@
-Function call (6: 12) System.exit(0)
