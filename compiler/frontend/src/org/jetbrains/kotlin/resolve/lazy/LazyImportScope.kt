@@ -38,7 +38,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                              imports: List<JetImportDirective>,
                              private val traceForImportResolve: BindingTrace,
                              private val debugName: String,
-                             inRootPackage: Boolean) : JetScope, LazyEntity {
+                             inRootPackage: Boolean) : JetScope {
 
     private val importsProvider = ImportsProvider(resolveSession.getStorageManager(), imports)
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
@@ -94,7 +94,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
         }
     }
 
-    override fun forceResolveAllContents() {
+    public fun forceResolveAllContents() {
         for (importDirective in importsProvider.getAllImports()) {
             forceResolveImportDirective(importDirective)
         }
