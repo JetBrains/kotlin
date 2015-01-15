@@ -32,12 +32,12 @@ class LazyFileScope private(
         debugName: String
 ) : ChainedScope(containingDeclaration, debugName, aliasImportsScope, allUnderImportsScope, defaultAliasImportsScope, defaultAllUnderImportsScope) {
 
-    public fun forceResolveAllContents() {
+    public fun forceResolveAllImports() {
         aliasImportsScope.forceResolveAllContents()
         allUnderImportsScope.forceResolveAllContents()
     }
 
-    public fun forceResolveImportDirective(importDirective: JetImportDirective) {
+    public fun forceResolveImport(importDirective: JetImportDirective) {
         if (importDirective.isAllUnder()) {
             allUnderImportsScope.forceResolveImportDirective(importDirective)
         }

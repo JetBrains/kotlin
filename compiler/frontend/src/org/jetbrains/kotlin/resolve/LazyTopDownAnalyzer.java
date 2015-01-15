@@ -195,7 +195,7 @@ public class LazyTopDownAnalyzer {
                         public void visitImportDirective(@NotNull JetImportDirective importDirective) {
                             LazyFileScope fileScope = resolveSession.getScopeProvider().getScopeForFile(
                                     importDirective.getContainingJetFile());
-                            fileScope.forceResolveImportDirective(importDirective);
+                            fileScope.forceResolveImport(importDirective);
                         }
 
                         private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
@@ -365,7 +365,7 @@ public class LazyTopDownAnalyzer {
 
     private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
         LazyFileScope fileScope = resolveSession.getScopeProvider().getScopeForFile(file);
-        fileScope.forceResolveAllContents();
+        fileScope.forceResolveAllImports();
     }
 
     private static void registerScope(

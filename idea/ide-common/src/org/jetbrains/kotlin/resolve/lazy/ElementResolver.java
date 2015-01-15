@@ -161,7 +161,7 @@ public abstract class ElementResolver {
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
             LazyFileScope scope = resolveSession.getScopeProvider().getScopeForFile(importDirective.getContainingJetFile());
-            scope.forceResolveAllContents();
+            scope.forceResolveAllImports();
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
             annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
