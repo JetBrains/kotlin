@@ -496,7 +496,9 @@ public final class StaticContext {
                     }
 
                     if (element == null) {
-                        return null;
+                        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
+                        String moduleName = moduleDescriptor.getName().asString();
+                        return moduleName.substring(1, moduleName.length()-1);
                     }
                     return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
                 }
