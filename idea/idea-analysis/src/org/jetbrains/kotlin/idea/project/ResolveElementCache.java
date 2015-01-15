@@ -55,7 +55,7 @@ public class ResolveElementCache extends ElementResolver {
                                 ResolveSession resolveSession = ResolveElementCache.this.resolveSession;
                                 LazyResolveStorageManager manager = resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
-                                        manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
+                                        manager.createSoftlyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
                                                 return elementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
