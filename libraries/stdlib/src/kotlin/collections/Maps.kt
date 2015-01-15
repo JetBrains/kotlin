@@ -275,7 +275,7 @@ public fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V> {
 }
 
 /**
- * Create a new read-only map from a map and a list new key-value pairs
+ * Create a new read-only map from a map and a collection of new key-value pairs
  */
 public fun <K, V> Map<K, V>.plus(pairs: Collection<Pair<K, V>>): Map<K, V> {
     val newMap = this.toLinkedMap()
@@ -291,7 +291,7 @@ public fun <K, V> Map<K, V>.minus(key: K): Map<K, V> {
 }
 
 /**
- * Create a new read-only map by removing a list of keys
+ * Create a new read-only map by removing a collection of keys
  */
 public fun <K, V> Map<K, V>.minus(keys: Collection<K>): Map<K, V> {
     return this.filterKeys { !keys.contains(it) }
