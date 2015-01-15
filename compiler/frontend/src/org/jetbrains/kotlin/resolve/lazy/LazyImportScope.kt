@@ -135,7 +135,7 @@ class LazyImportScope(
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
             val fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile())
-            ImportsResolver.reportUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
+            ImportsResolver.reportConflictingOrUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }
 

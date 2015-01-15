@@ -4649,12 +4649,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/uselessImports"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
 
-        @TestMetadata("beforeRemoveUselessHiddenImport.kt")
-        public void testRemoveUselessHiddenImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/uselessImports/beforeRemoveUselessHiddenImport.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("beforeRemoveUselessImport.kt")
         public void testRemoveUselessImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/uselessImports/beforeRemoveUselessImport.kt");

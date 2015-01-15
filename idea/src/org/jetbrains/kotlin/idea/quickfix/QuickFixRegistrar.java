@@ -128,7 +128,6 @@ public class QuickFixRegistrar {
 
         JetSingleIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
         QuickFixes.factories.put(USELESS_SIMPLE_IMPORT, removeImportFixFactory);
-        QuickFixes.factories.put(USELESS_HIDDEN_IMPORT, removeImportFixFactory);
         QuickFixes.factories.put(CONFLICTING_IMPORT, removeImportFixFactory);
 
         QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, ChangeToConstructorInvocationFix.createFactory());
