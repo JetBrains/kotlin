@@ -43,6 +43,7 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
 import org.jetbrains.kotlin.idea.search.usagesSearch.getOperationSymbolsToSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.INVOKE_OPERATION_NAME
+import org.jetbrains.kotlin.psi.JetEnumEntry
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -53,6 +54,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         return object : JetVisitorVoid() {
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
+
+                if (klass is JetEnumEntry) return
 
                 if (isEntryPoint(klass)) return
                 if (hasNonTrivialUsages(klass)) return
