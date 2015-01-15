@@ -267,14 +267,13 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 return getClassObjectDescriptor(classObjectElement);
             }
         }
-        JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
-        Name name = classOrObject.getNameAsSafeName();
+        JetScope resolutionScope = resolutionScopeToResolveDeclaration(classOrObject);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(name);
+        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(classOrObject.getNameAsSafeName());
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {
@@ -291,7 +290,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @NotNull
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
-        JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(script);
+        JetScope resolutionScope = resolutionScopeToResolveDeclaration(script);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
         ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName());
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
@@ -399,7 +398,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
-                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(function);
+                JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(function);
                 scopeForDeclaration.getFunctions(function.getNameAsSafeName());
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
@@ -435,7 +434,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
-                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(property);
+                JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(property);
                 scopeForDeclaration.getProperties(property.getNameAsSafeName());
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
@@ -526,5 +525,19 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @NotNull
     public QualifiedExpressionResolver getQualifiedExpressionResolver() {
         return qualifiedExpressionResolver;
+    }
+
+    @NotNull
+    private JetScope resolutionScopeToResolveDeclaration(@NotNull JetDeclaration declaration) {
+        boolean isTopLevel = JetStubbedPsiUtil.getContainingDeclaration(declaration) == null;
+        if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports
+            FqName fqName = ((JetFile) declaration.getContainingFile()).getPackageFqName();
+            LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
+            assert packageDescriptor != null;
+            return packageDescriptor.getMemberScope();
+        }
+        else {
+            return getScopeProvider().getResolutionScopeForDeclaration(declaration);
+        }
     }
 }

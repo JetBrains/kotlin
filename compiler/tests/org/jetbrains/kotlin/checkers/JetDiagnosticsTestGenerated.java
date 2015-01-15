@@ -4733,6 +4733,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("CurrentPackageAndAllUnderImport.kt")
+            public void testCurrentPackageAndAllUnderImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/CurrentPackageAndAllUnderImport.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("CurrentPackageAndExplicitImport.kt")
+            public void testCurrentPackageAndExplicitImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/CurrentPackageAndExplicitImport.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DontImportRootScope.kt")
             public void testDontImportRootScope() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/DontImportRootScope.kt");
@@ -4775,6 +4787,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportHidingDefinitionInTheSameFile.kt")
+            public void testImportHidingDefinitionInTheSameFile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportHidingDefinitionInTheSameFile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportObjectAndUseAsSupertype.kt")
             public void testImportObjectAndUseAsSupertype() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportObjectAndUseAsSupertype.kt");
@@ -4814,12 +4832,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ImportsConflicting.kt")
             public void testImportsConflicting() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsConflicting.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsHiddenByDefinitionInTheSameFile.kt")
-            public void testImportsHiddenByDefinitionInTheSameFile() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsHiddenByDefinitionInTheSameFile.kt");
                 doTest(fileName);
             }
 
