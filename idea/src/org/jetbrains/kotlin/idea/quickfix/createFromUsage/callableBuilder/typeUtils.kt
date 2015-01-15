@@ -189,8 +189,7 @@ fun JetExpression.guessTypes(
 }
 
 private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetType> {
-    val scope = getContainingFile()!!.getUseScope()
-    val expectedTypes = SearchUtils.findAllReferences(this, scope)!!.stream().map { ref ->
+    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.stream().map { ref ->
         if (ref is JetSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }
