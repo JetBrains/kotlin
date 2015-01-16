@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.name.FqName
 
 class LazyFileScope private(
         private val aliasImportsScope: LazyImportScope,
@@ -71,13 +72,16 @@ class LazyFileScope private(
                 file.getImportDirectives()
 
             val packageView = getPackageViewDescriptor(file, resolveSession)
+            val inRootPackage = packageView.getFqName().isRoot()
+            val rootPackageView = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)
+                                  ?: throw IllegalStateException("Root package not found")
 
             val currentPackageMembersScope = NoSubpackagesInPackageScope(packageView)
             val rootPackagesScope = JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor())
-            val aliasImportsScope = LazyImportScope(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, "Alias imports in $debugName")
-            val allUnderImportsScope = LazyImportScope(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, "All under imports in $debugName")
-            val defaultAliasImportsScope = LazyImportScope(resolveSession, packageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default alias imports in $debugName")
-            val defaultAllUnderImportsScope = LazyImportScope(resolveSession, packageView, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default all under imports in $debugName")
+            val aliasImportsScope = LazyImportScope(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, "Alias imports in $debugName", inRootPackage)
+            val allUnderImportsScope = LazyImportScope(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, "All under imports in $debugName", inRootPackage)
+            val defaultAliasImportsScope = LazyImportScope(resolveSession, rootPackageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default alias imports in $debugName", false)
+            val defaultAllUnderImportsScope = LazyImportScope(resolveSession, rootPackageView, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default all under imports in $debugName", false)
 
             return LazyFileScope(aliasImportsScope, allUnderImportsScope, defaultAliasImportsScope, defaultAllUnderImportsScope,
                                  currentPackageMembersScope, rootPackagesScope, additionalScopes,

@@ -66,13 +66,13 @@ class LazyImportScope(
         private val containingDeclaration: PackageViewDescriptor,
         private val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace,
-        private val debugName: String
+        private val debugName: String,
+        private val inRootPackage: Boolean
 ) : JetScope {
 
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
         (directive: JetImportDirective) -> ImportDirectiveResolveCache(directive)
     }
-    private val inRootPackage = containingDeclaration.getFqName().isRoot()
     private val rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), inRootPackage)
 
     private var directiveUnderResolve: JetImportDirective? = null
