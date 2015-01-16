@@ -980,5 +980,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/SmartCasts.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("TypedLoopVar.kt")
+        public void testTypedLoopVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/TypedLoopVar.kt");
+            doTest(fileName);
+        }
     }
 }

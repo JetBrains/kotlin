@@ -71,7 +71,7 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        IterableTypesDetector iterableTypesDetector = new IterableTypesDetector(project, analysisResult.getModuleDescriptor(), scope);
+        IterableTypesDetector iterableTypesDetector = new IterableTypesDetector(project, analysisResult.getModuleDescriptor(), scope, null);
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 

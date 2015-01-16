@@ -377,14 +377,23 @@ class SmartCompletion(
         val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
 
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
-        val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope)
+
+        val loopVar = forExpression.getLoopParameter()
+        val loopVarType = if (loopVar != null && loopVar.getTypeReference() != null) {
+            val type = (resolutionFacade.resolveToDescriptor(loopVar) as VariableDescriptor).getType()
+            if (type.isError()) null else type
+        }
+        else {
+            null
+        }
+
+        val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope, loopVarType)
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val types = descriptor.fuzzyTypes(smartCastTypes)
 
             fun createLookupElement() = lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
 
-            //TODO: use type of variable if declared
             if (types.any { iterableDetector.isIterable(it.type) }) {
                 return listOf(createLookupElement().addTail(Tail.RPARENTH))
             }

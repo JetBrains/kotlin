@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 public class IterableTypesDetector(
         private val project: Project,
         private val moduleDescriptor: ModuleDescriptor,
-        private val scope: JetScope) {
+        private val scope: JetScope,
+        private val loopVarType: JetType? = null
+) {
 
     private val injector = InjectorForMacros(project, moduleDescriptor)
     private val cache = HashMap<JetType, Boolean>()
@@ -56,7 +58,9 @@ public class IterableTypesDetector(
         val expression = JetPsiFactory(project).createExpression("fake")
         val expressionReceiver = ExpressionReceiver(expression, type)
         val context = ExpressionTypingContext.newContext(injector.getExpressionTypingServices(), BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
-        return injector.getExpressionTypingComponents().getForLoopConventionsChecker().checkIterableConvention(expressionReceiver, context) != null
+        val elementType = injector.getExpressionTypingComponents().getForLoopConventionsChecker().checkIterableConvention(expressionReceiver, context)
+        if (elementType == null) return false
+        return loopVarType == null || elementType.isSubtypeOf(loopVarType)
     }
 
     private fun canBeIterable(type: JetType): Boolean {
