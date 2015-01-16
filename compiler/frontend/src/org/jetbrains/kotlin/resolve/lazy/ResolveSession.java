@@ -296,6 +296,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         return (ClassDescriptor) classifier;
     }
 
+    @Override
     @NotNull
     public ScriptDescriptor getScriptDescriptor(@NotNull JetScript script) {
         return scriptDescriptors.invoke(script);
