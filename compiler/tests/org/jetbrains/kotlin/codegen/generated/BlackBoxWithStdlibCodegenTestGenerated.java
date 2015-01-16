@@ -2504,9 +2504,15 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                     doTestWithStdlib(fileName);
                 }
 
-                @TestMetadata("lambdaInLocalClass.kt")
-                public void testLambdaInLocalClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClass.kt");
+                @TestMetadata("lambdaInLocalClassConstructor.kt")
+                public void testLambdaInLocalClassConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClassConstructor.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("lambdaInLocalClassSuperCall.kt")
+                public void testLambdaInLocalClassSuperCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInLocalClassSuperCall.kt");
                     doTestWithStdlib(fileName);
                 }
 
@@ -2537,6 +2543,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 @TestMetadata("lambdaInObjectExpression.kt")
                 public void testLambdaInObjectExpression() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInObjectExpression.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("lambdaInObjectLiteralSuperCall.kt")
+                public void testLambdaInObjectLiteralSuperCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInObjectLiteralSuperCall.kt");
                     doTestWithStdlib(fileName);
                 }
 

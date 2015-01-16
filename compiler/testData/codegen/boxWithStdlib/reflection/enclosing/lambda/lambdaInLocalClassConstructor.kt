@@ -1,22 +1,21 @@
-trait C {
-    val a: Any
-}
+open class C
 
 fun box(): String {
-    val l = object : C {
-        override val a: Any
+    class L : C() {
+        val a: Any
 
         {
             a = {}
         }
     }
+    val l = L()
 
     val javaClass = l.a.javaClass
     val enclosingMethod = javaClass.getEnclosingConstructor()!!.getName()
-    if (!enclosingMethod.startsWith("_DefaultPackage\$") || !enclosingMethod.endsWith("\$box\$l\$1")) return "ctor: $enclosingMethod"
+    if (!enclosingMethod.startsWith("_DefaultPackage\$") || !enclosingMethod.endsWith("\$box\$L")) return "ctor: $enclosingMethod"
 
     val enclosingClass = javaClass.getEnclosingClass()!!.getName()
-    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$l\$1")) return "enclosing class: $enclosingClass"
+    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$L")) return "enclosing class: $enclosingClass"
 
     if (enclosingMethod != enclosingClass) return "$enclosingClass != $enclosingMethod"
 
