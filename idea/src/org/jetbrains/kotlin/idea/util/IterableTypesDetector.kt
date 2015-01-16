@@ -42,7 +42,7 @@ public class IterableTypesDetector(
     private val cache = HashMap<JetType, Boolean>()
     private val iteratorName = Name.identifier("iterator")
 
-    private val typesWithIteratorExtensions: Collection<JetType> = scope.getFunctions(iteratorName)
+    private val typesWithExtensionIterator: Collection<JetType> = scope.getFunctions(iteratorName)
             .map { it.getExtensionReceiverParameter() }
             .filterNotNull()
             .map { it.getType() }
@@ -64,6 +64,6 @@ public class IterableTypesDetector(
     }
 
     private fun canBeIterable(type: JetType): Boolean {
-        return type.getMemberScope().getFunctions(iteratorName).isEmpty() || typesWithIteratorExtensions.any { type.isSubtypeOf(type) }
+        return type.getMemberScope().getFunctions(iteratorName).isEmpty() || typesWithExtensionIterator.any { type.isSubtypeOf(type) }
     }
 }
