@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import com.intellij.util.containers.ConcurrentSoftValueHashMap
+import com.intellij.util.containers.ContainerUtil
 
 public class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
     override fun <K, V> createSoftlyRetainedMemoizedFunction(compute: Function1<K, V>) =
-        storageManager.createMemoizedFunction<K, V>(compute, ConcurrentSoftValueHashMap<K, Any>())
+        storageManager.createMemoizedFunction<K, V>(compute, ContainerUtil.createConcurrentSoftValueMap<K, Any>())
 
     override fun <K, V> createSoftlyRetainedMemoizedFunctionWithNullableValues(compute: Function1<K, V>) =
-        storageManager.createMemoizedFunctionWithNullableValues<K, V>(compute, ConcurrentSoftValueHashMap<K, Any>())
+        storageManager.createMemoizedFunctionWithNullableValues<K, V>(compute, ContainerUtil.createConcurrentSoftValueMap<K, Any>())
 
     // It seems safe to have a separate lock for traces:
     // no other locks will be acquired inside the trace operations
