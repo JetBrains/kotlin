@@ -43,7 +43,7 @@ fun FuzzyType.makeNotNullable() = FuzzyType(type.makeNotNullable(), freeParamete
 fun FuzzyType.makeNullable() = FuzzyType(type.makeNullable(), freeParameters)
 fun FuzzyType.nullability() = type.nullability()
 
-class FuzzyType(
+data class FuzzyType(
         val type: JetType,
         val freeParameters: Collection<TypeParameterDescriptor>
 ) {

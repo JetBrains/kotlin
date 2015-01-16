@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JvmSmartCompletionTestGenerated.AfterAs.class, JvmSmartCompletionTestGenerated.AnonymousObject.class, JvmSmartCompletionTestGenerated.Constructor.class, JvmSmartCompletionTestGenerated.ForLoopRange.class, JvmSmartCompletionTestGenerated.FunctionLiterals.class, JvmSmartCompletionTestGenerated.FunctionReference.class, JvmSmartCompletionTestGenerated.Generics.class, JvmSmartCompletionTestGenerated.IfValue.class, JvmSmartCompletionTestGenerated.InElvisOperator.class, JvmSmartCompletionTestGenerated.Inheritors.class, JvmSmartCompletionTestGenerated.MultipleArgsItem.class, JvmSmartCompletionTestGenerated.SmartCasts.class, JvmSmartCompletionTestGenerated.This.class, JvmSmartCompletionTestGenerated.WhenEntry.class})
+@InnerTestClasses({JvmSmartCompletionTestGenerated.AfterAs.class, JvmSmartCompletionTestGenerated.AnonymousObject.class, JvmSmartCompletionTestGenerated.Constructor.class, JvmSmartCompletionTestGenerated.ForLoopRange.class, JvmSmartCompletionTestGenerated.FunctionLiterals.class, JvmSmartCompletionTestGenerated.FunctionReference.class, JvmSmartCompletionTestGenerated.Generics.class, JvmSmartCompletionTestGenerated.IfValue.class, JvmSmartCompletionTestGenerated.InElvisOperator.class, JvmSmartCompletionTestGenerated.InOperator.class, JvmSmartCompletionTestGenerated.Inheritors.class, JvmSmartCompletionTestGenerated.MultipleArgsItem.class, JvmSmartCompletionTestGenerated.SmartCasts.class, JvmSmartCompletionTestGenerated.This.class, JvmSmartCompletionTestGenerated.WhenEntry.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
     @TestMetadata("AfterExclSign.kt")
@@ -823,6 +823,75 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         public void testAllFilesPresentInInElvisOperator() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/smart/inElvisOperator"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+    }
+
+    @TestMetadata("idea/testData/completion/smart/inOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InOperator extends AbstractJvmSmartCompletionTest {
+        public void testAllFilesPresentInInOperator() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/smart/inOperator"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ExtensionContains.kt")
+        public void testExtensionContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/ExtensionContains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FilterByArgumentType.kt")
+        public void testFilterByArgumentType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/FilterByArgumentType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericMethod.kt")
+        public void testGenericMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/GenericMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericMethod2.kt")
+        public void testGenericMethod2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/GenericMethod2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("GenericMethod3.kt")
+        public void testGenericMethod3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/GenericMethod3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonBooleanContains.kt")
+        public void testNonBooleanContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/NonBooleanContains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotIn.kt")
+        public void testNotIn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/NotIn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/Nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SmartCasts.kt")
+        public void testSmartCasts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/inOperator/SmartCasts.kt");
+            doTest(fileName);
         }
     }
 
