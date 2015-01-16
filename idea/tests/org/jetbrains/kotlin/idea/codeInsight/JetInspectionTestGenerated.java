@@ -89,5 +89,11 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/function/inspectionData/inspections.test");
             doTest(fileName);
         }
+
+        @TestMetadata("unusedSymbol/property/inspectionData/inspections.test")
+        public void testUnusedSymbol_property_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/property/inspectionData/inspections.test");
+            doTest(fileName);
+        }
     }
 }

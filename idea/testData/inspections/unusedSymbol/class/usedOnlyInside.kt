@@ -1,3 +1,5 @@
 class A {
-    val x: A? = null
+    {
+        val x: A? = null
+    }
 }
