@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({JvmSmartCompletionTestGenerated.ForLoopRange.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
     @TestMetadata("AfterAs.kt")
@@ -934,5 +935,50 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     public void testWrongReceiver() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/WrongReceiver.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/testData/completion/smart/forLoopRange")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForLoopRange extends AbstractJvmSmartCompletionTest {
+        @TestMetadata("AfterDot.kt")
+        public void testAfterDot() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/AfterDot.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInForLoopRange() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/smart/forLoopRange"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ExtensionIteratorMethod.kt")
+        public void testExtensionIteratorMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/ExtensionIteratorMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoGenericT.kt")
+        public void testNoGenericT() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/NoGenericT.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/Nullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SmartCasts.kt")
+        public void testSmartCasts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/forLoopRange/SmartCasts.kt");
+            doTest(fileName);
+        }
     }
 }

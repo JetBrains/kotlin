@@ -32,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.di.InjectorForMacros;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.util.IterableTypesDetector;
 import org.jetbrains.kotlin.idea.util.UtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -72,8 +71,7 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        ExpressionTypingComponents components =
-                new InjectorForMacros(project, analysisResult.getModuleDescriptor()).getExpressionTypingComponents();
+        IterableTypesDetector iterableTypesDetector = new IterableTypesDetector(project, analysisResult.getModuleDescriptor(), scope);
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
@@ -88,7 +86,7 @@ public abstract class BaseJetVariableMacro extends Macro {
                     continue;
                 }
 
-                if (isSuitable(variableDescriptor, scope, project, components)) {
+                if (isSuitable(variableDescriptor, project, iterableTypesDetector)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
@@ -110,9 +108,8 @@ public abstract class BaseJetVariableMacro extends Macro {
 
     protected abstract boolean isSuitable(
             @NotNull VariableDescriptor variableDescriptor,
-            @NotNull JetScope scope,
             @NotNull Project project,
-            @NotNull ExpressionTypingComponents components
+            @NotNull IterableTypesDetector iterableTypesDetector
     );
 
     @Nullable

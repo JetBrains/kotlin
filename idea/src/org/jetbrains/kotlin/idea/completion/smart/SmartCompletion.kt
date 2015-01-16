@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.idea.util.IterableTypesDetector
+import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.TypeNullability
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
@@ -109,6 +112,9 @@ class SmartCompletion(
         else {
             expression
         }
+
+        val loopRangePositionResult = buildForLoopRangePosition(expressionWithType, receiver)
+        if (loopRangePositionResult != null) return loopRangePositionResult
 
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
         val filteredExpectedInfos = allExpectedInfos.filter { !it.type.isError() }
@@ -361,6 +367,36 @@ class SmartCompletion(
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return Result(null, items, null)
+    }
+
+    private fun buildForLoopRangePosition(expressionWithType: JetExpression, receiver: JetExpression?): Result? {
+        val forExpression = (expressionWithType.getParent() as? JetContainerNode)
+                                    ?.getParent() as? JetForExpression ?: return null
+        if (expressionWithType != forExpression.getLoopRange()) return null
+
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
+
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope)
+
+        fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+            val types = descriptor.fuzzyTypes(smartCastTypes)
+
+            fun createLookupElement() = lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
+
+            //TODO: use type of variable if declared
+            if (types.any { iterableDetector.isIterable(it.type) }) {
+                return listOf(createLookupElement().addTail(Tail.RPARENTH))
+            }
+
+            if (types.any { it.nullability() == TypeNullability.NULLABLE && iterableDetector.isIterable(it.type.makeNotNullable()) }) {
+                return lookupElementsForNullable(::createLookupElement).map { it.addTail(Tail.RPARENTH) }
+            }
+
+            return listOf()
+        }
+
+        return Result(::filterDeclaration, listOf(), null)
     }
 
     private fun lookupElementForType(jetType: JetType): LookupElement? {
