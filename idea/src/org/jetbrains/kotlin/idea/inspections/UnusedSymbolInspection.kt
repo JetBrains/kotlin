@@ -97,14 +97,13 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun classHasTextUsages(klass: JetClass): Boolean {
         var hasTextUsages = false
 
-        val classUseScope = klass.getUseScope()
         // Finding text usages
-        if (classUseScope is GlobalSearchScope) {
+        if (klass.getUseScope() is GlobalSearchScope) {
             val findClassUsagesHandler = KotlinFindClassUsagesHandler(klass, KotlinFindUsagesHandlerFactory(klass.getProject()))
             findClassUsagesHandler.processUsagesInText(
                     klass,
                     { hasTextUsages = true; false },
-                    classUseScope
+                    GlobalSearchScope.projectScope(klass.getProject())
             )
         }
 
