@@ -1,5 +1,5 @@
-// ERROR: Unresolved reference: ast2
 // ERROR: Unresolved reference: ast
+// ERROR: Unresolved reference: ast2
 package test
 
 import ast
