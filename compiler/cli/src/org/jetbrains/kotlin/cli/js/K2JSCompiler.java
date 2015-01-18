@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -55,10 +54,10 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
-import org.jetbrains.kotlin.js.facade.Status;
+import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -67,7 +66,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.kotlin.js.facade.K2JSTranslator.translateWithMainCallParameters;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
@@ -159,22 +157,23 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
-        Status<OutputFileCollection> status;
+        TranslationResult translationResult;
 
+        K2JSTranslator translator = new K2JSTranslator(config);
         try {
             //noinspection unchecked
-            status = translateWithMainCallParameters(mainCallParameters, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile,
-                                                    config, Consumer.EMPTY_CONSUMER);
+            translationResult = translator.translate(sourcesFiles, mainCallParameters);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
-        AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector);
+        AnalyzerWithCompilerReport.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
 
-        if (status.isFail()) return ExitCode.COMPILATION_ERROR;
+        if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
 
-        OutputFileCollection outputFiles = status.getResult();
+        TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
+        OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
+
         if (outputFile.isDirectory()) {
             messageCollector.report(CompilerMessageSeverity.ERROR,
                                     "Cannot open output file '" + outputFile.getPath() + "': is a directory",
