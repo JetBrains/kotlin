@@ -31,12 +31,12 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.inline.JsInliner;
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.utils.fileUtils.FileUtilsPackage;
 
@@ -148,8 +148,12 @@ public final class K2JSTranslator {
             @Nullable SourceMapBuilder sourceMapBuilder,
             @NotNull Consumer<JsNode> astConsumer
     ) throws TranslationException {
-        JsProgram program = generateProgram(files, mainCallParameters);
-        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
+        JsAnalysisResult analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
+        BindingTrace bindingTrace = analysisResult.getBindingTrace();
+        TopDownAnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(files, config), bindingTrace.getBindingContext());
+        ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
+        JsProgram program = Translation.generateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
+        Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
         if (hasError(diagnostics)) return Status.fail();
 
@@ -158,17 +162,6 @@ public final class K2JSTranslator {
         astConsumer.consume(program);
 
         return Status.success(output.toString());
-    }
-
-    @NotNull
-    public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
-            @NotNull MainCallParameters mainCallParameters)
-            throws TranslationException {
-        AnalysisResult analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(filesToTranslate, Predicates.<PsiFile>alwaysTrue(), config);
-        BindingContext bindingContext = analysisResult.getBindingContext();
-        TopDownAnalyzerFacadeForJS.checkForErrors(Config.withJsLibAdded(filesToTranslate, config), bindingContext);
-        ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
-        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, moduleDescriptor, config);
     }
 
     @NotNull

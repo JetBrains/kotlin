@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
@@ -52,19 +53,19 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension;
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
+    public static StaticContext generateStaticContext(@NotNull BindingTrace bindingTrace, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
         StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), config, moduleDescriptor);
+        return new StaticContext(program, bindingTrace, namer, intrinsics, standardClasses, program.getRootScope(), config, moduleDescriptor);
     }
 
     @NotNull
     private final JsProgram program;
 
     @NotNull
-    private final BindingContext bindingContext;
+    private final BindingTrace bindingTrace;
     @NotNull
     private final Namer namer;
 
@@ -101,11 +102,11 @@ public final class StaticContext {
     private final EcmaVersion ecmaVersion;
 
     //TODO: too many parameters in constructor
-    private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
+    private StaticContext(@NotNull JsProgram program, @NotNull BindingTrace bindingTrace,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
             @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
         this.program = program;
-        this.bindingContext = bindingContext;
+        this.bindingTrace = bindingTrace;
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
@@ -125,8 +126,13 @@ public final class StaticContext {
     }
 
     @NotNull
+    public BindingTrace getBindingTrace() {
+        return bindingTrace;
+    }
+
+    @NotNull
     public BindingContext getBindingContext() {
-        return bindingContext;
+        return bindingTrace.getBindingContext();
     }
 
     @NotNull
