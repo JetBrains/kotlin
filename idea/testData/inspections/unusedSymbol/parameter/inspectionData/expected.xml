@@ -1,0 +1,10 @@
+<problems>
+  <problem>
+    <file>paramPropertyUnused.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/paramPropertyUnused.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Property 'param' is never used</description>
+  </problem>
+</problems>

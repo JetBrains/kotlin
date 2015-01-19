@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -97,6 +99,24 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         property.getNameIdentifier(),
                         JetBundle.message("unused.property", property.getName()),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                ) // TODO add quick fix to delete it
+            }
+
+            override fun visitParameter(parameter: JetParameter) {
+                if (parameter.getName() == null) return
+
+                if (parameter.getParent()?.getParent() !is JetClass || !parameter.hasValOrVarNode()) return
+
+                // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
+                if (parameter.dataClassComponentFunctionName() != null) return
+
+                if (parameter.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+                if (hasNonTrivialUsages(parameter)) return
+
+                holder.registerProblem(
+                        parameter.getNameIdentifier(),
+                        JetBundle.message("unused.property", parameter.getName()),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                 ) // TODO add quick fix to delete it
             }
@@ -156,7 +176,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
             is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
-            is JetProperty -> PropertyUsagesSearchHelper(skipImports = true)
+            is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true)
             else -> return false
         }
 
