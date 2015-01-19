@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -35,9 +36,14 @@ import org.jetbrains.kotlin.psi.JetCallExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetStringTemplateExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -45,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.diagnostics.JsCallChecker.isJsCall;
 
@@ -139,8 +144,13 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     private List<JsStatement> parseJsCode(@NotNull JetStringTemplateExpression jsCodeExpression) {
-        Object jsCode = getCompileTimeValue(bindingContext(), jsCodeExpression);
-        assert jsCode instanceof String: "jsCode must be compile time string";
+        BindingTrace bindingTrace = TemporaryBindingTrace.create(context().bindingTrace(), "parseJsCode");
+        JetType stringType = KotlinBuiltIns.getInstance().getStringType();
+        CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(jsCodeExpression, bindingTrace, stringType);
+
+        assert constant != null: "jsCode must be compile time string " + jsCodeExpression;
+        String jsCode = (String) constant.getValue();
+        assert jsCode != null: jsCodeExpression.toString();
 
         List<JsStatement> statements = new ArrayList<JsStatement>();
         ErrorReporter errorReporter = new ErrorReporter() {
@@ -162,7 +172,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         try {
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
             JsScope scope = context().scope();
-            StringReader reader = new StringReader((String) jsCode);
+            StringReader reader = new StringReader(jsCode);
             statements.addAll(JsParser.parse(info, scope, reader, errorReporter, /* insideFunction= */ true));
         } catch (AbortParsingException e) {
             /** @see JsCodeErrorReporter#error */
