@@ -57,7 +57,7 @@ public class KotlinJavaPsiFacade {
         private final GlobalSearchScope searchScope;
 
         public KotlinJavaPsiFacadeWrapper(Project project, GlobalSearchScope searchScope) {
-            super(project, PsiManager.getInstance(project), findJavaFileManager(project), project.getMessageBus());
+            super(project, PsiManager.getInstance(project), findJavaFileManager(project), null);
             this.searchScope = searchScope;
         }
 
