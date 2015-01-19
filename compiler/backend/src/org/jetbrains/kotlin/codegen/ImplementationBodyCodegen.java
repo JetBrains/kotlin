@@ -69,7 +69,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -209,10 +210,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeEnclosingMethod();
 
-        writeOuterClasses();
-
-        writeInnerClasses();
-
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
 
         generateReflectionObjectFieldIfNeeded();
@@ -263,43 +260,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isLocalOrAnonymousClass && state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
             writeOuterClassAndEnclosingMethod(descriptor, descriptor, typeMapper, v);
         }
-    }
-
-    private void writeInnerClasses() {
-        Collection<ClassDescriptor> result = bindingContext.get(INNER_CLASSES, descriptor);
-        if (result != null) {
-            for (ClassDescriptor innerClass : result) {
-                writeInnerClass(innerClass);
-            }
-        }
-    }
-
-    private void writeOuterClasses() {
-        // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
-        // for each enclosing class and for each immediate member
-        DeclarationDescriptor inner = descriptor;
-        while (true) {
-            if (inner == null || isTopLevelDeclaration(inner)) {
-                break;
-            }
-            if (inner instanceof ClassDescriptor) {
-                writeInnerClass((ClassDescriptor) inner);
-            }
-            inner = inner.getContainingDeclaration();
-        }
-    }
-
-    private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
-        DeclarationDescriptor containing = innerClass.getContainingDeclaration();
-        String outerClassInternalName =
-                containing instanceof ClassDescriptor ? typeMapper.mapClass((ClassDescriptor) containing).getInternalName() : null;
-
-        String innerName = isClassObject(innerClass)
-                           ? JvmAbi.CLASS_OBJECT_CLASS_NAME
-                           : innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
-
-        String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
-        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
 
     @NotNull

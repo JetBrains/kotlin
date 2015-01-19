@@ -48,14 +48,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
@@ -73,6 +73,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     protected final BindingContext bindingContext;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
+    protected final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
@@ -120,11 +121,18 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected abstract void generateKotlinAnnotation();
 
+    @Nullable
+    protected ClassDescriptor classForInnerClassRecord() {
+        return null;
+    }
+
     protected void done() {
         if (clInit != null) {
             clInit.v.visitInsn(RETURN);
             FunctionCodegen.endVisit(clInit.v, "static initializer", element);
         }
+
+        writeInnerClasses();
 
         v.done();
     }
@@ -201,6 +209,41 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     public void genClassOrObject(JetClassOrObject aClass) {
         genClassOrObject(context, aClass, state, this);
+    }
+
+    private void writeInnerClasses() {
+        // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
+        // for each enclosing class and for each immediate member
+        ClassDescriptor classDescriptor = classForInnerClassRecord();
+        if (classDescriptor != null) {
+            if (parentCodegen != null) {
+                parentCodegen.innerClasses.add(classDescriptor);
+            }
+
+            for (MemberCodegen<?> codegen = this; codegen != null; codegen = codegen.getParentCodegen()) {
+                ClassDescriptor outerClass = codegen.classForInnerClassRecord();
+                if (outerClass != null) {
+                    innerClasses.add(outerClass);
+                }
+            }
+        }
+
+        for (ClassDescriptor innerClass : innerClasses) {
+            writeInnerClass(innerClass);
+        }
+    }
+
+    private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
+        DeclarationDescriptor containing = innerClass.getContainingDeclaration();
+        String outerClassInternalName =
+                containing instanceof ClassDescriptor ? typeMapper.mapClass((ClassDescriptor) containing).getInternalName() : null;
+
+        String innerName = isClassObject(innerClass)
+                           ? JvmAbi.CLASS_OBJECT_CLASS_NAME
+                           : innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
+
+        String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
+        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
 
     @NotNull
@@ -402,5 +445,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     public MemberCodegen<?> getParentCodegen() {
         return parentCodegen;
+    }
+
+    @Override
+    public String toString() {
+        return context.toString();
     }
 }
