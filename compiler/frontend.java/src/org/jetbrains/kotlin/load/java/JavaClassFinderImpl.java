@@ -102,7 +102,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Nullable
     @Override
     public JavaPackage findPackage(@NotNull FqName fqName) {
-        PsiPackage psiPackage = javaFacade.findPackage(fqName.asString());
+        PsiPackage psiPackage = javaFacade.findPackage(fqName.asString(), javaSearchScope);
         return psiPackage == null ? null : new JavaPackageImpl(psiPackage, javaSearchScope);
     }
 }

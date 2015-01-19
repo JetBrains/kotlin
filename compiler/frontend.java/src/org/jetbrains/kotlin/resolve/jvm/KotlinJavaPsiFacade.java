@@ -79,7 +79,7 @@ public class KotlinJavaPsiFacade {
     @NotNull
     private PsiClass[] findClassesInDumbMode(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
         String packageName = StringUtil.getPackageName(qualifiedName);
-        PsiPackage pkg = findPackage(packageName);
+        PsiPackage pkg = findPackage(packageName, scope);
         String className = StringUtil.getShortName(qualifiedName);
         if (pkg == null && packageName.length() < qualifiedName.length()) {
             PsiClass[] containingClasses = findClassesInDumbMode(packageName, scope);
@@ -117,6 +117,7 @@ public class KotlinJavaPsiFacade {
                 getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
                     @Override
                     public Boolean invoke(PsiElementFinder finder) {
+                        // TODO: Filter out PsiElementFinderImpl in idea 14
                         return !(finder instanceof KotlinFinderMarker);
                     }
                 });
@@ -131,7 +132,9 @@ public class KotlinJavaPsiFacade {
         return elementFinders.toArray(new KotlinPsiElementFinderWrapper[elementFinders.size()]);
     }
 
-    public PsiPackage findPackage(@NotNull String qualifiedName) {
+    public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
+        assert searchScope == this.searchScope : "Illegal scope is used for package search";
+
         ConcurrentMap<String, PsiPackage> cache = SoftReference.dereference(myPackageCache);
         if (cache == null) {
             myPackageCache = new SoftReference<ConcurrentMap<String, PsiPackage>>(cache = new ConcurrentHashMap<String, PsiPackage>());
