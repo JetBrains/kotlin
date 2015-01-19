@@ -376,7 +376,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(true, true);
+            parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
 
@@ -551,6 +551,12 @@ public class JetParsing extends AbstractJetParsing {
         annotation.done(ANNOTATION_ENTRY);
     }
 
+    public enum NameParsingMode {
+        REQUIRED,
+        ALLOWED,
+        PROHIBITED;
+    }
+
     /*
      * class
      *   : modifiers ("class" | "trait") SimpleName
@@ -565,7 +571,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    IElementType parseClassOrObject(final boolean object, boolean named, boolean optionalBody, boolean enumClass) {
+    IElementType parseClassOrObject(boolean object, NameParsingMode nameParsingMode, boolean optionalBody, boolean enumClass) {
         if (object) {
             assert _at(OBJECT_KEYWORD);
         }
@@ -574,15 +580,23 @@ public class JetParsing extends AbstractJetParsing {
         }
         advance(); // CLASS_KEYWORD, TRAIT_KEYWORD or OBJECT_KEYWORD
 
-        if (named) {
+        if (nameParsingMode == NameParsingMode.REQUIRED) {
             OptionalMarker marker = new OptionalMarker(object);
             expect(IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET);
             marker.done(OBJECT_DECLARATION_NAME);
         }
         else {
+            assert object : "Must be an object to be nameless";
             if (at(IDENTIFIER)) {
-                assert object : "Must be an object to be nameless";
-                errorAndAdvance("An object expression cannot bind a name");
+                if (nameParsingMode == NameParsingMode.PROHIBITED) {
+                    errorAndAdvance("An object expression cannot bind a name");
+                }
+                else {
+                    assert nameParsingMode == NameParsingMode.ALLOWED;
+                    PsiBuilder.Marker marker = mark();
+                    advance();
+                    marker.done(OBJECT_DECLARATION_NAME);
+                }
             }
         }
 
@@ -595,7 +609,7 @@ public class JetParsing extends AbstractJetParsing {
         boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON) ) {
+        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON)) {
             beforeConstructorModifiers.rollbackTo();
             constructorModifiersMarker.drop();
             return object ? OBJECT_DECLARATION : CLASS;
@@ -616,7 +630,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         constructorModifiersMarker.error("Constructors are not allowed for objects");
 
-        if (at(COLON) ) {
+        if (at(COLON)) {
             advance(); // COLON
             parseDelegationSpecifierList();
         }
@@ -643,11 +657,11 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     IElementType parseClass(boolean enumClass) {
-        return parseClassOrObject(false, true, true, enumClass);
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass);
     }
 
-    void parseObject(boolean named, boolean optionalBody) {
-        parseClassOrObject(true, named, optionalBody, false);
+    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false);
     }
 
     /*
@@ -803,7 +817,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(true, true);
+            parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         else if (keywordToken == LBRACE) {
@@ -872,7 +886,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // CLASS_KEYWORD
 
         PsiBuilder.Marker objectDeclaration = mark();
-        parseObject(false, true);
+        parseObject(NameParsingMode.ALLOWED, true);
         closeDeclarationWithCommentBinders(objectDeclaration, OBJECT_DECLARATION, true);
         return CLASS_OBJECT;
     }

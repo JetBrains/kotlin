@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.JetNodeType;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.parsing.JetParsing.NameParsingMode;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -1318,7 +1319,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 return null;
             }
 
-            myJetParsing.parseObject(true, true);
+            myJetParsing.parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         return declType;
@@ -1826,7 +1827,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
-        myJetParsing.parseObject(false, false); // Body is not optional because of foo(object : A, B)
+        myJetParsing.parseObject(NameParsingMode.PROHIBITED, false); // Body is not optional because of foo(object : A, B)
         declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }
