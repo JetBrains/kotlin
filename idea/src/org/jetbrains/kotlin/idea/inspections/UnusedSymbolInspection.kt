@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
+import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -120,6 +122,18 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                 ) // TODO add quick fix to delete it
             }
+
+            override fun visitTypeParameter(parameter: JetTypeParameter) {
+                if (parameter.getName() == null) return
+
+                if (hasNonTrivialUsages(parameter)) return
+
+                holder.registerProblem(
+                        parameter.getNameIdentifier(),
+                        JetBundle.message("unused.type.parameter", parameter.getName()),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                ) // TODO add quick fix to delete it
+            }
         }
     }
 
@@ -177,7 +191,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             is JetClass -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
             is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true)
-            else -> return false
+            else -> DefaultSearchHelper<JetNamedDeclaration>()
         }
 
         val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
