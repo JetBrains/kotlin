@@ -378,10 +378,6 @@ class SmartCompletion(
                                     ?.getParent() as? JetForExpression ?: return null
         if (expressionWithType != forExpression.getLoopRange()) return null
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
-
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
-
         val loopVar = forExpression.getLoopParameter()
         val loopVarType = if (loopVar != null && loopVar.getTypeReference() != null) {
             val type = (resolutionFacade.resolveToDescriptor(loopVar) as VariableDescriptor).getType()
@@ -391,52 +387,45 @@ class SmartCompletion(
             null
         }
 
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
         val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope, loopVarType)
 
-        fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
-            val types = descriptor.fuzzyTypes(smartCastTypes)
-
-            fun createLookupElement() = lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
-
-            if (types.any { iterableDetector.isIterable(it.type) }) {
-                return listOf(createLookupElement().addTail(Tail.RPARENTH))
-            }
-
-            if (types.any { it.nullability() == TypeNullability.NULLABLE && iterableDetector.isIterable(it.type.makeNotNullable()) }) {
-                return lookupElementsForNullable(::createLookupElement).map { it.addTail(Tail.RPARENTH) }
-            }
-
-            return listOf()
-        }
-
-        return Result(::filterDeclaration, listOf(), null)
+        return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it.type) }
     }
 
-    //TODO: reuse code from above
     private fun buildForInOperatorArgument(expressionWithType: JetExpression, receiver: JetExpression?): Result? {
         val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression ?: return null
         val operationToken = binaryExpression.getOperationToken()
         if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
 
         val leftOperandType = bindingContext.get(BindingContext.EXPRESSION_TYPE, binaryExpression.getLeft()) ?: return null
-
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
-
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
-
         val detector = TypesWithContainsDetector(scope, leftOperandType)
+
+        return buildResultByTypeFilter(expressionWithType, receiver, null) { detector.hasContains(it) }
+    }
+
+    private fun buildResultByTypeFilter(
+            position: JetExpression,
+            receiver: JetExpression?,
+            tail: Tail?,
+            typeFilter: (FuzzyType) -> Boolean
+    ): Result {
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(position, receiver)
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val types = descriptor.fuzzyTypes(smartCastTypes)
 
-            fun createLookupElement() = lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
-
-            if (types.any { detector.hasContains(it) }) {
-                return listOf(createLookupElement())
+            fun createLookupElement(): LookupElement {
+                return lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
             }
 
-            if (types.any { it.nullability() == TypeNullability.NULLABLE && detector.hasContains(it.makeNotNullable()) }) {
-                return lookupElementsForNullable(::createLookupElement)
+            if (types.any { typeFilter(it) }) {
+                return listOf(createLookupElement().addTail(tail))
+            }
+
+            if (types.any { it.nullability() == TypeNullability.NULLABLE && typeFilter(it.makeNotNullable()) }) {
+                return lookupElementsForNullable(::createLookupElement).map { it.addTail(tail) }
             }
 
             return listOf()
