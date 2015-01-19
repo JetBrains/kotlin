@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.parsing.JetParserDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer;
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -255,6 +256,7 @@ public class JetCoreEnvironment {
         MockProject project = projectEnvironment.getProject();
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
 
+        project.registerService(KotlinJavaPsiFacade.class, new KotlinJavaPsiFacade(project));
         project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
     }
 

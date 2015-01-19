@@ -75,7 +75,8 @@ public class JavaClassFinderImpl implements JavaClassFinder {
                 return project;
             }
         };
-        javaFacade = new KotlinJavaPsiFacade(project, javaSearchScope);
+
+        javaFacade = KotlinJavaPsiFacade.getInstance(project);
     }
 
     @Nullable

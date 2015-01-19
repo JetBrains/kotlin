@@ -23,6 +23,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.PackageIndex;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -32,11 +33,13 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ConcurrentHashMap;
+import com.intellij.util.messages.MessageBus;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -47,19 +50,38 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 public class KotlinJavaPsiFacade {
-    private volatile KotlinPsiElementFinderWrapper[] myElementFinders;
-    private volatile SoftReference<ConcurrentMap<String, PsiPackage>> myPackageCache;
-    private final Project Project;
-    private final GlobalSearchScope searchScope;
+    private volatile KotlinPsiElementFinderWrapper[] elementFinders;
+    private volatile SoftReference<ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage>> packageCache;
+    private final Project project;
 
-    public KotlinJavaPsiFacade(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
-        this.Project = project;
-        this.searchScope = searchScope;
+    public static KotlinJavaPsiFacade getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinJavaPsiFacade.class);
+    }
+
+    public KotlinJavaPsiFacade(@NotNull Project project) {
+        this.project = project;
+
+        final PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
+        MessageBus bus = project.getMessageBus();
+
+        bus.connect().subscribe(PsiModificationTracker.TOPIC, new PsiModificationTracker.Listener() {
+            private long lastTimeSeen = -1L;
+
+            @Override
+            public void modificationCountChanged() {
+                long now = modificationTracker.getJavaStructureModificationCount();
+                if (lastTimeSeen != now) {
+                    lastTimeSeen = now;
+                    packageCache = null;
+                }
+            }
+        });
     }
 
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-        ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
+        ProgressIndicatorProvider.checkCanceled();
 
+        // TODO: Update in IDEA 14
         if (DumbService.getInstance(getProject()).isDumb()) {
             PsiClass[] classes = findClassesInDumbMode(qualifiedName, scope);
             if (classes.length != 0) {
@@ -99,10 +121,10 @@ public class KotlinJavaPsiFacade {
 
     @NotNull
     private KotlinPsiElementFinderWrapper[] finders() {
-        KotlinPsiElementFinderWrapper[] answer = myElementFinders;
+        KotlinPsiElementFinderWrapper[] answer = elementFinders;
         if (answer == null) {
             answer = calcFinders();
-            myElementFinders = answer;
+            elementFinders = answer;
         }
 
         return answer;
@@ -133,14 +155,14 @@ public class KotlinJavaPsiFacade {
     }
 
     public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
-        assert searchScope == this.searchScope : "Illegal scope is used for package search";
-
-        ConcurrentMap<String, PsiPackage> cache = SoftReference.dereference(myPackageCache);
+        ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> cache = SoftReference.dereference(packageCache);
         if (cache == null) {
-            myPackageCache = new SoftReference<ConcurrentMap<String, PsiPackage>>(cache = new ConcurrentHashMap<String, PsiPackage>());
+            packageCache = new SoftReference<ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage>>(
+                    cache = new ConcurrentHashMap<Pair<String, GlobalSearchScope>, PsiPackage>());
         }
 
-        PsiPackage aPackage = cache.get(qualifiedName);
+        Pair<String, GlobalSearchScope> key = new Pair<String, GlobalSearchScope>(qualifiedName, searchScope);
+        PsiPackage aPackage = cache.get(key);
         if (aPackage != null) {
             return aPackage;
         }
@@ -148,7 +170,7 @@ public class KotlinJavaPsiFacade {
         for (KotlinPsiElementFinderWrapper finder : filteredFinders()) {
             aPackage = finder.findPackage(qualifiedName, searchScope);
             if (aPackage != null) {
-                return ConcurrencyUtil.cacheOrGet(cache, qualifiedName, aPackage);
+                return ConcurrencyUtil.cacheOrGet(cache, key, aPackage);
             }
         }
 
@@ -168,7 +190,7 @@ public class KotlinJavaPsiFacade {
 
     @NotNull
     public Project getProject() {
-        return Project;
+        return project;
     }
 
     public static KotlinPsiElementFinderWrapper wrap(PsiElementFinder finder) {
