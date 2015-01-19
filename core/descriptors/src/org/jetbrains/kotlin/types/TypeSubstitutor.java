@@ -31,7 +31,7 @@ public class TypeSubstitutor {
 
     private static final int MAX_RECURSION_DEPTH = 100;
 
-    public static class MapToTypeSubstitutionAdapter implements TypeSubstitution {
+    public static class MapToTypeSubstitutionAdapter extends TypeSubstitution {
         private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
 
         public MapToTypeSubstitutionAdapter(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
@@ -142,6 +142,9 @@ public class TypeSubstitutor {
     @Nullable
     public TypeProjection substitute(@NotNull TypeProjection typeProjection) {
         TypeProjection substitutedTypeProjection = substituteWithoutApproximation(typeProjection);
+        if (!substitution.approximateCapturedTypes()) {
+            return substitutedTypeProjection;
+        }
         return TypesApproximationPackage.approximateCapturedTypesIfNecessary(substitutedTypeProjection);
     }
 

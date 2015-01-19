@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface TypeSubstitution {
-    TypeSubstitution EMPTY = new TypeSubstitution() {
+public abstract class TypeSubstitution {
+    public static final TypeSubstitution EMPTY = new TypeSubstitution() {
         @Override
         public TypeProjection get(TypeConstructor key) {
             return null;
@@ -37,6 +37,13 @@ public interface TypeSubstitution {
     };
 
     @Nullable
-    TypeProjection get(TypeConstructor key);
-    boolean isEmpty();
+    public abstract TypeProjection get(TypeConstructor key);
+
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public boolean approximateCapturedTypes() {
+        return false;
+    }
 }

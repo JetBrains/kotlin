@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundC
 import org.jetbrains.kotlin.types.getCustomTypeVariable
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
+import org.jetbrains.kotlin.types.TypeSubstitution
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -437,9 +438,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
         return if (typeParameterDescriptor != null && isMyTypeVariable(typeParameterDescriptor)) typeParameterDescriptor else null
     }
 
-    override fun getResultingSubstitutor() = replaceUninferredBySpecialErrorType()
+    override fun getResultingSubstitutor() = replaceUninferredBySpecialErrorType().setApproximateCapturedTypes()
 
-    override fun getCurrentSubstitutor() = replaceUninferredBy(TypeUtils.DONT_CARE)
+    override fun getCurrentSubstitutor() = replaceUninferredBy(TypeUtils.DONT_CARE).setApproximateCapturedTypes()
 
     private fun createCorrespondingExtensionFunctionType(functionType: JetType, receiverType: JetType): JetType {
         assert(KotlinBuiltIns.isFunctionType(functionType))
@@ -460,4 +461,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
         val returnType = typeArguments.get(lastIndex).getType()
         return KotlinBuiltIns.getInstance().getFunctionType(functionType.getAnnotations(), receiverType, arguments, returnType)
     }
+}
+
+private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
+    return TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(getSubstitution()))
+}
+
+private class SubstitutionWithCapturedTypeApproximation(val substitution: TypeSubstitution) : TypeSubstitution() {
+    override fun get(key: TypeConstructor?) = substitution[key]
+    override fun isEmpty() = substitution.isEmpty()
+    override fun approximateCapturedTypes() = true
 }

@@ -54,6 +54,11 @@ public class DescriptorSubstitutor {
             }
 
             @Override
+            public boolean approximateCapturedTypes() {
+                return originalSubstitutor.getSubstitution().approximateCapturedTypes();
+            }
+
+            @Override
             public String toString() {
                 return "DescriptorSubstitutor.substituteTypeParameters(" + mutableSubstitution + " / " + originalSubstitutor.getSubstitution() + ")";
             }
