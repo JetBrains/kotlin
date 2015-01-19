@@ -99,7 +99,7 @@ public class ImportsResolver {
     ) {
         @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
-        Importer importer = new Importer(module.getPlatformToKotlinClassMap());
+        Importer importer = new Importer();
         if (lookupMode == LookupMode.EVERYTHING) {
             fileScope.clearImports();
         }

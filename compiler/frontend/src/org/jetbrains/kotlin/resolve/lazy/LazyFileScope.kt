@@ -40,7 +40,7 @@ class LazyFileScope private(
         debugName: String
 ) : ChainedScope(containingDeclaration,
                  debugName,
-                 *(listOf(aliasImportsScope, defaultAliasImportsScope, currentPackageMembersScope, rootPackagesScope, allUnderImportsScope, defaultAllUnderImportsScope) + additionalScopes).copyToArray()) {
+                 *(listOf(aliasImportsScope, currentPackageMembersScope, rootPackagesScope, defaultAliasImportsScope, defaultAllUnderImportsScope, allUnderImportsScope) + additionalScopes).copyToArray()) {
 
     public fun forceResolveAllImports() {
         aliasImportsScope.forceResolveAllContents()

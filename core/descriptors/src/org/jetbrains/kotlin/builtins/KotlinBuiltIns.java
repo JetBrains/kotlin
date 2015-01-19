@@ -135,8 +135,6 @@ public class KotlinBuiltIns {
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
-
-        computeNonPhysicalClasses();
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
@@ -474,57 +472,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getMutableListIterator() {
         return getBuiltInClassByName("MutableListIterator");
-    }
-
-    /**
-     * Classes that only exist for the Kotlin compiler: they are erased at runtime.
-     * As a consequence they, for example, shouldn't be referred to by other languages
-     * (e.g. Java).
-     */
-    @NotNull
-    public Set<ClassDescriptor> getNonPhysicalClasses() {
-        return Collections.unmodifiableSet(nonPhysicalClasses);
-    }
-
-    private void computeNonPhysicalClasses() {
-        nonPhysicalClasses.addAll(Arrays.asList(
-                getAny(),
-                getNothing(),
-
-                getNumber(),
-                getString(),
-                getCharSequence(),
-                getThrowable(),
-
-                getIterator(),
-                getIterable(),
-                getCollection(),
-                getList(),
-                getListIterator(),
-                getSet(),
-                getMap(),
-                getMapEntry(),
-
-                getMutableIterator(),
-                getMutableIterable(),
-                getMutableCollection(),
-                getMutableList(),
-                getMutableListIterator(),
-                getMutableSet(),
-                getMutableMap(),
-                getMutableMapEntry(),
-
-                getDataClassAnnotation(),
-                getAnnotation(),
-                getComparable(),
-                getEnum(),
-                getArray()
-        ));
-
-        for (PrimitiveType primitiveType : values()) {
-            nonPhysicalClasses.add(getPrimitiveClassDescriptor(primitiveType));
-            nonPhysicalClasses.add(getPrimitiveArrayClassDescriptor(primitiveType));
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

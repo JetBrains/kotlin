@@ -98,7 +98,7 @@ class LazyImportScope(
                     val directiveImportScope = WritableScopeImpl(JetScope.Empty, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
-                    val importer = Importer(resolveSession.getModuleDescriptor().platformToKotlinClassMap)
+                    val importer = Importer()
                     directiveUnderResolve = directive
 
                     val descriptors: Collection<DeclarationDescriptor>

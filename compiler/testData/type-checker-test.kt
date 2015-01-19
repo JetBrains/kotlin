@@ -29,9 +29,9 @@ class WithPredicate() {
   val p : Boolean
 }
 
-open class List<E>()
-open class AbstractList<E> : List<E?>
-open class ArrayList<E>() : Any, AbstractList<E?>, List<E?>
+open class InvList<E>()
+open class AbstractList<E> : InvList<E?>
+open class ArrayList<E>() : Any, AbstractList<E?>, InvList<E?>
 
 fun f() : Unit {}
 fun f(a : Int) : Int {a}

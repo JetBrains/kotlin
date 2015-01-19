@@ -26,14 +26,13 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.Printer
 
-public class Importer(private val platformToKotlinClassMap: PlatformToKotlinClassMap) {
+public class Importer {
     private val allUnderImportScopes = ArrayList<JetScope>()
     private val explicitImports = ArrayList<Pair<DeclarationDescriptor, Name>>()
 
     public fun addAllUnderImport(descriptor: DeclarationDescriptor) {
         if (descriptor is PackageViewDescriptor) {
-            val scope = NoSubpackagesInPackageScope(descriptor)
-            allUnderImportScopes.add(createFilteringScope(scope, descriptor, platformToKotlinClassMap))
+            allUnderImportScopes.add(NoSubpackagesInPackageScope(descriptor))
         }
         else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
             allUnderImportScopes.add(descriptor.getStaticScope())
@@ -43,12 +42,6 @@ public class Importer(private val platformToKotlinClassMap: PlatformToKotlinClas
                 allUnderImportScopes.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
             }
         }
-    }
-
-    private fun createFilteringScope(scope: JetScope, descriptor: PackageViewDescriptor, platformToKotlinClassMap: PlatformToKotlinClassMap): JetScope {
-        val kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(descriptor)
-        if (kotlinAnalogsForClassesInside.isEmpty()) return scope
-        return FilteringScope(scope) { descriptor -> kotlinAnalogsForClassesInside.all { it.getName() != descriptor.getName() } }
     }
 
     public fun addAliasImport(descriptor: DeclarationDescriptor, aliasName: Name) {

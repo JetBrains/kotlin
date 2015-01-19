@@ -304,7 +304,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         assertSubtype("Derived_T<Int>", "Base_T<in Int>");
         assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
-        assertSubtype("ArrayList<Int>", "List<in Int>");
+        assertSubtype("ArrayList<Int>", "InvList<in Int>");
 
 //        assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
     }
@@ -596,7 +596,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), trace, true);
         ModuleDescriptor module = injector.getModule();
         for (ImportPath defaultImport : module.getDefaultImports()) {
-            writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
+            FqName fqName = defaultImport.fqnPart();
+            if (defaultImport.isAllUnder()) {
+                writableScope.importScope(module.getPackage(fqName).getMemberScope());
+            }
+            else {
+                writableScope.addClassifierAlias(defaultImport.getImportedName(),
+                                                 module.getPackage(fqName.parent()).getMemberScope().getClassifier(fqName.shortName()));
+            }
         }
         writableScope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);

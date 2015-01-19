@@ -4745,6 +4745,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("DefaultImportsPriority.kt")
+            public void testDefaultImportsPriority() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/DefaultImportsPriority.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("DontImportRootScope.kt")
             public void testDontImportRootScope() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/DontImportRootScope.kt");
