@@ -53,7 +53,6 @@ functionParameter
   ;
 
 initializer
-  : annotations "this" valueArguments
   : annotations constructorInvocation // type parameters may (must?) be omitted
   ;
 

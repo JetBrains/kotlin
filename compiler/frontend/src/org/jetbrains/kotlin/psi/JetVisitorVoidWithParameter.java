@@ -130,10 +130,6 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitDelegationToSuperClassSpecifier(specifier, data);
     }
 
-    public void visitDelegationToThisCallVoid(@NotNull JetDelegatorToThisCall thisCall, P data) {
-        super.visitDelegationToThisCall(thisCall, data);
-    }
-
     public void visitPropertyDelegateVoid(@NotNull JetPropertyDelegate delegate, P data) {
         super.visitPropertyDelegate(delegate, data);
     }
@@ -574,12 +570,6 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     @Override
     public final Void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier, P data) {
         visitDelegationToSuperClassSpecifierVoid(specifier, data);
-    	return null;
-    }
-
-    @Override
-    public final Void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall, P data) {
-        visitDelegationToThisCallVoid(thisCall, data);
     	return null;
     }
 

@@ -859,7 +859,6 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * initializer
-     *   : annotations "this" valueArguments
      *   : annotations constructorInvocation // type parameters may (must?) be omitted
      *   ;
      */
@@ -868,20 +867,14 @@ public class JetParsing extends AbstractJetParsing {
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         IElementType type;
-        if (at(THIS_KEYWORD)) {
-            PsiBuilder.Marker mark = mark();
-            advance(); // THIS_KEYWORD
-            mark.done(THIS_CONSTRUCTOR_REFERENCE);
-            type = THIS_CALL;
-        }
-        else if (atSet(TYPE_REF_FIRST)) {
+        if (atSet(TYPE_REF_FIRST)) {
             PsiBuilder.Marker reference = mark();
             parseTypeRef();
             reference.done(CONSTRUCTOR_CALLEE);
             type = DELEGATOR_SUPER_CALL;
         }
         else {
-            errorWithRecovery("Expecting constructor call (this(...)) or supertype initializer",
+            errorWithRecovery("Expecting constructor call (<class-name>(...))",
                               TokenSet.orSet(TOPLEVEL_OBJECT_FIRST, TokenSet.create(RBRACE, LBRACE, COMMA, SEMICOLON)));
             initializer.drop();
             return;

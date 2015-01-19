@@ -232,11 +232,6 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall) {
-                throw new IllegalStateException("This-calls should be prohibited by the parser");
-            }
-
-            @Override
             public void visitJetElement(@NotNull JetElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
