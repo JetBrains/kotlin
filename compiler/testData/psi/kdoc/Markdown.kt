@@ -1,4 +1,6 @@
 /**
- * [[WikiLink]]
- * Just \[[ and \]]
+ * [WikiLink]
+ * \[NotALink]
+ * [[DoubleQuotedLink]]
+ * Just \[ and \]
  */
