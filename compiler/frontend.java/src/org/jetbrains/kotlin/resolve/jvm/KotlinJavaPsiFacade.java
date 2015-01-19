@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -57,31 +58,23 @@ public class KotlinJavaPsiFacade {
         private final GlobalSearchScope searchScope;
 
         public KotlinJavaPsiFacadeWrapper(Project project, GlobalSearchScope searchScope) {
-            super(project, PsiManager.getInstance(project), findJavaFileManager(project), null);
+            super(project);
             this.searchScope = searchScope;
         }
 
         @NotNull
         @Override
         protected PsiElementFinder[] calcFinders() {
-            List<PsiElementFinder> filteredBaseFinders = KotlinPackage.filter(
-                    super.calcFinders(), new Function1<PsiElementFinder, Boolean>() {
-                @Override
-                public Boolean invoke(PsiElementFinder finder) {
-                    if (finder instanceof KotlinFinderMarker) return false;
-
-                    if (finder.getClass().getName().equals("org.jetbrains.kotlin.resolve.jvm.JavaPsiFacadeImpl$PsiElementFinderImpl")) {
-                        // TODO: Replace with instanceof check in idea 14
-                        return false;
-                    }
-
-                    return true;
-                }
-            });
-
             List<PsiElementFinder> elementFinders = new ArrayList<PsiElementFinder>();
             elementFinders.add(new KotlinPsiElementFinderImpl(getProject(), searchScope));
-            elementFinders.addAll(filteredBaseFinders);
+
+            ContainerUtil.addAll(elementFinders, KotlinPackage.filter(
+                    getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
+                        @Override
+                        public Boolean invoke(PsiElementFinder finder) {
+                            return !(finder instanceof KotlinFinderMarker);
+                        }
+                    }));
 
             return elementFinders.toArray(new PsiElementFinder[elementFinders.size()]);
         }
