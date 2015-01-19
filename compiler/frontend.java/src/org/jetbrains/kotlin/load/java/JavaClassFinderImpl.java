@@ -24,6 +24,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
@@ -31,9 +32,8 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
-import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
+import org.jetbrains.kotlin.resolve.jvm.JavaPsiFacadeImpl;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -43,7 +43,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     private GlobalSearchScope baseScope;
 
     private GlobalSearchScope javaSearchScope;
-    private KotlinJavaPsiFacade javaFacade;
+    private JavaPsiFacadeImpl javaFacade;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -75,7 +75,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
                 return project;
             }
         };
-        javaFacade = new KotlinJavaPsiFacade(project, javaSearchScope);
+        javaFacade = new JavaPsiFacadeImpl(project, javaSearchScope);
     }
 
     @Nullable
