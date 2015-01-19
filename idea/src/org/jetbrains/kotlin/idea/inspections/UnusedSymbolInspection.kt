@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.INVOKE_OPERATION_NAME
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -137,12 +138,18 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         val useScope = declaration.getUseScope()
         if (useScope is GlobalSearchScope) {
-            val searchCostResult = psiSearchHelper.isCheapEnoughToSearch(declaration.getName(), useScope, null, null)
+            var zeroOccurrences = true
 
-            when (searchCostResult) {
-                ZERO_OCCURRENCES -> return false // function is surely unused
-                FEW_OCCURRENCES -> {} // do search (following code)
-                TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
+            for (name in listOf(declaration.getName()) + declaration.getAccessorNames()) {
+                when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                    ZERO_OCCURRENCES -> {} // go on, check other names
+                    FEW_OCCURRENCES -> zeroOccurrences = false
+                    TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
+                }
+            }
+
+            if (zeroOccurrences) {
+                return false
             }
         }
 
