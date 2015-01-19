@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
-import org.jetbrains.kotlin.resolve.jvm.JavaPsiFacadeImpl;
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -43,7 +43,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     private GlobalSearchScope baseScope;
 
     private GlobalSearchScope javaSearchScope;
-    private JavaPsiFacadeImpl javaFacade;
+    private KotlinJavaPsiFacade javaFacade;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -75,7 +75,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
                 return project;
             }
         };
-        javaFacade = new JavaPsiFacadeImpl(project, javaSearchScope);
+        javaFacade = new KotlinJavaPsiFacade(project, javaSearchScope);
     }
 
     @Nullable

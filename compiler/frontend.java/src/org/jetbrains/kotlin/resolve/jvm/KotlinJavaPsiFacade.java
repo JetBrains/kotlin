@@ -46,13 +46,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-public class JavaPsiFacadeImpl {
+public class KotlinJavaPsiFacade {
     private volatile KotlinPsiElementFinderWrapper[] myElementFinders;
     private volatile SoftReference<ConcurrentMap<String, PsiPackage>> myPackageCache;
     private final Project Project;
     private final GlobalSearchScope searchScope;
 
-    public JavaPsiFacadeImpl(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
+    public KotlinJavaPsiFacade(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
         this.Project = project;
         this.searchScope = searchScope;
     }
