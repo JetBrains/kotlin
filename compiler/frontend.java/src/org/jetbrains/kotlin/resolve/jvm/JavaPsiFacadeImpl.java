@@ -16,30 +16,45 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
+import com.intellij.core.CoreJavaFileManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.impl.file.PsiPackageImpl;
+import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.reference.SoftReference;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.Query;
 import com.intellij.util.containers.ConcurrentHashMap;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-public abstract class JavaPsiFacadeImpl {
-    private volatile PsiElementFinder[] myElementFinders;
+public class JavaPsiFacadeImpl {
+    private volatile KotlinPsiElementFinderWrapper[] myElementFinders;
     private volatile SoftReference<ConcurrentMap<String, PsiPackage>> myPackageCache;
-    private final Project myProject;
+    private final Project Project;
+    private final GlobalSearchScope searchScope;
 
-    public JavaPsiFacadeImpl(Project project) {
-        myProject = project;
+    public JavaPsiFacadeImpl(@NotNull Project project, @NotNull GlobalSearchScope searchScope) {
+        this.Project = project;
+        this.searchScope = searchScope;
     }
 
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
@@ -53,7 +68,7 @@ public abstract class JavaPsiFacadeImpl {
             return null;
         }
 
-        for (PsiElementFinder finder : finders()) {
+        for (KotlinPsiElementFinderWrapper finder : finders()) {
             PsiClass aClass = finder.findClass(qualifiedName, scope);
             if (aClass != null) return aClass;
         }
@@ -83,8 +98,8 @@ public abstract class JavaPsiFacadeImpl {
     }
 
     @NotNull
-    private PsiElementFinder[] finders() {
-        PsiElementFinder[] answer = myElementFinders;
+    private KotlinPsiElementFinderWrapper[] finders() {
+        KotlinPsiElementFinderWrapper[] answer = myElementFinders;
         if (answer == null) {
             answer = calcFinders();
             myElementFinders = answer;
@@ -94,7 +109,27 @@ public abstract class JavaPsiFacadeImpl {
     }
 
     @NotNull
-    protected abstract PsiElementFinder[] calcFinders();
+    protected KotlinPsiElementFinderWrapper[] calcFinders() {
+        List<KotlinPsiElementFinderWrapper> elementFinders = new ArrayList<KotlinPsiElementFinderWrapper>();
+        elementFinders.add(new KotlinPsiElementFinderImpl(getProject()));
+
+        List<PsiElementFinder> nonKotlinFinders = KotlinPackage.filter(
+                getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
+                    @Override
+                    public Boolean invoke(PsiElementFinder finder) {
+                        return !(finder instanceof KotlinFinderMarker);
+                    }
+                });
+
+        elementFinders.addAll(KotlinPackage.map(nonKotlinFinders, new Function1<PsiElementFinder, KotlinPsiElementFinderWrapper>() {
+            @Override
+            public KotlinPsiElementFinderWrapper invoke(PsiElementFinder finder) {
+                return wrap(finder);
+            }
+        }));
+
+        return elementFinders.toArray(new KotlinPsiElementFinderWrapper[elementFinders.size()]);
+    }
 
     public PsiPackage findPackage(@NotNull String qualifiedName) {
         ConcurrentMap<String, PsiPackage> cache = SoftReference.dereference(myPackageCache);
@@ -107,8 +142,8 @@ public abstract class JavaPsiFacadeImpl {
             return aPackage;
         }
 
-        for (PsiElementFinder finder : filteredFinders()) {
-            aPackage = finder.findPackage(qualifiedName);
+        for (KotlinPsiElementFinderWrapper finder : filteredFinders()) {
+            aPackage = finder.findPackage(qualifiedName, searchScope);
             if (aPackage != null) {
                 return ConcurrencyUtil.cacheOrGet(cache, qualifiedName, aPackage);
             }
@@ -118,18 +153,116 @@ public abstract class JavaPsiFacadeImpl {
     }
 
     @NotNull
-    private PsiElementFinder[] filteredFinders() {
+    private KotlinPsiElementFinderWrapper[] filteredFinders() {
         DumbService dumbService = DumbService.getInstance(getProject());
-        PsiElementFinder[] finders = finders();
+        KotlinPsiElementFinderWrapper[] finders = finders();
         if (dumbService.isDumb()) {
-            List<PsiElementFinder> list = dumbService.filterByDumbAwareness(Arrays.asList(finders));
-            finders = list.toArray(new PsiElementFinder[list.size()]);
+            List<KotlinPsiElementFinderWrapper> list = dumbService.filterByDumbAwareness(Arrays.asList(finders));
+            finders = list.toArray(new KotlinPsiElementFinderWrapper[list.size()]);
         }
         return finders;
     }
 
     @NotNull
     public Project getProject() {
-        return myProject;
+        return Project;
+    }
+
+    public static KotlinPsiElementFinderWrapper wrap(PsiElementFinder finder) {
+        return finder instanceof DumbAware
+               ? new KotlinPsiElementFinderWrapperImplDumbAware(finder)
+               : new KotlinPsiElementFinderWrapperImpl(finder);
+    }
+
+    interface KotlinPsiElementFinderWrapper {
+        PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
+        PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
+    }
+
+    private static class KotlinPsiElementFinderWrapperImpl implements KotlinPsiElementFinderWrapper {
+        private final PsiElementFinder finder;
+
+        private KotlinPsiElementFinderWrapperImpl(PsiElementFinder finder) {
+            this.finder = finder;
+        }
+
+        @Override
+        public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            return finder.findClass(qualifiedName, scope);
+        }
+
+        @Override
+        public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            // Original element finder can't search packages with scope
+            return finder.findPackage(qualifiedName);
+        }
+    }
+
+    private static class KotlinPsiElementFinderWrapperImplDumbAware extends KotlinPsiElementFinderWrapperImpl implements DumbAware {
+        private KotlinPsiElementFinderWrapperImplDumbAware(PsiElementFinder finder) {
+            super(finder);
+        }
+    }
+
+    static class KotlinPsiElementFinderImpl implements KotlinPsiElementFinderWrapper, DumbAware {
+        private final JavaFileManager javaFileManager;
+        private final boolean isCoreJavaFileManager;
+
+        private final PsiManager psiManager;
+        private final PackageIndex packageIndex;
+
+        public KotlinPsiElementFinderImpl(Project project) {
+            this.javaFileManager = findJavaFileManager(project);
+            this.isCoreJavaFileManager = javaFileManager instanceof CoreJavaFileManager;
+
+            this.packageIndex = PackageIndex.getInstance(project);
+            this.psiManager = PsiManager.getInstance(project);
+        }
+
+        @NotNull
+        private static JavaFileManager findJavaFileManager(@NotNull Project project) {
+            JavaFileManager javaFileManager = ServiceManager.getService(project, JavaFileManager.class);
+            if (javaFileManager == null) {
+                throw new IllegalStateException("JavaFileManager component is not found in project");
+            }
+
+            return javaFileManager;
+        }
+
+
+        @Override
+        public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);
+            if (aClass != null) {
+                //TODO: (module refactoring) CoreJavaFileManager should check scope
+                if (!isCoreJavaFileManager || scope.contains(aClass.getContainingFile().getOriginalFile().getVirtualFile())) {
+                    return aClass;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            if (isCoreJavaFileManager) {
+                return javaFileManager.findPackage(qualifiedName);
+            }
+
+            Query<VirtualFile> dirs = packageIndex.getDirsByPackageName(qualifiedName, true);
+            return hasDirectoriesInScope(dirs, scope) ? new PsiPackageImpl(psiManager, qualifiedName) : null;
+        }
+
+        private static boolean hasDirectoriesInScope(Query<VirtualFile> dirs, final GlobalSearchScope scope) {
+            CommonProcessors.FindProcessor<VirtualFile> findProcessor = new CommonProcessors.FindProcessor<VirtualFile>() {
+                @Override
+                protected boolean accept(VirtualFile file) {
+                    return scope.accept(file);
+                }
+            };
+
+            dirs.forEach(findProcessor);
+            return findProcessor.isFound();
+        }
     }
 }
