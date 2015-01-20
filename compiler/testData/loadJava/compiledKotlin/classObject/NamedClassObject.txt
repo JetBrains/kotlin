@@ -1,0 +1,10 @@
+package test
+
+internal final class NamedClassObject {
+    /*primary*/ public constructor NamedClassObject()
+
+    internal class object Named {
+        /*primary*/ private constructor Named()
+        internal final fun f(): kotlin.Int
+    }
+}
