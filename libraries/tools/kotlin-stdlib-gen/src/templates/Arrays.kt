@@ -23,5 +23,18 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add f("asIterable()") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns the Iterable that wraps the original array" }
+        returns("Iterable<T>")
+        body {
+            """
+            return object : Iterable<T> {
+                override fun iterator(): Iterator<T> = this@asIterable.iterator()
+            }
+            """
+        }
+    }
+
     return templates
 }
