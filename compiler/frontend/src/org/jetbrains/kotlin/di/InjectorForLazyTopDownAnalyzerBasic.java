@@ -62,10 +62,6 @@ import org.jetbrains.kotlin.resolve.DeclarationResolver;
 import org.jetbrains.kotlin.resolve.ImportsResolver;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.TopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
-import org.jetbrains.kotlin.resolve.ScriptHeaderResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -120,10 +116,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final ImportsResolver importsResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
-    private final TopDownAnalyzer topDownAnalyzer;
-    private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final TypeHierarchyResolver typeHierarchyResolver;
-    private final ScriptHeaderResolver scriptHeaderResolver;
     private final VarianceChecker varianceChecker;
 
     public InjectorForLazyTopDownAnalyzerBasic(
@@ -179,10 +171,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.importsResolver = new ImportsResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
-        this.topDownAnalyzer = new TopDownAnalyzer();
-        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
-        this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
@@ -199,7 +187,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.lazyTopDownAnalyzer.setModuleDescriptor(module);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
@@ -297,24 +284,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setTrace(bindingTrace);
-
-        topDownAnalyzer.setBodyResolver(bodyResolver);
-        topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        topDownAnalyzer.setModuleDescriptor(module);
-        topDownAnalyzer.setOverloadResolver(overloadResolver);
-        topDownAnalyzer.setOverrideResolver(overrideResolver);
-        topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-        topDownAnalyzer.setVarianceChecker(varianceChecker);
-
-        typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
-        typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        typeHierarchyResolver.setTrace(bindingTrace);
-
-        scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTrace(bindingTrace);
 
     }
 

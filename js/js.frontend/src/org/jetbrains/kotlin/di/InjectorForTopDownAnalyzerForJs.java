@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesAllowed;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
@@ -63,9 +62,6 @@ import org.jetbrains.kotlin.resolve.DeclarationResolver;
 import org.jetbrains.kotlin.resolve.ImportsResolver;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.TopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
-import org.jetbrains.kotlin.resolve.ScriptHeaderResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -84,7 +80,6 @@ public class InjectorForTopDownAnalyzerForJs {
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
-    private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final KotlinJsCheckerProvider kotlinJsCheckerProvider;
     private final DynamicTypesAllowed dynamicTypesAllowed;
     private final AnnotationResolver annotationResolver;
@@ -121,9 +116,6 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ImportsResolver importsResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
-    private final TopDownAnalyzer topDownAnalyzer;
-    private final TypeHierarchyResolver typeHierarchyResolver;
-    private final ScriptHeaderResolver scriptHeaderResolver;
     private final VarianceChecker varianceChecker;
 
     public InjectorForTopDownAnalyzerForJs(
@@ -143,7 +135,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.declarationProviderFactory = declarationProviderFactory;
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
-        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
         this.kotlinJsCheckerProvider = KotlinJsCheckerProvider.INSTANCE$;
         this.dynamicTypesAllowed = new DynamicTypesAllowed();
         this.annotationResolver = new AnnotationResolver();
@@ -180,9 +171,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.importsResolver = new ImportsResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
-        this.topDownAnalyzer = new TopDownAnalyzer();
-        this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
@@ -199,7 +187,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.lazyTopDownAnalyzer.setModuleDescriptor(module);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
@@ -297,24 +284,6 @@ public class InjectorForTopDownAnalyzerForJs {
         overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setTrace(bindingTrace);
-
-        topDownAnalyzer.setBodyResolver(bodyResolver);
-        topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        topDownAnalyzer.setModuleDescriptor(module);
-        topDownAnalyzer.setOverloadResolver(overloadResolver);
-        topDownAnalyzer.setOverrideResolver(overrideResolver);
-        topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-        topDownAnalyzer.setVarianceChecker(varianceChecker);
-
-        typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
-        typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        typeHierarchyResolver.setTrace(bindingTrace);
-
-        scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTrace(bindingTrace);
 
     }
 
