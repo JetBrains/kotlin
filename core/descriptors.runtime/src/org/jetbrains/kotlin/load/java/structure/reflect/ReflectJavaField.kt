@@ -16,26 +16,11 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import java.lang.reflect.Field
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.name.FqName
+import java.lang.reflect.Field
 
-public class ReflectJavaField(field: Field) : ReflectJavaMember(field), JavaField {
-    val field: Field
-        get() = member as Field
+public class ReflectJavaField(override val member: Field) : ReflectJavaMember(), JavaField {
+    override fun isEnumEntry() = member.isEnumConstant()
 
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        // TODO
-        return listOf()
-    }
-
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        // TODO
-        return null
-    }
-
-    override fun isEnumEntry() = field.isEnumConstant()
-
-    override fun getType() = ReflectJavaType.create(field.getGenericType()!!)
+    override fun getType() = ReflectJavaType.create(member.getGenericType())
 }

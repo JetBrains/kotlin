@@ -20,12 +20,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.util.ArrayList
 
-public abstract class ReflectJavaMember(protected val member: Member) : ReflectJavaElement(), JavaMember {
+public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, JavaMember {
+    protected abstract val member: Member
+
+    override val element: AnnotatedElement get() = member as AnnotatedElement
+
     override fun getName() = member.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
 
     override fun getContainingClass() = ReflectJavaClass(member.getDeclaringClass())

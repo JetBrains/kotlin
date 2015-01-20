@@ -16,36 +16,17 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.Method
 
-public class ReflectJavaMethod(method: Method) : ReflectJavaMember(method), JavaMethod {
-    private val method: Method
-        get() = member as Method
-
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        // TODO
-        return listOf()
-    }
-
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        // TODO
-        return null
-    }
-
+public class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), JavaMethod {
     override fun getValueParameters(): List<JavaValueParameter> =
-            getValueParameters(method.getGenericParameterTypes(), method.getParameterAnnotations(), method.isVarArgs())
+            getValueParameters(member.getGenericParameterTypes(), member.getParameterAnnotations(), member.isVarArgs())
 
-    override fun getReturnType(): JavaType? {
-        // TODO
-        return ReflectJavaType.create(method.getGenericReturnType()!!)
-    }
+    override fun getReturnType() = ReflectJavaType.create(member.getGenericReturnType())
 
-    override fun hasAnnotationParameterDefaultValue() = method.getDefaultValue() != null
+    override fun hasAnnotationParameterDefaultValue() = member.getDefaultValue() != null
 
-    override fun getTypeParameters() = method.getTypeParameters().map { ReflectJavaTypeParameter(it) }
+    override fun getTypeParameters() = member.getTypeParameters().map { ReflectJavaTypeParameter(it) }
 }

@@ -16,40 +16,25 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
 import java.util.Arrays
 
-public class ReflectJavaConstructor(constructor: Constructor<*>) : ReflectJavaMember(constructor), JavaConstructor {
-    private val constructor: Constructor<*>
-        get() = member as Constructor<*>
-
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        // TODO
-        return listOf()
-    }
-
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        // TODO
-        return null
-    }
-
+public class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaMember(), JavaConstructor {
     override fun getValueParameters(): List<JavaValueParameter> =
             getValueParameters(
-                    dropSynthetic(constructor.getGenericParameterTypes()),
-                    dropSynthetic(constructor.getParameterAnnotations()),
-                    constructor.isVarArgs()
+                    dropSynthetic(member.getGenericParameterTypes()),
+                    dropSynthetic(member.getParameterAnnotations()),
+                    member.isVarArgs()
             )
 
     // Constructors of inner classes have one additional synthetic parameter
     // TODO: test this code with annotations on constructor parameters of enums and inner classes
     private inline fun <reified T> dropSynthetic(array: Array<T>): Array<T> {
-        val klass = constructor.getDeclaringClass()
+        val klass = member.getDeclaringClass()
         return if (klass.getDeclaringClass() != null && !Modifier.isStatic(klass.getModifiers())) {
             Arrays.copyOfRange(array, 1, array.size())
         }

@@ -16,15 +16,20 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaTypeSubstitutor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.Arrays
 
-public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(), JavaClass {
+public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(), ReflectJavaAnnotationOwner, JavaClass {
+    override val element: AnnotatedElement get() = klass
+
     override fun getInnerClasses() = klass.getDeclaredClasses()
             .stream()
             .filterNot {
@@ -85,17 +90,6 @@ public class ReflectJavaClass(private val klass: Class<*>) : ReflectJavaElement(
     override fun createImmediateType(substitutor: JavaTypeSubstitutor): JavaType = throw UnsupportedOperationException()
 
     override fun getName(): Name = Name.identifier(klass.getSimpleName())
-
-    override fun getAnnotations() = klass.getDeclaredAnnotations().map { ReflectJavaAnnotation(it) }
-
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        for (annotation in klass.getDeclaredAnnotations()) {
-            if (annotation.annotationType().fqName == fqName) {
-                return ReflectJavaAnnotation(annotation)
-            }
-        }
-        return null
-    }
 
     override fun getTypeParameters() = klass.getTypeParameters().map { ReflectJavaTypeParameter(it) }
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.FqName
 
 public class ReflectJavaValueParameter(
@@ -25,15 +24,9 @@ public class ReflectJavaValueParameter(
         private val annotations: Array<Annotation>,
         private val isVararg: Boolean
 ) : ReflectJavaElement(), JavaValueParameter {
-    override fun getAnnotations(): Collection<JavaAnnotation> {
-        // TODO
-        return listOf()
-    }
+    override fun getAnnotations() = getAnnotations(annotations)
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        // TODO
-        return null
-    }
+    override fun findAnnotation(fqName: FqName) = findAnnotation(annotations, fqName)
 
     override fun getName() = null // TODO: use ParameterNames on JDK 8
     override fun getType() = returnType
