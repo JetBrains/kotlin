@@ -848,7 +848,11 @@ public class AsmUtil {
             @NotNull ClassBuilder v
     ) {
         String outerClassName = getOuterClassName(descriptor, originalDescriptor, typeMapper);
+
         FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
+        while (function != null && JvmCodegenUtil.isLambdaWhichWillBeInlined(typeMapper.getBindingContext(), function)) {
+            function = DescriptorUtils.getParentOfType(function, FunctionDescriptor.class);
+        }
 
         if (function != null) {
             Method method = typeMapper.mapSignature(function).getAsmMethod();
