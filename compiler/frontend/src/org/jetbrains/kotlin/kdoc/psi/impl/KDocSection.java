@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.psi.impl;
 
-import com.intellij.psi.PsiComment;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
+import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 
-// Don't implement JetElement (or it will be treated as statement)
-public interface KDoc extends PsiComment {
-    KDocSection getDefaultSection();
+/**
+ * The part of a doc comment which describes a single class, method or property
+ * produced by the element being documented. For example, the doc comment of a class
+ * can have sections for the class itself, its primary constructor and each of the
+ * properties defined in the primary constructor.
+ */
+public class KDocSection extends KDocTag {
+    public KDocSection(@NotNull ASTNode node) {
+        super(node);
+    }
 }

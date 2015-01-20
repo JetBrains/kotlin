@@ -42,9 +42,8 @@ import java.lang.Character;
 
 %state LINE_BEGINNING
 %state CONTENTS_BEGINNING
+%state TAG_BEGINNING
 %state CONTENTS
-%state CODE
-%state CODE2
 
 WHITE_SPACE_CHAR    =[\ \t\f\n\r]
 NOT_WHITE_SPACE_CHAR=[^\ \t\f\n\r]
@@ -52,8 +51,10 @@ NOT_WHITE_SPACE_CHAR=[^\ \t\f\n\r]
 DIGIT=[0-9]
 ALPHA=[:jletter:]
 TAG_NAME={ALPHA}({ALPHA}|{DIGIT})*
-
-MARKDOWN_EMPHASIS=[\*_]
+IDENTIFIER={ALPHA}({ALPHA}|{DIGIT}|".")*
+CODE_LINK_START={ALPHA}
+CODE_LINK_CHAR={ALPHA}|{DIGIT}|[()\-\.<>]
+CODE_LINK=\[{CODE_LINK_START}{CODE_LINK_CHAR}*\]
 
 %%
 
@@ -66,8 +67,36 @@ MARKDOWN_EMPHASIS=[\*_]
 <LINE_BEGINNING> "*"+                     { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.LEADING_ASTERISK; }
 
-<CONTENTS_BEGINNING> "@"{TAG_NAME}          { yybegin(CONTENTS);
+<CONTENTS_BEGINNING> "@"{TAG_NAME}          { yybegin(TAG_BEGINNING);
                                               return KDocTokens.TAG_NAME; }
+
+<TAG_BEGINNING> {
+    {WHITE_SPACE_CHAR}+ {
+        if (yytextContainLineBreaks()) {
+            yybegin(LINE_BEGINNING);
+        }
+        return TokenType.WHITE_SPACE;
+    }
+
+    /* Example: @return[x] The return value of function x
+                       ^^^
+    */
+    {CODE_LINK} { yybegin(CONTENTS);
+                  return KDocTokens.MARKDOWN_LINK; }
+
+    /* Example: @param aaa The value of aaa
+                       ^^^
+    */
+    {IDENTIFIER} {
+        yybegin(CONTENTS);
+        return KDocTokens.TEXT_OR_LINK;
+    }
+
+    . {
+        yybegin(CONTENTS);
+        return KDocTokens.TEXT;
+    }
+}
 
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
     {WHITE_SPACE_CHAR}+ {
@@ -83,10 +112,11 @@ MARKDOWN_EMPHASIS=[\*_]
     "\\"[\[\]]   { yybegin(CONTENTS);
                    return KDocTokens.MARKDOWN_ESCAPED_CHAR; }
 
-    "[["  { yybegin(CONTENTS);
-            return KDocTokens.WIKI_LINK_OPEN; }
-    "]]"  { yybegin(CONTENTS);
-            return KDocTokens.WIKI_LINK_CLOSE; }
+    /* We're only interested in parsing links that can become code references,
+       meaning they contain only identifier characters and characters that can be
+       used in type declarations. No brackets, backticks, asterisks or anything like that. */
+    {CODE_LINK} { yybegin(CONTENTS);
+                  return KDocTokens.MARKDOWN_LINK; }
 
     .     { yybegin(CONTENTS);
             return KDocTokens.TEXT; }

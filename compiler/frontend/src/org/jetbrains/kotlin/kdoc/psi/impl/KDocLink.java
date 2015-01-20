@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.psi.impl;
 
-import com.intellij.psi.PsiComment;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
+import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 
-// Don't implement JetElement (or it will be treated as statement)
-public interface KDoc extends PsiComment {
-    KDocSection getDefaultSection();
+public class KDocLink extends KDocElementImpl {
+    public KDocLink(@NotNull ASTNode node) {
+        super(node);
+    }
 }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.parser;
 
-import com.intellij.psi.PsiComment;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 
-// Don't implement JetElement (or it will be treated as statement)
-public interface KDoc extends PsiComment {
-    KDocSection getDefaultSection();
+public class KDocElementTypes {
+    public static final KDocElementType KDOC_SECTION = new KDocElementType("KDOC_SECTION", KDocSection.class);
+    public static final KDocElementType KDOC_TAG = new KDocElementType("KDOC_TAG", KDocTag.class);
+    public static final KDocElementType KDOC_LINK = new KDocElementType("KDOC_LINK", KDocLink.class);
 }

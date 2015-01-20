@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.JetNodeTypes.*
 import org.jetbrains.kotlin.psi.JetContainerNode
 import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 
 public class KotlinWordSelectionFilter : Condition<PsiElement>{
     override fun value(e: PsiElement): Boolean {
@@ -31,7 +32,7 @@ public class KotlinWordSelectionFilter : Condition<PsiElement>{
         if (e.getParent().getFirstChild().getNextSibling() == null && e.getParent() !is JetContainerNode) return false // skip nodes with the same range as their parent
 
         return when (e.getNode().getElementType()) {
-            BLOCK, LITERAL_STRING_TEMPLATE_ENTRY -> false
+            BLOCK, LITERAL_STRING_TEMPLATE_ENTRY, KDocElementTypes.KDOC_SECTION -> false
             else -> true
         }
     }

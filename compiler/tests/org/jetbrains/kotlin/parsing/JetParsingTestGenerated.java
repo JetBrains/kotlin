@@ -1085,6 +1085,24 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("ParamTag.kt")
+            public void testParamTag() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ParamTag.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("ReturnWithBrackets.kt")
+            public void testReturnWithBrackets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ReturnWithBrackets.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("Sections.kt")
+            public void testSections() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/Sections.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/Simple.kt");
@@ -1094,6 +1112,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("TextRightAfterLeadAsterisks.kt")
             public void testTextRightAfterLeadAsterisks() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/TextRightAfterLeadAsterisks.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("TwoTags.kt")
+            public void testTwoTags() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/TwoTags.kt");
                 doParsingTest(fileName);
             }
         }
