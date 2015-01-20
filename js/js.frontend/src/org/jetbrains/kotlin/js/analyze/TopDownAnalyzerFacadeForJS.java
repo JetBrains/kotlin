@@ -107,7 +107,7 @@ public final class TopDownAnalyzerFacadeForJS {
                 project, topDownAnalysisParameters, trace, module,
                 new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), allFiles));
         try {
-            injector.getLazyTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles, 
+            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, allFiles,
                                                            Collections.<PackageFragmentProvider>emptyList());
             return AnalysisResult.success(trace.getBindingContext(), module);
         }

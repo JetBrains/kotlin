@@ -20,12 +20,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -98,29 +94,6 @@ public class LazyTopDownAnalyzer {
     @Inject
     public void setBodyResolver(@NotNull BodyResolver bodyResolver) {
         this.bodyResolver = bodyResolver;
-    }
-
-    @NotNull
-    public TopDownAnalysisContext analyzeFiles(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
-            @NotNull Collection<JetFile> files,
-            @NotNull List<? extends PackageFragmentProvider> additionalProviders
-    ) {
-        assert topDownAnalysisParameters.isLazy() : "Lazy analyzer is run in non-lazy mode";
-
-        PackageFragmentProvider provider;
-        if (additionalProviders.isEmpty()) {
-            provider = resolveSession.getPackageFragmentProvider();
-        }
-        else {
-            provider = new CompositePackageFragmentProvider(KotlinPackage.plus(
-                    Arrays.asList(resolveSession.getPackageFragmentProvider()),
-                    additionalProviders));
-        }
-
-        ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
-
-        return analyzeDeclarations(topDownAnalysisParameters, files);
     }
 
     @NotNull
@@ -293,8 +266,6 @@ public class LazyTopDownAnalyzer {
 
         varianceChecker.check(c);
 
-        resolveImportsInAllFiles(c, resolveSession);
-
         declarationResolver.resolveAnnotationsOnFiles(c, resolveSession.getScopeProvider());
 
         overloadResolver.process(c);
@@ -302,16 +273,6 @@ public class LazyTopDownAnalyzer {
         bodyResolver.resolveBodies(c);
 
         return c;
-    }
-
-    private static void resolveImportsInAllFiles(TopDownAnalysisContext c, KotlinCodeAnalyzer resolveSession) {
-        for (JetFile file : c.getFiles()) {
-            resolveAndCheckImports(file, resolveSession);
-        }
-
-        for (JetScript script : c.getScripts().keySet()) {
-            resolveAndCheckImports(script.getContainingJetFile(), resolveSession);
-        }
     }
 
     private static void resolveAllHeadersInClasses(TopDownAnalysisContext c) {
@@ -350,11 +311,6 @@ public class LazyTopDownAnalyzer {
             );
             registerScope(c, resolveSession, function);
         }
-    }
-
-    private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
-        LazyFileScope fileScope = resolveSession.getScopeProvider().getFileScope(file);
-        fileScope.forceResolveAllImports();
     }
 
     private static void registerScope(

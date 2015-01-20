@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -83,6 +84,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final ResolveSession resolveSession;
     private final ScopeProvider scopeProvider;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
+    private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
     private final DefaultProvider defaultProvider;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -140,6 +142,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
+        this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.defaultProvider = DefaultProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -199,6 +202,9 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
+
+        this.lazyTopDownAnalyzerForTopLevel.setKotlinCodeAnalyzer(resolveSession);
+        this.lazyTopDownAnalyzerForTopLevel.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(storageManager);
@@ -310,6 +316,10 @@ public class InjectorForLazyTopDownAnalyzerBasic {
 
     public LazyTopDownAnalyzer getLazyTopDownAnalyzer() {
         return this.lazyTopDownAnalyzer;
+    }
+
+    public LazyTopDownAnalyzerForTopLevel getLazyTopDownAnalyzerForTopLevel() {
+        return this.lazyTopDownAnalyzerForTopLevel;
     }
 
 }

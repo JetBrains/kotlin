@@ -104,6 +104,7 @@ private fun generatorForLazyTopDownAnalyzerBasic() =
             commonForResolveSessionBased()
 
             publicField<LazyTopDownAnalyzer>()
+            publicField<LazyTopDownAnalyzerForTopLevel>()
 
             field<AdditionalCheckerProvider.DefaultProvider>()
         }
@@ -127,6 +128,7 @@ private fun generatorForTopDownAnalyzerForJs() =
             commonForResolveSessionBased()
 
             publicField<LazyTopDownAnalyzer>()
+            publicField<LazyTopDownAnalyzerForTopLevel>()
 
             field<MutablePackageFragmentProvider>()
             field<KotlinJsCheckerProvider>()
@@ -281,6 +283,7 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     parameter<GlobalSearchScope>(name = "moduleContentScope")
 
     publicField<LazyTopDownAnalyzer>()
+    publicField<LazyTopDownAnalyzerForTopLevel>()
     publicField<JavaDescriptorResolver>()
     publicField<DeserializationComponentsForJava>()
 
