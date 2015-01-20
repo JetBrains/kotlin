@@ -74,6 +74,11 @@ public class JavaClassFinderImpl implements JavaClassFinder {
             public Project getProject() {
                 return project;
             }
+
+            @Override
+            public String toString() {
+                return "JCFI: " + baseScope;
+            }
         };
 
         javaFacade = KotlinJavaPsiFacade.getInstance(project);
