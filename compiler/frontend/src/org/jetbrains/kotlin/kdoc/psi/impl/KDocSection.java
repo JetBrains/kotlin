@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * can have sections for the class itself, its primary constructor and each of the
  * properties defined in the primary constructor.
  */
-public class KDocSection extends KDocElementImpl {
+public class KDocSection extends KDocTag {
     public KDocSection(@NotNull ASTNode node) {
         super(node);
     }

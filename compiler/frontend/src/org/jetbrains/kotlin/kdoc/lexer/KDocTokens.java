@@ -57,7 +57,7 @@ public interface KDocTokens {
 
     /**
      * First word following the tag name (@xxx). Depending on the tag name, this can be
-     * either a link (@param xxx) or just a plain text word (@author name).
+     * either a link (@param xxx) or just a plain text word (@since version).
      * We understand which one it is during parsing.
      */
     KDocToken TEXT_OR_LINK          = new KDocToken("KDOC_TEXT_OR_LINK");
