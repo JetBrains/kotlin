@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
 import org.jetbrains.kotlin.resolve.BodyResolver;
 import org.jetbrains.kotlin.resolve.ControlFlowAnalyzer;
@@ -106,6 +107,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
     private final AdditionalFileScopeProvider additionalFileScopeProvider;
+    private final DeclarationScopeProviderImpl declarationScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
     private final BodyResolver bodyResolver;
     private final ControlFlowAnalyzer controlFlowAnalyzer;
@@ -161,6 +163,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
@@ -250,6 +253,9 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         jetImportsFactory.setProject(project);
 
         scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
+        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
+
+        declarationScopeProvider.setFileScopeProvider(scopeProvider);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
