@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
 import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import com.intellij.util.Processor
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -197,6 +198,6 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
         val query = UsagesSearch.search(request)
 
-        return query.any { !declaration.isAncestor(it.getElement()) }
+        return !query.forEach(Processor { declaration.isAncestor(it.getElement()) })
     }
 }
