@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/smart")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JvmSmartCompletionTestGenerated.AfterAs.class, JvmSmartCompletionTestGenerated.AnonymousObject.class, JvmSmartCompletionTestGenerated.Constructor.class, JvmSmartCompletionTestGenerated.ForLoopRange.class, JvmSmartCompletionTestGenerated.FunctionLiterals.class, JvmSmartCompletionTestGenerated.FunctionReference.class, JvmSmartCompletionTestGenerated.Generics.class, JvmSmartCompletionTestGenerated.IfValue.class, JvmSmartCompletionTestGenerated.InElvisOperator.class, JvmSmartCompletionTestGenerated.InOperator.class, JvmSmartCompletionTestGenerated.Inheritors.class, JvmSmartCompletionTestGenerated.MultipleArgsItem.class, JvmSmartCompletionTestGenerated.SmartCasts.class, JvmSmartCompletionTestGenerated.This.class, JvmSmartCompletionTestGenerated.WhenEntry.class})
+@InnerTestClasses({JvmSmartCompletionTestGenerated.AfterAs.class, JvmSmartCompletionTestGenerated.AnonymousObject.class, JvmSmartCompletionTestGenerated.Constructor.class, JvmSmartCompletionTestGenerated.ForLoopRange.class, JvmSmartCompletionTestGenerated.FunctionLiterals.class, JvmSmartCompletionTestGenerated.FunctionReference.class, JvmSmartCompletionTestGenerated.Generics.class, JvmSmartCompletionTestGenerated.HeuristicSignatures.class, JvmSmartCompletionTestGenerated.IfValue.class, JvmSmartCompletionTestGenerated.InElvisOperator.class, JvmSmartCompletionTestGenerated.InOperator.class, JvmSmartCompletionTestGenerated.Inheritors.class, JvmSmartCompletionTestGenerated.MultipleArgsItem.class, JvmSmartCompletionTestGenerated.SmartCasts.class, JvmSmartCompletionTestGenerated.This.class, JvmSmartCompletionTestGenerated.WhenEntry.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
     @TestMetadata("AfterExclSign.kt")
@@ -732,6 +732,87 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("GenericMethodArgument.kt")
         public void testGenericMethodArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/generics/GenericMethodArgument.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/completion/smart/heuristicSignatures")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class HeuristicSignatures extends AbstractJvmSmartCompletionTest {
+        public void testAllFilesPresentInHeuristicSignatures() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/smart/heuristicSignatures"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("Contains.kt")
+        public void testContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/Contains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ContainsAll.kt")
+        public void testContainsAll() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/ContainsAll.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ContainsKey.kt")
+        public void testContainsKey() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/ContainsKey.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ContainsValue.kt")
+        public void testContainsValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/ContainsValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Get.kt")
+        public void testGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/Get.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InOperator.kt")
+        public void testInOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/InOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IndexOf.kt")
+        public void testIndexOf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/IndexOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LastIndexOf.kt")
+        public void testLastIndexOf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/LastIndexOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MapRemove.kt")
+        public void testMapRemove() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/MapRemove.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Remove.kt")
+        public void testRemove() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/Remove.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RemoveAll.kt")
+        public void testRemoveAll() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/RemoveAll.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RetainAll.kt")
+        public void testRetainAll() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/heuristicSignatures/RetainAll.kt");
             doTest(fileName);
         }
     }

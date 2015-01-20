@@ -73,8 +73,8 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
 fun buildLambdaPresentation(lambdaType: JetType): String {
     val parameterTypes = functionParameterTypes(lambdaType)
-    val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.makeString(", ")
-    fun wrap(s: String) = if (parameterTypes.size != 1) "($s)" else s
+    val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
+    fun wrap(s: String) = if (parameterTypes.size() != 1) "($s)" else s
     return "{ ${wrap(parametersPresentation)} -> ... }"
 }
 
@@ -86,18 +86,18 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
-    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(expression) ?: return false
+    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, resolutionFacade.findModuleDescriptor(file), false).calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }.toSet()
-    if (functionTypes.size <= 1) return false
+    if (functionTypes.size() <= 1) return false
 
-    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size
-    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
+    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size()
+    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() == lambdaParameterCount }.size() > 1
 }
 
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
     val parameterTypes = functionParameterTypes(lambdaType)
 
-    val useParenthesis = explicitParameterTypes || parameterTypes.size != 1
+    val useParenthesis = explicitParameterTypes || parameterTypes.size() != 1
 
     val manager = TemplateManager.getInstance(project)
 
@@ -109,7 +109,7 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
         template.addTextSegment("(")
     }
 
-    for ((i, parameterType) in parameterTypes.withIndices()) {
+    for ((i, parameterType) in parameterTypes.withIndex()) {
         if (i > 0) {
             template.addTextSegment(", ")
         }
@@ -135,7 +135,7 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
     override fun calculateQuickResult(context: ExpressionContext?): Result? = null
 
     override fun calculateLookupItems(context: ExpressionContext?)
-            = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
+            = Array<LookupElement>(nameSuggestions.size(), { LookupElementBuilder.create(nameSuggestions[it]) })
 }
 
 fun functionParameterTypes(functionType: JetType): List<JetType>

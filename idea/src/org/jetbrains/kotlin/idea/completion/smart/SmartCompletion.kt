@@ -238,7 +238,7 @@ class SmartCompletion(
             }
         }
 
-        return ExpectedInfos(bindingContext, resolutionFacade).calculate(expression)
+        return ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, true).calculate(expression)
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
@@ -400,7 +400,7 @@ class SmartCompletion(
 
         val leftOperandType = bindingContext.get(BindingContext.EXPRESSION_TYPE, binaryExpression.getLeft()) ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
-        val detector = TypesWithContainsDetector(scope, leftOperandType)
+        val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
 
         return buildResultByTypeFilter(expressionWithType, receiver, null) { detector.hasContains(it) }
     }
