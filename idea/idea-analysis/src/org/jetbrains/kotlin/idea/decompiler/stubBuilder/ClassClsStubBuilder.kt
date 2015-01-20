@@ -197,7 +197,7 @@ private class ClassClsStubBuilder(
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         val container = ProtoContainer(classProto, null)
-        for (callableProto in sortCallableStubs(classProto.getMemberList())) {
+        for (callableProto in classProto.getMemberList()) {
             createCallableStub(classBody, callableProto, c, container)
         }
     }
