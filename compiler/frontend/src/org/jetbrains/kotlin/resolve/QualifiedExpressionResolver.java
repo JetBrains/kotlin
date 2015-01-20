@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -486,9 +487,10 @@ public class QualifiedExpressionResolver {
             @NotNull JetScope scopeToCheckVisibility
     ) {
         if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
+            Visibility visibility = descriptor.getVisibility();
+            if (PsiTreeUtil.getParentOfType(referenceExpression, JetImportDirective.class) != null && !visibility.mustCheckInImports()) return;
             //noinspection ConstantConditions
-            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getVisibility(),
-                                                descriptor.getContainingDeclaration()));
+            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, visibility, descriptor.getContainingDeclaration()));
         }
     }
 
