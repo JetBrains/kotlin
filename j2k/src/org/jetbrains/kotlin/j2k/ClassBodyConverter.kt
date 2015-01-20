@@ -25,6 +25,7 @@ import java.util.ArrayList
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.Class
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiReturnStatement
 import com.intellij.psi.PsiReferenceExpression
