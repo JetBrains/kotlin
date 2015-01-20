@@ -795,12 +795,22 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertFunctionToPropertyIntention</className>
+        <className>org.jetbrains.kotlin.idea.intentions.ConvertFunctionToPropertyIntention</className>
+        <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+        <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyToFunctionIntention</className>
+        <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertReceiverToParameterIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyToFunctionIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertParameterToReceiverIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

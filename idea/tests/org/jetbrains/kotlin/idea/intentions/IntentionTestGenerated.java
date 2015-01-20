@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/intentions")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({IntentionTestGenerated.AddBraces.class, IntentionTestGenerated.AttributeCallReplacements.class, IntentionTestGenerated.Branched.class, IntentionTestGenerated.ConvertAssertToIf.class, IntentionTestGenerated.ConvertFunctionToProperty.class, IntentionTestGenerated.ConvertIfToAssert.class, IntentionTestGenerated.ConvertNegatedBooleanSequence.class, IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class, IntentionTestGenerated.ConvertPropertyToFunction.class, IntentionTestGenerated.ConvertToBlockBody.class, IntentionTestGenerated.ConvertToConcatenatedStringIntention.class, IntentionTestGenerated.ConvertToExpressionBody.class, IntentionTestGenerated.ConvertToForEachFunctionCall.class, IntentionTestGenerated.ConvertToForEachLoop.class, IntentionTestGenerated.ConvertToStringTemplateIntention.class, IntentionTestGenerated.Declarations.class, IntentionTestGenerated.InsertCurlyBracesToTemplate.class, IntentionTestGenerated.InsertExplicitTypeArguments.class, IntentionTestGenerated.InvertIfCondition.class, IntentionTestGenerated.MakeTypeExplicitInLambda.class, IntentionTestGenerated.MakeTypeImplicitInLambda.class, IntentionTestGenerated.MoveLambdaInsideParentheses.class, IntentionTestGenerated.MoveLambdaOutsideParentheses.class, IntentionTestGenerated.OperatorToFunction.class, IntentionTestGenerated.ReconstructedType.class, IntentionTestGenerated.RemoveBraces.class, IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class, IntentionTestGenerated.RemoveExplicitTypeArguments.class, IntentionTestGenerated.RemoveUnnecessaryParentheses.class, IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class, IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class, IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class, IntentionTestGenerated.ReplaceWithInfixFunctionCall.class, IntentionTestGenerated.ReplaceWithOperatorAssign.class, IntentionTestGenerated.ReplaceWithTraditionalAssignment.class, IntentionTestGenerated.SimplifyBooleanWithConstants.class, IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class, IntentionTestGenerated.SpecifyType.class, IntentionTestGenerated.SplitIf.class, IntentionTestGenerated.SwapBinaryExpression.class})
+@InnerTestClasses({IntentionTestGenerated.AddBraces.class, IntentionTestGenerated.AttributeCallReplacements.class, IntentionTestGenerated.Branched.class, IntentionTestGenerated.ConvertAssertToIf.class, IntentionTestGenerated.ConvertFunctionToProperty.class, IntentionTestGenerated.ConvertIfToAssert.class, IntentionTestGenerated.ConvertNegatedBooleanSequence.class, IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class, IntentionTestGenerated.ConvertParameterToReceiver.class, IntentionTestGenerated.ConvertPropertyToFunction.class, IntentionTestGenerated.ConvertReceiverToParameter.class, IntentionTestGenerated.ConvertToBlockBody.class, IntentionTestGenerated.ConvertToConcatenatedStringIntention.class, IntentionTestGenerated.ConvertToExpressionBody.class, IntentionTestGenerated.ConvertToForEachFunctionCall.class, IntentionTestGenerated.ConvertToForEachLoop.class, IntentionTestGenerated.ConvertToStringTemplateIntention.class, IntentionTestGenerated.Declarations.class, IntentionTestGenerated.InsertCurlyBracesToTemplate.class, IntentionTestGenerated.InsertExplicitTypeArguments.class, IntentionTestGenerated.InvertIfCondition.class, IntentionTestGenerated.MakeTypeExplicitInLambda.class, IntentionTestGenerated.MakeTypeImplicitInLambda.class, IntentionTestGenerated.MoveLambdaInsideParentheses.class, IntentionTestGenerated.MoveLambdaOutsideParentheses.class, IntentionTestGenerated.OperatorToFunction.class, IntentionTestGenerated.ReconstructedType.class, IntentionTestGenerated.RemoveBraces.class, IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class, IntentionTestGenerated.RemoveExplicitTypeArguments.class, IntentionTestGenerated.RemoveUnnecessaryParentheses.class, IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class, IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class, IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class, IntentionTestGenerated.ReplaceWithInfixFunctionCall.class, IntentionTestGenerated.ReplaceWithOperatorAssign.class, IntentionTestGenerated.ReplaceWithTraditionalAssignment.class, IntentionTestGenerated.SimplifyBooleanWithConstants.class, IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class, IntentionTestGenerated.SpecifyType.class, IntentionTestGenerated.SplitIf.class, IntentionTestGenerated.SwapBinaryExpression.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class IntentionTestGenerated extends AbstractIntentionTest {
     public void testAllFilesPresentInIntentions() throws Exception {
@@ -2929,6 +2929,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertParameterToReceiver")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertParameterToReceiver extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertParameterToReceiver() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertParameterToReceiver"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classParameter.kt")
+        public void testClassParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/classParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParameter.kt")
+        public void testLambdaParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/lambdaParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/localFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberFun.kt")
+        public void testMemberFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/memberFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParameterUnderCaret.kt")
+        public void testNoParameterUnderCaret() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/noParameterUnderCaret.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/topLevelFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withExtensionReceiver.kt")
+        public void testWithExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/withExtensionReceiver.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertPropertyToFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3018,6 +3069,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("var.kt")
         public void testVar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/var.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertReceiverToParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertReceiverToParameter extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertReceiverToParameter() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReceiverToParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/localFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberFun.kt")
+        public void testMemberFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/memberFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noReceiverUnderCaret.kt")
+        public void testNoReceiverUnderCaret() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/noReceiverUnderCaret.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notExtension.kt")
+        public void testNotExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/notExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/topLevelFun.kt");
             doTest(fileName);
         }
     }
