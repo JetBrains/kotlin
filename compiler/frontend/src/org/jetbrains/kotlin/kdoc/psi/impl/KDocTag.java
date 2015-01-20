@@ -50,7 +50,7 @@ public class KDocTag extends KDocElementImpl {
                 afterAsterisk = false;
             }
 
-            if (type == KDocTokens.LEADING_ASTERISK || type == KDocTokens.START) {
+            if (type == KDocTokens.LEADING_ASTERISK) {
                 afterAsterisk = true;
             }
 
