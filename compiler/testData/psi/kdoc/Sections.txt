@@ -1,0 +1,38 @@
+JetFile: Sections.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' This is the doc comment for a class.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_TAG
+        PsiElement(KDOC_TAG_NAME)('@param')
+        PsiWhiteSpace(' ')
+        KDOC_LINK
+          PsiElement(KDOC_TEXT_OR_LINK)('T')
+        PsiElement(KDOC_TEXT)(' a type parameter.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+    KDOC_SECTION
+      KDOC_TAG
+        PsiElement(KDOC_TAG_NAME)('@constructor')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT_OR_LINK)('This')
+        PsiElement(KDOC_TEXT)(' is the doc comment for the primary constructor.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_TAG
+        PsiElement(KDOC_TAG_NAME)('@param')
+        PsiWhiteSpace(' ')
+        KDOC_LINK
+          PsiElement(KDOC_TEXT_OR_LINK)('a')
+        PsiElement(KDOC_TEXT)(' a constructor parameter.')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')

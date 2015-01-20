@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.parser;
+package org.jetbrains.kotlin.kdoc.psi.impl;
 
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
+import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 
-public class KDocElementTypes {
-    public static final KDocElementType KDOC_SECTION = new KDocElementType("KDOC_SECTION", KDocSection.class);
-    public static final KDocElementType KDOC_TAG = new KDocElementType("KDOC_TAG", KDocTag.class);
-    public static final KDocElementType KDOC_LINK = new KDocElementType("KDOC_LINK", KDocLink.class);
+/**
+ * The part of a doc comment which describes a single class, method or property
+ * produced by the element being documented. For example, the doc comment of a class
+ * can have sections for the class itself, its primary constructor and each of the
+ * properties defined in the primary constructor.
+ */
+public class KDocSection extends KDocElementImpl {
+    public KDocSection(@NotNull ASTNode node) {
+        super(node);
+    }
 }

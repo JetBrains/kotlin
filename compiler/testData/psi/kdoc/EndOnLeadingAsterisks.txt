@@ -4,4 +4,6 @@ JetFile: EndOnLeadingAsterisks.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      <empty list>
     PsiElement(KDOC_END)('*/')

@@ -27,7 +27,8 @@ JetFile: EOLsInComments.kt
       PsiWhiteSpace('\n  ')
       KDoc
         PsiElement(KDOC_START)('/**')
-        PsiElement(KDOC_TEXT)(' ')
+        KDOC_SECTION
+          PsiElement(KDOC_TEXT)(' ')
         PsiElement(KDOC_END)('*/')
       PREFIX_EXPRESSION
         OPERATION_REFERENCE
@@ -78,6 +79,8 @@ JetFile: EOLsInComments.kt
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n  ')
+          KDOC_SECTION
+            <empty list>
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('  ')
         OPERATION_REFERENCE

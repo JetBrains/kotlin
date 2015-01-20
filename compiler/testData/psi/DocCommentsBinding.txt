@@ -5,8 +5,9 @@ JetFile: DocCommentsBinding.kt
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' Doc comment for A')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Doc comment for A')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_END)('*/')
     PsiWhiteSpace('\n')
@@ -22,8 +23,9 @@ JetFile: DocCommentsBinding.kt
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n         ')
-          PsiElement(KDOC_LEADING_ASTERISK)('*')
-          PsiElement(KDOC_TEXT)(' Doc comment for val-parameter')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Doc comment for val-parameter')
           PsiWhiteSpace('\n         ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n        ')
@@ -47,8 +49,9 @@ JetFile: DocCommentsBinding.kt
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n     ')
-          PsiElement(KDOC_LEADING_ASTERISK)('*')
-          PsiElement(KDOC_TEXT)(' Doc comment for function')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Doc comment for function')
           PsiWhiteSpace('\n     ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n    ')
@@ -66,8 +69,9 @@ JetFile: DocCommentsBinding.kt
             KDoc
               PsiElement(KDOC_START)('/**')
               PsiWhiteSpace('\n         ')
-              PsiElement(KDOC_LEADING_ASTERISK)('*')
-              PsiElement(KDOC_TEXT)(' Doc comment for local function')
+              KDOC_SECTION
+                PsiElement(KDOC_LEADING_ASTERISK)('*')
+                PsiElement(KDOC_TEXT)(' Doc comment for local function')
               PsiWhiteSpace('\n         ')
               PsiElement(KDOC_END)('*/')
             PsiWhiteSpace('\n        ')
@@ -87,8 +91,9 @@ JetFile: DocCommentsBinding.kt
             KDoc
               PsiElement(KDOC_START)('/**')
               PsiWhiteSpace('\n         ')
-              PsiElement(KDOC_LEADING_ASTERISK)('*')
-              PsiElement(KDOC_TEXT)(' Doc comment for local class')
+              KDOC_SECTION
+                PsiElement(KDOC_LEADING_ASTERISK)('*')
+                PsiElement(KDOC_TEXT)(' Doc comment for local class')
               PsiWhiteSpace('\n         ')
               PsiElement(KDOC_END)('*/')
             PsiWhiteSpace('\n        ')
@@ -102,8 +107,9 @@ JetFile: DocCommentsBinding.kt
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n     ')
-          PsiElement(KDOC_LEADING_ASTERISK)('*')
-          PsiElement(KDOC_TEXT)(' Doc comment for property')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Doc comment for property')
           PsiWhiteSpace('\n     ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n    ')
@@ -120,7 +126,8 @@ JetFile: DocCommentsBinding.kt
         PROPERTY_ACCESSOR
           KDoc
             PsiElement(KDOC_START)('/**')
-            PsiElement(KDOC_TEXT)(' Doc comment for getter ')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' Doc comment for getter ')
             PsiElement(KDOC_END)('*/')
           PsiWhiteSpace('\n      ')
           PsiElement(get)('get')
@@ -135,7 +142,8 @@ JetFile: DocCommentsBinding.kt
         PROPERTY_ACCESSOR
           KDoc
             PsiElement(KDOC_START)('/**')
-            PsiElement(KDOC_TEXT)(' Doc comment for setter ')
+            KDOC_SECTION
+              PsiElement(KDOC_TEXT)(' Doc comment for setter ')
             PsiElement(KDOC_END)('*/')
           PsiWhiteSpace('\n      ')
           PsiElement(set)('set')
@@ -155,8 +163,9 @@ JetFile: DocCommentsBinding.kt
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' Doc comment for B')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Doc comment for B')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_END)('*/')
     PsiWhiteSpace('\n')

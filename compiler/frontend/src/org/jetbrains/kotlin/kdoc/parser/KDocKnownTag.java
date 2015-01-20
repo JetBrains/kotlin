@@ -17,22 +17,30 @@
 package org.jetbrains.kotlin.kdoc.parser;
 
 public enum KDocKnownTag {
-    AUTHOR(false),
-    THROWS(true),
-    EXCEPTION(true),
-    PARAM(true),
-    RETURN(false),
-    SEE(false),
-    SINCE(false);
+    AUTHOR(false, false),
+    THROWS(true, false),
+    EXCEPTION(true, false),
+    PARAM(true, false),
+    RETURN(false, false),
+    SEE(false, false),
+    SINCE(false, false),
+    CONSTRUCTOR(false, true),
+    PROPERTY(true, true);
 
     private final boolean takesReference;
+    private final boolean startsSection;
 
-    KDocKnownTag(boolean takesReference) {
+    KDocKnownTag(boolean takesReference, boolean startsSection) {
         this.takesReference = takesReference;
+        this.startsSection = startsSection;
     }
 
     public boolean isReferenceRequired() {
         return takesReference;
+    }
+
+    public boolean isSectionStart() {
+        return startsSection;
     }
 
     public static KDocKnownTag findByTagName(String tagName) {

@@ -3,5 +3,6 @@ JetFile: EndRightAfterText.kt
     <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
-    PsiElement(KDOC_TEXT)('text')
+    KDOC_SECTION
+      PsiElement(KDOC_TEXT)('text')
     PsiElement(KDOC_END)('*/')

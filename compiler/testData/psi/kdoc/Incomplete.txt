@@ -4,4 +4,5 @@ JetFile: Incomplete.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n      ')
-    PsiElement(KDOC_TEXT)('contents')
+    KDOC_SECTION
+      PsiElement(KDOC_TEXT)('contents')
