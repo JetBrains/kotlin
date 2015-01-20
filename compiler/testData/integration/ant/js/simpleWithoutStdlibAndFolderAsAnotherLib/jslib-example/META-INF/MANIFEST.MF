@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.1
+Created-By: 1.7.0_72-b14 (Oracle Corporation)
+Built-By: JetBrains
+Implementation-Vendor: JetBrains
+Implementation-Version: snapshot
+Specification-Title: Kotlin JavaScript Lib
+
+

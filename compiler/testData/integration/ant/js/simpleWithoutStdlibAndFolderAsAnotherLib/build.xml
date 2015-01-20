@@ -1,0 +1,22 @@
+<project name="Ant Task Test" default="build">
+  <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+  <property name="library.path" value="${test.data}/jslib-example"/>
+  <property name="temp.library.path" value="${temp}/lib"/>
+  <target name="build">
+    <mkdir dir="${temp.library.path}"/>
+
+    <kotlin2js src="${library.path}" output="${temp.library.path}/jslib-example.js" metaInfo="${temp.library.path}/jslib-example.meta.js"/>
+
+    <kotlin2js src="${test.data}/root1" output="${temp}/out.js" main="call">
+      <library>
+        <pathelement path="${temp.library.path}"/>
+      </library>
+    </kotlin2js>
+    <copy todir="${temp}">
+      <fileset dir="${temp.library.path}">
+        <include name="**/*.js"/>
+        <exclude name="META-INF/**"/>
+      </fileset>
+    </copy>
+  </target>
+</project>
