@@ -1,0 +1,14 @@
+package test
+
+public open class AnnotatedField {
+    public constructor AnnotatedField()
+    test.AnnotatedField.Anno(value = "member": kotlin.String) public final val y: kotlin.Int = 0
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public abstract fun value(): kotlin.String
+    }
+
+    // Static members
+    test.AnnotatedField.Anno(value = "static": kotlin.String) public final val x: kotlin.Int = 0
+}

@@ -1,0 +1,10 @@
+package test
+
+public open class AnnotatedConstructor {
+    test.AnnotatedConstructor.Anno(value = "constructor": kotlin.String) public constructor AnnotatedConstructor()
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public abstract fun value(): kotlin.String
+    }
+}

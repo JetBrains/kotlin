@@ -2,5 +2,10 @@ package test
 
 public open class AnnotatedMethod {
     public constructor AnnotatedMethod()
-    kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open fun f(): kotlin.Unit
+    test.AnnotatedMethod.Anno(value = 42: kotlin.Int) public open fun f(): kotlin.Unit
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.Int)
+        public abstract fun value(): kotlin.Int
+    }
 }
