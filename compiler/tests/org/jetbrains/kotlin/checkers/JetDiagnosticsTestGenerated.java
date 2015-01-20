@@ -4751,12 +4751,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("DontImportRootScope.kt")
-            public void testDontImportRootScope() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/DontImportRootScope.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ExplicitImportsAmbiguity.kt")
             public void testExplicitImportsAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
@@ -4778,6 +4772,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportFromRootPackage.kt")
+            public void testImportFromRootPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromRootPackage.kt");
                 doTest(fileName);
             }
 
@@ -4844,18 +4844,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ImportsConflicting.kt")
             public void testImportsConflicting() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsConflicting.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsUselessSimpleImport.kt")
-            public void testImportsUselessSimpleImport() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsUselessSimpleImport.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ImportsUselessSimpleImport2.kt")
-            public void testImportsUselessSimpleImport2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportsUselessSimpleImport2.kt");
                 doTest(fileName);
             }
 

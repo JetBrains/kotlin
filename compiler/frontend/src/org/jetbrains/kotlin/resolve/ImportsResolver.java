@@ -133,7 +133,7 @@ public class ImportsResolver {
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportConflictingOrUselessImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
+                reportConflictingImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
             }
         }
     }
@@ -167,7 +167,7 @@ public class ImportsResolver {
         }
     }
 
-    public static void reportConflictingOrUselessImport(
+    public static void reportConflictingImport(
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope fileScope,
             @Nullable Collection<? extends DeclarationDescriptor> resolvedTo,
@@ -180,26 +180,18 @@ public class ImportsResolver {
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
         if (aliasName == null) return;
 
-        if (resolvedTo.size() == 1) {
-            DeclarationDescriptor target = resolvedTo.iterator().next();
-            if (target instanceof ClassDescriptor) {
-                if (fileScope.getClassifier(aliasName) == null) {
-                    trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
-                    return;
-                }
-            }
-            else if (target instanceof PackageViewDescriptor) {
-                if (fileScope.getPackage(aliasName) == null) {
-                    trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
-                    return;
-                }
+        if (resolvedTo.size() != 1) return;
+
+        DeclarationDescriptor target = resolvedTo.iterator().next();
+        if (target instanceof ClassDescriptor) {
+            if (fileScope.getClassifier(aliasName) == null) {
+                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
             }
         }
-
-        if (!importDirective.isAllUnder() &&
-            importedReference instanceof JetSimpleNameExpression &&
-            importDirective.getAliasName() == null) {
-            trace.report(USELESS_SIMPLE_IMPORT.on(importedReference));
+        else if (target instanceof PackageViewDescriptor) {
+            if (fileScope.getPackage(aliasName) == null) {
+                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
+            }
         }
     }
 }

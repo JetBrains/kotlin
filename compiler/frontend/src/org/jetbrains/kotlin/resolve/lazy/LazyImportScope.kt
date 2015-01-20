@@ -68,12 +68,12 @@ class LazyImportResolver(
         val packageView: PackageViewDescriptor,
         val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace,
-        private val inRootPackage: Boolean
+        includeRootPackageClasses: Boolean
 ) {
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
         (directive: JetImportDirective) -> ImportDirectiveResolveCache(directive)
     }
-    private val rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), inRootPackage)
+    private val rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), includeRootPackageClasses)
 
     private var directiveUnderResolve: JetImportDirective? = null
 
@@ -135,7 +135,7 @@ class LazyImportResolver(
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
             val fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile())
-            ImportsResolver.reportConflictingOrUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
+            ImportsResolver.reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }
 

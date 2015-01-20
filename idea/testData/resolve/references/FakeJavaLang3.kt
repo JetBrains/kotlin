@@ -1,8 +1,8 @@
 package nonRoot
-import java.lang.* // will not import Fake
+import java.lang.*
 
 fun foo() {
     <caret>Fake()
 }
 
-//REF_EMPTY
+//REF: (java.lang).Fake

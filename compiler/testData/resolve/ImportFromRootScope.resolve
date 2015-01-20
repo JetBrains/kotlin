@@ -16,13 +16,13 @@ fun foo() {
 // FILE: otherPackage.kt
 package test
 
-import `!`Klass
-import `!`function
-import `!`property
+import `k`Klass
+import `f`function
+import `p`property
 
 fun foo() {
-    `!`Klass()
-    `!`function()
-    `!`property
+    `k`Klass()
+    `f`function()
+    `p`property
 }
 

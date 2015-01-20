@@ -21,9 +21,9 @@ fun foo() {
 
 // FILE: nonRoot.kt
 package nonRoot
-import java.lang.* // will not import Fake
+import java.lang.* // will import Fake
 
 fun foo() {
-    `!`Fake()
-    java.lang.`!`Fake() // qualification doesn't help, because we are in other package
+    `Fake`Fake()
+    java.lang.`!`Fake() // qualified access to root package's class does not work
 }

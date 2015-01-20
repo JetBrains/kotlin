@@ -2,7 +2,7 @@ import testData.libraries.*
 
 fun foo() {
     processDouble(1.0);
-    processDouble(Double())
+    processDouble(testData.libraries.Double())
 }
 
 // main.kt

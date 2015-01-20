@@ -1,7 +1,7 @@
 package
 
 internal val property: kotlin.String = ""
-internal fun foo(): kotlin.Unit
+internal fun foo(): Klass
 internal fun function(): kotlin.String
 
 internal final class Klass {
@@ -12,5 +12,5 @@ internal final class Klass {
 }
 
 package pkg {
-    internal fun foo(): kotlin.Unit
+    internal fun foo(): Klass
 }

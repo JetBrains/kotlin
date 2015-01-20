@@ -71,7 +71,6 @@ class LazyFileScope private(
                 file.getImportDirectives()
 
             val packageView = getPackageViewDescriptor(file, resolveSession)
-            val inRootPackage = packageView.getFqName().isRoot()
             val rootPackageView = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)
                                   ?: throw IllegalStateException("Root package not found")
             val packageFragment = resolveSession.getPackageFragment(file.getPackageFqName())
@@ -79,8 +78,8 @@ class LazyFileScope private(
             val onlyVisibleFilter = VisibilityFilter(packageFragment, true)
             val onlyInvisibleFilter = VisibilityFilter(packageFragment, false)
 
-            val aliasImportResolver = LazyImportResolver(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, inRootPackage)
-            val allUnderImportResolver = LazyImportResolver(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, inRootPackage)
+            val aliasImportResolver = LazyImportResolver(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, true)
+            val allUnderImportResolver = LazyImportResolver(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, true)
             val defaultAliasImportResolver = LazyImportResolver(resolveSession, rootPackageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
             val defaultAllUnderImportResolver = LazyImportResolver(resolveSession, rootPackageView, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
 

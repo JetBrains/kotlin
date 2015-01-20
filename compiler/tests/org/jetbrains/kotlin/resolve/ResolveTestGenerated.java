@@ -61,12 +61,6 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         doTest(fileName);
     }
 
-    @TestMetadata("DontImportRootScope.resolve")
-    public void testDontImportRootScope() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/DontImportRootScope.resolve");
-        doTest(fileName);
-    }
-
     @TestMetadata("ErrorSupertype.resolve")
     public void testErrorSupertype() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/ErrorSupertype.resolve");
@@ -82,6 +76,12 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     @TestMetadata("FunctionVariable.resolve")
     public void testFunctionVariable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/FunctionVariable.resolve");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportFromRootScope.resolve")
+    public void testImportFromRootScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/ImportFromRootScope.resolve");
         doTest(fileName);
     }
 

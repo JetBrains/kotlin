@@ -6,5 +6,5 @@ public class Ccc extends Bbb {
 }
 
 //FILE: Ddd.kt
-import <!USELESS_SIMPLE_IMPORT!>Ccc<!>
+import Ccc
 
