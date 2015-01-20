@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
@@ -104,6 +105,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final ScopeProvider scopeProvider;
     private final GlobalSearchScope moduleContentScope;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
+    private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final VirtualFileFinder virtualFileFinder;
@@ -182,6 +184,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.moduleContentScope = moduleContentScope;
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
+        this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
@@ -260,6 +263,9 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
+
+        this.lazyTopDownAnalyzerForTopLevel.setKotlinCodeAnalyzer(resolveSession);
+        this.lazyTopDownAnalyzerForTopLevel.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
 
         javaClassFinder.setComponentPostConstruct(javaLazyAnalyzerPostConstruct);
         javaClassFinder.setProject(project);
@@ -398,6 +404,10 @@ public class InjectorForTopDownAnalyzerForJvm {
 
     public LazyTopDownAnalyzer getLazyTopDownAnalyzer() {
         return this.lazyTopDownAnalyzer;
+    }
+
+    public LazyTopDownAnalyzerForTopLevel getLazyTopDownAnalyzerForTopLevel() {
+        return this.lazyTopDownAnalyzerForTopLevel;
     }
 
     public JavaDescriptorResolver getJavaDescriptorResolver() {
