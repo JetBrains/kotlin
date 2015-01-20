@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.kotlin.load.java.lazy.GlobalJavaResolverContext;
@@ -128,6 +129,7 @@ public class InjectorForLazyResolveWithJava {
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
     private final AdditionalFileScopeProvider additionalFileScopeProvider;
+    private final DeclarationScopeProviderImpl declarationScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
@@ -197,6 +199,7 @@ public class InjectorForLazyResolveWithJava {
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
         this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
@@ -289,6 +292,9 @@ public class InjectorForLazyResolveWithJava {
         jetImportsFactory.setProject(project);
 
         scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
+        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
+
+        declarationScopeProvider.setFileScopeProvider(scopeProvider);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 

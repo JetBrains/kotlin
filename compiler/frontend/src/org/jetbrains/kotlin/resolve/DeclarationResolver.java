@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -96,7 +96,7 @@ public class DeclarationResolver {
         checkRedeclarationsInInnerClassNames(c);
     }
 
-    public void resolveAnnotationsOnFiles(@NotNull TopDownAnalysisContext c, @NotNull final ScopeProvider scopeProvider) {
+    public void resolveAnnotationsOnFiles(@NotNull TopDownAnalysisContext c, @NotNull final FileScopeProvider scopeProvider) {
         Map<JetFile, JetScope> file2scope = UtilsPackage.keysToMap(c.getFiles(), new Function1<JetFile, JetScope>() {
             @Override
             public JetScope invoke(JetFile file) {

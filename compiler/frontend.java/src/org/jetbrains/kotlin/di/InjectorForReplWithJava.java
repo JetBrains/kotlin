@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
 import org.jetbrains.kotlin.resolve.BodyResolver;
 import org.jetbrains.kotlin.resolve.ControlFlowAnalyzer;
@@ -141,6 +142,7 @@ public class InjectorForReplWithJava {
     private final TaskPrioritizer taskPrioritizer;
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
+    private final DeclarationScopeProviderImpl declarationScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
     private final BodyResolver bodyResolver;
     private final ControlFlowAnalyzer controlFlowAnalyzer;
@@ -223,6 +225,7 @@ public class InjectorForReplWithJava {
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
@@ -333,6 +336,9 @@ public class InjectorForReplWithJava {
         jetImportsFactory.setProject(project);
 
         scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
+        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
+
+        declarationScopeProvider.setFileScopeProvider(scopeProvider);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
