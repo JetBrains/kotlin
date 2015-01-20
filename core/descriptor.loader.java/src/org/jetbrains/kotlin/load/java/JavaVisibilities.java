@@ -32,6 +32,11 @@ public class JavaVisibilities {
         }
 
         @Override
+        public boolean mustCheckInImports() {
+            return true;
+        }
+
+        @Override
         protected Integer compareTo(@NotNull Visibility visibility) {
             if (this == visibility) return 0;
             if (Visibilities.isPrivate(visibility)) return 1;
@@ -71,6 +76,11 @@ public class JavaVisibilities {
         }
 
         @Override
+        public boolean mustCheckInImports() {
+            return false;
+        }
+
+        @Override
         public String toString() {
             return "protected/*protected static*/";
         }
@@ -99,6 +109,11 @@ public class JavaVisibilities {
                 return true;
             }
             return isVisible(receiver, what, fromClass.getContainingDeclaration());
+        }
+
+        @Override
+        public boolean mustCheckInImports() {
+            return false;
         }
 
         @Override

@@ -27,32 +27,31 @@ import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import java.util.ArrayList
 
 class LazyFileScope private(
-        private val aliasImportsScope: LazyImportScope,
-        private val allUnderImportsScope: LazyImportScope,
-        private val defaultAliasImportsScope: LazyImportScope,
-        private val defaultAllUnderImportsScope: LazyImportScope,
-        currentPackageMembersScope: JetScope,
-        rootPackagesScope: JetScope,
-        additionalScopes: List<JetScope>,
+        private val scopeChain: List<JetScope>,
+        private val aliasImportResolver: LazyImportResolver,
+        private val allUnderImportResolver: LazyImportResolver,
         containingDeclaration: PackageFragmentDescriptor,
         debugName: String
-) : ChainedScope(containingDeclaration,
-                 debugName,
-                 *(listOf(aliasImportsScope, currentPackageMembersScope, rootPackagesScope, defaultAliasImportsScope, defaultAllUnderImportsScope, allUnderImportsScope) + additionalScopes).copyToArray()) {
+) : ChainedScope(containingDeclaration, debugName, *scopeChain.copyToArray()) {
 
     public fun forceResolveAllImports() {
-        aliasImportsScope.forceResolveAllContents()
-        allUnderImportsScope.forceResolveAllContents()
+        aliasImportResolver.forceResolveAllContents()
+        allUnderImportResolver.forceResolveAllContents()
     }
 
     public fun forceResolveImport(importDirective: JetImportDirective) {
         if (importDirective.isAllUnder()) {
-            allUnderImportsScope.forceResolveImportDirective(importDirective)
+            allUnderImportResolver.forceResolveImportDirective(importDirective)
         }
         else {
-            aliasImportsScope.forceResolveImportDirective(importDirective)
+            aliasImportResolver.forceResolveImportDirective(importDirective)
         }
     }
 
@@ -75,17 +74,46 @@ class LazyFileScope private(
             val inRootPackage = packageView.getFqName().isRoot()
             val rootPackageView = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)
                                   ?: throw IllegalStateException("Root package not found")
+            val packageFragment = resolveSession.getPackageFragment(file.getPackageFqName())
 
-            val currentPackageMembersScope = NoSubpackagesInPackageScope(packageView)
-            val rootPackagesScope = JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor())
-            val aliasImportsScope = LazyImportScope(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, "Alias imports in $debugName", inRootPackage)
-            val allUnderImportsScope = LazyImportScope(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, "All under imports in $debugName", inRootPackage)
-            val defaultAliasImportsScope = LazyImportScope(resolveSession, rootPackageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default alias imports in $debugName", false)
-            val defaultAllUnderImportsScope = LazyImportScope(resolveSession, rootPackageView, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, "Default all under imports in $debugName", false)
+            val onlyVisibleFilter = VisibilityFilter(packageFragment, true)
+            val onlyInvisibleFilter = VisibilityFilter(packageFragment, false)
 
-            return LazyFileScope(aliasImportsScope, allUnderImportsScope, defaultAliasImportsScope, defaultAllUnderImportsScope,
-                                 currentPackageMembersScope, rootPackagesScope, additionalScopes,
-                                 resolveSession.getPackageFragment(file.getPackageFqName()), debugName)
+            val aliasImportResolver = LazyImportResolver(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, inRootPackage)
+            val allUnderImportResolver = LazyImportResolver(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, inRootPackage)
+            val defaultAliasImportResolver = LazyImportResolver(resolveSession, rootPackageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
+            val defaultAllUnderImportResolver = LazyImportResolver(resolveSession, rootPackageView, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
+
+            val scopeChain = ArrayList<JetScope>()
+
+            scopeChain.add(LazyImportScope(aliasImportResolver, { true }, "Alias imports in $debugName"))
+
+            scopeChain.add(NoSubpackagesInPackageScope(packageView)) //TODO: problems with visibility too
+            scopeChain.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()))
+
+            scopeChain.add(LazyImportScope(defaultAliasImportResolver, { true }, "Default alias imports in $debugName"))
+
+            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, onlyVisibleFilter, "Default all under imports in $debugName (visible classes)"))
+            scopeChain.add(LazyImportScope(allUnderImportResolver, onlyVisibleFilter, "All under imports in $debugName (visible classes)"))
+
+            scopeChain.addAll(additionalScopes)
+
+            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, onlyInvisibleFilter, "Default all under imports in $debugName (invisible classes only)"))
+            scopeChain.add(LazyImportScope(allUnderImportResolver, onlyInvisibleFilter, "All under imports in $debugName (invisible classes only)"))
+
+            return LazyFileScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
+        }
+
+        private class VisibilityFilter(
+                private val packageFragment: PackageFragmentDescriptor,
+                private val visible: Boolean
+        ) : (DeclarationDescriptor) -> Boolean {
+            override fun invoke(descriptor: DeclarationDescriptor): Boolean {
+                if (descriptor !is ClassDescriptor) return visible
+                val visibility = descriptor.getVisibility()
+                if (!visibility.mustCheckInImports()) return visible
+                return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, packageFragment) == visible
+            }
         }
 
         private fun getPackageViewDescriptor(file: JetFile, resolveSession: ResolveSession): PackageViewDescriptor {

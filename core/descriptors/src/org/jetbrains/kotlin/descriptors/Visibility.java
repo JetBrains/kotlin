@@ -33,6 +33,18 @@ public abstract class Visibility {
     }
 
     /**
+     * True, if it makes sense to check this visibility in imports and not import inaccessible declarations with such visibility.
+     * Hint: return true, if this visibility can be checked on file's level.
+     * Examples:
+     *   it returns false for PROTECTED because protected members of classes can be imported to be used in subclasses of their containers,
+     *                                  so when we are looking at the import, we don't know whether it is legal somewhere in this file or not.
+     *   it returns true for INTERNAL, because an internal declaration is either visible everywhere in a file, or invisible everywhere in the same file.
+     *   it returns true for PRIVATE, because there's no point in importing privates: they are inaccessible unless their short name is
+     *                                  already available without an import
+     */
+    public abstract boolean mustCheckInImports();
+
+    /**
     * @return null if the answer is unknown
     */
     protected Integer compareTo(@NotNull Visibility visibility) {

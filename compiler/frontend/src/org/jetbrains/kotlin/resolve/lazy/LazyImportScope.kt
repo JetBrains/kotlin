@@ -33,6 +33,8 @@ import java.util.HashSet
 import com.google.common.collect.ListMultimap
 import kotlin.properties.Delegates
 import com.google.common.collect.ImmutableListMultimap
+import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
+import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameMultiSelector
 
 trait IndexedImports {
     val imports: List<JetImportDirective>
@@ -61,15 +63,13 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
     override fun importsForName(name: Name) = nameToDirectives.get(name)
 }
 
-class LazyImportScope(
-        private val resolveSession: ResolveSession,
-        private val containingDeclaration: PackageViewDescriptor,
-        private val indexedImports: IndexedImports,
+class LazyImportResolver(
+        val resolveSession: ResolveSession,
+        val packageView: PackageViewDescriptor,
+        val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace,
-        private val debugName: String,
         private val inRootPackage: Boolean
-) : JetScope {
-
+) {
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
         (directive: JetImportDirective) -> ImportDirectiveResolveCache(directive)
     }
@@ -95,7 +95,7 @@ class LazyImportScope(
                     cachedStatus.scope
                 }
                 else {
-                    val directiveImportScope = WritableScopeImpl(JetScope.Empty, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
+                    val directiveImportScope = WritableScopeImpl(JetScope.Empty, packageView, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
                     val importer = Importer()
@@ -104,11 +104,11 @@ class LazyImportScope(
                     val descriptors: Collection<DeclarationDescriptor>
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
-                        descriptors = resolver.processImportReference(directive, rootScope, containingDeclaration.getMemberScope(),
+                        descriptors = resolver.processImportReference(directive, rootScope, packageView.getMemberScope(),
                                                                       importer, traceForImportResolve, mode)
                         importer.doImport(directiveImportScope)
                         if (mode == LookupMode.EVERYTHING) {
-                            ImportsResolver.checkPlatformTypesMappedToKotlin(containingDeclaration.getModule(), traceForImportResolve, directive, descriptors)
+                            ImportsResolver.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }
                     }
                     finally {
@@ -139,10 +139,10 @@ class LazyImportScope(
         }
     }
 
-    private fun <D : DeclarationDescriptor> selectSingleFromImports(
+    public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
             lookupMode: LookupMode,
-            descriptorSelector: JetScopeSelectorUtil.ScopeByNameSelector<D>
+            descriptorSelector: ScopeByNameSelector<D>
     ): D? {
         fun compute(): D? {
             val imports = indexedImports.importsForName(name)
@@ -162,10 +162,10 @@ class LazyImportScope(
         return resolveSession.getStorageManager().compute(::compute)
     }
 
-    private fun <D : DeclarationDescriptor> collectFromImports(
+    public fun <D : DeclarationDescriptor> collectFromImports(
             name: Name,
             lookupMode: LookupMode,
-            descriptorsSelector: JetScopeSelectorUtil.ScopeByNameMultiSelector<D>
+            descriptorsSelector: ScopeByNameMultiSelector<D>
     ): Collection<D> {
         return resolveSession.getStorageManager().compute {
             val descriptors = HashSet<D>()
@@ -182,36 +182,69 @@ class LazyImportScope(
         }
     }
 
-    private fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode) = importedScopesProvider(directive).scopeForMode(lookupMode)
+    public fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode): JetScope {
+        return importedScopesProvider(directive).scopeForMode(lookupMode)
+    }
 
-    override fun getClassifier(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
+    public fun printScopeStructure(p: Printer) {
+        p.print("rootScope = ")
+        rootScope.printScopeStructure(p.withholdIndentOnce())
+    }
+}
 
-    override fun getPackage(name: Name) = selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
+class LazyImportScope(
+        private val importResolver: LazyImportResolver,
+        private val filter: (DeclarationDescriptor) -> Boolean,
+        private val debugName: String
+) : JetScope {
 
-    override fun getProperties(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
+    private inner class FilteringScopeByNameSelector<D : DeclarationDescriptor>(
+            private val selector: ScopeByNameSelector<D>
+    ) : ScopeByNameSelector<D> {
+        override fun get(scope: JetScope, name: Name): D? {
+            val descriptor = selector.get(scope, name)
+            return if (descriptor != null && filter(descriptor)) descriptor else null
+        }
+    }
+
+    private inner class FilteringScopeByNameMultiSelector<D : DeclarationDescriptor>(
+            private val selector: ScopeByNameMultiSelector<D>
+    ) : ScopeByNameMultiSelector<D> {
+        override fun get(scope: JetScope, name: Name): Collection<D> {
+            return selector.get(scope, name).filter(filter)
+        }
+    }
+
+    override fun getClassifier(name: Name): ClassifierDescriptor? {
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, FilteringScopeByNameSelector(JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR))
+    }
+
+    override fun getPackage(name: Name): PackageViewDescriptor? {
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, FilteringScopeByNameSelector(JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR))
+    }
+
+    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, FilteringScopeByNameMultiSelector(JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR))
+    }
 
     override fun getLocalVariable(name: Name) = null
 
-    override fun getFunctions(name: Name) = collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, FilteringScopeByNameMultiSelector(JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR))
+    }
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        return resolveSession.getStorageManager().compute {
+        return importResolver.resolveSession.getStorageManager().compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
-            for (directive in indexedImports.imports) {
-                if (directive == directiveUnderResolve) {
-                    // This is the recursion in imports analysis
-                    throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
-                }
-
+            for (directive in importResolver.indexedImports.imports) {
                 val importPath = directive.getImportPath() ?: continue
                 val importedName = importPath.getImportedName()
                 if (importedName == null || nameFilter(importedName)) {
-                    descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
+                    importResolver.getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter).filterTo(descriptors, filter)
                 }
             }
-
             descriptors
         }
     }
@@ -220,7 +253,7 @@ class LazyImportScope(
 
     override fun getOwnDeclaredDescriptors() = listOf<DeclarationDescriptor>()
 
-    override fun getContainingDeclaration() = containingDeclaration
+    override fun getContainingDeclaration() = importResolver.packageView
 
     override fun toString() = "LazyImportScope: " + debugName
 
@@ -228,10 +261,9 @@ class LazyImportScope(
         p.println(javaClass.getSimpleName(), ": ", debugName, " {")
         p.pushIndent()
 
-        p.println("packageDescriptor = ", containingDeclaration)
+        p.println("packageDescriptor = ", importResolver.packageView)
 
-        p.print("rootScope = ")
-        rootScope.printScopeStructure(p.withholdIndentOnce())
+        importResolver.printScopeStructure(p)
 
         p.popIndent()
         p.println("}")

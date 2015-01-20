@@ -1,0 +1,21 @@
+package
+
+package a {
+
+    internal final class X : pack.InetAddressImpl {
+        public constructor X()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package pack {
+
+    public open class InetAddressImpl {
+        public constructor InetAddressImpl()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

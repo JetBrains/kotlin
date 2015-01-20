@@ -4853,6 +4853,42 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("JavaPackageLocalClassNotImported.kt")
+            public void testJavaPackageLocalClassNotImported() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/JavaPackageLocalClassNotImported.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageLocalClassNotImported.kt")
+            public void testPackageLocalClassNotImported() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImported.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageLocalClassNotImportedWithDefaultImport.kt")
+            public void testPackageLocalClassNotImportedWithDefaultImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImportedWithDefaultImport.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PackageLocalClassReferencedError.kt")
+            public void testPackageLocalClassReferencedError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassReferencedError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PrivateClassNotImported.kt")
+            public void testPrivateClassNotImported() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PrivateClassNotImported.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PrivateClassReferencedError.kt")
+            public void testPrivateClassReferencedError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PrivateClassReferencedError.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyClassFileDependencyRecursion.kt")
             public void testPropertyClassFileDependencyRecursion() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/propertyClassFileDependencyRecursion.kt");
