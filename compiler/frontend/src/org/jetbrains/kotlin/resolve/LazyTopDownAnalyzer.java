@@ -60,8 +60,6 @@ public class LazyTopDownAnalyzer {
 
     private BodyResolver bodyResolver;
 
-    private TopDownAnalyzer topDownAnalyzer;
-
     @Inject
     public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
         this.resolveSession = kotlinCodeAnalyzer;
@@ -102,23 +100,14 @@ public class LazyTopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
-    @Inject
-    public void setTopDownAnalyzer(@NotNull TopDownAnalyzer topDownAnalyzer) {
-        this.topDownAnalyzer = topDownAnalyzer;
-    }
-
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<JetFile> files,
             @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
-        if (!topDownAnalysisParameters.isLazy()) {
-            return topDownAnalyzer.analyzeFiles(
-                    topDownAnalysisParameters, files,
-                    additionalProviders.toArray(new PackageFragmentProvider[additionalProviders.size()]));
-        }
-        
+        assert topDownAnalysisParameters.isLazy() : "Lazy analyzer is run in non-lazy mode";
+
         PackageFragmentProvider provider;
         if (additionalProviders.isEmpty()) {
             provider = resolveSession.getPackageFragmentProvider();

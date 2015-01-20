@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.load.java.components.PsiBasedExternalAnnotationResol
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl;
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl;
 import org.jetbrains.kotlin.load.java.components.JavaSourceElementFactoryImpl;
-import org.jetbrains.kotlin.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct;
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider;
@@ -78,9 +77,6 @@ import org.jetbrains.kotlin.resolve.DeclarationResolver;
 import org.jetbrains.kotlin.resolve.ImportsResolver;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.TopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
-import org.jetbrains.kotlin.resolve.ScriptHeaderResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.kotlin.load.java.lazy.GlobalJavaResolverContext;
@@ -117,7 +113,6 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final JavaPropertyInitializerEvaluatorImpl javaPropertyInitializerEvaluator;
     private final SamConversionResolverImpl samConversionResolver;
     private final JavaSourceElementFactoryImpl javaSourceElementFactory;
-    private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final SingleModuleClassResolver singleModuleClassResolver;
     private final JavaLazyAnalyzerPostConstruct javaLazyAnalyzerPostConstruct;
     private final JavaFlexibleTypeCapabilitiesProvider javaFlexibleTypeCapabilitiesProvider;
@@ -156,9 +151,6 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final ImportsResolver importsResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
-    private final TopDownAnalyzer topDownAnalyzer;
-    private final TypeHierarchyResolver typeHierarchyResolver;
-    private final ScriptHeaderResolver scriptHeaderResolver;
     private final VarianceChecker varianceChecker;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
@@ -203,7 +195,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
         this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
-        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
         this.javaLazyAnalyzerPostConstruct = new JavaLazyAnalyzerPostConstruct();
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
         this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
@@ -241,9 +232,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.importsResolver = new ImportsResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
-        this.topDownAnalyzer = new TopDownAnalyzer();
-        this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
@@ -260,7 +248,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.lazyTopDownAnalyzer.setModuleDescriptor(module);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
@@ -379,24 +366,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setTrace(bindingTrace);
-
-        topDownAnalyzer.setBodyResolver(bodyResolver);
-        topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        topDownAnalyzer.setModuleDescriptor(module);
-        topDownAnalyzer.setOverloadResolver(overloadResolver);
-        topDownAnalyzer.setOverrideResolver(overrideResolver);
-        topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-        topDownAnalyzer.setVarianceChecker(varianceChecker);
-
-        typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
-        typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        typeHierarchyResolver.setTrace(bindingTrace);
-
-        scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTrace(bindingTrace);
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava);
 
