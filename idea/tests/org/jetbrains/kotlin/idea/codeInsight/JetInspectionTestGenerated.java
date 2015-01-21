@@ -90,6 +90,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedSymbol/object/inspectionData/inspections.test")
+        public void testUnusedSymbol_object_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/object/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedSymbol/parameter/inspectionData/inspections.test")
         public void testUnusedSymbol_parameter_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/parameter/inspectionData/inspections.test");

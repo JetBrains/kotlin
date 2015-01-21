@@ -59,6 +59,8 @@ import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -83,6 +85,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             override fun visitNamedDeclaration(declaration: JetNamedDeclaration) {
                 val messageKey = when (declaration) {
                     is JetClass -> "unused.class"
+                    is JetObjectDeclaration -> "unused.object"
                     is JetNamedFunction -> "unused.function"
                     is JetProperty, is JetParameter -> "unused.property"
                     is JetTypeParameter -> "unused.type.parameter"
@@ -104,7 +107,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // Main checks: finding reference usages && text usages
                 if (hasNonTrivialUsages(declaration)) return
-                if (declaration is JetClass && classHasTextUsages(declaration)) return
+                if (declaration is JetClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
                 holder.registerProblem(
                         declaration.getNameIdentifier(),
@@ -118,23 +121,23 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
         val lightElement: PsiElement? = when (declaration) {
-            is JetClass ->  declaration.toLightClass()
+            is JetClassOrObject -> declaration.toLightClass()
             is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
             else -> return false
         }
         return lightElement != null && javaInspection.isEntryPoint(lightElement)
     }
 
-    private fun classHasTextUsages(klass: JetClass): Boolean {
+    private fun classOrObjectHasTextUsages(classOrObject: JetClassOrObject): Boolean {
         var hasTextUsages = false
 
         // Finding text usages
-        if (klass.getUseScope() is GlobalSearchScope) {
-            val findClassUsagesHandler = KotlinFindClassUsagesHandler(klass, KotlinFindUsagesHandlerFactory(klass.getProject()))
+        if (classOrObject.getUseScope() is GlobalSearchScope) {
+            val findClassUsagesHandler = KotlinFindClassUsagesHandler(classOrObject, KotlinFindUsagesHandlerFactory(classOrObject.getProject()))
             findClassUsagesHandler.processUsagesInText(
-                    klass,
+                    classOrObject,
                     { hasTextUsages = true; false },
-                    GlobalSearchScope.projectScope(klass.getProject())
+                    GlobalSearchScope.projectScope(classOrObject.getProject())
             )
         }
 
