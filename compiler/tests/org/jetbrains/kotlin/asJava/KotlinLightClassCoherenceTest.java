@@ -23,6 +23,7 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -206,6 +207,6 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
     }
 
     public void testClassObject() throws Exception {
-        doTest("test.WithClassObject.object");
+        doTest("test.WithClassObject." + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString());
     }
 }

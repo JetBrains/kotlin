@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
 import java.util.Arrays;
@@ -139,7 +140,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testInClassObjectActual() throws Exception {
-            checkMethodGenericParameter("test.PlatformStaticClass.object", "inClassObject", 0, "T");
+            checkMethodGenericParameter("test.PlatformStaticClass." + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString(), "inClassObject", 0, "T");
         }
 
         public void testInClass() throws Exception {

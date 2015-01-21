@@ -1,6 +1,6 @@
 public class Testing {
     public static void test() {
-        mockLib.foo.F.object.F.object.<caret>
+        mockLib.foo.F.Default.F.Default.<caret>
     }
 }
 

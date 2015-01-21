@@ -4,5 +4,5 @@ class A {
     }
 }
 
-// CLASS: A$object$Foo
+// CLASS: A$Default$Foo
 // HAS_DEFAULT_CONSTRUCTOR: true

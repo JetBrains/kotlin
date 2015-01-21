@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -43,7 +44,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObject() throws Exception {
-        doTest("foo.Foo$object", "outerClassInfo");
+        doTest("foo.Foo$" + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString(), "outerClassInfo");
     }
 
     public void testInnerClass() throws Exception {
