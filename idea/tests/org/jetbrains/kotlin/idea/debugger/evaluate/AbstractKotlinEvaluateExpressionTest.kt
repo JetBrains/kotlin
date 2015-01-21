@@ -110,7 +110,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
-        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
+        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").joinToString("\n") }
 
         createDebugProcess(path)
 
@@ -130,7 +130,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                     }
                 }
 
-                for ((i, block) in blocks.withIndices()) {
+                for ((i, block) in blocks.withIndex()) {
                     mayThrow(exceptions, block) {
                         evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
                     }
@@ -184,7 +184,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
         for (breakpoint in breakpoints) {
             val position = breakpoint.split(".kt:")
-            assert(position.size == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
+            assert(position.size() == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
             createBreakpoint(position[0], position[1])
         }
     }
@@ -289,11 +289,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
-        if (!exceptions.empty) {
+        if (!exceptions.isEmpty()) {
             for (exc in exceptions.values()) {
                 exc.printStackTrace()
             }
-            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
+            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.joinToString("\n"))
         }
     }
 
@@ -309,7 +309,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
-        assert(directives.size == expected.size, "Sizes of test directives are different")
+        assert(directives.size() == expected.size(), "Sizes of test directives are different")
         return directives.zip(expected)
     }
 
