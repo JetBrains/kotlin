@@ -25,4 +25,6 @@ class TestClass {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 21
+// EXIST:  constructor
+// EXIST:  init
+// NUMBER: 23

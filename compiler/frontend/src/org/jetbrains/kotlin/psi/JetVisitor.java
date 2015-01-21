@@ -33,6 +33,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(klass, data);
     }
 
+    public R visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, D data) {
+        return visitJetElement(constructor, data);
+    }
+
     public R visitNamedFunction(@NotNull JetNamedFunction function, D data) {
         return visitNamedDeclaration(function, data);
     }
@@ -132,6 +136,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
 
     public R visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier, D data) {
         return visitDelegationSpecifier(specifier, data);
+    }
+
+    public R visitConstructorDelegationCall(@NotNull JetConstructorDelegationCall call, D data) {
+        return visitJetElement(call, data);
     }
 
     public R visitPropertyDelegate(@NotNull JetPropertyDelegate delegate, D data) {

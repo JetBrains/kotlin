@@ -1,0 +1,50 @@
+JetFile: recoveryWrongDelegationName.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          PsiElement(IDENTIFIER)('superr')
+          PsiErrorElement:Expecting a 'this' or 'super' constructor call
+            <empty list>
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(COMMA)(',')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('2')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

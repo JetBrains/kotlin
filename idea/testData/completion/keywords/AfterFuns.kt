@@ -32,5 +32,7 @@ class A {
 // EXIST:  val
 // EXIST:  var
 // EXIST:  vararg
+// EXIST:  constructor
+// EXIST:  init
 /*why?*/
-// NUMBER: 21
+// NUMBER: 23
