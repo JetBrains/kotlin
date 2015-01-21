@@ -27,7 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.kdoc.KdocPackage;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
@@ -90,11 +91,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
         }
 
-        PsiElement navigationElement = declaration.getNavigationElement();
-        if (navigationElement instanceof JetDeclaration) {
-            declaration = (JetDeclaration) navigationElement;
-        }
-        KDoc comment = declaration.getDocComment();
+        KDocTag comment = KdocPackage.findKDoc(declarationDescriptor);
         if (comment != null) {
             renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
         }
@@ -115,9 +112,9 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return null;
     }
 
-    private static String kDocToHtml(@NotNull KDoc comment) {
+    private static String kDocToHtml(@NotNull KDocTag comment) {
         // TODO: Parse and show markdown comments as html
-        String content = comment.getDefaultSection().getContentWithTags();
+        String content = comment.getContentWithTags();
         String htmlContent = StringUtil.replace(content, "\n", "<br/>")
                 .replaceAll("(@param)\\s+(\\w+)", "@param - <i>$2</i>")
                 .replaceAll("(@\\w+)", "<b>$1</b>");
