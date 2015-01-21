@@ -71,10 +71,6 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 file.acceptChildren(this)
             }
 
-            override fun visitClassObject(classObject: JetClassObject) {
-                classObject.acceptChildren(this)
-            }
-
             override fun visitParameter(parameter: JetParameter) {
                 val declaringElement = parameter.getParent().getParent()
                 when (declaringElement) {

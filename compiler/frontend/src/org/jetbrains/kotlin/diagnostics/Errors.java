@@ -187,8 +187,8 @@ public interface Errors {
 
     // Class objects
 
-    DiagnosticFactory0<JetClassObject> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetClassObject> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetObjectDeclaration> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Objects
 

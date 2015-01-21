@@ -24,7 +24,6 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassObject;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
@@ -46,7 +45,7 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new KotlinObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE$.wrapStrings(superNames),
-                                        psi.isTopLevel(), isClassObject(psi), psi.isLocal(), psi.isObjectLiteral());
+                                        psi.isTopLevel(), psi.isClassObject(), psi.isLocal(), psi.isObjectLiteral());
     }
 
     @Override
@@ -92,9 +91,5 @@ public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, J
     @Override
     public void indexStub(@NotNull KotlinObjectStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexObject(stub, sink);
-    }
-
-    private static boolean isClassObject(@NotNull JetObjectDeclaration objectDeclaration) {
-        return objectDeclaration.getParent() instanceof JetClassObject;
     }
 }

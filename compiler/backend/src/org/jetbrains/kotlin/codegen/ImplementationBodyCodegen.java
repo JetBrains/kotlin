@@ -150,7 +150,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             isStatic = !jetClass.isInner();
         }
         else {
-            isStatic = myClass.getParent() instanceof JetClassObject;
+            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isClassObject() ;
             isFinal = true;
         }
 
@@ -968,9 +968,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             fieldTypeDescriptor = descriptor;
         }
         else if (classObjectDescriptor != null) {
-            JetClassObject classObject = ((JetClass) myClass).getClassObject();
+            JetObjectDeclaration classObject = ((JetClass) myClass).getClassObject();
             assert classObject != null : "Class object not found: " + myClass.getText();
-            original = classObject.getObjectDeclaration();
+            original = classObject;
             fieldTypeDescriptor = classObjectDescriptor;
         }
         else {

@@ -29,12 +29,7 @@ public class PsiBasedClassMemberDeclarationProvider(
 
     override fun doCreateIndex(index: AbstractPsiBasedDeclarationProvider.Index) {
         for (declaration in classInfo.getDeclarations()) {
-            if (declaration !is JetClassObject) {
-                index.putToIndex(declaration)
-            }
-            else {
-                index.putToIndex(declaration.getObjectDeclaration())
-            }
+            index.putToIndex(declaration)
         }
 
         for (parameter in classInfo.getPrimaryConstructorParameters()) {

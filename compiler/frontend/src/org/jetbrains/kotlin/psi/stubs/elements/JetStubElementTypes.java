@@ -31,8 +31,6 @@ public interface JetStubElementTypes {
 
     JetClassElementType ENUM_ENTRY = new JetClassElementType("ENUM_ENTRY");
     JetObjectElementType OBJECT_DECLARATION = new JetObjectElementType("OBJECT_DECLARATION");
-    JetPlaceHolderStubElementType<JetClassObject> CLASS_OBJECT =
-            new JetPlaceHolderStubElementType<JetClassObject>("CLASS_OBJECT", JetClassObject.class);
     JetPlaceHolderStubElementType<JetClassInitializer> ANONYMOUS_INITIALIZER =
             new JetPlaceHolderStubElementType<JetClassInitializer>("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
 
@@ -115,7 +113,7 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
 
     TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
+            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
 
     TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS, THIS_CALL);
 

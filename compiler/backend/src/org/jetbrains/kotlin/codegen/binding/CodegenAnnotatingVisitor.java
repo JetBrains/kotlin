@@ -207,44 +207,21 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitClassObject(@NotNull JetClassObject classObject) {
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
+    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
+        if (!filter.shouldProcessClass(declaration)) return;
 
-        assert classDescriptor != null : String.format("No class found in binding context for: \n---\n%s\n---\n",
-                                                       JetPsiUtil.getElementTextWithContext(classObject));
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
+        // working around a problem with shallow analysis
+        if (classDescriptor == null) return;
 
-        //TODO_R: remove visitClassObject
         String name = getName(classDescriptor);
         recordClosure(classDescriptor, name);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
-        super.visitClassObject(classObject);
+        super.visitObjectDeclaration(declaration);
         nameStack.pop();
         classStack.pop();
-    }
-
-    @Override
-    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-        if (declaration.getParent() instanceof JetClassObject) {
-            super.visitObjectDeclaration(declaration);
-        }
-        else {
-            if (!filter.shouldProcessClass(declaration)) return;
-
-            ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
-            // working around a problem with shallow analysis
-            if (classDescriptor == null) return;
-
-            String name = getName(classDescriptor);
-            recordClosure(classDescriptor, name);
-
-            classStack.push(classDescriptor);
-            nameStack.push(name);
-            super.visitObjectDeclaration(declaration);
-            nameStack.pop();
-            classStack.pop();
-        }
     }
 
     @Override

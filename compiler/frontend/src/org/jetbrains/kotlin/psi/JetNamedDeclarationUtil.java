@@ -51,9 +51,6 @@ public final class JetNamedDeclarationUtil {
     @Nullable
     public static FqName getParentFqName(@NotNull JetNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();
-        if (parent instanceof JetClassObject) {
-            parent = parent.getParent();
-        }
         if (parent instanceof JetClassBody) {
             // One nesting to JetClassBody doesn't affect to qualified name
             parent = parent.getParent();

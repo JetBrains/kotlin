@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 
@@ -34,11 +34,11 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     JetModifierList getModifierList();
 
     @Nullable
-    JetClassObject getClassObject();
+    JetObjectDeclaration getClassObject();
 
     @NotNull
     @ReadOnly
-    List<JetClassObject> getClassObjects();
+    List<JetObjectDeclaration> getClassObjects();
 
     // This element is used to identify resolution scope for the class
     @NotNull

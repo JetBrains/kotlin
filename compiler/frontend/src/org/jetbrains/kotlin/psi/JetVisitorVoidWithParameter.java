@@ -34,10 +34,6 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitClass(klass, data);
     }
 
-    public void visitClassObjectVoid(@NotNull JetClassObject classObject, P data) {
-        super.visitClassObject(classObject, data);
-    }
-
     public void visitNamedFunctionVoid(@NotNull JetNamedFunction function, P data) {
         super.visitNamedFunction(function, data);
     }
@@ -430,12 +426,6 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     @Override
     public final Void visitClass(@NotNull JetClass klass, P data) {
         visitClassVoid(klass, data);
-    	return null;
-    }
-
-    @Override
-    public final Void visitClassObject(@NotNull JetClassObject classObject, P data) {
-        visitClassObjectVoid(classObject, data);
     	return null;
     }
 

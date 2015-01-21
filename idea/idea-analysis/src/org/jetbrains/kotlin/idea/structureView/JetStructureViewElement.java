@@ -166,10 +166,6 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
         else if (element instanceof JetClassOrObject) {
             return ((JetClassOrObject) element).getDeclarations();
         }
-        else if (element instanceof JetClassObject) {
-            JetObjectDeclaration objectDeclaration = ((JetClassObject) element).getObjectDeclaration();
-            return objectDeclaration.getDeclarations();
-        }
 
         return Collections.emptyList();
     }

@@ -155,7 +155,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             }
             return icon;
         }
-        if (psiElement instanceof JetObjectDeclaration || psiElement instanceof JetClassObject) {
+        if (psiElement instanceof JetObjectDeclaration) {
             return JetIcons.OBJECT;
         }
         if (psiElement instanceof JetParameter) {

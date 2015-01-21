@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetClassObject
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
@@ -80,20 +79,10 @@ private class ClassClsStubBuilder(
     }
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
-        val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
-        if (isClassObject) {
-            val classObjectStub = KotlinPlaceHolderStubImpl<JetClassObject>(parentStub, JetStubElementTypes.CLASS_OBJECT)
-            val modifierList = createModifierListForClass(classObjectStub)
-            val objectDeclarationStub = doCreateClassOrObjectStub(classObjectStub)
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
-            return objectDeclarationStub
-        }
-        else {
-            val classOrObjectStub = doCreateClassOrObjectStub(parentStub)
-            val modifierList = createModifierListForClass(classOrObjectStub)
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
-            return classOrObjectStub
-        }
+        val classOrObjectStub = doCreateClassOrObjectStub()
+        val modifierList = createModifierListForClass(classOrObjectStub)
+        createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+        return classOrObjectStub
     }
 
     private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
@@ -110,7 +99,7 @@ private class ClassClsStubBuilder(
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
     }
 
-    private fun doCreateClassOrObjectStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
+    private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
         val fqName = outerContext.memberFqNameProvider.getMemberFqName(classId.getRelativeClassName().shortName())
         val shortName = fqName.shortName()?.ref()
@@ -121,7 +110,7 @@ private class ClassClsStubBuilder(
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(
-                        parent, shortName, fqName, superTypeRefs,
+                        parentStub, shortName, fqName, superTypeRefs,
                         isTopLevel = classId.isTopLevelClass(),
                         isClassObject = isClassObject,
                         isLocal = false,
@@ -131,7 +120,7 @@ private class ClassClsStubBuilder(
             else -> {
                 KotlinClassStubImpl(
                         JetClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
-                        parent,
+                        parentStub,
                         fqName.ref(),
                         shortName,
                         superTypeRefs,

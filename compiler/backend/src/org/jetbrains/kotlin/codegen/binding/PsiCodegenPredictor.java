@@ -55,10 +55,6 @@ public final class PsiCodegenPredictor {
         // TODO: Method won't give correct class name for traits implementations
 
         JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);
-        if (parentDeclaration instanceof JetClassObject) {
-            assert declaration instanceof JetObjectDeclaration : "Only object declarations can be children of JetClassObject: " + declaration;
-            return getPredefinedJvmInternalName(parentDeclaration);
-        }
 
         String parentInternalName;
         if (parentDeclaration != null) {
@@ -76,12 +72,6 @@ public final class PsiCodegenPredictor {
             }
 
             parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());
-        }
-
-        if (declaration instanceof JetClassObject) {
-            // Get parent and assign Class object prefix
-            //TODO_R: getName() nullable
-            return parentInternalName + "$" + ((JetClassObject) declaration).getObjectDeclaration().getName();
         }
 
         if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||

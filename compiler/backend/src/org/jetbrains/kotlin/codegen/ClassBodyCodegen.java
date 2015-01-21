@@ -99,9 +99,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
 
             genClassOrObject((JetClassOrObject) declaration);
         }
-        else if (declaration instanceof JetClassObject) {
-            genClassOrObject(((JetClassObject) declaration).getObjectDeclaration());
-        }
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {

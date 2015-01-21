@@ -645,10 +645,6 @@ public class JetPsiFactory(private val project: Project) {
         return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression() as JetBlockExpression
     }
 
-    public fun createEmptyClassObject(): JetClassObject {
-        return createClass("class foo { class object { } }").getClassObject()!!
-    }
-
     public fun createComment(text: String): PsiComment {
         val file = createFile(text)
         val comments = file.getChildren().filterIsInstance<PsiComment>()

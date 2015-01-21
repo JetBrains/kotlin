@@ -431,11 +431,6 @@ public class JetPsiUtil {
             if (parent instanceof PsiFile) {
                 return current;
             }
-            if (parent instanceof JetClassObject) {
-                // current class IS the class object declaration
-                parent = parent.getParent();
-                assert parent instanceof JetClassBody : "Parent of class object is not a class body: " + parent;
-            }
             if (!(parent instanceof JetClassBody)) {
                 // It is a local class, no legitimate outer
                 return current;

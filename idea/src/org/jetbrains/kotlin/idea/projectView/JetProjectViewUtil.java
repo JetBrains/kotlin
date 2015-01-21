@@ -21,7 +21,6 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.psi.JetClassObject;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 
@@ -43,9 +42,6 @@ public final class JetProjectViewUtil {
             for (JetDeclaration declaration : declarations) {
                 if (declaration instanceof JetClassOrObject) {
                     result.add(new JetClassOrObjectTreeNode(project, (JetClassOrObject) declaration, settings));
-                }
-                else if (declaration instanceof JetClassObject) {
-                    result.add(new JetClassObjectTreeNode(project, (JetClassObject) declaration, settings));
                 }
                 else {
                     result.add(new JetDeclarationTreeNode(project, declaration, settings));

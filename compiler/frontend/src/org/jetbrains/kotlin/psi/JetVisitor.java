@@ -33,10 +33,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(klass, data);
     }
 
-    public R visitClassObject(@NotNull JetClassObject classObject, D data) {
-        return visitDeclaration(classObject, data);
-    }
-
     public R visitNamedFunction(@NotNull JetNamedFunction function, D data) {
         return visitNamedDeclaration(function, data);
     }

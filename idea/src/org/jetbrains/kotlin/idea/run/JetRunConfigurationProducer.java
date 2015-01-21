@@ -117,8 +117,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
              currentElement = PsiTreeUtil.getParentOfType((PsiElement) currentElement, JetClassOrObject.class, JetFile.class)) {
             JetDeclarationContainer entryPointContainer = currentElement;
             if (entryPointContainer instanceof JetClass) {
-                JetClassObject classObject = ((JetClass) currentElement).getClassObject();
-                entryPointContainer = classObject != null ? classObject.getObjectDeclaration() : null;
+                entryPointContainer = ((JetClass) currentElement).getClassObject();
             }
             if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer;
         }

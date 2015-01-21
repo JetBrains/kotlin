@@ -199,9 +199,9 @@ public class LazyTopDownAnalyzer {
                             for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
                                 jetDeclaration.accept(this);
 
-                                if (jetDeclaration instanceof JetClassObject) {
+                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isClassObject()) {
                                     if (classObjectAlreadyFound) {
-                                        trace.report(MANY_CLASS_OBJECTS.on((JetClassObject) jetDeclaration));
+                                        trace.report(MANY_CLASS_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
                                     }
                                     classObjectAlreadyFound = true;
                                 }
@@ -224,11 +224,6 @@ public class LazyTopDownAnalyzer {
                                     );
                                 }
                             }
-                        }
-
-                        @Override
-                        public void visitClassObject(@NotNull JetClassObject classObject) {
-                            visitClassOrObject(classObject.getObjectDeclaration());
                         }
 
                         @Override

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
@@ -65,13 +64,6 @@ public class LazyDeclarationResolver {
 
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
-        if (classOrObject instanceof JetObjectDeclaration) {
-            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObject;
-            JetClassObject classObjectElement = objectDeclaration.getClassObjectElement();
-            if (classObjectElement != null) {
-                return getClassObjectDescriptor(classObjectElement);
-            }
-        }
         JetScope resolutionScope = resolutionScopeToResolveDeclaration(classOrObject);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
@@ -94,31 +86,6 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    /*package*/ LazyClassDescriptor getClassObjectDescriptor(@NotNull JetClassObject classObject) {
-        JetClass aClass = JetStubbedPsiUtil.getContainingDeclaration(classObject, JetClass.class);
-
-        LazyClassDescriptor parentClassDescriptor;
-
-        if (aClass != null) {
-            parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(aClass);
-        }
-        else {
-            // Class object in object is an error but we want to find descriptors even for this case
-            JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(classObject, JetObjectDeclaration.class);
-            assert objectDeclaration != null : String.format("Class object %s can be in class or object in file %s", classObject, classObject.getContainingFile().getText());
-            parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(objectDeclaration);
-        }
-
-        // Activate resolution and writing to trace
-        parentClassDescriptor.getClassObjectDescriptor();
-        parentClassDescriptor.getDescriptorsForExtraClassObjects();
-        DeclarationDescriptor classObjectDescriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classObject.getObjectDeclaration());
-        assert classObjectDescriptor != null : "No descriptor found for " + JetPsiUtil.getElementTextWithContext(classObject);
-
-        return (LazyClassDescriptor) classObjectDescriptor;
-    }
-
-    @NotNull
     private BindingContext getBindingContext() {
         return trace.getBindingContext();
     }
@@ -133,17 +100,7 @@ public class LazyDeclarationResolver {
 
             @Override
             public DeclarationDescriptor visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
-                PsiElement parent = declaration.getParent();
-                if (parent instanceof JetClassObject) {
-                    JetClassObject jetClassObject = (JetClassObject) parent;
-                    return resolveToDescriptor(jetClassObject);
-                }
                 return getClassDescriptor(declaration);
-            }
-
-            @Override
-            public DeclarationDescriptor visitClassObject(@NotNull JetClassObject classObject, Void data) {
-                return getClassObjectDescriptor(classObject);
             }
 
             @Override
