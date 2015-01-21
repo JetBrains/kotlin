@@ -1,0 +1,36 @@
+LineBreakpoint created at evSkipLambda.kt:12
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evSkipLambda.EvSkipLambdaPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+evSkipLambda.kt:12
+package evSkipLambda
+
+class A {
+    var prop = 1
+}
+
+fun main(args: Array<String>) {
+    val a1 = A()
+    val a2 = A()
+
+    //Breakpoint!
+    foo(a1.prop)
+    l {
+        foo(a2.prop)
+    }
+}
+
+fun foo(i: Int) {}
+fun l(f: () -> Unit) {}
+
+// PRINT_FRAME
+ frame    = main():12, EvSkipLambdaPackage$@packagePartHASH {evSkipLambda}
+   static   = static = evSkipLambda.EvSkipLambdaPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipLambda.kt, 7)
+   local    = a1: evSkipLambda.A = {evSkipLambda.A@uniqueID} (sp = evSkipLambda.kt, 8)
+     field    = prop: int = 1 (sp = evSkipLambda.kt, 4)
+   local    = a2: evSkipLambda.A = {evSkipLambda.A@uniqueID} (sp = evSkipLambda.kt, 9)
+     field    = prop: int = 1 (sp = evSkipLambda.kt, 4)
+   extra    = a1.prop
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

@@ -59,9 +59,10 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SourcePositionProvider
+import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.debugger.ui.impl.watch.WatchItemDescriptor
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -223,13 +224,21 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             tree.rebuild(debuggerContext)
             expandAll(tree, Runnable {
                 try {
-                    Printer().printTree(tree)
+                    val printer = Printer()
+                    printer.printTree(tree)
+                    for (extra in getExtraVars()) {
+                        printer.printDescriptor(tree.getNodeFactory().getWatchItemDescriptor(null, extra, null), 2)
+                    }
                 }
                 finally {
                     resume(this@printFrame)
                 }
             })
         }
+    }
+
+    fun getExtraVars(): Set<TextWithImports> {
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.getSourcePosition(), evaluationContext, hashSetOf())!!
     }
 
     private inner class Printer() {
@@ -240,14 +249,22 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
         private fun printNode(node: DebuggerTreeNodeImpl, indent: Int) {
             val descriptor: NodeDescriptorImpl = node.getDescriptor()!!
-            if (descriptor is DefaultNodeDescriptor) return
+
+            if (printDescriptor(descriptor, indent)) return
+
+            printChildren(node, indent + 2)
+        }
+
+        fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
+            if (descriptor is DefaultNodeDescriptor) return true
 
             val label = descriptor.getLabel()!!.replaceAll("Package\\$[\\w]*\\$[0-9a-f]+", "Package\\$@packagePartHASH")
-            if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return
+            if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return true
 
             val curIndent = " ".repeat(indent)
             when (descriptor) {
                 is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
+                is WatchItemDescriptor ->     logDescriptor(descriptor, "$curIndent extra    = ${descriptor.calcValueName()}\n")
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label"
                                                     + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
@@ -256,8 +273,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                                                     + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
-
-            printChildren(node, indent + 2)
+            return false
         }
 
         private fun printChildren(node: DebuggerTreeNodeImpl, indent: Int) {

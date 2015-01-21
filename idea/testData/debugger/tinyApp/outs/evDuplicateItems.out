@@ -1,0 +1,26 @@
+LineBreakpoint created at evDuplicateItems.kt:10
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evDuplicateItems.EvDuplicateItemsPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+evDuplicateItems.kt:10
+package evDuplicateItems
+
+class A {
+    var prop = 1
+}
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    val b = a.prop + a.prop
+}
+
+// PRINT_FRAME
+ frame    = main():10, EvDuplicateItemsPackage$@packagePartHASH {evDuplicateItems}
+   static   = static = evDuplicateItems.EvDuplicateItemsPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evDuplicateItems.kt, 7)
+   local    = a: evDuplicateItems.A = {evDuplicateItems.A@uniqueID} (sp = evDuplicateItems.kt, 8)
+     field    = prop: int = 1 (sp = evDuplicateItems.kt, 4)
+   extra    = a.prop
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

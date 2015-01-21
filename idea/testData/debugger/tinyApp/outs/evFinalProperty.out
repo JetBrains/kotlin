@@ -1,0 +1,25 @@
+LineBreakpoint created at evFinalProperty.kt:10
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evFinalProperty.EvFinalPropertyPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+evFinalProperty.kt:10
+package evFinalProperty
+
+class A {
+    val prop = 1
+}
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    val b = a.prop
+}
+
+// PRINT_FRAME
+ frame    = main():10, EvFinalPropertyPackage$@packagePartHASH {evFinalProperty}
+   static   = static = evFinalProperty.EvFinalPropertyPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evFinalProperty.kt, 7)
+   local    = a: evFinalProperty.A = {evFinalProperty.A@uniqueID} (sp = evFinalProperty.kt, 8)
+     field    = prop: int = 1 (sp = evFinalProperty.kt, 4)
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

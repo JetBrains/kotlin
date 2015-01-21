@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class, SingleBreakpoint.Renderer.class})
+    @InnerTestClasses({SingleBreakpoint.ExtraVariables.class, SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class, SingleBreakpoint.Renderer.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         @TestMetadata("abstractFunCall.kt")
@@ -224,6 +224,75 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         public void test_kt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/.kt.kt");
             doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtraVariables extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInExtraVariables() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("evBreakpointOnPropertyDeclaration.kt")
+            public void testEvBreakpointOnPropertyDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evBreakpointOnPropertyDeclaration.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evDelegatedProperty.kt")
+            public void testEvDelegatedProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evDelegatedProperty.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evDuplicateItems.kt")
+            public void testEvDuplicateItems() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evDuplicateItems.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evFinalProperty.kt")
+            public void testEvFinalProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evFinalProperty.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evLineRange.kt")
+            public void testEvLineRange() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evLineRange.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evProperty.kt")
+            public void testEvProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evProperty.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evPropertyRefExpr.kt")
+            public void testEvPropertyRefExpr() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evPropertyRefExpr.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evSkipAnonymousObject.kt")
+            public void testEvSkipAnonymousObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evSkipAnonymousObject.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evSkipLambda.kt")
+            public void testEvSkipLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evSkipLambda.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("evSkipLocalClass.kt")
+            public void testEvSkipLocalClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evSkipLocalClass.kt");
+                doSingleBreakpointTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame")
