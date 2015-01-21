@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.actions
 
-import com.google.common.collect.Lists
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.actions.AddImportAction
 import com.intellij.codeInsight.hint.QuestionAction
@@ -29,7 +28,6 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
@@ -50,11 +48,7 @@ public class JetAddImportAction
  * @param imports Variants for resolution.
  */
 (private val myProject: Project, private val myEditor: Editor, private val myElement: PsiElement, imports: Iterable<FqName>) : QuestionAction {
-    private val possibleImports: List<FqName>
-
-    {
-        possibleImports = Lists.newArrayList<FqName>(imports)
-    }
+    private val possibleImports = imports.toList()
 
     override fun execute(): Boolean {
         PsiDocumentManager.getInstance(myProject).commitAllDocuments()
@@ -75,20 +69,20 @@ public class JetAddImportAction
         return true
     }
 
-    protected fun getImportSelectionPopup(): BaseListPopupStep<Any> {
+    protected fun getImportSelectionPopup(): BaseListPopupStep<FqName> {
         return object : BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
             override fun isAutoSelectionEnabled(): Boolean {
                 return false
             }
 
-            override fun onChosen(selectedValue: FqName?, finalChoice: Boolean): PopupStep<Any>? {
+            override fun onChosen(selectedValue: FqName?, finalChoice: Boolean): PopupStep<String>? {
                 if (selectedValue == null) {
-                    return PopupStep.FINAL_CHOICE
+                    return null
                 }
 
                 if (finalChoice) {
                     addImport(myElement, myProject, selectedValue)
-                    return PopupStep.FINAL_CHOICE
+                    return null
                 }
 
                 val toExclude = AddImportAction.getAllExcludableStrings(selectedValue.asString())
@@ -103,7 +97,7 @@ public class JetAddImportAction
                             AddImportAction.excludeFromImport(myProject, selectedValue)
                         }
 
-                        return super.onChosen(selectedValue, finalChoice)
+                        return null
                     }
                 }
             }
@@ -137,8 +131,8 @@ public class JetAddImportAction
                     ApplicationManager.getApplication().runWriteAction(object : Runnable {
                         override fun run() {
                             val file = element.getContainingFile()
-                            if (!(file is JetFile)) return
-                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file as JetFile)
+                            if (file !is JetFile) return
+                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file)
                         }
                     })
                 }
