@@ -425,7 +425,7 @@ JetFile: ShortAnnotations.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -477,12 +477,11 @@ JetFile: ShortAnnotations.kt
         PsiWhiteSpace(' ')
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n  ')
       CLASS
         MODIFIER_LIST

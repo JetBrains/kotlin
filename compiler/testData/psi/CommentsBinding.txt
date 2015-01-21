@@ -263,20 +263,19 @@ JetFile: CommentsBinding.kt
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('// end of foo')
       PsiWhiteSpace('\n\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiComment(EOL_COMMENT)('// class object')
         PsiWhiteSpace('\n    ')
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            PsiElement(RBRACE)('}')
-          PsiWhiteSpace(' ')
-          PsiComment(EOL_COMMENT)('// end of class object')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// end of class object')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

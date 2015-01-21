@@ -9,42 +9,38 @@ JetFile: NamedClassObject.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('Default')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('Default')
       PsiWhiteSpace('\n\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('B')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('C')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('C')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      CLASS_OBJECT
+      OBJECT_DECLARATION
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION
-          PsiElement(object)('object')
+        PsiElement(object)('object')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         PsiElement(object)('object')
