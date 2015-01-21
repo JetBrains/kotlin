@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.components.ServiceManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.kotlin.resolve.ImportPath;
-
-import java.util.List;
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.resolve.ImportPath
 
 public abstract class ImportInsertHelper {
-    public static ImportInsertHelper getInstance() {
-        return ServiceManager.getService(ImportInsertHelper.class);
+
+    public abstract fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
+
+    public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
+
+    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
+
+    public abstract fun needImport(fqName: FqName, file: JetFile): Boolean
+
+    public abstract fun needImport(importPath: ImportPath, file: JetFile): Boolean
+
+    public abstract fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean
+    public abstract fun writeImportToFile(importPath: ImportPath, file: JetFile)
+
+    class object {
+        public fun getInstance(): ImportInsertHelper {
+            return ServiceManager.getService<ImportInsertHelper>(javaClass<ImportInsertHelper>())
+        }
     }
-
-    public abstract void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file);
-
-    public abstract boolean optimizeImportsOnTheFly(JetFile file);
-
-    public abstract boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile);
-
-    public abstract boolean needImport(@NotNull FqName fqName, @NotNull JetFile file);
-
-    public abstract boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file);
-
-    public abstract boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives);
-    public abstract void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file);
 }

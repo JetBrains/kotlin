@@ -14,136 +14,125 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.NamePackage;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.ImportPath;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 
-import java.util.List;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class ImportInsertHelperImpl extends ImportInsertHelper {
+public class ImportInsertHelperImpl : ImportInsertHelper() {
     /**
      * Add import directive into the PSI tree for the given package.
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
      */
-    @Override
-    public void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
-        ImportPath importPath = new ImportPath(importFqn, false);
+    override fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile) {
+        val importPath = ImportPath(importFqn, false)
 
-        optimizeImportsOnTheFly(file);
+        optimizeImportsOnTheFly(file)
 
         if (needImport(importPath, file)) {
-            writeImportToFile(importPath, file);
+            writeImportToFile(importPath, file)
         }
     }
 
-    @Override
-    public boolean optimizeImportsOnTheFly(JetFile file) {
+    override fun optimizeImportsOnTheFly(file: JetFile): Boolean {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
-            return true;
+            OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress()
+            return true
         }
         else {
-            return false;
+            return false
         }
     }
 
-    @Override
-    public void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        JetPsiFactory psiFactory = JetPsiFactory(file.getProject());
-        if (file instanceof JetCodeFragment) {
-            JetImportDirective newDirective = psiFactory.createImportDirective(importPath);
-            ((JetCodeFragment) file).addImportsFromString(newDirective.getText());
-            return;
+    override fun writeImportToFile(importPath: ImportPath, file: JetFile) {
+        val psiFactory = JetPsiFactory(file.getProject())
+        if (file is JetCodeFragment) {
+            val newDirective = psiFactory.createImportDirective(importPath)
+            (file as JetCodeFragment).addImportsFromString(newDirective.getText())
+            return
         }
 
-        JetImportList importList = file.getImportList();
+        val importList = file.getImportList()
         if (importList != null) {
-            JetImportDirective newDirective = psiFactory.createImportDirective(importPath);
-            importList.add(psiFactory.createNewLine());
-            importList.add(newDirective);
+            val newDirective = psiFactory.createImportDirective(importPath)
+            importList.add(psiFactory.createNewLine())
+            importList.add(newDirective)
         }
         else {
-            JetImportList newDirective = psiFactory.createImportDirectiveWithImportList(importPath);
-            JetPackageDirective packageDirective = file.getPackageDirective();
+            val newDirective = psiFactory.createImportDirectiveWithImportList(importPath)
+            val packageDirective = file.getPackageDirective()
             if (packageDirective == null) {
-                throw new IllegalStateException("Scripts are not supported: " + file.getName());
+                throw IllegalStateException("Scripts are not supported: " + file.getName())
             }
 
-            packageDirective.getParent().addAfter(newDirective, packageDirective);
+            packageDirective.getParent().addAfter(newDirective, packageDirective)
         }
     }
 
     /**
      * Check that import is useless.
      */
-    private boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull JetFile jetFile) {
+    private fun isImportedByDefault(importPath: ImportPath, jetFile: JetFile): Boolean {
         if (importPath.fqnPart().isRoot()) {
-            return true;
+            return true
         }
 
         if (!importPath.isAllUnder() && !importPath.hasAlias()) {
             // Single element import without .* and alias is useless
-            if (NamePackage.isOneSegmentFQN(importPath.fqnPart())) {
-                return true;
+            if (importPath.fqnPart().isOneSegmentFQN()) {
+                return true
             }
 
             // There's no need to import a declaration from the package of current file
-            if (jetFile.getPackageFqName().equals(importPath.fqnPart().parent())) {
-                return true;
+            if (jetFile.getPackageFqName() == importPath.fqnPart().parent()) {
+                return true
             }
         }
 
-        return isImportedWithDefault(importPath, jetFile);
+        return isImportedWithDefault(importPath, jetFile)
     }
 
-    @Override
-    public boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile) {
+    override fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean {
 
-        List<ImportPath> defaultImports = ProjectStructureUtil.isJsKotlinModule(contextFile)
-                                   ? TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
-                                   : TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS;
-        return NamePackage.isImported(importPath, defaultImports);
+        val defaultImports = if (ProjectStructureUtil.isJsKotlinModule(contextFile))
+            TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
+        else
+            TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
+        return importPath.isImported(defaultImports)
     }
 
-    @Override
-    public boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
-        return needImport(new ImportPath(fqName, false), file);
+    override fun needImport(fqName: FqName, file: JetFile): Boolean {
+        return needImport(ImportPath(fqName, false), file)
     }
 
-    @Override
-    public boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        return needImport(importPath, file, file.getImportDirectives());
+    override fun needImport(importPath: ImportPath, file: JetFile): Boolean {
+        return needImport(importPath, file, file.getImportDirectives())
     }
 
-    @Override
-    public boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
+    override fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean {
         if (isImportedByDefault(importPath, file)) {
-            return false;
+            return false
         }
 
         if (!importDirectives.isEmpty()) {
             // Check if import is already present
-            for (JetImportDirective directive : importDirectives) {
-                ImportPath existentImportPath = directive.getImportPath();
-                if (existentImportPath != null && NamePackage.isImported(importPath, existentImportPath)) {
-                    return false;
+            for (directive in importDirectives) {
+                val existentImportPath = directive.getImportPath()
+                if (existentImportPath != null && importPath.isImported(existentImportPath)) {
+                    return false
                 }
             }
         }
 
-        return true;
+        return true
     }
 }
