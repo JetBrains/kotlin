@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
@@ -34,7 +35,6 @@ import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
@@ -60,9 +60,7 @@ public class KotlinBuilderModuleScriptGenerator {
             ModuleChunk chunk,
             MultiMap<ModuleBuildTarget, File> sourceFiles, // ignored for non-incremental compilation
             boolean hasRemovedFiles
-    )
-            throws IOException, ProjectBuildException
-    {
+    ) throws IOException, ProjectBuildException {
         KotlinModuleDescriptionBuilder builder = FACTORY.create();
 
         boolean noSources = true;
@@ -130,7 +128,6 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
-
         return getAllDependencies(target).classes().getRoots();
     }
 
@@ -149,7 +146,7 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static List<File> findAnnotationRoots(@NotNull ModuleBuildTarget target) {
-        List<File> annotationRootFiles = ContainerUtil.newArrayList();
+        LinkedHashSet<File> annotationRootFiles = new LinkedHashSet<File>();
 
         JpsModule module = target.getModule();
         JpsSdk sdk = module.getSdk(getSdkType(module));
@@ -171,7 +168,7 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
 
-        return annotationRootFiles;
+        return KotlinPackage.toList(annotationRootFiles);
     }
 
     @NotNull
@@ -182,21 +179,6 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
         return JpsJavaSdkType.INSTANCE;
-    }
-
-    @Nullable
-    private static JpsLibrary getLibrary(@NotNull JpsDependencyElement dependencyElement) {
-        if (dependencyElement instanceof JpsSdkDependency) {
-            JpsSdkDependency sdkDependency = (JpsSdkDependency) dependencyElement;
-            return sdkDependency.resolveSdk();
-        }
-
-        if (dependencyElement instanceof JpsLibraryDependency) {
-            JpsLibraryDependency libraryDependency = (JpsLibraryDependency) dependencyElement;
-            return libraryDependency.getLibrary();
-        }
-
-        return null;
     }
 
     private KotlinBuilderModuleScriptGenerator() {}
