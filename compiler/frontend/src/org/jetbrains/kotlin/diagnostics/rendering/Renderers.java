@@ -394,18 +394,26 @@ public class Renderers {
             @NotNull InferenceErrorData inferenceErrorData,
             @NotNull TabledDescriptorRenderer result
     ) {
-        ConstraintSystem constraintSystem = inferenceErrorData.constraintSystem;
+        ConstraintSystemImpl constraintSystem = (ConstraintSystemImpl) inferenceErrorData.constraintSystem;
+        List<ConstraintError> errors = constraintSystem.getConstraintErrors();
         TypeParameterDescriptor typeParameterWithCapturedConstraint = null;
+        for (ConstraintError error : errors) {
+            if (error instanceof CannotCapture) {
+                typeParameterWithCapturedConstraint = ((CannotCapture) error).getTypeVariable();
+            }
+        }
+        if (typeParameterWithCapturedConstraint == null) {
+            LOG.error(renderDebugMessage("An error 'cannot capture type parameter' is not found in errors", inferenceErrorData));
+            return result;
+        }
+
         CapturedTypeConstructor capturedTypeConstructor = null;
-        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
-            TypeBounds typeBounds = constraintSystem.getTypeBounds(typeParameter);
+        TypeBounds typeBounds = constraintSystem.getTypeBounds(typeParameterWithCapturedConstraint);
             for (TypeBounds.Bound bound : typeBounds.getBounds()) {
                 TypeConstructor constructor = bound.getConstrainingType().getConstructor();
                 if (constructor instanceof CapturedTypeConstructor) {
-                    typeParameterWithCapturedConstraint = typeParameter;
                     capturedTypeConstructor = (CapturedTypeConstructor) constructor;
                 }
-            }
         }
         if (capturedTypeConstructor == null) {
             LOG.error(renderDebugMessage("There is no captured type in bounds, but there is an error 'cannot capture type parameter'",

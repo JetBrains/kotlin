@@ -51,7 +51,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private val typeParameterBounds = LinkedHashMap<TypeParameterDescriptor, TypeBoundsImpl>()
+
     private val errors = ArrayList<ConstraintError>()
+    public val constraintErrors: List<ConstraintError>
+        get() = errors
 
     private val constraintSystemStatus = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
@@ -134,7 +137,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis({ it }, { it.copy() }, { true })
 
-    public fun substituteTypeVariables(typeVariablesMap: (TypeParameterDescriptor) -> TypeParameterDescriptor?): ConstraintSystem {
+    public fun substituteTypeVariables(typeVariablesMap: (TypeParameterDescriptor) -> TypeParameterDescriptor): ConstraintSystem {
         // type bounds are proper types and don't contain other variables
         return createNewConstraintSystemFromThis(typeVariablesMap, { it }, { true })
     }
@@ -163,16 +166,16 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun createNewConstraintSystemFromThis(
-            substituteTypeVariable: (TypeParameterDescriptor) -> TypeParameterDescriptor?,
+            substituteTypeVariable: (TypeParameterDescriptor) -> TypeParameterDescriptor,
             replaceTypeBounds: (TypeBoundsImpl) -> TypeBoundsImpl,
             filterConstraintPosition: (ConstraintPosition) -> Boolean
     ): ConstraintSystem {
         val newSystem = ConstraintSystemImpl()
         for ((typeParameter, typeBounds) in typeParameterBounds) {
             val newTypeParameter = substituteTypeVariable(typeParameter)
-            newSystem.typeParameterBounds.put(newTypeParameter!!, replaceTypeBounds(typeBounds))
+            newSystem.typeParameterBounds.put(newTypeParameter, replaceTypeBounds(typeBounds))
         }
-        newSystem.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
+        newSystem.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) }.map { it.substituteTypeVariable(substituteTypeVariable) })
         return newSystem
     }
 
@@ -188,11 +191,12 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private fun addConstraint(constraintKind: ConstraintKind, subType: JetType?, superType: JetType?, constraintPosition: ConstraintPosition) {
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
-            private var isTopLevel = true
+            private var depth = 0
 
             override fun assertEqualTypes(a: JetType, b: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
-                isTopLevel = false
+                depth++
                 doAddConstraint(EQUAL, a, b, constraintPosition, typeCheckingProcedure)
+                depth--
                 return true
 
             }
@@ -202,15 +206,16 @@ public class ConstraintSystemImpl : ConstraintSystem {
             }
 
             override fun assertSubtype(subtype: JetType, supertype: JetType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
-                isTopLevel = false
+                depth++
                 doAddConstraint(SUB_TYPE, subtype, supertype, constraintPosition, typeCheckingProcedure)
+                depth--
                 return true
             }
 
             override fun capture(typeVariable: JetType, typeProjection: TypeProjection): Boolean {
                 val myTypeVariable = getMyTypeVariable(typeVariable)
                 if (myTypeVariable != null && constraintPosition.isCaptureAllowed()) {
-                    if (!isTopLevel) {
+                    if (depth > 0) {
                         errors.add(CannotCapture(constraintPosition, myTypeVariable))
                     }
                     generateTypeParameterCaptureConstraint(typeVariable, typeProjection, constraintPosition)

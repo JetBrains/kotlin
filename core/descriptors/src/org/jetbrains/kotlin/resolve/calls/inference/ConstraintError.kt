@@ -26,3 +26,6 @@ class TypeConstructorMismatch(constraintPosition: ConstraintPosition): Constrain
 class ErrorInConstrainingType(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
 class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeParameterDescriptor): ConstraintError(constraintPosition)
+
+fun ConstraintError.substituteTypeVariable(substitution: (TypeParameterDescriptor) -> TypeParameterDescriptor) =
+        if (this is CannotCapture) CannotCapture(constraintPosition, substitution(typeVariable)) else this
