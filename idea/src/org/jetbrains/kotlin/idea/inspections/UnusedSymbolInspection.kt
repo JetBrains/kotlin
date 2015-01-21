@@ -80,84 +80,37 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitClass(klass: JetClass) {
-                if (klass.getName() == null) return
+            override fun visitNamedDeclaration(declaration: JetNamedDeclaration) {
+                val messageKey = when (declaration) {
+                    is JetClass -> "unused.class"
+                    is JetNamedFunction -> "unused.function"
+                    is JetProperty, is JetParameter -> "unused.property"
+                    is JetTypeParameter -> "unused.type.parameter"
+                    else -> return
+                }
 
-                if (klass is JetEnumEntry) return
+                // Simple PSI-based checks
+                if (declaration.getName() == null) return
+                if (declaration is JetEnumEntry) return
+                if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+                if (declaration is JetProperty && declaration.isLocal()) return
+                if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetClass || !declaration.hasValOrVarNode())) return
+                if (declaration is JetNamedFunction && isConventionalName(declaration)) return
 
-                if (isEntryPoint(klass)) return
-                if (hasNonTrivialUsages(klass)) return
-                if (classHasTextUsages(klass)) return
-
-                holder.registerProblem(
-                        klass.getNameIdentifier(),
-                        JetBundle.message("unused.class", klass.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        createQuickFix(klass)
-                )
-            }
-
-            override fun visitNamedFunction(function: JetNamedFunction) {
-                if (function.getName() == null) return
-
-                if (function.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
-                if (isEntryPoint(function)) return
-                if (isConventionalName(function)) return
-                if (hasNonTrivialUsages(function)) return
-
-                holder.registerProblem(
-                        function.getNameIdentifier(),
-                        JetBundle.message("unused.function", function.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        createQuickFix(function)
-                )
-            }
-
-            override fun visitProperty(property: JetProperty) {
-                if (property.getName() == null) return
-
-                if (property.isLocal()) return
-
-                if (property.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
-                if (hasNonTrivialUsages(property)) return
-
-                holder.registerProblem(
-                        property.getNameIdentifier(),
-                        JetBundle.message("unused.property", property.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        createQuickFix(property)
-                )
-            }
-
-            override fun visitParameter(parameter: JetParameter) {
-                if (parameter.getName() == null) return
-
-                if (parameter.getParent()?.getParent() !is JetClass || !parameter.hasValOrVarNode()) return
-
+                // More expensive, resolve-based checks
+                if (isEntryPoint(declaration)) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
-                if (parameter.dataClassComponentFunctionName() != null) return
+                if (declaration is JetParameter && declaration.dataClassComponentFunctionName() != null) return
 
-                if (parameter.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
-                if (hasNonTrivialUsages(parameter)) return
-
-                holder.registerProblem(
-                        parameter.getNameIdentifier(),
-                        JetBundle.message("unused.property", parameter.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        createQuickFix(parameter)
-                )
-            }
-
-            override fun visitTypeParameter(parameter: JetTypeParameter) {
-                if (parameter.getName() == null) return
-
-                if (hasNonTrivialUsages(parameter)) return
+                // Main checks: finding reference usages && text usages
+                if (hasNonTrivialUsages(declaration)) return
+                if (declaration is JetClass && classHasTextUsages(declaration)) return
 
                 holder.registerProblem(
-                        parameter.getNameIdentifier(),
-                        JetBundle.message("unused.type.parameter", parameter.getName()),
+                        declaration.getNameIdentifier(),
+                        JetBundle.message(messageKey, declaration.getName()),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        createQuickFix(parameter)
+                        createQuickFix(declaration)
                 )
             }
         }
@@ -167,7 +120,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val lightElement: PsiElement? = when (declaration) {
             is JetClass ->  declaration.toLightClass()
             is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
-            else -> null
+            else -> return false
         }
         return lightElement != null && javaInspection.isEntryPoint(lightElement)
     }
