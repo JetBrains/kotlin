@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.resolve.ImportPath
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -114,7 +115,7 @@ public class JetAddImportAction(
                 override fun run() {
                     ApplicationManager.getApplication().runWriteAction {
                         val file = element.getContainingFile() as JetFile
-                        ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file)
+                        ImportInsertHelper.getInstance().writeImportToFile(ImportPath(selectedImport, false), file)
                     }
                 }
             }, QuickFixBundle.message("add.import"), null)

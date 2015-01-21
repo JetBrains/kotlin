@@ -156,7 +156,6 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         result.addAll(getExtensions(referenceName, element, indicesHelper))
 
         return result
-                .filter { ImportInsertHelper.getInstance().needImport(ImportPath(it.fqName, false), file) }
                 .sortBy { it.priority }
                 .map { it.fqName }
     }
