@@ -54,8 +54,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
                 if (isUseful(importPath, usedQualifiedNames)
-                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesBeforeCurrent)
-                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesAfterCurrent)
+                    && ImportInsertHelper.INSTANCE.needImport(importPath, jetFile, directivesBeforeCurrent)
+                    && ImportInsertHelper.INSTANCE.needImport(importPath, jetFile, directivesAfterCurrent)
                 ) {
                     directivesBeforeCurrent.add(anImport)
                 }

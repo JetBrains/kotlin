@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 
-public class ImportInsertHelperImpl : ImportInsertHelper() {
+public class ImportInsertHelperImpl : ImportInsertHelper {
     /**
      * Add import directive into the PSI tree for the given package.
      *
@@ -57,7 +57,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper() {
         val psiFactory = JetPsiFactory(file.getProject())
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)
-            (file as JetCodeFragment).addImportsFromString(newDirective.getText())
+            file.addImportsFromString(newDirective.getText())
             return
         }
 
@@ -102,20 +102,11 @@ public class ImportInsertHelperImpl : ImportInsertHelper() {
     }
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean {
-
         val defaultImports = if (ProjectStructureUtil.isJsKotlinModule(contextFile))
             TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
         else
             TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
         return importPath.isImported(defaultImports)
-    }
-
-    override fun needImport(fqName: FqName, file: JetFile): Boolean {
-        return needImport(ImportPath(fqName, false), file)
-    }
-
-    override fun needImport(importPath: ImportPath, file: JetFile): Boolean {
-        return needImport(importPath, file, file.getImportDirectives())
     }
 
     override fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean {

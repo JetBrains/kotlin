@@ -22,24 +22,22 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.resolve.ImportPath
 
-public abstract class ImportInsertHelper {
+public trait ImportInsertHelper {
 
-    public abstract fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
+    public fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
 
-    public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
+    public fun optimizeImportsOnTheFly(file: JetFile): Boolean
 
-    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
+    public fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
 
-    public abstract fun needImport(fqName: FqName, file: JetFile): Boolean
+    public fun needImport(fqName: FqName, file: JetFile): Boolean = needImport(ImportPath(fqName, false), file)
 
-    public abstract fun needImport(importPath: ImportPath, file: JetFile): Boolean
+    public fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
 
-    public abstract fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean
-    public abstract fun writeImportToFile(importPath: ImportPath, file: JetFile)
+    public fun writeImportToFile(importPath: ImportPath, file: JetFile)
 
     class object {
-        public fun getInstance(): ImportInsertHelper {
-            return ServiceManager.getService<ImportInsertHelper>(javaClass<ImportInsertHelper>())
-        }
+        public val INSTANCE: ImportInsertHelper
+            get() = ServiceManager.getService<ImportInsertHelper>(javaClass<ImportInsertHelper>())
     }
 }

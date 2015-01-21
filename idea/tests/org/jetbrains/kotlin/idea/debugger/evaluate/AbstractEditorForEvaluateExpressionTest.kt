@@ -50,7 +50,7 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
         ApplicationManager.getApplication()?.runWriteAction {
             val fileText = FileUtil.loadFile(File(filePath), true)
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(FqName(it), (myFixture.getFile() as JetFile))
+                ImportInsertHelper.INSTANCE.addImportDirectiveIfNeeded(FqName(it), (myFixture.getFile() as JetFile))
             }
         }
 

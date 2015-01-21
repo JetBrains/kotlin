@@ -118,7 +118,7 @@ public object ShortenReferences {
             file: JetFile,
             fileElements: List<JetElement> = Collections.singletonList(file)
     ): Map<JetReferenceExpression, BindingContext> {
-        ImportInsertHelper.getInstance().optimizeImportsOnTheFly(file)
+        ImportInsertHelper.INSTANCE.optimizeImportsOnTheFly(file)
         return JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
     }
 
@@ -312,14 +312,14 @@ public object ShortenReferences {
             if (realTarget.getContainingDeclaration() is ClassDescriptor) return false // do not insert imports for nested classes
 
             optimizeImports()
-            ImportInsertHelper.getInstance().writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(realTarget), false), file)
+            ImportInsertHelper.INSTANCE.writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(realTarget), false), file)
             return true
         }
 
         fun optimizeImports(): Boolean {
             if (!optimizeImports) return false
             optimizeImports = false
-            return ImportInsertHelper.getInstance().optimizeImportsOnTheFly(file)
+            return ImportInsertHelper.INSTANCE.optimizeImportsOnTheFly(file)
         }
     }
 }

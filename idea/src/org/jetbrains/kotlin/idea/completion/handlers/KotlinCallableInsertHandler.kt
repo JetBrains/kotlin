@@ -77,7 +77,7 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
 
                     if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                         ApplicationManager.getApplication()?.runWriteAction {
-                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
+                            ImportInsertHelper.INSTANCE.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
                         }
                     }
                 }
