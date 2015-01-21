@@ -33,34 +33,29 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-
-import javax.swing.*
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
 /**
  * Automatically adds import directive to the file for resolving reference.
  * Based on {@link AddImportAction}
  */
-public class JetAddImportAction
-/**
- * @param project Project where action takes place.
- * @param editor Editor where modification should be done.
- * @param element Element with unresolved reference.
- * @param imports Variants for resolution.
- */
-(private val myProject: Project, private val myEditor: Editor, private val myElement: PsiElement, imports: Iterable<FqName>) : QuestionAction {
+public class JetAddImportAction(
+        private val project: Project,
+        private val editor: Editor,
+        private val element: JetSimpleNameExpression,
+        imports: Iterable<FqName>
+) : QuestionAction {
     private val possibleImports = imports.toList()
 
     override fun execute(): Boolean {
-        PsiDocumentManager.getInstance(myProject).commitAllDocuments()
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        if (!myElement.isValid()) {
-            return false
-        }
+        if (!element.isValid()) return false
 
         // TODO: Validate resolution variants. See AddImportAction.execute()
 
         if (possibleImports.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            addImport(myElement, myProject, possibleImports.get(0))
+            addImport(element, project, possibleImports[0])
         }
         else {
             chooseClassAndImport()
@@ -71,17 +66,13 @@ public class JetAddImportAction
 
     protected fun getImportSelectionPopup(): BaseListPopupStep<FqName> {
         return object : BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
-            override fun isAutoSelectionEnabled(): Boolean {
-                return false
-            }
+            override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: FqName?, finalChoice: Boolean): PopupStep<String>? {
-                if (selectedValue == null) {
-                    return null
-                }
+                if (selectedValue == null) return null
 
                 if (finalChoice) {
-                    addImport(myElement, myProject, selectedValue)
+                    addImport(element, project, selectedValue)
                     return null
                 }
 
@@ -89,36 +80,29 @@ public class JetAddImportAction
 
                 return object : BaseListPopupStep<String>(null, toExclude) {
                     override fun getTextFor(value: String): String {
-                        return "Exclude '" + value + "' from auto-import"
+                        return "Exclude '$value' from auto-import"
                     }
 
                     override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<Any>? {
                         if (finalChoice) {
-                            AddImportAction.excludeFromImport(myProject, selectedValue)
+                            AddImportAction.excludeFromImport(project, selectedValue)
                         }
-
                         return null
                     }
                 }
             }
 
-            override fun hasSubstep(selectedValue: FqName?): Boolean {
-                return true
-            }
+            override fun hasSubstep(selectedValue: FqName?) = true
 
-            override fun getTextFor(value: FqName): String {
-                return value.asString()
-            }
+            override fun getTextFor(value: FqName) = value.asString()
 
-            override fun getIconFor(aValue: FqName): Icon? {
-                // TODO: change icon
-                return PlatformIcons.CLASS_ICON
-            }
+            // TODO: change icon
+            override fun getIconFor(aValue: FqName) = PlatformIcons.CLASS_ICON
         }
     }
 
     private fun chooseClassAndImport() {
-        JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(myEditor)
+        JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(editor)
     }
 
     class object {
@@ -128,13 +112,10 @@ public class JetAddImportAction
 
             CommandProcessor.getInstance().executeCommand(project, object : Runnable {
                 override fun run() {
-                    ApplicationManager.getApplication().runWriteAction(object : Runnable {
-                        override fun run() {
-                            val file = element.getContainingFile()
-                            if (file !is JetFile) return
-                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file)
-                        }
-                    })
+                    ApplicationManager.getApplication().runWriteAction {
+                        val file = element.getContainingFile() as JetFile
+                        ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file)
+                    }
                 }
             }, QuickFixBundle.message("add.import"), null)
         }
