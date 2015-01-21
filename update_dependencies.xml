@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="ideaVersion" value="139.1038.6"/>
+    <property name="ideaVersion" value="139.1116"/>
 
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
