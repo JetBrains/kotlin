@@ -1,6 +1,7 @@
 package
 
 package p {
+    internal fun bar(): p.Foo.Nested?
     internal fun foo(): p.Foo.Nested?
 
     internal final class Bar : p.Foo {

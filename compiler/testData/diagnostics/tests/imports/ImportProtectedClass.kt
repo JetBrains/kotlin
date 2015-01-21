@@ -11,3 +11,4 @@ class Bar: Foo() {
 }
 
 fun foo(): <!INVISIBLE_REFERENCE!>Nested<!>? = null
+fun bar(): p.Foo.<!INVISIBLE_REFERENCE!>Nested<!>? = null
