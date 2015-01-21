@@ -74,8 +74,6 @@ public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?):
     if (typeProjection == null) return null
 
     val type = typeProjection.getType()
-    //todo temporary hack to compile 'kotlin'
-    if (type is LazyType) return typeProjection
     if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {
         return typeProjection
     }
@@ -89,11 +87,10 @@ public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?):
 }
 
 private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProjection? {
-    val typeSubstitutor = TypeSubstitutor.create(object : TypeSubstitution {
+    val typeSubstitutor = TypeSubstitutor.create(object : TypeSubstitution() {
         override fun get(typeConstructor: TypeConstructor?): TypeProjection? {
             return (typeConstructor as? CapturedTypeConstructor)?.typeProjection
         }
-        override fun isEmpty() = false
     })
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
 }

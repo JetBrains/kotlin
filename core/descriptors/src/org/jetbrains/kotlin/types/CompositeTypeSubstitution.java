@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CompositeTypeSubstitution implements TypeSubstitution {
+public class CompositeTypeSubstitution extends TypeSubstitution {
     private final TypeSubstitution[] inner;
 
     public CompositeTypeSubstitution(@NotNull TypeSubstitution... inner) {
@@ -40,6 +40,14 @@ public class CompositeTypeSubstitution implements TypeSubstitution {
             if (!substitution.isEmpty()) return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean approximateCapturedTypes() {
+        for (TypeSubstitution substitution : inner) {
+            if (substitution.approximateCapturedTypes()) return true;
+        }
+        return false;
     }
 
     @Override

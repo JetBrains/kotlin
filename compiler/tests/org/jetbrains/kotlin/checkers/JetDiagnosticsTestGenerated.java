@@ -5208,6 +5208,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("notApproximateWhenCopyDescriptors.kt")
+                public void testNotApproximateWhenCopyDescriptors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/notApproximateWhenCopyDescriptors.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("overApproximationForInCaptured.kt")
                 public void testOverApproximationForInCaptured() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForInCaptured.kt");
