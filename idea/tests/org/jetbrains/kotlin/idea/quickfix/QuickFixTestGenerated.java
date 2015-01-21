@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/quickfix")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({QuickFixTestGenerated.Abstract.class, QuickFixTestGenerated.AddStarProjections.class, QuickFixTestGenerated.AutoImports.class, QuickFixTestGenerated.ChangeSignature.class, QuickFixTestGenerated.CheckArguments.class, QuickFixTestGenerated.ConflictingImports.class, QuickFixTestGenerated.CreateFromUsage.class, QuickFixTestGenerated.Expressions.class, QuickFixTestGenerated.Migration.class, QuickFixTestGenerated.Modifiers.class, QuickFixTestGenerated.Nullables.class, QuickFixTestGenerated.Override.class, QuickFixTestGenerated.PlatformClasses.class, QuickFixTestGenerated.Supercalls.class, QuickFixTestGenerated.SupertypeInitialization.class, QuickFixTestGenerated.Suppress.class, QuickFixTestGenerated.TypeAddition.class, QuickFixTestGenerated.TypeImports.class, QuickFixTestGenerated.TypeMismatch.class, QuickFixTestGenerated.TypeProjection.class, QuickFixTestGenerated.Variables.class, QuickFixTestGenerated.When.class})
+@InnerTestClasses({QuickFixTestGenerated.Abstract.class, QuickFixTestGenerated.AddStarProjections.class, QuickFixTestGenerated.AutoImports.class, QuickFixTestGenerated.ChangeSignature.class, QuickFixTestGenerated.CheckArguments.class, QuickFixTestGenerated.ConflictingImports.class, QuickFixTestGenerated.CreateFromUsage.class, QuickFixTestGenerated.Expressions.class, QuickFixTestGenerated.Migration.class, QuickFixTestGenerated.Modifiers.class, QuickFixTestGenerated.Nullables.class, QuickFixTestGenerated.Override.class, QuickFixTestGenerated.PlatformClasses.class, QuickFixTestGenerated.RemoveUnused.class, QuickFixTestGenerated.Supercalls.class, QuickFixTestGenerated.SupertypeInitialization.class, QuickFixTestGenerated.Suppress.class, QuickFixTestGenerated.TypeAddition.class, QuickFixTestGenerated.TypeImports.class, QuickFixTestGenerated.TypeMismatch.class, QuickFixTestGenerated.TypeProjection.class, QuickFixTestGenerated.Variables.class, QuickFixTestGenerated.When.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public void testAllFilesPresentInQuickfix() throws Exception {
@@ -3419,6 +3419,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeMapPlatformClassToKotlin4.kt")
         public void testMapPlatformClassToKotlin4() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/platformClasses/beforeMapPlatformClassToKotlin4.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/removeUnused")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveUnused extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRemoveUnused() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnused"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("beforeUnusedClass.kt")
+        public void testUnusedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeUnusedFunction.kt")
+        public void testUnusedFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeUnusedProperty.kt")
+        public void testUnusedProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeUnusedPropertyAsConstructorParameter.kt")
+        public void testUnusedPropertyAsConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedPropertyAsConstructorParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeUnusedTypeParameter.kt")
+        public void testUnusedTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/beforeUnusedTypeParameter.kt");
             doTest(fileName);
         }
     }

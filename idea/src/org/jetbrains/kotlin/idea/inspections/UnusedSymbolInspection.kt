@@ -52,6 +52,12 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionN
 import org.jetbrains.kotlin.psi.JetTypeParameter
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import com.intellij.util.Processor
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.openapi.project.Project
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.codeInsight.FileModificationService
+import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -60,6 +66,19 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : JetVisitorVoid() {
+            private fun createQuickFix(declaration: JetNamedDeclaration): LocalQuickFix {
+                return object : LocalQuickFix {
+                    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.getName())
+
+                    override fun getFamilyName() = "whatever"
+
+                    override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
+                        if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return
+                        SafeDeleteHandler.invoke(project, array(declaration), false)
+                    }
+                }
+            }
+
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
 
@@ -72,8 +91,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         klass.getNameIdentifier(),
                         JetBundle.message("unused.class", klass.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                ) // TODO add quick fix to delete it
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        createQuickFix(klass)
+                )
             }
 
             override fun visitNamedFunction(function: JetNamedFunction) {
@@ -87,8 +107,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         function.getNameIdentifier(),
                         JetBundle.message("unused.function", function.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                ) // TODO add quick fix to delete it
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        createQuickFix(function)
+                )
             }
 
             override fun visitProperty(property: JetProperty) {
@@ -102,8 +123,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         property.getNameIdentifier(),
                         JetBundle.message("unused.property", property.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                ) // TODO add quick fix to delete it
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        createQuickFix(property)
+                )
             }
 
             override fun visitParameter(parameter: JetParameter) {
@@ -120,8 +142,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         parameter.getNameIdentifier(),
                         JetBundle.message("unused.property", parameter.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                ) // TODO add quick fix to delete it
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        createQuickFix(parameter)
+                )
             }
 
             override fun visitTypeParameter(parameter: JetTypeParameter) {
@@ -132,8 +155,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                         parameter.getNameIdentifier(),
                         JetBundle.message("unused.type.parameter", parameter.getName()),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                ) // TODO add quick fix to delete it
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        createQuickFix(parameter)
+                )
             }
         }
     }

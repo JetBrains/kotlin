@@ -26,9 +26,11 @@ import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.Assert;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +53,19 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
+    @Nullable
+    private static File findInspectionFile(@NotNull File startDir) {
+        File currentDir = startDir;
+        while (currentDir != null) {
+            File inspectionFile = new File(currentDir, ".inspection");
+            if (inspectionFile.exists()) {
+                return inspectionFile;
+            }
+            currentDir = currentDir.getParentFile();
+        }
+        return null;
+    }
+
     protected void doTest(@NotNull String beforeFileName) throws Exception {
         boolean isWithRuntime = beforeFileName.endsWith("Runtime.kt");
 
@@ -57,6 +73,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             if (isWithRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
             }
+
+            enableInspections(beforeFileName);
 
             doSingleTest(getTestName(false) + ".kt");
             checkForUnexpectedActions();
@@ -66,6 +84,15 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             if (isWithRuntime) {
                 ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
             }
+        }
+    }
+
+    private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
+        File inspectionFile = findInspectionFile(new File(beforeFileName).getParentFile());
+        if (inspectionFile != null) {
+            String className = FileUtil.loadFile(inspectionFile).trim();
+            Class<?> inspectionClass = Class.forName(className);
+            enableInspectionTools(inspectionClass);
         }
     }
 
