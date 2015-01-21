@@ -219,12 +219,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val tree = FrameVariablesTree(getProject()!!)
         Disposer.register(getTestRootDisposable()!!, tree);
 
-        val debuggerContext = createDebuggerContext(this)
         invokeRatherLater(this) {
             tree.rebuild(debuggerContext)
             expandAll(tree, Runnable {
                 try {
-                    Printer(debuggerContext).printTree(tree)
+                    Printer().printTree(tree)
                 }
                 finally {
                     resume(this@printFrame)
@@ -233,7 +232,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         }
     }
 
-    private inner class Printer(val debuggerContext: DebuggerContextImpl) {
+    private inner class Printer() {
         fun printTree(tree: DebuggerTree) {
             val root = tree.getMutableModel()!!.getRoot() as DebuggerTreeNodeImpl
             printNode(root, 0)
@@ -324,7 +323,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-                val value = evaluator.evaluate(createEvaluationContext(this))
+                val value = evaluator.evaluate(evaluationContext)
                 val actualResult = value.asValue().asString()
 
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)

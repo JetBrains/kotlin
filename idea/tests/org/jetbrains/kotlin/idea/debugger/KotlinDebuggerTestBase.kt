@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.debugger.SourcePosition
+import kotlin.properties.Delegates
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
@@ -35,6 +38,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun onBreakpoint(doOnBreakpoint: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint {
+            initContexts(it)
             it.printContext()
             it.doOnBreakpoint()
         }
@@ -42,6 +46,14 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun SuspendContextImpl.stepInto() {
         this.stepInto(false, null)
+    }
+
+    protected var evaluationContext: EvaluationContextImpl by Delegates.notNull()
+    protected var debuggerContext: DebuggerContextImpl by Delegates.notNull()
+
+    protected fun initContexts(suspendContext: SuspendContextImpl) {
+        evaluationContext = createEvaluationContext(suspendContext)
+        debuggerContext = createDebuggerContext(suspendContext)
     }
 
     protected fun SuspendContextImpl.stepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
