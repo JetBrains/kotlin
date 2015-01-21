@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.ClassReader;
@@ -44,13 +44,14 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
     public void testInnerClassInfo() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$B", "A", "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         InnerClassAttribute innerC = new InnerClassAttribute("A$B$C", "A$B", "C", ACC_PUBLIC | ACC_FINAL);
+        String classObjectDefaultName = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
         InnerClassAttribute innerAClassObject = new InnerClassAttribute(
-                "A" + JvmAbi.CLASS_OBJECT_SUFFIX, "A", JvmAbi.CLASS_OBJECT_CLASS_NAME, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+                "A$" + classObjectDefaultName, "A", classObjectDefaultName, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
 
         extractAndCompareInnerClasses("A", innerB, innerAClassObject);
         extractAndCompareInnerClasses("A$B", innerB, innerC);
         extractAndCompareInnerClasses("A$B$C", innerB, innerC);
-        extractAndCompareInnerClasses("A" + JvmAbi.CLASS_OBJECT_SUFFIX, innerAClassObject);
+        extractAndCompareInnerClasses("A$" + classObjectDefaultName, innerAClassObject);
     }
 
     public void testLocalClass() {

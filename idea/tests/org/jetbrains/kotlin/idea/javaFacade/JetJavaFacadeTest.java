@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 
 public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
@@ -186,20 +186,21 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         PsiField classobjField = theClass.findFieldByName("$classobj", false);
         assertNull(classobjField);
 
-        PsiClass classObjectClass = theClass.findInnerClassByName("object", false);
+        String defaultClassObjectName = SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString();
+        PsiClass classObjectClass = theClass.findInnerClassByName(defaultClassObjectName, false);
         assertNotNull(classObjectClass);
-        assertEquals("foo.TheClass.object", classObjectClass.getQualifiedName());
+        assertEquals("foo.TheClass." + defaultClassObjectName, classObjectClass.getQualifiedName());
         assertTrue(classObjectClass.hasModifierProperty(PsiModifier.STATIC));
 
-        PsiField instance = theClass.findFieldByName(JvmAbi.CLASS_OBJECT_FIELD, false);
+        PsiField instance = theClass.findFieldByName(defaultClassObjectName, false);
         assertNotNull(instance);
-        assertEquals("foo.TheClass.object", instance.getType().getCanonicalText());
+        assertEquals("foo.TheClass." + defaultClassObjectName, instance.getType().getCanonicalText());
         assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.STATIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.FINAL));
 
         PsiMethod[] methods = classObjectClass.findMethodsByName("getOut", false);
-        
+
         assertEquals("java.io.PrintStream", methods[0].getReturnType().getCanonicalText());
     }
 

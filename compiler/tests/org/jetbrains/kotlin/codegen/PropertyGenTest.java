@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
@@ -248,7 +248,7 @@ public class PropertyGenTest extends CodegenTestCase {
         findDeclaredMethodByName(c, "getExtension");
         findDeclaredMethodByName(c, "setExtension");
 
-        findDeclaredMethodByName(initializedClassLoader.loadClass("C" + JvmAbi.CLASS_OBJECT_SUFFIX), "getClassObjectVal");
+        findDeclaredMethodByName(initializedClassLoader.loadClass("C$" + SpecialNames.DEFAULT_NAME_FOR_DEFAULT_OBJECT.asString()), "getClassObjectVal");
 
         assertNull("Property should not have a getter", findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"));
         assertNull("Property should not have a setter", findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"));
