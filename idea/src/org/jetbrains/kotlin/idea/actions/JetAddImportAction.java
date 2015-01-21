@@ -14,157 +14,135 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.actions;
+package org.jetbrains.kotlin.idea.actions
 
-import com.google.common.collect.Lists;
-import com.intellij.codeInsight.daemon.QuickFixBundle;
-import com.intellij.codeInsight.daemon.impl.actions.AddImportAction;
-import com.intellij.codeInsight.hint.QuestionAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.PopupStep;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.PlatformIcons;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import com.google.common.collect.Lists
+import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.codeInsight.daemon.impl.actions.AddImportAction
+import com.intellij.codeInsight.hint.QuestionAction
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.PopupStep
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.util.PlatformIcons
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
 
-import javax.swing.*;
-import java.util.List;
+import javax.swing.*
 
 /**
  * Automatically adds import directive to the file for resolving reference.
  * Based on {@link AddImportAction}
  */
-public class JetAddImportAction implements QuestionAction {
+public class JetAddImportAction
+/**
+ * @param project Project where action takes place.
+ * @param editor Editor where modification should be done.
+ * @param element Element with unresolved reference.
+ * @param imports Variants for resolution.
+ */
+(private val myProject: Project, private val myEditor: Editor, private val myElement: PsiElement, imports: Iterable<FqName>) : QuestionAction {
+    private val possibleImports: List<FqName>
 
-    private final Project myProject;
-    private final Editor myEditor;
-    private final PsiElement myElement;
-    private final List<FqName> possibleImports;
-
-    /**
-     * @param project Project where action takes place.
-     * @param editor Editor where modification should be done.
-     * @param element Element with unresolved reference.
-     * @param imports Variants for resolution.
-     */
-    public JetAddImportAction(
-            @NotNull Project project,
-            @NotNull Editor editor,
-            @NotNull PsiElement element,
-            @NotNull Iterable<FqName> imports
-    ) {
-        myProject = project;
-        myEditor = editor;
-        myElement = element;
-        possibleImports = Lists.newArrayList(imports);
+    {
+        possibleImports = Lists.newArrayList<FqName>(imports)
     }
 
-    @Override
-    public boolean execute() {
-        PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+    override fun execute(): Boolean {
+        PsiDocumentManager.getInstance(myProject).commitAllDocuments()
 
-        if (!myElement.isValid()){
-            return false;
+        if (!myElement.isValid()) {
+            return false
         }
 
         // TODO: Validate resolution variants. See AddImportAction.execute()
 
         if (possibleImports.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            addImport(myElement, myProject, possibleImports.get(0));
+            addImport(myElement, myProject, possibleImports.get(0))
         }
-        else{
-            chooseClassAndImport();
+        else {
+            chooseClassAndImport()
         }
 
-        return true;
+        return true
     }
 
-    protected BaseListPopupStep getImportSelectionPopup() {
-        return new BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
-            @Override
-            public boolean isAutoSelectionEnabled() {
-                return false;
+    protected fun getImportSelectionPopup(): BaseListPopupStep<Any> {
+        return object : BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
+            override fun isAutoSelectionEnabled(): Boolean {
+                return false
             }
 
-            @Override
-            public PopupStep onChosen(FqName selectedValue, boolean finalChoice) {
+            override fun onChosen(selectedValue: FqName?, finalChoice: Boolean): PopupStep<Any>? {
                 if (selectedValue == null) {
-                    return FINAL_CHOICE;
+                    return PopupStep.FINAL_CHOICE
                 }
 
                 if (finalChoice) {
-                    addImport(myElement, myProject, selectedValue);
-                    return FINAL_CHOICE;
+                    addImport(myElement, myProject, selectedValue)
+                    return PopupStep.FINAL_CHOICE
                 }
 
-                List<String> toExclude = AddImportAction.getAllExcludableStrings(selectedValue.asString());
+                val toExclude = AddImportAction.getAllExcludableStrings(selectedValue.asString())
 
-                return new BaseListPopupStep<String>(null, toExclude) {
-                    @NotNull
-                    @Override
-                    public String getTextFor(String value) {
-                        return "Exclude '" + value + "' from auto-import";
+                return object : BaseListPopupStep<String>(null, toExclude) {
+                    override fun getTextFor(value: String): String {
+                        return "Exclude '" + value + "' from auto-import"
                     }
 
-                    @Override
-                    public PopupStep onChosen(String selectedValue, boolean finalChoice) {
+                    override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<Any>? {
                         if (finalChoice) {
-                            AddImportAction.excludeFromImport(myProject, selectedValue);
+                            AddImportAction.excludeFromImport(myProject, selectedValue)
                         }
 
-                        return super.onChosen(selectedValue, finalChoice);
+                        return super.onChosen(selectedValue, finalChoice)
                     }
-                };
+                }
             }
 
-            @Override
-            public boolean hasSubstep(FqName selectedValue) {
-                return true;
+            override fun hasSubstep(selectedValue: FqName?): Boolean {
+                return true
             }
 
-            @NotNull
-            @Override
-            public String getTextFor(FqName value) {
-                return value.asString();
+            override fun getTextFor(value: FqName): String {
+                return value.asString()
             }
 
-            @Override
-            public Icon getIconFor(FqName aValue) {
+            override fun getIconFor(aValue: FqName): Icon? {
                 // TODO: change icon
-                return PlatformIcons.CLASS_ICON;
+                return PlatformIcons.CLASS_ICON
             }
-        };
+        }
     }
 
-    protected static void addImport(final PsiElement element, Project project, final FqName selectedImport) {
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
-
-        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        PsiFile file = element.getContainingFile();
-                        if (!(file instanceof JetFile)) return;
-                        ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, (JetFile) file);
-                    }
-                });
-            }
-        }, QuickFixBundle.message("add.import"), null);
+    private fun chooseClassAndImport() {
+        JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(myEditor)
     }
 
-    private void chooseClassAndImport() {
-        JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(myEditor);
+    class object {
+
+        protected fun addImport(element: PsiElement, project: Project, selectedImport: FqName) {
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+
+            CommandProcessor.getInstance().executeCommand(project, object : Runnable {
+                override fun run() {
+                    ApplicationManager.getApplication().runWriteAction(object : Runnable {
+                        override fun run() {
+                            val file = element.getContainingFile()
+                            if (!(file is JetFile)) return
+                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(selectedImport, file as JetFile)
+                        }
+                    })
+                }
+            }, QuickFixBundle.message("add.import"), null)
+        }
     }
 }
