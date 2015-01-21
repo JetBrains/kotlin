@@ -42,7 +42,7 @@ fun renderKDoc(docComment: KDocTag): String {
 }
 
 private fun renderTagList(tags: List<KDocTag>, title: String, to: StringBuilder) {
-    if (tags.size() == 0) {
+    if (tags.isEmpty()) {
         return
     }
     to.append("<dl><dt><b>${title}:</b></dt>")

@@ -22,7 +22,7 @@ public class KDocLink(node: ASTNode) : KDocElementImpl(node) {
     fun getLinkText(): String {
         val text = getText()
         if (text.startsWith('[') && text.endsWith(']')) {
-            return text.substring(1, text.length()-1)
+            return text.substring(1, text.length() - 1)
         }
         return text
     }
