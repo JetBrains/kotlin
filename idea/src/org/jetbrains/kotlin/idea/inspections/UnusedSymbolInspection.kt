@@ -58,6 +58,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -222,6 +223,10 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
         val query = UsagesSearch.search(request)
 
-        return !query.forEach(Processor { declaration.isAncestor(it.getElement()) })
+        return !query.forEach(Processor {
+            assert(it != null, { "Found reference is null, was looking for: " + JetPsiUtil.getElementTextWithContext(declaration) +
+                                 " findAll(): " + query.findAll().map { it?.getElement()?.let{ JetPsiUtil.getElementTextWithContext(it) } } })
+            declaration.isAncestor(it.getElement())
+        })
     }
 }
