@@ -194,13 +194,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         if (!arguments.noJdk) {
             classpath.addAll(PathUtil.getJdkClassesRoots());
         }
-        if (!arguments.noStdlib) {
-            classpath.add(paths.getRuntimePath());
-        }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
                 classpath.add(new File(element));
             }
+        }
+        if (!arguments.noStdlib) {
+            classpath.add(paths.getRuntimePath());
         }
         return classpath;
     }
@@ -208,13 +208,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @NotNull
     private static List<File> getAnnotationsPath(@NotNull KotlinPaths paths, @NotNull K2JVMCompilerArguments arguments) {
         List<File> annotationsPath = Lists.newArrayList();
-        if (!arguments.noJdkAnnotations) {
-            annotationsPath.add(paths.getJdkAnnotationsPath());
-        }
         if (arguments.annotations != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
                 annotationsPath.add(new File(element));
             }
+        }
+        if (!arguments.noJdkAnnotations) {
+            annotationsPath.add(paths.getJdkAnnotationsPath());
         }
         return annotationsPath;
     }
