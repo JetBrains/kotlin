@@ -79,16 +79,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     @Nullable
     @Override
     public JetType getClassObjectType() {
-        if (getKind() == ClassKind.OBJECT) {
-            return getDefaultType();
-        }
-
-        if (getKind() == ClassKind.ENUM_ENTRY) {
-            DeclarationDescriptor enumClass = getContainingDeclaration();
-            assert isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + this;
-            return ((ClassDescriptor) enumClass).getDefaultType();
-        }
-
         ClassDescriptor classObject = getClassObjectDescriptor();
         return classObject == null ? null : classObject.getDefaultType();
     }
