@@ -23,13 +23,13 @@
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update_with_id_resolve
             teamcity.server.url="https://teamcity.jetbrains.com"
-            build.locator.request="buildType:bt410,status:SUCCESS,lookupLimit:1,branch:idea/${ideaVersion}"/>
+            build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}"/>
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
-            build.locator.request="buildType:bt3498,status:SUCCESS,lookupLimit:1,branch:/idea/${ideaVersion}"/>
+            build.locator.request="buildType:bt3498,status:SUCCESS,branch:/idea/${ideaVersion}"/>
     </target>
 
     <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
