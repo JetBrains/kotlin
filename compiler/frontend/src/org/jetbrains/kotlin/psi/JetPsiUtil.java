@@ -59,7 +59,7 @@ public class JetPsiUtil {
         JetExpression getBaseExpression();
     }
 
-    public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
+    public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetVisitor<Void, D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {
             if (child instanceof JetElement) {

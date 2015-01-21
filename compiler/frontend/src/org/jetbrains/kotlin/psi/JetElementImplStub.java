@@ -70,7 +70,7 @@ public class JetElementImplStub<T extends StubElement> extends StubBasedPsiEleme
     }
 
     @Override
-    public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
+    public <D> void acceptChildren(@NotNull JetVisitor<Void, D> visitor, D data) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof JetElement) {
