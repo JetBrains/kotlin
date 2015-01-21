@@ -107,6 +107,12 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithReturnAndThrows.kt")
+    public void testOnMethodUsageWithReturnAndThrows() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndThrows.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMethodFromJava.java")
     public void testTopLevelMethodFromJava() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TopLevelMethodFromJava.java");

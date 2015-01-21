@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea;
 import com.google.common.base.Predicate;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -93,7 +92,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
 
         KDocTag comment = KdocPackage.findKDoc(declarationDescriptor);
         if (comment != null) {
-            renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
+            renderedDecl = renderedDecl + "<br/>" + org.jetbrains.kotlin.idea.kdoc.KdocPackage.renderKDoc(comment);
         }
 
         return renderedDecl;
@@ -110,15 +109,5 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         }
 
         return null;
-    }
-
-    private static String kDocToHtml(@NotNull KDocTag comment) {
-        // TODO: Parse and show markdown comments as html
-        String content = comment.getContentWithTags();
-        String htmlContent = StringUtil.replace(content, "\n", "<br/>")
-                .replaceAll("(@param)\\s+(\\w+)", "@param - <i>$2</i>")
-                .replaceAll("(@\\w+)", "<b>$1</b>");
-
-        return "<p>" + htmlContent + "</p>";
     }
 }

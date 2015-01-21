@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.psi.impl;
+package org.jetbrains.kotlin.kdoc.psi.impl
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.util.PsiTreeUtil
 
 /**
  * The part of a doc comment which describes a single class, method or property
@@ -25,8 +25,15 @@ import org.jetbrains.annotations.NotNull;
  * can have sections for the class itself, its primary constructor and each of the
  * properties defined in the primary constructor.
  */
-public class KDocSection extends KDocTag {
-    public KDocSection(@NotNull ASTNode node) {
-        super(node);
+public class KDocSection(node: ASTNode) : KDocTag(node) {
+    public fun findTagsByName(name: String): List<KDocTag> {
+        val tags = PsiTreeUtil.getChildrenOfType<KDocTag>(this, javaClass<KDocTag>())
+        if (tags == null) {
+            return listOf()
+        }
+        return tags.filter { it.getName() == name }
     }
+
+    public fun findTagByName(name: String): KDocTag?
+        = findTagsByName(name).firstOrNull()
 }
