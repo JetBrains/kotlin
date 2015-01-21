@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -104,6 +105,18 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
     @TestMetadata("OnMethodUsage.kt")
     public void testOnMethodUsage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithBracketsInParam.kt")
+    public void testOnMethodUsageWithBracketsInParam() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithBracketsInParam.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithReturnAndThrows.kt")
+    public void testOnMethodUsageWithReturnAndThrows() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndThrows.kt");
         doTest(fileName);
     }
 

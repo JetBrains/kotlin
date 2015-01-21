@@ -1,8 +1,8 @@
 /**
  Some documentation
 
- * @param a Some int
- * @param b String
+ * @param[a] Some int
+ * @param[b] String
  */
 fun testMethod(a: Int, b: String) {
 

@@ -45,11 +45,12 @@ public enum KDocKnownTag {
 
     public static KDocKnownTag findByTagName(String tagName) {
         if (tagName.startsWith("@")) {
-            try {
-                return valueOf(tagName.substring(1).toUpperCase());
-            }
-            catch (IllegalArgumentException ignored) {
-            }
+            tagName = tagName.substring(1);
+        }
+        try {
+            return valueOf(tagName.toUpperCase());
+        }
+        catch (IllegalArgumentException ignored) {
         }
         return null;
     }
