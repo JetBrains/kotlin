@@ -86,32 +86,12 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
     }
 
-    @Override
-    @Nullable
-    public JetModifierList getModifierList() {
-        if (isClassObject()) {
-            PsiElement parent = getParentByStub();
-            assert parent instanceof JetDeclaration;
-            return ((JetDeclaration)parent).getModifierList();
-        }
-        return super.getModifierList();
-    }
-
     public boolean isClassObject() {
         KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.isClassObject();
         }
-        PsiElement parent = getParent();
-        return parent != null && parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
-    }
-
-    @Nullable
-    public JetClassObject getClassObjectElement() {
-        if (!isClassObject()) {
-            return null;
-        }
-        return (JetClassObject) getParentByStub();
+        return getClassKeyword() != null;
     }
 
     @Override
@@ -186,6 +166,11 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     @NotNull
     public PsiElement getObjectKeyword() {
         return findChildByType(JetTokens.OBJECT_KEYWORD);
+    }
+
+    @Nullable
+    public PsiElement getClassKeyword() {
+        return findChildByType(JetTokens.CLASS_KEYWORD);
     }
 
     @Override
