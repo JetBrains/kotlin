@@ -231,6 +231,10 @@ public class CodeInsightUtils {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
         if (document == null) return null;
 
+        if (line >= document.getLineCount()) {
+            return null;
+        }
+
         int lineStartOffset = document.getLineStartOffset(line);
         return CharArrayUtil.shiftForward(document.getCharsSequence(), lineStartOffset, " \t");
     }
@@ -239,6 +243,10 @@ public class CodeInsightUtils {
     public static Integer getEndLineOffset(@NotNull PsiFile file, int line) {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
         if (document == null) return null;
+
+        if (line >= document.getLineCount()) {
+            return null;
+        }
 
         int lineStartOffset = document.getLineEndOffset(line);
         return CharArrayUtil.shiftBackward(document.getCharsSequence(), lineStartOffset, " \t");
