@@ -50,6 +50,7 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     public void testCommentForStatements() { doTest(); }
 
     public void testSimpleStringLiteral() { doTest(); }
+    public void testSimpleStringLiteral2() { doTest(); }
 
     public void testTemplateStringLiteral1() { doTest(); }
     public void testTemplateStringLiteral2() { doTest(); }
