@@ -259,6 +259,7 @@ private fun generatorForLazyResolve() =
             parameter<DynamicTypesSettings>()
 
             publicField<ResolveSession>()
+            field<ScopeProvider>()
 
             field<LazyResolveToken>()
         }
@@ -271,6 +272,7 @@ private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
     parameter<DeclarationProviderFactory>()
 
     publicField<ResolveSession>()
+    field<ScopeProvider>()
 }
 
 private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
