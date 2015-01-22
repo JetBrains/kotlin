@@ -25,8 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
+import org.jetbrains.kotlin.resolve.lazy.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
@@ -52,13 +51,34 @@ public class LazyTopDownAnalyzer {
 
     private ModuleDescriptor moduleDescriptor;
 
-    private KotlinCodeAnalyzer resolveSession;
+    private LazyDeclarationResolver lazyDeclarationResolver;
 
     private BodyResolver bodyResolver;
 
+    private TopLevelDescriptorProvider topLevelDescriptorProvider;
+
+    private FileScopeProvider fileScopeProvider;
+
+    private DeclarationScopeProvider declarationScopeProvider;
+
     @Inject
-    public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
-        this.resolveSession = kotlinCodeAnalyzer;
+    public void setLazyDeclarationResolver(@NotNull LazyDeclarationResolver lazyDeclarationResolver) {
+        this.lazyDeclarationResolver = lazyDeclarationResolver;
+    }
+
+    @Inject
+    public void setTopLevelDescriptorProvider(@NotNull TopLevelDescriptorProvider topLevelDescriptorProvider) {
+        this.topLevelDescriptorProvider = topLevelDescriptorProvider;
+    }
+
+    @Inject
+    public void setFileScopeProvider(@NotNull FileScopeProvider fileScopeProvider) {
+        this.fileScopeProvider = fileScopeProvider;
+    }
+
+    @Inject
+    public void setDeclarationScopeProvider(DeclarationScopeProviderImpl declarationScopeProvider) {
+        this.declarationScopeProvider = declarationScopeProvider;
     }
 
     @Inject
@@ -131,7 +151,7 @@ public class LazyTopDownAnalyzer {
                                 assert script != null;
 
                                 DescriptorResolver.registerFileInPackage(trace, file);
-                                c.getScripts().put(script, resolveSession.getScriptDescriptor(script));
+                                c.getScripts().put(script, topLevelDescriptorProvider.getScriptDescriptor(script));
                             }
                             else {
                                 JetPackageDirective packageDirective = file.getPackageDirective();
@@ -155,14 +175,14 @@ public class LazyTopDownAnalyzer {
 
                         @Override
                         public void visitImportDirective(@NotNull JetImportDirective importDirective) {
-                            LazyFileScope fileScope = resolveSession.getScopeProvider().getFileScope(
+                            LazyFileScope fileScope = (LazyFileScope) fileScopeProvider.getFileScope(
                                     importDirective.getContainingJetFile());
                             fileScope.forceResolveImport(importDirective);
                         }
 
                         private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
                             ClassDescriptorWithResolutionScopes descriptor =
-                                    (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject);
+                                    (ClassDescriptorWithResolutionScopes) lazyDeclarationResolver.getClassDescriptor(classOrObject);
 
                             c.getDeclaredClasses().put(classOrObject, descriptor);
                             registerDeclarations(classOrObject.getDeclarations());
@@ -197,7 +217,7 @@ public class LazyTopDownAnalyzer {
                                 if (jetParameter.hasValOrVarNode()) {
                                     c.getPrimaryConstructorParameterProperties().put(
                                             jetParameter,
-                                            (PropertyDescriptor) resolveSession.resolveToDescriptor(jetParameter)
+                                            (PropertyDescriptor) lazyDeclarationResolver.resolveToDescriptor(jetParameter)
                                     );
                                 }
                             }
@@ -220,11 +240,11 @@ public class LazyTopDownAnalyzer {
 
                         @Override
                         public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
-                            registerScope(c, resolveSession, initializer);
+                            registerScope(c, initializer);
                             JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(initializer, JetClassOrObject.class);
                             c.getAnonymousInitializers().put(
                                     initializer,
-                                    (ClassDescriptorWithResolutionScopes) resolveSession.resolveToDescriptor(classOrObject)
+                                    (ClassDescriptorWithResolutionScopes) lazyDeclarationResolver.resolveToDescriptor(classOrObject)
                             );
                         }
 
@@ -251,13 +271,13 @@ public class LazyTopDownAnalyzer {
             );
         }
 
-        createFunctionDescriptors(c, resolveSession, functions);
+        createFunctionDescriptors(c, functions);
 
-        createPropertyDescriptors(c, resolveSession, topLevelFqNames, properties);
+        createPropertyDescriptors(c, topLevelFqNames, properties);
 
         resolveAllHeadersInClasses(c);
 
-        declarationResolver.checkRedeclarationsInPackages(resolveSession, topLevelFqNames);
+        declarationResolver.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames);
         declarationResolver.checkRedeclarationsInInnerClassNames(c);
 
         ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
@@ -266,7 +286,7 @@ public class LazyTopDownAnalyzer {
 
         varianceChecker.check(c);
 
-        declarationResolver.resolveAnnotationsOnFiles(c, resolveSession.getScopeProvider());
+        declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider);
 
         overloadResolver.process(c);
 
@@ -281,47 +301,44 @@ public class LazyTopDownAnalyzer {
         }
     }
 
-    private static void createPropertyDescriptors(
+    private void createPropertyDescriptors(
             TopDownAnalysisContext c,
-            KotlinCodeAnalyzer resolveSession,
             Multimap<FqName, JetElement> topLevelFqNames,
             List<JetProperty> properties
     ) {
         for (JetProperty property : properties) {
-            PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(property);
+            PropertyDescriptor descriptor = (PropertyDescriptor) lazyDeclarationResolver.resolveToDescriptor(property);
 
             c.getProperties().put(property, descriptor);
             registerTopLevelFqName(topLevelFqNames, property, descriptor);
 
-            registerScope(c, resolveSession, property);
-            registerScope(c, resolveSession, property.getGetter());
-            registerScope(c, resolveSession, property.getSetter());
+            registerScope(c, property);
+            registerScope(c, property.getGetter());
+            registerScope(c, property.getSetter());
         }
     }
 
-    private static void createFunctionDescriptors(
+    private void createFunctionDescriptors(
             TopDownAnalysisContext c,
-            KotlinCodeAnalyzer resolveSession,
             List<JetNamedFunction> functions
     ) {
         for (JetNamedFunction function : functions) {
             c.getFunctions().put(
                     function,
-                    (SimpleFunctionDescriptor) resolveSession.resolveToDescriptor(function)
+                    (SimpleFunctionDescriptor) lazyDeclarationResolver.resolveToDescriptor(function)
             );
-            registerScope(c, resolveSession, function);
+            registerScope(c, function);
         }
     }
 
-    private static void registerScope(
+    private void registerScope(
             @NotNull TopDownAnalysisContext c,
-            @NotNull KotlinCodeAnalyzer resolveSession,
             @Nullable JetDeclaration declaration
     ) {
         if (declaration == null) return;
         c.registerDeclaringScope(
                 declaration,
-                resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
+                declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
         );
     }
 
@@ -336,11 +353,6 @@ public class LazyTopDownAnalyzer {
                 topLevelFqNames.put(fqName, declaration);
             }
         }
-    }
-
-    @NotNull
-    public KotlinCodeAnalyzer getCodeAnalyzer() {
-        return resolveSession;
     }
 }
 

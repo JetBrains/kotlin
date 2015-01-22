@@ -113,7 +113,7 @@ private fun generatorForLazyBodyResolve() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyBodyResolve") {
             parameter<Project>()
             parameter<GlobalContext>(useAsContext = true)
-            parameter<KotlinCodeAnalyzer>(name = "analyzer")
+            parameter<KotlinCodeAnalyzer>(name = "analyzer", useAsContext = true)
             parameter<BindingTrace>()
             parameter<AdditionalCheckerProvider>()
             parameter<DynamicTypesSettings>()
