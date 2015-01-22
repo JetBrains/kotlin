@@ -4,8 +4,8 @@
         <sources path="s1"/>
         <sources path="s2"/>
         <!-- External annotations -->
-        <externalAnnotations path= "a1/f1"/>
-        <externalAnnotations path= "a2"/>
+        <externalAnnotations path="a1/f1"/>
+        <externalAnnotations path="a2"/>
         <!-- s1 -->
         <!-- Output directory, commented out -->
         <!-- 

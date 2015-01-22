@@ -60,6 +60,7 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
                 String outputDir,
                 DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
+                List<File> javaSourceRoots,
                 boolean tests,
                 final Set<File> directoriesToFilterOut
         ) {
@@ -82,7 +83,7 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
                 p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");
             }
 
-            dependencyProvider.processClassPath(new DependencyProcessor() {
+            DependencyProcessor processor = new DependencyProcessor() {
                 @Override
                 public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
                     p.println("<!-- ", sectionDescription, " -->");
@@ -110,10 +111,16 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
                 public void processAnnotationRoots(@NotNull List<File> files) {
                     p.println("<!-- External annotations -->");
                     for (File file : files) {
-                        p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "= \"", getEscapedPath(file), "\"/>");
+                        p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
                     }
                 }
-            });
+            };
+
+            if (!javaSourceRoots.isEmpty()) {
+                processor.processClassPathSection("Java source roots", javaSourceRoots);
+            }
+
+            dependencyProvider.processClassPath(processor);
 
             closeTag(p, MODULE);
             return this;

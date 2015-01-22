@@ -3,9 +3,11 @@
     <module name="name" outputDir="output">
         <sources path="s1"/>
         <sources path="s2"/>
+        <!-- Java source roots -->
+        <classpath path="java"/>
         <!-- External annotations -->
-        <externalAnnotations path= "a1/f1"/>
-        <externalAnnotations path= "a2"/>
+        <externalAnnotations path="a1/f1"/>
+        <externalAnnotations path="a2"/>
         <!-- s1 -->
         <classpath path="cp1"/>
         <classpath path="cp2"/>

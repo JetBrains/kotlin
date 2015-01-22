@@ -56,6 +56,7 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
                 String outputDir,
                 DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
+                List<File> javaSourceRoots,
                 boolean tests,
                 final Set<File> directoriesToFilterOut
         ) {
@@ -74,7 +75,7 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
                 script.append("        sources += \"" + toSystemIndependentName(sourceFile.getPath()) + "\"\n");
             }
 
-            dependencyProvider.processClassPath(new DependencyProcessor() {
+            DependencyProcessor processor = new DependencyProcessor() {
                 @Override
                 public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
                     script.append("        // " + sectionDescription + "\n");
@@ -97,7 +98,13 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
                         script.append("        annotationsPath += \"").append(toSystemIndependentName(file.getPath())).append("\"\n");
                     }
                 }
-            });
+            };
+
+            if (!javaSourceRoots.isEmpty()) {
+                processor.processClassPathSection("Java source roots", javaSourceRoots);
+            }
+
+            dependencyProvider.processClassPath(processor);
 
             script.append("    }\n");
             return this;

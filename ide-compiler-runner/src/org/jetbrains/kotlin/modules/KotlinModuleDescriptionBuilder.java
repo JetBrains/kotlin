@@ -27,6 +27,7 @@ public interface KotlinModuleDescriptionBuilder {
             String outputDir,
             DependencyProvider dependencyProvider,
             List<File> sourceFiles,
+            List<File> javaSourceRoots,
             boolean tests,
             Set<File> directoriesToFilterOut
     );

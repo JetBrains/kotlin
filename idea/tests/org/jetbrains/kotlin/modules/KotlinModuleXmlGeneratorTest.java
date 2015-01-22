@@ -37,8 +37,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                     }
                 },
                 Arrays.asList(new File("s1"), new File("s2")),
+                Collections.singletonList(new File("java")),
                 false,
-                Collections.<File>emptySet()).asText().toString();
+                Collections.<File>emptySet()
+        ).asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
 
@@ -54,8 +56,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                     }
                 },
                 Arrays.asList(new File("s1"), new File("s2")),
+                Collections.<File>emptyList(),
                 false,
-                Collections.singleton(new File("cp1"))).asText().toString();
+                Collections.singleton(new File("cp1"))
+        ).asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
 
@@ -72,8 +76,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                     }
                 },
                 Arrays.asList(new File("s1"), new File("s2")),
+                Collections.<File>emptyList(),
                 false,
-                Collections.singleton(new File("cp1")));
+                Collections.singleton(new File("cp1"))
+        );
         builder.addModule(
                 "name2",
                 "output2",
@@ -85,8 +91,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                     }
                 },
                 Arrays.asList(new File("s12"), new File("s22")),
+                Collections.<File>emptyList(),
                 true,
-                Collections.singleton(new File("cp12")));
+                Collections.singleton(new File("cp12"))
+        );
         String actual = builder.asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
     }
