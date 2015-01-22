@@ -237,8 +237,8 @@ public class CallResolver {
         if (calleeExpression instanceof JetConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
         }
-        else if (calleeExpression instanceof JetThisReferenceExpression) {
-            return resolveCallForThisExpression(context, (JetThisReferenceExpression) calleeExpression);
+        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
+            return resolveCallForThisExpression(context, (JetConstructorDelegationReferenceExpression) calleeExpression);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -290,7 +290,7 @@ public class CallResolver {
 
     private OverloadResolutionResults<FunctionDescriptor> resolveCallForThisExpression(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetThisReferenceExpression calleeExpression
+            @NotNull JetConstructorDelegationReferenceExpression calleeExpression
     ) {
         DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
         if (containingDeclaration instanceof ConstructorDescriptor) {

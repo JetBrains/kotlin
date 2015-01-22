@@ -29,8 +29,8 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             registerProvider(javaClass<JetSimpleNameExpression>()) {
                 JetSimpleNameReference(it)
             }
-            registerProvider(javaClass<JetThisReferenceExpression>()) {
-                JetThisReference(it)
+            registerProvider(javaClass<JetConstructorDelegationReferenceExpression>()) {
+                JetConstructorDelegationReference(it)
             }
             registerProvider(javaClass<JetCallExpression>()) {
                 JetInvokeFunctionReference(it)

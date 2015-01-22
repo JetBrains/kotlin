@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.idea.references;
 
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.kotlin.psi.JetThisReferenceExpression;
+import org.jetbrains.kotlin.psi.JetConstructorDelegationReferenceExpression;
 
-public class JetThisReference extends JetSimpleReference<JetThisReferenceExpression> {
-    public JetThisReference(JetThisReferenceExpression expression) {
+public class JetConstructorDelegationReference extends JetSimpleReference<JetConstructorDelegationReferenceExpression> {
+    public JetConstructorDelegationReference(JetConstructorDelegationReferenceExpression expression) {
         super(expression);
     }
 

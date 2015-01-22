@@ -18,9 +18,14 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.JetTokens;
 
-public class JetThisReferenceExpression extends JetExpressionImpl implements JetReferenceExpression {
-    public JetThisReferenceExpression(@NotNull ASTNode node) {
+public class JetConstructorDelegationReferenceExpression extends JetExpressionImpl implements JetReferenceExpression {
+    public JetConstructorDelegationReferenceExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public boolean isThis() {
+        return findChildByType(JetTokens.THIS_KEYWORD) != null;
     }
 }
