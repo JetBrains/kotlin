@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.context.LazyResolveToken;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -49,10 +50,10 @@ import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -71,6 +72,7 @@ public class InjectorForLazyResolve {
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final DynamicTypesSettings dynamicTypesSettings;
     private final ResolveSession resolveSession;
+    private final ScopeProvider scopeProvider;
     private final LazyResolveToken lazyResolveToken;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -93,10 +95,10 @@ public class InjectorForLazyResolve {
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
     private final JetImportsFactory jetImportsFactory;
-    private final ScopeProvider scopeProvider;
-    private final AdditionalFileScopeProvider additionalFileScopeProvider;
+    private final LazyDeclarationResolver lazyDeclarationResolver;
     private final DeclarationScopeProviderImpl declarationScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
+    private final AdditionalFileScopeProvider additionalFileScopeProvider;
 
     public InjectorForLazyResolve(
         @NotNull Project project,
@@ -118,6 +120,7 @@ public class InjectorForLazyResolve {
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.dynamicTypesSettings = dynamicTypesSettings;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
+        this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyResolveToken = new LazyResolveToken();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -140,18 +143,22 @@ public class InjectorForLazyResolve {
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
-        this.scopeProvider = new ScopeProvider(getResolveSession());
-        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
-        this.declarationScopeProvider = new DeclarationScopeProviderImpl(getResolveSession());
+        this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(lazyDeclarationResolver);
         this.scriptBodyResolver = new ScriptBodyResolver();
+        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
         this.resolveSession.setJetImportFactory(jetImportsFactory);
+        this.resolveSession.setLazyDeclarationResolver(lazyDeclarationResolver);
         this.resolveSession.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         this.resolveSession.setScopeProvider(scopeProvider);
         this.resolveSession.setScriptBodyResolver(scriptBodyResolver);
         this.resolveSession.setTypeResolver(typeResolver);
+
+        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
+        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(storageManager);
@@ -212,8 +219,8 @@ public class InjectorForLazyResolve {
 
         jetImportsFactory.setProject(project);
 
-        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
-        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyDeclarationResolver.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyDeclarationResolver.setTopLevelDescriptorProvider(resolveSession);
 
         declarationScopeProvider.setFileScopeProvider(scopeProvider);
 

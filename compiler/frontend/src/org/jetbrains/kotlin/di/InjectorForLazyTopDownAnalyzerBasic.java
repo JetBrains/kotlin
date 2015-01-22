@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
@@ -50,10 +51,10 @@ import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.kotlin.resolve.BodyResolver;
 import org.jetbrains.kotlin.resolve.ControlFlowAnalyzer;
 import org.jetbrains.kotlin.resolve.DeclarationsChecker;
@@ -80,6 +81,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
+    private final ScopeProvider scopeProvider;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final DefaultProvider defaultProvider;
     private final AnnotationResolver annotationResolver;
@@ -105,10 +107,10 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
     private final JetImportsFactory jetImportsFactory;
-    private final ScopeProvider scopeProvider;
-    private final AdditionalFileScopeProvider additionalFileScopeProvider;
+    private final LazyDeclarationResolver lazyDeclarationResolver;
     private final DeclarationScopeProviderImpl declarationScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
+    private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final BodyResolver bodyResolver;
     private final ControlFlowAnalyzer controlFlowAnalyzer;
     private final DeclarationsChecker declarationsChecker;
@@ -136,6 +138,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
+        this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.defaultProvider = DefaultProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
@@ -161,10 +164,10 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
-        this.scopeProvider = new ScopeProvider(getResolveSession());
-        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
-        this.declarationScopeProvider = new DeclarationScopeProviderImpl(getResolveSession());
+        this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(lazyDeclarationResolver);
         this.scriptBodyResolver = new ScriptBodyResolver();
+        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
@@ -179,10 +182,14 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
         this.resolveSession.setJetImportFactory(jetImportsFactory);
+        this.resolveSession.setLazyDeclarationResolver(lazyDeclarationResolver);
         this.resolveSession.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         this.resolveSession.setScopeProvider(scopeProvider);
         this.resolveSession.setScriptBodyResolver(scriptBodyResolver);
         this.resolveSession.setTypeResolver(typeResolver);
+
+        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
+        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
 
         this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
         this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
@@ -252,8 +259,8 @@ public class InjectorForLazyTopDownAnalyzerBasic {
 
         jetImportsFactory.setProject(project);
 
-        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
-        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyDeclarationResolver.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyDeclarationResolver.setTopLevelDescriptorProvider(resolveSession);
 
         declarationScopeProvider.setFileScopeProvider(scopeProvider);
 

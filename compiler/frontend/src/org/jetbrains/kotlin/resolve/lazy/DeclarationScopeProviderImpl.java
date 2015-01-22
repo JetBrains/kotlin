@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
 
-    private final ResolveSession resolveSession;
+    private final LazyDeclarationResolver lazyDeclarationResolver;
 
     private FileScopeProvider fileScopeProvider;
 
@@ -35,8 +35,8 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         this.fileScopeProvider = fileScopeProvider;
     }
 
-    public DeclarationScopeProviderImpl(@NotNull ResolveSession resolveSession) {
-        this.resolveSession = resolveSession;
+    public DeclarationScopeProviderImpl(@NotNull LazyDeclarationResolver lazyDeclarationResolver) {
+        this.lazyDeclarationResolver = lazyDeclarationResolver;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
 
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
-            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
+            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject);
             if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
                 return classDescriptor.getScopeForInitializerResolution();
             }
@@ -72,7 +72,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
 
             JetClassObject classObject = (JetClassObject) parentDeclaration;
             LazyClassDescriptor classObjectDescriptor =
-                    (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
+                    (LazyClassDescriptor) lazyDeclarationResolver.getClassObjectDescriptor(classObject).getContainingDeclaration();
 
             return classObjectDescriptor.getScopeForMemberDeclarationResolution();
         }
