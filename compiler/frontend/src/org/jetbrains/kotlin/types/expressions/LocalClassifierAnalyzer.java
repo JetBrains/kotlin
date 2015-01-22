@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 
 import java.util.Collections;
 
-/* package */ class LocalClassifierAnalyzer {
+public class LocalClassifierAnalyzer {
     public void processClassOrObject(
             @NotNull GlobalContext globalContext,
             @Nullable final WritableScope scope,
