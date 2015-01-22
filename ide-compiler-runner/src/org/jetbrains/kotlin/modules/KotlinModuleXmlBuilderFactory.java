@@ -58,11 +58,12 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
         public KotlinModuleDescriptionBuilder addModule(
                 String moduleName,
                 String outputDir,
-                DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
                 List<File> javaSourceRoots,
+                Collection<File> classpathRoots,
+                List<File> annotationRoots,
                 boolean tests,
-                final Set<File> directoriesToFilterOut
+                Set<File> directoriesToFilterOut
         ) {
             assert !done : "Already done";
 
@@ -83,47 +84,48 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
                 p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");
             }
 
-            DependencyProcessor processor = new DependencyProcessor() {
-                @Override
-                public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
-                    p.println("<!-- ", sectionDescription, " -->");
-                    for (File file : files) {
-                        boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
-                        if (isOutput) {
-                            // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
-                            // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
-                            // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                            p.println("<!-- Output directory, commented out -->");
-                            p.println("<!-- ");
-                            p.pushIndent();
-                        }
-
-                        p.println("<", CLASSPATH, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
-
-                        if (isOutput) {
-                            p.popIndent();
-                            p.println("-->");
-                        }
-                    }
-                }
-
-                @Override
-                public void processAnnotationRoots(@NotNull List<File> files) {
-                    p.println("<!-- External annotations -->");
-                    for (File file : files) {
-                        p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
-                    }
-                }
-            };
-
             if (!javaSourceRoots.isEmpty()) {
-                processor.processClassPathSection("Java source roots", javaSourceRoots);
+                processClassPathSection("Java source roots", javaSourceRoots, directoriesToFilterOut);
             }
 
-            dependencyProvider.processClassPath(processor);
+            processClassPathSection("Classpath", classpathRoots, directoriesToFilterOut);
+            processAnnotationRoots(annotationRoots);
 
             closeTag(p, MODULE);
             return this;
+        }
+
+        private void processClassPathSection(
+                @NotNull String sectionDescription,
+                @NotNull Collection<File> files,
+                @NotNull Set<File> directoriesToFilterOut
+        ) {
+            p.println("<!-- ", sectionDescription, " -->");
+            for (File file : files) {
+                boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
+                if (isOutput) {
+                    // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
+                    // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
+                    // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
+                    p.println("<!-- Output directory, commented out -->");
+                    p.println("<!-- ");
+                    p.pushIndent();
+                }
+
+                p.println("<", CLASSPATH, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+
+                if (isOutput) {
+                    p.popIndent();
+                    p.println("-->");
+                }
+            }
+        }
+
+        private void processAnnotationRoots(@NotNull List<File> files) {
+            p.println("<!-- External annotations -->");
+            for (File file : files) {
+                p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+            }
         }
 
         @Override

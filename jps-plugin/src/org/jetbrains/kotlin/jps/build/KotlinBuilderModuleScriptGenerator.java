@@ -47,8 +47,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies;
-import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProcessor;
-import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProvider;
 
 public class KotlinBuilderModuleScriptGenerator {
 
@@ -89,9 +87,10 @@ public class KotlinBuilderModuleScriptGenerator {
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
-                    getKotlinModuleDependencies(target),
                     moduleSources,
                     findSourceRoots(context, target),
+                    findClassPathRoots(target),
+                    findAnnotationRoots(target),
                     target.isTests(),
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs
@@ -114,16 +113,6 @@ public class KotlinBuilderModuleScriptGenerator {
             throw new ProjectBuildException("No output directory found for " + target);
         }
         return outputDir;
-    }
-
-    private static DependencyProvider getKotlinModuleDependencies(final ModuleBuildTarget target) {
-        return new DependencyProvider() {
-            @Override
-            public void processClassPath(@NotNull DependencyProcessor processor) {
-                processor.processClassPathSection("Classpath", findClassPathRoots(target));
-                processor.processAnnotationRoots(findAnnotationRoots(target));
-            }
-        };
     }
 
     @NotNull

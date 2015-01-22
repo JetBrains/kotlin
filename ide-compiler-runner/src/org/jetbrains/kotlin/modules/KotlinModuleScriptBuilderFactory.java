@@ -54,11 +54,12 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
         public KotlinModuleDescriptionBuilder addModule(
                 String moduleName,
                 String outputDir,
-                DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
                 List<File> javaSourceRoots,
+                Collection<File> classpathRoots,
+                List<File> annotationRoots,
                 boolean tests,
-                final Set<File> directoriesToFilterOut
+                Set<File> directoriesToFilterOut
         ) {
             assert !done : "Already done";
 
@@ -75,39 +76,40 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
                 script.append("        sources += \"" + toSystemIndependentName(sourceFile.getPath()) + "\"\n");
             }
 
-            DependencyProcessor processor = new DependencyProcessor() {
-                @Override
-                public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
-                    script.append("        // " + sectionDescription + "\n");
-                    for (File file : files) {
-                        if (directoriesToFilterOut.contains(file)) {
-                            // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
-                            // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
-                            // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                            script.append("        // Output directory, commented out\n");
-                            script.append("        // ");
-                        }
-                        script.append("        classpath += \"" + toSystemIndependentName(file.getPath()) + "\"\n");
-                    }
-                }
-
-                @Override
-                public void processAnnotationRoots(@NotNull List<File> files) {
-                    script.append("        // External annotations\n");
-                    for (File file : files) {
-                        script.append("        annotationsPath += \"").append(toSystemIndependentName(file.getPath())).append("\"\n");
-                    }
-                }
-            };
-
             if (!javaSourceRoots.isEmpty()) {
-                processor.processClassPathSection("Java source roots", javaSourceRoots);
+                processClassPathSection("Java source roots", javaSourceRoots, directoriesToFilterOut);
             }
 
-            dependencyProvider.processClassPath(processor);
+            processClassPathSection("Classpath", classpathRoots, directoriesToFilterOut);
+            processAnnotationRoots(annotationRoots);
 
             script.append("    }\n");
             return this;
+        }
+
+        private void processClassPathSection(
+                @NotNull String sectionDescription,
+                @NotNull Collection<File> files,
+                @NotNull Set<File> directoriesToFilterOut
+        ) {
+            script.append("        // " + sectionDescription + "\n");
+            for (File file : files) {
+                if (directoriesToFilterOut.contains(file)) {
+                    // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
+                    // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
+                    // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
+                    script.append("        // Output directory, commented out\n");
+                    script.append("        // ");
+                }
+                script.append("        classpath += \"" + toSystemIndependentName(file.getPath()) + "\"\n");
+            }
+        }
+
+        private void processAnnotationRoots(@NotNull List<File> files) {
+            script.append("        // External annotations\n");
+            for (File file : files) {
+                script.append("        annotationsPath += \"").append(toSystemIndependentName(file.getPath())).append("\"\n");
+            }
         }
 
         @Override
@@ -120,5 +122,4 @@ public class KotlinModuleScriptBuilderFactory implements KotlinModuleDescription
             return script;
         }
     }
-
 }

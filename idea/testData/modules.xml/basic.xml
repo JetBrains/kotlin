@@ -5,11 +5,11 @@
         <sources path="s2"/>
         <!-- Java source roots -->
         <classpath path="java"/>
+        <!-- Classpath -->
+        <classpath path="cp1"/>
+        <classpath path="cp2"/>
         <!-- External annotations -->
         <externalAnnotations path="a1/f1"/>
         <externalAnnotations path="a2"/>
-        <!-- s1 -->
-        <classpath path="cp1"/>
-        <classpath path="cp2"/>
     </module>
 </modules>

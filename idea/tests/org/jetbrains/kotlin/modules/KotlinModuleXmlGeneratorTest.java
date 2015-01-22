@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -29,15 +28,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
-                new KotlinModuleDescriptionBuilder.DependencyProvider() {
-                    @Override
-                    public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
-                        processor.processAnnotationRoots(Arrays.asList(new File("a1/f1"), new File("a2")));
-                        processor.processClassPathSection("s1", Arrays.asList(new File("cp1"), new File("cp2")));
-                    }
-                },
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.singletonList(new File("java")),
+                Arrays.asList(new File("cp1"), new File("cp2")),
+                Arrays.asList(new File("a1/f1"), new File("a2")),
                 false,
                 Collections.<File>emptySet()
         ).asText().toString();
@@ -48,15 +42,10 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
-                new KotlinModuleDescriptionBuilder.DependencyProvider() {
-                    @Override
-                    public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
-                        processor.processAnnotationRoots(Arrays.asList(new File("a1/f1"), new File("a2")));
-                        processor.processClassPathSection("s1", Arrays.asList(new File("cp1"), new File("cp2")));
-                    }
-                },
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<File>emptyList(),
+                Arrays.asList(new File("cp1"), new File("cp2")),
+                Arrays.asList(new File("a1/f1"), new File("a2")),
                 false,
                 Collections.singleton(new File("cp1"))
         ).asText().toString();
@@ -68,30 +57,20 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         builder.addModule(
                 "name",
                 "output",
-                new KotlinModuleDescriptionBuilder.DependencyProvider() {
-                    @Override
-                    public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
-                        processor.processAnnotationRoots(Arrays.asList(new File("a1/f1"), new File("a2")));
-                        processor.processClassPathSection("s1", Arrays.asList(new File("cp1"), new File("cp2")));
-                    }
-                },
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<File>emptyList(),
+                Arrays.asList(new File("cp1"), new File("cp2")),
+                Arrays.asList(new File("a1/f1"), new File("a2")),
                 false,
                 Collections.singleton(new File("cp1"))
         );
         builder.addModule(
                 "name2",
                 "output2",
-                new KotlinModuleDescriptionBuilder.DependencyProvider() {
-                    @Override
-                    public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
-                        processor.processAnnotationRoots(Arrays.asList(new File("a12/f12"), new File("a22")));
-                        processor.processClassPathSection("s12", Arrays.asList(new File("cp12"), new File("cp22")));
-                    }
-                },
                 Arrays.asList(new File("s12"), new File("s22")),
                 Collections.<File>emptyList(),
+                Arrays.asList(new File("cp12"), new File("cp22")),
+                Arrays.asList(new File("a12/f12"), new File("a22")),
                 true,
                 Collections.singleton(new File("cp12"))
         );

@@ -25,21 +25,13 @@ public interface KotlinModuleDescriptionBuilder {
     KotlinModuleDescriptionBuilder addModule(
             String moduleName,
             String outputDir,
-            DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             List<File> javaSourceRoots,
+            Collection<File> classpathRoots,
+            List<File> annotationRoots,
             boolean tests,
             Set<File> directoriesToFilterOut
     );
 
     CharSequence asText();
-
-    interface DependencyProvider {
-        void processClassPath(DependencyProcessor processor);
-    }
-
-    interface DependencyProcessor {
-        void processClassPathSection(String sectionDescription, Collection<File> files);
-        void processAnnotationRoots(List<File> files);
-    }
 }
