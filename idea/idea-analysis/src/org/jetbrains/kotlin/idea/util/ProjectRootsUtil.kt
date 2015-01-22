@@ -34,7 +34,7 @@ public object ProjectRootsUtil {
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
                            isJsProject: Boolean? = null): Boolean {
         if (includeProjectSource && fileIndex.isInSourceContent(file)) {
-            return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
+            return true
         }
         if (!includeLibraryClasses && !includeLibrarySource) return false
 

@@ -423,7 +423,6 @@
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 

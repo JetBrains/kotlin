@@ -21,9 +21,6 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager;
 
@@ -36,14 +33,6 @@ public class JetPluginUtil {
         IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));
         assert plugin != null : "Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins());
         return plugin.getVersion();
-    }
-
-    public static boolean isKtFileInGradleProjectInWrongFolder(@NotNull PsiElement element) {
-        return JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(element);
-    }
-
-    public static boolean isKtFileInGradleProjectInWrongFolder(@NotNull VirtualFile virtualFile, @NotNull Project project) {
-        return JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(virtualFile, project);
     }
 
     public static boolean isAndroidGradleModule(@NotNull Module module) {

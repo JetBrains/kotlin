@@ -18,53 +18,11 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager;
 
 public class JetModuleTypeManagerImpl extends JetModuleTypeManager {
-    @Override
-    public boolean isKtFileInGradleProjectInWrongFolder(@NotNull final PsiElement element) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-            @Override
-            public Boolean compute() {
-                PsiFile containingFile = element.getContainingFile();
-                if (containingFile == null) {
-                    return false;
-                }
-                VirtualFile virtualFile = containingFile.getVirtualFile();
-                if (virtualFile == null) {
-                    return false;
-                }
-                return isKtFileInGradleProjectInWrongFolder(virtualFile, element.getProject());
-            }
-        });
-    }
-
-    @Override
-    public boolean isKtFileInGradleProjectInWrongFolder(@NotNull VirtualFile virtualFile, @NotNull Project project) {
-        Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
-        if (module == null) return false;
-
-        if (!isAndroidGradleModule(module) && !isGradleModule(module)) {
-            return false;
-        }
-
-        VirtualFile sourceRootForFile = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(virtualFile);
-        if (sourceRootForFile != null) {
-            return !sourceRootForFile.getName().equals("kotlin");
-        }
-        return false;
-    }
-
     @Override
     public boolean isAndroidGradleModule(@NotNull Module module) {
         // We don't want to depend on the Android-Gradle plugin
