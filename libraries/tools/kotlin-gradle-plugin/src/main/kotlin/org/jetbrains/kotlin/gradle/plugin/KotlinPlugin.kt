@@ -134,6 +134,14 @@ class Kotlin2JvmSourceSetProcessor(
             val javacClassPath = javaTask.getClasspath() + project.files(kotlinDestinationDir);
             javaTask.setClasspath(javacClassPath)
         }
+
+        project afterEvaluate { project ->
+            if (project != null) {
+                for (dir in sourceSet.getJava().getSrcDirs()) {
+                    kotlinDirSet?.srcDir(dir)
+                }
+            }
+        }
     }
 }
 
@@ -332,19 +340,25 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
                 val javaSourceList = ArrayList<Any?>()
 
+                fun processSourceSet(javaSourceSet: AndroidSourceSet) {
+                    val javaSrcDirs = AndroidGradleWrapper.getJavaSrcDirs(javaSourceSet)
+                    javaSourceList.addAll(javaSrcDirs)
+                    val testKotlinSource = getExtension<KotlinSourceSet>(javaSourceSet, "kotlin")
+                    val kotlinSDS = testKotlinSource.getKotlin()
+                    for (dir in javaSrcDirs) {
+                        kotlinSDS.srcDir(dir)
+                    }
+                    kotlinTask.source(kotlinSDS)
+                }
+
                 if (variant is TestVariant) {
-                    javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(testSourceSet))
-                    val testKotlinSource = getExtension<KotlinSourceSet>(testSourceSet, "kotlin")
-                    kotlinTask.source(testKotlinSource.getKotlin())
+                    processSourceSet(testSourceSet)
                 } else {
-                    javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(mainSourceSet))
-                    val mainKotlinSource = getExtension<KotlinSourceSet>(mainSourceSet, "kotlin")
-                    kotlinTask.source(mainKotlinSource.getKotlin())
+                    processSourceSet(mainSourceSet)
                 }
 
                 if (null != buildTypeSourceSet) {
-                    javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(buildTypeSourceSet))
-                    kotlinTask.source(getExtension<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
+                    processSourceSet(buildTypeSourceSet)
                 }
 
                 for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
@@ -359,14 +373,12 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                         val defaultFlavourSourceSetName = flavourName + buildTypeSourceSetName.capitalize()
                         val defaultFlavourSourceSet = sourceSets.findByName(defaultFlavourSourceSetName)
                         if (defaultFlavourSourceSet != null) {
-                            javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(defaultFlavourSourceSet))
-                            kotlinTask.source(getExtension<KotlinSourceSet>(defaultFlavourSourceSet, "kotlin").getKotlin())
+                            processSourceSet(defaultFlavourSourceSet)
                         }
 
                         val flavourSourceSet = sourceSets.findByName(flavourName)
                         if (flavourSourceSet != null) {
-                            javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(flavourSourceSet))
-                            kotlinTask.source(getExtension<KotlinSourceSet>(flavourSourceSet, "kotlin").getKotlin())
+                            processSourceSet(flavourSourceSet)
                         }
                     }
                 }
@@ -403,7 +415,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
 }
 
-    
+
 open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInternal) {
     public fun resolveDependencies(vararg coordinates: String): Collection<File> {
         val dependencyHandler: DependencyHandler = scriptHandler.getDependencies()
