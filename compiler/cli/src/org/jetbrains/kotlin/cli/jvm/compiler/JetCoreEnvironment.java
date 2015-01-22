@@ -95,7 +95,7 @@ public class JetCoreEnvironment {
             }
         });
         JetCoreEnvironment environment =
-                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configFilePaths), configuration);
+                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration);
 
         synchronized (APPLICATION_LOCK) {
             ourProjectCount++;
@@ -111,16 +111,18 @@ public class JetCoreEnvironment {
             @NotNull List<String> extensionConfigs
     ) {
         // Tests are supposed to create a single project and dispose it right after use
-        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, extensionConfigs), configuration);
+        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration);
     }
 
     @NotNull
-    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction(@NotNull List<String> configFilePaths) {
+    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction(
+            @NotNull CompilerConfiguration configuration,
+            @NotNull List<String> configFilePaths) {
         synchronized (APPLICATION_LOCK) {
             if (ourApplicationEnvironment != null) return ourApplicationEnvironment;
 
             Disposable parentDisposable = Disposer.newDisposable();
-            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configFilePaths);
+            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths);
             ourProjectCount = 0;
             Disposer.register(parentDisposable, new Disposable() {
                 @Override
@@ -146,12 +148,13 @@ public class JetCoreEnvironment {
     @NotNull
     private static JavaCoreApplicationEnvironment createApplicationEnvironment(
             @NotNull Disposable parentDisposable,
+            @NotNull CompilerConfiguration configuration,
             @NotNull List<String> configFilePaths
     ) {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
-        for (String config : configFilePaths) {
-            registerApplicationExtensionPointsAndExtensionsFrom(config);
+        for (String configPath : configFilePaths) {
+            registerApplicationExtensionPointsAndExtensionsFrom(configuration, configPath);
         }
 
         registerApplicationServicesForCLI(applicationEnvironment);
@@ -160,9 +163,10 @@ public class JetCoreEnvironment {
         return applicationEnvironment;
     }
 
-    private static void registerApplicationExtensionPointsAndExtensionsFrom(String configFilePath) {
+    private static void registerApplicationExtensionPointsAndExtensionsFrom(@NotNull CompilerConfiguration configuration, @NotNull String configFilePath) {
         IdeaPluginDescriptorImpl descriptor;
-        File jar = PathUtil.getPathUtilJar();
+        CompilerJarLocator locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR);
+        File jar = locator == null ? PathUtil.getPathUtilJar() : locator.getCompilerJar();
         if (jar.isFile()) {
             descriptor = PluginManagerCoreProxy.loadDescriptorFromJar(jar, configFilePath);
         }
