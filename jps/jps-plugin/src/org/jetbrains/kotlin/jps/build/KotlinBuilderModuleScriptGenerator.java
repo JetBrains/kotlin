@@ -89,8 +89,9 @@ public class KotlinBuilderModuleScriptGenerator {
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
-                    getKotlinModuleDependencies(context, target),
+                    getKotlinModuleDependencies(target),
                     moduleSources,
+                    findSourceRoots(context, target),
                     target.isTests(),
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs
@@ -115,12 +116,11 @@ public class KotlinBuilderModuleScriptGenerator {
         return outputDir;
     }
 
-    private static DependencyProvider getKotlinModuleDependencies(final CompileContext context, final ModuleBuildTarget target) {
+    private static DependencyProvider getKotlinModuleDependencies(final ModuleBuildTarget target) {
         return new DependencyProvider() {
             @Override
             public void processClassPath(@NotNull DependencyProcessor processor) {
                 processor.processClassPathSection("Classpath", findClassPathRoots(target));
-                processor.processClassPathSection("Java Source Roots", findSourceRoots(context, target));
                 processor.processAnnotationRoots(findAnnotationRoots(target));
             }
         };
@@ -132,9 +132,9 @@ public class KotlinBuilderModuleScriptGenerator {
     }
 
     @NotNull
-    private static Collection<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
+    private static List<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
         List<JavaSourceRootDescriptor> roots = context.getProjectDescriptor().getBuildRootIndex().getTargetRoots(target, context);
-        Collection<File> result = ContainerUtil.newArrayList();
+        List<File> result = ContainerUtil.newArrayList();
         for (JavaSourceRootDescriptor root : roots) {
             File file = root.getRootFile();
             if (file.exists()) {
