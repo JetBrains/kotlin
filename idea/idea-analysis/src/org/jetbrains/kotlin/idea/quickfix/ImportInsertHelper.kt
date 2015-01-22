@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 
 public trait ImportInsertHelper {
 
@@ -34,7 +36,13 @@ public trait ImportInsertHelper {
 
     public fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
 
-    public fun writeImportToFile(importPath: ImportPath, file: JetFile)
+    public fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective
+
+    /**
+     * Returns true, if the descriptor is imported (even if no import was added because it's not needed)
+     * and false, if importing of this descriptor is either impossible or not allowed by code style.
+     */
+    public fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): Boolean
 
     class object {
         public val INSTANCE: ImportInsertHelper

@@ -1,0 +1,3 @@
+package dependency
+
+fun foo(){}

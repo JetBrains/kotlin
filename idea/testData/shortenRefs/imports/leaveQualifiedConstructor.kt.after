@@ -1,4 +1,4 @@
-// OPTIMIZE_IMPORTS
+// OPTIMIZE_IMPORTS: true
 import java.sql.Date
 
 val x = Date(1)

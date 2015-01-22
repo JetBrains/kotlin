@@ -27,16 +27,15 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -303,17 +302,9 @@ public object ShortenReferences {
         private var optimizeImports = true
 
         fun addImport(target: DeclarationDescriptor): Boolean {
-            val realTarget = if (DescriptorUtils.isClassObject(target)) // references to class object are treated as ones to its owner class
-                target.getContainingDeclaration() as? ClassDescriptor ?: return false
-            else
-                target
-
-            if (realTarget !is ClassDescriptor && realTarget !is PackageViewDescriptor) return false
-            if (realTarget.getContainingDeclaration() is ClassDescriptor) return false // do not insert imports for nested classes
-
+            if (target !is ClassDescriptor && target !is PackageViewDescriptor) return false
             optimizeImports()
-            ImportInsertHelper.INSTANCE.writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(realTarget), false), file)
-            return true
+            return ImportInsertHelper.INSTANCE.importDescriptor(file, target)
         }
 
         fun optimizeImports(): Boolean {
