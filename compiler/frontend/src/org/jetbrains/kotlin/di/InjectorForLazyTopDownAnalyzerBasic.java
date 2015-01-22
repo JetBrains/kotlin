@@ -196,10 +196,13 @@ public class InjectorForLazyTopDownAnalyzerBasic {
 
         this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
         this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
+        this.lazyTopDownAnalyzer.setDeclarationScopeProvider(declarationScopeProvider);
+        this.lazyTopDownAnalyzer.setFileScopeProvider(scopeProvider);
+        this.lazyTopDownAnalyzer.setLazyDeclarationResolver(lazyDeclarationResolver);
         this.lazyTopDownAnalyzer.setModuleDescriptor(module);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
+        this.lazyTopDownAnalyzer.setTopLevelDescriptorProvider(resolveSession);
         this.lazyTopDownAnalyzer.setTrace(bindingTrace);
         this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 

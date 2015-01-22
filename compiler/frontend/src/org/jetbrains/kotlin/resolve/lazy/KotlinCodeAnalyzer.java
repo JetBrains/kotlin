@@ -35,10 +35,6 @@ public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
     ModuleDescriptor getModuleDescriptor();
 
     @NotNull
-    @ReadOnly
-    Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName);
-
-    @NotNull
     ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject);
 
     @NotNull

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -435,14 +435,17 @@ public class DeclarationResolver {
         }
     }
 
-    public void checkRedeclarationsInPackages(@NotNull KotlinCodeAnalyzer resolveSession, @NotNull Multimap<FqName, JetElement> topLevelFqNames) {
+    public void checkRedeclarationsInPackages(
+            @NotNull TopLevelDescriptorProvider topLevelDescriptorProvider,
+            @NotNull Multimap<FqName, JetElement> topLevelFqNames
+    ) {
         for (Map.Entry<FqName, Collection<JetElement>> entry : topLevelFqNames.asMap().entrySet()) {
             FqName fqName = entry.getKey();
             Collection<JetElement> declarationsOrPackageDirectives = entry.getValue();
 
             if (fqName.isRoot()) continue;
 
-            Set<DeclarationDescriptor> descriptors = getTopLevelDescriptorsByFqName(resolveSession, fqName);
+            Set<DeclarationDescriptor> descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName);
 
             if (descriptors.size() > 1) {
                 for (JetElement declarationOrPackageDirective : declarationsOrPackageDirectives) {
@@ -456,12 +459,15 @@ public class DeclarationResolver {
     }
 
     @NotNull
-    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(@NotNull KotlinCodeAnalyzer resolveSession, @NotNull FqName fqName) {
+    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(
+            @NotNull TopLevelDescriptorProvider topLevelDescriptorProvider,
+            @NotNull FqName fqName
+    ) {
         FqName parentFqName = fqName.parent();
 
         Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
 
-        LazyPackageDescriptor parentFragment = resolveSession.getPackageFragment(parentFqName);
+        LazyPackageDescriptor parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName);
         if (parentFragment != null) {
             // Filter out extension properties
             descriptors.addAll(
@@ -477,9 +483,9 @@ public class DeclarationResolver {
             );
         }
 
-        ContainerUtil.addIfNotNull(descriptors, resolveSession.getPackageFragment(fqName));
+        ContainerUtil.addIfNotNull(descriptors, topLevelDescriptorProvider.getPackageFragment(fqName));
 
-        descriptors.addAll(resolveSession.getTopLevelClassDescriptors(fqName));
+        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName));
         return descriptors;
     }
 

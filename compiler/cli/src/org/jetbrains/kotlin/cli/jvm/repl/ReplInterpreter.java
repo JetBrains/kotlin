@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
@@ -99,6 +100,7 @@ public class ReplInterpreter {
 
     private final TopDownAnalysisContext topDownAnalysisContext;
     private final LazyTopDownAnalyzer topDownAnalyzer;
+    private final ResolveSession resolveSession;
     private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
@@ -141,6 +143,7 @@ public class ReplInterpreter {
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzer();
+        this.resolveSession = injector.getResolveSession();
 
         module.initialize(new CompositePackageFragmentProvider(
                 Arrays.asList(
@@ -361,7 +364,7 @@ public class ReplInterpreter {
                 Collections.singletonList(psiFile));
 
         if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile) == null) {
-            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, topDownAnalyzer.getCodeAnalyzer().getPackageFragment(FqName.ROOT));
+            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
         }
 
         boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), messageCollector);
