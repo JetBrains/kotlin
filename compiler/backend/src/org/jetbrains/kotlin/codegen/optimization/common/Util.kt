@@ -31,11 +31,11 @@ val AbstractInsnNode.isMeaningful : Boolean get() =
 class InsnStream(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Stream<AbstractInsnNode> {
     override fun iterator(): Iterator<AbstractInsnNode> {
         return object : Iterator<AbstractInsnNode> {
-            var current = from
+            var current: AbstractInsnNode? = from
             override fun next(): AbstractInsnNode {
                 val result = current
-                current = current.getNext()
-                return result
+                current = current!!.getNext()
+                return result!!
             }
             override fun hasNext() = current != to
         }
