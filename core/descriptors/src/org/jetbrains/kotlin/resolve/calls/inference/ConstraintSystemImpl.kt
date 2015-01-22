@@ -71,9 +71,6 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasTypeConstructorMismatch() = errors.any { it is TypeConstructorMismatch }
 
-        override fun hasTypeConstructorMismatchAt(constraintPosition: ConstraintPosition) =
-                errors.any { it is TypeConstructorMismatch && it.constraintPosition == constraintPosition }
-
         override fun hasOnlyErrorsFromPosition(constraintPosition: ConstraintPosition): Boolean {
             if (isSuccessful()) return false
             if (filterConstraintsOut(constraintPosition).getStatus().isSuccessful()) return true

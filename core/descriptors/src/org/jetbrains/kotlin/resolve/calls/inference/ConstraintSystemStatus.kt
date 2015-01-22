@@ -66,15 +66,6 @@ public trait ConstraintSystemStatus {
     public fun hasTypeConstructorMismatch(): Boolean
 
     /**
-     * Returns <tt>true</tt> if there is type constructor mismatch error at a specific {@code constraintPosition}.
-     *
-     * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
-     * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>
-     * at a constraint position {@code ConstraintPosition.getValueParameterPosition(0)}.
-     */
-    public fun hasTypeConstructorMismatchAt(constraintPosition: ConstraintPosition): Boolean
-
-    /**
      * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */

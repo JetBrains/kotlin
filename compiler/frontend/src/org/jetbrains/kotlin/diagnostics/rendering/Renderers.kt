@@ -188,10 +188,8 @@ public object Renderers {
     public fun renderTypeConstructorMismatchError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val isErrorPosition = Predicate {
-            (constraintPosition: ConstraintPosition) ->
-            inferenceErrorData.constraintSystem.getStatus().hasTypeConstructorMismatchAt(constraintPosition)
-        }
+        val constraintErrors = (inferenceErrorData.constraintSystem as ConstraintSystemImpl).constraintErrors
+        val errorPositions = constraintErrors.filter { it is TypeConstructorMismatch }.map { it.constraintPosition }
         return renderer.table(
                 TabledDescriptorRenderer
                         .newTable()
@@ -199,7 +197,7 @@ public object Renderers {
                         .text("cannot be applied to")
                         .functionArgumentTypeList(inferenceErrorData.receiverArgumentType,
                                                   inferenceErrorData.valueArgumentsTypes,
-                                                  isErrorPosition))
+                                                  { errorPositions.contains(it) }))
     }
 
 
