@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-public class JetConstructorParameterTableModel extends JetFunctionParameterTableModel {
+public class JetConstructorParameterTableModel extends JetCallableParameterTableModel {
     public JetConstructorParameterTableModel(PsiElement context) {
         super(context,
               new ValVarColumn(),

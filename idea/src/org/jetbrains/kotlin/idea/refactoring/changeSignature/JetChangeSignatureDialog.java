@@ -74,7 +74,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         Visibility,
         JetMethodDescriptor,
         ParameterTableModelItemBase<JetParameterInfo>,
-        JetFunctionParameterTableModel
+        JetCallableParameterTableModel
         >
 {
     private final String commandName;
@@ -90,11 +90,11 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     }
 
     @Override
-    protected JetFunctionParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor) {
+    protected JetCallableParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor) {
         if (ChangeSignaturePackage.getIsConstructor(descriptor))
             return new JetConstructorParameterTableModel(myDefaultValueContext);
         else
-            return new JetFunctionParameterTableModel(myDefaultValueContext);
+            return new JetFunctionParameterTableModel(descriptor, myDefaultValueContext);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
             }
         }
 
-        String parameterName = item.parameter.getName();
+        String parameterName = getPresentationName(item);
         String typeText = item.typeCodeFragment.getText();
         String defaultValue = item.defaultValueCodeFragment.getText();
         String separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length() + 1);
@@ -165,6 +165,13 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         return panel;
     }
 
+    private String getPresentationName(ParameterTableModelItemBase<JetParameterInfo> item) {
+        JetParameterInfo parameter = item.parameter;
+        if (parameter == null) return null;
+        if (parameter == myParametersTableModel.getReceiver()) return "<receiver>";
+        return parameter.getName();
+    }
+
     private int getColumnTextMaxLength(Function<ParameterTableModelItemBase<JetParameterInfo>, String> nameFunction) {
         int len = 0;
         for (ParameterTableModelItemBase<JetParameterInfo> item : myParametersTableModel.getItems()) {
@@ -178,7 +185,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         return getColumnTextMaxLength(new Function<ParameterTableModelItemBase<JetParameterInfo>, String>() {
             @Override
             public String fun(ParameterTableModelItemBase<JetParameterInfo> item) {
-                return item.parameter == null ? null : item.parameter.getName();
+                return getPresentationName(item);
             }
         });
     }
@@ -223,7 +230,15 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     protected JBTableRowEditor getTableEditor(final JTable t, final ParameterTableModelItemBase<JetParameterInfo> item) {
         return new JBTableRowEditor() {
             private final List<JComponent> components = new ArrayList<JComponent>();
-            private final boolean defaultValueColumnEnabled = item.parameter.getIsNewParameter();
+            private final EditorTextField nameEditor = new EditorTextField(item.parameter.getName(), getProject(), getFileType());;
+
+            private void updateNameEditor() {
+                nameEditor.setEnabled(item.parameter != myParametersTableModel.getReceiver());
+            }
+
+            private boolean isDefaultColumnEnabled() {
+                return item.parameter.getIsNewParameter() && item.parameter != myMethod.getReceiver();
+            }
 
             @Override
             public void prepareEditor(JTable table, final int row) {
@@ -236,13 +251,15 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                     JComponent component;
                     final int columnFinal = column;
 
-                    if (JetFunctionParameterTableModel.isTypeColumn(columnInfo)) {
+                    if (JetCallableParameterTableModel.isTypeColumn(columnInfo)) {
                         Document document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment);
                         component = editor = new EditorTextField(document, getProject(), getFileType());
                     }
-                    else if (JetFunctionParameterTableModel.isNameColumn(columnInfo))
-                        component = editor = new EditorTextField((String)columnInfo.valueOf(item), getProject(), getFileType());
-                    else if (JetFunctionParameterTableModel.isDefaultValueColumn(columnInfo) && defaultValueColumnEnabled) {
+                    else if (JetCallableParameterTableModel.isNameColumn(columnInfo)) {
+                        component = editor = nameEditor;
+                        updateNameEditor();
+                    }
+                    else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
                         Document document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment);
                         component = editor = new EditorTextField(document, getProject(), getFileType());
                     }
@@ -257,6 +274,21 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                             }
                         });
                         component = comboBox;
+                    }
+                    else if (JetFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
+                        JCheckBox checkBox = new JCheckBox();
+                        checkBox.setSelected(myParametersTableModel.getReceiver() == item.parameter);
+                        checkBox.addItemListener(
+                                new ItemListener() {
+                                    @Override
+                                    public void itemStateChanged(@NotNull ItemEvent e) {
+                                        ((JetFunctionParameterTableModel)myParametersTableModel).setReceiver(item.parameter);
+                                        updateSignature();
+                                        updateNameEditor();
+                                    }
+                                }
+                        );
+                        component = checkBox;
                     }
                     else
                         continue;
@@ -291,11 +323,11 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
                         if (JetConstructorParameterTableModel.isValVarColumn(columnInfo))
                             return ((JComboBox) components.get(column)).getSelectedItem();
-                        else if (JetFunctionParameterTableModel.isTypeColumn(columnInfo))
+                        else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
                             return item.typeCodeFragment;
-                        else if (JetFunctionParameterTableModel.isNameColumn(columnInfo))
+                        else if (JetCallableParameterTableModel.isNameColumn(columnInfo))
                             return ((EditorTextField) components.get(column)).getText();
-                        else if (JetFunctionParameterTableModel.isDefaultValueColumn(columnInfo))
+                        else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo))
                             return item.defaultValueCodeFragment;
                         else
                             return null;
@@ -310,7 +342,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
             }
 
             private int getEditorIndex(int x) {
-                int[] columnLetters = defaultValueColumnEnabled ?
+                int[] columnLetters = isDefaultColumnEnabled() ?
                                       new int[] { 4, getParamNamesMaxLength(), getTypesMaxLength(), getDefaultValuesMaxLength() } :
                                       new int[] { 4, getParamNamesMaxLength(), getTypesMaxLength() };
                 int columnIndex = 0;
@@ -391,7 +423,8 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         for (ParameterTableModelItemBase<JetParameterInfo> item : parameterInfos) {
             String parameterName = item.parameter.getName();
 
-            if (!JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName))
+            if (item.parameter != myParametersTableModel.getReceiver()
+                && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName))
                 throw new ConfigurationException(JetRefactoringBundle.message("parameter.name.is.invalid", parameterName));
             if (getType((JetTypeCodeFragment) item.typeCodeFragment) == null)
                 throw new ConfigurationException(JetRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()));
@@ -420,7 +453,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
         return new JetChangeInfo(myMethod, getMethodName(), getReturnType(), returnTypeText,
-                                 getVisibility(), parameters, null, myDefaultValueContext
+                                 getVisibility(), parameters, myParametersTableModel.getReceiver(), myDefaultValueContext
         );
     }
 
