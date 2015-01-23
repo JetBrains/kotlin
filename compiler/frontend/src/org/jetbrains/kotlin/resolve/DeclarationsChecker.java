@@ -268,9 +268,8 @@ public class DeclarationsChecker {
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         checkConstructorParameters(aClass);
-        if (c.getTopDownAnalysisParameters().isLazy()) {
-            checkTypeParameters(aClass);
-        }
+        checkTypeParameters(aClass);
+
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);

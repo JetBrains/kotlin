@@ -106,16 +106,13 @@ public class BodyResolver {
 
         resolvePropertyDeclarationBodies(c);
 
-        if (!c.getTopDownAnalysisParameters().isLazy()) {
-            resolveClassAnnotations(c);
-        }
         resolveAnonymousInitializers(c);
         resolvePrimaryConstructorParameters(c);
 
         resolveFunctionBodies(c);
 
         // SCRIPT: resolve script bodies
-        scriptBodyResolverResolver.resolveScriptBodies(c, trace);
+        scriptBodyResolverResolver.resolveScriptBodies(c);
 
         if (!c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             computeDeferredTypes();
@@ -306,32 +303,12 @@ public class BodyResolver {
         }
     }
 
-    private void resolveClassAnnotations(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            resolveAnnotationArguments(entry.getValue().getScopeForClassHeaderResolution(), entry.getKey());
-        }
-    }
-
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        if (c.getTopDownAnalysisParameters().isLazy()) {
-            for (Map.Entry<JetClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
-                JetClassInitializer initializer = entry.getKey();
-                ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
-                resolveAnonymousInitializer(c, initializer, descriptor);
-            }
+        for (Map.Entry<JetClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
+            JetClassInitializer initializer = entry.getKey();
+            ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
+            resolveAnonymousInitializer(c, initializer, descriptor);
         }
-        else {
-            for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-                JetClassOrObject classOrObject = entry.getKey();
-                ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
-
-                if (!c.completeAnalysisNeeded(classOrObject)) return;
-                for (JetClassInitializer initializer : classOrObject.getAnonymousInitializers()) {
-                    resolveAnonymousInitializer(c, initializer, descriptor);
-                }
-            }
-        }
-
     }
 
     public void resolveAnonymousInitializer(
@@ -577,9 +554,6 @@ public class BodyResolver {
             JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
-            if (!c.getTopDownAnalysisParameters().isLazy()) {
-                resolveAnnotationArguments(declaringScope, declaration);
-            }
             resolveFunctionBody(c, trace, declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;

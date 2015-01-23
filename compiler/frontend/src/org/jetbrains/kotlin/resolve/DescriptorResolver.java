@@ -109,7 +109,6 @@ public class DescriptorResolver {
     }
 
     public void resolveMutableClassDescriptor(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull JetClass classElement,
             @NotNull MutableClassDescriptor descriptor,
             BindingTrace trace
@@ -125,11 +124,6 @@ public class DescriptorResolver {
         }
         int index = 0;
         for (JetTypeParameter typeParameter : typeParameters) {
-            if (!topDownAnalysisParameters.isLazy()) {
-                // TODO: Support
-                AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
-            }
-
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
                     Annotations.EMPTY,
@@ -149,16 +143,6 @@ public class DescriptorResolver {
         descriptor.setVisibility(resolveVisibilityFromModifiers(classElement, getDefaultClassVisibility(descriptor)));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
-    }
-
-    public void resolveSupertypesForMutableClassDescriptor(
-            @NotNull JetClassOrObject jetClass,
-            @NotNull MutableClassDescriptor descriptor,
-            BindingTrace trace
-    ) {
-        for (JetType supertype : resolveSupertypes(descriptor.getScopeForClassHeaderResolution(), descriptor, jetClass, trace)) {
-            descriptor.addSupertype(supertype);
-        }
     }
 
     public List<JetType> resolveSupertypes(

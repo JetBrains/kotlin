@@ -17,19 +17,10 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ScriptDescriptorImpl;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.lazy.data.DataPackage;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy;
@@ -37,8 +28,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -47,7 +36,6 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 // SCRIPT: resolve symbols in scripts
 public class ScriptBodyResolver {
 
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
 
     @Inject
@@ -56,46 +44,10 @@ public class ScriptBodyResolver {
     }
 
 
-
-    public void resolveScriptBodies(@NotNull BodiesResolveContext c, @NotNull BindingTrace trace) {
+    public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
-            JetScript declaration = e.getKey();
             ScriptDescriptor descriptor = e.getValue();
-
-            if (c.getTopDownAnalysisParameters().isLazy()) {
-                ForceResolveUtil.forceResolveAllContents(descriptor);
-                continue;
-            }
-
-            ScriptDescriptorImpl descriptorImpl = (ScriptDescriptorImpl) descriptor;
-
-            // TODO: lock in resolveScriptDeclarations
-            descriptorImpl.getScopeForBodyResolution().changeLockLevel(WritableScope.LockLevel.READING);
-
-            JetType returnType = resolveScriptReturnType(declaration, descriptor, trace);
-
-            List<PropertyDescriptorImpl> properties = new ArrayList<PropertyDescriptorImpl>();
-            List<SimpleFunctionDescriptor> functions = new ArrayList<SimpleFunctionDescriptor>();
-
-            BindingContext bindingContext = trace.getBindingContext();
-            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
-                if (jetDeclaration instanceof JetProperty) {
-                    if (!DataPackage.shouldBeScriptClassMember(jetDeclaration)) continue;
-
-                    PropertyDescriptorImpl propertyDescriptor = (PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
-                    properties.add(propertyDescriptor);
-                }
-                else if (jetDeclaration instanceof JetNamedFunction) {
-                    if (!DataPackage.shouldBeScriptClassMember(jetDeclaration)) continue;
-
-                    SimpleFunctionDescriptor function = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
-                    assert function != null;
-                    functions.add(function.copy(descriptor.getClassDescriptor(), function.getModality(), function.getVisibility(),
-                                                CallableMemberDescriptor.Kind.DECLARATION, false));
-                }
-            }
-
-            descriptorImpl.initialize(returnType, properties, functions);
+            ForceResolveUtil.forceResolveAllContents(descriptor);
         }
     }
 

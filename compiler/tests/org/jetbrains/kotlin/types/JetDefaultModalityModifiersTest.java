@@ -103,7 +103,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
                     LockBasedStorageManager.NO_LOCKS, new ExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false
             );
             descriptorResolver.resolveMutableClassDescriptor(
-                    parameters, aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
+                    aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
             return classDescriptor;
         }
 
