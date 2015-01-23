@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.components.JavaSourceElementFactoryImpl;
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.LazyResolveToken;
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct;
+import org.jetbrains.kotlin.resolve.LazyLocalClassifierAnalyzer;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
@@ -107,6 +107,7 @@ public class InjectorForLazyResolveWithJava {
     private final JavaFlexibleTypeCapabilitiesProvider javaFlexibleTypeCapabilitiesProvider;
     private final LazyResolveToken lazyResolveToken;
     private final JavaLazyAnalyzerPostConstruct javaLazyAnalyzerPostConstruct;
+    private final LazyLocalClassifierAnalyzer lazyLocalClassifierAnalyzer;
     private final KotlinJvmCheckerProvider kotlinJvmCheckerProvider;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -117,7 +118,6 @@ public class InjectorForLazyResolveWithJava {
     private final DynamicTypesSettings dynamicTypesSettings;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
@@ -178,6 +178,7 @@ public class InjectorForLazyResolveWithJava {
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
         this.lazyResolveToken = new LazyResolveToken();
         this.javaLazyAnalyzerPostConstruct = new JavaLazyAnalyzerPostConstruct();
+        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer();
         this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -188,7 +189,6 @@ public class InjectorForLazyResolveWithJava {
         this.dynamicTypesSettings = new DynamicTypesSettings();
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
         this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
@@ -272,7 +272,7 @@ public class InjectorForLazyResolveWithJava {
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setGlobalContext(globalContext);
-        expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        expressionTypingComponents.setLocalClassifierAnalyzer(lazyLocalClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
 

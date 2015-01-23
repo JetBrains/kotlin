@@ -29,3 +29,19 @@ public trait TopLevelDescriptorProvider {
 
     fun getTopLevelClassDescriptors(fqName: FqName): Collection<ClassDescriptor>
 }
+
+public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
+    private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
+
+    override fun getPackageFragment(fqName: FqName): LazyPackageDescriptor? {
+        shouldNotBeCalled()
+    }
+
+    override fun getScriptDescriptor(script: JetScript): ScriptDescriptor {
+        shouldNotBeCalled()
+    }
+
+    override fun getTopLevelClassDescriptors(fqName: FqName): Collection<ClassDescriptor> {
+        shouldNotBeCalled()
+    }
+}

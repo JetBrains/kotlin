@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.resolve.LazyLocalClassifierAnalyzer;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
@@ -82,6 +82,7 @@ public class InjectorForLazyBodyResolve {
     private final DynamicTypesSettings dynamicTypesSettings;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final LazyLocalClassifierAnalyzer lazyLocalClassifierAnalyzer;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final DeclarationScopeProviderImpl declarationScopeProvider;
@@ -95,7 +96,6 @@ public class InjectorForLazyBodyResolve {
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
@@ -139,6 +139,7 @@ public class InjectorForLazyBodyResolve {
         this.dynamicTypesSettings = dynamicTypesSettings;
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer();
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
@@ -152,7 +153,6 @@ public class InjectorForLazyBodyResolve {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
@@ -240,7 +240,7 @@ public class InjectorForLazyBodyResolve {
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setGlobalContext(globalContext);
-        expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        expressionTypingComponents.setLocalClassifierAnalyzer(lazyLocalClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
 

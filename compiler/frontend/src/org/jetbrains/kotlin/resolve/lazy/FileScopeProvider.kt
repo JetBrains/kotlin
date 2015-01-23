@@ -22,3 +22,9 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 public trait FileScopeProvider {
     fun getFileScope(jetFile: JetFile): JetScope
 }
+
+public object NoFileScopeProvider : FileScopeProvider {
+    override fun getFileScope(jetFile: JetFile): JetScope {
+        throw UnsupportedOperationException("Should not be called")
+    }
+}

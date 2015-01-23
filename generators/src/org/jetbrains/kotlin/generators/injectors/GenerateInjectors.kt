@@ -51,6 +51,8 @@ import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
+import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
+import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -72,6 +74,7 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         listOf(
                 generatorForTopDownAnalyzerBasic(),
                 generatorForLazyTopDownAnalyzerBasic(),
+                generatorForLazyLocalClassifierAnalyzer(),
                 generatorForTopDownAnalyzerForJvm(),
                 generatorForJavaDescriptorResolver(),
                 generatorForLazyResolveWithJava(),
@@ -107,6 +110,23 @@ private fun generatorForLazyTopDownAnalyzerBasic() =
             publicField<LazyTopDownAnalyzerForTopLevel>()
 
             field<AdditionalCheckerProvider.DefaultProvider>()
+            field<LazyLocalClassifierAnalyzer>()
+        }
+
+private fun generatorForLazyLocalClassifierAnalyzer() =
+        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyLocalClassifierAnalyzer") {
+            parameter<Project>()
+            parameter<GlobalContext>(useAsContext = true)
+            parameter<BindingTrace>()
+            parameter<ModuleDescriptor>(name = "module", useAsContext = true)
+            parameter<AdditionalCheckerProvider>()
+            parameter<DynamicTypesSettings>()
+
+            publicField<LazyTopDownAnalyzer>()
+
+            field<NoTopLevelDescriptorProvider>()
+            field<NoFileScopeProvider>()
+            field<LazyLocalClassifierAnalyzer>()
         }
 
 private fun generatorForLazyBodyResolve() =
@@ -119,6 +139,7 @@ private fun generatorForLazyBodyResolve() =
             parameter<DynamicTypesSettings>()
 
             field<ModuleDescriptor>(init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
+            field<LazyLocalClassifierAnalyzer>()
 
             publicField<LazyTopDownAnalyzer>()
         }
@@ -133,6 +154,7 @@ private fun generatorForTopDownAnalyzerForJs() =
             field<MutablePackageFragmentProvider>()
             field<KotlinJsCheckerProvider>()
             field<DynamicTypesAllowed>()
+            field<LazyLocalClassifierAnalyzer>()
         }
 
 private fun generatorForTopDownAnalyzerForJvm() =
@@ -197,6 +219,7 @@ private fun generatorForLazyResolveWithJava() =
             field<JavaFlexibleTypeCapabilitiesProvider>()
             field<LazyResolveToken>()
             field<JavaLazyAnalyzerPostConstruct>()
+            field<LazyLocalClassifierAnalyzer>()
 
             field<KotlinJvmCheckerProvider>()
         }
@@ -261,9 +284,10 @@ private fun generatorForLazyResolve() =
             parameter<DynamicTypesSettings>()
 
             publicField<ResolveSession>()
-            field<ScopeProvider>()
 
+            field<ScopeProvider>()
             field<LazyResolveToken>()
+            field<LazyLocalClassifierAnalyzer>()
         }
 
 private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
@@ -309,6 +333,8 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     field<KotlinJvmCheckerProvider>()
 
     field<VirtualFileFinder>(init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
+
+    field<LazyLocalClassifierAnalyzer>()
 }
 
 

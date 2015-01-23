@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesAllowed;
+import org.jetbrains.kotlin.resolve.LazyLocalClassifierAnalyzer;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
@@ -87,6 +87,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
     private final KotlinJsCheckerProvider kotlinJsCheckerProvider;
     private final DynamicTypesAllowed dynamicTypesAllowed;
+    private final LazyLocalClassifierAnalyzer lazyLocalClassifierAnalyzer;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -95,7 +96,6 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
@@ -145,6 +145,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.kotlinJsCheckerProvider = KotlinJsCheckerProvider.INSTANCE$;
         this.dynamicTypesAllowed = new DynamicTypesAllowed();
+        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -153,7 +154,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
         this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
@@ -242,7 +242,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setGlobalContext(globalContext);
-        expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
+        expressionTypingComponents.setLocalClassifierAnalyzer(lazyLocalClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
 
