@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.debugText.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.Importer
-import org.jetbrains.kotlin.resolve.ImportsResolver
 import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -35,6 +34,8 @@ import kotlin.properties.Delegates
 import com.google.common.collect.ImmutableListMultimap
 import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
 import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameMultiSelector
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.diagnostics.Errors
 
 trait IndexedImports {
     val imports: List<JetImportDirective>
@@ -108,7 +109,7 @@ class LazyImportResolver(
                                                                       importer, traceForImportResolve, mode)
                         importer.doImport(directiveImportScope)
                         if (mode == LookupMode.EVERYTHING) {
-                            ImportsResolver.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
+                            org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }
                     }
                     finally {
@@ -135,9 +136,39 @@ class LazyImportResolver(
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
             val fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile())
-            ImportsResolver.reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
+            reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }
+
+    private fun reportConflictingImport(
+            importDirective: JetImportDirective,
+            fileScope: JetScope,
+            resolvedTo: Collection<DeclarationDescriptor>?,
+            trace: BindingTrace
+    ) {
+
+        val importedReference = importDirective.getImportedReference()
+        if (importedReference == null || resolvedTo == null) return
+
+        val aliasName = JetPsiUtil.getAliasName(importDirective)
+        if (aliasName == null) return
+
+        if (resolvedTo.size() != 1) return
+
+        when (resolvedTo.single()) {
+            is ClassDescriptor -> {
+                if (fileScope.getClassifier(aliasName) == null) {
+                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
+                }
+            }
+            is PackageViewDescriptor -> {
+                if (fileScope.getPackage(aliasName) == null) {
+                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
+                }
+            }
+        }
+    }
+
 
     public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,

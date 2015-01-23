@@ -17,25 +17,19 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.Collection;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.CONFLICTING_IMPORT;
 import static org.jetbrains.kotlin.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
 
-public class ImportsResolver {
+public class PlatformTypesMappedToKotlinChecker {
 
     public static void checkPlatformTypesMappedToKotlin(
             @NotNull ModuleDescriptor module,
@@ -63,34 +57,6 @@ public class ImportsResolver {
         Collection<ClassDescriptor> kotlinAnalogsForClass = platformToKotlinMap.mapPlatformClass((ClassDescriptor) descriptor);
         if (!kotlinAnalogsForClass.isEmpty()) {
             trace.report(PLATFORM_CLASS_MAPPED_TO_KOTLIN.on(element, kotlinAnalogsForClass));
-        }
-    }
-
-    public static void reportConflictingImport(
-            @NotNull JetImportDirective importDirective,
-            @NotNull JetScope fileScope,
-            @Nullable Collection<? extends DeclarationDescriptor> resolvedTo,
-            @NotNull BindingTrace trace
-    ) {
-
-        JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || resolvedTo == null) return;
-
-        Name aliasName = JetPsiUtil.getAliasName(importDirective);
-        if (aliasName == null) return;
-
-        if (resolvedTo.size() != 1) return;
-
-        DeclarationDescriptor target = resolvedTo.iterator().next();
-        if (target instanceof ClassDescriptor) {
-            if (fileScope.getClassifier(aliasName) == null) {
-                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
-            }
-        }
-        else if (target instanceof PackageViewDescriptor) {
-            if (fileScope.getPackage(aliasName) == null) {
-                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
-            }
         }
     }
 }
