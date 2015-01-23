@@ -273,7 +273,7 @@ public open class LazyClassMemberScope(
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             val ownerInfo = declarationProvider.getOwnerInfo()
             val classOrObject = ownerInfo.getCorrespondingClassOrObject()
-            if (!thisDescriptor.getKind().isSingleton()) {
+            if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
                 assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
                 classOrObject as JetClass
                 val constructor = c.descriptorResolver.resolvePrimaryConstructorDescriptor(

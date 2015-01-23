@@ -33,7 +33,9 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
 
     protected JetObjectInfo(@NotNull JetObjectDeclaration element) {
         super(element);
-        this.kind = element.isClassObject() ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT;
+        this.kind = element.isObjectLiteral()
+                    ? ClassKind.CLASS
+                    : (element.isClassObject() ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT);
     }
 
     @Override
