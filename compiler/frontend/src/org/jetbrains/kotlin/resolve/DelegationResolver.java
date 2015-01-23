@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
 import org.jetbrains.kotlin.psi.JetDelegatorByExpressionSpecifier;
@@ -30,50 +28,16 @@ import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public final class DelegationResolver<T extends CallableMemberDescriptor> {
-
-    public static void generateDelegatesInAClass(
-            @NotNull MutableClassDescriptor classDescriptor,
-            @NotNull final BindingTrace trace,
-            @NotNull JetClassOrObject jetClassOrObject
-    ) {
-        TypeResolver eagerTypeResolver = new TypeResolver() {
-            @Nullable
-            @Override
-            public JetType resolve(@NotNull JetTypeReference reference) {
-                return trace.get(BindingContext.TYPE, reference);
-            }
-        };
-        MemberExtractor<CallableMemberDescriptor> eagerExtractor = new MemberExtractor<CallableMemberDescriptor>() {
-            @NotNull
-            @Override
-            public Collection<CallableMemberDescriptor> getMembersByType(@NotNull JetType type) {
-                //noinspection unchecked
-                return (Collection) Collections2.filter(type.getMemberScope().getAllDescriptors(),
-                                                        Predicates.instanceOf(CallableMemberDescriptor.class));
-            }
-        };
-        Set<CallableMemberDescriptor> existingMembers = classDescriptor.getAllCallableMembers();
-        Collection<CallableMemberDescriptor> delegatedMembers =
-                generateDelegatedMembers(jetClassOrObject, classDescriptor, existingMembers, trace, eagerExtractor, eagerTypeResolver);
-        for (CallableMemberDescriptor descriptor : delegatedMembers) {
-            if (descriptor instanceof PropertyDescriptor) {
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
-            }
-            else if (descriptor instanceof SimpleFunctionDescriptor) {
-                SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
-                classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
-            }
-        }
-    }
-
 
     @NotNull
     public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(
