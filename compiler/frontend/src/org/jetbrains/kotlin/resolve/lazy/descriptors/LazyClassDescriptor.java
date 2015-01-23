@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -34,10 +36,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
-import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil;
@@ -57,8 +56,10 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
+import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.kotlin.name.SpecialNames.getClassObjectName;
+import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
@@ -620,10 +621,40 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                     if (supertypeDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
-                        TypeHierarchyResolver.reportCyclicInheritanceHierarchyError(c.getTrace(), LazyClassDescriptor.this,
-                                                                                    superclass);
+                        reportCyclicInheritanceHierarchyError(c.getTrace(), LazyClassDescriptor.this, superclass);
                     }
                 }
+            }
+        }
+
+        private void reportCyclicInheritanceHierarchyError(
+                @NotNull BindingTrace trace,
+                @NotNull ClassDescriptor classDescriptor,
+                @NotNull ClassDescriptor superclass
+        ) {
+            PsiElement psiElement = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
+
+            PsiElement elementToMark = null;
+            if (psiElement instanceof JetClassOrObject) {
+                JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
+                for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+                    JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                    if (typeReference == null) continue;
+                    JetType supertype = trace.get(TYPE, typeReference);
+                    if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
+                        elementToMark = typeReference;
+                    }
+                }
+            }
+            if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
+                PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
+                PsiElement nameIdentifier = namedElement.getNameIdentifier();
+                if (nameIdentifier != null) {
+                    elementToMark = nameIdentifier;
+                }
+            }
+            if (elementToMark != null) {
+                trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
             }
         }
 
