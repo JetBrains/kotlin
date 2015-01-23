@@ -46,23 +46,14 @@ import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
-    @NotNull
     private ScriptBodyResolver scriptBodyResolverResolver;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
-    @NotNull
     private CallResolver callResolver;
-    @NotNull
     private ObservableBindingTrace trace;
-    @NotNull
     private ControlFlowAnalyzer controlFlowAnalyzer;
-    @NotNull
     private DeclarationsChecker declarationsChecker;
-    @NotNull
     private AnnotationResolver annotationResolver;
-    @NotNull
     private DelegatedPropertyResolver delegatedPropertyResolver;
-    @NotNull
     private FunctionAnalyzerExtension functionAnalyzerExtension;
 
     @Inject
