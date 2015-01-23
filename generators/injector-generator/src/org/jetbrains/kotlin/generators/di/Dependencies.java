@@ -67,7 +67,7 @@ public class Dependencies {
         DiType typeToInitialize = InjectorGeneratorUtil.getEffectiveFieldType(field);
 
         // Sort setters in order to get deterministic behavior
-        List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getDeclaredMethods());
+        List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getMethods());
         Collections.sort(declaredMethods, new Comparator<Method>() {
             @Override
             public int compare(@NotNull Method o1, @NotNull Method o2) {
