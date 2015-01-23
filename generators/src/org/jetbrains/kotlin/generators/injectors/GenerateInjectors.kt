@@ -76,7 +76,6 @@ private val DI_DEFAULT_PACKAGE = "org.jetbrains.kotlin.di"
 
 public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         listOf(
-                generatorForTopDownAnalyzerBasic(),
                 generatorForLazyTopDownAnalyzerBasic(),
                 generatorForLazyLocalClassifierAnalyzer(),
                 generatorForTopDownAnalyzerForJvm(),
@@ -90,21 +89,6 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForLazyBodyResolve(),
                 generatorForReplWithJava()
         )
-
-private fun generatorForTopDownAnalyzerBasic() =
-        generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForTopDownAnalyzerBasic") {
-            parameter<Project>()
-            parameter<GlobalContext>(useAsContext = true)
-            parameter<BindingTrace>()
-            publicParameter<ModuleDescriptor>(useAsContext = true)
-
-            publicField<TopDownAnalyzer>()
-
-            field<MutablePackageFragmentProvider>()
-
-            parameter<AdditionalCheckerProvider>()
-            parameter<DynamicTypesSettings>()
-        }
 
 private fun generatorForLazyTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyTopDownAnalyzerBasic") {
