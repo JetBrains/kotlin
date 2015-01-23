@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.context.LazyResolveToken;
-import org.jetbrains.kotlin.resolve.LazyLocalClassifierAnalyzer;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -38,13 +37,14 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
-import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
@@ -74,7 +74,6 @@ public class InjectorForLazyResolve {
     private final ResolveSession resolveSession;
     private final ScopeProvider scopeProvider;
     private final LazyResolveToken lazyResolveToken;
-    private final LazyLocalClassifierAnalyzer lazyLocalClassifierAnalyzer;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -83,13 +82,14 @@ public class InjectorForLazyResolve {
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
-    private final ReflectionTypes reflectionTypes;
-    private final CallExpressionResolver callExpressionResolver;
+    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final ReflectionTypes reflectionTypes;
+    private final CallExpressionResolver callExpressionResolver;
     private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -122,12 +122,7 @@ public class InjectorForLazyResolve {
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyResolveToken = new LazyResolveToken();
-        this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
-        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken, dynamicTypesSettings);
-        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingComponents = new ExpressionTypingComponents();
@@ -135,9 +130,14 @@ public class InjectorForLazyResolve {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.descriptorResolver = new DescriptorResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken, dynamicTypesSettings);
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
-        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -193,7 +193,7 @@ public class InjectorForLazyResolve {
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setGlobalContext(globalContext);
-        expressionTypingComponents.setLocalClassifierAnalyzer(lazyLocalClassifierAnalyzer);
+        expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingComponents.setReflectionTypes(reflectionTypes);
 
@@ -201,8 +201,6 @@ public class InjectorForLazyResolve {
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
         forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
         forLoopConventionsChecker.setProject(project);
-
-        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setBuiltIns(kotlinBuiltIns);
@@ -214,6 +212,8 @@ public class InjectorForLazyResolve {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
