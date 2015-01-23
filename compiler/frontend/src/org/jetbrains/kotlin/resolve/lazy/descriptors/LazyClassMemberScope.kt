@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 
 public open class LazyClassMemberScope(
         c: LazyClassContext,
@@ -272,7 +273,7 @@ public open class LazyClassMemberScope(
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             val ownerInfo = declarationProvider.getOwnerInfo()
             val classOrObject = ownerInfo.getCorrespondingClassOrObject()
-            if (!thisDescriptor.getKind().isSingleton()) {
+            if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
                 assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
                 classOrObject as JetClass
                 val constructor = c.descriptorResolver.resolvePrimaryConstructorDescriptor(
