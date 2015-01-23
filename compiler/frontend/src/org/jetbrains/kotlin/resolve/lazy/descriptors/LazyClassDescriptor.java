@@ -107,8 +107,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         );
         this.c = c;
 
-        if (classLikeInfo.getCorrespondingClassOrObject() != null) {
-            this.c.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
+        @Nullable JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
+        if (classOrObject != null) {
+            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
         }
         this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
 
@@ -129,9 +130,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
+
+        boolean isLocal = classOrObject != null && JetPsiUtil.isLocal(classOrObject);
         this.visibility = isSyntheticClassObject(this)
                           ? DescriptorUtils.getSyntheticClassObjectVisibility()
-                          : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
+                          : isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
 
         StorageManager storageManager = c.getStorageManager();
@@ -408,7 +411,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     private boolean isClassObjectAllowed() {
-        return !(getKind().isSingleton() || isInner());
+        return !(getKind().isSingleton() || isInner() || DescriptorUtils.isLocal(this));
     }
 
     @NotNull
