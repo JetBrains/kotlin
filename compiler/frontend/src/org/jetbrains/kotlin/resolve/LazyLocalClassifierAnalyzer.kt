@@ -77,6 +77,7 @@ public class LazyLocalClassifierAnalyzer(
                 additionalCheckerProvider,
                 dynamicTypesSettings,
                 LocalClassDescriptorManager(
+                        scope,
                         classOrObject,
                         containingDeclaration,
                         globalContext.storageManager,
@@ -96,6 +97,7 @@ public class LazyLocalClassifierAnalyzer(
 }
 
 class LocalClassDescriptorManager(
+        val writableScope: WritableScope?,
         val myClass: JetClassOrObject,
         val containingDeclaration: DeclarationDescriptor,
         val storageManager: StorageManager,
@@ -138,6 +140,7 @@ class LocalClassDescriptorManager(
                     if (classOrObject.isObjectLiteral()) SpecialNames.NO_NAME_PROVIDED else classOrObject.getNameAsName(),
                     JetClassInfoUtil.createClassLikeInfo(classOrObject)
             )
+            writableScope?.addClassifierDescriptor(classDescriptor!!)
         }
 
         return classDescriptor!!
