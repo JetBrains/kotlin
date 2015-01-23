@@ -63,8 +63,7 @@ public class LocalClassifierAnalyzer {
                 dynamicTypesSettings
         );
 
-        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
-        c.setOuterDataFlowInfo(context.dataFlowInfo);
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters, context.dataFlowInfo);
 
         injector.getTopDownAnalyzer().doProcess(
                c,

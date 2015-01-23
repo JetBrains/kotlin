@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 
 public trait DeclarationScopeProvider {
     fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope
+    fun getOuterDataFlowInfoForDeclaration(elementOfDeclaration: PsiElement): DataFlowInfo
 }

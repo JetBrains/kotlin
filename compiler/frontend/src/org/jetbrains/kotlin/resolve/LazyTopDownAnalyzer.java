@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
@@ -119,11 +120,13 @@ public class LazyTopDownAnalyzer {
     @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
-            @NotNull Collection<? extends PsiElement> declarations
+            @NotNull Collection<? extends PsiElement> declarations,
+            @NotNull DataFlowInfo outerDataFlowInfo
     ) {
         assert topDownAnalysisParameters.isLazy() : "Lazy analyzer is run in non-lazy mode";
 
-        final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters, outerDataFlowInfo);
+
         final Multimap<FqName, JetElement> topLevelFqNames = HashMultimap.create();
 
         final List<JetProperty> properties = new ArrayList<JetProperty>();

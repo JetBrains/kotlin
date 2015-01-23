@@ -39,7 +39,7 @@ import java.util.*;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
 
-    private DataFlowInfo outerDataFlowInfo = DataFlowInfo.EMPTY;
+    private final DataFlowInfo outerDataFlowInfo;
 
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
@@ -66,8 +66,9 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private StringBuilder debugOutput;
 
-    public TopDownAnalysisContext(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
+    public TopDownAnalysisContext(@NotNull TopDownAnalysisParameters topDownAnalysisParameters, @NotNull DataFlowInfo outerDataFlowInfo) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
+        this.outerDataFlowInfo = outerDataFlowInfo;
     }
 
     @Override
@@ -197,10 +198,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @NotNull
     public DataFlowInfo getOuterDataFlowInfo() {
         return outerDataFlowInfo;
-    }
-
-    public void setOuterDataFlowInfo(@NotNull DataFlowInfo outerDataFlowInfo) {
-        this.outerDataFlowInfo = outerDataFlowInfo;
     }
 
     @NotNull

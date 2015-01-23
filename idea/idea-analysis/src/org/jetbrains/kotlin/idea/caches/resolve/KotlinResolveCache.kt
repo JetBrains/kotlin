@@ -263,7 +263,8 @@ private object KotlinResolveDataProvider {
                             /* analyzingBootstrapLibrary = */ false,
                             /* declaredLocally = */ false
                     ),
-                    listOf(analyzableElement)
+                    listOf(analyzableElement),
+                    DataFlowInfo.EMPTY
             )
             return AnalysisResult.success(
                     trace.getBindingContext(),

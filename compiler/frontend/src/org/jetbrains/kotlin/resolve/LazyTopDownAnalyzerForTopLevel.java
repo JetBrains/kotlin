@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
 
@@ -66,7 +67,7 @@ public class LazyTopDownAnalyzerForTopLevel {
 
         ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
 
-        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisParameters, files);
+        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisParameters, files, DataFlowInfo.EMPTY);
 
         resolveImportsInAllFiles(c, resolveSession);
 
