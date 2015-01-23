@@ -33,7 +33,6 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -63,87 +62,10 @@ public class OverrideResolver {
 
 
 
-    public void process(@NotNull TopDownAnalysisContext c) {
-        //all created fake descriptors are stored to resolve visibility on them later
-        generateOverridesAndDelegation(c);
-
-        check(c);
-    }
-
     public void check(@NotNull TopDownAnalysisContext c) {
         checkVisibility(c);
         checkOverrides(c);
         checkParameterOverridesForAllClasses(c);
-    }
-
-    /**
-     * Generate fake overrides and add overridden descriptors to existing descriptors.
-     */
-    private void generateOverridesAndDelegation(@NotNull TopDownAnalysisContext c) {
-        Set<ClassDescriptorWithResolutionScopes> ourClasses = new HashSet<ClassDescriptorWithResolutionScopes>(c.getAllClasses());
-        Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
-
-        for (MutableClassDescriptor klass : ContainerUtil.reverse(c.getClassesTopologicalOrder())) {
-            if (ourClasses.contains(klass)) {
-                generateOverridesAndDelegationInAClass(klass, processed, ourClasses);
-
-                MutableClassDescriptor classObject = klass.getClassObjectDescriptor();
-                if (classObject != null) {
-                    generateOverridesAndDelegationInAClass(classObject, processed, ourClasses);
-                }
-            }
-        }
-    }
-
-    private void generateOverridesAndDelegationInAClass(
-            @NotNull MutableClassDescriptor classDescriptor,
-            @NotNull Set<ClassifierDescriptor> processed,
-            @NotNull Set<ClassDescriptorWithResolutionScopes> classesBeingAnalyzed
-            // to filter out classes such as stdlib and others that come from dependencies
-    ) {
-        if (!processed.add(classDescriptor)) {
-            return;
-        }
-
-        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            ClassDescriptor superclass = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
-            if (superclass instanceof MutableClassDescriptor && classesBeingAnalyzed.contains(superclass)) {
-                generateOverridesAndDelegationInAClass((MutableClassDescriptor) superclass, processed, classesBeingAnalyzed);
-            }
-        }
-
-        JetClassOrObject classOrObject = (JetClassOrObject) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
-        if (classOrObject != null) {
-            DelegationResolver.generateDelegatesInAClass(classDescriptor, trace, classOrObject);
-        }
-
-        generateOverridesInAClass(classDescriptor);
-    }
-
-    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor) {
-        generateOverridesInAClass(classDescriptor, classDescriptor.getDeclaredCallableMembers(), new OverridingUtil.DescriptorSink() {
-            @Override
-            public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                if (fakeOverride instanceof PropertyDescriptor) {
-                    classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
-                }
-                else if (fakeOverride instanceof SimpleFunctionDescriptor) {
-                    classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
-                }
-                else {
-                    throw new IllegalStateException(fakeOverride.getClass().getName());
-                }
-            }
-
-            @Override
-            public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                JetDeclaration declaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent);
-                //noinspection ConstantConditions
-                trace.report(CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
-            }
-        });
-
-        resolveUnknownVisibilities(classDescriptor.getAllCallableMembers(), trace);
     }
 
     public static void generateOverridesInAClass(
