@@ -57,7 +57,7 @@ public class TypeResolver(
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false), typeReference)
     }
 
-    public fun resolveType(c: TypeResolutionContext, typeReference: JetTypeReference): JetType {
+    private fun resolveType(c: TypeResolutionContext, typeReference: JetTypeReference): JetType {
         assert(!c.allowBareTypes, "Use resolvePossiblyBareType() when bare types are allowed")
         return resolvePossiblyBareType(c, typeReference).getActualType()
     }
