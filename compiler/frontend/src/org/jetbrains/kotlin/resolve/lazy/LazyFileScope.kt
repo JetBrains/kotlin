@@ -75,9 +75,6 @@ class LazyFileScope private(
                                   ?: throw IllegalStateException("Root package not found")
             val packageFragment = resolveSession.getPackageFragment(file.getPackageFqName())
 
-            val onlyVisibleFilter = VisibilityFilter(packageFragment, true)
-            val onlyInvisibleFilter = VisibilityFilter(packageFragment, false)
-
             val aliasImportResolver = LazyImportResolver(resolveSession, packageView, AliasImportsIndexed(imports), traceForImportResolve, true)
             val allUnderImportResolver = LazyImportResolver(resolveSession, packageView, AllUnderImportsIndexed(imports), traceForImportResolve, true)
             val defaultAliasImportResolver = LazyImportResolver(resolveSession, rootPackageView, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
@@ -85,34 +82,22 @@ class LazyFileScope private(
 
             val scopeChain = ArrayList<JetScope>()
 
-            scopeChain.add(LazyImportScope(aliasImportResolver, { true }, "Alias imports in $debugName"))
+            scopeChain.add(LazyImportScope(aliasImportResolver, packageFragment, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName"))
 
             scopeChain.add(NoSubpackagesInPackageScope(packageView)) //TODO: problems with visibility too
             scopeChain.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()))
 
-            scopeChain.add(LazyImportScope(defaultAliasImportResolver, { true }, "Default alias imports in $debugName"))
+            scopeChain.add(LazyImportScope(defaultAliasImportResolver, packageFragment, LazyImportScope.FilteringKind.ALL, "Default alias imports in $debugName"))
 
-            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, onlyVisibleFilter, "Default all under imports in $debugName (visible classes)"))
-            scopeChain.add(LazyImportScope(allUnderImportResolver, onlyVisibleFilter, "All under imports in $debugName (visible classes)"))
+            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, packageFragment, LazyImportScope.FilteringKind.VISIBLE_CLASSES, "Default all under imports in $debugName (visible classes)"))
+            scopeChain.add(LazyImportScope(allUnderImportResolver, packageFragment, LazyImportScope.FilteringKind.VISIBLE_CLASSES, "All under imports in $debugName (visible classes)"))
 
             scopeChain.addAll(additionalScopes)
 
-            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, onlyInvisibleFilter, "Default all under imports in $debugName (invisible classes only)"))
-            scopeChain.add(LazyImportScope(allUnderImportResolver, onlyInvisibleFilter, "All under imports in $debugName (invisible classes only)"))
+            scopeChain.add(LazyImportScope(defaultAllUnderImportResolver, packageFragment, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "Default all under imports in $debugName (invisible classes only)"))
+            scopeChain.add(LazyImportScope(allUnderImportResolver, packageFragment, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "All under imports in $debugName (invisible classes only)"))
 
             return LazyFileScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
-        }
-
-        private class VisibilityFilter(
-                private val packageFragment: PackageFragmentDescriptor,
-                private val visible: Boolean
-        ) : (DeclarationDescriptor) -> Boolean {
-            override fun invoke(descriptor: DeclarationDescriptor): Boolean {
-                if (descriptor !is ClassDescriptor) return visible
-                val visibility = descriptor.getVisibility()
-                if (!visibility.mustCheckInImports()) return visible
-                return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, packageFragment) == visible
-            }
         }
 
         private fun getPackageViewDescriptor(file: JetFile, resolveSession: ResolveSession): PackageViewDescriptor {
