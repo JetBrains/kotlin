@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
@@ -155,7 +156,7 @@ public class TopDownAnalyzer {
         //noinspection deprecation
         assert !topDownAnalysisParameters.isLazy() : "Lazy resolve must be disabled for this method";
 
-        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters, DataFlowInfo.EMPTY);
         CompositePackageFragmentProvider provider =
                 new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(packageFragmentProvider), additionalProviders));
 

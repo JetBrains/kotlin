@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.JetImportDirective;
 import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScopeProvider implements DeclarationScopeProvider, FileScopeProvider {
+
     public static class AdditionalFileScopeProvider {
         @NotNull
         public List<JetScope> scopes(@NotNull JetFile file) {
@@ -112,5 +114,11 @@ public class ScopeProvider implements DeclarationScopeProvider, FileScopeProvide
     @Override
     public JetScope getResolutionScopeForDeclaration(@NotNull PsiElement elementOfDeclaration) {
         return declarationScopeProvider.getResolutionScopeForDeclaration(elementOfDeclaration);
+    }
+
+    @NotNull
+    @Override
+    public DataFlowInfo getOuterDataFlowInfoForDeclaration(@NotNull PsiElement elementOfDeclaration) {
+        return declarationScopeProvider.getOuterDataFlowInfoForDeclaration(elementOfDeclaration);
     }
 }

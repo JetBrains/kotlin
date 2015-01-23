@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
@@ -45,6 +44,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 
 public class LazyLocalClassifierAnalyzer(
         val descriptorResolver: DescriptorResolver,
@@ -64,9 +66,6 @@ public class LazyLocalClassifierAnalyzer(
                 globalContext.storageManager,
                 globalContext.exceptionTracker,
                 Predicates.equalTo(classOrObject.getContainingFile()), false, true)
-
-        val c = TopDownAnalysisContext(topDownAnalysisParameters)
-        c.setOuterDataFlowInfo(context.dataFlowInfo)
 
         val moduleDescriptor = DescriptorUtils.getContainingModule(containingDeclaration)
         val injector = InjectorForLazyLocalClassifierAnalyzer(
@@ -91,7 +90,8 @@ public class LazyLocalClassifierAnalyzer(
 
         injector.getLazyTopDownAnalyzer().analyzeDeclarations(
                 topDownAnalysisParameters,
-                listOf(classOrObject)
+                listOf(classOrObject),
+                context.dataFlowInfo
         )
     }
 }
@@ -110,7 +110,8 @@ class LocalClassDescriptorManager(
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
 
-    fun isMyClass(c: PsiElement): Boolean = c == myClass
+    fun isMyClass(element: PsiElement): Boolean = element == myClass
+    fun insideMyClass(element: PsiElement): Boolean = PsiTreeUtil.isAncestor(myClass, element, false)
 
     fun createClassDescriptor(classOrObject: JetClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
         assert(isMyClass(classOrObject)) {"Called on a wrong class: ${classOrObject.getDebugText()}"}
@@ -176,5 +177,13 @@ class DeclarationScopeProviderForLocalClassifierAnalyzer(
             return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as JetClassOrObject)
         }
         return super.getResolutionScopeForDeclaration(elementOfDeclaration)
+    }
+
+    override fun getOuterDataFlowInfoForDeclaration(elementOfDeclaration: PsiElement): DataFlowInfo {
+        // nested (non-inner) classes and class objects are forbidden in local classes, so it's enough to be simply inside the class
+        if (localClassDescriptorManager.insideMyClass(elementOfDeclaration)) {
+            return localClassDescriptorManager.expressionTypingContext.dataFlowInfo
+        }
+        return super.getOuterDataFlowInfoForDeclaration(elementOfDeclaration)
     }
 }

@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.parsing.JetParserDefinition;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -141,7 +142,7 @@ public class ReplInterpreter {
                 scopeProvider
         );
 
-        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
+        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters, DataFlowInfo.EMPTY);
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzer();
         this.resolveSession = injector.getResolveSession();
 
@@ -361,7 +362,9 @@ public class ReplInterpreter {
 
         TopDownAnalysisContext context = topDownAnalyzer.analyzeDeclarations(
                 topDownAnalysisContext.getTopDownAnalysisParameters(),
-                Collections.singletonList(psiFile));
+                Collections.singletonList(psiFile),
+                DataFlowInfo.EMPTY
+        );
 
         if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile) == null) {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));

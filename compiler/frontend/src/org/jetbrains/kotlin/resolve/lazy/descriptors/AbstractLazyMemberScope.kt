@@ -74,9 +74,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
                     resolutionScope,
                     functionDeclaration,
                     trace,
-                    // this relies on the assumption that a lazily resolved declaration is not a local one,
-                    // thus doesn't have a surrounding data flow
-                    DataFlowInfo.EMPTY))
+                    c.scopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration)))
         }
 
         getNonDeclaredFunctions(name, result)
@@ -101,9 +99,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
                     resolutionScope,
                     propertyDeclaration,
                     trace,
-                    // this relies on the assumption that a lazily resolved declaration is not a local one,
-                    // thus doesn't have a surrounding data flow
-                    DataFlowInfo.EMPTY)
+                    c.scopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration))
             result.add(propertyDescriptor)
             AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations(), trace)
         }
