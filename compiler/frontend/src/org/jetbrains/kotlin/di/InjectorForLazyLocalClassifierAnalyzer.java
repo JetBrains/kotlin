@@ -59,8 +59,6 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
 import org.jetbrains.kotlin.resolve.DeclarationResolver;
-import org.jetbrains.kotlin.resolve.ImportsResolver;
-import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
@@ -114,8 +112,6 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
     private final DeclarationResolver declarationResolver;
-    private final ImportsResolver importsResolver;
-    private final JetImportsFactory jetImportsFactory;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final VarianceChecker varianceChecker;
@@ -172,8 +168,6 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.declarationResolver = new DeclarationResolver();
-        this.importsResolver = new ImportsResolver();
-        this.jetImportsFactory = new JetImportsFactory();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
@@ -273,16 +267,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setDescriptorResolver(descriptorResolver);
-        declarationResolver.setImportsResolver(importsResolver);
         declarationResolver.setTrace(bindingTrace);
-
-        importsResolver.setImportsFactory(jetImportsFactory);
-        importsResolver.setModuleDescriptor(module);
-        importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-        importsResolver.setTrace(bindingTrace);
-
-        jetImportsFactory.setProject(project);
 
         overloadResolver.setTrace(bindingTrace);
 
