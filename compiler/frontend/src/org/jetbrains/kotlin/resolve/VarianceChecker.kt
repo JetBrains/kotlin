@@ -49,14 +49,6 @@ import kotlin.platform.platformStatic
 
 class VarianceChecker(private val trace: BindingTrace) {
 
-    fun process(c: TopDownAnalysisContext) {
-        for (member in c.getMembers().values()) {
-            recordPrivateToThisIfNeeded(trace, member)
-        }
-
-        check(c)
-    }
-
     fun check(c: TopDownAnalysisContext) {
         checkClasses(c)
         checkMembers(c)
