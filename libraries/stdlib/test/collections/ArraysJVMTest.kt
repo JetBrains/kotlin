@@ -214,4 +214,93 @@ class ArraysJVMTest {
         expect("1") { xArray[0] }
         expect("2") { xArray[1] }
     }
+
+    test fun drop() {
+        expect(listOf(), { intArray().drop(1) })
+        expect(listOf(), { intArray(1).drop(1) })
+        expect(listOf(3), { intArray(2, 3).drop(1) })
+        expect(listOf(2000000000000), { longArray(3000000000000, 2000000000000).drop(1) })
+        expect(listOf(3.toByte()), { byteArray(2, 3).drop(1) })
+        expect(listOf(3.toShort()), { shortArray(2, 3).drop(1) })
+        expect(listOf(3.0f), { floatArray(2f, 3f).drop(1) })
+        expect(listOf(3.0), { doubleArray(2.0, 3.0).drop(1) })
+        expect(listOf(false), { booleanArray(true, false).drop(1) })
+        expect(listOf('b'), { charArray('a', 'b').drop(1) })
+        expect(listOf("b"), { array("a", "b").drop(1) })
+    }
+
+    test fun dropWhile() {
+        expect(listOf(), { intArray().dropWhile { it < 3 } })
+        expect(listOf(), { intArray(1).dropWhile { it < 3 } })
+        expect(listOf(3, 1), { intArray(2, 3, 1).dropWhile { it < 3 } })
+        expect(listOf(2000000000000), { longArray(3000000000000, 2000000000000).dropWhile { it > 2000000000000 } })
+        expect(listOf(3.toByte(), 1.toByte()), { byteArray(2, 3, 1).dropWhile { it < 3 } })
+        expect(listOf(3.toShort(), 1.toShort()), { shortArray(2, 3, 1).dropWhile { it < 3 } })
+        expect(listOf(3f, 1f), { floatArray(2f, 3f, 1f).dropWhile { it < 3 } })
+        expect(listOf(3.0, 1.0), { doubleArray(2.0, 3.0, 1.0).dropWhile { it < 3 } })
+        expect(listOf(false, true), { booleanArray(true, false, true).dropWhile { it } })
+        expect(listOf('b', 'a'), { charArray('a', 'b', 'a').dropWhile { it < 'b' } })
+        expect(listOf("b", "a"), { array("a", "b", "a").dropWhile { it < "b" } })
+    }
+
+    test fun take() {
+        expect(listOf(), { intArray().take(1) })
+        expect(listOf(1), { intArray(1).take(1) })
+        expect(listOf(2), { intArray(2, 3).take(1) })
+        expect(listOf(3000000000000), { longArray(3000000000000, 2000000000000).take(1) })
+        expect(listOf(2.toByte()), { byteArray(2, 3).take(1) })
+        expect(listOf(2.toShort()), { shortArray(2, 3).take(1) })
+        expect(listOf(2.0f), { floatArray(2f, 3f).take(1) })
+        expect(listOf(2.0), { doubleArray(2.0, 3.0).take(1) })
+        expect(listOf(true), { booleanArray(true, false).take(1) })
+        expect(listOf('a'), { charArray('a', 'b').take(1) })
+        expect(listOf("a"), { array("a", "b").take(1) })
+    }
+
+    test fun takeWhile() {
+        expect(listOf(), { intArray().takeWhile { it < 3 } })
+        expect(listOf(1), { intArray(1).takeWhile { it < 3 } })
+        expect(listOf(2), { intArray(2, 3, 1).takeWhile { it < 3 } })
+        expect(listOf(3000000000000), { longArray(3000000000000, 2000000000000).takeWhile { it > 2000000000000 } })
+        expect(listOf(2.toByte()), { byteArray(2, 3, 1).takeWhile { it < 3 } })
+        expect(listOf(2.toShort()), { shortArray(2, 3, 1).takeWhile { it < 3 } })
+        expect(listOf(2f), { floatArray(2f, 3f, 1f).takeWhile { it < 3 } })
+        expect(listOf(2.0), { doubleArray(2.0, 3.0, 1.0).takeWhile { it < 3 } })
+        expect(listOf(true), { booleanArray(true, false, true).takeWhile { it } })
+        expect(listOf('a'), { charArray('a', 'b', 'a').takeWhile { it < 'b' } })
+        expect(listOf("a"), { array("a", "b", "a").takeWhile { it < "b" } })
+    }
+
+    test fun filter() {
+        expect(listOf(), { intArray().filter { it > 2 } })
+        expect(listOf(), { intArray(1).filter { it > 2 } })
+        expect(listOf(3), { intArray(2, 3).filter { it > 2 } })
+        expect(listOf(3000000000000), { longArray(3000000000000, 2000000000000).filter { it > 2000000000000 } })
+        expect(listOf(3.toByte()), { byteArray(2, 3).filter { it > 2 } })
+        expect(listOf(3.toShort()), { shortArray(2, 3).filter { it > 2 } })
+        expect(listOf(3.0f), { floatArray(2f, 3f).filter { it > 2 } })
+        expect(listOf(3.0), { doubleArray(2.0, 3.0).filter { it > 2 } })
+        expect(listOf(true), { booleanArray(true, false).filter { it } })
+        expect(listOf('b'), { charArray('a', 'b').filter { it > 'a' } })
+        expect(listOf("b"), { array("a", "b").filter { it > "a" } })
+    }
+
+    test fun filterNot() {
+        expect(listOf(), { intArray().filterNot { it > 2 } })
+        expect(listOf(1), { intArray(1).filterNot { it > 2 } })
+        expect(listOf(2), { intArray(2, 3).filterNot { it > 2 } })
+        expect(listOf(2000000000000), { longArray(3000000000000, 2000000000000).filterNot { it > 2000000000000 } })
+        expect(listOf(2.toByte()), { byteArray(2, 3).filterNot { it > 2 } })
+        expect(listOf(2.toShort()), { shortArray(2, 3).filterNot { it > 2 } })
+        expect(listOf(2.0f), { floatArray(2f, 3f).filterNot { it > 2 } })
+        expect(listOf(2.0), { doubleArray(2.0, 3.0).filterNot { it > 2 } })
+        expect(listOf(false), { booleanArray(true, false).filterNot { it } })
+        expect(listOf('a'), { charArray('a', 'b').filterNot { it > 'a' } })
+        expect(listOf("a"), { array("a", "b").filterNot { it > "a" } })
+    }
+
+    test fun filterNotNull() {
+        expect(listOf("a"), { array("a", null).filterNotNull() })
+    }
+
 }

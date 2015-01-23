@@ -112,6 +112,22 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals(listOf("foo"), foo)
     }
 
+    Test fun drop() {
+        val foo = data.drop(1)
+        expect(true) { foo is List<String> }
+        expect(true) { foo.all { it.startsWith("b") } }
+        expect(1) { foo.size() }
+        assertEquals(listOf("bar"), foo)
+    }
+
+    Test fun dropWhile() {
+        val foo = data.dropWhile { it[0] == 'f' }
+        expect(true) { foo is List<String> }
+        expect(true) { foo.all { it.startsWith("b") } }
+        expect(1) { foo.size() }
+        assertEquals(listOf("bar"), foo)
+    }
+
     Test fun filterNot() {
         val notFoo = data.filterNot { it.startsWith("f") }
         expect(true) { notFoo is List<String> }
