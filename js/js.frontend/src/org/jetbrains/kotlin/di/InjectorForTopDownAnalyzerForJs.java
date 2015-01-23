@@ -145,8 +145,13 @@ public class InjectorForTopDownAnalyzerForJs {
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.kotlinJsCheckerProvider = KotlinJsCheckerProvider.INSTANCE$;
         this.dynamicTypesAllowed = new DynamicTypesAllowed();
-        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer();
+        this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesAllowed);
+        this.lazyLocalClassifierAnalyzer = new LazyLocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingComponents = new ExpressionTypingComponents();
@@ -156,12 +161,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.reflectionTypes = new ReflectionTypes(module);
         this.callExpressionResolver = new CallExpressionResolver();
-        this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesAllowed);
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);

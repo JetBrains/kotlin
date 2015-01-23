@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -121,12 +122,15 @@ private fun generatorForLazyLocalClassifierAnalyzer() =
             parameter<ModuleDescriptor>(name = "module", useAsContext = true)
             parameter<AdditionalCheckerProvider>()
             parameter<DynamicTypesSettings>()
+            parameter<LocalClassDescriptorManager>()
 
             publicField<LazyTopDownAnalyzer>()
 
             field<NoTopLevelDescriptorProvider>()
             field<NoFileScopeProvider>()
             field<LazyLocalClassifierAnalyzer>()
+            field<DeclarationScopeProviderForLocalClassifierAnalyzer>()
+            field<LocalLazyDeclarationResolver>()
         }
 
 private fun generatorForLazyBodyResolve() =

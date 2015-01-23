@@ -39,7 +39,7 @@ public class LazyDeclarationResolver {
 
     private final BindingTrace trace;
 
-    private DeclarationScopeProvider scopeProvider;
+    protected DeclarationScopeProvider scopeProvider;
     private TopLevelDescriptorProvider topLevelDescriptorProvider;
 
     @Inject
