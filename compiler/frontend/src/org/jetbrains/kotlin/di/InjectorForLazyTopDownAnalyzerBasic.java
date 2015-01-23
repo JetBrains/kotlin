@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.resolve.DeclarationsChecker;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.DeclarationResolver;
-import org.jetbrains.kotlin.resolve.ImportsResolver;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
@@ -119,7 +118,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final ModifiersChecker modifiersChecker;
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final DeclarationResolver declarationResolver;
-    private final ImportsResolver importsResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final VarianceChecker varianceChecker;
@@ -177,7 +175,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.modifiersChecker = new ModifiersChecker(bindingTrace, defaultProvider);
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.declarationResolver = new DeclarationResolver();
-        this.importsResolver = new ImportsResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
@@ -294,14 +291,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         functionAnalyzerExtension.setTrace(bindingTrace);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setDescriptorResolver(descriptorResolver);
-        declarationResolver.setImportsResolver(importsResolver);
         declarationResolver.setTrace(bindingTrace);
-
-        importsResolver.setImportsFactory(jetImportsFactory);
-        importsResolver.setModuleDescriptor(module);
-        importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-        importsResolver.setTrace(bindingTrace);
 
         overloadResolver.setTrace(bindingTrace);
 
