@@ -275,7 +275,7 @@ public class ReplInterpreter {
         trace.clearDiagnostics();
 
         //noinspection ConstantConditions
-        psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
+        psiFile.getScript().putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber);
 
         ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorCollector);
         if (scriptDescriptor == null) {
