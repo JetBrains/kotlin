@@ -292,7 +292,7 @@ public class TypeResolver(
         val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace, true)
                                         .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {
-            ImportsResolver.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)
+            PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(moduleDescriptor, trace, userType, classifierDescriptor)
         }
         return classifierDescriptor
     }
