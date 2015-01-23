@@ -66,6 +66,12 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
     }
 
+    test fun stream() {
+        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
+        val named = map.stream().filter { it.key == "name" }.single()
+        assertEquals("James", named.value)
+    }
+
     test fun iterateWithProperties() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
