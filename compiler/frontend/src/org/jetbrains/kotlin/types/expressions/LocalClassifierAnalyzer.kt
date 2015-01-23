@@ -1,59 +1,64 @@
 /*
-* Copyright 2010-2015 JetBrains s.r.o.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-package org.jetbrains.kotlin.resolve
+package org.jetbrains.kotlin.types.expressions
 
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer
+import org.jetbrains.kotlin.resolve.DescriptorResolver
+import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import com.google.common.base.Predicates
+import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.di.InjectorForLazyLocalClassifierAnalyzer
-import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
-import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 
-public class LazyLocalClassifierAnalyzer(
+public class LocalClassifierAnalyzer(
         val descriptorResolver: DescriptorResolver,
         val typeResolver: TypeResolver,
         val annotationResolver: AnnotationResolver
-) : LocalClassifierAnalyzer() {
-    override fun processClassOrObject(
+) {
+    fun processClassOrObject(
             globalContext: GlobalContext,
             scope: WritableScope?,
             context: ExpressionTypingContext,

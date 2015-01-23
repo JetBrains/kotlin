@@ -111,7 +111,7 @@ public class InjectorForTests {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(getDescriptorResolver(), getTypeResolver(), annotationResolver);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
