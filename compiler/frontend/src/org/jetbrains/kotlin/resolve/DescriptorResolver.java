@@ -108,43 +108,6 @@ public class DescriptorResolver {
         this.builtIns = builtIns;
     }
 
-    public void resolveMutableClassDescriptor(
-            @NotNull JetClass classElement,
-            @NotNull MutableClassDescriptor descriptor,
-            BindingTrace trace
-    ) {
-        // TODO : Where-clause
-        List<JetTypeParameter> typeParameters = classElement.getTypeParameters();
-        List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-        if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
-            JetTypeParameterList typeParameterList = classElement.getTypeParameterList();
-            if (typeParameterList != null) {
-                trace.report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
-            }
-        }
-        int index = 0;
-        for (JetTypeParameter typeParameter : typeParameters) {
-            TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
-                    descriptor,
-                    Annotations.EMPTY,
-                    typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
-                    typeParameter.getVariance(),
-                    JetPsiUtil.safeName(typeParameter.getName()),
-                    index,
-                    toSourceElement(typeParameter)
-            );
-            trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-            typeParameterDescriptors.add(typeParameterDescriptor);
-            index++;
-        }
-        descriptor.setTypeParameterDescriptors(typeParameterDescriptors);
-        Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        descriptor.setModality(resolveModalityFromModifiers(classElement, defaultModality));
-        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement, getDefaultClassVisibility(descriptor)));
-
-        trace.record(BindingContext.CLASS, classElement, descriptor);
-    }
-
     public List<JetType> resolveSupertypes(
             @NotNull JetScope scope,
             @NotNull ClassDescriptor classDescriptor,
