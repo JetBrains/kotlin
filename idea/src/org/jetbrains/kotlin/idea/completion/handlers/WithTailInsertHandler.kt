@@ -91,5 +91,6 @@ class WithTailInsertHandler(val tailText: String,
         fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
         fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
         fun spaceTail() = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false, overwriteText = false)
+        fun colonTail() = WithTailInsertHandler(":", spaceBefore = false, spaceAfter = true)
     }
 }

@@ -1539,20 +1539,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
 
-            if (statement instanceof JetMultiDeclaration) {
-                JetMultiDeclaration multiDeclaration = (JetMultiDeclaration) statement;
-                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-                    generateLocalVariableDeclaration(entry, blockEnd, leaveTasks);
-                }
-            }
-
-            if (statement instanceof JetVariableDeclaration) {
-                generateLocalVariableDeclaration((JetVariableDeclaration) statement, blockEnd, leaveTasks);
-            }
-
-            if (statement instanceof JetNamedFunction) {
-                generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
-            }
+            putDescriptorIntoFrameMap(statement);
 
             boolean isExpression = !iterator.hasNext() && !isStatement;
             if (isExpression && labelBeforeLastExpression != null) {
@@ -1567,6 +1554,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 result.put(Type.VOID_TYPE, v);
             }
+
+            removeDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
         }
 
         return new StackValueWithLeaveTask(answer, new ExtensionFunction0<StackValueWithLeaveTask, Unit>() {
@@ -1583,54 +1572,101 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
-    private void generateLocalVariableDeclaration(
-            @NotNull JetVariableDeclaration variableDeclaration,
-            final @NotNull Label blockEnd,
+    @NotNull
+    private Type getVariableType(@NotNull VariableDescriptor variableDescriptor) {
+        Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
+        return sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
+    }
+
+    private static boolean isSharedVarType(@NotNull Type type) {
+        return type.getSort() == Type.OBJECT && type.getInternalName().startsWith(REF_TYPE_PREFIX);
+    }
+
+
+    private void putDescriptorIntoFrameMap(@NotNull JetElement statement) {
+        if (statement instanceof JetMultiDeclaration) {
+            JetMultiDeclaration multiDeclaration = (JetMultiDeclaration) statement;
+            for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                putLocalVariableIntoFrameMap(entry);
+            }
+        }
+
+        if (statement instanceof JetVariableDeclaration) {
+            putLocalVariableIntoFrameMap((JetVariableDeclaration) statement);
+        }
+
+        if (statement instanceof JetNamedFunction) {
+            DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
+            myFrameMap.enter(descriptor, OBJECT_TYPE);
+        }
+    }
+
+    private void putLocalVariableIntoFrameMap(@NotNull JetVariableDeclaration statement) {
+        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, statement);
+        assert variableDescriptor != null;
+
+        Type type = getVariableType(variableDescriptor);
+        int index = myFrameMap.enter(variableDescriptor, type);
+
+        if (isSharedVarType(type)) {
+            v.anew(type);
+            v.dup();
+            v.invokespecial(type.getInternalName(), "<init>", "()V", false);
+            v.store(index, OBJECT_TYPE);
+        }
+    }
+
+    private void removeDescriptorFromFrameMap(
+            @NotNull JetElement statement,
+            @NotNull Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
-        final VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, variableDeclaration);
+        if (statement instanceof JetMultiDeclaration) {
+            JetMultiDeclaration multiDeclaration = (JetMultiDeclaration) statement;
+            for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                removeLocalVariableFromFrameMap(entry, blockEnd, leaveTasks);
+            }
+        }
+
+        if (statement instanceof JetVariableDeclaration) {
+            removeLocalVariableFromFrameMap((JetVariableDeclaration) statement, blockEnd, leaveTasks);
+        }
+
+        if (statement instanceof JetNamedFunction) {
+            final DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
+            leaveTasks.add(new Function<StackValue, Void>() {
+                @Override
+                public Void fun(StackValue value) {
+                    myFrameMap.leave(descriptor);
+                    return null;
+                }
+            });
+        }
+    }
+
+    private void removeLocalVariableFromFrameMap(
+            @NotNull JetVariableDeclaration statement,
+            final Label blockEnd,
+            @NotNull List<Function<StackValue, Void>> leaveTasks
+    ) {
+        final VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, statement);
         assert variableDescriptor != null;
+
+        final Type type = getVariableType(variableDescriptor);
 
         final Label scopeStart = new Label();
         v.mark(scopeStart);
-
-        final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-        final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
-        int index = myFrameMap.enter(variableDescriptor, type);
-
-        if (sharedVarType != null) {
-            v.anew(sharedVarType);
-            v.dup();
-            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V", false);
-            v.store(index, OBJECT_TYPE);
-        }
 
         leaveTasks.add(new Function<StackValue, Void>() {
             @Override
             public Void fun(StackValue answer) {
                 int index = myFrameMap.leave(variableDescriptor);
 
-                if (sharedVarType != null) {
+                if (isSharedVarType(type)) {
                     v.aconst(null);
                     v.store(index, OBJECT_TYPE);
                 }
                 v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd, index);
-                return null;
-            }
-        });
-    }
-
-    private void generateLocalFunctionDeclaration(
-            @NotNull JetNamedFunction namedFunction,
-            @NotNull List<Function<StackValue, Void>> leaveTasks
-    ) {
-        final DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, namedFunction);
-        myFrameMap.enter(descriptor, OBJECT_TYPE);
-
-        leaveTasks.add(new Function<StackValue, Void>() {
-            @Override
-            public Void fun(StackValue value) {
-                myFrameMap.leave(descriptor);
                 return null;
             }
         });
@@ -1710,6 +1746,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (tryCatchBlockEnd != null) {
+            if (context.isInlineFunction()) {
+                InlineCodegenUtil.generateGoToTryCatchBlockEndMarker(v);
+            }
             v.goTo(tryCatchBlockEnd);
         }
 

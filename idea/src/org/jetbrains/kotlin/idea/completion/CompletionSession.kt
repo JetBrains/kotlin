@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PatternCondition
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -168,7 +169,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     // set is used only for completion in code fragments
     private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
 
-    fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean): Collection<DeclarationDescriptor> {
         val descriptors = referenceVariantsHelper!!.getReferenceVariants(reference!!.expression, kindFilter, shouldCastToRuntimeType, prefixMatcher.asNameFilter())
         if (!shouldCastToRuntimeType) {
             if (position.getContainingFile() is JetCodeFragment) {
@@ -215,19 +216,67 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
+    public enum class CompletionKind {
+        KEYWORDS_ONLY
+        NAMED_PARAMETERS_ONLY
+        ALL
+        TYPES
+        ANNOTATION_TYPES
+        ANNOTATION_TYPES_OR_PARAMETER_NAME
+    }
+
+    public val completionKind: CompletionKind = calcCompletionKind()
+
+    private fun calcCompletionKind(): CompletionKind {
+        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
+            return CompletionKind.NAMED_PARAMETERS_ONLY
+        }
+
+        if (reference == null) {
+            return CompletionKind.KEYWORDS_ONLY
+        }
+
+        val annotationEntry = position.getStrictParentOfType<JetAnnotationEntry>()
+        if (annotationEntry != null) {
+            val valueArgList = position.getStrictParentOfType<JetValueArgumentList>()
+            if (valueArgList == null || !annotationEntry.isAncestor(valueArgList)) {
+                val parent = annotationEntry.getParent()
+                if (parent is JetDeclarationModifierList && parent.getParent() is JetParameter) {
+                    return CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME
+                }
+                return CompletionKind.ANNOTATION_TYPES
+            }
+        }
+
+        // Check that completion in the type annotation context and if there's a qualified
+        // expression we are at first of it
+        val typeReference = position.getStrictParentOfType<JetTypeReference>()
+        if (typeReference != null) {
+            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
+            if (firstPartReference == reference.expression) {
+                return CompletionKind.TYPES
+            }
+        }
+
+        return CompletionKind.ALL
+    }
+
     override fun doComplete() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
-        if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
-            val completeReference = reference != null && !isOnlyKeywordCompletion()
-            val onlyTypes = completeReference && shouldRunOnlyTypeCompletion()
+        if (completionKind != CompletionKind.NAMED_PARAMETERS_ONLY) {
+            val kindFilter = when (completionKind) {
+                CompletionKind.TYPES ->
+                    DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
 
-            val kindFilter = if (onlyTypes)
-                DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
-            else
-                DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
+                CompletionKind.ANNOTATION_TYPES,  CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME ->
+                    DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
 
-            if (completeReference) {
+                else ->
+                    DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
+            }
+
+            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 addReferenceVariants(kindFilter, shouldCastToRuntimeType = false)
             }
 
@@ -260,51 +309,50 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 }
             }
 
-            if (completeReference) {
+            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
                     JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
                 }
 
                 flushToResultSet()
-                addNonImported(onlyTypes)
-            }
+                addNonImported(completionKind)
 
-            if (completeReference && position.getContainingFile() is JetCodeFragment) {
-                flushToResultSet()
-                addReferenceVariants(kindFilter, shouldCastToRuntimeType = true)
+                if (position.getContainingFile() is JetCodeFragment) {
+                    flushToResultSet()
+                    addReferenceVariants(kindFilter, shouldCastToRuntimeType = true)
+                }
             }
         }
 
         NamedParametersCompletion.complete(position, collector)
     }
 
-    private fun addNonImported(onlyTypes: Boolean) {
-        if (shouldRunTopLevelCompletion()) {
-            addAllClasses { it != ClassKind.ENUM_ENTRY }
+    private object NonAnnotationClassifierExclude : DescriptorKindExclude {
+        override fun matches(descriptor: DeclarationDescriptor): Boolean {
+            return if (descriptor is ClassDescriptor)
+                descriptor.getKind() != ClassKind.ANNOTATION_CLASS
+            else
+                descriptor !is ClassifierDescriptor
+        }
+    }
 
-            if (!onlyTypes) {
+    private fun addNonImported(completionKind: CompletionKind) {
+        if (shouldRunTopLevelCompletion()) {
+            addAllClasses {
+                if (completionKind != CompletionKind.ANNOTATION_TYPES && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
+                    it != ClassKind.ENUM_ENTRY
+                else
+                    it == ClassKind.ANNOTATION_CLASS
+            }
+
+            if (completionKind == CompletionKind.ALL) {
                 collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)
             }
         }
 
-        if (!onlyTypes && shouldRunExtensionsCompletion()) {
+        if (completionKind == CompletionKind.ALL && shouldRunExtensionsCompletion()) {
             collector.addDescriptorElements(getKotlinExtensions(), suppressAutoInsertion = true)
         }
-    }
-
-    private fun isOnlyKeywordCompletion()
-            = position.getStrictParentOfType<JetModifierList>() != null
-
-    private fun shouldRunOnlyTypeCompletion(): Boolean {
-        // Check that completion in the type annotation context and if there's a qualified
-        // expression we are at first of it
-        val typeReference = position.getStrictParentOfType<JetTypeReference>()
-        if (typeReference != null) {
-            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
-            return firstPartReference == reference!!.expression
-        }
-
-        return false
     }
 
     private fun addReferenceVariants(kindFilter: DescriptorKindFilter, shouldCastToRuntimeType: Boolean) {

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.test.JetLiteFixture;
@@ -46,9 +47,9 @@ import java.util.List;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
-            .setVerbose(true)
-            .setShortNames(true)
-            .build();
+                                                                                    .setVerbose(true)
+                                                                                    .setNameShortness(NameShortness.SHORT)
+                                                                                    .build();
 
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 

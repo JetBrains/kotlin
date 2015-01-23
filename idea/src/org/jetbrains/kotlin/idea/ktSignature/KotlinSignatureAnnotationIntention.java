@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 
@@ -55,7 +56,7 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SIGNATURE
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setModifiers()
             .setWithDefinedIn(false).build();
 

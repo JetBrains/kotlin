@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.inline.NameGenerator;
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -61,16 +62,20 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Tr
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> extends ParentCodegenAware {
+public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> {
+    protected final GenerationState state;
     protected final T element;
     protected final FieldOwnerContext context;
     protected final ClassBuilder v;
     protected final FunctionCodegen functionCodegen;
     protected final PropertyCodegen propertyCodegen;
+    protected final JetTypeMapper typeMapper;
+    protected final BindingContext bindingContext;
+    private final MemberCodegen<?> parentCodegen;
+    private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
-    private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
 
     public MemberCodegen(
             @NotNull GenerationState state,
@@ -79,12 +84,15 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             T element,
             @NotNull ClassBuilder builder
     ) {
-        super(state, parentCodegen);
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
         this.element = element;
         this.context = context;
         this.v = builder;
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
+        this.parentCodegen = parentCodegen;
     }
 
     protected MemberCodegen(@NotNull MemberCodegen<T> wrapped) {
@@ -249,8 +257,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
                 bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);
         if (pdResolvedCall != null) {
             int index = PropertyCodegen.indexOfDelegatedProperty(property);
-            StackValue lastValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(propertyDescriptor, codegen,
-                                                                                           state.getTypeMapper(), pdResolvedCall, index, 0);
+            StackValue lastValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(
+                    propertyDescriptor, codegen, typeMapper, pdResolvedCall, index, 0
+            );
             lastValue.put(Type.VOID_TYPE, codegen.v);
         }
     }
@@ -389,5 +398,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @NotNull
     public ReifiedTypeParametersUsages getReifiedTypeParametersUsages() {
         return reifiedTypeParametersUsages;
+    }
+
+    public MemberCodegen<?> getParentCodegen() {
+        return parentCodegen;
     }
 }

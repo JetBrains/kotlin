@@ -63,34 +63,12 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private static final TokenSet BINARY_OPERATIONS = TokenSet.orSet(
             AUGMENTED_ASSIGNMENTS,
-            TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
-
-    private static class ClassDescriptorWithState {
-
-        private boolean isDelegationToSuperCall;
-
-        private final ClassDescriptor descriptor;
-
-        public ClassDescriptorWithState(ClassDescriptor descriptor) {
-            this.descriptor = descriptor;
-        }
-
-        public boolean isDelegationToSuperCall() {
-            return isDelegationToSuperCall;
-        }
-
-        public void setDelegationToSuperCall(boolean isDelegationToSuperCall) {
-            this.isDelegationToSuperCall = isDelegationToSuperCall;
-        }
-
-        public ClassDescriptor getDescriptor() {
-            return descriptor;
-        }
-    }
+            TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER)
+    );
 
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
-    private final Stack<ClassDescriptorWithState> classStack = new Stack<ClassDescriptorWithState>();
+    private final Stack<ClassDescriptor> classStack = new Stack<ClassDescriptor>();
     private final Stack<String> nameStack = new Stack<String>();
 
     private final BindingTrace bindingTrace;
@@ -114,13 +92,49 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     ) {
         String simpleName = name.substring(name.lastIndexOf('/') + 1);
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                funDescriptor.getContainingDeclaration(), Name.special("<closure-" + simpleName + ">"), Modality.FINAL, supertypes,
+                correctContainerForLambda(funDescriptor, element),
+                Name.special("<closure-" + simpleName + ">"),
+                Modality.FINAL,
+                supertypes,
                 SourcePackage.toSourceElement(element)
         );
         classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
+    }
+
+    @NotNull
+    @SuppressWarnings("ConstantConditions")
+    private DeclarationDescriptor correctContainerForLambda(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+
+        // In almost all cases the function's direct container is the correct container to consider in JVM back-end
+        // (and subsequently to write to EnclosingMethod and InnerClasses attributes).
+        // The only exceptional case is when a lambda is declared in the super call of an anonymous object:
+        // in this case it's constructed in the outer code, despite being located under the object PSI- and descriptor-wise
+        // TODO: consider the possibility of fixing this in the compiler front-end
+
+        if (container instanceof ConstructorDescriptor && DescriptorUtils.isAnonymousObject(container.getContainingDeclaration())) {
+            PsiElement element = function;
+            while (element != null) {
+                PsiElement child = element;
+                element = element.getParent();
+
+                if (bindingContext.get(DECLARATION_TO_DESCRIPTOR, element) == container) return container;
+
+                if (element instanceof JetObjectDeclaration &&
+                    element.getParent() instanceof JetObjectLiteralExpression &&
+                    child instanceof JetDelegationSpecifierList) {
+                    // If we're passing an anonymous object's super call, it means "container" is ConstructorDescriptor of that object.
+                    // To reach outer context, we should call getContainingDeclaration() twice
+                    // TODO: this is probably not entirely correct, mostly because DECLARATION_TO_DESCRIPTOR can return null
+                    container = container.getContainingDeclaration().getContainingDeclaration();
+                }
+            }
+        }
+
+        return container;
     }
 
     private String inventAnonymousClassName(JetElement declaration) {
@@ -160,7 +174,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             // SCRIPT: should be replaced with VisitScript override
             //noinspection ConstantConditions
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
-            pushClassDescriptor(classDescriptor);
+            classStack.push(classDescriptor);
             //noinspection ConstantConditions
             nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
@@ -170,7 +184,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         file.acceptChildren(this);
         nameStack.pop();
         if (file.isScript()) {
-            popClassDescriptor();
+            classStack.pop();
         }
     }
 
@@ -201,16 +215,16 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
         recordClosure(classDescriptor, name);
 
-        pushClassDescriptor(classDescriptor);
+        classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitClassObject(classObject);
         nameStack.pop();
-        popClassDescriptor();
+        classStack.pop();
     }
 
     @Override
     public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-        if (declaration.getParent() instanceof JetObjectLiteralExpression || declaration.getParent() instanceof JetClassObject) {
+        if (declaration.getParent() instanceof JetClassObject) {
             super.visitObjectDeclaration(declaration);
         }
         else {
@@ -223,11 +237,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             String name = getName(classDescriptor);
             recordClosure(classDescriptor, name);
 
-            pushClassDescriptor(classDescriptor);
+            classStack.push(classDescriptor);
             nameStack.push(name);
             super.visitObjectDeclaration(declaration);
             nameStack.pop();
-            popClassDescriptor();
+            classStack.pop();
         }
     }
 
@@ -242,11 +256,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         String name = getName(classDescriptor);
         recordClosure(classDescriptor, name);
 
-        pushClassDescriptor(classDescriptor);
+        classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitClass(klass);
         nameStack.pop();
-        popClassDescriptor();
+        classStack.pop();
     }
 
     private String getName(ClassDescriptor classDescriptor) {
@@ -258,21 +272,30 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression) {
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS, expression.getObjectDeclaration());
+        JetObjectDeclaration object = expression.getObjectDeclaration();
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS, object);
         if (classDescriptor == null) {
             // working around a problem with shallow analysis
             super.visitObjectLiteralExpression(expression);
             return;
         }
 
-        String name = inventAnonymousClassName(expression.getObjectDeclaration());
+        String name = inventAnonymousClassName(object);
         recordClosure(classDescriptor, name);
 
-        pushClassDescriptor(classDescriptor);
+        JetDelegationSpecifierList delegationSpecifierList = object.getDelegationSpecifierList();
+        if (delegationSpecifierList != null) {
+            delegationSpecifierList.accept(this);
+        }
+
+        classStack.push(classDescriptor);
         nameStack.push(CodegenBinding.getAsmType(bindingContext, classDescriptor).getInternalName());
-        super.visitObjectLiteralExpression(expression);
+        JetClassBody body = object.getBody();
+        if (body != null) {
+            super.visitClassBody(body);
+        }
         nameStack.pop();
-        popClassDescriptor();
+        classStack.pop();
     }
 
     @Override
@@ -288,40 +311,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ClassDescriptor classDescriptor = recordClassForFunction(functionLiteral, functionDescriptor, supertypes, name);
         recordClosure(classDescriptor, name);
 
-        pushClassDescriptor(classDescriptor);
+        classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitFunctionLiteralExpression(expression);
         nameStack.pop();
-        popClassDescriptor();
-    }
-
-    private void pushClassDescriptor(ClassDescriptor classDescriptor) {
-        classStack.push(new ClassDescriptorWithState(classDescriptor));
-    }
-
-    private void popClassDescriptor() {
         classStack.pop();
-    }
-
-    private ClassDescriptor getOuterClassDescriptor() {
-        ListIterator<ClassDescriptorWithState> iterator = classStack.listIterator(classStack.size());
-        while(iterator.hasPrevious()) {
-            ClassDescriptorWithState previous = iterator.previous();
-            if (!previous.isDelegationToSuperCall()) {//find last not delegated to super call
-                return previous.getDescriptor();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
-        ClassDescriptorWithState state = peekFromStack(classStack);
-        // working around a problem with shallow analysis
-        if (state == null) return;
-        state.setDelegationToSuperCall(true);
-        super.visitDelegationToSuperCallSpecifier(call);
-        state.setDelegationToSuperCall(false);
     }
 
     @Override
@@ -339,16 +333,15 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ClassDescriptor classDescriptor = recordClassForFunction(expression, functionDescriptor, supertypes, name);
         recordClosure(classDescriptor, name);
 
-        pushClassDescriptor(classDescriptor);
+        classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitCallableReferenceExpression(expression);
         nameStack.pop();
-        popClassDescriptor();
+        classStack.pop();
     }
 
-
     private void recordClosure(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
-        CodegenBinding.recordClosure(bindingTrace, classDescriptor, getOuterClassDescriptor(), Type.getObjectType(name));
+        CodegenBinding.recordClosure(bindingTrace, classDescriptor, peekFromStack(classStack), Type.getObjectType(name));
     }
 
     @Override
@@ -386,11 +379,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, supertypes, name);
             recordClosure(classDescriptor, name);
 
-            pushClassDescriptor(classDescriptor);
+            classStack.push(classDescriptor);
             nameStack.push(name);
             super.visitNamedFunction(function);
             nameStack.pop();
-            popClassDescriptor();
+            classStack.pop();
         }
     }
 
@@ -547,9 +540,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @NotNull
     private String getCurrentTopLevelClassOrPackagePartInternalName(@NotNull JetFile file) {
-        ListIterator<ClassDescriptorWithState> iterator = classStack.listIterator(classStack.size());
+        ListIterator<ClassDescriptor> iterator = classStack.listIterator(classStack.size());
         while (iterator.hasPrevious()) {
-            ClassDescriptor previous = iterator.previous().getDescriptor();
+            ClassDescriptor previous = iterator.previous();
             if (DescriptorUtils.isTopLevelOrInnerClass(previous)) {
                 return CodegenBinding.getAsmType(bindingContext, previous).getInternalName();
             }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.Empty;
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider.DefaultProvider;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.LazinessToken;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtensionProvider;
 import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
@@ -84,7 +83,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
-    private final Empty empty;
+    private final DefaultProvider defaultProvider;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -102,7 +101,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final LazinessToken lazinessToken;
-    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PartialBodyResolveProvider partialBodyResolveProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -143,7 +141,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.declarationProviderFactory = declarationProviderFactory;
         this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
-        this.empty = Empty.INSTANCE$;
+        this.defaultProvider = DefaultProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -161,7 +159,6 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -173,7 +170,7 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
-        this.modifiersChecker = new ModifiersChecker(bindingTrace, empty);
+        this.modifiersChecker = new ModifiersChecker(bindingTrace, defaultProvider);
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.declarationResolver = new DeclarationResolver();
         this.importsResolver = new ImportsResolver();
@@ -223,12 +220,11 @@ public class InjectorForLazyTopDownAnalyzerBasic {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
-        expressionTypingComponents.setAdditionalCheckerProvider(empty);
+        expressionTypingComponents.setAdditionalCheckerProvider(defaultProvider);
         expressionTypingComponents.setBuiltIns(kotlinBuiltIns);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);

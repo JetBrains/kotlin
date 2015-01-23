@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.storage
 
-import com.intellij.util.containers.ConcurrentWeakValueHashMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -24,13 +23,14 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import com.intellij.util.containers.ConcurrentSoftValueHashMap
 
 public class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
-    override fun <K, V> createWeaklyRetainedMemoizedFunction(compute: Function1<K, V>) =
-        storageManager.createMemoizedFunction<K, V>(compute, ConcurrentWeakValueHashMap<K, Any>())
+    override fun <K, V> createSoftlyRetainedMemoizedFunction(compute: Function1<K, V>) =
+        storageManager.createMemoizedFunction<K, V>(compute, ConcurrentSoftValueHashMap<K, Any>())
 
-    override fun <K, V> createWeaklyRetainedMemoizedFunctionWithNullableValues(compute: Function1<K, V>) =
-        storageManager.createMemoizedFunctionWithNullableValues<K, V>(compute, ConcurrentWeakValueHashMap<K, Any>())
+    override fun <K, V> createSoftlyRetainedMemoizedFunctionWithNullableValues(compute: Function1<K, V>) =
+        storageManager.createMemoizedFunctionWithNullableValues<K, V>(compute, ConcurrentSoftValueHashMap<K, Any>())
 
     // It seems safe to have a separate lock for traces:
     // no other locks will be acquired inside the trace operations

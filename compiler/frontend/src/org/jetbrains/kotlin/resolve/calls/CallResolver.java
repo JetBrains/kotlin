@@ -219,7 +219,7 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                        expressionTypingServices.createExtension(scope, isAnnotationContext), isAnnotationContext)
+                        expressionTypingServices.getCallChecker(), isAnnotationContext)
         );
     }
 

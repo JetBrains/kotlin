@@ -25,10 +25,18 @@ import org.junit.Assert
 public abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {
 
     fun doTest(path: String) {
+        doTest(path, true)
+    }
+
+    fun doTestWoMethodCalls(path: String) {
+        doTest(path, false)
+    }
+
+    fun doTest(path: String, allowMethodCalls: Boolean) {
         myFixture.configureByFile(path)
 
         val elementAt = myFixture.getFile()?.findElementAt(myFixture.getCaretOffset())!!
-        val selectedExpression = KotlinEditorTextProvider.findExpressionInner(elementAt)
+        val selectedExpression = KotlinEditorTextProvider.findExpressionInner(elementAt, allowMethodCalls)
 
         val expected = InTextDirectivesUtils.findStringWithPrefixes(myFixture.getFile()?.getText()!!, "// EXPECTED: ")
         Assert.assertEquals("Another expression should be selected", expected, selectedExpression?.getText() ?: "null")

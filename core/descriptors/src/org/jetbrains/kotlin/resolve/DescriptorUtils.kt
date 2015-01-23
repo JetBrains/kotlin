@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassKind.*
+import org.jetbrains.kotlin.name.FqName
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
     val classObjectDescriptor = getClassObjectDescriptor()
@@ -35,3 +36,9 @@ public val DeclarationDescriptor.isExtension: Boolean
 
 public val DeclarationDescriptor.module: ModuleDescriptor
     get() = DescriptorUtils.getContainingModule(this)
+
+public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName): ClassDescriptor? {
+    assert(!topLevelClassFqName.isRoot())
+    return getPackage(topLevelClassFqName.parent())?.getMemberScope()
+            ?.getClassifier(topLevelClassFqName.shortName()) as? ClassDescriptor
+}

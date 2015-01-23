@@ -16,12 +16,20 @@
 
 package org.jetbrains.kotlin.resolve
 
-public trait AdditionalCheckerProvider {
+import org.jetbrains.annotations.ReadOnly
 
-    public val annotationCheckers: List<AnnotationChecker>
+import java.util.Collections
+import kotlin.properties.Delegates
+import org.jetbrains.kotlin.resolve.calls.checkers.*
 
-    public object Empty : AdditionalCheckerProvider {
+private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
 
-        override val annotationCheckers: List<AnnotationChecker> = listOf()
-    }
+public abstract class AdditionalCheckerProvider(
+        public val annotationCheckers: List<AnnotationChecker>,
+        additionalCallCheckers: List<CallChecker>
+) {
+
+    public val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
+
+    public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf()) {}
 }

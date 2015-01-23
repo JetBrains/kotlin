@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util;
 import kotlin.Function1;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.types.JetType;
 
 public class IdeDescriptorRenderers {
@@ -38,17 +39,17 @@ public class IdeDescriptorRenderers {
     };
 
     public static final DescriptorRenderer SOURCE_CODE = commonBuilder()
-            .setShortNames(false)
+            .setNameShortness(NameShortness.SOURCE_CODE_QUALIFIED)
             .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES)
             .build();
 
     public static final DescriptorRenderer SOURCE_CODE_FOR_TYPE_ARGUMENTS = commonBuilder()
-            .setShortNames(false)
+            .setNameShortness(NameShortness.SOURCE_CODE_QUALIFIED)
             .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS)
             .build();
 
     public static final DescriptorRenderer SOURCE_CODE_SHORT_NAMES_IN_TYPES = commonBuilder()
-            .setShortNames(true)
+            .setNameShortness(NameShortness.SHORT)
             .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES)
             .build();
 

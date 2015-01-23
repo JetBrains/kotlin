@@ -55,7 +55,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     }
 
     @NotNull
-    private BoxedBasicValue createNewBoxing(
+    protected BasicValue createNewBoxing(
             @NotNull AbstractInsnNode insn, @NotNull Type type,
             @Nullable ProgressionIteratorBasicValue progressionIterator
     ) {
@@ -201,7 +201,7 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
         return super.unaryOperation(insn, value);
     }
 
-    private static boolean isExactValue(@NotNull BasicValue value) {
+    protected boolean isExactValue(@NotNull BasicValue value) {
         return value instanceof ProgressionIteratorBasicValue ||
                value instanceof BoxedBasicValue ||
                (value.getType() != null && isProgressionClass(value.getType().getInternalName()));

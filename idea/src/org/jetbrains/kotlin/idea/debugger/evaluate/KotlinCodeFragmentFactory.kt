@@ -112,7 +112,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             if (expressionAtOffset != null) {
                 return expressionAtOffset
             }
-            return KotlinEditorTextProvider.findExpressionInner(elementAt)
+            return KotlinEditorTextProvider.findExpressionInner(elementAt, true)
         }
     }
 }

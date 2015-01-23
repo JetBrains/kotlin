@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 
 public class RedundantGotoMethodTransformer : MethodTransformer() {
     /**
@@ -53,9 +54,3 @@ public class RedundantGotoMethodTransformer : MethodTransformer() {
         }
     }
 }
-
-private val AbstractInsnNode.isMeaningful : Boolean get() =
-    when (this.getType()) {
-        AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
-        else -> true
-    }

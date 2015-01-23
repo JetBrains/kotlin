@@ -1,7 +1,14 @@
-open class C(val a: Any)
+trait C {
+    val a: Any
+}
 
 fun box(): String {
-    val l = object : C({}) {
+    val l = object : C {
+        override val a: Any
+
+        {
+            a = {}
+        }
     }
 
     val javaClass = l.a.javaClass

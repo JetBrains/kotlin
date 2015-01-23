@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantNullCheckMethodTransformer;
+import org.jetbrains.kotlin.codegen.optimization.common.CommonPackage;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -35,8 +36,11 @@ import java.util.List;
 public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
     private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
-            new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer(),
-            new RedundantGotoMethodTransformer(), new StoreStackBeforeInlineMethodTransformer()
+            new RedundantNullCheckMethodTransformer(),
+            new RedundantBoxingMethodTransformer(),
+            new DeadCodeEliminationMethodTransformer(),
+            new RedundantGotoMethodTransformer(),
+            new StoreStackBeforeInlineMethodTransformer()
     };
 
     private final MethodNode methodNode;
@@ -70,6 +74,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
             for (MethodTransformer transformer : TRANSFORMERS) {
                 transformer.transform("fake", methodNode);
             }
+            CommonPackage.prepareForEmitting(methodNode);
         }
 
         methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));

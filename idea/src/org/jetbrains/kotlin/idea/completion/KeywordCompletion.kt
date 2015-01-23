@@ -45,7 +45,10 @@ object KeywordCompletion {
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as JetKeywordToken }
 
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(OUT_KEYWORD to " X")
+    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(
+            OUT_KEYWORD to " X",
+            FILE_KEYWORD to ":"
+    )
 
     public fun complete(position: PsiElement, prefix: String, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return

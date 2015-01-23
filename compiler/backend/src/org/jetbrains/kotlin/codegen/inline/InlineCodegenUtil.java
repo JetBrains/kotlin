@@ -75,6 +75,7 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
     public static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
     public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
+    public static final String INLINE_MARKER_GOTO_TRY_CATCH_BLOCK_END = "goToTryCatchBlockEnd";
 
     @Nullable
     public static MethodNode getMethodNode(
@@ -389,6 +390,18 @@ public class InlineCodegenUtil {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void generateGoToTryCatchBlockEndMarker(@NotNull InstructionAdapter v) {
+        v.invokestatic(INLINE_MARKER_CLASS_NAME, INLINE_MARKER_GOTO_TRY_CATCH_BLOCK_END, "()V", false);
+    }
+
+    public static boolean isGoToTryCatchBlockEnd(@NotNull AbstractInsnNode node) {
+        if (!(node.getPrevious() instanceof MethodInsnNode)) return false;
+        MethodInsnNode previous = (MethodInsnNode) node.getPrevious();
+        return node.getOpcode() == Opcodes.GOTO &&
+               INLINE_MARKER_CLASS_NAME.equals(previous.owner) &&
+               INLINE_MARKER_GOTO_TRY_CATCH_BLOCK_END.equals(previous.name);
     }
 
     public static class LabelTextifier extends Textifier {

@@ -42,7 +42,11 @@ public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                                         DYNAMIC_KEYWORD).map { it.getValue() }
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        if (item.getLookupString() !in NO_SPACE_AFTER) {
+        val keyword = item.getLookupString()
+        if (keyword == FILE_KEYWORD.getValue()) {
+            WithTailInsertHandler.colonTail().postHandleInsert(context, item)
+        }
+        else if (keyword !in NO_SPACE_AFTER) {
             WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
         }
     }

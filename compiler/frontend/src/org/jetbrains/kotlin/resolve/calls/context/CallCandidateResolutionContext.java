@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.extensions.CallResolverExtension;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -50,13 +50,13 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallResolverExtension callResolverExtension,
+            @NotNull CallChecker callChecker,
             @NotNull ReceiverValue explicitExtensionReceiverForInvoke,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
+              dataFlowInfoForArguments, callChecker, isAnnotationContext, collectAllCandidates);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.explicitExtensionReceiverForInvoke = explicitExtensionReceiverForInvoke;
@@ -71,7 +71,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
-                context.callResolverExtension, explicitExtensionReceiverForInvoke, context.isAnnotationContext, context.collectAllCandidates);
+                context.callChecker, explicitExtensionReceiverForInvoke, context.isAnnotationContext, context.collectAllCandidates);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -94,7 +94,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
-                context.dataFlowInfoForArguments, context.callResolverExtension, ReceiverValue.NO_RECEIVER,
+                context.dataFlowInfoForArguments, context.callChecker, ReceiverValue.NO_RECEIVER,
                 context.isAnnotationContext, context.collectAllCandidates);
     }
 
@@ -110,7 +110,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callResolverExtension, explicitExtensionReceiverForInvoke,
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, explicitExtensionReceiverForInvoke,
                 isAnnotationContext, collectAllCandidates);
     }
 }

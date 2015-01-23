@@ -437,8 +437,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        context.callResolverExtension.run(resolvedCall,
-                                          BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.DISABLED));
+        context.callChecker.check(resolvedCall,
+                                  BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.DISABLED));
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {

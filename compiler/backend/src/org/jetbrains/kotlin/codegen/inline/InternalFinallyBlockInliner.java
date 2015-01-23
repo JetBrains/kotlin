@@ -470,8 +470,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
 
         TryCatchBlockNodeInfo nextIntervalWithSameDefaultHandler = sameDefaultHandler.get(1);
         AbstractInsnNode startFinallyChain = tryCatchBlock.getNode().end;
-        AbstractInsnNode endFinallyChainExclusive = skipLastGotoIfNeeded(nextIntervalWithSameDefaultHandler.getNode().handler,
-                                                        nextIntervalWithSameDefaultHandler.getNode().start);
+        AbstractInsnNode endFinallyChainExclusive = skipLastGotoIfNeeded(nextIntervalWithSameDefaultHandler.getNode().start);
 
         FinallyBlockInfo finallyInfo = new FinallyBlockInfo(startFinallyChain.getNext(), endFinallyChainExclusive);
 
@@ -483,37 +482,15 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor<T
     }
 
     @NotNull
-    private AbstractInsnNode skipLastGotoIfNeeded(
-            @NotNull LabelNode defaultHandlerStartLabel,
+    private static AbstractInsnNode skipLastGotoIfNeeded(
             @NotNull AbstractInsnNode lastFinallyInsExclusive
     ) {
 
         AbstractInsnNode prevLast = getPrevNoLineNumberOrLabel(lastFinallyInsExclusive, true);
         assert prevLast != null : "Empty finally block: " + lastFinallyInsExclusive;
 
-        if (prevLast.getOpcode() == Opcodes.GOTO) {
-            //There we should understand whether goto is jump over catches or last break/continue command inside finally.
-            //If it's a jump over catches so next is true:
-            //      1. jump label should go after default catch handler start label
-            //          AND
-            //      2. it shouldn't be present in default catch block, otherwise it break/continue
-            LabelNode targetJump = ((JumpInsnNode) prevLast).label;
-
-            InsnList instructions = inlineFun.instructions;
-            if (instructions.indexOf(defaultHandlerStartLabel) < instructions.indexOf(targetJump)) { //1 condition
-                AbstractInsnNode cur = defaultHandlerStartLabel;
-                while (cur != targetJump) {
-                    if (cur.getOpcode() == Opcodes.GOTO) {
-                        //noinspection ConstantConditions
-                        if (((JumpInsnNode) cur).label == targetJump) { //fail of 2 condition
-                            return lastFinallyInsExclusive;
-                        }
-                    }
-                    cur = cur.getNext();
-                }
-
-                return prevLast;
-            }
+        if (InlineCodegenUtil.isGoToTryCatchBlockEnd(prevLast)) {
+            return prevLast.getPrevious();
         }
         return lastFinallyInsExclusive;
     }

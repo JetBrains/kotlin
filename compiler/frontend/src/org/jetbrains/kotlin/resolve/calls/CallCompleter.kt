@@ -78,7 +78,7 @@ public class CallCompleter(
             temporaryTrace.commit()
         }
 
-        resolvedCall?.let { context.callResolverExtension.run(it, context) }
+        resolvedCall?.let { context.callChecker.check(it, context) }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
             return results.changeStatusToSuccess()

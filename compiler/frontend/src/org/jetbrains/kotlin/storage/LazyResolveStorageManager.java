@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 
 public interface LazyResolveStorageManager extends StorageManager {
     @NotNull
-    <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(@NotNull Function1<K, V> compute);
+    <K, V> MemoizedFunctionToNotNull<K, V> createSoftlyRetainedMemoizedFunction(@NotNull Function1<K, V> compute);
 
     @NotNull
-    <K, V> MemoizedFunctionToNullable<K, V> createWeaklyRetainedMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute);
+    <K, V> MemoizedFunctionToNullable<K, V> createSoftlyRetainedMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute);
 
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);

@@ -59,6 +59,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.psi.JetTypeElement
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -93,6 +95,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
+                    ?: specialInParameterListDummyIdentifier(tokenBefore)
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
@@ -204,7 +207,14 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             val configuration = CompletionSessionConfiguration(parameters)
             if (parameters.getCompletionType() == CompletionType.BASIC) {
-                val somethingAdded = BasicCompletionSession(configuration, parameters, result).complete()
+                val session = BasicCompletionSession(configuration, parameters, result)
+
+                if (session.completionKind == BasicCompletionSession.CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME && parameters.isAutoPopup()) {
+                    result.stopHere()
+                    return
+                }
+
+                val somethingAdded = session.complete()
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true,
@@ -238,9 +248,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
         // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
         if (invocationCount == 0 && isInExtensionReceiver(position)) return true
 
-        // no auto-popup on typing in the very beginning of function literal where name of the first parameter can be
-        if (invocationCount == 0 && isInFunctionLiteralStart(position)) return true
-
         return false
     }
 
@@ -255,16 +262,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
             is JetProperty -> typeRef == parent.getReceiverTypeReference()
             else -> false
         }
-    }
-
-    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
-        var prev = position.prevLeafSkipWhitespacesAndComments()
-        if (prev?.getNode()?.getElementType() == JetTokens.LPAR) {
-            prev = prev?.prevLeafSkipWhitespacesAndComments()
-        }
-        if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
-        val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
-        return functionLiteral.getLBrace() == prev
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
@@ -342,5 +339,35 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             current = current.prevLeaf(skipEmptyElements = true) ?: return null
         }
+    }
+
+    private fun specialInParameterListDummyIdentifier(tokenBefore: PsiElement?): String? {
+        if (tokenBefore == null) return null
+        var parent = tokenBefore.getParent()
+        while (parent != null) {
+            if (parent is JetParameterList) {
+                val balance = countParenthesisBalance(tokenBefore, parent)
+                val count = if (balance > 1) balance - 1 else 0
+                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B$"
+            }
+            if (parent is JetTypeElement) return null
+            if (parent is JetAnnotationEntry) return null
+            parent = parent.getParent()
+        }
+        return null
+    }
+
+    private fun countParenthesisBalance(at: PsiElement, container: PsiElement): Int {
+        val stopAt = container.prevLeaf()
+        var current: PsiElement? = at
+        var balance = 0
+        while (current != stopAt) {
+            when (current!!.getNode().getElementType()) {
+                JetTokens.LPAR -> balance++
+                JetTokens.RPAR -> balance--
+            }
+            current = current!!.prevLeaf()
+        }
+        return balance
     }
 }

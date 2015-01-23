@@ -21,6 +21,12 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.CharFilter.Result
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.util.Key
+import com.intellij.codeInsight.completion.CompletionService
+import com.intellij.codeInsight.completion.CompletionProgressIndicator
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.psiUtil.prevLeafSkipWhitespacesAndComments
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
@@ -32,8 +38,21 @@ public class KotlinCompletionCharFilter() : CharFilter() {
     override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
         if (!lookup.isCompletion()) return null
+        // it does not work in tests, so we use other way
+//        val isAutopopup = CompletionService.getCompletionService().getCurrentCompletion().isAutopopupCompletion()
+        val completionParameters = (CompletionService.getCompletionService().getCurrentCompletion() as CompletionProgressIndicator).getParameters()
+        val isAutopopup = completionParameters.getInvocationCount() == 0
 
-        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/ || c == '@') {
+        if (Character.isJavaIdentifierPart(c) || c == '@') {
+            return CharFilter.Result.ADD_TO_PREFIX
+        }
+
+        // do not accept items by special chars in the very beginning of function literal where name of the first parameter can be
+        if (isAutopopup && !lookup.isSelectionTouched() && isInFunctionLiteralStart(completionParameters.getPosition())) {
+            return Result.HIDE_LOOKUP
+        }
+
+        if (c == ':' /* used in '::xxx'*/) {
             return CharFilter.Result.ADD_TO_PREFIX
         }
 
@@ -44,8 +63,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
 
         return when (c) {
             '.' -> {
-                //TODO: this heuristics better to be only used for auto-popup completion but I see no way to check this
-                if (prefixLength == 0 && !lookup.isSelectionTouched()) {
+                if (prefixLength == 0 && isAutopopup && !lookup.isSelectionTouched()) {
                     val caret = lookup.getEditor().getCaretModel().getOffset()
                     if (caret > 0 && lookup.getEditor().getDocument().getCharsSequence()[caret - 1] == '.') {
                         return Result.HIDE_LOOKUP
@@ -65,5 +83,15 @@ public class KotlinCompletionCharFilter() : CharFilter() {
 
             else -> CharFilter.Result.HIDE_LOOKUP
         }
+    }
+
+    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
+        var prev = position.prevLeafSkipWhitespacesAndComments()
+        if (prev?.getNode()?.getElementType() == JetTokens.LPAR) {
+            prev = prev?.prevLeafSkipWhitespacesAndComments()
+        }
+        if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
+        val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
+        return functionLiteral.getLBrace() == prev
     }
 }

@@ -661,7 +661,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
-            model("debugger/selectExpression")
+            model("debugger/selectExpression", recursive = false)
+            model("debugger/selectExpression/disallowMethodCalls", testMethod = "doTestWoMethodCalls")
         }
 
         /*

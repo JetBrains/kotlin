@@ -46,7 +46,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassObject;
@@ -62,14 +61,14 @@ public class PropertyCodegen {
     private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;
     private final FieldOwnerContext context;
-    private final MemberCodegen<?> classBodyCodegen;
+    private final MemberCodegen<?> memberCodegen;
     private final OwnerKind kind;
 
     public PropertyCodegen(
             @NotNull FieldOwnerContext context,
             @NotNull ClassBuilder v,
             @NotNull FunctionCodegen functionCodegen,
-            @Nullable MemberCodegen<?> classBodyCodegen
+            @NotNull MemberCodegen<?> memberCodegen
     ) {
         this.state = functionCodegen.state;
         this.v = v;
@@ -77,7 +76,7 @@ public class PropertyCodegen {
         this.typeMapper = state.getTypeMapper();
         this.bindingContext = state.getBindingContext();
         this.context = context;
-        this.classBodyCodegen = classBodyCodegen;
+        this.memberCodegen = memberCodegen;
         this.kind = context.getContextKind();
     }
 
@@ -254,7 +253,7 @@ public class PropertyCodegen {
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC | getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
             if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
-                ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
+                ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
@@ -265,7 +264,7 @@ public class PropertyCodegen {
         }
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
-            ImplementationBodyCodegen parentBodyCodegen = getParentBodyCodegen(classBodyCodegen);
+            ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addClassObjectPropertyToCopy(propertyDescriptor, defaultValue);
         }
 

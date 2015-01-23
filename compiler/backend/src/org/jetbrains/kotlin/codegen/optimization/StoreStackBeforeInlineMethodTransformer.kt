@@ -75,7 +75,10 @@ private fun isInlineMarker(insn: AbstractInsnNode, markerName: String? = null): 
     return insn.getOpcode() == Opcodes.INVOKESTATIC &&
            insn is MethodInsnNode &&
            insn.owner == InlineCodegenUtil.INLINE_MARKER_CLASS_NAME &&
-           if (markerName != null) markerName == insn.name else true
+           if (markerName != null) markerName == insn.name else (
+               insn.name == InlineCodegenUtil.INLINE_MARKER_BEFORE_METHOD_NAME ||
+               insn.name == InlineCodegenUtil.INLINE_MARKER_AFTER_METHOD_NAME
+           )
 }
 
 private fun process(methodNode: MethodNode, frames: Array<Frame<BasicValue>?>) {

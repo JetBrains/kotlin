@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.types.KotlinToJavaTypesMap
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -164,7 +164,7 @@ class TypeInstantiationItems(
         var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
+        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
         if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis

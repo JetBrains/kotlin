@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LazyCodegen.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DeadCodeElimination.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LazyCodegen.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")
@@ -297,6 +297,57 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("short.kt")
         public void testShort() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/short.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DeadCodeElimination extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInDeadCodeElimination() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arrayConstructor.kt")
+        public void testArrayConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/arrayConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("boxing.kt")
+        public void testBoxing() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/boxing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyVariableRange.kt")
+        public void testEmptyVariableRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/emptyVariableRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastReturn.kt")
+        public void testLastReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/lastReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("literal.kt")
+        public void testLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/literal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleConstructor.kt")
+        public void testSimpleConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleConstructorNotRedundant.kt")
+        public void testSimpleConstructorNotRedundant() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundant.kt");
             doTest(fileName);
         }
     }

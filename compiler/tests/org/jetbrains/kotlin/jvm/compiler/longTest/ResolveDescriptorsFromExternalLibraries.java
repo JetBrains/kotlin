@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.ResolvePackage;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -46,6 +45,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.resolveTopLevelClass;
 
 public class ResolveDescriptorsFromExternalLibraries {
     public static void main(String[] args) throws Exception {
@@ -212,7 +213,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = ResolvePackage.resolveTopLevelClass(moduleDescriptor, new FqName(className));
+                    ClassDescriptor clazz = resolveTopLevelClass(moduleDescriptor, new FqName(className));
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

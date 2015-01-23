@@ -1235,7 +1235,7 @@ public abstract class StackValue {
                 if (primitiveType == null) throw new UnsupportedOperationException();
 
                 String typeName = primitiveType.getTypeName().getIdentifier();
-                return Type.getObjectType("kotlin/jvm/internal/Ref$" + typeName + "Ref");
+                return Type.getObjectType(REF_TYPE_PREFIX + typeName + "Ref");
         }
     }
 

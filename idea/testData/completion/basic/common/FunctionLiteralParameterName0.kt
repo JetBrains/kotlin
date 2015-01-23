@@ -3,4 +3,5 @@ fun bar() {
 }
 
 // INVOCATION_COUNT: 0
-// NUMBER: 0
+// EXIST: bar
+// EXIST: null
