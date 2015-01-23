@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2010-2015 JetBrains s.r.o.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.jetbrains.kotlin.resolve
 
@@ -25,8 +25,32 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import com.google.common.base.Predicates
 import org.jetbrains.kotlin.di.InjectorForLazyLocalClassifierAnalyzer
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
+import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.name.SpecialNames
 
-public class LazyLocalClassifierAnalyzer : LocalClassifierAnalyzer() {
+public class LazyLocalClassifierAnalyzer(
+        val descriptorResolver: DescriptorResolver,
+        val typeResolver: TypeResolver,
+        val annotationResolver: AnnotationResolver
+) : LocalClassifierAnalyzer() {
     override fun processClassOrObject(
             globalContext: GlobalContext,
             scope: WritableScope?,
@@ -44,18 +68,110 @@ public class LazyLocalClassifierAnalyzer : LocalClassifierAnalyzer() {
         val c = TopDownAnalysisContext(topDownAnalysisParameters)
         c.setOuterDataFlowInfo(context.dataFlowInfo)
 
+        val moduleDescriptor = DescriptorUtils.getContainingModule(containingDeclaration)
         val injector = InjectorForLazyLocalClassifierAnalyzer(
                 classOrObject.getProject(),
                 globalContext,
                 context.trace,
-                DescriptorUtils.getContainingModule(containingDeclaration),
+                moduleDescriptor,
                 additionalCheckerProvider,
-                dynamicTypesSettings
+                dynamicTypesSettings,
+                LocalClassDescriptorManager(
+                        classOrObject,
+                        containingDeclaration,
+                        globalContext.storageManager,
+                        context,
+                        moduleDescriptor,
+                        descriptorResolver,
+                        typeResolver,
+                        annotationResolver
+                )
         )
 
         injector.getLazyTopDownAnalyzer().analyzeDeclarations(
                 topDownAnalysisParameters,
                 listOf(classOrObject)
         )
+    }
+}
+
+class LocalClassDescriptorManager(
+        val myClass: JetClassOrObject,
+        val containingDeclaration: DeclarationDescriptor,
+        val storageManager: StorageManager,
+        val expressionTypingContext: ExpressionTypingContext,
+        val moduleDescriptor: ModuleDescriptor,
+        val descriptorResolver: DescriptorResolver,
+        val typeResolver: TypeResolver,
+        val annotationResolver: AnnotationResolver
+) {
+    // We do not need to synchronize here, because this code is used strictly from one thread
+    private var classDescriptor: ClassDescriptor? = null
+
+    fun isMyClass(c: PsiElement): Boolean = c == myClass
+
+    fun createClassDescriptor(classOrObject: JetClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
+        assert(isMyClass(classOrObject)) {"Called on a wrong class: ${classOrObject.getDebugText()}"}
+        if (classDescriptor == null) {
+            classDescriptor = LazyClassDescriptor(
+                    object : LazyClassContext {
+                        override val scopeProvider = declarationScopeProvider
+                        override val storageManager = this@LocalClassDescriptorManager.storageManager
+                        override val trace = expressionTypingContext.trace
+                        override val moduleDescriptor = this@LocalClassDescriptorManager.moduleDescriptor
+                        override val descriptorResolver = this@LocalClassDescriptorManager.descriptorResolver
+                        override val typeResolver = this@LocalClassDescriptorManager.typeResolver
+                        override val declarationProviderFactory = object : DeclarationProviderFactory {
+                            override fun getClassMemberDeclarationProvider(classLikeInfo: JetClassLikeInfo): ClassMemberDeclarationProvider {
+                                return PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo)
+                            }
+
+                            override fun getPackageMemberDeclarationProvider(packageFqName: FqName): PackageMemberDeclarationProvider? {
+                                throw UnsupportedOperationException("Should not be called for top-level declarations")
+                            }
+
+                        }
+                        override val annotationResolver = this@LocalClassDescriptorManager.annotationResolver
+                    }
+                    ,
+                    containingDeclaration,
+                    if (classOrObject.isObjectLiteral()) SpecialNames.NO_NAME_PROVIDED else classOrObject.getNameAsName(),
+                    JetClassInfoUtil.createClassLikeInfo(classOrObject)
+            )
+        }
+
+        return classDescriptor!!
+    }
+
+    fun getResolutionScopeForClass(classOrObject: JetClassOrObject): JetScope {
+        assert (isMyClass(classOrObject)) {"Called on a wrong class: ${classOrObject.getDebugText()}"}
+        return expressionTypingContext.scope
+    }
+}
+
+class LocalLazyDeclarationResolver(
+        globalContext: GlobalContext,
+        trace: BindingTrace,
+        val localClassDescriptorManager: LocalClassDescriptorManager
+) : LazyDeclarationResolver(globalContext, trace) {
+
+    override fun getClassDescriptor(classOrObject: JetClassOrObject): ClassDescriptor {
+        if (localClassDescriptorManager.isMyClass(classOrObject)) {
+            return localClassDescriptorManager.createClassDescriptor(classOrObject, scopeProvider)
+        }
+        return super.getClassDescriptor(classOrObject)
+    }
+}
+
+
+class DeclarationScopeProviderForLocalClassifierAnalyzer(
+        lazyDeclarationResolver: LazyDeclarationResolver,
+        val localClassDescriptorManager: LocalClassDescriptorManager
+) : DeclarationScopeProviderImpl(lazyDeclarationResolver) {
+    override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope {
+        if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {
+            return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as JetClassOrObject)
+        }
+        return super.getResolutionScopeForDeclaration(elementOfDeclaration)
     }
 }
