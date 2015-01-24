@@ -1,8 +1,0 @@
-Cleaning output files:
-out/production/module1/a/A.class
-out/production/module1/a/APackage$module1_a$*.class
-out/production/module1/a/APackage.class
-End of files
-Compiling files:
-module1/src/module1_a.kt
-End of files
