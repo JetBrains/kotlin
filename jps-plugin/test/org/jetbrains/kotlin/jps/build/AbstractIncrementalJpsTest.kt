@@ -36,8 +36,6 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import kotlin.test.assertFalse
 import java.util.regex.Pattern
 import kotlin.test.assertEquals
-import org.jetbrains.jps.model.java.JpsJavaDependencyExtension
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     class object {
@@ -184,7 +182,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
-            val dependencies = if (split.size > 1) split[1].split(",") else array()
+            val dependencies = split[1].split(",")
 
             result[module] = dependencies.toList()
         }
@@ -255,7 +253,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             for ((moduleName, dependencies) in moduleDependencies) {
                 val module = nameToModule[moduleName]!!
                 for (dependency in dependencies) {
-                    JpsModuleRootModificationUtil.addDependency(module, nameToModule[dependency])
+                    module.getDependenciesList().addModuleDependency(nameToModule[dependency]!!)
                 }
             }
 
