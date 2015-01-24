@@ -1,6 +1,0 @@
-package a
-
-inline fun a(body: () -> Unit) {
-    println("i am inline function")
-    body()
-}
