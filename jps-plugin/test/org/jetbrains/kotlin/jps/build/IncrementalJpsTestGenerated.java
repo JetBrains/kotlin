@@ -52,24 +52,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("constantValueChanged")
-        public void testConstantValueChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/constantValueChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineFunctionChanged")
-        public void testInlineFunctionChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionChanged/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inlineFunctionInlined")
-        public void testInlineFunctionInlined() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
-            doTest(fileName);
-        }
-
         @TestMetadata("simpleDependency")
         public void testSimpleDependency() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependency/");
@@ -85,12 +67,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("transitiveDependency")
         public void testTransitiveDependency() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/transitiveDependency/");
-            doTest(fileName);
-        }
-
-        @TestMetadata("transitiveInlining")
-        public void testTransitiveInlining() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/transitiveInlining/");
             doTest(fileName);
         }
 
