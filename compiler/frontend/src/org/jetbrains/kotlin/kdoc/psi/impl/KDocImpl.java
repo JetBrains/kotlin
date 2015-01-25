@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.kdoc.psi.impl;
 import com.intellij.lang.Language;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
@@ -44,5 +45,10 @@ public class KDocImpl extends LazyParseablePsiElement implements KDoc {
     @Override
     public IElementType getTokenType() {
         return JetTokens.DOC_COMMENT;
+    }
+
+    @Override
+    public KDocSection getDefaultSection() {
+        return PsiTreeUtil.getChildOfType(this, KDocSection.class);
     }
 }

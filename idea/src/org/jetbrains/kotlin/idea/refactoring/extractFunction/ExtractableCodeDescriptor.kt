@@ -132,7 +132,7 @@ trait OutputValue {
 
     class Jump(
             val elementsToReplace: List<JetExpression>,
-            val elementToInsertAfterCall: JetElement,
+            val elementToInsertAfterCall: JetElement?,
             val conditional: Boolean
     ): OutputValue {
         override val originalExpressions: List<JetExpression> get() = elementsToReplace
@@ -176,7 +176,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             else -> null
         }
         val arguments = call?.getValueArguments()
-        if (arguments == null || arguments.size <= index) return null
+        if (arguments == null || arguments.size() <= index) return null
 
         return arguments[index].getArgumentExpression()
     }
@@ -195,7 +195,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             val module: ModuleDescriptor
     ) : OutputValueBoxer(outputValues) {
         {
-            assert(outputValues.size <= 3, "At most 3 output values are supported")
+            assert(outputValues.size() <= 3, "At most 3 output values are supported")
         }
 
         class object {
@@ -204,7 +204,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override val returnType: JetType by Delegates.lazy {
             fun getType(): JetType {
-                val boxingClass = when (outputValues.size) {
+                val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
                     2 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Pair")).first()
                     3 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Triple")).first()
@@ -216,10 +216,10 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             getType()
         }
 
-        override val boxingRequired: Boolean = outputValues.size > 1
+        override val boxingRequired: Boolean = outputValues.size() > 1
 
         override fun getBoxingExpressionText(arguments: List<String>): String? {
-            return when (arguments.size) {
+            return when (arguments.size()) {
                 0 -> null
                 1 -> arguments.first()
                 else -> {
@@ -235,7 +235,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
         }
 
         override fun getUnboxingExpressions(boxedText: String): Map<OutputValue, String> {
-            return when (outputValues.size) {
+            return when (outputValues.size()) {
                 0 -> Collections.emptyMap()
                 1 -> Collections.singletonMap(outputValues.first(), boxedText)
                 else -> {
@@ -255,7 +255,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             )
         }
 
-        override val boxingRequired: Boolean = outputValues.size > 0
+        override val boxingRequired: Boolean = outputValues.size() > 0
 
         override fun getBoxingExpressionText(arguments: List<String>): String? {
             if (arguments.isEmpty()) return null
@@ -281,14 +281,15 @@ data class ControlFlow(
     val outputValueBoxer = boxerFactory(outputValues)
 
     val defaultOutputValue: ExpressionValue? = with(outputValues.filterIsInstance<ExpressionValue>()) {
-        if (size > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
+        if (size() > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
     }
 
     val jumpOutputValue: Jump? = with(outputValues.filterIsInstance<Jump>()) {
+        val jumpCount = size()
         when {
             isEmpty() ->
                 null
-            outputValues.size > size || size > 1 ->
+            outputValues.size() > jumpCount || jumpCount > 1 ->
                 throw IllegalArgumentException("Jump values must be the only value if it's present: ${outputValues.joinToString()}")
             else ->
                 first()
@@ -384,7 +385,7 @@ class ExtractableCodeDescriptorWithConflicts(
 )
 
 fun ExtractableCodeDescriptor.canGenerateProperty(): Boolean {
-    if (!parameters.empty) return false
+    if (!parameters.isEmpty()) return false
     if (controlFlow.outputValueBoxer.returnType.isUnit()) return false
 
     val parent = extractionData.targetSibling.getParent()

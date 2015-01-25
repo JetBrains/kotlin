@@ -1,0 +1,4 @@
+package inline
+
+fun other() {
+}

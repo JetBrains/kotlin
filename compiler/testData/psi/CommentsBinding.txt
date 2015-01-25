@@ -64,8 +64,9 @@ JetFile: CommentsBinding.kt
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' Doc comment for A')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Doc comment for A')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_END)('*/')
     PsiWhiteSpace('\n')
@@ -128,7 +129,8 @@ JetFile: CommentsBinding.kt
       PROPERTY
         KDoc
           PsiElement(KDOC_START)('/**')
-          PsiElement(KDOC_TEXT)(' v2 doc comment ')
+          KDOC_SECTION
+            PsiElement(KDOC_TEXT)(' v2 doc comment ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n    ')
         PsiElement(val)('val')
@@ -356,7 +358,8 @@ JetFile: CommentsBinding.kt
       ENUM_ENTRY
         KDoc
           PsiElement(KDOC_START)('/**')
-          PsiElement(KDOC_TEXT)(' This is B ')
+          KDOC_SECTION
+            PsiElement(KDOC_TEXT)(' This is B ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
@@ -371,7 +374,8 @@ JetFile: CommentsBinding.kt
       ENUM_ENTRY
         KDoc
           PsiElement(KDOC_START)('/**')
-          PsiElement(KDOC_TEXT)(' This is X ')
+          KDOC_SECTION
+            PsiElement(KDOC_TEXT)(' This is X ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n    ')
         OBJECT_DECLARATION_NAME

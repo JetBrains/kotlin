@@ -3,3 +3,5 @@ JetFile: DocCommentAtBeginningOfFile1.kt
     <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
+    KDOC_SECTION
+      <empty list>

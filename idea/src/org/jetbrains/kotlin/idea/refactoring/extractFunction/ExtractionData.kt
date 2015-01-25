@@ -92,12 +92,12 @@ data class ExtractionData(
 
     fun getCodeFragmentTextRange(): TextRange? {
         val originalElements = originalElements
-        return when (originalElements.size) {
+        return when (originalElements.size()) {
             0 -> null
-            1 -> originalElements.first!!.getTextRange()
+            1 -> originalElements.first().getTextRange()
             else -> {
-                val from = originalElements.first!!.getTextRange()!!.getStartOffset()
-                val to = originalElements.last!!.getTextRange()!!.getEndOffset()
+                val from = originalElements.first().getTextRange()!!.getStartOffset()
+                val to = originalElements.last().getTextRange()!!.getEndOffset()
                 TextRange(from, to)
             }
         }
@@ -106,7 +106,7 @@ data class ExtractionData(
     fun getCodeFragmentText(): String =
             getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
 
-    val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
+    val originalStartOffset = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
 
     private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
 

@@ -4,7 +4,8 @@ JetFile: TextRightAfterLeadAsterisks.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n')
-    PsiElement(KDOC_LEADING_ASTERISK)('**')
-    PsiElement(KDOC_TEXT)('test')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('**')
+      PsiElement(KDOC_TEXT)('test')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

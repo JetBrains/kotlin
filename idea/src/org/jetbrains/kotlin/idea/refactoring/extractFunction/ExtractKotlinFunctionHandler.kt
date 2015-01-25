@@ -63,7 +63,7 @@ public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
         private val helper: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper.DEFAULT) : RefactoringActionHandler {
     private fun adjustElements(elements: List<PsiElement>): List<PsiElement> {
-        if (elements.size != 1) return elements
+        if (elements.size() != 1) return elements
 
         val e = elements.first()
         if (e is JetBlockExpression && e.getParent() is JetFunctionLiteral) return e.getStatements()
@@ -108,7 +108,7 @@ public class ExtractKotlinFunctionHandler(
             }
         }
 
-        val message = analysisResult.messages.map { it.renderMessage() }.makeString("\n")
+        val message = analysisResult.messages.map { it.renderMessage() }.joinToString("\n")
         when (analysisResult.status) {
             Status.CRITICAL_ERROR -> {
                 showErrorHint(project, editor, message)
@@ -179,7 +179,7 @@ fun selectElements(
 
     fun onSelectionComplete(parent: PsiElement, elements: List<PsiElement>, targetContainer: JetElement) {
         if (parent == targetContainer) {
-            continuation(elements, elements.first!!)
+            continuation(elements, elements.first())
             return
         }
 
@@ -194,10 +194,10 @@ fun selectElements(
 
     fun selectTargetContainer(elements: List<PsiElement>) {
         val parent = PsiTreeUtil.findCommonParent(elements)
-            ?: throw AssertionError("Should have at least one parent: ${elements.makeString("\n")}")
+            ?: throw AssertionError("Should have at least one parent: ${elements.joinToString("\n")}")
 
-        val containers = parent.getExtractionContainers(elements.size == 1, allContainersEnabled)
-        if (containers.empty) {
+        val containers = parent.getExtractionContainers(elements.size() == 1, allContainersEnabled)
+        if (containers.isEmpty()) {
             noContainerError()
             return
         }

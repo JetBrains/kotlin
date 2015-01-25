@@ -369,6 +369,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localFunction.kt")
+            public void testLocalFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localProperty.kt")
             public void testLocalProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localProperty.kt");

@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
 public class JetPairMatcher implements PairedBraceMatcher {
@@ -31,7 +30,6 @@ public class JetPairMatcher implements PairedBraceMatcher {
             new BracePair(JetTokens.LONG_TEMPLATE_ENTRY_START, JetTokens.LONG_TEMPLATE_ENTRY_END, false),
             new BracePair(JetTokens.LBRACE, JetTokens.RBRACE, true),
             new BracePair(JetTokens.LBRACKET, JetTokens.RBRACKET, false),
-            new BracePair(KDocTokens.WIKI_LINK_OPEN, KDocTokens.WIKI_LINK_CLOSE, false)
     };
 
     @Override
@@ -45,8 +43,6 @@ public class JetPairMatcher implements PairedBraceMatcher {
             // KotlinTypedHandler insert paired brace in this case
             return false;
         }
-
-        if (lbraceType == KDocTokens.WIKI_LINK_OPEN) return false;
 
         return  JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
                 || contextType == JetTokens.SEMICOLON

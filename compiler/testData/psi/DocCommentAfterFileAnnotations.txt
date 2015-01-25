@@ -18,8 +18,9 @@ JetFile: DocCommentAfterFileAnnotations.kt
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' Doc comment')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Doc comment')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_END)('*/')
     PsiWhiteSpace('\n')
