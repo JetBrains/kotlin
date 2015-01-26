@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.idea.navigation;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
 
 import java.io.File;
 
-public class JetGotoImplementationMultifileTest extends CodeInsightTestCase {
+public class JetGotoImplementationMultifileTest extends KotlinCodeInsightTestCase {
     public void testImplementFunInJava() throws Exception {
         doKotlinJavaTest();
     }
