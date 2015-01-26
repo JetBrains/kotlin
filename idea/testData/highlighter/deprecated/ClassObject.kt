@@ -1,9 +1,9 @@
 fun test() {
-   <warning descr="'MyClass.<class-object-for-MyClass>' is deprecated. Use A instead">MyClass</warning>.test
+   <warning descr="'MyClass.Default' is deprecated. Use A instead">MyClass</warning>.test
    MyClass()
    val a: MyClass? = null
    val b: MyTrait? = null
-   <warning descr="'MyTrait.<class-object-for-MyTrait>' is deprecated. Use A instead">MyTrait</warning>.test
+   <warning descr="'MyTrait.Default' is deprecated. Use A instead">MyTrait</warning>.test
 
    a == b
 }
