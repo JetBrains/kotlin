@@ -151,15 +151,15 @@ public object ShortenReferences {
     private abstract class ShorteningVisitor<T : JetElement>(
             val file: JetFile,
             val elementFilter: (PsiElement) -> FilterResult,
-            val resolveMap: Map<JetReferenceExpression, BindingContext>,
-            val importInserter: ImportInserter) : JetVisitorVoid() {
-        protected val resolutionFacade: ResolutionFacade
-            get() = file.getResolutionFacade()
+            val preResolveMap: Map<JetReferenceExpression, BindingContext>,
+            val importInserter: ImportInserter
+    ) : JetVisitorVoid() {
+        protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
 
         protected val elementsToShorten: MutableSet<T> = LinkedHashSet()
 
         protected fun bindingContext(element: JetElement): BindingContext
-                = resolveMap[element] ?: resolutionFacade.analyze(element)
+                = preResolveMap[element] ?: resolutionFacade.analyze(element)
 
         protected abstract fun getShortenedElement(element: T): JetElement?
 
@@ -179,18 +179,16 @@ public object ShortenReferences {
     private class ShortenTypesVisitor(
             file: JetFile,
             elementFilter: (PsiElement) -> FilterResult,
-            resolveMap: Map<JetReferenceExpression, BindingContext>,
+            preResolveMap: Map<JetReferenceExpression, BindingContext>,
             importInserter: ImportInserter
-    ) : ShorteningVisitor<JetUserType>(file, elementFilter, resolveMap, importInserter) {
+    ) : ShorteningVisitor<JetUserType>(file, elementFilter, preResolveMap, importInserter) {
         private fun canShortenType(userType: JetUserType): Boolean {
             if (userType.getQualifier() == null) return false
-            val referenceExpression = userType.getReferenceExpression()
-            if (referenceExpression == null) return false
+            val referenceExpression = userType.getReferenceExpression() ?: return false
 
             val target = bindingContext(referenceExpression)[BindingContext.REFERENCE_TARGET, referenceExpression]?.let { desc ->
                 if (desc is ConstructorDescriptor) desc.getContainingDeclaration() else desc
-            }
-            if (target == null) return false
+            } ?: return false
 
             val typeReference = userType.getStrictParentOfType<JetTypeReference>()!!
             val scope = resolutionFacade.analyze(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
@@ -237,9 +235,9 @@ public object ShortenReferences {
     private class ShortenQualifiedExpressionsVisitor(
             file: JetFile,
             elementFilter: (PsiElement) -> FilterResult,
-            resolveMap: Map<JetReferenceExpression, BindingContext>,
+            preResolveMap: Map<JetReferenceExpression, BindingContext>,
             importInserter: ImportInserter
-    ) : ShorteningVisitor<JetQualifiedExpression>(file, elementFilter, resolveMap, importInserter) {
+    ) : ShorteningVisitor<JetQualifiedExpression>(file, elementFilter, preResolveMap, importInserter) {
         private fun canShorten(qualifiedExpression: JetDotQualifiedExpression): Boolean {
             val context = bindingContext(qualifiedExpression)
 
