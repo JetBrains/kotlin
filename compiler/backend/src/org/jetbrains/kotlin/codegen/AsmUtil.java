@@ -257,6 +257,8 @@ public class AsmUtil {
     public static int getVisibilityAccessFlagForClass(ClassDescriptor descriptor) {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor) ||
             descriptor.getVisibility() == Visibilities.PUBLIC ||
+            // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
+            descriptor.getVisibility() == Visibilities.LOCAL ||
             descriptor.getVisibility() == Visibilities.INTERNAL) {
             return ACC_PUBLIC;
         }
@@ -281,7 +283,8 @@ public class AsmUtil {
     }
 
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
-        return getVisibilityAccessFlag(innerClass) |
+        int visibility = (innerClass.getVisibility() == Visibilities.LOCAL) ? ACC_PUBLIC : getVisibilityAccessFlag(innerClass);
+        return visibility |
                innerAccessFlagsForModalityAndKind(innerClass) |
                (innerClass.isInner() ? 0 : ACC_STATIC);
     }
