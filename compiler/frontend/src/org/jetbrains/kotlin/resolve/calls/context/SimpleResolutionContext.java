@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -32,10 +33,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, partialBodyResolveProvider,
               isAnnotationContext, collectAllCandidates);
     }
 
@@ -45,10 +47,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CallChecker callChecker
+            @NotNull CallChecker callChecker,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider
     ) {
         this(trace, scope, expectedType, dataFlowInfo, contextDependency, new ResolutionResultsCacheImpl(),
-             callChecker, false, false);
+             callChecker, partialBodyResolveProvider, false, false);
     }
 
     @Override
@@ -59,10 +62,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             boolean collectAllCandidates
     ) {
         return new SimpleResolutionContext(
-                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker,
+                trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker, partialBodyResolveProvider,
                 isAnnotationContext, collectAllCandidates);
     }
 }

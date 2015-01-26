@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public open class PartialBodyResolveProvider {
+
     public open val filter: ((JetElement) -> Boolean)?
         get() = null
 
@@ -26,3 +29,10 @@ public open class PartialBodyResolveProvider {
         public val NONE: PartialBodyResolveProvider = PartialBodyResolveProvider()
     }
 }
+
+fun PartialBodyResolveProvider.filterStatements(block: JetBlockExpression): List<JetElement> {
+    if (filter == null || block is JetPsiUtil.JetExpressionWrapper) return block.getStatements()
+    return block.getStatements().filter { filter!!(it) }
+}
+
+fun PartialBodyResolveProvider.getLastStatementInABlock(block: JetBlockExpression) = filterStatements(block).lastOrNull()

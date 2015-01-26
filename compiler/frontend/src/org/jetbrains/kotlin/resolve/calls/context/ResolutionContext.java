@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -40,6 +41,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public final ResolutionResultsCache resolutionResultsCache;
     @NotNull
     public final CallChecker callChecker;
+    @NotNull
+    public final PartialBodyResolveProvider partialBodyResolveProvider;
 
     public final boolean isAnnotationContext;
 
@@ -53,6 +56,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
@@ -63,6 +67,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.contextDependency = contextDependency;
         this.resolutionResultsCache = resolutionResultsCache;
         this.callChecker = callChecker;
+        this.partialBodyResolveProvider = partialBodyResolveProvider;
         this.isAnnotationContext = isAnnotationContext;
         this.collectAllCandidates = collectAllCandidates;
     }
@@ -74,6 +79,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             boolean collectAllCandidates
     );
 
@@ -86,38 +92,44 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, collectAllCandidates);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
-        return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, collectAllCandidates);
+        return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
     public Context replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
-        return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, collectAllCandidates);
+        return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
-        return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, collectAllCandidates);
+        return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, collectAllCandidates);
+        return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, collectAllCandidates);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 
     @NotNull
@@ -127,6 +139,13 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
 
     @NotNull
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
-        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, newCollectAllCandidates);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      newCollectAllCandidates);
+    }
+
+    @NotNull
+    public Context replacePartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, partialBodyResolveProvider,
+                      collectAllCandidates);
     }
 }

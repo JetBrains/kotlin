@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -55,12 +56,13 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, isAnnotationContext, collectAllCandidates);
+              dataFlowInfoForArguments, callChecker, partialBodyResolveProvider, isAnnotationContext, collectAllCandidates);
         this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
@@ -75,7 +77,8 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
-             context.callChecker, Lists.<MutableResolvedCall<F>>newArrayList(), context.isAnnotationContext, context.collectAllCandidates);
+             context.callChecker, context.partialBodyResolveProvider, Lists.<MutableResolvedCall<F>>newArrayList(),
+             context.isAnnotationContext, context.collectAllCandidates);
     }
 
     public ResolutionTask(
@@ -113,12 +116,13 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull PartialBodyResolveProvider partialBodyResolveProvider,
             boolean collectAllCandidates
     ) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, resolvedCalls, isAnnotationContext,
-                collectAllCandidates);
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, partialBodyResolveProvider, resolvedCalls,
+                isAnnotationContext, collectAllCandidates);
     }
 
     public ResolutionTask<D, F> replaceContext(@NotNull BasicCallResolutionContext newContext) {
@@ -128,7 +132,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, resolvedCalls,
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, partialBodyResolveProvider, resolvedCalls,
                 isAnnotationContext, collectAllCandidates);
     }
 
