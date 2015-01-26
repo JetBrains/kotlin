@@ -253,7 +253,7 @@ private object KotlinResolveDataProvider {
                     trace,
                     targetPlatform.getAdditionalCheckerProvider(),
                     targetPlatform.getDynamicTypesSettings()
-            ).getLazyTopDownAnalyzer()!!
+            ).getLazyTopDownAnalyzerForTopLevel()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(
                     TopDownAnalysisParameters.create(
@@ -263,8 +263,7 @@ private object KotlinResolveDataProvider {
                             /* analyzingBootstrapLibrary = */ false,
                             /* declaredLocally = */ false
                     ),
-                    listOf(analyzableElement),
-                    DataFlowInfo.EMPTY
+                    listOf(analyzableElement)
             )
             return AnalysisResult.success(
                     trace.getBindingContext(),

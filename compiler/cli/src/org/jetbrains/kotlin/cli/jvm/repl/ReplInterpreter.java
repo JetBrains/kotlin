@@ -100,7 +100,7 @@ public class ReplInterpreter {
     private final ModuleDescriptorImpl module;
 
     private final TopDownAnalysisContext topDownAnalysisContext;
-    private final LazyTopDownAnalyzer topDownAnalyzer;
+    private final LazyTopDownAnalyzerForTopLevel topDownAnalyzer;
     private final ResolveSession resolveSession;
     private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
 
@@ -143,7 +143,7 @@ public class ReplInterpreter {
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters, DataFlowInfo.EMPTY);
-        this.topDownAnalyzer = injector.getLazyTopDownAnalyzer();
+        this.topDownAnalyzer = injector.getLazyTopDownAnalyzerForTopLevel();
         this.resolveSession = injector.getResolveSession();
 
         module.initialize(new CompositePackageFragmentProvider(
@@ -362,8 +362,7 @@ public class ReplInterpreter {
 
         TopDownAnalysisContext context = topDownAnalyzer.analyzeDeclarations(
                 topDownAnalysisContext.getTopDownAnalysisParameters(),
-                Collections.singletonList(psiFile),
-                DataFlowInfo.EMPTY
+                Collections.singletonList(psiFile)
         );
 
         if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile) == null) {

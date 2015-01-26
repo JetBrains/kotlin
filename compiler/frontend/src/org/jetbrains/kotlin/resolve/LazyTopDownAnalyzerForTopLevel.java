@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.intellij.psi.PsiElement;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
@@ -67,7 +68,15 @@ public class LazyTopDownAnalyzerForTopLevel {
 
         ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
 
-        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisParameters, files, DataFlowInfo.EMPTY);
+        return analyzeDeclarations(topDownAnalysisParameters, files);
+    }
+
+    @NotNull
+    public TopDownAnalysisContext analyzeDeclarations(
+            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull Collection<? extends PsiElement> elements
+    ) {
+        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisParameters, elements, DataFlowInfo.EMPTY);
 
         resolveImportsInAllFiles(c, resolveSession);
 

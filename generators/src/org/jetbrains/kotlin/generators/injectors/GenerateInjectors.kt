@@ -94,7 +94,6 @@ private fun generatorForLazyTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyTopDownAnalyzerBasic") {
             commonForResolveSessionBased()
 
-            publicField<LazyTopDownAnalyzer>()
             publicField<LazyTopDownAnalyzerForTopLevel>()
 
             field<AdditionalCheckerProvider.DefaultProvider>()
@@ -129,14 +128,13 @@ private fun generatorForLazyBodyResolve() =
 
             field<ModuleDescriptor>(init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
 
-            publicField<LazyTopDownAnalyzer>()
+            publicField<LazyTopDownAnalyzerForTopLevel>()
         }
 
 private fun generatorForTopDownAnalyzerForJs() =
         generator("js/js.frontend/src", DI_DEFAULT_PACKAGE, "InjectorForTopDownAnalyzerForJs") {
             commonForResolveSessionBased()
 
-            publicField<LazyTopDownAnalyzer>()
             publicField<LazyTopDownAnalyzerForTopLevel>()
 
             field<MutablePackageFragmentProvider>()
