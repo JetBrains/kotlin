@@ -15,5 +15,5 @@ class MyClass() {
 //public constructor A() defined in test.A
 //internal final class MyClass defined in test
 //public constructor MyClass() defined in test.MyClass
-//internal final class B : test.A defined in test.MyClass.<init>
+//local final class B : test.A defined in test.MyClass.<init>
 //public constructor B() defined in test.MyClass.<init>.B
