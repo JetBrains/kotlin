@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,23 +87,25 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
 
         JetTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        element.setTypeReference(replacingTypeReference);
+        ArrayList<JetTypeReference> toShorten = new ArrayList<JetTypeReference>();
+        toShorten.add(element.setTypeReference(replacingTypeReference));
+
         if (element instanceof JetProperty) {
             JetPropertyAccessor getter = ((JetProperty) element).getGetter();
             JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
-                getterReturnTypeRef.replace(replacingTypeReference);
+                toShorten.add((JetTypeReference) getterReturnTypeRef.replace(replacingTypeReference));
             }
 
             JetPropertyAccessor setter = ((JetProperty) element).getSetter();
             JetParameter setterParameter = setter == null ? null : setter.getParameter();
             JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {
-                setterParameterTypeRef.replace(replacingTypeReference);
+                toShorten.add((JetTypeReference) setterParameterTypeRef.replace(replacingTypeReference));
             }
         }
 
-        QuickFixUtil.shortenReferencesOfType(type, file);
+        ShortenReferences.INSTANCE$.process(toShorten);
     }
 
     @NotNull

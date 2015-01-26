@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -83,10 +84,16 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
                 (JetParenthesizedExpression) element.replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
 
         if (JetPsiUtil.areParenthesesUseless(castExpressionInParentheses)) {
-            castExpressionInParentheses.replace(castExpression);
+            castExpression = (JetBinaryExpressionWithTypeRHS) castExpressionInParentheses.replace(castExpression);
+        }
+        else {
+            castExpression = (JetBinaryExpressionWithTypeRHS) castExpressionInParentheses.getExpression();
+            assert castExpression != null;
         }
 
-        QuickFixUtil.shortenReferencesOfType(type, file);
+        JetTypeReference typeRef = castExpression.getRight();
+        assert typeRef != null;
+        ShortenReferences.INSTANCE$.process(typeRef);
     }
 
     @NotNull

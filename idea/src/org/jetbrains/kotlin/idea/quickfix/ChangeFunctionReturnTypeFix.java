@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -108,12 +109,14 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         }
         else {
             if (!(KotlinBuiltIns.isUnit(type) && element.hasBlockBody())) {
-                element.setTypeReference(JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)));
+                JetTypeReference newTypeRef = JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+                newTypeRef = element.setTypeReference(newTypeRef);
+                assert newTypeRef != null;
+                ShortenReferences.INSTANCE$.process(newTypeRef);
             }
             else {
                 element.setTypeReference(null);
             }
-            QuickFixUtil.shortenReferencesOfType(type, file);
         }
     }
 

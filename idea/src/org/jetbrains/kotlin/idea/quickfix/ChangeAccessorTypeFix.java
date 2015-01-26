@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
@@ -67,24 +67,21 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
         JetTypeReference newTypeReference = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
+        JetTypeReference typeReference;
         if (element.isGetter()) {
-            JetTypeReference returnTypeReference = newElement.getReturnTypeReference();
-            assert returnTypeReference != null;
-            CodeEditUtil.replaceChild(newElement.getNode(), returnTypeReference.getNode(), newTypeReference.getNode());
+            typeReference = element.getReturnTypeReference();
         }
         else {
-            JetParameter parameter = newElement.getParameter();
+            JetParameter parameter = element.getParameter();
             assert parameter != null;
-            JetTypeReference typeReference = parameter.getTypeReference();
-            assert typeReference != null;
-            CodeEditUtil.replaceChild(parameter.getNode(), typeReference.getNode(), newTypeReference.getNode());
+            typeReference = parameter.getTypeReference();
         }
-        element.replace(newElement);
+        assert typeReference != null;
 
-        QuickFixUtil.shortenReferencesOfType(type, file);
+        newTypeReference = (JetTypeReference) typeReference.replace(newTypeReference);
+        ShortenReferences.INSTANCE$.process(newTypeReference);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

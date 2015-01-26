@@ -22,8 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -32,10 +30,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.UtilPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -48,9 +44,6 @@ import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 public class QuickFixUtil {
@@ -214,34 +207,5 @@ public class QuickFixUtil {
                ? IdeDescriptorRenderers.SOURCE_CODE
                : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
         return renderer.renderType(type);
-    }
-
-    public static void shortenReferencesOfType(@NotNull JetType type, @NotNull JetFile file) {
-        shortenReferencesOfTypes(Collections.singletonList(type), file);
-    }
-
-    public static void shortenReferencesOfTypes(@NotNull List<JetType> types, @NotNull JetFile file) {
-        Set<JetType> typesToShorten = KotlinPackage.flatMapTo(
-                types,
-                new LinkedHashSet<JetType>(),
-                new Function1<JetType, Iterable<JetType>>() {
-                    @Override
-                    public Iterable<JetType> invoke(JetType type) {
-                        return UtilPackage.getAllReferencedTypes(type);
-                    }
-                }
-        );
-        ShortenReferences.INSTANCE$.processAllReferencesInFile(
-                KotlinPackage.map(
-                        typesToShorten,
-                        new Function1<JetType, DeclarationDescriptor>() {
-                            @Override
-                            public DeclarationDescriptor invoke(JetType type) {
-                                return DescriptorUtils.getClassDescriptorForType(type);
-                            }
-                        }
-                ),
-                file
-        );
     }
 }

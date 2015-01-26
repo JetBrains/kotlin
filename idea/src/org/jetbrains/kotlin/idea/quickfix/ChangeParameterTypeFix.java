@@ -23,12 +23,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -55,7 +53,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
     @NotNull
     @Override
     public String getText() {
-        String renderedType = renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
+        String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         return isPrimaryConstructorParameter ?
             JetBundle.message("change.primary.constructor.parameter.type", element.getName(), containingDeclarationName, renderedType) :
             JetBundle.message("change.function.parameter.type", element.getName(), containingDeclarationName, renderedType);
@@ -69,7 +67,9 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.setTypeReference(JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)));
-        QuickFixUtil.shortenReferencesOfType(type, file);
+        JetTypeReference newTypeRef = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+        newTypeRef = element.setTypeReference(newTypeRef);
+        assert newTypeRef != null;
+        ShortenReferences.INSTANCE$.process(newTypeRef);
     }
 }

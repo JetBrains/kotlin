@@ -3,4 +3,4 @@
 import kotlin.modules.Module
 
 fun bar(): Module = kotlin.modules.ModuleBuilder("", "")
-fun foo(): Module = bar(<caret>)
+fun foo(): kotlin.modules.Module = bar()

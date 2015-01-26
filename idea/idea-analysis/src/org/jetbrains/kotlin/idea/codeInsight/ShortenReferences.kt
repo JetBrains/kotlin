@@ -92,32 +92,10 @@ public object ShortenReferences {
         }
     }
 
-    fun processAllReferencesInFile(descriptors: List<DeclarationDescriptor>, file: JetFile) {
-        val renderedDescriptors = descriptors.map { it.asString() }
-        val referenceToContext = resolveReferencesInFile(file).filter { e ->
-            val (ref, context) = e
-            val renderedTargets = ref.getTargets(context).map { it.asString() }
-            ref is JetSimpleNameExpression && renderedDescriptors.any { it in renderedTargets }
-        }
-        shortenReferencesInFile(
-                file,
-                referenceToContext.keySet().map { (it as JetSimpleNameExpression).getQualifiedElement() },
-                referenceToContext,
-                { FilterResult.PROCESS }
-        )
-    }
-
     private enum class FilterResult {
         SKIP
         GO_INSIDE
         PROCESS
-    }
-
-    private fun resolveReferencesInFile(
-            file: JetFile,
-            fileElements: List<JetElement> = Collections.singletonList(file)
-    ): Map<JetReferenceExpression, BindingContext> {
-        return JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
     }
 
     private fun shortenReferencesInFile(
@@ -135,7 +113,7 @@ public object ShortenReferences {
     private fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult) {
         for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
             // first resolve all qualified references - optimization
-            val referenceToContext = resolveReferencesInFile(file, fileElements)
+            val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
             shortenReferencesInFile(file, fileElements, referenceToContext, elementFilter)
         }
     }
