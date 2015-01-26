@@ -8,5 +8,5 @@ class Foo {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Foo$object, setTest
+// TESTED_OBJECTS: Foo$Default, setTest
 // FLAGS: ACC_PRIVATE, ACC_FINAL

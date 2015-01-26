@@ -10,5 +10,5 @@ class Foo {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Foo$object, test
+// TESTED_OBJECTS: Foo$Default, test
 // FLAGS: ACC_PRIVATE, ACC_FINAL

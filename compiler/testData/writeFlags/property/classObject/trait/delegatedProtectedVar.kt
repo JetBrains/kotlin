@@ -19,11 +19,11 @@ trait Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop
+// TESTED_OBJECTS: Test$Default, prop
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop$delegate
+// TESTED_OBJECTS: Test$Default, prop$delegate
 // FLAGS: ACC_FINAL, ACC_PRIVATE
 
 // TESTED_OBJECT_KIND: property

@@ -12,5 +12,5 @@ class Test {
 // FLAGS: ACC_STATIC, ACC_PRIVATE, ACC_FINAL
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop
+// TESTED_OBJECTS: Test$Default, prop
 // ABSENT: TRUE

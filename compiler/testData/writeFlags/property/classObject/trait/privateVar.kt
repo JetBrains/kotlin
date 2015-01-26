@@ -9,5 +9,5 @@ trait Test {
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop
+// TESTED_OBJECTS: Test$Default, prop
 // FLAGS: ACC_PRIVATE
