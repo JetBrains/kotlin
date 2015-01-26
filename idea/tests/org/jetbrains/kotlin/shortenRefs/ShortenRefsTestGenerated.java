@@ -330,6 +330,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OtherClassWithThisNameImported.kt")
+        public void testOtherClassWithThisNameImported() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/OtherClassWithThisNameImported.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SameClassTwice.kt")
         public void testSameClassTwice() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/SameClassTwice.kt");
