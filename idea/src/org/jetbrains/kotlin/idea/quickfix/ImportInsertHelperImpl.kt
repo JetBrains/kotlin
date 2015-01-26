@@ -46,6 +46,9 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 
 public class ImportInsertHelperImpl : ImportInsertHelper {
     /**
@@ -227,17 +230,26 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                     }
                     .filterNotNull()
 
+            val filePackage = moduleDescriptor.getPackage(file.getPackageFqName())!!
+
+            fun isVisible(descriptor: DeclarationDescriptor): Boolean {
+                if (descriptor !is DeclarationDescriptorWithVisibility) return true
+                val visibility = descriptor.getVisibility()
+                return !visibility.mustCheckInImports() || Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, filePackage)
+            }
+
             val classNamesToImport = scopeToImport
                     .getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS, { true })
+                    .filter(::isVisible)
                     .map { it.getName() }
 
             val aliasNames = imports.map { it.getImportedName() }.filterNotNull().toSet()
-            //TODO: check for visibility
             var conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .filter { it.asString() !in aliasNames }
                     .flatMap {
                         importedScopes.map { scope -> scope.getClassifier(it) }.filterNotNull()
                     }
+                    .filter(::isVisible)
             val conflicts = detectNeededImports(conflictCandidates)
 
             val addedImport = addImport(parentFqName, true)

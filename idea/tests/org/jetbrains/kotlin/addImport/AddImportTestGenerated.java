@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.addImport;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -177,6 +176,18 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ImportPackage.kt")
     public void testImportPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportPackage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoConflictingNameForInaccessibleClass1.kt")
+    public void testNoConflictingNameForInaccessibleClass1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NoConflictingNameForInaccessibleClass2.kt")
+    public void testNoConflictingNameForInaccessibleClass2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass2.kt");
         doTest(fileName);
     }
 

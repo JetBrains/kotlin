@@ -226,7 +226,6 @@ class LazyImportResolver(
 
 class LazyImportScope(
         private val importResolver: LazyImportResolver,
-        private val packageFragment: PackageFragmentDescriptor,
         private val filteringKind: LazyImportScope.FilteringKind,
         private val debugName: String
 ) : JetScope {
@@ -248,7 +247,7 @@ class LazyImportScope(
             val visibility = descriptor.getVisibility()
             val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
             if (!visibility.mustCheckInImports()) return includeVisible
-            return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, packageFragment) == includeVisible
+            return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.packageView) == includeVisible
         }
     }
 
