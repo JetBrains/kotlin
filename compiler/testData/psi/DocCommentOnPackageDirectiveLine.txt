@@ -12,7 +12,8 @@ JetFile: DocCommentOnPackageDirectiveLine.kt
   FUN
     KDoc
       PsiElement(KDOC_START)('/**')
-      PsiElement(KDOC_TEXT)(' some ')
+      KDOC_SECTION
+        PsiElement(KDOC_TEXT)(' some ')
       PsiElement(KDOC_END)('*/')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')

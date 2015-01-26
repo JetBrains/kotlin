@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
@@ -45,7 +44,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
@@ -69,6 +68,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.util.makeNullable
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -152,9 +152,37 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     return resultType to expressions
 }
 
-private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): Boolean {
-    if (mapTo(HashSet<Label?>()) { it.targetLabel }.size > 1) return false
-    return !checkPsi || mapTo(HashSet<String?>()) { it.element.getText() }.size <= 1
+private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): Instruction? {
+    val singleSuccessorCheckingVisitor = object: InstructionVisitorWithResult<Boolean>() {
+        var target: Instruction? = null
+
+        override fun visitInstructionWithNext(instruction: InstructionWithNext): Boolean {
+            return when (instruction) {
+                is LoadUnitValueInstruction,
+                is MergeInstruction,
+                is MarkInstruction -> {
+                    instruction.next?.accept(this) ?: true
+                }
+                else -> visitInstruction(instruction)
+            }
+        }
+
+        override fun visitJump(instruction: AbstractJumpInstruction): Boolean {
+            return when (instruction) {
+                is ConditionalJumpInstruction -> visitInstruction(instruction)
+                else -> instruction.resolvedTarget?.accept(this) ?: true
+            }
+        }
+
+        override fun visitInstruction(instruction: Instruction): Boolean {
+            if (target != null && target != instruction) return false
+            target = instruction
+            return true
+        }
+    }
+
+    if (instructions.flatMap { it.nextInstructions }.any { !it.accept(singleSuccessorCheckingVisitor) }) return null
+    return singleSuccessorCheckingVisitor.target ?: instructions.firstOrNull()?.owner?.getSinkInstruction()
 }
 
 private fun JetType.isMeaningful(): Boolean {
@@ -272,7 +300,7 @@ private fun ExtractionData.analyzeControlFlow(
             parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortBy { it.nameForRef }
     val outDeclarations =
             declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
-    val modifiedValueCount = outParameters.size + outDeclarations.size
+    val modifiedValueCount = outParameters.size() + outDeclarations.size()
 
     val outputValues = ArrayList<OutputValue>()
 
@@ -289,13 +317,13 @@ private fun ExtractionData.analyzeControlFlow(
 
         if (defaultExits.isNotEmpty()) {
             if (modifiedValueCount != 0) return outputAndExitsError
-            if (valuedReturnExits.size != 1) return multipleExitsError
+            if (valuedReturnExits.size() != 1) return multipleExitsError
 
-            val element = valuedReturnExits.first!!.element as JetExpression
+            val element = valuedReturnExits.first().element as JetExpression
             return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
         }
 
-        if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
+        if (getCommonNonTrivialSuccessorIfAny(valuedReturnExits) == null) return multipleExitsError
         outputValues.add(ExpressionValue(true, valuedReturnExpressions, returnValueType))
     }
 
@@ -309,7 +337,7 @@ private fun ExtractionData.analyzeControlFlow(
         if (jumpExits.isNotEmpty()) return outputAndExitsError
 
         val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
-            outputValues.size > 3 -> {
+            outputValues.size() > 3 -> {
                 if (!options.enableListBoxing) {
                     val outValuesStr =
                             (outParameters.map { it.originalDescriptor.renderForMessage() }
@@ -326,12 +354,14 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     if (jumpExits.isNotEmpty()) {
-        if (!jumpExits.checkEquivalence(true)) return multipleExitsError
+        val jumpTarget = getCommonNonTrivialSuccessorIfAny(jumpExits)
+        if (jumpTarget == null) return multipleExitsError
 
+        val singleExit = getCommonNonTrivialSuccessorIfAny(defaultExits) == jumpTarget
+        val conditional = !singleExit && defaultExits.isNotEmpty()
         val elements = jumpExits.map { it.element as JetExpression }
-        return controlFlow.copy(
-                outputValues = Collections.singletonList(Jump(elements, elements.first(), defaultExits.isNotEmpty()))
-        ) to null
+        val elementToInsertAfterCall = if (singleExit) null else elements.first()
+        return controlFlow.copy(outputValues = Collections.singletonList(Jump(elements, elementToInsertAfterCall, conditional))) to null
     }
 
     return controlFlow to null
@@ -538,13 +568,14 @@ private fun ExtractionData.inferParametersInfo(
             return info
         }
 
-        val receiverArgument = resolvedCall?.getExtensionReceiver()
-        val receiver = when(receiverArgument) {
-            ReceiverValue.NO_RECEIVER -> resolvedCall?.getDispatchReceiver()
-            else -> receiverArgument
-        } ?: ReceiverValue.NO_RECEIVER
+        val extensionReceiver = resolvedCall?.getExtensionReceiver()
+        val receiverToExtract = when {
+                           extensionReceiver == ReceiverValue.NO_RECEIVER,
+                           resolvedCall?.getCall() is CallTransformer.CallForImplicitInvoke -> resolvedCall?.getDispatchReceiver()
+                           else -> extensionReceiver
+                       } ?: ReceiverValue.NO_RECEIVER
 
-        val thisDescriptor = (receiver as? ThisReceiver)?.getDeclarationDescriptor()
+        val thisDescriptor = (receiverToExtract as? ThisReceiver)?.getDeclarationDescriptor()
         val hasThisReceiver = thisDescriptor != null
         val thisExpr = ref.getParent() as? JetThisExpression
 
@@ -552,9 +583,9 @@ private fun ExtractionData.inferParametersInfo(
             when (it) {
                 is ClassDescriptor ->
                     when(it.getKind()) {
-                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassDescriptor
+                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it : ClassDescriptor
                         ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
-                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it as ClassDescriptor else null
+                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it : ClassDescriptor else null
                     }
 
                 is ConstructorDescriptor -> it.getContainingDeclaration()
@@ -582,7 +613,7 @@ private fun ExtractionData.inferParametersInfo(
             val extractParameter = extractThis || extractLocalVar
             if (extractParameter) {
                 val parameterType = when {
-                    receiver.exists() -> receiver.getType()
+                    receiverToExtract.exists() -> receiverToExtract.getType()
                     else -> bindingContext[BindingContext.SMARTCAST, originalRef]
                             ?: bindingContext[BindingContext.EXPRESSION_TYPE, originalRef]
                             ?: DEFAULT_PARAMETER_TYPE
@@ -593,8 +624,10 @@ private fun ExtractionData.inferParametersInfo(
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val argumentText =
-                            if (hasThisReceiver && extractThis)
-                                "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
+                            if (hasThisReceiver && extractThis) {
+                                val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.getName().asString()}" else ""
+                                "this$label"
+                            }
                             else
                                 (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
 
@@ -619,7 +652,7 @@ private fun ExtractionData.inferParametersInfo(
 
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getNonStrictParentOfType<JetExpression>(),
-            originalElements.first,
+            originalElements.firstOrNull(),
             JetNameValidatorImpl.Target.PROPERTIES
     )
 
@@ -688,7 +721,7 @@ fun ExtractionData.isVisibilityApplicable(): Boolean {
 }
 
 fun ExtractionData.performAnalysis(): AnalysisResult {
-    if (originalElements.empty) {
+    if (originalElements.isEmpty()) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
     }
 
@@ -764,7 +797,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
-    val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
+    val receiverParameter = if (receiverCandidates.size() == 1) receiverCandidates.first() else null
     receiverParameter?.let { adjustedParameters.remove(it) }
 
     return AnalysisResult(
@@ -777,9 +810,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     receiverParameter,
                     paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
                     paramsInfo.replacementMap,
-                    if (messages.empty) controlFlow else controlFlow.toDefault()
+                    if (messages.isEmpty()) controlFlow else controlFlow.toDefault()
             ),
-            if (messages.empty) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
+            if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
 }

@@ -54,12 +54,18 @@ public interface KDocTokens {
     KDocToken LEADING_ASTERISK      = new KDocToken("KDOC_LEADING_ASTERISK");
 
     KDocToken TEXT                  = new KDocToken("KDOC_TEXT");
+
+    /**
+     * First word following the tag name (@xxx). Depending on the tag name, this can be
+     * either a link (@param xxx) or just a plain text word (@since version).
+     * We understand which one it is during parsing.
+     */
+    KDocToken TEXT_OR_LINK          = new KDocToken("KDOC_TEXT_OR_LINK");
     KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME");
-    KDocToken WIKI_LINK_OPEN        = new KDocToken("KDOC_WIKI_LINK_OPEN");
-    KDocToken WIKI_LINK_CLOSE       = new KDocToken("KDOC_WIKI_LINK_CLOSE");
+    KDocToken MARKDOWN_LINK         = new KDocToken("KDOC_MARKDOWN_LINK");
 
-    KDocToken MARKDOWN_ESCAPED_CHAR                         = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
+    KDocToken MARKDOWN_ESCAPED_CHAR = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
 
-    TokenSet KDOC_HIGHLIGHT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, WIKI_LINK_OPEN, WIKI_LINK_CLOSE, MARKDOWN_ESCAPED_CHAR);
-    TokenSet CONTENT_TOKENS = TokenSet.create(TEXT, TAG_NAME, WIKI_LINK_OPEN, WIKI_LINK_CLOSE, MARKDOWN_ESCAPED_CHAR);
+    TokenSet KDOC_HIGHLIGHT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR);
+    TokenSet CONTENT_TOKENS = TokenSet.create(TEXT, TAG_NAME, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR);
 }

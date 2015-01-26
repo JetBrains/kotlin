@@ -114,12 +114,9 @@ public class JetControlFlowProcessor {
     }
 
     private void processLocalDeclaration(@NotNull JetDeclaration subroutine) {
-        JetElement parent = PsiTreeUtil.getParentOfType(subroutine, JetElement.class);
-        assert parent != null;
-
         Label afterDeclaration = builder.createUnboundLabel("after local declaration");
 
-        builder.nondeterministicJump(afterDeclaration, parent, null);
+        builder.nondeterministicJump(afterDeclaration, subroutine, null);
         generate(subroutine);
         builder.bindLabel(afterDeclaration);
     }

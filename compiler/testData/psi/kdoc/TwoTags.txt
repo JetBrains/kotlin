@@ -1,0 +1,23 @@
+JetFile: TwoTags.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_TAG
+        PsiElement(KDOC_TAG_NAME)('@author')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT_OR_LINK)('Dmitry')
+        PsiElement(KDOC_TEXT)(' Jemerov')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_TAG
+        PsiElement(KDOC_TAG_NAME)('@since')
+        PsiWhiteSpace(' ')
+        PsiElement(KDOC_TEXT_OR_LINK)('M12')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')

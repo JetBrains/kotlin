@@ -1,0 +1,40 @@
+== test ==
+fun test(): Int {
+    val j = 1
+    fun local() = 1
+    return local()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val j = 1 fun local() = 1 return local() })
+    v(val j = 1)
+    r(1) -> <v0>
+    w(j|<v0>)
+    jmp?(L2)                                              NEXT:[mark(local()), d(fun local() = 1)]
+    d(fun local() = 1)                                    NEXT:[<SINK>]
+L2 [after local declaration]:
+    mark(local())                                         PREV:[jmp?(L2)]
+    call(local(), local) -> <v1>
+    ret(*|<v1>) L1
+L1:
+  1 <END>                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                               PREV:[]
+sink:
+    <SINK>                                                PREV:[<ERROR>, <END>, d(fun local() = 1)]
+=====================
+== local ==
+fun local() = 1
+---------------------
+L3:
+  3 <START>
+    r(1) -> <v0>
+    ret(*|<v0>) L4
+L4:
+    <END>             NEXT:[<SINK>]
+error:
+    <ERROR>           PREV:[]
+sink:
+    <SINK>            PREV:[<ERROR>, <END>]
+=====================

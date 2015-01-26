@@ -126,7 +126,7 @@ class DuplicateInfo(
 
 fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
     fun processWeakMatch(match: Match, newControlFlow: ControlFlow): Boolean {
-        val valueCount = controlFlow.outputValues.size
+        val valueCount = controlFlow.outputValues.size()
 
         val weakMatches = HashMap((match.result as WeaklyMatched).weakMatches)
         val currentValuesToNew = HashMap<OutputValue, OutputValue>()
@@ -152,7 +152,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
                 }
         }
 
-        return currentValuesToNew.size == valueCount && weakMatches.isEmpty()
+        return currentValuesToNew.size() == valueCount && weakMatches.isEmpty()
     }
 
     fun getControlFlowIfMatched(match: Match): ControlFlow? {
@@ -161,7 +161,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
         val newControlFlow = analysisResult.descriptor!!.controlFlow
         if (newControlFlow.outputValues.isEmpty()) return newControlFlow
-        if (controlFlow.outputValues.size != newControlFlow.outputValues.size) return null
+        if (controlFlow.outputValues.size() != newControlFlow.outputValues.size()) return null
 
         val matched = when (match.result) {
             is StronglyMatched -> true
@@ -231,7 +231,7 @@ private fun makeCall(
     val psiFactory = JetPsiFactory(anchor.getProject())
     val newLine = psiFactory.createNewLine()
 
-    if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size > 1 && controlFlow.outputValues.all { it is Initializer }) {
+    if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size() > 1 && controlFlow.outputValues.all { it is Initializer }) {
         val declarationsToMerge = controlFlow.outputValues.map { (it as Initializer).initializedDeclaration }
         val isVar = declarationsToMerge.first().isVar()
         if (declarationsToMerge.all { it.isVar() == isVar }) {
@@ -249,7 +249,7 @@ private fun makeCall(
         }
     }
 
-    val inlinableCall = controlFlow.outputValues.size <= 1
+    val inlinableCall = controlFlow.outputValues.size() <= 1
     val unboxingExpressions =
             if (inlinableCall) {
                 controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
@@ -287,7 +287,10 @@ private fun makeCall(
                 )
 
             is Jump -> {
-                if (outputValue.conditional) {
+                if (outputValue.elementToInsertAfterCall == null) {
+                    Collections.singletonList(psiFactory.createExpression(callText))
+                }
+                else if (outputValue.conditional) {
                     Collections.singletonList(
                             psiFactory.createExpression("if ($callText) ${outputValue.elementToInsertAfterCall.getText()}")
                     )
@@ -316,7 +319,7 @@ private fun makeCall(
     controlFlow.outputValues
             .filter { it != defaultValue }
             .flatMap { wrapCall(it, unboxingExpressions[it]!!) }
-            .withIndices()
+            .withIndex()
             .forEach {
                 val (i, e) = it
 

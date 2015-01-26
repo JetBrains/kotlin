@@ -9,4 +9,5 @@ fun foo(a: Int) {
     <selection>if (a > 0) throw Exception("")
     if (b + a > 0) return
     println(a - b)</selection>
+    println(a + b)
 }

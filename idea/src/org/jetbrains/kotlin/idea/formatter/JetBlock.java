@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
+import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 
@@ -64,6 +65,8 @@ public class JetBlock extends AbstractBlock {
             BLOCK,
             CLASS_BODY,
             FUNCTION_LITERAL);
+
+    private static final TokenSet KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC, KDocElementTypes.KDOC_SECTION);
 
     // private static final List<IndentWhitespaceRule>
 
@@ -415,7 +418,7 @@ public class JetBlock extends AbstractBlock {
                     .set(Indent.getContinuationWithoutFirstIndent(false)),
 
             strategy("KDoc comment indent")
-                    .in(DOC_COMMENT)
+                    .in(KDOC_CONTENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
                     .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
 

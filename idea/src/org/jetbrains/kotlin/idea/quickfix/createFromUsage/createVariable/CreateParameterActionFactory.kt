@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.psi.JetDelegationSpecifier
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -78,13 +80,20 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
         val container = refExpr.parents(false)
-                .filter { it is JetNamedFunction || it is JetPropertyAccessor || it is JetClassBody || it is JetClassInitializer }
+                .filter {
+                    it is JetNamedFunction || it is JetPropertyAccessor || it is JetClassBody || it is JetClassInitializer ||
+                    it is JetDelegationSpecifier
+                }
                 .firstOrNull()
                 ?.let {
                     when {
                         it is JetNamedFunction && varExpected,
                         it is JetPropertyAccessor -> chooseContainingClass(it)
                         it is JetClassInitializer -> it.getParent()?.getParent() as? JetClass
+                        it is JetDelegationSpecifier -> {
+                            val klass = it.getStrictParentOfType<JetClass>()
+                            if (klass != null && !klass.isTrait() && klass !is JetEnumEntry) klass else null
+                        }
                         it is JetClassBody -> {
                             val klass = it.getParent() as? JetClass
                             when {

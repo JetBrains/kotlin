@@ -22,13 +22,11 @@ import com.intellij.lang.java.JavaDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
@@ -117,36 +115,9 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return null;
     }
 
-    private static String getKDocContent(@NotNull KDoc kDoc) {
-        StringBuilder builder = new StringBuilder();
-
-        boolean contentStarted = false;
-        boolean afterAsterisk = false;
-
-        for (PsiElement element : kDoc.getChildren()) {
-            IElementType type = element.getNode().getElementType();
-
-            if (KDocTokens.CONTENT_TOKENS.contains(type)) {
-                contentStarted = true;
-                builder.append(afterAsterisk ? StringUtil.trimLeading(element.getText()) : element.getText());
-                afterAsterisk = false;
-            }
-
-            if (type == KDocTokens.LEADING_ASTERISK || type == KDocTokens.START) {
-                afterAsterisk = true;
-            }
-
-            if (contentStarted && element instanceof PsiWhiteSpace) {
-                builder.append(StringUtil.repeat("\n", StringUtil.countNewLines(element.getText())));
-            }
-        }
-
-        return builder.toString();
-    }
-
     private static String kDocToHtml(@NotNull KDoc comment) {
         // TODO: Parse and show markdown comments as html
-        String content = getKDocContent(comment);
+        String content = comment.getDefaultSection().getContentWithTags();
         String htmlContent = StringUtil.replace(content, "\n", "<br/>")
                 .replaceAll("(@param)\\s+(\\w+)", "@param - <i>$2</i>")
                 .replaceAll("(@\\w+)", "<b>$1</b>");
