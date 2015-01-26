@@ -54,15 +54,15 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
     }
 
     public void testLocalClass() {
-        InnerClassAttribute innerB = new InnerClassAttribute("A$foo$B", null, "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        InnerClassAttribute innerB = new InnerClassAttribute("A$foo$B", null, "B", ACC_STATIC | ACC_FINAL);
 
         extractAndCompareInnerClasses("A", innerB);
         extractAndCompareInnerClasses("A$foo$B", innerB);
     }
 
     public void testAnonymousClass() {
-        InnerClassAttribute innerB = new InnerClassAttribute("A$B$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
-        InnerClassAttribute innerC = new InnerClassAttribute("A$foo$C$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        InnerClassAttribute innerB = new InnerClassAttribute("A$B$1", null, null, ACC_STATIC | ACC_FINAL);
+        InnerClassAttribute innerC = new InnerClassAttribute("A$foo$C$1", null, null, ACC_STATIC | ACC_FINAL);
 
         extractAndCompareInnerClasses("A", innerB, innerC);
         extractAndCompareInnerClasses("A$B$1", innerB);
@@ -70,7 +70,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
     }
 
     public void testAnonymousObjectInline() {
-        InnerClassAttribute objectInInlineFun = new InnerClassAttribute("A$inlineFun$s$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        InnerClassAttribute objectInInlineFun = new InnerClassAttribute("A$inlineFun$s$1", null, null, ACC_STATIC | ACC_FINAL);
         extractAndCompareInnerClasses("A", objectInInlineFun);
     }
 
