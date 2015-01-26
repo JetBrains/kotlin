@@ -167,8 +167,8 @@ public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
 
-    public class object <class-object-for-ByteRange> {
-        /*primary*/ private constructor <class-object-for-ByteRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.ByteRange
             public final fun <get-EMPTY>(): kotlin.ByteRange
     }
@@ -285,8 +285,8 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
 
-    public class object <class-object-for-CharRange> {
-        /*primary*/ private constructor <class-object-for-CharRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.CharRange
             public final fun <get-EMPTY>(): kotlin.CharRange
     }
@@ -431,8 +431,8 @@ public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 
-    public class object <class-object-for-DoubleRange> {
-        /*primary*/ private constructor <class-object-for-DoubleRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.DoubleRange
             public final fun <get-EMPTY>(): kotlin.DoubleRange
     }
@@ -655,8 +655,8 @@ public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<k
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
 
-    public class object <class-object-for-FloatRange> {
-        /*primary*/ private constructor <class-object-for-FloatRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.FloatRange
             public final fun <get-EMPTY>(): kotlin.FloatRange
     }
@@ -760,13 +760,6 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-LOCAL_CONTINUE_AND_BREAK> : kotlin.InlineOption.LOCAL_CONTINUE_AND_BREAK {
-            /*primary*/ private constructor <class-object-for-LOCAL_CONTINUE_AND_BREAK>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry ONLY_LOCAL_RETURN : kotlin.InlineOption {
@@ -774,13 +767,6 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-ONLY_LOCAL_RETURN> : kotlin.InlineOption.ONLY_LOCAL_RETURN {
-            /*primary*/ private constructor <class-object-for-ONLY_LOCAL_RETURN>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor InlineOption()
@@ -799,13 +785,6 @@ public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-AS_FUNCTION> : kotlin.InlineStrategy.AS_FUNCTION {
-            /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry IN_PLACE : kotlin.InlineStrategy {
@@ -813,13 +792,6 @@ public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-IN_PLACE> : kotlin.InlineStrategy.IN_PLACE {
-            /*primary*/ private constructor <class-object-for-IN_PLACE>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor InlineStrategy()
@@ -960,8 +932,8 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
 
-    public class object <class-object-for-IntRange> {
-        /*primary*/ private constructor <class-object-for-IntRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.IntRange
             public final fun <get-EMPTY>(): kotlin.IntRange
     }
@@ -1127,8 +1099,8 @@ public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kot
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
 
-    public class object <class-object-for-LongRange> {
-        /*primary*/ private constructor <class-object-for-LongRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.LongRange
             public final fun <get-EMPTY>(): kotlin.LongRange
     }
@@ -1419,8 +1391,8 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
 
-    public class object <class-object-for-ShortRange> {
-        /*primary*/ private constructor <class-object-for-ShortRange>()
+    public class object Default {
+        /*primary*/ private constructor Default()
         public final val EMPTY: kotlin.ShortRange
             public final fun <get-EMPTY>(): kotlin.ShortRange
     }
@@ -1445,10 +1417,6 @@ public open class Throwable {
 
 public object Unit {
     /*primary*/ private constructor Unit()
-
-    public class object <class-object-for-Unit> : kotlin.Unit {
-        /*primary*/ private constructor <class-object-for-Unit>()
-    }
 }
 
 public final annotation class data : kotlin.Annotation {

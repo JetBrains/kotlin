@@ -10,8 +10,8 @@ internal open class A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object <class-object-for-A> {
-        private constructor <class-object-for-A>()
+    internal class object Default {
+        private constructor Default()
         internal final val internal_val: kotlin.Int = 1
         private final val private_val: kotlin.Int = 3
         protected final val protected_val: kotlin.Int = 5

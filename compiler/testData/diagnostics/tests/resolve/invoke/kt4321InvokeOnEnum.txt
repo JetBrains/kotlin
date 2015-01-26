@@ -12,17 +12,6 @@ internal final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClas
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-cls1> : DOMElementTestClasses.cls1 {
-            private constructor <class-object-for-cls1>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     public enum entry cls2 : DOMElementTestClasses {
@@ -34,17 +23,6 @@ internal final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClas
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-cls2> : DOMElementTestClasses.cls2 {
-            private constructor <class-object-for-cls2>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     private constructor DOMElementTestClasses()
@@ -78,17 +56,6 @@ internal final enum class TestClasses : kotlin.Enum<TestClasses>, EnumStyleClass
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-cls> : TestClasses.cls {
-            private constructor <class-object-for-cls>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestClasses): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            internal open override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     private constructor TestClasses()

@@ -71,8 +71,8 @@ internal final class Test : java.lang.Thread {
     invisible_fake open override /*1*/ /*fake_override*/ fun suspend0(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String!
 
-    internal class object <class-object-for-Test> {
-        private constructor <class-object-for-Test>()
+    internal class object Default {
+        private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final fun init2(): kotlin.Unit

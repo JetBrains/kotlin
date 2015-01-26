@@ -12,12 +12,12 @@ test.anno(x = "top level class": kotlin.String) internal final class C1 {
     test.anno(x = "member function": kotlin.String) internal final fun f3(/*0*/ test.anno(x = "member function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
     test.anno(x = "member extension function": kotlin.String) internal final fun kotlin.String.f4(): kotlin.Unit
 
-    test.anno(x = "class object": kotlin.String) internal class object <class-object-for-C1> {
-        private constructor <class-object-for-C1>()
-    }
-
     test.anno(x = "nested class": kotlin.String) internal final class C2 {
         public constructor C2()
+    }
+
+    test.anno(x = "class object": kotlin.String) internal class object Default {
+        private constructor Default()
     }
 }
 

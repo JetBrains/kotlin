@@ -2,8 +2,8 @@ package test
 
 internal trait Test {
 
-    internal class object <class-object-for-Test> {
-        /*primary*/ private constructor <class-object-for-Test>()
+    internal class object Default {
+        /*primary*/ private constructor Default()
         public final val prop1: kotlin.Int = 10
             public final fun <get-prop1>(): kotlin.Int
         public final var prop2: kotlin.Int

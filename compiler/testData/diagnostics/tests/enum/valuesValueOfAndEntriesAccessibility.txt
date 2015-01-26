@@ -16,19 +16,6 @@ internal final enum class E : kotlin.Enum<E> {
         internal final override /*1*/ /*fake_override*/ fun rab(): kotlin.Array<E>
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         internal final override /*1*/ /*fake_override*/ fun zab(): E
-
-        public class object <class-object-for-ENTRY> : E.ENTRY {
-            private constructor <class-object-for-ENTRY>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            internal final override /*1*/ /*fake_override*/ fun oof(): E
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            internal final override /*1*/ /*fake_override*/ fun rab(): kotlin.Array<E>
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            internal final override /*1*/ /*fake_override*/ fun zab(): E
-        }
     }
 
     private constructor E()
@@ -42,8 +29,8 @@ internal final enum class E : kotlin.Enum<E> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     internal final fun zab(): E
 
-    internal class object <class-object-for-E> {
-        private constructor <class-object-for-E>()
+    internal class object Default {
+        private constructor Default()
         internal final val valuez: kotlin.Array<E>
         internal final fun bar(): kotlin.Array<E>
         internal final fun baz(): E

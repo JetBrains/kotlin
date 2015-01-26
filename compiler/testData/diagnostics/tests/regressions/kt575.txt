@@ -8,33 +8,25 @@ package kt575 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal class object <class-object-for-Creature> {
-            private constructor <class-object-for-Creature>()
-            internal final var numCreated: kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
-
         internal object A {
             private constructor A()
             internal final var bbb: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-A> : kt575.Creature.A {
-                private constructor <class-object-for-A>()
-                internal final override /*1*/ /*fake_override*/ var bbb: kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         internal final class C {
             public constructor C()
             internal final var ccc: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal class object Default {
+            private constructor Default()
+            internal final var numCreated: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

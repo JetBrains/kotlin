@@ -24,13 +24,6 @@ internal final enum class Weapon : kotlin.Enum<test.Weapon> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-ROCK> : test.Weapon.ROCK {
-            private constructor <class-object-for-ROCK>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry PAPER : test.Weapon {
@@ -38,13 +31,6 @@ internal final enum class Weapon : kotlin.Enum<test.Weapon> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-PAPER> : test.Weapon.PAPER {
-            private constructor <class-object-for-PAPER>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry SCISSORS : test.Weapon {
@@ -52,13 +38,6 @@ internal final enum class Weapon : kotlin.Enum<test.Weapon> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-SCISSORS> : test.Weapon.SCISSORS {
-            private constructor <class-object-for-SCISSORS>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     private constructor Weapon()

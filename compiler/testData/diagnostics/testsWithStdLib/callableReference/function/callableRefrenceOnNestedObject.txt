@@ -15,13 +15,5 @@ internal open class A {
         internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-B> : A.B {
-            private constructor <class-object-for-B>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 }

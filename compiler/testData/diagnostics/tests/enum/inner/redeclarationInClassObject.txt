@@ -6,8 +6,8 @@ internal final class A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object <class-object-for-A> {
-        private constructor <class-object-for-A>()
+    internal class object Default {
+        private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,16 +21,6 @@ internal final class A {
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
                 public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-                public class object <class-object-for-ENTRY2> : A.E.ENTRY2 {
-                    private constructor <class-object-for-ENTRY2>()
-                    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
-                    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-                }
             }
 
             private constructor E()
@@ -56,16 +46,6 @@ internal final class A {
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-ENTRY> : A.E.ENTRY {
-                private constructor <class-object-for-ENTRY>()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
         }
 
         private constructor E()

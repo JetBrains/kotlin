@@ -3,7 +3,7 @@ package
 internal fun bar(): E
 internal fun baz(): E
 internal fun foo(): kotlin.Array<E>
-internal fun quux(): E.<class-object-for-E>
+internal fun quux(): E.Default
 
 internal final enum class E : kotlin.Enum<E> {
     public enum entry ENTRY : E {
@@ -14,16 +14,6 @@ internal final enum class E : kotlin.Enum<E> {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        public class object <class-object-for-ENTRY> : E.ENTRY {
-            private constructor <class-object-for-ENTRY>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
     }
 
     private constructor E()
@@ -34,8 +24,8 @@ internal final enum class E : kotlin.Enum<E> {
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    private class object <class-object-for-E> {
-        private constructor <class-object-for-E>()
+    private class object Default {
+        private constructor Default()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

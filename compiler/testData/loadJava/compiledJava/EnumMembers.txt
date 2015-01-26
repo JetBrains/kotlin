@@ -8,15 +8,6 @@ public final enum class EnumMembers : kotlin.Enum<test.EnumMembers!> {
         public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-FIRST> : test.EnumMembers.FIRST {
-            private constructor <class-object-for-FIRST>()
-            public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumMembers!): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry SECOND : test.EnumMembers {
@@ -26,15 +17,6 @@ public final enum class EnumMembers : kotlin.Enum<test.EnumMembers!> {
         public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-SECOND> : test.EnumMembers.SECOND {
-            private constructor <class-object-for-SECOND>()
-            public final override /*1*/ /*fake_override*/ val isFirst: kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumMembers!): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun first(): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     private constructor EnumMembers(/*0*/ p0: kotlin.Boolean)

@@ -3,71 +3,71 @@ package test
 internal final class IntInt {
     /*primary*/ public constructor IntInt()
 
-    internal class object <class-object-for-IntInt> {
-        /*primary*/ private constructor <class-object-for-IntInt>()
+    internal class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 internal final class IntPri {
     /*primary*/ public constructor IntPri()
 
-    private class object <class-object-for-IntPri> {
-        /*primary*/ private constructor <class-object-for-IntPri>()
+    private class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 internal final class IntPub {
     /*primary*/ public constructor IntPub()
 
-    public class object <class-object-for-IntPub> {
-        /*primary*/ private constructor <class-object-for-IntPub>()
+    public class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 private final class PriInt {
     /*primary*/ public constructor PriInt()
 
-    internal class object <class-object-for-PriInt> {
-        /*primary*/ private constructor <class-object-for-PriInt>()
+    internal class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 private final class PriPri {
     /*primary*/ public constructor PriPri()
 
-    private class object <class-object-for-PriPri> {
-        /*primary*/ private constructor <class-object-for-PriPri>()
+    private class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 private final class PriPub {
     /*primary*/ public constructor PriPub()
 
-    public class object <class-object-for-PriPub> {
-        /*primary*/ private constructor <class-object-for-PriPub>()
+    public class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 public final class PubInt {
     /*primary*/ public constructor PubInt()
 
-    internal class object <class-object-for-PubInt> {
-        /*primary*/ private constructor <class-object-for-PubInt>()
+    internal class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 public final class PubPri {
     /*primary*/ public constructor PubPri()
 
-    private class object <class-object-for-PubPri> {
-        /*primary*/ private constructor <class-object-for-PubPri>()
+    private class object Default {
+        /*primary*/ private constructor Default()
     }
 }
 
 public final class PubPub {
     /*primary*/ public constructor PubPub()
 
-    public class object <class-object-for-PubPub> {
-        /*primary*/ private constructor <class-object-for-PubPub>()
+    public class object Default {
+        /*primary*/ private constructor Default()
     }
 }

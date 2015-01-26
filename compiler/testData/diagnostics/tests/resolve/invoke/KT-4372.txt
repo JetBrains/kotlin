@@ -33,12 +33,4 @@ internal object Y {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public class object <class-object-for-Y> : Y {
-        private constructor <class-object-for-Y>()
-        internal final override /*1*/ /*fake_override*/ val x: java.lang.Class<EnumClass>
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

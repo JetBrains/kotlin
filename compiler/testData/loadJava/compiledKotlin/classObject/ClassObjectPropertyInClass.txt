@@ -5,8 +5,8 @@ internal final class A {
     internal final val other: kotlin.Int = 1
         internal final fun <get-other>(): kotlin.Int
 
-    internal class object <class-object-for-A> {
-        /*primary*/ private constructor <class-object-for-A>()
+    internal class object Default {
+        /*primary*/ private constructor Default()
         internal final val some: kotlin.Int = 1
             internal final fun <get-some>(): kotlin.Int
     }

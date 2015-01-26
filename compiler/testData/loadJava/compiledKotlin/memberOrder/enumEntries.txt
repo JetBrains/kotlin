@@ -6,13 +6,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-ONE> : test.E.ONE {
-            /*primary*/ private constructor <class-object-for-ONE>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry TWO : test.E {
@@ -20,13 +13,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-TWO> : test.E.TWO {
-            /*primary*/ private constructor <class-object-for-TWO>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry THREE : test.E {
@@ -34,13 +20,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-THREE> : test.E.THREE {
-            /*primary*/ private constructor <class-object-for-THREE>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry FOUR : test.E {
@@ -48,13 +27,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-FOUR> : test.E.FOUR {
-            /*primary*/ private constructor <class-object-for-FOUR>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry FIVE : test.E {
@@ -62,13 +34,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-FIVE> : test.E.FIVE {
-            /*primary*/ private constructor <class-object-for-FIVE>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry SIX : test.E {
@@ -76,13 +41,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-SIX> : test.E.SIX {
-            /*primary*/ private constructor <class-object-for-SIX>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry SEVEN : test.E {
@@ -90,13 +48,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-SEVEN> : test.E.SEVEN {
-            /*primary*/ private constructor <class-object-for-SEVEN>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     public enum entry EIGHT : test.E {
@@ -104,13 +55,6 @@ internal final enum class E : kotlin.Enum<test.E> {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
-        public class object <class-object-for-EIGHT> : test.E.EIGHT {
-            /*primary*/ private constructor <class-object-for-EIGHT>()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        }
     }
 
     /*primary*/ private constructor E()
