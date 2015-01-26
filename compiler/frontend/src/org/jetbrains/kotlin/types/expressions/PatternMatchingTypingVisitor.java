@@ -107,7 +107,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                         .replaceScope(scopeToExtend).replaceDataFlowInfo(infosForCondition.thenInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
                 JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
-                        scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
+                        scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
                 JetType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);

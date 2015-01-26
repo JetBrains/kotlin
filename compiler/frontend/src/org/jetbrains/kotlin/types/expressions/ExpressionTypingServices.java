@@ -235,7 +235,7 @@ public class ExpressionTypingServices {
             r = DataFlowUtils.checkType(builtIns.getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
-            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, context.trace);
+            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -276,15 +276,14 @@ public class ExpressionTypingServices {
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull BindingTrace trace
+            @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
             return JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
-        ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
+        ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
@@ -350,12 +349,6 @@ public class ExpressionTypingServices {
             }
         }
         return result;
-    }
-
-    private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency, oldContext.resolutionResultsCache,
-                oldContext.callChecker, oldContext.isAnnotationContext);
     }
 
     @Nullable
