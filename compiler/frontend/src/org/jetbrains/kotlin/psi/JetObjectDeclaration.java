@@ -142,6 +142,17 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     }
 
     @Override
+    public int getTextOffset() {
+        PsiElement nameIdentifier = getNameIdentifier();
+        if (nameIdentifier != null) {
+            return nameIdentifier.getTextRange().getStartOffset();
+        }
+        else {
+            return getObjectKeyword().getTextRange().getStartOffset();
+        }
+    }
+
+    @Override
     @NotNull
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = getBody();
