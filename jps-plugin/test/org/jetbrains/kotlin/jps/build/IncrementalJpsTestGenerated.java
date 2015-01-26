@@ -319,7 +319,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
 
     @TestMetadata("jps-plugin/testData/incremental/withJava")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({WithJava.ConvertBetweenJavaAndKotlin.class, WithJava.KotlinUsedInJava.class})
+    @InnerTestClasses({WithJava.ConvertBetweenJavaAndKotlin.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithJava extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInWithJava() throws Exception {
@@ -344,23 +344,6 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("kotlinToJava")
             public void testKotlinToJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava/");
-                doTest(fileName);
-            }
-
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class KotlinUsedInJava extends AbstractIncrementalJpsTest {
-            public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), true);
-            }
-
-            @TestMetadata("constantChanged")
-            public void testConstantChanged() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantChanged/");
                 doTest(fileName);
             }
 
