@@ -117,7 +117,6 @@ public object ShortenReferences {
             file: JetFile,
             fileElements: List<JetElement> = Collections.singletonList(file)
     ): Map<JetReferenceExpression, BindingContext> {
-        ImportInsertHelper.INSTANCE.optimizeImportsOnTheFly(file)
         return JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
     }
 
