@@ -338,34 +338,37 @@ public object Renderers {
         }.toString()
     }
 
-    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<JetType>> = Renderer {
-        types -> StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
-    }
+    private fun renderTypes(types: Collection<JetType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
 
-    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer {
-        (constraintSystem) ->
+    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<JetType>> = Renderer { renderTypes(it) }
+
+    private fun renderConstraintSystem(constraintSystem: ConstraintSystem): String {
         val typeVariables = constraintSystem.getTypeVariables()
         val typeBounds = Sets.newLinkedHashSet<TypeBounds>()
         for (variable in typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
-        "type parameter bounds:\n" + StringUtil.join(typeBounds, { RENDER_TYPE_BOUNDS.render(it) }, "\n") + "\n" + "status:\n" +
-        ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
+        return "type parameter bounds:\n" +
+               StringUtil.join(typeBounds, { RENDER_TYPE_BOUNDS.render(it) }, "\n") + "\n" + "status:\n" +
+               ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
     }
 
-    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer {
-        typeBounds ->
+    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it) }
+
+    private fun renderTypeBounds(typeBounds: TypeBounds): String {
         val renderBound = { (bound: Bound) ->
             val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
             arrow + RENDER_TYPE.render(bound.constrainingType) + '(' + bound.position + ')'
         }
         val typeVariableName = typeBounds.typeVariable.getName()
-        if (typeBounds.isEmpty()) {
+        return if (typeBounds.isEmpty()) {
             typeVariableName.asString()
         }
         else
             "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
     }
+
+    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it) }
 
     private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = StringBuilder {
         append(message)
@@ -384,6 +387,6 @@ public object Renderers {
         if (inferenceErrorData.receiverArgumentType != null) {
             append(RENDER_TYPE.render(inferenceErrorData.receiverArgumentType)).append(".")
         }
-        append("(").append(StringUtil.join(inferenceErrorData.valueArgumentsTypes, { RENDER_TYPE.render(it) }, ", ")).append(")")
+        append("(").append(renderTypes(inferenceErrorData.valueArgumentsTypes)).append(")")
     }.toString()
 }
