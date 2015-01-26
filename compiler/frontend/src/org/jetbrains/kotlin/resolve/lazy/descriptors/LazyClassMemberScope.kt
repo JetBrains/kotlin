@@ -39,11 +39,11 @@ import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 
 public open class LazyClassMemberScope(
-        c: LazyClassContext,
+        c: org.jetbrains.kotlin.resolve.lazy.LazyClassContext,
         declarationProvider: ClassMemberDeclarationProvider,
         thisClass: LazyClassDescriptor,
         trace: BindingTrace

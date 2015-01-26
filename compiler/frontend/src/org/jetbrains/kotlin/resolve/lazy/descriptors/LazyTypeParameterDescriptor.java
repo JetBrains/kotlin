@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext;
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;

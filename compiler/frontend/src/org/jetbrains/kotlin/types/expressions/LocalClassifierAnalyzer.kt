@@ -37,7 +37,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -122,7 +122,7 @@ class LocalClassDescriptorManager(
         assert(isMyClass(classOrObject)) {"Called on a wrong class: ${classOrObject.getDebugText()}"}
         if (classDescriptor == null) {
             classDescriptor = LazyClassDescriptor(
-                    object : LazyClassContext {
+                    object : org.jetbrains.kotlin.resolve.lazy.LazyClassContext {
                         override val scopeProvider = declarationScopeProvider
                         override val storageManager = this@LocalClassDescriptorManager.storageManager
                         override val trace = expressionTypingContext.trace

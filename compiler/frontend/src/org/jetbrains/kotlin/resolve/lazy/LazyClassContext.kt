@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.descriptors
+package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.AnnotationResolver
-import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
 
 public trait LazyClassContext {
     val scopeProvider: DeclarationScopeProvider

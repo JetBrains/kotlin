@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassContext;
+import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
