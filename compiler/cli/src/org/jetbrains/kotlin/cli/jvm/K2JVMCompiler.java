@@ -81,25 +81,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         }
 
         try {
-            configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
-            configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
+            if (!arguments.noJdk) {
+                configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+            }
         }
         catch (Throwable t) {
             MessageCollectorUtil.reportException(messageCollector, t);
             return INTERNAL_ERROR;
         }
 
-        if (!arguments.script &&
-            arguments.module == null &&
-            arguments.freeArgs.isEmpty() &&
-            !arguments.version
-        ) {
-            ReplFromTerminal.run(rootDisposable, configuration);
-            return ExitCode.OK;
-        }
-        else if (arguments.module != null) {
-        }
-        else if (arguments.script) {
+        if (arguments.script) {
             if (arguments.freeArgs.isEmpty()) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",
                                         CompilerMessageLocation.NO_LOCATION);
@@ -107,8 +98,24 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
-        else {
+        else if (arguments.module == null) {
             CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, arguments.freeArgs);
+
+            // Adding all directory sources to classpath to resolve Java symbols from Kotlin
+            for (String source : arguments.freeArgs) {
+                File file = new File(source);
+                if (file.isDirectory()) {
+                    configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, file);
+                }
+            }
+        }
+
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
+        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
+
+        if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
+            ReplFromTerminal.run(rootDisposable, configuration);
+            return ExitCode.OK;
         }
 
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
@@ -191,9 +198,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @NotNull
     private static List<File> getClasspath(@NotNull KotlinPaths paths, @NotNull K2JVMCompilerArguments arguments) {
         List<File> classpath = Lists.newArrayList();
-        if (!arguments.noJdk) {
-            classpath.addAll(PathUtil.getJdkClassesRoots());
-        }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
                 classpath.add(new File(element));
