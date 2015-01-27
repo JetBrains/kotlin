@@ -6,3 +6,5 @@ public class Impl : ArrayFactory {
         <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }
+
+val array: Array<String>
