@@ -11,7 +11,7 @@ package test {
         internal final val b: B
         internal final /*synthesized*/ fun component1(): A
         internal final /*synthesized*/ fun component2(): B
-        internal final /*synthesized*/ fun copy(/*0*/ a: A = ..., /*1*/ b: B = ...): test.Pair<A, B>
+        public final /*synthesized*/ fun copy(/*0*/ a: A = ..., /*1*/ b: B = ...): test.Pair<A, B>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
