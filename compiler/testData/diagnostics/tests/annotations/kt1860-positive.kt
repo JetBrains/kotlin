@@ -7,5 +7,5 @@ var bar : Int = 1
 
 val x : (Int) -> Int = {([test] x : Int) -> x}
 
-class Hello(test args: Any) {
+class Hello(test <!UNUSED_PARAMETER!>args<!>: Any) {
 }

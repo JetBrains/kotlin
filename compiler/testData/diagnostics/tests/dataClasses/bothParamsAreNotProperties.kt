@@ -1,4 +1,4 @@
-data class A(x: Int, y: String)
+data class A(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: String)
 
 fun foo(a: A) {
     a.<!UNRESOLVED_REFERENCE!>component1<!>()

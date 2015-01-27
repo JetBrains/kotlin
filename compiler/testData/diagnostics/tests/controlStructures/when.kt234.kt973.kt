@@ -3,7 +3,7 @@
 
 package kt234_kt973
 
-class Pair<A, B>(a: A, b: B)
+class Pair<A, B>(<!UNUSED_PARAMETER!>a<!>: A, <!UNUSED_PARAMETER!>b<!>: B)
 
 fun test(t : Pair<Int, Int>) : Int {
     when (t) {

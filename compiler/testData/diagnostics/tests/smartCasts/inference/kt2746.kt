@@ -1,6 +1,6 @@
 //KT-2746 Do.smartcasts in inference
 
-class C<T>(t :T)
+class C<T>(<!UNUSED_PARAMETER!>t<!> :T)
 
 fun test1(a: Any) {
     if (a is String) {

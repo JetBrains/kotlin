@@ -526,6 +526,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UnusedParameters.kt")
+        public void testUnusedParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedParameters.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnusedVariables.kt")
         public void testUnusedVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedVariables.kt");

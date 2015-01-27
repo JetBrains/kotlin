@@ -52,7 +52,7 @@ abstract class B1(
 
 class B2() : B1(1, "r") {}
 
-abstract class B3(i: Int) {
+abstract class B3(<!UNUSED_PARAMETER!>i<!>: Int) {
 }
 
 fun foo(<!UNUSED_PARAMETER!>c<!>: B3) {

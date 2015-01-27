@@ -13,4 +13,4 @@ fun f(a: Any?) {
 trait B {
   fun foo() {}
 }
-open class X(b: B)
+open class X(<!UNUSED_PARAMETER!>b<!>: B)

@@ -1,6 +1,6 @@
 package unresolved
 
-class Pair<A, B>(a: A, b: B)
+class Pair<A, B>(<warning>a</warning>: A, <warning>b</warning>: B)
 
 fun testGenericArgumentsCount() {
     val <warning>p1</warning>: Pair<error><Int></error> = Pair(2, 2)

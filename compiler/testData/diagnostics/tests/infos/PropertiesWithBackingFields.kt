@@ -44,9 +44,9 @@ abstract class Test() {
 
 }
 
-open class Super(i : Int)
+open class Super(<!UNUSED_PARAMETER!>i<!> : Int)
 
-class TestPCParameters(w : Int, x : Int, val y : Int, var z : Int) : Super(w) {
+class TestPCParameters(w : Int, <!UNUSED_PARAMETER!>x<!> : Int, val y : Int, var z : Int) : Super(w) {
 
   val xx = w
 

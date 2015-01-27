@@ -1,6 +1,6 @@
 package test
 
-open class ToResolve<SomeClass>(f : (Int) -> Int)
+open class ToResolve<SomeClass>(<!UNUSED_PARAMETER!>f<!> : (Int) -> Int)
 fun testFun(<!UNUSED_PARAMETER!>a<!> : Int) = 12
 
 class TestSome<P> {

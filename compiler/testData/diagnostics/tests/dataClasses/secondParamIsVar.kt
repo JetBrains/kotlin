@@ -1,4 +1,4 @@
-data class A(x: Int, var y: String)
+data class A(<!UNUSED_PARAMETER!>x<!>: Int, var y: String)
 
 fun foo(a: A) {
     a.component1() : String

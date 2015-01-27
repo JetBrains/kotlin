@@ -1,6 +1,6 @@
 package a
 
-class MyList<T>(t: T) {}
+class MyList<T>(<!UNUSED_PARAMETER!>t<!>: T) {}
 
 fun <T> getMyList(t: T)           : MyList<    T> = MyList(t)
 fun <T> getMyListToWriteTo(t: T)  : MyList< in T> = MyList(t)
