@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import java.util.Collections
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
@@ -221,12 +219,12 @@ public object ShortenReferences {
 
             val selector = qualifiedExpression.getSelectorExpression() ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? JetReferenceExpression ?: return false
-            val targetBefore = callee.getTargets(context).singleOrNull() ?: return false
+            val targetBefore = callee.targets(context).singleOrNull() ?: return false
 
             val scope = context[BindingContext.RESOLUTION_SCOPE, qualifiedExpression] ?: return false
             val selectorCopy = selector.copy() as JetReferenceExpression
             val newContext = selectorCopy.analyzeInContext(scope)
-            val targetsAfter = (selectorCopy.getCalleeExpressionIfAny() as JetReferenceExpression).getTargets(newContext)
+            val targetsAfter = (selectorCopy.getCalleeExpressionIfAny() as JetReferenceExpression).targets(newContext)
 
             when (targetsAfter.size()) {
                 0 -> return importInserter.addImport(targetBefore)
@@ -263,10 +261,10 @@ public object ShortenReferences {
     private fun DeclarationDescriptor.asString()
             = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
-    private fun JetReferenceExpression.getTargets(context: BindingContext): Collection<DeclarationDescriptor> {
-        return context[BindingContext.REFERENCE_TARGET, this]?.let { Collections.singletonList(it.getImportableDescriptor()) }
-               ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]?.mapTo(HashSet<DeclarationDescriptor>()) { it.getImportableDescriptor() }
-               ?: Collections.emptyList()
+    private fun JetReferenceExpression.targets(context: BindingContext): Collection<DeclarationDescriptor> {
+        return context[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it.getImportableDescriptor()) }
+               ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]?.map { it.getImportableDescriptor() }?.toSet()
+               ?: listOf()
     }
 
     // this class is needed to optimize imports only when we actually insert any import (optimization)
