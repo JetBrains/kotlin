@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper.ImportDescriptorResult
 
 public class ImportInsertHelperImpl : ImportInsertHelper {
     /**
@@ -152,7 +153,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
         return true
     }
 
-    override fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): Boolean {
+    override fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult {
         return Importer(file).importDescriptor(descriptor)
     }
 
@@ -162,9 +163,9 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
         private val resolutionFacade = file.getResolutionFacade()
         private val preferAllUnderImports = JetCodeStyleSettings.getInstance(file.getProject()).PREFER_ALL_UNDER_IMPORTS
 
-        fun importDescriptor(descriptor: DeclarationDescriptor): Boolean {
+        fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
             val target = if (DescriptorUtils.isClassObject(descriptor)) // references to class object are treated as ones to its owner class
-                descriptor.getContainingDeclaration() as? ClassDescriptor ?: return false
+                descriptor.getContainingDeclaration() as? ClassDescriptor ?: return ImportDescriptorResult.FAIL
             else
                 descriptor
 
@@ -173,20 +174,20 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
 
             // check if import is not needed
             when (target) {
-                is ClassDescriptor -> { if (topLevelScope.getClassifier(name) == target) return true }
-                is PackageViewDescriptor -> { if (topLevelScope.getPackage(name) == target) return true }
-                is FunctionDescriptor -> { if (topLevelScope.getFunctions(name).contains(target)) return true }
-                is PropertyDescriptor -> { if (topLevelScope.getProperties(name).contains(target)) return true }
-                else -> return false
+                is ClassDescriptor -> { if (topLevelScope.getClassifier(name) == target) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is PackageViewDescriptor -> { if (topLevelScope.getPackage(name) == target) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is FunctionDescriptor -> { if (topLevelScope.getFunctions(name).contains(target)) return ImportDescriptorResult.ALREADY_IMPORTED }
+                is PropertyDescriptor -> { if (topLevelScope.getProperties(name).contains(target)) return ImportDescriptorResult.ALREADY_IMPORTED }
+                else -> return ImportDescriptorResult.FAIL
             }
 
             // do not insert imports for non-top level declarations
-            if (target !is PackageViewDescriptor && target.getContainingDeclaration() !is PackageFragmentDescriptor) return false
+            if (target !is PackageViewDescriptor && target.getContainingDeclaration() !is PackageFragmentDescriptor) return ImportDescriptorResult.FAIL
 
             val imports = file.getImportDirectives()
 
             //TODO: is that correct? What if function is imported and we need to import class?
-            if (imports.any { it.getImportedName() == name.asString() }) return false
+            if (imports.any { it.getImportedName() == name.asString() }) return ImportDescriptorResult.FAIL
 
             val fqName = target.importableFqNameSafe
             val packageFqName = fqName.parent()
@@ -202,20 +203,21 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                                         else -> throw Exception()
                                     }
 
-            if (tryAllUnderImport && addAllUnderImport(target)) {
-                return true
+            if (tryAllUnderImport) {
+                val result = addAllUnderImport(target)
+                if (result != ImportDescriptorResult.FAIL) return result
             }
 
             return addExplicitImport(target)
         }
 
-        private fun addAllUnderImport(target: DeclarationDescriptor): Boolean {
+        private fun addAllUnderImport(target: DeclarationDescriptor): ImportDescriptorResult {
             val targetFqName = target.importableFqNameSafe
             val parentFqName = targetFqName.parent()
 
             val moduleDescriptor = resolutionFacade.findModuleDescriptor(file)
             val imports = file.getImportDirectives()
-            val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return false
+            val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
             val importedScopes = imports
                     .filter { it.isAllUnder () }
                     .map {
@@ -262,7 +264,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                 val resolvedTo = newTopLevelScope.getClassifier(target.getName())
                 if (resolvedTo?.importableFqNameSafe != targetFqName) {
                     addedImport.delete()
-                    return false
+                    return ImportDescriptorResult.FAIL
                 }
             }
 
@@ -272,7 +274,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
 
             dropRedundantExplicitImports(parentFqName)
 
-            return true
+            return ImportDescriptorResult.IMPORT_ADDED
         }
 
         private fun getMemberScope(fqName: FqName, moduleDescriptor: ModuleDescriptor): JetScope? {
@@ -286,7 +288,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
             return classDescriptor.getDefaultType().getMemberScope()
         }
 
-        private fun addExplicitImport(target: DeclarationDescriptor): Boolean {
+        private fun addExplicitImport(target: DeclarationDescriptor): ImportDescriptorResult {
             if (target is ClassDescriptor || target is PackageViewDescriptor) {
                 val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
                 val name = target.getName()
@@ -295,12 +297,12 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                 // (not with explicit import - explicit imports are checked before this method invocation)
                 val classifier = topLevelScope.getClassifier(name)
                 if (classifier != null && detectNeededImports(listOf(classifier)).isNotEmpty()) {
-                    return false
+                    return ImportDescriptorResult.FAIL
                 }
             }
 
             addImport(target.importableFqNameSafe, false)
-            return true
+            return ImportDescriptorResult.IMPORT_ADDED
         }
 
         private fun dropRedundantExplicitImports(packageFqName: FqName) {
