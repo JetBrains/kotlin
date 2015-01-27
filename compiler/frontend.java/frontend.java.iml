@@ -13,7 +13,6 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="descriptor.loader.java" exported="" />
-    <orderEntry type="module" module-name="util.runtime" />
     <orderEntry type="module" module-name="util" />
   </component>
 </module>

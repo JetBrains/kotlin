@@ -13,7 +13,6 @@
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
-    <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.jvm" />
@@ -29,9 +28,9 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="guava" level="project" />
-    <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="library" name="trove4j" level="project" />
     <orderEntry type="module" module-name="ide-common" exported="" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>

@@ -11,6 +11,5 @@
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="util.runtime" />
-    <orderEntry type="library" name="protobuf-java" level="project" />
   </component>
 </module>

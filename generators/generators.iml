@@ -19,11 +19,10 @@
     <orderEntry type="module" module-name="serialization" scope="TEST" />
     <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
-    <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="module" module-name="j2k" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="kotlin-runtime" level="project" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
-    <orderEntry type="module" module-name="js.dart-ast" />
-    <orderEntry type="module" module-name="js.frontend" />
+    <orderEntry type="module" module-name="js.dart-ast" scope="TEST" />
+    <orderEntry type="module" module-name="js.frontend" scope="TEST" />
+    <orderEntry type="module" module-name="util" scope="TEST" />
   </component>
 </module>
