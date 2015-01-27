@@ -31,11 +31,9 @@ import java.util.Collections
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -138,7 +136,7 @@ public object ShortenReferences {
         protected fun bindingContext(element: JetElement): BindingContext
                 = preResolveMap[element] ?: resolutionFacade.analyze(element)
 
-        protected abstract fun getShortenedElement(element: T): JetElement?
+        protected abstract fun shortenElement(element: T)
 
         override fun visitElement(element: PsiElement) {
             if (elementFilter(element) != FilterResult.SKIP) {
@@ -148,7 +146,7 @@ public object ShortenReferences {
 
         public fun finish() {
             for (element in elementsToShorten) {
-                getShortenedElement(element)?.let { element.replace(it) }
+                shortenElement(element)
             }
         }
     }
@@ -201,11 +199,8 @@ public object ShortenReferences {
             }
         }
 
-        override fun getShortenedElement(element: JetUserType): JetElement? {
-            val referenceExpression = element.getReferenceExpression() ?: return null
-            val typeArgumentList = element.getTypeArgumentList()
-            val text = referenceExpression.getText() + (if (typeArgumentList != null) typeArgumentList.getText() else "")
-            return JetPsiFactory(element).createType(text).getTypeElement()!!
+        override fun shortenElement(element: JetUserType) {
+            element.deleteQualifier()
         }
     }
 
@@ -260,7 +255,9 @@ public object ShortenReferences {
             }
         }
 
-        override fun getShortenedElement(element: JetQualifiedExpression): JetElement = element.getSelectorExpression()!!
+        override fun shortenElement(element: JetQualifiedExpression) {
+            element.replace(element.getSelectorExpression()!!)
+        }
     }
 
     private fun DeclarationDescriptor.asString()

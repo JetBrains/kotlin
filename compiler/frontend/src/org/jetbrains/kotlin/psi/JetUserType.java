@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -78,6 +79,15 @@ public class JetUserType extends JetElementImplStub<KotlinUserTypeStub> implemen
     @Nullable
     public JetUserType getQualifier() {
         return getStubOrPsiChild(JetStubElementTypes.USER_TYPE);
+    }
+
+    public void deleteQualifier() {
+        JetUserType qualifier = getQualifier();
+        assert qualifier != null;
+        PsiElement dot = findChildByType(JetTokens.DOT);
+        assert dot != null;
+        qualifier.delete();
+        dot.delete();
     }
 
     @Nullable
