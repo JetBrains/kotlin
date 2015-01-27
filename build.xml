@@ -77,9 +77,7 @@
                 <pathelement location="${idea.sdk}/lib/javac2.jar"/>
                 <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
             </path>
-            <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath" loaderref="javac2.loader"/>
-            <typedef name="skip" classname="com.intellij.ant.ClassFilterAnnotationRegexp" classpathref="javac2.classpath"
-                     loaderref="javac2.loader"/>
+            <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
             <echo message="Use javac2 from Idea lib"/>
         </then>
         <else>
@@ -370,10 +368,10 @@
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
-        <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+        <javac2 destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <src refid="preloaderSources.path"/>
-        </javac>
+        </javac2>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-preloader.jar">
             <fileset dir="${output}/classes/preloader"/>
@@ -470,7 +468,6 @@
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac2>
@@ -623,7 +620,6 @@
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/ant">
                     <include name="src"/>
@@ -715,7 +711,6 @@
                 <then>
                     <javac2 srcdir="${src.paths}" destdir="@{output}" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                             source="${java.target}" target="${java.target}">
-                        <skip pattern="kotlin/jvm/internal/.*"/>
                         <classpath>
                             <path refid="classpath.path"/>
                             <!-- Include @{output} here for Java compiler to resolve symbols from Kotlin sources -->
@@ -868,7 +863,6 @@
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/idea/ide-common" includes="src"/>
                 <dirset dir="${basedir}/idea/idea-analysis" includes="src"/>
