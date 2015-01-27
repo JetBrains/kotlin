@@ -36,8 +36,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
-    private final Map<String, JetType> primitiveTypesMap = new HashMap<String, JetType>();
+    private final Map<String, JetType> primitiveTypesMap = new LinkedHashMap<String, JetType>();
     private final Map<FqName, Collection<ClassDescriptor>> packagesWithMappedClasses = new HashMap<FqName, Collection<ClassDescriptor>>();
+    private final Set<ClassDescriptor> allKotlinClasses = new LinkedHashSet<ClassDescriptor>();
 
     private JavaToKotlinClassMap() {
         init();
@@ -57,6 +58,10 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             primitiveTypesMap.put(wrapperFqName.asString(), builtIns.getNullablePrimitiveJetType(primitiveType));
         }
         primitiveTypesMap.put("void", KotlinBuiltIns.getInstance().getUnitType());
+
+        for (JetType type : primitiveTypesMap.values()) {
+            allKotlinClasses.add((ClassDescriptor)type.getConstructor().getDeclarationDescriptor());
+        }
     }
 
     @Nullable
@@ -119,6 +124,8 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             packagesWithMappedClasses.put(packageFqName, classesInPackage);
         }
         classesInPackage.add(kotlinDescriptor);
+
+        allKotlinClasses.add(kotlinDescriptor);
     }
 
     @NotNull
@@ -154,5 +161,10 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         }
         Collection<ClassDescriptor> result = packagesWithMappedClasses.get(fqName.toSafe());
         return result == null ? Collections.<ClassDescriptor>emptySet() : Collections.unmodifiableCollection(result);
+    }
+
+    @NotNull
+    public Set<ClassDescriptor> allKotlinClasses() {
+        return allKotlinClasses;
     }
 }

@@ -1,0 +1,28 @@
+// FILE: rootPackage.kt
+class ~k~Klass {
+}
+
+fun ~f~function() = ""
+
+val ~p~property = ""
+
+// FILE: anotherFromRootPackage.kt
+fun foo() {
+    `k`Klass()
+    `f`function()
+    `p`property
+}
+
+// FILE: otherPackage.kt
+package test
+
+import `k`Klass
+import `f`function
+import `p`property
+
+fun foo() {
+    `k`Klass()
+    `f`function()
+    `p`property
+}
+

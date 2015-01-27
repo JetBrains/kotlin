@@ -83,5 +83,35 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/class/inspectionData/inspections.test");
             doTest(fileName);
         }
+
+        @TestMetadata("unusedSymbol/function/inspectionData/inspections.test")
+        public void testUnusedSymbol_function_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/function/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedSymbol/object/inspectionData/inspections.test")
+        public void testUnusedSymbol_object_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/object/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedSymbol/parameter/inspectionData/inspections.test")
+        public void testUnusedSymbol_parameter_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/parameter/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedSymbol/property/inspectionData/inspections.test")
+        public void testUnusedSymbol_property_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/property/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedSymbol/typeParameter/inspectionData/inspections.test")
+        public void testUnusedSymbol_typeParameter_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/typeParameter/inspectionData/inspections.test");
+            doTest(fileName);
+        }
     }
 }

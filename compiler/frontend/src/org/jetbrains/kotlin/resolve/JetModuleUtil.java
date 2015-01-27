@@ -28,8 +28,8 @@ public class JetModuleUtil {
         return getRootPackageScope(module, /* scopeIncludingMembers = */ false);
     }
 
-    public static JetScope getImportsResolutionScope(ModuleDescriptor module, boolean inRootPackage) {
-        return getRootPackageScope(module, /* scopeIncludingMembers = */ inRootPackage);
+    public static JetScope getImportsResolutionScope(ModuleDescriptor module, boolean includeRootPackageClasses) {
+        return getRootPackageScope(module, /* scopeIncludingMembers = */ includeRootPackageClasses);
     }
 
     private static JetScope getRootPackageScope(ModuleDescriptor module, boolean scopeIncludingMembers) {

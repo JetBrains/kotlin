@@ -9,7 +9,7 @@ import org.junit.Test as test
 class CollectionJVMTest {
 
     test fun flatMap() {
-        val data = arrayListOf("", "foo", "bar", "x", "")
+        val data = listOf("", "foo", "bar", "x", "")
         val characters = data.flatMap { it.toCharList() }
         println("Got list of characters ${characters}")
         assertEquals(7, characters.size())
@@ -19,7 +19,7 @@ class CollectionJVMTest {
 
 
     test fun filterIntoLinkedList() {
-        val data = arrayListOf("foo", "bar")
+        val data = listOf("foo", "bar")
         val foo = data.filterTo(linkedListOf<String>()) { it.startsWith("f") }
 
         assertTrue {
@@ -33,8 +33,8 @@ class CollectionJVMTest {
         }
     }
 
-    test fun filterNotIntolinkedListOf() {
-        val data = arrayListOf("foo", "bar")
+    test fun filterNotIntoLinkedListOf() {
+        val data = listOf("foo", "bar")
         val foo = data.filterNotTo(linkedListOf<String>()) { it.startsWith("f") }
 
         assertTrue {
@@ -49,7 +49,7 @@ class CollectionJVMTest {
     }
 
     test fun filterNotNullIntoLinkedListOf() {
-        val data = arrayListOf(null, "foo", null, "bar")
+        val data = listOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedListOf<String>())
 
         assertEquals(2, foo.size())
@@ -61,8 +61,8 @@ class CollectionJVMTest {
     }
 
     test fun filterIntoSortedSet() {
-        val data = arrayListOf("foo", "bar")
-        val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }
+        val data = listOf("foo", "bar")
+        val sorted = data.filterTo(sortedSetOf<String>()) { it.length() == 3 }
         assertEquals(2, sorted.size())
         assertEquals(sortedSetOf("bar", "foo"), sorted)
         assertTrue {
@@ -71,13 +71,13 @@ class CollectionJVMTest {
     }
 
     test fun first() {
-        assertEquals(19, TreeSet(arrayListOf(90, 47, 19)).first())
+        assertEquals(19, TreeSet(listOf(90, 47, 19)).first())
     }
 
     test fun last() {
-        val data = arrayListOf("foo", "bar")
+        val data = listOf("foo", "bar")
         assertEquals("bar", data.last())
-        assertEquals(25, arrayListOf(15, 19, 20, 25).last())
+        assertEquals(25, listOf(15, 19, 20, 25).last())
         assertEquals('a', linkedListOf('a').last())
     }
 
@@ -90,8 +90,8 @@ class CollectionJVMTest {
     }
 
     test fun toArray() {
-        val data = arrayListOf("foo", "bar")
-        val arr = data.toArray()
+        val data = listOf("foo", "bar")
+        val arr = data.copyToArray()
         println("Got array ${arr}")
         assertEquals(2, arr.size())
         todo {
@@ -106,40 +106,40 @@ class CollectionJVMTest {
     }
 
     test fun filterIsInstanceList() {
-        val src: List<Any> = listOf(1,2,3.toDouble(), "abc", "cde")
+        val values: List<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde")
 
-        val ints: List<Int> = src.filterIsInstance<Int>()
-        assertEquals(arrayListOf(1,2), ints)
+        val intValues: List<Int> = values.filterIsInstance<Int>()
+        assertEquals(listOf(1, 2), intValues)
 
-        val doubles: List<Double> = src.filterIsInstance<Double>()
-        assertEquals(arrayListOf(3.0), doubles)
+        val doubleValues: List<Double> = values.filterIsInstance<Double>()
+        assertEquals(listOf(3.0), doubleValues)
 
-        val strings: List<String> = src.filterIsInstance<String>()
-        assertEquals(arrayListOf("abc", "cde"), strings)
+        val stringValues: List<String> = values.filterIsInstance<String>()
+        assertEquals(listOf("abc", "cde"), stringValues)
 
-        val anys: List<Any> = src.filterIsInstance<Any>()
-        assertEquals(src.toList(), anys)
+        val anyValues: List<Any> = values.filterIsInstance<Any>()
+        assertEquals(values.toList(), anyValues)
 
-        val chars: List<Char> = src.filterIsInstance<Char>()
-        assertEquals(0, chars.size())
+        val charValues: List<Char> = values.filterIsInstance<Char>()
+        assertEquals(0, charValues.size())
     }
 
     test fun filterIsInstanceArray() {
-        val src: Array<Any> = array(1,2,3.toDouble(), "abc", "cde")
+        val src: Array<Any> = array(1, 2, 3.toDouble(), "abc", "cde")
 
-        val ints: List<Int> = src.filterIsInstance<Int>()
-        assertEquals(arrayListOf(1,2), ints)
+        val intValues: List<Int> = src.filterIsInstance<Int>()
+        assertEquals(listOf(1, 2), intValues)
 
-        val doubles: List<Double> = src.filterIsInstance<Double>()
-        assertEquals(arrayListOf(3.0), doubles)
+        val doubleValues: List<Double> = src.filterIsInstance<Double>()
+        assertEquals(listOf(3.0), doubleValues)
 
-        val strings: List<String> = src.filterIsInstance<String>()
-        assertEquals(arrayListOf("abc", "cde"), strings)
+        val stringValues: List<String> = src.filterIsInstance<String>()
+        assertEquals(listOf("abc", "cde"), stringValues)
 
-        val anys: List<Any> = src.filterIsInstance<Any>()
-        assertEquals(src.toList(), anys)
+        val anyValues: List<Any> = src.filterIsInstance<Any>()
+        assertEquals(src.toList(), anyValues)
 
-        val chars: List<Char> = src.filterIsInstance<Char>()
-        assertEquals(0, chars.size())
+        val charValues: List<Char> = src.filterIsInstance<Char>()
+        assertEquals(0, charValues.size())
     }
 }

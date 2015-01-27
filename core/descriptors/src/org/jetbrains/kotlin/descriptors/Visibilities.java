@@ -31,6 +31,11 @@ import java.util.Set;
 public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
+        public boolean mustCheckInImports() {
+            return true;
+        }
+
+        @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             DeclarationDescriptor parent = what;
             while (parent != null) {
@@ -73,12 +78,22 @@ public class Visibilities {
         }
 
         @Override
+        public boolean mustCheckInImports() {
+            return true;
+        }
+
+        @Override
         public String toString() {
             return "private/*private to this*/";
         }
     };
 
     public static final Visibility PROTECTED = new Visibility("protected", true) {
+        @Override
+        public boolean mustCheckInImports() {
+            return false;
+        }
+
         @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
@@ -98,6 +113,11 @@ public class Visibilities {
 
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
+        public boolean mustCheckInImports() {
+            return true;
+        }
+
+        @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             //NOTE: supposedly temporarily
             return PUBLIC.isVisible(receiver, what, from);
@@ -106,6 +126,11 @@ public class Visibilities {
 
     public static final Visibility PUBLIC = new Visibility("public", true) {
         @Override
+        public boolean mustCheckInImports() {
+            return false;
+        }
+
+        @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return true;
         }
@@ -113,12 +138,22 @@ public class Visibilities {
 
     public static final Visibility LOCAL = new Visibility("local", false) {
         @Override
+        public boolean mustCheckInImports() {
+            throw new IllegalStateException("This method shouldn't be invoked for LOCAL visibility");
+        }
+
+        @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            throw new IllegalStateException(); //This method shouldn't be invoked for LOCAL visibility
+            throw new IllegalStateException("This method shouldn't be invoked for LOCAL visibility");
         }
     };
 
     public static final Visibility INHERITED = new Visibility("inherited", false) {
+        @Override
+        public boolean mustCheckInImports() {
+            throw new IllegalStateException("This method shouldn't be invoked for INHERITED visibility");
+        }
+
         @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             throw new IllegalStateException("Visibility is unknown yet"); //This method shouldn't be invoked for INHERITED visibility
@@ -127,6 +162,11 @@ public class Visibilities {
 
     /* Visibility for fake override invisible members (they are created for better error reporting) */
     public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
+        @Override
+        public boolean mustCheckInImports() {
+            throw new IllegalStateException("This method shouldn't be invoked for INVISIBLE_FAKE visibility");
+        }
+
         @Override
         protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return false;

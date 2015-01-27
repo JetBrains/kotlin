@@ -124,6 +124,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         if (lookup.getCurrentItem() != item) { // do not touch selection if not changed - important for char filter tests
             lookup.setCurrentItem(item)
         }
+        lookup.setFocusDegree(LookupImpl.FocusDegree.FOCUSED);
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
             (object : WriteCommandAction.Simple<Any>(getProject()) {
                 protected override fun run(result: Result<Any>) {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.Annotation
 import com.intellij.codeInsight.NullableNotNullManager
 
 class AnnotationConverter(private val converter: Converter) {

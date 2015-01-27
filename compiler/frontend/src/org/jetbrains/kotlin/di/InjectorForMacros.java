@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
@@ -74,6 +75,7 @@ public class InjectorForMacros {
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final LocalClassifierAnalyzer localClassifierAnalyzer;
     private final ReflectionTypes reflectionTypes;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CallCompleter callCompleter;
@@ -107,6 +109,7 @@ public class InjectorForMacros {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver(), kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -131,6 +134,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         this.expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         this.expressionTypingComponents.setGlobalContext(globalContext);
+        this.expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         this.expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingComponents.setReflectionTypes(reflectionTypes);
 

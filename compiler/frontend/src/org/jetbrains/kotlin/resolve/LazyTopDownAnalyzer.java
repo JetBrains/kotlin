@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.LazyImportScope;
+import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
@@ -193,8 +193,9 @@ public class LazyTopDownAnalyzer {
 
                         @Override
                         public void visitImportDirective(@NotNull JetImportDirective importDirective) {
-                            LazyImportScope importScope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(importDirective.getContainingJetFile());
-                            importScope.forceResolveImportDirective(importDirective);
+                            LazyFileScope fileScope = resolveSession.getScopeProvider().getFileScope(
+                                    importDirective.getContainingJetFile());
+                            fileScope.forceResolveImport(importDirective);
                         }
 
                         private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
@@ -363,8 +364,8 @@ public class LazyTopDownAnalyzer {
     }
 
     private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
-        LazyImportScope fileScope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(file);
-        fileScope.forceResolveAllContents();
+        LazyFileScope fileScope = resolveSession.getScopeProvider().getFileScope(file);
+        fileScope.forceResolveAllImports();
     }
 
     private static void registerScope(

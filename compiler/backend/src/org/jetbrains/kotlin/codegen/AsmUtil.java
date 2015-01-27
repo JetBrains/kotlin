@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
@@ -61,6 +62,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -846,7 +848,11 @@ public class AsmUtil {
             @NotNull ClassBuilder v
     ) {
         String outerClassName = getOuterClassName(descriptor, originalDescriptor, typeMapper);
+
         FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
+        while (function != null && JvmCodegenUtil.isLambdaWhichWillBeInlined(typeMapper.getBindingContext(), function)) {
+            function = DescriptorUtils.getParentOfType(function, FunctionDescriptor.class);
+        }
 
         if (function != null) {
             Method method = typeMapper.mapSignature(function).getAsmMethod();
@@ -863,15 +869,16 @@ public class AsmUtil {
             @NotNull DeclarationDescriptor originalDescriptor,
             @NotNull JetTypeMapper typeMapper
     ) {
+        BindingContext bindingContext = typeMapper.getBindingContext();
+
         DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
         while (container != null) {
             if (container instanceof ClassDescriptor) {
                 return typeMapper.mapClass((ClassDescriptor) container).getInternalName();
             }
-            else if (CodegenBinding.isLocalFunOrLambda(container)) {
-                ClassDescriptor descriptor =
-                        CodegenBinding.anonymousClassForFunction(typeMapper.getBindingContext(), (FunctionDescriptor) container);
-                return typeMapper.mapClass(descriptor).getInternalName();
+            else if (CodegenBinding.isLocalFunOrLambda(container) &&
+                     !JvmCodegenUtil.isLambdaWhichWillBeInlined(bindingContext, container)) {
+                return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) container).getInternalName();
             }
 
             container = container.getContainingDeclaration();

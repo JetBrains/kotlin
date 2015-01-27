@@ -59,7 +59,7 @@ public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(
 public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(values.size()))
 
 /** Returns a new LinkedHashSet with a variable number of initial elements */
-public fun linkedSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(LinkedHashSet(values.size()))
+public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(values.size()))
 
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1

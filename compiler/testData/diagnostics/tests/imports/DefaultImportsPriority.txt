@@ -1,0 +1,3 @@
+package
+
+internal fun foo(/*0*/ p1: kotlin.Array<kotlin.String>, /*1*/ p2: java.util.List<kotlin.String>): kotlin.Unit

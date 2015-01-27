@@ -101,8 +101,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         p.println("public class ", testClassName, " extends ", baseTestClassName, " {");
         p.pushIndent();
 
-        File testDataSources = new File("compiler/testData/codegen/");
-        generateTestMethodsForDirectory(p, testDataSources);
+        generateTestMethodsForDirectories(p, new File("compiler/testData/codegen/box"), new File("compiler/testData/codegen/boxWithStdlib"));
 
         p.popIndent();
         p.println("}");
@@ -112,12 +111,15 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         FileUtil.writeToFile(new File(testSourceFilePath), out.toString());
     }
 
-    private void generateTestMethodsForDirectory(Printer p, File dir) throws IOException {
-        File[] files = dir.listFiles();
-        Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
-        FilesWriter holderFull = new FilesWriter(true);
+    private void generateTestMethodsForDirectories(Printer p, File... dirs) throws IOException {
         FilesWriter holderMock = new FilesWriter(false);
-        processFiles(p, files, holderFull, holderMock);
+        FilesWriter holderFull = new FilesWriter(true);
+
+        for (File dir : dirs) {
+            File[] files = dir.listFiles();
+            Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
+            processFiles(p, files, holderFull, holderMock);
+        }
 
         holderFull.writeFilesOnDisk();
         holderMock.writeFilesOnDisk();

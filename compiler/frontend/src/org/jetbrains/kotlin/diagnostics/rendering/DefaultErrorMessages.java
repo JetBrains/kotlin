@@ -168,8 +168,7 @@ public class DefaultErrorMessages {
 
         MAP.put(CANNOT_IMPORT_FROM_ELEMENT, "Cannot import from ''{0}''", NAME);
         MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
-        MAP.put(USELESS_HIDDEN_IMPORT, "Useless import, it is hidden further");
-        MAP.put(USELESS_SIMPLE_IMPORT, "Useless import, does nothing");
+        MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
         MAP.put(CANNOT_INFER_PARAMETER_TYPE,

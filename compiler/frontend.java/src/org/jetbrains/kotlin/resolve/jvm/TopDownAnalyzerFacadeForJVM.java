@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -26,16 +25,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -48,12 +50,23 @@ public enum TopDownAnalyzerFacadeForJVM {
 
     INSTANCE;
 
-    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
-            new ImportPath("java.lang.*"),
-            new ImportPath("kotlin.*"),
-            new ImportPath("kotlin.jvm.*"),
-            new ImportPath("kotlin.io.*")
-    );
+    public static final List<ImportPath> DEFAULT_IMPORTS = buildDefaultImports();
+
+    private static List<ImportPath> buildDefaultImports() {
+        List<ImportPath> list = new ArrayList<ImportPath>();
+        list.add(new ImportPath("java.lang.*"));
+        list.add(new ImportPath("kotlin.*"));
+        list.add(new ImportPath("kotlin.jvm.*"));
+        list.add(new ImportPath("kotlin.io.*"));
+        // all classes from package "kotlin" mapped to java classes are imported explicitly so that they take priority over classes from java.lang
+        for (ClassDescriptor descriptor : JavaToKotlinClassMap.INSTANCE.allKotlinClasses()) {
+            FqName fqName = DescriptorUtils.getFqNameSafe(descriptor);
+            if (fqName.parent().equals(new FqName("kotlin"))) {
+                list.add(new ImportPath(fqName, false));
+            }
+        }
+        return list;
+    }
 
     private TopDownAnalyzerFacadeForJVM() {
     }

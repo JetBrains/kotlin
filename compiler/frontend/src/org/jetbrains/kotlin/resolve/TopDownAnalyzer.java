@@ -39,28 +39,13 @@ import java.util.Set;
 @Deprecated
 public class TopDownAnalyzer {
 
-    @SuppressWarnings("NullableProblems") @NotNull
     private DeclarationResolver declarationResolver;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private TypeHierarchyResolver typeHierarchyResolver;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private OverrideResolver overrideResolver;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private VarianceChecker varianceChecker;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private OverloadResolver overloadResolver;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private ModuleDescriptor moduleDescriptor;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private MutablePackageFragmentProvider packageFragmentProvider;
-
-    @SuppressWarnings("NullableProblems") @NotNull
     private BodyResolver bodyResolver;
 
     public TopDownAnalyzer() {

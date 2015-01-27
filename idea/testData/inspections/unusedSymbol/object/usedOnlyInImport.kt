@@ -1,0 +1,4 @@
+import A
+
+object A {
+}

@@ -1,1 +1,1 @@
-val v = <selection>"aaa $x <caret>bbb"</selection>
+val v = "<selection>aaa $x <caret>bbb</selection>"

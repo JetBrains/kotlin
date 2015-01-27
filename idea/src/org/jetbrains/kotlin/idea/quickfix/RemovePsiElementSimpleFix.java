@@ -66,10 +66,10 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
                     JetExpression exp = directive.getImportedReference();
                     if (exp != null) {
                         return new RemovePsiElementSimpleFix(directive,
-                                                             JetBundle.message("remove.useless.import", exp.getText()));
+                                                             JetBundle.message("remove.conflicting.import", exp.getText()));
                     }
                     return new RemovePsiElementSimpleFix(directive,
-                                                         JetBundle.message("remove.useless.import",""));
+                                                         JetBundle.message("remove.conflicting.import",""));
                 }
             }
         };

@@ -3,7 +3,7 @@ package test.collections
 import kotlin.test.*
 import org.junit.Test as test
 
-fun <T> checkContent(iter : Iterator<T>, length : Int, value : (Int) -> T) {
+fun <T> checkContent(iter: Iterator<T>, length: Int, value: (Int) -> T) {
     var idx = 0
     while (idx != length && iter.hasNext()) {
         assertEquals(value(idx++), iter.next(), "Invalid element")
@@ -19,7 +19,7 @@ class ArraysTest {
         val arr1 = IntArray(0)
         assertEquals(-1, arr1.lastIndex)
 
-        val arr2 = Array<String>(0, {"$it"})
+        val arr2 = Array<String>(0, { "$it" })
         assertEquals(-1, arr2.lastIndex)
     }
 
@@ -28,7 +28,7 @@ class ArraysTest {
         assertEquals(4, arr1.lastIndex)
         assertEquals(4, arr1[arr1.lastIndex])
 
-        val arr2 = Array<String>(5, {"$it"})
+        val arr2 = Array<String>(5, { "$it" })
         assertEquals(4, arr2.lastIndex)
         assertEquals("4", arr2[arr2.lastIndex])
     }
@@ -124,7 +124,7 @@ class ArraysTest {
         expect(1, { array(1).minBy { it } })
         expect(3, { array(2, 3).minBy { -it } })
         expect('a', { array('a', 'b').minBy { "x$it" } })
-        expect("b", { array("b", "abc").minBy { it.length } })
+        expect("b", { array("b", "abc").minBy { it.length() } })
     }
 
     test fun maxBy() {
@@ -132,7 +132,7 @@ class ArraysTest {
         expect(1, { array(1).maxBy { it } })
         expect(2, { array(2, 3).maxBy { -it } })
         expect('b', { array('a', 'b').maxBy { "x$it" } })
-        expect("abc", { array("b", "abc").maxBy { it.length } })
+        expect("abc", { array("b", "abc").maxBy { it.length() } })
     }
 
     test fun minByEvaluateOnce() {
@@ -162,33 +162,33 @@ class ArraysTest {
         expect(0) { array("cat", "dog", "bird").indexOf("cat") }
         expect(1) { array("cat", "dog", "bird").indexOf("dog") }
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
-        expect(0) { array(null, "dog", null).indexOf(null)}
+        expect(0) { array(null, "dog", null).indexOf(null) }
     }
 
     test fun plus() {
-        assertEquals(listOf("1","2","3","4"), array("1", "2") + array("3", "4"))
-        assertEquals(listOf("1","2","3","4"), listOf("1", "2") + array("3", "4"))
+        assertEquals(listOf("1", "2", "3", "4"), array("1", "2") + array("3", "4"))
+        assertEquals(listOf("1", "2", "3", "4"), listOf("1", "2") + array("3", "4"))
     }
 
     test fun plusVararg() {
         fun onePlus(vararg a: String) = array("1") + a
-        assertEquals(listOf("1","2"), onePlus("2"))
+        assertEquals(listOf("1", "2"), onePlus("2"))
     }
 
     test fun first() {
-        expect(1) { array(1,2,3).first() }
-        expect(2) { array(1,2,3).first { it % 2 == 0 } }
+        expect(1) { array(1, 2, 3).first() }
+        expect(2) { array(1, 2, 3).first { it % 2 == 0 } }
     }
 
     test fun last() {
-        expect(3) { array(1,2,3).last() }
-        expect(2) { array(1,2,3).last { it % 2 == 0 } }
+        expect(3) { array(1, 2, 3).last() }
+        expect(2) { array(1, 2, 3).last { it % 2 == 0 } }
     }
 
     test fun contains() {
-        assertTrue(array("1","2","3","4").contains("2"))
-        assertTrue("3" in array("1","2","3","4"))
-        assertTrue("0" !in array("1","2","3","4"))
+        assertTrue(array("1", "2", "3", "4").contains("2"))
+        assertTrue("3" in array("1", "2", "3", "4"))
+        assertTrue("0" !in array("1", "2", "3", "4"))
     }
 
     test fun slice() {

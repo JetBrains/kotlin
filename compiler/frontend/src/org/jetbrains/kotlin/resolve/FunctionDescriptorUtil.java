@@ -40,11 +40,6 @@ public class FunctionDescriptorUtil {
         }
 
         @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
         public String toString() {
             return "FunctionDescriptorUtil.MAKE_TYPE_PARAMETERS_FRESH";
         }

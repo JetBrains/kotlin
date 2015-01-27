@@ -40,7 +40,7 @@ class PrimitiveSetJsTest : SetJsTest() {
     }
 }
 
-class LinkedHashSetTest : SetJsTest() {
+class LinkedHashSetJsTest : SetJsTest() {
     override fun createEmptyMutableSet(): MutableSet<String> = LinkedHashSet()
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = LinkedHashSet()
     Test override fun constructors() {

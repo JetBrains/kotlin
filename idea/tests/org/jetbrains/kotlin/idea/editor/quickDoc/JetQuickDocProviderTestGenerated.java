@@ -96,9 +96,27 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
         doTest(fileName);
     }
 
+    @TestMetadata("OnInheritedMethodUsage.kt")
+    public void testOnInheritedMethodUsage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnInheritedMethodUsage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsage.kt")
     public void testOnMethodUsage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithBracketsInParam.kt")
+    public void testOnMethodUsageWithBracketsInParam() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithBracketsInParam.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithReturnAndThrows.kt")
+    public void testOnMethodUsageWithReturnAndThrows() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithReturnAndThrows.kt");
         doTest(fileName);
     }
 

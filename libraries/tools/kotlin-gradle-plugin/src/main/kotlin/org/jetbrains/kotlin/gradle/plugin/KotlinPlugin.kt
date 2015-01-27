@@ -273,6 +273,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             }
         })
 
+        (ext as ExtensionAware).getExtensions().add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
+
         project afterEvaluate { project ->
             if (project != null) {
                 val testVariants = ext.getTestVariants()!!
@@ -294,7 +296,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
         val logger = project.getLogger()
-        val kotlinOptions = getExtension<Any>(androidExt, "kotlinOptions")
+        val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
         //TODO: change to BuilderConstants.MAIN - it was relocated in 0.11 plugin
         val mainSourceSet = sourceSets.getByName("main")
@@ -316,8 +318,9 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
                 val kotlinTaskName = "compile${variantName.capitalize()}Kotlin"
                 val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
-                kotlinTask.setProperty("kotlinOptions", kotlinOptions)
-
+                if (kotlinOptions != null) {
+                    kotlinTask.setProperty("kotlinOptions", kotlinOptions)
+                }
 
                 // store kotlin classes in separate directory. They will serve as class-path to java compiler
                 val kotlinOutputDir = File(project.getBuildDir(), "tmp/kotlin-classes/${variantName}")

@@ -136,9 +136,6 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
                         serviceImplementation="org.jetbrains.kotlin.idea.stubindex.StubIndexServiceImpl"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.OperationModeProvider"
-                        serviceImplementation="org.jetbrains.kotlin.idea.IdeModeProvider"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 

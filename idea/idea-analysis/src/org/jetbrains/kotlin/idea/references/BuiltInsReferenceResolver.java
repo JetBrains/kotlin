@@ -199,6 +199,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return findCurrentDescriptorForMember(unwrapFakeOverride((CallableMemberDescriptor) originalDescriptor).getOriginal());
         }
 
+        if (!isFromBuiltinModule(originalDescriptor)) return null;
+
         DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
         JetScope memberScope = getMemberScope(containingDeclaration);
         if (memberScope == null) return null;
@@ -222,10 +224,12 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     @Nullable
     private DeclarationDescriptor findCurrentDescriptor(@NotNull DeclarationDescriptor originalDescriptor) {
         if (originalDescriptor instanceof ClassDescriptor) {
+            if (!isFromBuiltinModule(originalDescriptor)) return null;
             return findCurrentDescriptorForClass((ClassDescriptor) originalDescriptor);
         }
         else if (originalDescriptor instanceof PackageFragmentDescriptor) {
-            return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageFragmentDescriptor) originalDescriptor).getFqName())
+            return isFromBuiltinModule(originalDescriptor)
+                   && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageFragmentDescriptor) originalDescriptor).getFqName())
                    ? builtinsPackageFragment
                    : null;
         }
@@ -235,6 +239,12 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         else {
             return null;
         }
+    }
+
+    private static boolean isFromBuiltinModule(@NotNull DeclarationDescriptor originalDescriptor) {
+        // TODO This is optimization only
+        // It should be rewritten by checking declarationDescriptor.getSource(), when the latter returns something non-trivial for builtins.
+        return KotlinBuiltIns.getInstance().getBuiltInsModule() == DescriptorUtils.getContainingModule(originalDescriptor);
     }
 
     @NotNull

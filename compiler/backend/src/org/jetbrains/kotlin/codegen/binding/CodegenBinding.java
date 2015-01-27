@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
@@ -60,8 +61,8 @@ public class CodegenBinding {
 
     public static final WritableSlice<JetExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM = Slices.
-            <JetWhenExpression, WhenByEnumsMapping>sliceBuilder().build();
+    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM =
+            Slices.<JetWhenExpression, WhenByEnumsMapping>sliceBuilder().build();
 
     public static final WritableSlice<String, List<WhenByEnumsMapping>> MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE =
             Slices.<String, List<WhenByEnumsMapping>>sliceBuilder().build();
@@ -169,9 +170,9 @@ public class CodegenBinding {
         trace.record(ASM_TYPE, classDescriptor, asmType);
         trace.record(CLOSURE, classDescriptor, closure);
 
-        //TEMPORARY EAT INNER CLASS INFO FOR FUNCTION LITERALS
-        //TODO: we should understand that lambda/closure would be inlined and don't generate inner class record
-        if (enclosing != null && !(element instanceof JetFunctionLiteral)) {
+        // Note: at the moment this is needed for light classes only
+        // TODO: refactor this out
+        if (enclosing != null && !JvmCodegenUtil.isLambdaWhichWillBeInlined(trace.getBindingContext(), classDescriptor)) {
             recordInnerClass(trace, enclosing, classDescriptor);
         }
     }
@@ -183,7 +184,7 @@ public class CodegenBinding {
     ) {
         Collection<ClassDescriptor> innerClasses = bindingTrace.get(INNER_CLASSES, outer);
         if (innerClasses == null) {
-            innerClasses = new ArrayList<ClassDescriptor>();
+            innerClasses = new ArrayList<ClassDescriptor>(1);
             bindingTrace.record(INNER_CLASSES, outer, innerClasses);
         }
         innerClasses.add(inner);

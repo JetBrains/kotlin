@@ -102,9 +102,7 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_IMPORT_FROM_ELEMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<JetExpression> USELESS_HIDDEN_IMPORT = DiagnosticFactory0.create(WARNING);
-
-    DiagnosticFactory0<JetExpression> USELESS_SIMPLE_IMPORT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<JetExpression, String> CONFLICTING_IMPORT = DiagnosticFactory1.create(ERROR);
 
     // Modifiers
 

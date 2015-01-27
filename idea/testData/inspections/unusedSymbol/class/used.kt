@@ -1,4 +1,5 @@
 class A
 
-fun f(): A {
+fun main(args: Array<String>) {
+    val x: A? = null
 }

@@ -128,4 +128,10 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
         }
         return Collections.emptyList();
     }
+
+    @Nullable
+    @Override
+    protected ClassDescriptor classForInnerClassRecord() {
+        return DescriptorUtils.isTopLevelDeclaration(descriptor) ? null : descriptor;
+    }
 }

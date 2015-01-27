@@ -4,8 +4,8 @@ package test
 
 import testing.custom.*
 
-// Non default import has priority over default one. No conflicts are expected.
-val a1: `custom`List<Int>? = null
+// Default import has priority over on-demand ones. No conflicts are expected.
+val a1: `kotlin::List`List<Int>? = null
 
 //FILE:javaUtilImport.kt
 //----------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ package test
 
 import java.util.*
 
-// Mapped declarations are dropped from on-demand imports.
+// Default imports take over import-on-demand
 // TODO: Fix for lazy resolve test
 // val a2: 'kotlin::List'List<Int>? = null
 
@@ -24,8 +24,8 @@ package test
 import testing.custom.*
 import java.util.*
 
-// Mapped declarations are dropped from on-demand "java.util" import. So no conflicts are expected.
-val a3: `custom`List<Int>? = null
+// Default import has priority over on-demand ones. No conflicts are expected.
+val a3: `kotlin::List`List<Int>? = null
 
 //FILE:singleClassImportFromJavaUtil.kt
 //----------------------------------------------------------------------------------

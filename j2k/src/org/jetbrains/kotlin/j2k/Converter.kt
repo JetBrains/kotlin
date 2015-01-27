@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.Annotation
+import org.jetbrains.kotlin.j2k.ast.Class
+import org.jetbrains.kotlin.j2k.ast.Enum
 import java.util.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*

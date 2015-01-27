@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.*
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.caches.KotlinIndicesHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,6 +27,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 class AllClassesCompletion(val parameters: CompletionParameters,
                            val lookupElementFactory: LookupElementFactory,
@@ -39,8 +40,10 @@ class AllClassesCompletion(val parameters: CompletionParameters,
                            val kindFilter: (ClassKind) -> Boolean,
                            val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     fun collect(result: LookupElementsCollector) {
-        val builtIns = KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
-        result.addDescriptorElements(builtIns, suppressAutoInsertion = true)
+        //TODO: this is a temporary hack until we have built-ins in indices
+        val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses() + listOf(KotlinBuiltIns.getInstance().getNothing())
+        val filteredBuiltIns = builtIns.filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
+        result.addDescriptorElements(filteredBuiltIns, suppressAutoInsertion = true)
 
         val helper = KotlinIndicesHelper(scope.getProject(), resolutionFacade, bindingContext, scope, moduleDescriptor, visibilityFilter)
         result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),

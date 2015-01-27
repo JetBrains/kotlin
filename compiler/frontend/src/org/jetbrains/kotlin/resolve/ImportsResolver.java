@@ -99,7 +99,7 @@ public class ImportsResolver {
     ) {
         @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
-        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope);
+        Importer importer = new Importer();
         if (lookupMode == LookupMode.EVERYTHING) {
             fileScope.clearImports();
         }
@@ -109,8 +109,8 @@ public class ImportsResolver {
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
-            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, delayedImporter,
-                                                               temporaryTrace, module, lookupMode);
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, importer,
+                                                               temporaryTrace, lookupMode);
         }
 
         Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives = Maps.newHashMap();
@@ -119,8 +119,8 @@ public class ImportsResolver {
 
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, delayedImporter,
-                                                                       trace, module, lookupMode);
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, importer,
+                                                                       trace, lookupMode);
             if (!descriptors.isEmpty()) {
                 resolvedDirectives.put(importDirective, descriptors);
             }
@@ -129,11 +129,11 @@ public class ImportsResolver {
                 checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }
-        delayedImporter.processImports();
+        importer.doImport(fileScope);
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportUselessImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
+                reportConflictingImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
             }
         }
     }
@@ -167,46 +167,31 @@ public class ImportsResolver {
         }
     }
 
-    public static void reportUselessImport(
-        @NotNull JetImportDirective importDirective,
-        @NotNull JetScope fileScope,
-        @Nullable Collection<? extends DeclarationDescriptor> resolvedDirectives,
-        @NotNull BindingTrace trace
+    public static void reportConflictingImport(
+            @NotNull JetImportDirective importDirective,
+            @NotNull JetScope fileScope,
+            @Nullable Collection<? extends DeclarationDescriptor> resolvedTo,
+            @NotNull BindingTrace trace
     ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || resolvedDirectives == null) {
-            return;
-        }
+        if (importedReference == null || resolvedTo == null) return;
+
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
-        if (aliasName == null) {
-            return;
-        }
+        if (aliasName == null) return;
 
-        boolean uselessHiddenImport = true;
-        for (DeclarationDescriptor wasResolved : resolvedDirectives) {
-            DeclarationDescriptor isResolved = null;
-            if (wasResolved instanceof ClassDescriptor) {
-                isResolved = fileScope.getClassifier(aliasName);
-            }
-            else if (wasResolved instanceof VariableDescriptor) {
-                isResolved = fileScope.getLocalVariable(aliasName);
-            }
-            else if (wasResolved instanceof PackageViewDescriptor) {
-                isResolved = fileScope.getPackage(aliasName);
-            }
-            if (isResolved == null || isResolved.equals(wasResolved)) {
-                uselessHiddenImport = false;
-            }
-        }
-        if (uselessHiddenImport) {
-            trace.report(USELESS_HIDDEN_IMPORT.on(importedReference));
-        }
+        if (resolvedTo.size() != 1) return;
 
-        if (!importDirective.isAllUnder() &&
-            importedReference instanceof JetSimpleNameExpression &&
-            importDirective.getAliasName() == null) {
-            trace.report(USELESS_SIMPLE_IMPORT.on(importedReference));
+        DeclarationDescriptor target = resolvedTo.iterator().next();
+        if (target instanceof ClassDescriptor) {
+            if (fileScope.getClassifier(aliasName) == null) {
+                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
+            }
+        }
+        else if (target instanceof PackageViewDescriptor) {
+            if (fileScope.getPackage(aliasName) == null) {
+                trace.report(CONFLICTING_IMPORT.on(importedReference, aliasName.asString()));
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +35,13 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetFunctionLiteral;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineDescriptorUtils;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -223,5 +228,12 @@ public class JvmCodegenUtil {
         return descriptor instanceof PropertyAccessorDescriptor
                ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
                : descriptor;
+    }
+
+    public static boolean isLambdaWhichWillBeInlined(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
+        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+        return declaration instanceof JetFunctionLiteral &&
+               declaration.getParent() instanceof JetFunctionLiteralExpression &&
+               InlineDescriptorUtils.isInlineLambda((JetFunctionLiteralExpression) declaration.getParent(), bindingContext, false);
     }
 }

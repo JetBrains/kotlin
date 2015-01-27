@@ -1,0 +1,13 @@
+package
+
+package a {
+    internal var X: kotlin.Int
+}
+
+package b {
+    internal var X: kotlin.String
+}
+
+package c {
+    internal fun foo(): kotlin.Unit
+}

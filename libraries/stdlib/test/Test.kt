@@ -9,6 +9,7 @@ import java.util.*
 import org.junit.*
 import org.junit.runner.*
 import org.junit.runner.notification.*
+import org.junit.Assert
 
 class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test: TestBuilt<T>.() -> Unit) : TestCase(name) {
     private var myState: T? = null

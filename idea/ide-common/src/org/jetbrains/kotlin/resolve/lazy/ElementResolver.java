@@ -160,8 +160,8 @@ public abstract class ElementResolver {
         }
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
-            LazyImportScope scope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(importDirective.getContainingJetFile());
-            scope.forceResolveAllContents();
+            LazyFileScope scope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile());
+            scope.forceResolveAllImports();
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
             annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);

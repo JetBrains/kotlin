@@ -51,7 +51,7 @@ class MapTest {
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-   
+
     test fun iterate() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
@@ -98,7 +98,7 @@ class MapTest {
         val m1 = mapOf("beverage" to "beer", "location" to "Mells")
         val list = m1.map { it.value + " rocks" }
 
-        assertEquals(arrayListOf("beer rocks", "Mells rocks"), list)
+        assertEquals(listOf("beer rocks", "Mells rocks"), list)
     }
 
     test fun mapValues() {
@@ -132,7 +132,7 @@ class MapTest {
     }
 
     test fun createWithSelector() {
-        val map = listOf("a", "bb", "ccc").toMap { it.length }
+        val map = listOf("a", "bb", "ccc").toMap { it.length() }
         assertEquals(3, map.size())
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
@@ -140,7 +140,7 @@ class MapTest {
     }
 
     test fun createWithSelectorAndOverwrite() {
-        val map = listOf("aa", "bb", "ccc").toMap { it.length }
+        val map = listOf("aa", "bb", "ccc").toMap { it.length() }
         assertEquals(2, map.size())
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))
@@ -158,7 +158,7 @@ class MapTest {
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
         assertEquals(3, map["c"])
-        assertEquals(arrayListOf("c", "b", "a"), map.keySet().toList())
+        assertEquals(listOf("c", "b", "a"), map.keySet().toList())
     }
 
     test fun filter() {
@@ -182,6 +182,38 @@ class MapTest {
         assertEquals(null, filteredByValue2["b"])
         assertEquals(2, filteredByValue2["c"])
         assertEquals(2, filteredByValue2["a"])
+    }
+
+    test fun any() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertTrue(map.any())
+        assertFalse(emptyMap<String, Int>().any())
+
+        assertTrue(map.any { it.key == "b" })
+        assertFalse(emptyMap<String, Int>().any { it.key == "b" })
+
+        assertTrue(map.any { it.value == 2 })
+        assertFalse(map.any { it.value == 5 })
+    }
+
+    test fun all() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertTrue(map.all { it.key != "d" })
+        assertTrue(emptyMap<String, Int>().all { it.key == "d" })
+
+        assertTrue(map.all { it.value > 0 })
+        assertFalse(map.all { it.value == 2 })
+    }
+
+    test fun countBy() {
+        val map = mapOf(Pair("b", 3), Pair("c", 2), Pair("a", 2))
+        assertEquals(3, map.count())
+
+        val filteredByKey = map.count { it.key == "b" }
+        assertEquals(1, filteredByKey)
+
+        val filteredByValue = map.count { it.value == 2 }
+        assertEquals(2, filteredByValue)
     }
 
     test fun filterNot() {

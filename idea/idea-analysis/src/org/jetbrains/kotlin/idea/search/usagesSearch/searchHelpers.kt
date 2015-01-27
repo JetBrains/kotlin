@@ -73,15 +73,27 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
     return when {
         name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>()
         this is JetParameter -> {
-            if (!hasValOrVarNode()) return Collections.emptyList<String>()
+            val componentFunctionName = this.dataClassComponentFunctionName()
+            if (componentFunctionName == null) return Collections.emptyList<String>()
 
-            val context = this.analyze()
-            val paramDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? ValueParameterDescriptor
-            context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]?.let {
-                listOf(it.getName().asString(), JetTokens.LPAR.getValue())
-            } ?: Collections.emptyList<String>()
+            return listOf(componentFunctionName.asString(), JetTokens.LPAR.getValue())
         }
         else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as JetSingleValueToken).getValue() }
+    }
+}
+
+fun JetParameter.dataClassComponentFunctionName(): Name? {
+    if (!hasValOrVarNode()) return null
+
+    // Forcing full resolve of owner class: otherwise DATA_CLASS_COMPONENT_FUNCTION won't be calculated.
+    // This is a hack, but better solution would need refactoring of data class component function resolution: they need to be resolved
+    // when resolving corresponding property.
+    LightClassUtil.getLightClassPropertyMethods(this)
+
+    val context = this.analyze()
+    val paramDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? ValueParameterDescriptor
+    return context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]?.let {
+        it.getName()
     }
 }
 

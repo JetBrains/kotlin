@@ -97,12 +97,6 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
-    @TestMetadata("DontImportRootScope.kt")
-    public void testDontImportRootScope() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DontImportRootScope.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("EnumValues.kt")
     public void testEnumValues() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/EnumValues.kt");
@@ -142,6 +136,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("GenericTypeInFunctionParameter.kt")
     public void testGenericTypeInFunctionParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/GenericTypeInFunctionParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportFromRootScope.kt")
+    public void testImportFromRootScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ImportFromRootScope.kt");
         doTest(fileName);
     }
 

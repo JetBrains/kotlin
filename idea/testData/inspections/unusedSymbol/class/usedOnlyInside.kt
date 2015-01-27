@@ -1,4 +1,5 @@
 class A {
-    fun f(other: A) {
+    {
+        val x: A? = null
     }
 }

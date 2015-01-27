@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea;
 import com.google.common.base.Predicate;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -27,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
+import org.jetbrains.kotlin.kdoc.KdocPackage;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
@@ -90,13 +90,9 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
         }
 
-        PsiElement navigationElement = declaration.getNavigationElement();
-        if (navigationElement instanceof JetDeclaration) {
-            declaration = (JetDeclaration) navigationElement;
-        }
-        KDoc comment = declaration.getDocComment();
+        KDocTag comment = KdocPackage.findKDoc(declarationDescriptor);
         if (comment != null) {
-            renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
+            renderedDecl = renderedDecl + "<br/>" + org.jetbrains.kotlin.idea.kdoc.KdocPackage.renderKDoc(comment);
         }
 
         return renderedDecl;
@@ -113,15 +109,5 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         }
 
         return null;
-    }
-
-    private static String kDocToHtml(@NotNull KDoc comment) {
-        // TODO: Parse and show markdown comments as html
-        String content = comment.getDefaultSection().getContentWithTags();
-        String htmlContent = StringUtil.replace(content, "\n", "<br/>")
-                .replaceAll("(@param)\\s+(\\w+)", "@param - <i>$2</i>")
-                .replaceAll("(@\\w+)", "<b>$1</b>");
-
-        return "<p>" + htmlContent + "</p>";
     }
 }

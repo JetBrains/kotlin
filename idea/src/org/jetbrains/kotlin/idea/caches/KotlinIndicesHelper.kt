@@ -56,7 +56,7 @@ public class KotlinIndicesHelper(
         return declarations.flatMap {
             if (it.getContainingJetFile().isCompiled()) {
                 val importDirective = JetPsiFactory(project).createImportDirective(it.getFqName().asString())
-                analyzeImportReference(importDirective, resolutionScope, BindingTraceContext(), moduleDescriptor).filterIsInstance<CallableDescriptor>()
+                analyzeImportReference(importDirective, resolutionScope, BindingTraceContext()).filterIsInstance<CallableDescriptor>()
             }
             else {
                 (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
@@ -118,7 +118,7 @@ public class KotlinIndicesHelper(
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
 
             matchingNames.flatMapTo(this) {
-                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, callType, resolutionScope, moduleDescriptor, bindingContext)
+                findSuitableExtensions(it, index, receiverValue, dataFlowInfo, callType, resolutionScope, bindingContext)
             }
         }
         else {
@@ -126,7 +126,7 @@ public class KotlinIndicesHelper(
 
             for (receiver in resolutionScope.getImplicitReceiversWithInstance()) {
                 matchingNames.flatMapTo(this) {
-                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, resolutionScope, moduleDescriptor, bindingContext)
+                    findSuitableExtensions(it, index, receiver.getValue(), dataFlowInfo, CallType.NORMAL, resolutionScope, bindingContext)
                 }
             }
         }
@@ -141,13 +141,12 @@ public class KotlinIndicesHelper(
                                        dataFlowInfo: DataFlowInfo,
                                        callType: CallType,
                                        resolutionScope: JetScope,
-                                       module: ModuleDescriptor,
                                        bindingContext: BindingContext): Stream<CallableDescriptor> {
         val fqnString = callableFQN.asString()
         val extensions = index.get(fqnString, project, scope).filter { it.getReceiverTypeReference() != null }
         val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) {
             val importDirective = JetPsiFactory(project).createImportDirective(fqnString)
-            analyzeImportReference(importDirective, resolutionScope, BindingTraceContext(), module)
+            analyzeImportReference(importDirective, resolutionScope, BindingTraceContext())
                     .filterIsInstance<CallableDescriptor>()
                     .filter { it.getExtensionReceiverParameter() != null }
         }
@@ -180,14 +179,13 @@ public class KotlinIndicesHelper(
 
     private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope): Collection<CallableDescriptor> {
         val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext(), moduleDescriptor)
+        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext())
         return allDescriptors.filterIsInstance<CallableDescriptor>().filter { it.getExtensionReceiverParameter() == null }
     }
 
     private fun analyzeImportReference(
-            importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace, module: ModuleDescriptor
+            importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace
     ): Collection<DeclarationDescriptor> {
-        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, Importer.DO_NOTHING, trace,
-                                                                    module, LookupMode.EVERYTHING)
+        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, null, trace, LookupMode.EVERYTHING)
     }
 }

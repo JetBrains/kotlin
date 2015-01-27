@@ -4,7 +4,7 @@ import org.junit.Test
 import kotlin.test.*
 import java.util.*
 
-fun <T> iterableOf(vararg items : T) : Iterable<T> = IterableWrapper(items.toList())
+fun <T> iterableOf(vararg items: T): Iterable<T> = IterableWrapper(items.toList())
 
 class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
     private val collection = collection
@@ -16,6 +16,7 @@ class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
 
 class IterableTest : IterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
 class SetTest : IterableTests<Set<String>>(setOf("foo", "bar"), setOf<String>())
+class LinkedSetTest : IterableTests<LinkedHashSet<String>>(linkedSetOf("foo", "bar"), linkedSetOf<String>())
 class ListTest : OrderedIterableTests<List<String>>(listOf("foo", "bar"), listOf<String>())
 class ArrayListTest : OrderedIterableTests<ArrayList<String>>(arrayListOf("foo", "bar"), arrayListOf<String>())
 
@@ -89,7 +90,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     Test fun all() {
-        expect(true) { data.all { it.length == 3 } }
+        expect(true) { data.all { it.length() == 3 } }
         expect(false) { data.all { it.startsWith("b") } }
         expect(true) { empty.all { it.startsWith("b") } }
     }
@@ -97,7 +98,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     Test fun none() {
         expect(false) { data.none() }
         expect(true) { empty.none() }
-        expect(false) { data.none { it.length == 3 } }
+        expect(false) { data.none { it.length() == 3 } }
         expect(false) { data.none { it.startsWith("b") } }
         expect(true) { data.none { it.startsWith("x") } }
         expect(true) { empty.none { it.startsWith("b") } }
@@ -121,7 +122,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test fun forEach() {
         var count = 0
-        data.forEach { count += it.length }
+        data.forEach { count += it.length() }
         assertEquals(6, count)
     }
 
@@ -138,7 +139,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         expect("foo") { data.single { it.startsWith("f") } }
         expect("bar") { data.single { it.startsWith("b") } }
         fails {
-            data.single { it.length == 3 }
+            data.single { it.length() == 3 }
         }
     }
 
@@ -149,32 +150,37 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         expect("foo") { data.singleOrNull { it.startsWith("f") } }
         expect("bar") { data.singleOrNull { it.startsWith("b") } }
         expect(null) {
-            data.singleOrNull { it.length == 3 }
+            data.singleOrNull { it.length() == 3 }
         }
     }
 
     Test
     fun map() {
-        val lengths = data.map { it.length }
+        val lengths = data.map { it.length() }
         assertTrue {
             lengths.all { it == 3 }
         }
         assertEquals(2, lengths.size())
-        assertEquals(arrayListOf(3, 3), lengths)
+        assertEquals(listOf(3, 3), lengths)
+    }
+
+    Test
+    fun flatten() {
+        assertEquals(listOf(0, 1, 2, 3, 0, 1, 2, 3), data.map { 0..it.length() }.flatten())
     }
 
     Test
     fun mapIndexed() {
-        val shortened = data.mapIndexed { (index, value)-> value.substring(0..index) }
+        val shortened = data.mapIndexed {(index, value) -> value.substring(0..index) }
         assertEquals(2, shortened.size())
-        assertEquals(arrayListOf("f", "ba"), shortened)
+        assertEquals(listOf("f", "ba"), shortened)
     }
 
     Test
     fun withIndex() {
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }
         assertEquals(2, indexed.size())
-        assertEquals(arrayListOf("f", "ba"), indexed)
+        assertEquals(listOf("f", "ba"), indexed)
     }
 
     Test
@@ -202,9 +208,18 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     Test
+    fun sumBy() {
+        expect(6) { data.sumBy { it.length() } }
+        expect(0) { empty.sumBy { it.length() } }
+
+        expect(3.0) { data.sumByDouble { it.length().toDouble() / 2 } }
+        expect(0.0) { empty.sumByDouble { it.length().toDouble() / 2 } }
+    }
+
+    Test
     fun withIndices() {
         var index = 0
-        for ((i, d) in data.withIndices()) {
+        for ((i, d) in data.withIndex()) {
             assertEquals(i, index)
             assertEquals(d, data.elementAt(index))
             index++
@@ -214,12 +229,12 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test
     fun fold() {
-        expect(231) { data.fold(1, {a, b -> a + if (b == "foo") 200 else 30 }) }
+        expect(231) { data.fold(1, { a, b -> a + if (b == "foo") 200 else 30 }) }
     }
 
     Test
     fun reduce() {
-        val reduced = data.reduce {a, b -> a + b }
+        val reduced = data.reduce { a, b -> a + b }
         assertEquals(6, reduced.length())
         assertTrue(reduced == "foobar" || reduced == "barfoo")
     }

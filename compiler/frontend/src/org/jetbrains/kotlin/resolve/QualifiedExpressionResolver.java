@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,9 +59,8 @@ public class QualifiedExpressionResolver {
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
             @NotNull JetScope scopeToCheckVisibility,
-            @NotNull Importer importer,
+            @Nullable Importer importer,
             @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor module,
             @NotNull LookupMode lookupMode
     ) {
         if (importDirective.isAbsoluteInRootPackage()) {
@@ -92,8 +92,10 @@ public class QualifiedExpressionResolver {
                 return Collections.emptyList();
             }
 
-            for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAllUnderImport(descriptor, module.getPlatformToKotlinClassMap());
+            if (importer != null) {
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    importer.addAllUnderImport(descriptor);
+                }
             }
             return Collections.emptyList();
         }
@@ -103,8 +105,10 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
 
-        for (DeclarationDescriptor descriptor : descriptors) {
-            importer.addAliasImport(descriptor, aliasName);
+        if (importer != null) {
+            for (DeclarationDescriptor descriptor : descriptors) {
+                importer.addAliasImport(descriptor, aliasName);
+            }
         }
 
         return descriptors;
@@ -483,9 +487,10 @@ public class QualifiedExpressionResolver {
             @NotNull JetScope scopeToCheckVisibility
     ) {
         if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
+            Visibility visibility = descriptor.getVisibility();
+            if (PsiTreeUtil.getParentOfType(referenceExpression, JetImportDirective.class) != null && !visibility.mustCheckInImports()) return;
             //noinspection ConstantConditions
-            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getVisibility(),
-                                                descriptor.getContainingDeclaration()));
+            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, visibility, descriptor.getContainingDeclaration()));
         }
     }
 
