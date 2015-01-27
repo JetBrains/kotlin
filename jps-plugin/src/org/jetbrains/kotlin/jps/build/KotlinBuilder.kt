@@ -162,7 +162,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     FSOperations.markDirtyRecursively(context, chunk)
                 }
                 RECOMPILE_OTHERS_WITH_DEPENDANTS -> {
-                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, fileFilter)
+                    // Workaround for IDEA 14.0-14.0.2: extended version of markDirtyRecursively is not available
+                    try {
+                        Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
+
+                        FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, fileFilter)
+                    } catch (e: ClassNotFoundException) {
+                        allCompiledFiles.clear()
+                        FSOperations.markDirtyRecursively(context, chunk)
+                    }
                 }
                 RECOMPILE_OTHERS_IN_CHUNK -> {
                     FSOperations.markDirty(context, chunk, fileFilter)
