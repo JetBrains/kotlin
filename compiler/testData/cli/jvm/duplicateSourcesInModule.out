@@ -1,2 +1,2 @@
-WARNING: Duplicate source roots: $TESTDATA_DIR$/duplicateSourcesInModule.kt
+WARNING: Duplicate source root: $TESTDATA_DIR$/duplicateSourcesInModule.kt
 OK

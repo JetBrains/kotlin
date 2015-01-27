@@ -99,7 +99,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else if (arguments.module == null) {
-            CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, arguments.freeArgs);
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs);
 
             // Adding all directory sources to classpath to resolve Java symbols from Kotlin
             for (String source : arguments.freeArgs) {

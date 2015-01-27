@@ -64,6 +64,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.*;
@@ -271,7 +272,7 @@ public class CompileEnvironmentUtil {
     @NotNull
     public static List<JetFile> getJetFiles(
             @NotNull final Project project,
-            @NotNull List<String> sourceRoots,
+            @NotNull Collection<String> sourceRoots,
             @NotNull Function1<String, Unit> reportError
     ) {
         final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
@@ -313,24 +314,5 @@ public class CompileEnvironmentUtil {
         }
 
         return result;
-    }
-
-    public static void addSourceFilesCheckingForDuplicates(@NotNull CompilerConfiguration configuration, @NotNull List<String> sourceRoots) {
-        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        assert messageCollector != null : "messageCollector should be set: " + configuration;
-
-        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
-
-        for (String sourceRoot : sourceRoots) {
-            if (!uniqueSourceRoots.add(sourceRoot)) {
-                messageCollector.report(
-                        CompilerMessageSeverity.WARNING,
-                        "Duplicate source roots: " + sourceRoot,
-                        NO_LOCATION
-                );
-            }
-        }
-
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, new ArrayList<String>(uniqueSourceRoots));
     }
 }

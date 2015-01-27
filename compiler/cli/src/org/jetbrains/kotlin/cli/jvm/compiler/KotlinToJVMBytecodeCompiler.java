@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -161,10 +162,8 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         CompilerConfiguration configuration = base.copy();
 
-        List<String> sourceRoots = Lists.newArrayList();
-
         for (Module module : chunk) {
-            sourceRoots.addAll(getAbsolutePaths(directory, module));
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
 
             for (String classpathRoot : module.getClasspathRoots()) {
                 configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
@@ -176,8 +175,6 @@ public class KotlinToJVMBytecodeCompiler {
 
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
-
-        CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, sourceRoots);
 
         return configuration;
     }

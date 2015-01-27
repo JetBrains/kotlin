@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
@@ -62,9 +63,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING;
@@ -231,17 +230,22 @@ public class JetCoreEnvironment {
             addExternalAnnotationsRoot(path);
         }
         sourceFiles.addAll(
-                CompileEnvironmentUtil
-                        .getJetFiles(getProject(), configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY),
-                                     new Function1<String, Unit>() {
-                                         @Override
-                                         public Unit invoke(String s) {
-                                             report(ERROR, s);
-                                             return Unit.INSTANCE$;
-                                         }
-                                     }));
+                CompileEnvironmentUtil.getJetFiles(
+                        getProject(),
+                        getSourceRootsCheckingForDuplicates(),
+                        new Function1<String, Unit>() {
+                            @Override
+                            public Unit invoke(String s) {
+                                report(ERROR, s);
+                                return Unit.INSTANCE$;
+                            }
+                        }
+                )
+        );
+
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
-                configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
+                configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY)
+        );
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
@@ -313,6 +317,19 @@ public class JetCoreEnvironment {
             projectEnvironment.addSourcesToClasspath(root);
             classPath.add(root);
         }
+    }
+
+    @NotNull
+    private Collection<String> getSourceRootsCheckingForDuplicates() {
+        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
+
+        for (String sourceRoot : configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
+            if (!uniqueSourceRoots.add(sourceRoot)) {
+                report(WARNING, "Duplicate source root: " + sourceRoot);
+            }
+        }
+
+        return uniqueSourceRoots;
     }
 
     @NotNull
