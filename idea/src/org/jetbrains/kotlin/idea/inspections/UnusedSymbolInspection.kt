@@ -61,6 +61,7 @@ import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -91,6 +92,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                     is JetTypeParameter -> "unused.type.parameter"
                     else -> return
                 }
+
+                if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
                 // Simple PSI-based checks
                 if (declaration.getName() == null) return
