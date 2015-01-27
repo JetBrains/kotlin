@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010-2015 JetBrains s.r.o.
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,11 +26,12 @@ import org.jetbrains.kotlin.idea.JetFileType;
 import java.util.List;
 
 public class JsHeaderLibraryDetectionUtil {
-    public static boolean isJsHeaderLibraryDetected(@NotNull List<VirtualFile> classesRoots) {
-        if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
-            // Prevent clashing with java runtime
-            return false;
-        }
+    class object {
+        public fun isJsHeaderLibraryDetected(classesRoots: List<VirtualFile>): Boolean {
+            if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
+                // Prevent clashing with java runtime
+                return false
+            }
 
         for (VirtualFile file : classesRoots) {
             CommonProcessors.FindFirstProcessor<VirtualFile> findKTProcessor = new CommonProcessors.FindFirstProcessor<VirtualFile>() {
@@ -38,16 +40,16 @@ public class JsHeaderLibraryDetectionUtil {
                     String extension = file.getExtension();
                     return extension != null && extension.equals(JetFileType.EXTENSION);
                 }
-            };
 
-            VfsUtilCore.processFilesRecursively(file, findKTProcessor);
+                VfsUtilCore.processFilesRecursively(file, findKTProcessor)
 
-            if (findKTProcessor.isFound()) {
-                return true;
+                if (findKTProcessor.isFound()) {
+                    return true
+                }
             }
+
+            return false
+
         }
-
-        return false;
-
     }
 }
