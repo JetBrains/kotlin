@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.addImport;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -92,6 +93,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ConflictingNameAppearsAndHasUsage5.kt")
     public void testConflictingNameAppearsAndHasUsage5() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage5.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConflictingNameAppearsAndHasUsage6.kt")
+    public void testConflictingNameAppearsAndHasUsage6() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage6.kt");
         doTest(fileName);
     }
 

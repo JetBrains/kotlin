@@ -243,13 +243,16 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                     .filter(::isVisible)
                     .map { it.getName() }
 
-            val aliasNames = imports.map { it.getImportedName() }.filterNotNull().toSet()
-            var conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
-                    .filter { it.asString() !in aliasNames }
+            val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
+            val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
                         importedScopes.map { scope -> scope.getClassifier(it) }.filterNotNull()
                     }
-                    .filter(::isVisible)
+                    .filter { importedClass ->
+                        isVisible(importedClass)
+                            && topLevelScope.getClassifier(importedClass.getName()) == importedClass /* check that class is really imported */
+                            && imports.all { it.getImportPath() != ImportPath(importedClass.importableFqNameSafe, false)  } /* and not yet imported explicitly */
+                    }
             val conflicts = detectNeededImports(conflictCandidates)
 
             val addedImport = addImport(parentFqName, true)
@@ -288,6 +291,8 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
                 val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
                 val name = target.getName()
 
+                // check if there is a conflicting class imported with * import
+                // (not with explicit import - explicit imports are checked before this method invocation)
                 val classifier = topLevelScope.getClassifier(name)
                 if (classifier != null && detectNeededImports(listOf(classifier)).isNotEmpty()) {
                     return false

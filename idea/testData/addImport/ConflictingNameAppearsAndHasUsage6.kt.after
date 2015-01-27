@@ -1,0 +1,9 @@
+// IMPORT: java.util.ArrayList
+package p
+
+import java.sql.*
+import dependency.Date // import of function does not affect class name conflict
+import java.util.*
+import java.sql.Date
+
+val d = Date(1)
