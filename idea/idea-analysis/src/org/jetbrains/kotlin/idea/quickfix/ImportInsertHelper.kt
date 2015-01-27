@@ -16,27 +16,30 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.components.ServiceManager
+import kotlin.platform.platformStatic
 
-public trait ImportInsertHelper {
+public abstract class ImportInsertHelper {
 
-    public fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
+    public abstract fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
 
-    public fun optimizeImportsOnTheFly(file: JetFile): Boolean
+    public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
 
-    public fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
+    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
 
     public fun needImport(fqName: FqName, file: JetFile): Boolean = needImport(ImportPath(fqName, false), file)
 
-    public fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
+    public abstract fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
 
-    public fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective
+    public abstract fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective
+
+    public abstract fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean
 
     public enum class ImportDescriptorResult {
         FAIL
@@ -44,10 +47,11 @@ public trait ImportInsertHelper {
         ALREADY_IMPORTED
     }
 
-    public fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
+    public abstract fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
 
     class object {
-        public val INSTANCE: ImportInsertHelper
-            get() = ServiceManager.getService<ImportInsertHelper>(javaClass<ImportInsertHelper>())
+        [platformStatic]
+        public fun getInstance(project: Project): ImportInsertHelper
+            = ServiceManager.getService<ImportInsertHelper>(project, javaClass<ImportInsertHelper>())
     }
 }

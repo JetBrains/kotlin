@@ -44,6 +44,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         val directivesAfterCurrent = ArrayList(jetFile.getImportDirectives())
 
         ApplicationManager.getApplication()!!.runWriteAction(Runnable {
+            val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
             // Remove only unnecessary imports
             for (anImport in directives) {
                 directivesAfterCurrent.remove(anImport)
@@ -54,8 +55,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
                 if (isUseful(importPath, usedQualifiedNames)
-                    && ImportInsertHelper.INSTANCE.needImport(importPath, jetFile, directivesBeforeCurrent)
-                    && ImportInsertHelper.INSTANCE.needImport(importPath, jetFile, directivesAfterCurrent)
+                    && importInsertHelper.needImport(importPath, jetFile, directivesBeforeCurrent)
+                    && importInsertHelper.needImport(importPath, jetFile, directivesAfterCurrent)
                 ) {
                     directivesBeforeCurrent.add(anImport)
                 }

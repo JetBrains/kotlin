@@ -57,7 +57,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
                 error("Multiple descriptors found:\n    " + descriptors.map { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }.joinToString("\n    "))
 
             else -> {
-                val success = ImportInsertHelper.INSTANCE.importDescriptor(file, descriptors.single()) != ImportInsertHelper.ImportDescriptorResult.FAIL
+                val success = ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptors.single()) != ImportInsertHelper.ImportDescriptorResult.FAIL
                 if (!success) {
                     val document = PsiDocumentManager.getInstance(getProject()).getDocument(file)
                     document.replaceString(0, document.getTextLength(), "Failed to add import")

@@ -223,7 +223,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             return Collections.emptyList()
         }
         return referenceData.map {
-            if (ImportInsertHelper.INSTANCE.needImport(it.fqName, file)) {
+            if (ImportInsertHelper.getInstance(file.getProject()).needImport(it.fqName, file)) {
                 val referenceExpression = findReference(it, file, bounds)
                 if (referenceExpression != null) createReferenceToRestoreData(referenceExpression, it.fqName) else null
             }
@@ -287,7 +287,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     private fun restoreReferences(referencesToRestore: Collection<ReferenceToRestoreData>, file: JetFile) {
         for ((referenceExpression, fqName, shouldLengthen) in referencesToRestore) {
             if (!shouldLengthen) {
-                ImportInsertHelper.INSTANCE.addImportDirectiveIfNeeded(fqName, file)
+                ImportInsertHelper.getInstance(file.getProject()).addImportDirectiveIfNeeded(fqName, file)
             }
             else {
                 //TODO: try to shorten reference after (sometimes is possible), need shorten reference to support all relevant cases

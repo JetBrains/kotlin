@@ -115,7 +115,7 @@ public class JetAddImportAction(
                 override fun run() {
                     ApplicationManager.getApplication().runWriteAction {
                         val file = element.getContainingFile() as JetFile
-                        ImportInsertHelper.INSTANCE.writeImportToFile(ImportPath(selectedImport, false), file)
+                        ImportInsertHelper.getInstance(project).writeImportToFile(ImportPath(selectedImport, false), file)
                     }
                 }
             }, QuickFixBundle.message("add.import"), null)

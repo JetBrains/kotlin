@@ -160,7 +160,7 @@ public object ShortenReferences {
             if (canShortenNow) {
                 elementsToShorten.add(element)
             }
-            else if (target !in failedToImportDescriptors && mayImport(target)) {
+            else if (target !in failedToImportDescriptors && mayImport(target, file)) {
                 descriptorsToImport.add(target)
             }
             else {
@@ -295,29 +295,25 @@ public object ShortenReferences {
                ?: listOf()
     }
 
-    //TODO: move into ImportInsertHelper
-    private fun mayImport(descriptor: DeclarationDescriptor): Boolean {
-        return when (descriptor) {
-            is ClassDescriptor -> descriptor.getContainingDeclaration() is PackageFragmentDescriptor
-            is PackageViewDescriptor -> true //TODO: option
-            else -> false
-        }
+    private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
+        if (descriptor !is ClassDescriptor && descriptor !is PackageViewDescriptor) return false
+        return ImportInsertHelper.getInstance(file.getProject()).mayImportByCodeStyle(descriptor)
     }
 
     // this class is needed to optimize imports only when we actually insert any import (optimization)
     private class ImportInserter(val file: JetFile) {
         private var optimizeImports = true
+        private val helper = ImportInsertHelper.getInstance(file.getProject())
 
         fun addImport(target: DeclarationDescriptor): ImportInsertHelper.ImportDescriptorResult {
-            if (!mayImport(target)) return ImportInsertHelper.ImportDescriptorResult.FAIL
             optimizeImports()
-            return ImportInsertHelper.INSTANCE.importDescriptor(file, target)
+            return helper.importDescriptor(file, target)
         }
 
         fun optimizeImports(): Boolean {
             if (!optimizeImports) return false
             optimizeImports = false
-            return ImportInsertHelper.INSTANCE.optimizeImportsOnTheFly(file)
+            return helper.optimizeImportsOnTheFly(file)
         }
     }
 }

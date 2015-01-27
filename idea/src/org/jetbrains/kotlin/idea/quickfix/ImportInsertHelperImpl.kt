@@ -50,8 +50,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper.ImportDescriptorResult
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import com.intellij.openapi.project.Project
 
-public class ImportInsertHelperImpl : ImportInsertHelper {
+public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
     /**
      * Add import directive into the PSI tree for the given package.
      *
@@ -70,7 +72,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
 
     override fun optimizeImportsOnTheFly(file: JetFile): Boolean {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress()
+            OptimizeImportsProcessor(project, file).runWithoutProgress()
             return true
         }
         else {
@@ -79,7 +81,7 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
     }
 
     override fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
-        val psiFactory = JetPsiFactory(file.getProject())
+        val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)
             file.addImportsFromString(newDirective.getText())
@@ -153,6 +155,15 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
         return true
     }
 
+    override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {
+        val importable = descriptor.getImportableDescriptor()
+        return when (importable) {
+            is ClassDescriptor -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes
+            is PackageViewDescriptor -> JetCodeStyleSettings.getInstance(project).IMPORT_PACKAGES
+            else -> true
+        }
+    }
+
     override fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult {
         return Importer(file).importDescriptor(descriptor)
     }
@@ -161,13 +172,10 @@ public class ImportInsertHelperImpl : ImportInsertHelper {
             private val file: JetFile
     ) {
         private val resolutionFacade = file.getResolutionFacade()
-        private val preferAllUnderImports = JetCodeStyleSettings.getInstance(file.getProject()).PREFER_ALL_UNDER_IMPORTS
+        private val preferAllUnderImports = JetCodeStyleSettings.getInstance(project).PREFER_ALL_UNDER_IMPORTS
 
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
-            val target = if (DescriptorUtils.isClassObject(descriptor)) // references to class object are treated as ones to its owner class
-                descriptor.getContainingDeclaration() as? ClassDescriptor ?: return ImportDescriptorResult.FAIL
-            else
-                descriptor
+            val target = descriptor.getImportableDescriptor()
 
             val name = target.getName()
             val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
