@@ -227,14 +227,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             JetChangeInfo changeInfo = getChangeInfo();
             JetElement method = (JetElement) changeInfo.getMethod();
             JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
+                @NotNull
                 @Override
-                public void configure(
-                        JetChangeSignatureData data, BindingContext bindingContext
-                ) {
+                public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
+                    return originalDescriptor;
                 }
 
                 @Override
-                public boolean performSilently(Collection<? extends PsiElement> elements) {
+                public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                     return true;
                 }
             };

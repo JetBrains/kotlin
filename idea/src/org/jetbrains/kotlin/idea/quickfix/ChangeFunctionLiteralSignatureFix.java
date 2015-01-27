@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import kotlin.ExtensionFunction0;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
@@ -26,9 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.SimpleCollectingValidator;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -60,18 +60,28 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolvePackage.analyzeFully(file);
         runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+            @NotNull
             @Override
-            public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
-                JetNameValidator validator = new SimpleCollectingValidator();
-                changeSignatureData.clearParameters();
-                for (JetType type : parameterTypes) {
-                    String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
-                    changeSignatureData.addParameter(new JetParameterInfo(-1, name, type, null, "", null, null));
-                }
+            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
+                return ChangeSignaturePackage.modify(
+                        originalDescriptor,
+                        new ExtensionFunction0<JetMutableMethodDescriptor, Unit>() {
+                            @Override
+                            public Unit invoke(JetMutableMethodDescriptor descriptor) {
+                                JetNameValidator validator = new SimpleCollectingValidator();
+                                descriptor.clearParameters();
+                                for (JetType type : parameterTypes) {
+                                    String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
+                                    descriptor.addParameter(new JetParameterInfo(-1, name, type, null, "", null, null));
+                                }
+                                return null;
+                            }
+                        }
+                );
             }
 
             @Override
-            public boolean performSilently(Collection<? extends PsiElement> elements) {
+            public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                 return false;
             }
         }, bindingContext, context, getText());

@@ -42,14 +42,8 @@ public class JetChangeSignatureData(
         override val baseDeclaration: PsiElement,
         private val descriptorsForSignatureChange: Collection<FunctionDescriptor>
 ) : JetMethodDescriptor {
-    private val parameters: MutableList<JetParameterInfo>
-    override var receiver: JetParameterInfo?
-        set(value: JetParameterInfo?) {
-            if (value != null && value !in parameters) {
-                parameters.add(value)
-            }
-            $receiver = value
-        }
+    private val parameters: List<JetParameterInfo>
+    override val receiver: JetParameterInfo?
 
     ;{
         $receiver = createReceiverInfoIfNeeded()
@@ -118,18 +112,6 @@ public class JetChangeSignatureData(
 
     override fun getParameters(): List<JetParameterInfo> {
         return parameters
-    }
-
-    public fun addParameter(parameter: JetParameterInfo) {
-        parameters.add(parameter)
-    }
-
-    public fun removeParameter(index: Int) {
-        parameters.remove(index)
-    }
-
-    public fun clearParameters() {
-        parameters.clear()
     }
 
     override fun getName(): String {
