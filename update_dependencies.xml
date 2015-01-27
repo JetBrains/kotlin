@@ -376,6 +376,15 @@
             <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}"/>
+
+            <!--
+                 ASM in IDEA 13 has a critical bug which breaks generation of inner classes in our compiler:
+                 http://forge.ow2.org/tracker/?func=detail&aid=317200&group_id=23&atid=100023
+                 To workaround that, we download a more recent ASM from IDEA 14 build, where it's already fixed
+            -->
+            <get
+                src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/383328:id/ideaIC-139.SNAPSHOT.win.zip%21/lib/asm-all.jar"
+                dest="ideaSDK/lib/asm-all.jar"/>
             <copy file="ideaSDK/lib/asm-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
