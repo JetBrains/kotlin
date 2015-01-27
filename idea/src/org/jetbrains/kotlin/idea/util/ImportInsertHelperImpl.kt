@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix
+package org.jetbrains.kotlin.util
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
@@ -49,9 +49,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
     /**

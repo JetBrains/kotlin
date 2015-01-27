@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.imports;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 

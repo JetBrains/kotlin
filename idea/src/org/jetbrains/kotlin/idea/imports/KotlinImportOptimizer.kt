@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.idea.references.JetReference
 import java.util.HashSet
 import java.util.ArrayList
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinImportOptimizer() : ImportOptimizer {

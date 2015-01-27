@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.JetCallElement
 import java.util.ArrayList
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.refactoring.util.RefactoringUIUtil
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import com.intellij.psi.PsiMethod
@@ -55,12 +54,12 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(
         "convert.function.to.property.intention", javaClass()

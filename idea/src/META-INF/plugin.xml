@@ -142,8 +142,8 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.kotlin.idea.JetModuleTypeManagerImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper"
-                        serviceImplementation="org.jetbrains.kotlin.idea.quickfix.ImportInsertHelperImpl"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
+                        serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>

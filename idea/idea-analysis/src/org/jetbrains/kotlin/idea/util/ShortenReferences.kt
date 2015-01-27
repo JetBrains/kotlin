@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.codeInsight
+package org.jetbrains.kotlin.idea.util
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange

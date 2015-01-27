@@ -29,7 +29,7 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import com.intellij.openapi.editor.Document
 import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.util.TextRange
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
-import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.JetTokens

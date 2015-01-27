@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetImportDirective
 import java.util.ArrayList
 import com.intellij.refactoring.util.NonCodeUsageInfo
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode

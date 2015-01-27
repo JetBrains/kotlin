@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 

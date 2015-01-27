@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.Editor
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.codeInsight.ShortenReferences
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import com.intellij.psi.util.PsiUtilBase
 import org.jetbrains.kotlin.psi.JetFile
 

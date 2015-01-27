@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.name.FqName

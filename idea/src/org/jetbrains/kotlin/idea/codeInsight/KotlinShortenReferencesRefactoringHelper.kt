@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.idea.codeInsight.shorten.prepareElementsToShorten
 import org.jetbrains.kotlin.idea.codeInsight.shorten.withElementsToShorten
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
