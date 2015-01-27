@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -100,8 +101,13 @@ public class KotlinToJVMBytecodeCompiler {
             boolean jarRuntime,
             @Nullable FqName mainClass
     ) {
-        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
-        CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, outputFiles, messageCollector);
+        if (jarPath != null) {
+            CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles);
+        }
+        else {
+            MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
+            OutputUtilsPackage.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
+        }
     }
 
     public static boolean compileModules(
