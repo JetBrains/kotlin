@@ -118,7 +118,7 @@ class LocalClassDescriptorManager(
     fun isMyClass(element: PsiElement): Boolean = element == myClass
     fun insideMyClass(element: PsiElement): Boolean = PsiTreeUtil.isAncestor(myClass, element, false)
 
-    fun createClassDescriptor(classOrObject: JetClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
+    fun getClassDescriptor(classOrObject: JetClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
         assert(isMyClass(classOrObject)) {"Called on a wrong class: ${classOrObject.getDebugText()}"}
         if (classDescriptor == null) {
             classDescriptor = LazyClassDescriptor(
@@ -166,7 +166,7 @@ class LocalLazyDeclarationResolver(
 
     override fun getClassDescriptor(classOrObject: JetClassOrObject): ClassDescriptor {
         if (localClassDescriptorManager.isMyClass(classOrObject)) {
-            return localClassDescriptorManager.createClassDescriptor(classOrObject, scopeProvider)
+            return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
         }
         return super.getClassDescriptor(classOrObject)
     }
