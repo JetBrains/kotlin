@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.test;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -96,29 +97,39 @@ public class MockLibraryUtil {
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
+    private static void runCompiler(@NotNull List<String> args) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Class<?> compilerClass = getCompilerClass();
-            Object compilerObject = compilerClass.newInstance();
+            Object compiler = compilerClass.newInstance();
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
-            List<String> classpath = new ArrayList<String>();
-            classpath.add(sourcesPath);
-            Collections.addAll(classpath, extraClasspath);
-            String newClasspath = StringUtil.join(classpath, File.pathSeparator);
-
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
-                    compilerObject, new PrintStream(outStream),
-                    new String[] {sourcesPath, "-d", outDir.getAbsolutePath(), "-classpath", newClasspath}
-            );
+            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(compiler, new PrintStream(outStream), ArrayUtil.toStringArray(args));
 
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }
         catch (Throwable e) {
             throw UtilsPackage.rethrow(e);
         }
+    }
+
+    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
+        List<String> classpath = new ArrayList<String>();
+        classpath.add(sourcesPath);
+        Collections.addAll(classpath, extraClasspath);
+
+        List<String> args = new ArrayList<String>();
+        args.add(sourcesPath);
+        args.add("-d");
+        args.add(outDir.getAbsolutePath());
+        args.add("-classpath");
+        args.add(StringUtil.join(classpath, File.pathSeparator));
+
+        runCompiler(args);
+    }
+
+    public static void compileKotlinModule(@NotNull String modulePath) {
+        runCompiler(Arrays.asList("-no-stdlib", "-module", modulePath));
     }
 
     @NotNull
