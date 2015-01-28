@@ -352,26 +352,34 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private String generateErrorMessageForErrorType(@NotNull JetType type, @NotNull DeclarationDescriptor descriptor) {
+    private static String generateErrorMessageForErrorType(@NotNull JetType type, @NotNull DeclarationDescriptor descriptor) {
         PsiElement declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        PsiElement parentDeclarationElement = null;
-        if (declarationElement != null) {
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (containingDeclaration != null) {
-                parentDeclarationElement = DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration);
-            }
+
+        if (declarationElement == null) {
+            return String.format(
+                    "Error type encountered: %s (%s). " +
+                    "One of the possible reasons may be that this type is not directly accessible from this module. " +
+                    "To workaround this error, try adding an explicit dependency on the module or library which contains this type " +
+                    "to the classpath",
+                    type,
+                    type.getClass().getSimpleName()
+            );
         }
 
-        return String.format("Error types are not allowed when classBuilderMode = %s. " +
-                             "Type: %s (%s). Descriptor: %s. For declaration %s:%s in %s:%s",
-                             classBuilderMode,
-                             type,
-                             type.getClass().getSimpleName(),
-                             descriptor,
-                             declarationElement,
-                             declarationElement != null ? declarationElement.getText() : "null",
-                             parentDeclarationElement,
-                             parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        PsiElement parentDeclarationElement =
+                containingDeclaration != null ? DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration) : null;
+
+        return String.format(
+                "Error type encountered: %s (%s). Descriptor: %s. For declaration %s:%s in %s:%s",
+                type,
+                type.getClass().getSimpleName(),
+                descriptor,
+                declarationElement,
+                declarationElement.getText(),
+                parentDeclarationElement,
+                parentDeclarationElement != null ? parentDeclarationElement.getText() : "null"
+        );
     }
 
     private void writeGenericType(
