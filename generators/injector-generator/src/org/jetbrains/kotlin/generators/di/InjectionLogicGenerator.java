@@ -97,6 +97,7 @@ public abstract class InjectionLogicGenerator {
 
         // Call setters
         for (Field field : fields) {
+            if (!(field.getInitialization() instanceof ConstructorCall)) continue;
             for (SetterDependency dependency : field.getDependencies()) {
                 String prefix = prefixForSetterCall(field);
                 String dependencyName = dependency.getDependency().getName();

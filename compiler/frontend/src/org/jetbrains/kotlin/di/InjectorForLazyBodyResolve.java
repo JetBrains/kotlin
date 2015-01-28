@@ -174,9 +174,6 @@ public class InjectorForLazyBodyResolve {
         this.overrideResolver = new OverrideResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
 
-        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
-        scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
-
         this.lazyTopDownAnalyzerForTopLevel.setKotlinCodeAnalyzer(analyzer);
         this.lazyTopDownAnalyzerForTopLevel.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
 
