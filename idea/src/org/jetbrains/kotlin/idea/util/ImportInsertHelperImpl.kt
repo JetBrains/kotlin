@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
     /**
@@ -190,8 +191,14 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 else -> return ImportDescriptorResult.FAIL
             }
 
-            // do not insert imports for non-top level declarations
-            if (target !is PackageViewDescriptor && target.getContainingDeclaration() !is PackageFragmentDescriptor) return ImportDescriptorResult.FAIL
+            if (!mayImportByCodeStyle(descriptor)) {
+                return ImportDescriptorResult.FAIL
+            }
+
+            // cannot import for non-top level function or property
+            if (target is CallableDescriptor && target.getContainingDeclaration() !is PackageFragmentDescriptor) {
+                return ImportDescriptorResult.FAIL
+            }
 
             val imports = file.getImportDirectives()
 
