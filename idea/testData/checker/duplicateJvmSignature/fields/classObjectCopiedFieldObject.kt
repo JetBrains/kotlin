@@ -1,7 +1,7 @@
 class C {
     <error>class object</error> {
-        <error>val `OBJECT$`</error> = this
+        val <error>Default</error> = this
     }
 
-    val `OBJECT$` = C
+    val <error>Default</error> = C
 }

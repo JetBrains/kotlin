@@ -19,5 +19,5 @@ class Some() {
 // SEARCH_TEXT: test
 // REF: (<root>).testGlobal
 // REF: (Some).testInClass
-// REF: (Some).testInClassObject
+// REF: (Some.Default).testInClassObject
 // REF: (SomeTrait).testInTrait
