@@ -1,0 +1,10 @@
+fun test() {
+    class X
+
+    class A(val n: Int) {
+        val foo: X
+            get() = X()
+    }
+
+    val t = A(1).foo
+}

@@ -36,20 +36,21 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
 import java.util.HashSet
-import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.JetDeclaration
 
 public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
@@ -167,4 +168,31 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             }
         }
     }
+}
+
+fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
+    val baseCallables = descriptorsForChange.map { DescriptorToDeclarationUtil.getDeclaration(project, it) }.filterNotNull()
+    return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
+        val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
+        overrides.map { method -> method.namedUnwrappedElement ?: method}
+    }
+}
+
+fun DeclarationDescriptor.getContainingScope(bindingContext: BindingContext): JetScope? {
+    val containingDescriptor = getContainingDeclaration() ?: return null
+    return when (containingDescriptor) {
+        is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
+        is FunctionDescriptor -> {
+            (DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? JetDeclarationWithBody)?.let {
+                it.getBodyScope(bindingContext)
+            }
+        }
+        is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
+        else -> null
+    }
+}
+
+fun JetDeclarationWithBody.getBodyScope(bindingContext: BindingContext): JetScope? {
+    val expression = getBodyExpression()?.getChildren()?.firstOrNull { it is JetExpression } as JetExpression?
+    return expression?.let { bindingContext[BindingContext.RESOLUTION_SCOPE, it] }
 }

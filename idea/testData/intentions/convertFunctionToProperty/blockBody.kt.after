@@ -1,0 +1,10 @@
+class A(val n: Int) {
+    val foo: Boolean
+        get() {
+            return n > 1
+        }
+}
+
+fun test() {
+    val t = A(1).foo
+}

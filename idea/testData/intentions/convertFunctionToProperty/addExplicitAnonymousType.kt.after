@@ -1,0 +1,16 @@
+trait T {
+    fun bar()
+}
+
+class A(val n: Int) {
+    val foo: T
+        get() = object : T {
+            override fun bar() {
+
+            }
+        }
+}
+
+fun test() {
+    val t = A(1).foo
+}

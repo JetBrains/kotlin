@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/intentions")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({IntentionTestGenerated.AddBraces.class, IntentionTestGenerated.AttributeCallReplacements.class, IntentionTestGenerated.Branched.class, IntentionTestGenerated.ConvertAssertToIf.class, IntentionTestGenerated.ConvertIfToAssert.class, IntentionTestGenerated.ConvertNegatedBooleanSequence.class, IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class, IntentionTestGenerated.ConvertToBlockBody.class, IntentionTestGenerated.ConvertToConcatenatedStringIntention.class, IntentionTestGenerated.ConvertToExpressionBody.class, IntentionTestGenerated.ConvertToForEachFunctionCall.class, IntentionTestGenerated.ConvertToForEachLoop.class, IntentionTestGenerated.ConvertToStringTemplateIntention.class, IntentionTestGenerated.Declarations.class, IntentionTestGenerated.InsertCurlyBracesToTemplate.class, IntentionTestGenerated.InsertExplicitTypeArguments.class, IntentionTestGenerated.InvertIfCondition.class, IntentionTestGenerated.MakeTypeExplicitInLambda.class, IntentionTestGenerated.MakeTypeImplicitInLambda.class, IntentionTestGenerated.MoveLambdaInsideParentheses.class, IntentionTestGenerated.MoveLambdaOutsideParentheses.class, IntentionTestGenerated.OperatorToFunction.class, IntentionTestGenerated.ReconstructedType.class, IntentionTestGenerated.RemoveBraces.class, IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class, IntentionTestGenerated.RemoveExplicitTypeArguments.class, IntentionTestGenerated.RemoveUnnecessaryParentheses.class, IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class, IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class, IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class, IntentionTestGenerated.ReplaceWithInfixFunctionCall.class, IntentionTestGenerated.ReplaceWithOperatorAssign.class, IntentionTestGenerated.ReplaceWithTraditionalAssignment.class, IntentionTestGenerated.SimplifyBooleanWithConstants.class, IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class, IntentionTestGenerated.SpecifyType.class, IntentionTestGenerated.SplitIf.class, IntentionTestGenerated.SwapBinaryExpression.class})
+@InnerTestClasses({IntentionTestGenerated.AddBraces.class, IntentionTestGenerated.AttributeCallReplacements.class, IntentionTestGenerated.Branched.class, IntentionTestGenerated.ConvertAssertToIf.class, IntentionTestGenerated.ConvertFunctionToProperty.class, IntentionTestGenerated.ConvertIfToAssert.class, IntentionTestGenerated.ConvertNegatedBooleanSequence.class, IntentionTestGenerated.ConvertNegatedExpressionWithDemorgansLaw.class, IntentionTestGenerated.ConvertPropertyToFunction.class, IntentionTestGenerated.ConvertToBlockBody.class, IntentionTestGenerated.ConvertToConcatenatedStringIntention.class, IntentionTestGenerated.ConvertToExpressionBody.class, IntentionTestGenerated.ConvertToForEachFunctionCall.class, IntentionTestGenerated.ConvertToForEachLoop.class, IntentionTestGenerated.ConvertToStringTemplateIntention.class, IntentionTestGenerated.Declarations.class, IntentionTestGenerated.InsertCurlyBracesToTemplate.class, IntentionTestGenerated.InsertExplicitTypeArguments.class, IntentionTestGenerated.InvertIfCondition.class, IntentionTestGenerated.MakeTypeExplicitInLambda.class, IntentionTestGenerated.MakeTypeImplicitInLambda.class, IntentionTestGenerated.MoveLambdaInsideParentheses.class, IntentionTestGenerated.MoveLambdaOutsideParentheses.class, IntentionTestGenerated.OperatorToFunction.class, IntentionTestGenerated.ReconstructedType.class, IntentionTestGenerated.RemoveBraces.class, IntentionTestGenerated.RemoveCurlyBracesFromTemplate.class, IntentionTestGenerated.RemoveExplicitTypeArguments.class, IntentionTestGenerated.RemoveUnnecessaryParentheses.class, IntentionTestGenerated.ReplaceExplicitFunctionLiteralParamWithIt.class, IntentionTestGenerated.ReplaceItWithExplicitFunctionLiteralParam.class, IntentionTestGenerated.ReplaceWithDotQualifiedMethodCall.class, IntentionTestGenerated.ReplaceWithInfixFunctionCall.class, IntentionTestGenerated.ReplaceWithOperatorAssign.class, IntentionTestGenerated.ReplaceWithTraditionalAssignment.class, IntentionTestGenerated.SimplifyBooleanWithConstants.class, IntentionTestGenerated.SimplifyNegatedBinaryExpressionIntention.class, IntentionTestGenerated.SpecifyType.class, IntentionTestGenerated.SplitIf.class, IntentionTestGenerated.SwapBinaryExpression.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class IntentionTestGenerated extends AbstractIntentionTest {
     public void testAllFilesPresentInIntentions() throws Exception {
@@ -2551,6 +2551,135 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertFunctionToProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertFunctionToProperty extends AbstractIntentionTest {
+        @TestMetadata("addExplicitAnonymousType.kt")
+        public void testAddExplicitAnonymousType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/addExplicitAnonymousType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExplicitLocalType.kt")
+        public void testAddExplicitLocalType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/addExplicitLocalType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExplicitType.kt")
+        public void testAddExplicitType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/addExplicitType.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInConvertFunctionToProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertFunctionToProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("blockBody.kt")
+        public void testBlockBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/blockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("existingPropertyConflict.kt")
+        public void testExistingPropertyConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/existingPropertyConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("existingPropertyJavaConflict.kt")
+        public void testExistingPropertyJavaConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/existingPropertyJavaConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionBody.kt")
+        public void testExpressionBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/expressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extraArgumentsConflict.kt")
+        public void testExtraArgumentsConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/extraArgumentsConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("funWithParameters.kt")
+        public void testFunWithParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/funWithParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invoke.kt")
+        public void testInvoke() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/invoke.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("iterator.kt")
+        public void testIterator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/iterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUsages.kt")
+        public void testJavaUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/javaUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/localFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nothingFun.kt")
+        public void testNothingFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/nothingFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefs.kt")
+        public void testOtherRefs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/otherRefs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrides.kt")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/overrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeArgumentsConflict.kt")
+        public void testTypeArgumentsConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/typeArgumentsConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unaryOp.kt")
+        public void testUnaryOp() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/unaryOp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unchangedElements.kt")
+        public void testUnchangedElements() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/unchangedElements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitFun.kt")
+        public void testUnitFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/unitFun.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertIfToAssert")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2796,6 +2925,99 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("retainedParens.kt")
         public void testRetainedParens() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/retainedParens.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertPropertyToFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertPropertyToFunction extends AbstractIntentionTest {
+        @TestMetadata("accessorCallGroovy.kt")
+        public void testAccessorCallGroovy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/accessorCallGroovy.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInConvertPropertyToFunction() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertPropertyToFunction"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("blockBody.kt")
+        public void testBlockBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/blockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegatingProperty.kt")
+        public void testDelegatingProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/delegatingProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("existingFunConflict.kt")
+        public void testExistingFunConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/existingFunConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("existingFunJavaConflict.kt")
+        public void testExistingFunJavaConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/existingFunJavaConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionBody.kt")
+        public void testExpressionBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/expressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("initializer.kt")
+        public void testInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/initializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUsageAsField.kt")
+        public void testJavaUsageAsField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/javaUsageAsField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUsages.kt")
+        public void testJavaUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/javaUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherRefs.kt")
+        public void testOtherRefs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/otherRefs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrides.kt")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/overrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyCallGroovy.kt")
+        public void testPropertyCallGroovy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/propertyCallGroovy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unchangedElements.kt")
+        public void testUnchangedElements() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/unchangedElements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/var.kt");
             doTest(fileName);
         }
     }

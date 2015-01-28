@@ -1,0 +1,5 @@
+package test
+
+object O {
+    fun foo(): Int = 1
+}
