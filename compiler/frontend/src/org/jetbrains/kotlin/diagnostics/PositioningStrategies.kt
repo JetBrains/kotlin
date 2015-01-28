@@ -173,6 +173,8 @@ public object PositioningStrategies {
                 else -> null
             }
 
+            if (nameIdentifier == null && element is JetObjectDeclaration) return DEFAULT.mark(element)
+
             return markElement(nameIdentifier ?: element)
         }
     }
