@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import java.util.ArrayList
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -106,6 +106,8 @@ public object ShortenReferences {
             elements: List<JetElement>,
             elementFilter: (PsiElement) -> FilterResult
     ) {
+        val elementsToUse = dropNestedElements(elements)
+
         val importInserter = ImportInserter(file)
 
         val failedToImportDescriptors = LinkedHashSet<DeclarationDescriptor>()
@@ -114,8 +116,8 @@ public object ShortenReferences {
             val visitor1 = ShortenTypesVisitor(file, elementFilter, failedToImportDescriptors)
             val visitor2 = ShortenQualifiedExpressionsVisitor(file, elementFilter, failedToImportDescriptors)
 
-            val descriptorsToImport1 = analyzeReferences(elements, visitor1)
-            val descriptorsToImport2 = analyzeReferences(elements, visitor2)
+            val descriptorsToImport1 = analyzeReferences(elementsToUse, visitor1)
+            val descriptorsToImport2 = analyzeReferences(elementsToUse, visitor2)
 
             visitor1.shortenElements()
             visitor2.shortenElements()
@@ -137,6 +139,18 @@ public object ShortenReferences {
             }
             if (!anyChange) break
         }
+    }
+
+    private fun dropNestedElements(elements: List<JetElement>): Iterable<JetElement> {
+        if (elements.size() <= 1) return elements
+        val elementSet = elements.toSet()
+        val newElements = ArrayList<JetElement>(elementSet.size())
+        for (element in elementSet) {
+            if (!element.parents(withItself = false).any { it in elementSet }) {
+                newElements.add(element)
+            }
+        }
+        return newElements
     }
 
     private fun analyzeReferences(elements: Iterable<JetElement>, visitor: ShorteningVisitor<*>): Set<DeclarationDescriptor> {
