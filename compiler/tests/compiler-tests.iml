@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="builtins-serializer" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="module" module-name="js.tests" />
+    <orderEntry type="module" module-name="preloader" />
     <orderEntry type="module" module-name="util" />
   </component>
 </module>

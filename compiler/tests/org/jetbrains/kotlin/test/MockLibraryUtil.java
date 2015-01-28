@@ -23,14 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +41,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MockLibraryUtil {
 
-    private static Class<?> compilerClass = null;
+    private static SoftReference<Class<?>> compilerClassRef = new SoftReference<Class<?>>(null);
 
     @NotNull
     public static File compileLibraryToJar(
@@ -123,14 +122,15 @@ public class MockLibraryUtil {
     }
 
     @NotNull
-    private static Class<?> getCompilerClass() throws MalformedURLException, ClassNotFoundException {
+    private static synchronized Class<?> getCompilerClass() throws IOException, ClassNotFoundException {
+        Class<?> compilerClass = compilerClassRef.get();
         if (compilerClass == null) {
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
-            File kotlinRuntimeJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-runtime.jar");
-            URLClassLoader classLoader = new URLClassLoader(new URL[] {kotlinCompilerJar.toURI().toURL(), kotlinRuntimeJar.toURI().toURL()},
-                                                            Object.class.getClassLoader());
+            ClassLoader classLoader =
+                    ClassPreloadingUtils.preloadClasses(Collections.singletonList(kotlinCompilerJar), 4096, null, null, null);
 
             compilerClass = classLoader.loadClass(K2JVMCompiler.class.getName());
+            compilerClassRef = new SoftReference<Class<?>>(compilerClass);
         }
         return compilerClass;
     }
