@@ -148,7 +148,7 @@ public class ArgumentTypeResolver {
     private static JetFunctionLiteralExpression getFunctionLiteralArgumentIfAny(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedExpression = deparenthesizeArgument(expression, context);
+        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
             return (JetFunctionLiteralExpression) deparenthesizedExpression;
         }
@@ -156,7 +156,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public static JetExpression deparenthesizeArgument(
+    public static JetExpression getLastElementDeparenthesized(
             @Nullable JetExpression expression,
             @NotNull ResolutionContext context
     ) {
@@ -169,7 +169,7 @@ public class ArgumentTypeResolver {
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
             JetElement lastStatementInABlock = ResolvePackage.getLastStatementInABlock(context.partialBodyResolveProvider, blockExpression);
             if (lastStatementInABlock instanceof JetExpression) {
-                return deparenthesizeArgument((JetExpression) lastStatementInABlock, context);
+                return getLastElementDeparenthesized((JetExpression) lastStatementInABlock, context);
             }
         }
         return deparenthesizedExpression;
@@ -291,7 +291,7 @@ public class ArgumentTypeResolver {
         BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = deparenthesizeArgument(expression, context);
+            JetExpression deparenthesized = getLastElementDeparenthesized(expression, context);
             if (deparenthesized != expression) {
                 updateNumberType(numberType, deparenthesized, context);
             }

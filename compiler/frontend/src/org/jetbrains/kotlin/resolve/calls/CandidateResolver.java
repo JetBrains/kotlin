@@ -51,7 +51,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
-import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.deparenthesizeArgument;
+import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke;
@@ -436,7 +436,7 @@ public class CandidateResolver {
             @Nullable JetExpression argumentExpression,
             @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedArgument = deparenthesizeArgument(argumentExpression, context);
+        JetExpression deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context);
         if (deparenthesizedArgument == null || type == null) return type;
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context.trace.getBindingContext());
