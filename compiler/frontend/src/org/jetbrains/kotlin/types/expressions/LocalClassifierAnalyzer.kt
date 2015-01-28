@@ -143,7 +143,7 @@ class LocalClassDescriptorManager(
                     }
                     ,
                     containingDeclaration,
-                    if (classOrObject.isObjectLiteral()) SpecialNames.NO_NAME_PROVIDED else classOrObject.getNameAsSafeName(),
+                    classOrObject.getNameAsSafeName(),
                     JetClassInfoUtil.createClassLikeInfo(classOrObject)
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)
