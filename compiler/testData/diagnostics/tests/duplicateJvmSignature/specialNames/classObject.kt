@@ -1,5 +1,5 @@
 class C {
-    <!CONFLICTING_JVM_DECLARATIONS!>class object<!> {}
+    <!REDECLARATION!>class object<!> {}
 
-    <!CONFLICTING_JVM_DECLARATIONS!>val `OBJECT$`<!> = C
+    val <!REDECLARATION!>Default<!> = C
 }
