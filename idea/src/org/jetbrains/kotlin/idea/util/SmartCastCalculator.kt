@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion.smart
+package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.idea.completion.smart.toList
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import java.util.Collections
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import java.util.HashMap
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import java.util.Collections
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import java.util.HashMap
 import java.util.HashSet
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import com.intellij.openapi.util.Pair
 
-class TypesWithSmartCasts(val bindingContext: BindingContext) {
-    public fun calculate(expression: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
-        val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
+class SmartCastCalculator(val bindingContext: BindingContext) {
+    public fun calculate(position: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
+        val dataFlowInfo = bindingContext.getDataFlowInfo(position)
         val (variableToTypes, notNullVariables) = processDataFlowInfo(dataFlowInfo, receiver)
 
         fun typesOf(descriptor: VariableDescriptor): Collection<JetType> {
@@ -65,7 +66,7 @@ class TypesWithSmartCasts(val bindingContext: BindingContext) {
             val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
             dataFlowValueToVariable = {(value) ->
                 val id = value.getId()
-                if (id is com.intellij.openapi.util.Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+                if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
             }
         }
         else {
@@ -73,7 +74,7 @@ class TypesWithSmartCasts(val bindingContext: BindingContext) {
                 val id = value.getId()
                 when {
                     id is VariableDescriptor -> id
-                    id is com.intellij.openapi.util.Pair<*, *> && id.first is ThisReceiver -> id.second as? VariableDescriptor
+                    id is Pair<*, *> && id.first is ThisReceiver -> id.second as? VariableDescriptor
                     else -> null
                 }
             }

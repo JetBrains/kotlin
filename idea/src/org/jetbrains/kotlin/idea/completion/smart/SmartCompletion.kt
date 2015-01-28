@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.idea.util.IterableTypesDetector
 import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.idea.util.TypeNullability
+import org.jetbrains.kotlin.idea.util.SmartCastCalculator
 
 trait InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
@@ -126,7 +127,7 @@ class SmartCompletion(
         else
             filteredExpectedInfos
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
@@ -374,7 +375,7 @@ class SmartCompletion(
                                     ?.getParent() as? JetForExpression ?: return null
         if (expressionWithType != forExpression.getLoopRange()) return null
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(bindingContext).calculate(expressionWithType, receiver)
 
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
 
