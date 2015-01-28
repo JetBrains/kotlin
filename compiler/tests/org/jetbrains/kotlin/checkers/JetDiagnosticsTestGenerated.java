@@ -2022,6 +2022,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeInferenceForExclExcl.kt")
+            public void testTypeInferenceForExclExcl() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/typeInferenceForExclExcl.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("valVarCatchParameter.kt")
             public void testValVarCatchParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/valVarCatchParameter.kt");

@@ -333,18 +333,20 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         val typeBounds = getTypeBounds(parameterType)
 
-        if (!parameterType.isMarkedNullable() || !newConstrainingType.isMarkedNullable()) {
+        if (!parameterType.isMarkedNullable() || !TypeUtils.isNullableType(newConstrainingType)) {
             typeBounds.addBound(boundKind, newConstrainingType, constraintPosition)
             return
         }
         // For parameter type T:
         // constraint T? =  Int? should transform to T >: Int and T <: Int?
-        // constraint T? >: Int? should transform to T >: Int
+        // constraint T? = Int! should transform to T >: Int and T <: Int!
+
+        // constraints T? >: Int?; T? >: Int! should transform to T >: Int
         val notNullConstrainingType = TypeUtils.makeNotNullable(newConstrainingType)
         if (boundKind == EXACT_BOUND || boundKind == LOWER_BOUND) {
             typeBounds.addBound(LOWER_BOUND, notNullConstrainingType, constraintPosition)
         }
-        // constraint T? <: Int? should transform to T <: Int?
+        // constraints T? <: Int?; T? <: Int! should transform to T <: Int?; T <: Int! correspondingly
         if (boundKind == EXACT_BOUND || boundKind == UPPER_BOUND) {
             typeBounds.addBound(UPPER_BOUND, newConstrainingType, constraintPosition)
         }
