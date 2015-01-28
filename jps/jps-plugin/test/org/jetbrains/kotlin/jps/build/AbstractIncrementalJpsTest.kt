@@ -38,10 +38,14 @@ import java.util.regex.Pattern
 import kotlin.test.assertEquals
 import org.jetbrains.jps.model.java.JpsJavaDependencyExtension
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
+import com.intellij.openapi.util.io.FileUtilRt
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     class object {
         val COMPILATION_FAILED = "COMPILATION FAILED"
+
+        // change to "/tmp" or anything when default is too long (for easier debugging)
+        val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
     }
 
     private var testDataDir: File by Delegates.notNull()
@@ -198,7 +202,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
 
         testDataDir = File(testDataPath)
-        workDir = FileUtil.createTempDirectory("jps-build", null)
+        workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
 
         val moduleNames = configureModules()
         initialMake()
