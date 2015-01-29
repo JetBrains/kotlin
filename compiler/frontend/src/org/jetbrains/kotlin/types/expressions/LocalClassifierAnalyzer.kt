@@ -80,7 +80,7 @@ public class LocalClassifierAnalyzer(
                 moduleDescriptor,
                 additionalCheckerProvider,
                 dynamicTypesSettings,
-                LocalClassDescriptorManager(
+                LocalClassDescriptorHolder(
                         scope,
                         classOrObject,
                         containingDeclaration,
@@ -101,7 +101,7 @@ public class LocalClassifierAnalyzer(
     }
 }
 
-class LocalClassDescriptorManager(
+class LocalClassDescriptorHolder(
         val writableScope: WritableScope?,
         val myClass: JetClassOrObject,
         val containingDeclaration: DeclarationDescriptor,
@@ -124,11 +124,11 @@ class LocalClassDescriptorManager(
             classDescriptor = LazyClassDescriptor(
                     object : LazyClassContext {
                         override val scopeProvider = declarationScopeProvider
-                        override val storageManager = this@LocalClassDescriptorManager.storageManager
+                        override val storageManager = this@LocalClassDescriptorHolder.storageManager
                         override val trace = expressionTypingContext.trace
-                        override val moduleDescriptor = this@LocalClassDescriptorManager.moduleDescriptor
-                        override val descriptorResolver = this@LocalClassDescriptorManager.descriptorResolver
-                        override val typeResolver = this@LocalClassDescriptorManager.typeResolver
+                        override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
+                        override val descriptorResolver = this@LocalClassDescriptorHolder.descriptorResolver
+                        override val typeResolver = this@LocalClassDescriptorHolder.typeResolver
                         override val declarationProviderFactory = object : DeclarationProviderFactory {
                             override fun getClassMemberDeclarationProvider(classLikeInfo: JetClassLikeInfo): ClassMemberDeclarationProvider {
                                 return PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo)
@@ -139,7 +139,7 @@ class LocalClassDescriptorManager(
                             }
 
                         }
-                        override val annotationResolver = this@LocalClassDescriptorManager.annotationResolver
+                        override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
                     }
                     ,
                     containingDeclaration,
@@ -161,7 +161,7 @@ class LocalClassDescriptorManager(
 class LocalLazyDeclarationResolver(
         globalContext: GlobalContext,
         trace: BindingTrace,
-        val localClassDescriptorManager: LocalClassDescriptorManager
+        val localClassDescriptorManager: LocalClassDescriptorHolder
 ) : LazyDeclarationResolver(globalContext, trace) {
 
     override fun getClassDescriptor(classOrObject: JetClassOrObject): ClassDescriptor {
@@ -175,7 +175,7 @@ class LocalLazyDeclarationResolver(
 
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
         lazyDeclarationResolver: LazyDeclarationResolver,
-        val localClassDescriptorManager: LocalClassDescriptorManager
+        val localClassDescriptorManager: LocalClassDescriptorHolder
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {

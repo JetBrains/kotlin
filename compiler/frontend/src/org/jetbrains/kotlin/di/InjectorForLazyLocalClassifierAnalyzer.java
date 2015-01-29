@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorManager;
+import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider;
 import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider;
@@ -78,7 +78,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final DynamicTypesSettings dynamicTypesSettings;
-    private final LocalClassDescriptorManager localClassDescriptorManager;
+    private final LocalClassDescriptorHolder localClassDescriptorHolder;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final NoTopLevelDescriptorProvider noTopLevelDescriptorProvider;
     private final NoFileScopeProvider noFileScopeProvider;
@@ -123,7 +123,7 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         @NotNull ModuleDescriptor module,
         @NotNull AdditionalCheckerProvider additionalCheckerProvider,
         @NotNull DynamicTypesSettings dynamicTypesSettings,
-        @NotNull LocalClassDescriptorManager localClassDescriptorManager
+        @NotNull LocalClassDescriptorHolder localClassDescriptorHolder
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -134,12 +134,12 @@ public class InjectorForLazyLocalClassifierAnalyzer {
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.dynamicTypesSettings = dynamicTypesSettings;
-        this.localClassDescriptorManager = localClassDescriptorManager;
+        this.localClassDescriptorHolder = localClassDescriptorHolder;
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.noTopLevelDescriptorProvider = NoTopLevelDescriptorProvider.INSTANCE$;
         this.noFileScopeProvider = NoFileScopeProvider.INSTANCE$;
-        this.localLazyDeclarationResolver = new LocalLazyDeclarationResolver(globalContext, bindingTrace, localClassDescriptorManager);
-        this.declarationScopeProviderForLocalClassifierAnalyzer = new DeclarationScopeProviderForLocalClassifierAnalyzer(localLazyDeclarationResolver, localClassDescriptorManager);
+        this.localLazyDeclarationResolver = new LocalLazyDeclarationResolver(globalContext, bindingTrace, localClassDescriptorHolder);
+        this.declarationScopeProviderForLocalClassifierAnalyzer = new DeclarationScopeProviderForLocalClassifierAnalyzer(localLazyDeclarationResolver, localClassDescriptorHolder);
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
