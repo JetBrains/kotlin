@@ -10,6 +10,7 @@ public final class BuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.className);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.callableAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.parameterAnnotation);
   }
   public static final int CLASS_NAME_FIELD_NUMBER = 150;
@@ -57,6 +58,21 @@ public final class BuiltInsProtoBuf {
         150,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
+  public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 151;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> compileTimeValue = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
+        null,
+        151,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Callable.ValueParameter { ... }</code>

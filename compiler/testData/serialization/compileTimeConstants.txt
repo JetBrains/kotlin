@@ -1,0 +1,81 @@
+package test
+
+internal val arrayConst: kotlin.Any = {1.toByte(), 2.toByte()}
+internal val booleanConst: kotlin.Boolean = true
+internal val byteConst: kotlin.Byte = 10.toByte()
+internal val charConst: kotlin.Char = \u0041 ('A')
+internal val doubleConst: kotlin.Double = 3.0.toDouble()
+internal val enumConst: test.Weapon? = Weapon.ROCK
+internal val floatConst: kotlin.Float = 2.0.toFloat()
+internal val intConst: kotlin.Int = 30
+internal val longConst: kotlin.Long = 40.toLong()
+internal val shortConst: kotlin.Short = 20.toShort()
+internal val stringConst: kotlin.String = "abcd"
+
+internal final class Class {
+    public constructor Class()
+    internal final val arrayConst: kotlin.Any = {1.toByte(), 2.toByte()}
+    internal final val booleanConst: kotlin.Boolean = true
+    internal final val byteConst: kotlin.Byte = 10.toByte()
+    internal final val charConst: kotlin.Char = \u0041 ('A')
+    internal final val doubleConst: kotlin.Double = 3.0.toDouble()
+    internal final val enumConst: test.Weapon? = Weapon.ROCK
+    internal final val floatConst: kotlin.Float = 2.0.toFloat()
+    internal final val intConst: kotlin.Int = 30
+    internal final val longConst: kotlin.Long = 40.toLong()
+    internal final val shortConst: kotlin.Short = 20.toShort()
+    internal final val stringConst: kotlin.String = "abcd"
+}
+
+internal final enum class Weapon : kotlin.Enum<test.Weapon> {
+    public enum entry ROCK : test.Weapon {
+        private constructor ROCK()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ROCK> : test.Weapon.ROCK {
+            private constructor <class-object-for-ROCK>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry PAPER : test.Weapon {
+        private constructor PAPER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-PAPER> : test.Weapon.PAPER {
+            private constructor <class-object-for-PAPER>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry SCISSORS : test.Weapon {
+        private constructor SCISSORS()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-SCISSORS> : test.Weapon.SCISSORS {
+            private constructor <class-object-for-SCISSORS>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    private constructor Weapon()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Weapon
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Weapon>
+}

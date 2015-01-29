@@ -113,7 +113,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             property.setCompileTimeInitializer(
                 c.storageManager.createNullableLazyValue {
                     val container = c.containingDeclaration.asProtoContainer()
-                    c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, AnnotatedCallableKind.PROPERTY)
+                    c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
                 }
             )
         }

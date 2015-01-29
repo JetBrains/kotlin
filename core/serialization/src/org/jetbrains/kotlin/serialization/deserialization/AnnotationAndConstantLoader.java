@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
 
@@ -51,6 +52,6 @@ public interface AnnotationAndConstantLoader<A, C> {
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
-            @NotNull AnnotatedCallableKind kind
+            @NotNull JetType expectedType
     );
 }

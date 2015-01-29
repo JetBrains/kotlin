@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
+import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
 private object BuiltInsSerializerExtension : SerializerExtension() {
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
@@ -70,6 +72,11 @@ private object BuiltInsSerializerExtension : SerializerExtension() {
     ) {
         for (annotation in callable.getAnnotations()) {
             proto.addExtension(BuiltInsProtoBuf.callableAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+        val compileTimeConstant = (callable as? PropertyDescriptor)?.getCompileTimeInitializer()
+        if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
+            val type = compileTimeConstant.getType(KotlinBuiltIns.getInstance())
+            proto.setExtension(BuiltInsProtoBuf.compileTimeValue, AnnotationSerializer.valueProto(compileTimeConstant, type, stringTable).build())
         }
     }
 
