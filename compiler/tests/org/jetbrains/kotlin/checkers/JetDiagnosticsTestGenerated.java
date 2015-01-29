@@ -2282,6 +2282,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("copyOfPrivateClass.kt")
+            public void testCopyOfPrivateClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/copyOfPrivateClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dataClassOverrideConflict.kt")
             public void testDataClassOverrideConflict() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/dataClassOverrideConflict.kt");

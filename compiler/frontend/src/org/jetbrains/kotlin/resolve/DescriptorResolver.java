@@ -462,7 +462,7 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC // TODO: test
+                Visibilities.PUBLIC
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
