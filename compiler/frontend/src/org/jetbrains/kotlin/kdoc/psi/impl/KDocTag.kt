@@ -22,6 +22,7 @@ import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import com.intellij.psi.PsiElement
 
 public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
@@ -32,7 +33,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      * or the code has a syntax error.
      */
     override fun getName(): String? {
-        val tagName = findChildByType(KDocTokens.TAG_NAME)
+        val tagName: PsiElement? = findChildByType(KDocTokens.TAG_NAME)
         if (tagName != null) {
             return tagName.getText().substring(1)
         }
