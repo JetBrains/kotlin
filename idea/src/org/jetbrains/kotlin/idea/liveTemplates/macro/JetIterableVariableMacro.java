@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.idea.liveTemplates.macro;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.util.FuzzyType;
 import org.jetbrains.kotlin.idea.util.IterableTypesDetector;
+
+import java.util.Collections;
 
 public class JetIterableVariableMacro extends BaseJetVariableMacro {
 
@@ -41,6 +45,6 @@ public class JetIterableVariableMacro extends BaseJetVariableMacro {
             @NotNull IterableTypesDetector iterableTypesDetector
     ) {
         //TODO: smart-casts
-        return iterableTypesDetector.isIterable(variableDescriptor.getType());
+        return iterableTypesDetector.isIterable(new FuzzyType(variableDescriptor.getType(), Collections.<TypeParameterDescriptor>emptyList()));
     }
 }

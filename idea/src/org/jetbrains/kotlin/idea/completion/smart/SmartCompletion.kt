@@ -390,7 +390,7 @@ class SmartCompletion(
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
         val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope, loopVarType)
 
-        return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it.type) }
+        return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it) }
     }
 
     private fun buildForInOperatorArgument(expressionWithType: JetExpression, receiver: JetExpression?): Result? {
