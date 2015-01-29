@@ -98,7 +98,7 @@ private class CallableClsStubBuilder(
     private fun doCreateCallableStub(): StubElement<out PsiElement> {
         val callableKind = Flags.CALLABLE_KIND[callableProto.getFlags()]
         val callableName = c.nameResolver.getName(callableProto.getName())
-        val callableFqName = c.memberFqNameProvider.getMemberFqName(callableName)
+        val callableFqName = c.containerFqName.child(callableName)
 
         return when (callableKind) {
             ProtoBuf.Callable.CallableKind.FUN -> {
