@@ -65,7 +65,7 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     private TypeResolver typeResolver;
     private AnnotationResolver annotationResolver;
-    private PartialBodyResolveProvider partialBodyResolveProvider;
+    private StatementFilter statementFilter;
     private KotlinBuiltIns builtIns;
 
     @NotNull
@@ -129,13 +129,13 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    private PartialBodyResolveProvider getPartialBodyResolveProvider() {
-        return partialBodyResolveProvider;
+    private StatementFilter getStatementFilter() {
+        return statementFilter;
     }
 
     @Inject
-    public void setPartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
-        this.partialBodyResolveProvider = partialBodyResolveProvider;
+    public void setStatementFilter(@NotNull StatementFilter statementFilter) {
+        this.statementFilter = statementFilter;
     }
 
     @Inject
@@ -208,7 +208,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetElement> block = ResolvePackage.filterStatements(getPartialBodyResolveProvider(), expression);
+        List<JetElement> block = ResolvePackage.filterStatements(getStatementFilter(), expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
@@ -229,7 +229,7 @@ public class ExpressionTypingServices {
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
-                                                      context.replacePartialBodyResolveProvider(getPartialBodyResolveProvider()));
+                                                      context.replacestatementFilter(getStatementFilter()));
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 

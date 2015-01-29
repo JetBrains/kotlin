@@ -353,7 +353,7 @@ public class AnnotationResolver {
                     SimpleResolutionContext context =
                             new SimpleResolutionContext(trace, JetScope.Empty.INSTANCE$, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
                                                         ContextDependency.INDEPENDENT,
-                                                        new CompositeChecker(Lists.<CallChecker>newArrayList()), PartialBodyResolveProvider.NONE);
+                                                        new CompositeChecker(Lists.<CallChecker>newArrayList()), StatementFilter.NONE);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context);
                 }
                 if (constant != null) {

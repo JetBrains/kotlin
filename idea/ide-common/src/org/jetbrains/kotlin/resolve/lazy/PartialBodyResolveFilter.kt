@@ -27,7 +27,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider
+import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.psi.psiUtil.isProbablyNothing
 
 //TODO: do resolve anonymous object's body
@@ -37,7 +37,7 @@ class PartialBodyResolveFilter(
         private val declaration: JetDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames,
         forCompletion: Boolean
-) : PartialBodyResolveProvider() {
+) : StatementFilter() {
 
     private val statementMarks = StatementMarks()
 
