@@ -134,6 +134,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("nestedClass.before.Main.kt")
+        public void testNestedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/nestedClass.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("noImportForFunInQualifiedNotFirst.before.Main.kt")
         public void testNoImportForFunInQualifiedNotFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForFunInQualifiedNotFirst.before.Main.kt");

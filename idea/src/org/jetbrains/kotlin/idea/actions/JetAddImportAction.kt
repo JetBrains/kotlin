@@ -34,7 +34,16 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -44,32 +53,72 @@ public class JetAddImportAction(
         private val project: Project,
         private val editor: Editor,
         private val element: JetSimpleNameExpression,
-        imports: Iterable<FqName>
+        candidates: Collection<DeclarationDescriptor>
 ) : QuestionAction {
-    private val possibleImports = imports.toList()
+
+    private val module = ModuleUtilCore.findModuleForPsiElement(element)
+
+    private enum class Priority {
+        MODULE
+        PROJECT
+        OTHER
+    }
+
+    private fun detectPriority(descriptor: DeclarationDescriptor): Priority {
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(element.getContainingJetFile(), descriptor)
+        return when {
+            declaration == null -> Priority.OTHER
+            ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
+            ProjectRootsUtil.isInProjectSource(declaration) -> Priority.PROJECT
+            else -> Priority.OTHER
+        }
+    }
+
+    private inner class Variant(
+            val fqName: FqName,
+            val descriptors: Collection<DeclarationDescriptor>
+    ) {
+        val priority = descriptors.map { detectPriority(it) }.min()!!
+
+        val descriptorToImport: DeclarationDescriptor
+            get() {
+                if (descriptors.size() == 1) return descriptors.single()
+                return descriptors.sortBy {
+                    when (it) {
+                        is ClassDescriptor -> 0
+                        is PackageViewDescriptor -> 1
+                        else -> 2
+                    }
+                }.first()
+            }
+    }
+
+    private val variants = candidates
+            .groupBy { DescriptorUtils.getFqNameSafe(it) }
+            .map { Variant(it.key, it.value) }
+            .sortBy { it.priority }
 
     override fun execute(): Boolean {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-
         if (!element.isValid()) return false
 
         // TODO: Validate resolution variants. See AddImportAction.execute()
 
-        if (possibleImports.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            addImport(element, project, possibleImports[0])
+        if (variants.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
+            addImport(element, project, variants.first())
         }
         else {
-            chooseClassAndImport()
+            chooseCandidateAndImport()
         }
 
         return true
     }
 
-    protected fun getImportSelectionPopup(): BaseListPopupStep<FqName> {
-        return object : BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
+    protected fun getImportSelectionPopup(): BaseListPopupStep<Variant> {
+        return object : BaseListPopupStep<Variant>(JetBundle.message("imports.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
-            override fun onChosen(selectedValue: FqName?, finalChoice: Boolean): PopupStep<String>? {
+            override fun onChosen(selectedValue: Variant?, finalChoice: Boolean): PopupStep<String>? {
                 if (selectedValue == null) return null
 
                 if (finalChoice) {
@@ -77,7 +126,7 @@ public class JetAddImportAction(
                     return null
                 }
 
-                val toExclude = AddImportAction.getAllExcludableStrings(selectedValue.asString())
+                val toExclude = AddImportAction.getAllExcludableStrings(selectedValue.fqName.asString())
 
                 return object : BaseListPopupStep<String>(null, toExclude) {
                     override fun getTextFor(value: String): String {
@@ -93,29 +142,38 @@ public class JetAddImportAction(
                 }
             }
 
-            override fun hasSubstep(selectedValue: FqName?) = true
+            override fun hasSubstep(selectedValue: Variant?) = true
 
-            override fun getTextFor(value: FqName) = value.asString()
+            override fun getTextFor(value: Variant) = value.fqName.asString()
 
             // TODO: change icon
-            override fun getIconFor(aValue: FqName) = PlatformIcons.CLASS_ICON
+            override fun getIconFor(aValue: Variant) = PlatformIcons.CLASS_ICON
         }
     }
 
-    private fun chooseClassAndImport() {
+    private fun chooseCandidateAndImport() {
         JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(editor)
     }
 
     class object {
 
-        protected fun addImport(element: PsiElement, project: Project, selectedImport: FqName) {
+        protected fun addImport(element: PsiElement, project: Project, selectedVariant: Variant) {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             CommandProcessor.getInstance().executeCommand(project, object : Runnable {
                 override fun run() {
                     ApplicationManager.getApplication().runWriteAction {
                         val file = element.getContainingFile() as JetFile
-                        ImportInsertHelper.getInstance(project).writeImportToFile(ImportPath(selectedImport, false), file)
+                        val descriptor = selectedVariant.descriptorToImport
+                        // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
+                        if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
+                            val fqName = descriptor.importableFqNameSafe
+                            val reference = element.getReference() as JetSimpleNameReference
+                            reference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
+                        }
+                        else {
+                            ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
+                        }
                     }
                 }
             }, QuickFixBundle.message("add.import"), null)

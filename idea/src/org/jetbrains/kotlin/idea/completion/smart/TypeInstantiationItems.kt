@@ -43,11 +43,8 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.PossiblyBareType
@@ -61,7 +58,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.util.psiClassToDescriptor.psiClassToDescriptor
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
@@ -285,14 +282,9 @@ class TypeInstantiationItems(
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
-                val descriptor = if (inheritor is KotlinLightClass && inheritor !is KotlinLightClassForDecompiledDeclaration) {
-                    val origin = inheritor.getOrigin() ?: continue
-                    val declaration = toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
-                    resolutionFacade.resolveToDescriptor(declaration)
-                }
-                else {
-                    resolutionFacade.get(JavaResolveExtension)(inheritor).first.resolveClass(JavaClassImpl(inheritor))
-                }  as? ClassDescriptor ?: continue
+                val descriptor = resolutionFacade.psiClassToDescriptor(
+                        inheritor,
+                        { toFromOriginalFileMapper.toSyntheticFile(it) as JetClassOrObject? }) as? ClassDescriptor ?: continue
                 if (!visibilityFilter(descriptor)) continue
 
                 val hasTypeArgs = descriptor.getTypeConstructor().getParameters().isNotEmpty()
