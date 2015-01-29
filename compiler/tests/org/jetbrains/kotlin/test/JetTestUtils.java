@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,7 +29,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
@@ -246,13 +244,6 @@ public class JetTestUtils {
     @NotNull
     public static AnalysisResult analyzeFile(@NotNull JetFile file) {
         return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
-    }
-
-    @NotNull
-    public static AnalysisResult analyzeFileWithoutBody(@NotNull JetFile file) {
-        return JvmResolveUtil.analyzeFilesWithJavaIntegration(file.getProject(),
-                                                              Collections.singleton(file),
-                                                              Predicates.<PsiFile>alwaysFalse());
     }
 
     @NotNull

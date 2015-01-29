@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,7 +86,6 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull GlobalContext globalContext,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull ModuleDescriptorImpl module,
             @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
@@ -96,7 +93,6 @@ public enum TopDownAnalyzerFacadeForJVM {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
-                filesToAnalyzeCompletely,
                 false,
                 false
         );

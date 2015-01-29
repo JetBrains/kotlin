@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.jvm.compiler;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -145,7 +143,7 @@ public final class LoadDescriptorUtil {
                 }
             });
             AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                    jetCoreEnvironment.getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue());
+                    jetCoreEnvironment.getProject(), jetFiles);
             return new JetFilesAndAnalysisResult(jetFiles, result);
         }
 

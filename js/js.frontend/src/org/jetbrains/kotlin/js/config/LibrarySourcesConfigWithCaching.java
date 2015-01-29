@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.js.config;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import kotlin.Function1;
 import kotlin.Unit;
@@ -123,7 +121,6 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
             //noinspection AssignmentToStaticFieldFromInstanceMethod
             result = TopDownAnalyzerFacadeForJS.analyzeFiles(
                     generateLibFiles(),
-                    Predicates.<PsiFile>alwaysFalse(),
                     createConfigWithoutLibFiles(getProject(), getModuleId(), getTarget())
             );
         }

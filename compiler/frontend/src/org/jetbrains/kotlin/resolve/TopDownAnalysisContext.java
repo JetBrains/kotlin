@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -89,12 +88,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @Override
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        boolean result = containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);
-        if (!result) {
-            debug(containingFile);
-        }
-        return result;
+        return true;
     }
 
     @Override

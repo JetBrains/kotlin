@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.lazy;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
@@ -62,7 +60,6 @@ public class LazyResolveTestUtil {
         TopDownAnalysisParameters params = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
-                Predicates.<PsiFile>alwaysTrue(),
                 false, false
         );
 
