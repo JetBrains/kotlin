@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
         BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class,
         BlackBoxInlineCodegenTestGenerated.Reified.class,
         BlackBoxInlineCodegenTestGenerated.Simple.class,
+        BlackBoxInlineCodegenTestGenerated.Smap.class,
         BlackBoxInlineCodegenTestGenerated.Special.class,
         BlackBoxInlineCodegenTestGenerated.Trait.class,
         BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class,
@@ -734,6 +735,85 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         public void testVararg() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/vararg.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/smap")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({Smap.Anonymous.class})
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Smap extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInSmap() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("assertion.1.kt")
+        public void testAssertion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/assertion.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("oneFile.1.kt")
+        public void testOneFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/oneFile.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("smap.1.kt")
+        public void testSmap() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/smap.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Anonymous extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInAnonymous() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("lambda.1.kt")
+            public void testLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/lambda.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaOnCallSite.1.kt")
+            public void testLambdaOnCallSite() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/lambdaOnCallSite.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaOnInlineCallSite.1.kt")
+            public void testLambdaOnInlineCallSite() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/lambdaOnInlineCallSite.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("object.1.kt")
+            public void testObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/object.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("objectOnCallSite.1.kt")
+            public void testObjectOnCallSite() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnCallSite.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("objectOnInlineCallSite.1.kt")
+            public void testObjectOnInlineCallSite() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("objectOnInlineCallSite2.1.kt")
+            public void testObjectOnInlineCallSite2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite2.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
         }
     }
 
