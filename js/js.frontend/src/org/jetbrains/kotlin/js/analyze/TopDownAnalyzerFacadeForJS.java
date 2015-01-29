@@ -72,7 +72,7 @@ public final class TopDownAnalyzerFacadeForJS {
                              ? new BindingTraceContext()
                              : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
 
-        ModuleDescriptorImpl module = createJsModule("<module>");
+        ModuleDescriptorImpl module = createJsModule("<" + config.getModuleId() + ">");
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         ModuleDescriptor libraryModule = config.getLibraryModule();

@@ -475,4 +475,8 @@ var Kotlin = {};
         Object.defineProperty(Kotlin.modules, id, {value: declaration});
     };
 
+    Kotlin.defineInlineFunction = function(startTag, fun, metadataArgs) {
+        return fun;
+    };
+
 })(Kotlin);

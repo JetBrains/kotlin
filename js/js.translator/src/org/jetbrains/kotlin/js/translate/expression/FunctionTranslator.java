@@ -17,18 +17,12 @@
 package org.jetbrains.kotlin.js.translate.expression;
 
 
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsParameter;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.Modality;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.AliasingContext;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -41,10 +35,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setParameters;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getIsEffectivelyPublicApi;
 
 public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
@@ -101,6 +97,12 @@ public final class FunctionTranslator extends AbstractTranslator {
     public JsPropertyInitializer translateAsMethod() {
         JsName functionName = context().getNameForDescriptor(descriptor);
         generateFunctionObject();
+
+        if (shouldBeInlined(descriptor) && getIsEffectivelyPublicApi(descriptor)) {
+            InlineMetadata metadata = InlineMetadata.compose(functionObject, descriptor);
+            return new JsPropertyInitializer(functionName.makeRef(), metadata.getFunctionWithMetadata());
+        }
+
         return new JsPropertyInitializer(functionName.makeRef(), functionObject);
     }
 

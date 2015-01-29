@@ -89,6 +89,10 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             descriptor = resolvedCall.getCandidateDescriptor();
         }
 
+        return shouldBeInlined(descriptor);
+    }
+
+    public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor) {
         if (descriptor instanceof SimpleFunctionDescriptor) {
             return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
         }
