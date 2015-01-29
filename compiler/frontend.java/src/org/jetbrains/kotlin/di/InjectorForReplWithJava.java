@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
-import org.jetbrains.kotlin.context.LazinessToken;
+import org.jetbrains.kotlin.context.TypeLazinessToken;
 import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -136,7 +136,7 @@ public class InjectorForReplWithJava {
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
-    private final LazinessToken lazinessToken;
+    private final TypeLazinessToken typeLazinessToken;
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final StatementFilter statementFilter;
@@ -217,8 +217,8 @@ public class InjectorForReplWithJava {
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), javaFlexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.typeLazinessToken = new TypeLazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), javaFlexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesSettings);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.reflectionTypes = new ReflectionTypes(getModule());

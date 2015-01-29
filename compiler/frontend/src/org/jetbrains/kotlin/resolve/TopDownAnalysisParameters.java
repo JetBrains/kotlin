@@ -20,14 +20,14 @@ import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.context.GlobalContext;
-import org.jetbrains.kotlin.context.LazinessToken;
+import org.jetbrains.kotlin.context.TypeLazinessToken;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.StorageManager;
 
 /**
  * Various junk that cannot be placed into context (yet).
  */
-public class TopDownAnalysisParameters extends LazinessToken implements GlobalContext {
+public class TopDownAnalysisParameters extends TypeLazinessToken implements GlobalContext {
 
     @NotNull
     public static TopDownAnalysisParameters create(

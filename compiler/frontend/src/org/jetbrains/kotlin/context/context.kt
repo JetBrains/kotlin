@@ -43,13 +43,13 @@ public fun GlobalContext(): GlobalContextImpl {
 }
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")
-public open class LazinessToken {
+public open class TypeLazinessToken {
     deprecated("Used temporarily while we are in transition from to lazy resolve")
     public open fun isLazy(): Boolean = false
 }
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")
-public class LazyResolveToken : LazinessToken() {
+public class LazyResolveToken : TypeLazinessToken() {
     deprecated("Used temporarily while we are in transition from to lazy resolve")
     override fun isLazy() = true
 }
