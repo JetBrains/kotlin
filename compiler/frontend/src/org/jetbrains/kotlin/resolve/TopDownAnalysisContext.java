@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
-import com.intellij.psi.PsiElement;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -84,11 +83,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         if (debugOutput != null) {
             out.print(debugOutput);
         }
-    }
-
-    @Override
-    public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
-        return true;
     }
 
     @Override

@@ -40,17 +40,14 @@ public class ControlFlowAnalyzer {
 
     public void process(@NotNull BodiesResolveContext c) {
         for (JetFile file : c.getFiles()) {
-            if (!c.completeAnalysisNeeded(file)) continue;
             checkDeclarationContainer(c, file);
         }
         for (JetClassOrObject aClass : c.getDeclaredClasses().keySet()) {
-            if (!c.completeAnalysisNeeded(aClass)) continue;
             checkDeclarationContainer(c, aClass);
         }
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-            if (!c.completeAnalysisNeeded(function)) continue;
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
@@ -58,7 +55,6 @@ public class ControlFlowAnalyzer {
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
-            if (!c.completeAnalysisNeeded(property)) continue;
             PropertyDescriptor propertyDescriptor = entry.getValue();
             checkProperty(c, property, propertyDescriptor);
         }

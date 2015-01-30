@@ -146,7 +146,6 @@ public class BodyResolver {
             @Nullable final ConstructorDescriptor primaryConstructor,
             @NotNull JetScope scopeForSupertypeResolution,
             @NotNull final JetScope scopeForMemberResolution) {
-        if (!c.completeAnalysisNeeded(jetClass)) return;
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
@@ -316,8 +315,6 @@ public class BodyResolver {
             @NotNull JetClassInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
-        if (!c.completeAnalysisNeeded(anonymousInitializer)) return;
-
         JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
             expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
@@ -350,7 +347,7 @@ public class BodyResolver {
             if (unsubstitutedPrimaryConstructor != null) {
                 WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
                 expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
-                                       parameterScope, c.getOuterDataFlowInfo(), trace, c.completeAnalysisNeeded(klass));
+                                       parameterScope, c.getOuterDataFlowInfo(), trace);
             }
         }
     }
@@ -572,12 +569,8 @@ public class BodyResolver {
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        boolean needCompleteAnalysis = c.completeAnalysisNeeded(function);
-
         expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, functionInnerScope,
-                                                        c.getOuterDataFlowInfo(), trace, needCompleteAnalysis);
-
-        if (!needCompleteAnalysis) return;
+                                                        c.getOuterDataFlowInfo(), trace);
 
         if (function.hasBody()) {
             expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, c.getOuterDataFlowInfo(), null, trace);
@@ -593,15 +586,13 @@ public class BodyResolver {
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull JetScope declaringScope
     ) {
-        if (!c.completeAnalysisNeeded(klass)) return;
-
         List<JetParameter> valueParameters = klass.getPrimaryConstructorParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
 
         JetScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
 
         expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, scope,
-                                                        c.getOuterDataFlowInfo(), trace, /* needCompleteAnalysis = */ true);
+                                                        c.getOuterDataFlowInfo(), trace);
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {

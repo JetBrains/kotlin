@@ -619,10 +619,5 @@ public abstract class ElementResolver {
         public TopDownAnalysisParameters getTopDownAnalysisParameters() {
             return topDownAnalysisParameters;
         }
-
-        @Override
-        public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
-            return true;
-        }
     }
 }
