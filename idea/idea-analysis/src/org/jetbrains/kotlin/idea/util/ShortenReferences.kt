@@ -119,8 +119,8 @@ public object ShortenReferences {
             val descriptorsToImport1 = analyzeReferences(elementsToUse, visitor1)
             val descriptorsToImport2 = analyzeReferences(elementsToUse, visitor2)
 
-            visitor1.shortenElements()
-            visitor2.shortenElements()
+            elementsToUse.removeAll(visitor1.shortenElements())
+            elementsToUse.removeAll(visitor2.shortenElements())
 
             if (descriptorsToImport1.isEmpty() && descriptorsToImport2.isEmpty()) break
 
@@ -141,10 +141,9 @@ public object ShortenReferences {
         }
     }
 
-    private fun dropNestedElements(elements: List<JetElement>): Iterable<JetElement> {
-        if (elements.size() <= 1) return elements
+    private fun dropNestedElements(elements: List<JetElement>): LinkedHashSet<JetElement> {
         val elementSet = elements.toSet()
-        val newElements = ArrayList<JetElement>(elementSet.size())
+        val newElements = LinkedHashSet<JetElement>(elementSet.size())
         for (element in elementSet) {
             if (!element.parents(withItself = false).any { it in elementSet }) {
                 newElements.add(element)
@@ -192,11 +191,12 @@ public object ShortenReferences {
             }
         }
 
-        public fun shortenElements() {
+        public fun shortenElements(): Collection<T> {
             for (element in elementsToShorten) {
                 assert (element.isValid())
                 shortenElement(element)
             }
+            return elementsToShorten
         }
 
         public fun getDescriptorsToImport(): Set<DeclarationDescriptor> = descriptorsToImport
