@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
@@ -317,10 +319,14 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         JetExpression initializer = property.getInitializer();
 
-        CompileTimeConstant<?> initializerValue =
-                property.isVar() && initializer != null
-                ? ConstantExpressionEvaluator.OBJECT$.evaluate(initializer, state.getBindingTrace(), null)
-                : propertyDescriptor.getCompileTimeInitializer();
+        CompileTimeConstant<?> initializerValue;
+        if (property.isVar() && initializer != null) {
+            BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
+            initializerValue = ConstantExpressionEvaluator.OBJECT$.evaluate(initializer, tempTrace, propertyDescriptor.getType());
+        }
+        else {
+            initializerValue = propertyDescriptor.getCompileTimeInitializer();
+        }
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
         if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
