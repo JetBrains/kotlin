@@ -75,7 +75,7 @@ public class ControlStructureTypingUtils {
     ) {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 constructionName.toUpperCase(), argumentNames, isArgumentNullable);
-        TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName);
+        TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName, context);
         ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(call, function);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
@@ -248,7 +248,8 @@ public class ControlStructureTypingUtils {
     @NotNull
     /*package*/ static TracingStrategy createTracingForSpecialConstruction(
             final @NotNull Call call,
-            final @NotNull String constructionName
+            final @NotNull String constructionName,
+            final @NotNull ExpressionTypingContext context
     ) {
         class CheckTypeContext {
             public BindingTrace trace;
@@ -272,7 +273,15 @@ public class ControlStructureTypingUtils {
                 if (typeInfo == null) return false;
 
                 Ref<Boolean> hasError = Ref.create();
-                DataFlowUtils.checkType(typeInfo.getType(), expression, c.expectedType, typeInfo.getDataFlowInfo(), c.trace, hasError);
+                DataFlowUtils.checkType(
+                        typeInfo.getType(),
+                        expression,
+                        context
+                                .replaceExpectedType(c.expectedType)
+                                .replaceDataFlowInfo(typeInfo.getDataFlowInfo())
+                                .replaceBindingTrace(c.trace),
+                        hasError
+                );
                 return hasError.get();
             }
 
