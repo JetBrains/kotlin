@@ -4,6 +4,10 @@ fun test() {
    val a: MyClass? = null
    val b: MyTrait? = null
    <warning descr="'MyTrait.Default' is deprecated. Use A instead">MyTrait</warning>.test
+   MyTrait.<warning descr="'MyTrait.Default' is deprecated. Use A instead">Default</warning>
+   <warning descr="'MyTrait.Default' is deprecated. Use A instead">MyTrait</warning>
+   MyClass.<warning descr="'MyClass.Default' is deprecated. Use A instead">Default</warning>
+   <warning descr="'MyClass.Default' is deprecated. Use A instead">MyClass</warning>.<warning descr="'MyClass.Default' is deprecated. Use A instead">Default</warning>.test
 
    a == b
 }
