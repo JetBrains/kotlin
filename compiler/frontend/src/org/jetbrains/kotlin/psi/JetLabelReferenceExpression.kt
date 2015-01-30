@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.JetTokens
+import com.intellij.psi.PsiElement
 
 public class JetLabelReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node) {
-     public override fun getReferencedNameElement() = findChildByType(JetTokens.LABEL_IDENTIFIER) ?: this
+     public override fun getReferencedNameElement() = (findChildByType(JetTokens.LABEL_IDENTIFIER): PsiElement?) ?: this
 }
