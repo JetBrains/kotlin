@@ -181,6 +181,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("redundantInitializer.kt")
+    public void testRedundantInitializer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/redundantInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("redundantInitializerNumber.kt")
+    public void testRedundantInitializerNumber() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/redundantInitializerNumber.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("stringBuilderAppend.kt")
     public void testStringBuilderAppend() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringBuilderAppend.kt");
