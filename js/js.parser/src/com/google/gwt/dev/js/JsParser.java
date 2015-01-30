@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import static com.google.dart.compiler.util.AstUtil.toFunctionScope;
 
@@ -37,7 +36,8 @@ import static com.google.dart.compiler.util.AstUtil.toFunctionScope;
  */
 public class JsParser {
 
-    private JsProgram program;
+    private final JsProgram program;
+    private final ScopeContext scopeContext;
 
     public static List<JsStatement> parse(
             SourceInfo rootSourceInfo,
@@ -45,22 +45,21 @@ public class JsParser {
             ErrorReporter errorReporter,
             boolean insideFunction
     ) throws IOException, JsParserException {
-        return new JsParser(scope.getProgram()).parseImpl(rootSourceInfo, scope, r, errorReporter, insideFunction);
+        return new JsParser(scope).parseImpl(rootSourceInfo, r, errorReporter, insideFunction);
     }
-
-    private final Stack<JsScope> scopeStack = new Stack<JsScope>();
 
     /**
      * since source maps are not mapped to kotlin source maps
      */
     private static final String SOURCE_NAME_STUB = "jsCode";
 
-    private JsParser(JsProgram program) {
-        this.program = program;
+    private JsParser(@NotNull JsScope scope) {
+        scopeContext = new ScopeContext(scope);
+        program = scope.getProgram();
     }
 
     List<JsStatement> parseImpl(
-            final SourceInfo rootSourceInfo, JsScope scope,
+            final SourceInfo rootSourceInfo,
             Reader r,
             ErrorReporter errorReporter,
             boolean insideFunction
@@ -73,12 +72,7 @@ public class JsParser {
             TokenStream ts = new TokenStream(r, SOURCE_NAME_STUB, rootSourceInfo.getLine());
             Parser parser = new Parser(new IRFactory(ts), insideFunction);
             Node topNode = (Node) parser.parse(ts);
-
-            // Map the Rhino AST to ours.
-            pushScope(scope);
-            List<JsStatement> stmts = mapStatements(topNode);
-            popScope();
-            return stmts;
+            return mapStatements(topNode);
         }
         finally {
             Context.exit();
@@ -88,10 +82,6 @@ public class JsParser {
     private static JsParserException createParserException(String msg, Node offender) {
         CodePosition position = new CodePosition(offender.getLineno(), 0);
         return new JsParserException("Parser encountered internal error: " + msg, position);
-    }
-
-    private JsScope getScope() {
-        return scopeStack.peek();
     }
 
     private JsNode map(Node node) throws JsParserException {
@@ -222,7 +212,7 @@ public class JsParser {
 
             case TokenStream.NAME:
             case TokenStream.BINDNAME:
-                return mapName(node);
+                return scopeContext.globalNameFor(node.getString()).makeRef();
 
             case TokenStream.RETURN:
                 return mapReturn(node);
@@ -291,8 +281,7 @@ public class JsParser {
         //
         if (unknown instanceof JsStringLiteral) {
             JsStringLiteral lit = (JsStringLiteral) unknown;
-            String litName = lit.getValue();
-            return new JsNameRef(litName);
+            return scopeContext.referenceFor(lit.getValue());
         }
         else {
             throw createParserException("Expecting a name reference", nameRefNode);
@@ -379,8 +368,7 @@ public class JsParser {
         String identifier = label.getString();
         assert identifier != null: "If label exists identifier should not be null";
 
-        JsFunctionScope scope = toFunctionScope(getScope());
-        JsName labelName = scope.findLabel(identifier);
+        JsName labelName = scopeContext.labelFor(identifier);
         assert labelName != null: "Unknown label name: " + identifier;
 
         return labelName.makeRef();
@@ -548,7 +536,7 @@ public class JsParser {
                 //
                 Node fromIterVarName = fromIter.getFirstChild();
                 String fromName = fromIterVarName.getString();
-                JsName toName = getScope().declareName(fromName);
+                JsName toName = scopeContext.localNameFor(fromName);
                 toForIn = new JsForIn(toName);
                 Node fromIterInit = fromIterVarName.getFirstChild();
                 if (fromIterInit != null) {
@@ -611,29 +599,19 @@ public class JsParser {
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
+        JsFunction toFn = scopeContext.enterFunction();
 
         // Decide the function's name, if any.
         //
-        String fromFnName = fromFnNameNode.getString();
-        JsName toFnName = null;
-        if (fromFnName != null && fromFnName.length() > 0) {
-            toFnName = getScope().declareName(fromFnName);
+        String fnNameIdent = fromFnNameNode.getString();
+        if (fnNameIdent != null && fnNameIdent.length() > 0) {
+            scopeContext.globalNameFor(fnNameIdent);
         }
-
-        // Create it, and set the params.
-        //
-        JsFunction toFn = new JsFunction(getScope(), "jsCode");
-
-        // Creating a function also creates a new scope, which we push onto
-        // the scope stack.
-        //
-        pushScope(toFn.getScope());
 
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();
-            // should this be unique? I think not since you can have dup args.
-            JsName paramName = toFn.getScope().declareName(fromParamName);
-            toFn.getParameters().add(new JsParameter(paramName));
+            JsName name = scopeContext.localNameFor(fromParamName);
+            toFn.getParameters().add(new JsParameter(name));
             fromParamNode = fromParamNode.getNext();
         }
 
@@ -642,10 +620,7 @@ public class JsParser {
         JsBlock toBody = mapBlock(fromBodyNode);
         toFn.setBody(toBody);
 
-        // Pop the new function's scope off of the scope stack.
-        //
-        popScope();
-
+        scopeContext.exitFunction();
         return toFn;
     }
 
@@ -673,7 +648,7 @@ public class JsParser {
             //
             Object obj = getPropNode.getProp(Node.SPECIAL_PROP_PROP);
             assert (obj instanceof String);
-            toNameRef = new JsNameRef((String) obj);
+            toNameRef = scopeContext.referenceFor((String) obj);
         }
         toNameRef.setQualifier(toQualifier);
 
@@ -725,22 +700,16 @@ public class JsParser {
 
     private JsLabel mapLabel(Node labelNode) throws JsParserException {
         String fromName = labelNode.getFirstChild().getString();
-        JsFunctionScope scope = toFunctionScope(getScope());
-        JsName toName = scope.enterLabel(fromName);
+
+        JsName toName = scopeContext.enterLabel(fromName);
+
         Node fromStmt = labelNode.getFirstChild().getNext();
         JsLabel toLabel = new JsLabel(toName);
         toLabel.setStatement(mapStatement(fromStmt));
-        scope.exitLabel();
-        return toLabel;
-    }
 
-    /**
-     * Creates a reference to a name that may or may not be obfuscatable, based on
-     * whether it matches a known name in the scope.
-     */
-    private JsNameRef mapName(Node node) {
-        String ident = node.getString();
-        return new JsNameRef(ident);
+        scopeContext.exitLabel();
+
+        return toLabel;
     }
 
     private JsNew mapNew(Node newNode) throws JsParserException {
@@ -1069,8 +1038,7 @@ public class JsParser {
             // Map the catch variable.
             //
             Node fromCatchVarName = fromCatchNode.getFirstChild();
-            JsCatch catchBlock = new JsCatch(
-                    getScope(), fromCatchVarName.getString());
+            JsCatch catchBlock = scopeContext.enterCatch(fromCatchVarName.getString());
 
             // Pre-advance to the next catch block, if any.
             // We do this here to decide whether or not this is the last one.
@@ -1102,6 +1070,7 @@ public class JsParser {
             // Attach it.
             //
             toTry.getCatches().add(catchBlock);
+            scopeContext.exitCatch();
         }
 
         Node fromFinallyNode = fromCatchNodes.getNext();
@@ -1153,7 +1122,7 @@ public class JsParser {
             // literals.
             //
             String fromName = fromVar.getString();
-            JsName toName = getScope().declareName(fromName);
+            JsName toName = scopeContext.localNameFor(fromName);
             JsVars.JsVar toVar = new JsVars.JsVar(toName);
 
             Node fromInit = fromVar.getFirstChild();
@@ -1178,14 +1147,6 @@ public class JsParser {
         //
         throw createParserException("Internal error: unexpected token 'with'",
                                     withNode);
-    }
-
-    private void popScope() {
-        scopeStack.pop();
-    }
-
-    private void pushScope(JsScope scope) {
-        scopeStack.push(scope);
     }
 
     private boolean isJsNumber(Node jsNode) {
