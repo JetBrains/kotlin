@@ -85,7 +85,7 @@ class StaticMembers(
 
         classDescriptor.getStaticScope().getAllDescriptors().forEach(::processMember)
 
-        val classObject = classDescriptor.getClassObjectDescriptor()
+        val classObject = classDescriptor.getDefaultObjectDescriptor()
         if (classObject != null) {
             classObject.getDefaultType().getMemberScope().getAllDescriptors()
                     .filter { !it.isExtension }

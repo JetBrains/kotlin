@@ -38,8 +38,8 @@ public class Importer {
             allUnderImportScopes.add(descriptor.getStaticScope())
             allUnderImportScopes.add(descriptor.getUnsubstitutedInnerClassesScope())
 
-            val classObjectDescriptor = descriptor.getClassObjectDescriptor()
-            if (classObjectDescriptor != null && DescriptorUtils.isClassObject(classObjectDescriptor)) {
+            val classObjectDescriptor = descriptor.getDefaultObjectDescriptor()
+            if (classObjectDescriptor != null) {
                 allUnderImportScopes.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
             }
         }

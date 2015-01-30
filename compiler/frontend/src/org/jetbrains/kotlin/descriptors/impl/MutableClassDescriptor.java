@@ -92,7 +92,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Nullable
     @Override
-    public MutableClassDescriptor getClassObjectDescriptor() {
+    public MutableClassDescriptor getDefaultObjectDescriptor() {
         return classObjectDescriptor;
     }
 

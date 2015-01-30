@@ -62,8 +62,8 @@ public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
 
     @Nullable
     public CodegenContext getClassObjectContext() {
-        if (getContextDescriptor().getClassObjectDescriptor() != null) {
-            return findChildContext(getContextDescriptor().getClassObjectDescriptor());
+        if (getContextDescriptor().getDefaultObjectDescriptor() != null) {
+            return findChildContext(getContextDescriptor().getDefaultObjectDescriptor());
         }
         return null;
     }

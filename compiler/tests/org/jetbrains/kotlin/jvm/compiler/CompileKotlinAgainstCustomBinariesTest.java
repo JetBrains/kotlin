@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -146,7 +145,6 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         for (DeclarationDescriptor descriptor : allDescriptors) {
             assertTrue("Wrong name: " + descriptor, descriptor.getName().asString().equals("Lol"));
             assertTrue("Should be an object: " + descriptor, isObject(descriptor));
-            assertNotNull("Object should have a class object: " + descriptor, ((ClassDescriptor) descriptor).getClassObjectDescriptor());
         }
     }
 

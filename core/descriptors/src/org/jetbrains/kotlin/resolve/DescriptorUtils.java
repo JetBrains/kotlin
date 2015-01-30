@@ -320,10 +320,6 @@ public class DescriptorUtils {
         return superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
     }
 
-    public static boolean isSyntheticClassObject(@NotNull DeclarationDescriptor descriptor) {
-        return isClassObject(descriptor) && isSingleton(descriptor.getContainingDeclaration());
-    }
-
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
@@ -334,11 +330,6 @@ public class DescriptorUtils {
             return Visibilities.INTERNAL;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
-        return Visibilities.PUBLIC;
-    }
-
-    @NotNull
-    public static Visibility getSyntheticClassObjectVisibility() {
         return Visibilities.PUBLIC;
     }
 

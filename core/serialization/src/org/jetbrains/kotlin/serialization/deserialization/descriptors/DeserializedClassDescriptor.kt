@@ -110,16 +110,13 @@ public class DeserializedClassDescriptor(
     }
 
     private fun computeClassObjectDescriptor(): ClassDescriptor? {
-        if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.CLASS_OBJECT) {
-            return this
-        }
         if (!classProto.hasClassObjectName()) return null
 
         val classObjectName = c.nameResolver.getName(classProto.getClassObjectName())
         return memberScope.getClassifier(classObjectName) as? ClassDescriptor
     }
 
-    override fun getClassObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()
+    override fun getDefaultObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()
 
     private fun computeSuperTypes(): Collection<JetType> {
         val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())

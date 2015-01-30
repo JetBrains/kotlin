@@ -22,12 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.ClassId
 
-public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
-    val classObjectDescriptor = getClassObjectDescriptor()
-    return if (classObjectDescriptor == null || hasSyntheticClassObject()) this else classObjectDescriptor
-}
-
-public fun ClassDescriptor.hasSyntheticClassObject(): Boolean = getKind() in setOf(ENUM_ENTRY, OBJECT)
+public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getDefaultObjectDescriptor() ?: this
 
 public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
     return when {
@@ -59,4 +54,18 @@ public val ClassDescriptor.classId: ClassId
             return owner.classId.createNestedClassId(getName())
         }
         throw IllegalStateException("Illegal container: $owner")
+    }
+
+/** If a literal of this class can be used as a value returns the class which represents the type of this value */
+public val ClassDescriptor.classObjectDescriptor: ClassDescriptor?
+    get() {
+        return when (this.getKind()) {
+            CLASS_OBJECT, OBJECT -> this
+            ENUM_ENTRY -> {
+                val container = this.getContainingDeclaration()
+                assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
+                container as ClassDescriptor
+            }
+            else -> getDefaultObjectDescriptor()
+        }
     }

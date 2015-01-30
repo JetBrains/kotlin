@@ -1915,7 +1915,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none());
             }
-            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+            ClassDescriptor classObjectDescriptor = classDescriptor.getDefaultObjectDescriptor();
             if (classObjectDescriptor != null) {
                 return StackValue.singleton(classObjectDescriptor, typeMapper);
             }

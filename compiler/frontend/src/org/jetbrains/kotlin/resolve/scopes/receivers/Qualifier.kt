@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectDescriptor
 
 public trait Qualifier: ReceiverValue {
 
@@ -81,8 +82,8 @@ class QualifierReceiver (
         if (classifier is ClassDescriptor) {
             scopes.add(classifier.getStaticScope())
 
-            val classObjectDescriptor = classifier.getClassObjectDescriptor()
-            if (classObjectDescriptor != null && DescriptorUtils.isClassObject(classObjectDescriptor)) {
+            val classObjectDescriptor = classifier.getDefaultObjectDescriptor()
+            if (classObjectDescriptor != null) {
                 // non-static members are resolved through class object receiver
                 scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
             }
@@ -145,7 +146,7 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier as TypeParameterDescriptor))
     }
-    else if (classifier is ClassDescriptor && classifier.getClassObjectDescriptor() != null) {
+    else if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
         context.trace.record(EXPRESSION_TYPE, referenceExpression, classifier.getClassObjectType())
     }
 }
@@ -173,7 +174,7 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
     if (classifier != null && containingDeclaration is ClassDescriptor && classifier == containingDeclaration) {
         return classifier
     }
-    if (classifier is ClassDescriptor && classifier.getClassObjectDescriptor() != null) {
+    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
         return classifier.getClassObjectReferenceTarget()
     }
 

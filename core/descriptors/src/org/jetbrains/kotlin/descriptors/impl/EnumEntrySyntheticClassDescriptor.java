@@ -47,7 +47,6 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final ConstructorDescriptor primaryConstructor;
     private final JetScope scope;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
-    private final ClassDescriptor classObjectDescriptor;
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
     /**
@@ -88,8 +87,6 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(this, source);
         primaryConstructor.setReturnType(getDefaultType());
         this.primaryConstructor = primaryConstructor;
-
-        this.classObjectDescriptor = containingClass;
     }
 
     @NotNull
@@ -118,8 +115,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor;
+    public ClassDescriptor getDefaultObjectDescriptor() {
+        return null;
     }
 
     @NotNull

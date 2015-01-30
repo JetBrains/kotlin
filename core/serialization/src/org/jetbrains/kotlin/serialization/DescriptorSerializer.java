@@ -130,8 +130,8 @@ public class DescriptorSerializer {
             }
         }
 
-        ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
-        if (classObject != null && isClassObject(classObject)) {
+        ClassDescriptor classObject = classDescriptor.getDefaultObjectDescriptor();
+        if (classObject != null) {
             builder.setClassObjectName(stringTable.getSimpleNameIndex(classObject.getName()));
         }
 

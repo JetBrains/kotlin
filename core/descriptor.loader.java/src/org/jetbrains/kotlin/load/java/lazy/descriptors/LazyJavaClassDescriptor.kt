@@ -85,8 +85,7 @@ class LazyJavaClassDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
-    override fun getClassObjectDescriptor(): ClassDescriptor? = null
-    override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
+    override fun getDefaultObjectDescriptor(): ClassDescriptor? = null
 
     override fun getConstructors() = scopeForMemberLookup.constructors()
 

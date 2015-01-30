@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import java.util.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.isFlexible
@@ -147,8 +146,8 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                 builder.append(" {\n")
                 var firstPassed = false
                 val subindent = indent + "    "
-                val classObject = descriptor.getClassObjectDescriptor()
-                if (classObject != null && !descriptor.getKind().isSingleton() && !isSyntheticClassObject(classObject)) {
+                val classObject = descriptor.getDefaultObjectDescriptor()
+                if (classObject != null) {
                     firstPassed = true
                     builder.append(subindent)
                     appendDescriptor(classObject, subindent)
