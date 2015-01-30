@@ -1,6 +1,6 @@
 package
 
-internal fun </*0*/ T : kotlin.Any> compareBy(/*0*/ a: T?, /*1*/ b: T?, /*2*/ vararg functions: T.() -> kotlin.Comparable<out kotlin.Any?>? /*kotlin.Array<out T.() -> kotlin.Comparable<out kotlin.Any?>?>*/): kotlin.Int
+internal fun </*0*/ T : kotlin.Any> compareBy(/*0*/ a: T?, /*1*/ b: T?, /*2*/ vararg functions: T.() -> kotlin.Comparable<*>? /*kotlin.Array<out T.() -> kotlin.Comparable<*>?>*/): kotlin.Int
 
 internal final class Item : kotlin.Comparable<Item> {
     public constructor Item(/*0*/ name: kotlin.String, /*1*/ rating: kotlin.Int)

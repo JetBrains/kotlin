@@ -57,8 +57,8 @@ package test {
     }
 
     internal final annotation class Ann6 : kotlin.Annotation {
-        public constructor Ann6(/*0*/ p: java.lang.Class<out kotlin.Any?>)
-        internal final val p: java.lang.Class<out kotlin.Any?>
+        public constructor Ann6(/*0*/ p: java.lang.Class<*>)
+        internal final val p: java.lang.Class<*>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -73,9 +73,9 @@ package test {
     }
 
     internal final annotation class Ann8 : kotlin.Annotation {
-        public constructor Ann8(/*0*/ p1: kotlin.Array<kotlin.String>, /*1*/ p2: kotlin.Array<java.lang.Class<out kotlin.Any?>>, /*2*/ p3: kotlin.Array<test.MyEnum>, /*3*/ p4: kotlin.Array<test.Ann1>)
+        public constructor Ann8(/*0*/ p1: kotlin.Array<kotlin.String>, /*1*/ p2: kotlin.Array<java.lang.Class<*>>, /*2*/ p3: kotlin.Array<test.MyEnum>, /*3*/ p4: kotlin.Array<test.Ann1>)
         internal final val p1: kotlin.Array<kotlin.String>
-        internal final val p2: kotlin.Array<java.lang.Class<out kotlin.Any?>>
+        internal final val p2: kotlin.Array<java.lang.Class<*>>
         internal final val p3: kotlin.Array<test.MyEnum>
         internal final val p4: kotlin.Array<test.Ann1>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -84,9 +84,9 @@ package test {
     }
 
     internal final annotation class Ann9 : kotlin.Annotation {
-        public constructor Ann9(/*0*/ vararg p1: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ vararg p2: java.lang.Class<out kotlin.Any?> /*kotlin.Array<out java.lang.Class<out kotlin.Any?>>*/, /*2*/ vararg p3: test.MyEnum /*kotlin.Array<out test.MyEnum>*/, /*3*/ vararg p4: test.Ann1 /*kotlin.Array<out test.Ann1>*/, /*4*/ vararg p5: kotlin.Int /*kotlin.IntArray*/)
+        public constructor Ann9(/*0*/ vararg p1: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ vararg p2: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/, /*2*/ vararg p3: test.MyEnum /*kotlin.Array<out test.MyEnum>*/, /*3*/ vararg p4: test.Ann1 /*kotlin.Array<out test.Ann1>*/, /*4*/ vararg p5: kotlin.Int /*kotlin.IntArray*/)
         internal final val p1: kotlin.Array<out kotlin.String>
-        internal final val p2: kotlin.Array<out java.lang.Class<out kotlin.Any?>>
+        internal final val p2: kotlin.Array<out java.lang.Class<*>>
         internal final val p3: kotlin.Array<out test.MyEnum>
         internal final val p4: kotlin.Array<out test.Ann1>
         internal final val p5: kotlin.IntArray
@@ -143,8 +143,8 @@ package test {
     }
 
     internal final annotation class InAnn6 : kotlin.Annotation {
-        public constructor InAnn6(/*0*/ p: java.lang.Class<out kotlin.Any?>?)
-        internal final val p: java.lang.Class<out kotlin.Any?>?
+        public constructor InAnn6(/*0*/ p: java.lang.Class<*>?)
+        internal final val p: java.lang.Class<*>?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

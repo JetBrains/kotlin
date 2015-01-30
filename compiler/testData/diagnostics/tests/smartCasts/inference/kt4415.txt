@@ -5,7 +5,7 @@ internal val </*0*/ T> T.javaClass: java.lang.Class<T>
 internal object A {
     private constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun find(/*0*/ clz: java.lang.Class<out kotlin.Any?>): kotlin.Unit
+    internal final fun find(/*0*/ clz: java.lang.Class<*>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal final fun toJson2(/*0*/ obj: kotlin.Any): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -13,7 +13,7 @@ internal object A {
     public class object <class-object-for-A> : A {
         private constructor <class-object-for-A>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final override /*1*/ /*fake_override*/ fun find(/*0*/ clz: java.lang.Class<out kotlin.Any?>): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun find(/*0*/ clz: java.lang.Class<*>): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final override /*1*/ /*fake_override*/ fun toJson2(/*0*/ obj: kotlin.Any): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

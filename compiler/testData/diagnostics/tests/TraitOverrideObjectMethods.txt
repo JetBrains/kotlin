@@ -4,7 +4,7 @@ internal trait MyTrait : java.lang.Object {
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
     public abstract override /*1*/ fun finalize(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<out kotlin.Any?>!
+    public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<*>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun notify(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun notifyAll(): kotlin.Unit

@@ -1,4 +1,4 @@
-package 
+package
 
 kotlin.js.native() internal val baz: kotlin.Int
 kotlin.js.native() internal val boo: kotlin.Int

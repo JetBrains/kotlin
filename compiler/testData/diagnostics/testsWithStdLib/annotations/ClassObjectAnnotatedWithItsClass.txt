@@ -3,8 +3,8 @@ package
 package test {
 
     internal final annotation class AnnClass : kotlin.Annotation {
-        public constructor AnnClass(/*0*/ a: java.lang.Class<out kotlin.Any?>)
-        internal final val a: java.lang.Class<out kotlin.Any?>
+        public constructor AnnClass(/*0*/ a: java.lang.Class<*>)
+        internal final val a: java.lang.Class<*>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

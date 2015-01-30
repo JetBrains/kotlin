@@ -1,3 +1,3 @@
 package
 
-internal fun ff(/*0*/ l: kotlin.Any): kotlin.MutableList<out kotlin.Any?>
+internal fun ff(/*0*/ l: kotlin.Any): kotlin.MutableList<*>

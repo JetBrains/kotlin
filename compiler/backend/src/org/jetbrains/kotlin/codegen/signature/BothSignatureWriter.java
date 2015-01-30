@@ -146,6 +146,12 @@ public class BothSignatureWriter {
         generic = true;
     }
 
+    public void writeUnboundedWildcard() {
+        signatureVisitor().visitTypeArgument();
+
+        generic = true;
+    }
+
     public void writeTypeArgumentEnd() {
         pop();
     }

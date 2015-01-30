@@ -10,10 +10,10 @@ private val INT: CompileTimeType<kotlin.Int>
 private val LONG: CompileTimeType<kotlin.Long>
 private val SHORT: CompileTimeType<kotlin.Short>
 private val STRING: CompileTimeType<kotlin.String>
-private val binaryOperations: java.util.HashMap<BinaryOperationKey<out kotlin.Any?, out kotlin.Any?>, kotlin.Pair<(kotlin.Any?, kotlin.Any?) -> kotlin.Any, (BigInteger, BigInteger) -> BigInteger>>
+private val binaryOperations: java.util.HashMap<BinaryOperationKey<*, *>, kotlin.Pair<(kotlin.Any?, kotlin.Any?) -> kotlin.Any, (BigInteger, BigInteger) -> BigInteger>>
 private val emptyBinaryFun: (BigInteger, BigInteger) -> BigInteger
 private val emptyUnaryFun: (kotlin.Long) -> kotlin.Long
-private val unaryOperations: java.util.HashMap<UnaryOperationKey<out kotlin.Any?>, kotlin.Pair<(kotlin.Any?) -> kotlin.Any, (kotlin.Long) -> kotlin.Long>>
+private val unaryOperations: java.util.HashMap<UnaryOperationKey<*>, kotlin.Pair<(kotlin.Any?) -> kotlin.Any, (kotlin.Long) -> kotlin.Long>>
 private fun </*0*/ A, /*1*/ B> binaryOperation(/*0*/ a: CompileTimeType<A>, /*1*/ b: CompileTimeType<B>, /*2*/ functionName: kotlin.String, /*3*/ operation: (A, B) -> kotlin.Any, /*4*/ checker: (BigInteger, BigInteger) -> BigInteger): kotlin.Pair<BinaryOperationKey<A, B>, kotlin.Pair<(kotlin.Any?, kotlin.Any?) -> kotlin.Any, (BigInteger, BigInteger) -> BigInteger>>
 private fun </*0*/ A> unaryOperation(/*0*/ a: CompileTimeType<A>, /*1*/ functionName: kotlin.String, /*2*/ operation: (A) -> kotlin.Any, /*3*/ checker: (kotlin.Long) -> kotlin.Long): kotlin.Pair<UnaryOperationKey<A>, kotlin.Pair<(kotlin.Any?) -> kotlin.Any, (kotlin.Long) -> kotlin.Long>>
 

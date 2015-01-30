@@ -90,6 +90,12 @@ public class DescriptorRendererTestGenerated extends AbstractDescriptorRendererT
         doTest(fileName);
     }
 
+    @TestMetadata("StarProjection.kt")
+    public void testStarProjection() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/StarProjection.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnitType.kt")
     public void testUnitType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/UnitType.kt");

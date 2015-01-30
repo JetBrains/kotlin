@@ -116,6 +116,12 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("StarProjection.kt")
+        public void testStarProjection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/class/StarProjection.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")

@@ -1,6 +1,6 @@
 package
 
-internal fun test(/*0*/ t: Tr<out kotlin.Any?>): kotlin.Unit
+internal fun test(/*0*/ t: Tr<*>): kotlin.Unit
 
 internal trait Tr</*0*/ T> {
     internal abstract var v: Tr<T>

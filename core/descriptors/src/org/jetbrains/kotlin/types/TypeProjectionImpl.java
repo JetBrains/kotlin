@@ -42,4 +42,9 @@ public class TypeProjectionImpl extends TypeProjectionBase {
     public JetType getType() {
         return type;
     }
+
+    @Override
+    public boolean isStarProjection() {
+        return false;
+    }
 }

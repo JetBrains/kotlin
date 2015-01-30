@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.types;
+package org.jetbrains.kotlin.types
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
-public interface TypeProjection {
-    @NotNull
-    Variance getProjectionKind();
+class StarProjectionImpl(
+        private val _type: JetType
+) : TypeProjectionBase() {
+    override fun isStarProjection() = true
 
-    @NotNull
-    JetType getType();
+    override fun getProjectionKind() = Variance.OUT_VARIANCE
 
-    boolean isStarProjection();
+    override fun getType() = _type
 }

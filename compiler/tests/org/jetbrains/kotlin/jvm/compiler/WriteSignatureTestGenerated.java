@@ -109,6 +109,24 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("StarProjectionInClass.kt")
+    public void testStarProjectionInClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StarProjectionInSuper.kt")
+    public void testStarProjectionInSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInSuper.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StarProjectionOutsideClass.kt")
+    public void testStarProjectionOutsideClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionOutsideClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VarargCharSequence.kt")
     public void testVarargCharSequence() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargCharSequence.kt");

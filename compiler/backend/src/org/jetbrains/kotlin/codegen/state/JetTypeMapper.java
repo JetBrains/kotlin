@@ -396,17 +396,22 @@ public class JetTypeMapper {
             for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
                 TypeProjection argument = arguments.get(parameter.getIndex());
 
-                Variance projectionKind = projectionsAllowed
-                                          ? getEffectiveVariance(
-                                                    parameter.getVariance(),
-                                                    argument.getProjectionKind(),
-                                                    howThisTypeIsUsed
-                                            )
-                                          : Variance.INVARIANT;
-                signatureVisitor.writeTypeArgument(projectionKind);
+                if (projectionsAllowed && argument.isStarProjection()) {
+                    signatureVisitor.writeUnboundedWildcard();
+                }
+                else {
+                    Variance projectionKind = projectionsAllowed
+                                              ? getEffectiveVariance(
+                                                        parameter.getVariance(),
+                                                        argument.getProjectionKind(),
+                                                        howThisTypeIsUsed
+                                                )
+                                              : Variance.INVARIANT;
+                    signatureVisitor.writeTypeArgument(projectionKind);
 
-                mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
-                signatureVisitor.writeTypeArgumentEnd();
+                    mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                    signatureVisitor.writeTypeArgumentEnd();
+                }
             }
             signatureVisitor.writeClassEnd();
         }

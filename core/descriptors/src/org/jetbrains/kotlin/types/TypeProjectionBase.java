@@ -20,6 +20,9 @@ public abstract class TypeProjectionBase implements TypeProjection {
 
     @Override
     public String toString() {
+        if (isStarProjection()) {
+            return "*";
+        }
         if (getProjectionKind() == Variance.INVARIANT) {
             return getType().toString();
         }

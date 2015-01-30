@@ -1,3 +1,3 @@
 package
 
-internal fun f(/*0*/ c: java.lang.Comparable<out kotlin.Any?>): kotlin.Unit
+internal fun f(/*0*/ c: java.lang.Comparable<*>): kotlin.Unit

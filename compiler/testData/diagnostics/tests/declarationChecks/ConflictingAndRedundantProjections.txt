@@ -1,8 +1,8 @@
 package
 
 internal fun f1(/*0*/ p: In<in X>): kotlin.Unit
-internal fun f10(/*0*/ p: Out<kotlin.Any?>): kotlin.Unit
-internal fun f11(/*0*/ p: Inv<out kotlin.Any?>): kotlin.Unit
+internal fun f10(/*0*/ p: Out<*>): kotlin.Unit
+internal fun f11(/*0*/ p: Inv<*>): kotlin.Unit
 internal fun f2(/*0*/ p: In<out X>): kotlin.Unit
 internal fun f3(/*0*/ p: In<X>): kotlin.Unit
 internal fun f4(/*0*/ p: Out<out X>): kotlin.Unit
@@ -11,7 +11,7 @@ internal fun f6(/*0*/ p: Inv<X>): kotlin.Unit
 internal fun f6(/*0*/ p: Out<X>): kotlin.Unit
 internal fun f7(/*0*/ p: Inv<in X>): kotlin.Unit
 internal fun f8(/*0*/ p: Inv<out X>): kotlin.Unit
-internal fun f9(/*0*/ p: In<out kotlin.Any?>): kotlin.Unit
+internal fun f9(/*0*/ p: In<*>): kotlin.Unit
 
 internal final class In</*0*/ in T> {
     public constructor In</*0*/ in T>()

@@ -55,8 +55,8 @@ package a {
             }
 
             internal final annotation class annJavaClass : kotlin.Annotation {
-                public constructor annJavaClass(/*0*/ p: java.lang.Class<out kotlin.Any?> = ...)
-                internal final val p: java.lang.Class<out kotlin.Any?>
+                public constructor annJavaClass(/*0*/ p: java.lang.Class<*> = ...)
+                internal final val p: java.lang.Class<*>
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
