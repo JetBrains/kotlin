@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
 import org.jetbrains.kotlin.idea.decompiler.isKotlinWithCompatibleAbiVersion
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import com.intellij.openapi.vfs.VirtualFile
@@ -40,8 +39,7 @@ class LocalClassFinder(
         if (classId.getPackageFqName() != directoryPackageFqName) {
             return null
         }
-        val segments = DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.getRelativeClassName()).pathSegments()
-        val targetName = segments.joinToString("$", postfix = ".class")
+        val targetName = classId.getRelativeClassName().pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
             return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)

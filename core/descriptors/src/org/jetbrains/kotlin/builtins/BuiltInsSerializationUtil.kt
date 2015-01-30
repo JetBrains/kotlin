@@ -25,7 +25,7 @@ public object BuiltInsSerializationUtil {
     private val STRING_TABLE_FILE_NAME = ".kotlin_string_table"
     private val CLASS_NAMES_FILE_NAME = ".kotlin_class_names"
 
-    platformStatic public fun getClassMetadataPath(classId: ClassId): String? {
+    platformStatic public fun getClassMetadataPath(classId: ClassId): String {
         return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
                "." + CLASS_METADATA_FILE_EXTENSION
     }

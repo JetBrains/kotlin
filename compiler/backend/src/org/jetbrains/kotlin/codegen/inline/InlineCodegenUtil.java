@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
@@ -56,8 +55,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.ListIterator;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
@@ -146,7 +144,7 @@ public class InlineCodegenUtil {
             return PackageClassUtils.getPackageClassFqName(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            FqName fqName = DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor));
+            FqName fqName = getFqNameSafe(containerDescriptor);
             if (isTrait(containerDescriptor)) {
                 return fqName.parent().child(Name.identifier(fqName.shortName() + JvmAbi.TRAIT_IMPL_SUFFIX));
             }

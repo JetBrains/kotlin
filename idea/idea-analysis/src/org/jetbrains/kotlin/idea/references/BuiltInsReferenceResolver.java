@@ -57,8 +57,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import static org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils.getClassId;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.unwrapFakeOverride;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
 import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor {
     val classObjectDescriptor = getClassObjectDescriptor()
@@ -47,3 +48,15 @@ public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName): C
     return getPackage(topLevelClassFqName.parent())?.getMemberScope()
             ?.getClassifier(topLevelClassFqName.shortName()) as? ClassDescriptor
 }
+
+public val ClassDescriptor.classId: ClassId
+    get() {
+        val owner = getContainingDeclaration()
+        if (owner is PackageFragmentDescriptor) {
+            return ClassId(owner.fqName, getName())
+        }
+        else if (owner is ClassDescriptor) {
+            return owner.classId.createNestedClassId(getName())
+        }
+        throw IllegalStateException("Illegal container: $owner")
+    }

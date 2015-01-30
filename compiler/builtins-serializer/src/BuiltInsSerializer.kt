@@ -37,12 +37,13 @@ import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.load.kotlin.DeserializedResolverUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 private object BuiltInsSerializerExtension : SerializerExtension() {
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
@@ -216,6 +217,6 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     }
 
     private fun getFileName(classDescriptor: ClassDescriptor): String {
-        return BuiltInsSerializationUtil.getClassMetadataPath(DeserializedResolverUtils.getClassId(classDescriptor))!!
+        return BuiltInsSerializationUtil.getClassMetadataPath(classDescriptor.classId)
     }
 }
