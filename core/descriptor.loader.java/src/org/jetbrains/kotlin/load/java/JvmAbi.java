@@ -45,6 +45,10 @@ public final class JvmAbi {
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
 
+    //TODO: To be removed after kotlin M11
+    @Deprecated
+    public static final String DEPRECATED_CLASS_OBJECT_FIELD = "OBJECT$";
+
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;

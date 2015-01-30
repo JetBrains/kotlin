@@ -206,6 +206,10 @@ public abstract class StackValue {
         return new Field(field.type, field.owner, field.name, field.isStaticPut, newReceiver);
     }
 
+    @NotNull
+    private static Field field(@NotNull FieldInfo info) {
+        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, none());
+    }
 
     @NotNull
     public static StackValue changeReceiverForFieldAndSharedVar(@NotNull StackValueWithSimpleReceiver stackValue, @Nullable StackValue newReceiver) {
@@ -506,8 +510,11 @@ public abstract class StackValue {
     }
 
     public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        FieldInfo info = FieldInfo.createForSingleton(classDescriptor, typeMapper);
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, none());
+        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
+    }
+
+    public static Field deprecatedClassObjectAccessor(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+        return field(FieldInfo.deprecatedFieldForClassObject(classDescriptor, typeMapper));
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
