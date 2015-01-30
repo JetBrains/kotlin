@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -313,14 +315,21 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
-        CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
+        JetExpression initializer = property.getInitializer();
+
+        CompileTimeConstant<?> initializerValue =
+                property.isVar() && initializer != null
+                ? ConstantExpressionEvaluator.OBJECT$.evaluate(initializer, state.getBindingTrace(), null)
+                : propertyDescriptor.getCompileTimeInitializer();
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
-        if (compileTimeValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
+        if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
 
-        Object value = compileTimeValue.getValue();
+        Object value = initializerValue instanceof IntegerValueTypeConstant
+            ? ((IntegerValueTypeConstant) initializerValue).getValue(propertyDescriptor.getType())
+            : initializerValue.getValue();
         JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
         Type type = typeMapper.mapType(jetType);
         return !skipDefaultValue(propertyDescriptor, value, type);
