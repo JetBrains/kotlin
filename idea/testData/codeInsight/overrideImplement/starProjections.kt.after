@@ -1,0 +1,11 @@
+class C<T : C<T>>
+
+trait Base {
+    fun foo(c: C<*>)
+}
+
+class Derived : Base {
+    override fun foo(c: C<*>) {
+        <selection><caret>throw UnsupportedOperationException()</selection>
+    }
+}

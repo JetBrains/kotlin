@@ -1,4 +1,4 @@
-// "Cast expression 'x' to 'Foo<out Number>'" "true"
+// "Cast expression 'x' to 'Foo<*>'" "true"
 trait Foo<T: Number> {
     fun foo()
 }
@@ -6,6 +6,6 @@ trait Foo<T: Number> {
 fun bar(_x: Any) {
     var x = _x
     if (x is Foo<*>) {
-        (x as Foo<out Number>)<caret>.foo()
+        (x as Foo<*>).foo()
     }
 }

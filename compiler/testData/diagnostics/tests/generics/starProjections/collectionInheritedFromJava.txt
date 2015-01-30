@@ -1,0 +1,20 @@
+package
+
+package p {
+
+    public open class Base</*0*/ T> {
+        public constructor Base</*0*/ T>()
+        public/*package*/ open fun coll(/*0*/ r: kotlin.(Mutable)Collection<*>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Derived : p.Base<kotlin.String> {
+        public constructor Derived()
+        public/*package*/ open override /*1*/ /*fake_override*/ fun coll(/*0*/ r: kotlin.(Mutable)Collection<*>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

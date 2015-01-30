@@ -1,0 +1,27 @@
+package
+
+package p {
+
+    public open class Base</*0*/ T> {
+        public constructor Base</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open fun foo(/*0*/ r: p.R<*>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Derived : p.Base<kotlin.String> {
+        public constructor Derived()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: p.R<*>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class R</*0*/ T : p.R<T>> {
+        public constructor R</*0*/ T : p.R<T>>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

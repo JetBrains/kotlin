@@ -1,4 +1,4 @@
-// "Cast expression 'x' to 'Foo<out Number>'" "true"
+// "Cast expression 'x' to 'Foo<*>'" "true"
 trait Foo<T: Number> {
     fun foo()
 }

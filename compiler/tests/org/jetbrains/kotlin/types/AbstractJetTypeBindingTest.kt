@@ -81,7 +81,10 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
                     ""
             }
 
-            println("typeProjection: ${projection}${argument.typeProjection.getType().render()}")
+            print("typeProjection: ")
+            if (argument.typeProjection.isStarProjection())
+                printlnWithNoIndent("*")
+            else printlnWithNoIndent("${projection}${argument.typeProjection.getType().render()}")
             print(argument.typeBinding)
             return this
         }

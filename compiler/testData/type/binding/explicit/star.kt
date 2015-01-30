@@ -1,6 +1,6 @@
 val foo: List<*> = null!!
 /*
 psi: List<*>
-type: List<Any?>
+type: List<*>
     null
 */

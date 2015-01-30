@@ -165,6 +165,8 @@ public class TypeSubstitutor {
     private TypeProjection unsafeSubstitute(@NotNull TypeProjection originalProjection, int recursionDepth) throws SubstitutionException {
         assertRecursionDepth(recursionDepth, originalProjection, substitution);
 
+        if (originalProjection.isStarProjection()) return originalProjection;
+
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
         Variance originalProjectionKind = originalProjection.getProjectionKind();
@@ -278,7 +280,7 @@ public class TypeSubstitutor {
             switch (conflictType(typeParameter.getVariance(), substitutedTypeArgument.getProjectionKind())) {
                 case NO_CONFLICT:
                     // if the corresponding type parameter is already co/contra-variant, there's not need for an explicit projection
-                    if (typeParameter.getVariance() != Variance.INVARIANT) {
+                    if (typeParameter.getVariance() != Variance.INVARIANT && !substitutedTypeArgument.isStarProjection()) {
                         substitutedTypeArgument = new TypeProjectionImpl(Variance.INVARIANT, substitutedTypeArgument.getType());
                     }
                     break;
