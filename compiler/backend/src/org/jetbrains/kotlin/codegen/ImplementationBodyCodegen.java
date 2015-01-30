@@ -960,38 +960,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateFieldForSingleton() {
         if (isEnumEntry(descriptor) || isClassObject(descriptor)) return;
 
-        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
-        ClassDescriptor fieldTypeDescriptor;
-        JetClassOrObject original;
         if (isObject(descriptor)) {
-            original = myClass;
-            fieldTypeDescriptor = descriptor;
-        }
-        else if (classObjectDescriptor != null) {
-            JetObjectDeclaration classObject = ((JetClass) myClass).getClassObject();
-            assert classObject != null : "Class object not found: " + myClass.getText();
-            original = classObject;
-            fieldTypeDescriptor = classObjectDescriptor;
-        }
-        else {
-            return;
-        }
+            createFieldForSingleton(descriptor, myClass);
 
-        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
+            if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        v.newField(OtherOrigin(original), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
-
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
-        if (isObject(descriptor)) {
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+            return;
         }
-        else if (!isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
-            generateClassObjectInitializer(fieldTypeDescriptor);
+
+        ClassDescriptor classObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+        if (classObjectDescriptor == null) {
+            return;
         }
+
+        JetObjectDeclaration classObject = ((JetClass) myClass).getClassObject();
+        assert classObject != null : "Class object not found: " + myClass.getText();
+
+        createFieldForSingleton(classObjectDescriptor, classObject);
+
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        if (!isClassObjectWithBackingFieldsInOuter(classObjectDescriptor)) {
+            generateClassObjectInitializer(classObjectDescriptor);
+        }
+    }
+
+    private void createFieldForSingleton(@NotNull ClassDescriptor fieldTypeDescriptor, @NotNull JetClassOrObject original) {
+        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
+
+        v.newField(OtherOrigin(original), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
     }
 
     private void generateClassObjectBackingFieldCopies() {
