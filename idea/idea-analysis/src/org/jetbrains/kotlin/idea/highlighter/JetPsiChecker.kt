@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import kotlin.platform.platformStatic
+import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -214,7 +215,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
         private fun getBeforeAnalysisVisitors(holder: AnnotationHolder) = array(
                 SoftKeywordsHighlightingVisitor(holder),
-                LabelsHighlightingVisitor(holder)
+                LabelsHighlightingVisitor(holder),
+                KDocHighlightingVisitor(holder)
         )
 
         private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = array(
