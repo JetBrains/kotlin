@@ -26,7 +26,10 @@ import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.PsiElementFinderImpl;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
@@ -36,7 +39,7 @@ import com.intellij.reference.SoftReference;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
-import com.intellij.util.containers.ConcurrentHashMap;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -51,10 +54,8 @@ public class KotlinJavaPsiFacade {
     private volatile KotlinPsiElementFinderWrapper[] elementFinders;
 
     private static class PackageCache {
-        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache =
-                new ConcurrentHashMap<Pair<String, GlobalSearchScope>, PsiPackage>();
-        final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache =
-                new ConcurrentHashMap<String, Boolean>();
+        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache = ContainerUtil.newConcurrentMap();
+        final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache = ContainerUtil.newConcurrentMap();
     }
 
     private volatile SoftReference<PackageCache> packageCache;
@@ -87,10 +88,9 @@ public class KotlinJavaPsiFacade {
     }
 
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-        ProgressIndicatorProvider.checkCanceled();
+        ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
 
-        // TODO: Update in IDEA 14
-        if (DumbService.getInstance(getProject()).isDumb()) {
+        if (shouldUseSlowResolve()) {
             PsiClass[] classes = findClassesInDumbMode(qualifiedName, scope);
             if (classes.length != 0) {
                 return classes[0];
@@ -125,6 +125,11 @@ public class KotlinJavaPsiFacade {
         }
 
         return pkg.findClassByShortName(className, scope);
+    }
+
+    private boolean shouldUseSlowResolve() {
+        DumbService dumbService = DumbService.getInstance(getProject());
+        return dumbService.isDumb() && dumbService.isAlternativeResolveEnabled();
     }
 
     @NotNull
