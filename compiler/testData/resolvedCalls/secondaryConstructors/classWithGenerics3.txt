@@ -1,0 +1,20 @@
+class B<R> {
+    constructor(x: String) {}
+    constructor(x: R) {}
+}
+
+val y8: B<String> = <caret>B("")
+
+
+Resolved call:
+
+Candidate descriptor: constructor B<R>(x: String) defined in B
+Resulting descriptor: constructor B<R>(x: String) defined in B
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : String = ""

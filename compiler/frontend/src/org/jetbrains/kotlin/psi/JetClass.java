@@ -237,4 +237,18 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         }
         return body.getAllDefaultObjects();
     }
+
+    public boolean hasPrimaryConstructor() {
+        return hasExplicitPrimaryConstructor() || !hasSecondaryConstructors();
+    }
+
+    private boolean hasSecondaryConstructors() {
+        return !getSecondaryConstructors().isEmpty();
+    }
+
+    @NotNull
+    public List<JetSecondaryConstructor> getSecondaryConstructors() {
+        JetClassBody body = getBody();
+        return body != null ? body.getSecondaryConstructors() : Collections.<JetSecondaryConstructor>emptyList();
+    }
 }

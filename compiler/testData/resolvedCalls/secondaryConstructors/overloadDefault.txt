@@ -1,0 +1,23 @@
+class A {
+    constructor(x: Int) {
+
+    }
+    constructor(x: Double, y: String = "abc") {
+
+    }
+}
+
+<caret>A(1.0)
+
+
+Resolved call:
+
+Resulting descriptor: constructor A(x: Double, y: String = ...) defined in A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : Double = 1.0

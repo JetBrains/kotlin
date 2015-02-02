@@ -86,6 +86,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             Tests.Regressions.class,
             Tests.Resolve.class,
             Tests.Scopes.class,
+            Tests.SecondaryConstructors.class,
             Tests.SenselessComparison.class,
             Tests.Shadowing.class,
             Tests.SmartCasts.class,
@@ -10384,6 +10385,27 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("VisibilityInheritModifier.kt")
             public void testVisibilityInheritModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/VisibilityInheritModifier.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SecondaryConstructors extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInSecondaryConstructors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("constructorCallType.kt")
+            public void testConstructorCallType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/constructorCallType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noPrimaryConstructor.kt")
+            public void testNoPrimaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/noPrimaryConstructor.kt");
                 doTest(fileName);
             }
         }

@@ -1,0 +1,20 @@
+class A {
+    constructor(vararg x: Int) {}
+}
+
+val y = <caret>A(0, *intArray(1, 2, 3), 4))
+
+
+Resolved call:
+
+Resulting descriptor: constructor A(vararg x: Int) defined in A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : IntArray = 0
+SUCCESS  x : IntArray = intArray(1, 2, 3)
+SUCCESS  x : IntArray = 4
