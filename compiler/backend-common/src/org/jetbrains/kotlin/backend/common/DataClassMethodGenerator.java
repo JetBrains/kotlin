@@ -79,8 +79,6 @@ public abstract class DataClassMethodGenerator {
     }
 
     private void generateComponentFunctionsForDataClasses() {
-        if (!declaration.hasPrimaryConstructor()) return;
-
         ConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
         assert constructor != null : "Data class should have primary constructor";
 

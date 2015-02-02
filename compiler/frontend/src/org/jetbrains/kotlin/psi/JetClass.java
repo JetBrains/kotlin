@@ -126,8 +126,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         return body.getAnonymousInitializers();
     }
 
-    @Override
-    public boolean hasPrimaryConstructor() {
+    private boolean hasExplicitPrimaryConstructor() {
         return getPrimaryConstructorParameterList() != null;
     }
 
