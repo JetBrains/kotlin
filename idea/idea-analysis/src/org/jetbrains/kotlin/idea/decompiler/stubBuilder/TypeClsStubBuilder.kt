@@ -97,9 +97,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.getProjection().toProjectionKind()
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal())
-            val modifierKeywordToken = projectionKind.getToken() as? JetModifierKeywordToken
-            createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
-            createTypeReferenceStub(typeProjection, typeArgumentProto.getType())
+            if (projectionKind != JetProjectionKind.STAR) {
+                val modifierKeywordToken = projectionKind.getToken() as? JetModifierKeywordToken
+                createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
+                createTypeReferenceStub(typeProjection, typeArgumentProto.getType())
+            }
         }
     }
 
@@ -107,6 +109,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         Projection.IN -> JetProjectionKind.IN
         Projection.OUT -> JetProjectionKind.OUT
         Projection.INV -> JetProjectionKind.NONE
+        Projection.STAR -> JetProjectionKind.STAR
     }
 
     private fun createFunctionTypeStub(parent: StubElement<out PsiElement>, type: Type, isExtensionFunctionType: Boolean) {

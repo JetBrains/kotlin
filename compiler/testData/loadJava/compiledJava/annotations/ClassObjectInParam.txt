@@ -4,8 +4,8 @@ public open class ClassObjectInParam {
     public constructor ClassObjectInParam()
 
     public final annotation class Anno : kotlin.Annotation {
-        public constructor Anno(/*0*/ value: java.lang.Class<out kotlin.Any?>)
-        public abstract fun value(): java.lang.Class<out kotlin.Any?>
+        public constructor Anno(/*0*/ value: java.lang.Class<*>)
+        public abstract fun value(): java.lang.Class<*>
     }
 
     test.ClassObjectInParam.Anno(value = test.ClassObjectInParam.class: java.lang.Class<test.ClassObjectInParam>) public open class Nested {

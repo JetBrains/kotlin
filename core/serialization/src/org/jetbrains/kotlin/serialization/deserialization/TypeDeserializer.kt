@@ -95,7 +95,10 @@ public class TypeDeserializer(
 
     fun typeArguments(protos: List<ProtoBuf.Type.Argument>): List<TypeProjection> =
             protos.map { proto ->
-                TypeProjectionImpl(variance(proto.getProjection()), type(proto.getType()))
+                val type = type(proto.getType())
+                if (proto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
+                    StarProjectionImpl(type)
+                else TypeProjectionImpl(variance(proto.getProjection()), type)
             }.toReadOnlyList()
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")

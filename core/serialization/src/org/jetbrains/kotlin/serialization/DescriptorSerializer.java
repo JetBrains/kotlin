@@ -373,11 +373,17 @@ public class DescriptorSerializer {
     @NotNull
     private ProtoBuf.Type.Argument.Builder typeArgument(@NotNull TypeProjection typeProjection) {
         ProtoBuf.Type.Argument.Builder builder = ProtoBuf.Type.Argument.newBuilder();
-        ProtoBuf.Type.Argument.Projection projection = projection(typeProjection.getProjectionKind());
 
-        // to avoid storing a default
-        if (projection != ProtoBuf.Type.Argument.Projection.INV) {
-            builder.setProjection(projection);
+        if (typeProjection.isStarProjection()) {
+            builder.setProjection(ProtoBuf.Type.Argument.Projection.STAR);
+        }
+        else {
+            ProtoBuf.Type.Argument.Projection projection = projection(typeProjection.getProjectionKind());
+
+            // to avoid storing a default
+            if (projection != ProtoBuf.Type.Argument.Projection.INV) {
+                builder.setProjection(projection);
+            }
         }
 
         builder.setType(type(typeProjection.getType()));

@@ -116,6 +116,7 @@ message Type {
       IN = 0;
       OUT = 1;
       INV = 2;
+      STAR = 3;
     }
 
     optional Projection projection = 1 [default = INV];

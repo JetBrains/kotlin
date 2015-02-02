@@ -42,16 +42,16 @@ public open class Rendering {
     }
 
     public/*package*/ trait H_Raw {
-        public abstract fun foo1(/*0*/ p0: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Unit
-        public abstract fun foo2(/*0*/ p0: test.Rendering.D_SuperG<out kotlin.Any?>!): kotlin.Unit
+        public abstract fun foo1(/*0*/ p0: kotlin.(Mutable)List<*>!): kotlin.Unit
+        public abstract fun foo2(/*0*/ p0: test.Rendering.D_SuperG<*>!): kotlin.Unit
     }
 
     public/*package*/ trait I_Wildcard {
         public abstract fun foo1(/*0*/ p0: (kotlin.MutableList<out kotlin.String!>..kotlin.List<kotlin.String!>?)): kotlin.Unit
         public abstract fun foo2(/*0*/ p0: kotlin.(Mutable)List<in kotlin.String!>!): kotlin.Unit
-        public abstract fun foo3(/*0*/ p0: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Unit
+        public abstract fun foo3(/*0*/ p0: kotlin.(Mutable)List<*>!): kotlin.Unit
         public abstract fun foo4(/*0*/ p0: test.Rendering.D_SuperG<out kotlin.String!>!): kotlin.Unit
         public abstract fun foo5(/*0*/ p0: test.Rendering.D_SuperG<in kotlin.String!>!): kotlin.Unit
-        public abstract fun foo6(/*0*/ p0: test.Rendering.D_SuperG<out kotlin.Any?>!): kotlin.Unit
+        public abstract fun foo6(/*0*/ p0: test.Rendering.D_SuperG<*>!): kotlin.Unit
     }
 }

@@ -1,4 +1,4 @@
 package test
 
-internal val kotlin.Collection<kotlin.Any?>.anotherSize: kotlin.Int
-    internal fun kotlin.Collection<kotlin.Any?>.<get-anotherSize>(): kotlin.Int
+internal val kotlin.Collection<*>.anotherSize: kotlin.Int
+    internal fun kotlin.Collection<*>.<get-anotherSize>(): kotlin.Int

@@ -5,7 +5,7 @@ public trait ReturnNotSubtype {
     public trait Sub : test.ReturnNotSubtype.Super<kotlin.Boolean!> {
         public abstract override /*1*/ fun _void(): kotlin.Boolean
         public abstract override /*1*/ fun array(): kotlin.Array<(out) java.lang.Void!>!
-        public abstract override /*1*/ fun klass(): java.lang.Class<out kotlin.Any?>!
+        public abstract override /*1*/ fun klass(): java.lang.Class<*>!
         public abstract override /*1*/ fun string1(): kotlin.Unit
         public abstract override /*1*/ fun string2(): kotlin.(Mutable)List<kotlin.Boolean!>!
         public abstract override /*1*/ fun t(): java.lang.Void!

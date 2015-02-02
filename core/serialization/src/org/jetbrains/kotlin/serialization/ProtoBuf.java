@@ -5121,6 +5121,10 @@ public final class ProtoBuf {
          * <code>INV = 2;</code>
          */
         INV(2, 2),
+        /**
+         * <code>STAR = 3;</code>
+         */
+        STAR(3, 3),
         ;
 
         /**
@@ -5135,6 +5139,10 @@ public final class ProtoBuf {
          * <code>INV = 2;</code>
          */
         public static final int INV_VALUE = 2;
+        /**
+         * <code>STAR = 3;</code>
+         */
+        public static final int STAR_VALUE = 3;
 
 
         public final int getNumber() { return value; }
@@ -5144,6 +5152,7 @@ public final class ProtoBuf {
             case 0: return IN;
             case 1: return OUT;
             case 2: return INV;
+            case 3: return STAR;
             default: return null;
           }
         }

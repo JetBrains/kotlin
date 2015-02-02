@@ -221,4 +221,10 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/SimpleEnumBuild.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("StarProjection.kt")
+    public void testStarProjection() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/stubs/StarProjection.kt");
+        doTest(fileName);
+    }
 }
