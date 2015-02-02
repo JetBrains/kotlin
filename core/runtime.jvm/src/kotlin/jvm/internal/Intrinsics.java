@@ -19,10 +19,8 @@ package kotlin.jvm.internal;
 import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -34,7 +32,7 @@ public class Intrinsics {
     }
 
     public static void throwNpe() {
-        throw new KotlinNullPointerException();
+        throw sanitizeStackTrace(new KotlinNullPointerException());
     }
 
     public static void checkExpressionValueIsNotNull(Object value, String message) {
@@ -102,11 +100,6 @@ public class Intrinsics {
         return new IntRange(0, length - 1);
     }
 
-    private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "throwNpe", "checkExpressionValueIsNotNull", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull",
-            "throwParameterIsNullException"
-    ));
-
     private static void throwUndefinedForReified() {
         throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
     }
@@ -131,20 +124,18 @@ public class Intrinsics {
         throwUndefinedForReified();
     }
 
-    public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
+    private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
-        ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>(stackTrace.length);
-        boolean skip = true;
-        for (StackTraceElement element : stackTrace) {
-            if (!skip) {
-                list.add(element);
-            }
-            else if ("kotlin.jvm.internal.Intrinsics".equals(element.getClassName())) {
-                if (METHOD_NAMES_TO_SKIP.contains(element.getMethodName())) {
-                    skip = false;
-                }
+        int size = stackTrace.length;
+
+        int lastIntrinsic = -1;
+        for (int i = 0; i < size; i++) {
+            if (Intrinsics.class.getName().equals(stackTrace[i].getClassName())) {
+                lastIntrinsic = i;
             }
         }
+
+        List<StackTraceElement> list = Arrays.asList(stackTrace).subList(lastIntrinsic + 1, size);
         throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
         return throwable;
     }
