@@ -74,7 +74,9 @@ public class KDocParser implements PsiParser {
 
         if (knownTag != null && knownTag.isReferenceRequired() && builder.getTokenType() == KDocTokens.TEXT_OR_LINK) {
             PsiBuilder.Marker referenceMarker = builder.mark();
+            PsiBuilder.Marker nameMarker = builder.mark();
             builder.advanceLexer();
+            nameMarker.done(KDocElementTypes.KDOC_NAME);
             referenceMarker.done(KDocElementTypes.KDOC_LINK);
         }
 

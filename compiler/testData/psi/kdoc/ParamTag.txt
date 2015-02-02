@@ -11,7 +11,8 @@ JetFile: ParamTag.kt
         PsiElement(KDOC_TAG_NAME)('@param')
         PsiWhiteSpace(' ')
         KDOC_LINK
-          PsiElement(KDOC_TEXT_OR_LINK)('a')
+          KDOC_NAME
+            PsiElement(KDOC_TEXT_OR_LINK)('a')
         PsiElement(KDOC_TEXT)(' The description of a.')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
