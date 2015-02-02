@@ -1091,6 +1091,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("ParamTagAtStart.kt")
+            public void testParamTagAtStart() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ParamTagAtStart.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("ReturnWithBrackets.kt")
             public void testReturnWithBrackets() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ReturnWithBrackets.kt");

@@ -59,7 +59,7 @@ CODE_LINK=\[{CODE_LINK_START}{CODE_LINK_CHAR}*\]
 %%
 
 
-<YYINITIAL> "/**"                         { yybegin(CONTENTS);
+<YYINITIAL> "/**"                         { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.START;            }
 "*"+ "/"                                  { if (isLastToken()) return KDocTokens.END;
                                             else return KDocTokens.TEXT; }
