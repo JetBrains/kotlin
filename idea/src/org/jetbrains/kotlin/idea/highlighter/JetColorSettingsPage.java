@@ -129,7 +129,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
 
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.comment"), JetHighlightingColors.DOC_COMMENT),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.tag"), JetHighlightingColors.KDOC_TAG),
-            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.value"), JetHighlightingColors.KDOC_TAG_VALUE),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.kdoc.value"), JetHighlightingColors.KDOC_LINK),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.class"), JetHighlightingColors.CLASS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),

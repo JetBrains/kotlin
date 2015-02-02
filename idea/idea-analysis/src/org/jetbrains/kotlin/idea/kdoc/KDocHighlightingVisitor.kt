@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.highlighter.JetHighlightingColors
 class KDocHighlightingVisitor(holder: AnnotationHolder): HighlightingVisitor(holder) {
     override fun visitElement(element: PsiElement) {
         if (element is KDocLink) {
-            holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.KDOC_TAG_VALUE)
+            holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.KDOC_LINK)
         }
         super.visitElement(element)
     }
