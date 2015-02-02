@@ -19,7 +19,6 @@ package kotlin.jvm.internal;
 import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
-import java.lang.Deprecated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -70,8 +69,11 @@ public class Intrinsics {
     private static void throwParameterIsNullException(String paramName) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
-        // #0 is Thread.getStackTrace(), #1 is Intrinsics.checkParameterIsNotNull, #2 is our caller
-        StackTraceElement caller = stackTraceElements[2];
+        // #0 Thread.getStackTrace()
+        // #1 Intrinsics.throwParameterIsNullException
+        // #2 Intrinsics.checkParameterIsNotNull
+        // #3 our caller
+        StackTraceElement caller = stackTraceElements[3];
         String className = caller.getClassName();
         String methodName = caller.getMethodName();
 
