@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
@@ -53,79 +54,30 @@ public fun runChangeSignature(project: Project,
     JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
 }
 
-public class JetChangeSignature(val project: Project,
-                                val functionDescriptor: FunctionDescriptor,
+public class JetChangeSignature(project: Project,
+                                functionDescriptor: FunctionDescriptor,
                                 val configuration: JetChangeSignatureConfiguration,
-                                val bindingContext: BindingContext,
+                                bindingContext: BindingContext,
                                 val defaultValueContext: PsiElement,
-                                val commandName: String?) {
+                                commandName: String?): CallableRefactoring<FunctionDescriptor>(project, functionDescriptor, bindingContext, commandName) {
 
     private val LOG = Logger.getInstance(javaClass<JetChangeSignature>())
 
-    public fun run() {
-        if (functionDescriptor.getKind() == SYNTHESIZED) {
-            LOG.error("Change signature refactoring should not be called for synthesized member " + functionDescriptor)
-            return
+    override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
+        assert (descriptorsForChange.all { it is FunctionDescriptor }) {
+            "Function descriptors expected: " + descriptorsForChange.joinToString(separator = "\n")
         }
 
-        val closestModifiableDescriptors = getClosestModifiableDescriptors()
-        assert(!closestModifiableDescriptors.isEmpty(), "Should contain functionDescriptor itself or some of its super declarations")
-        val deepestSuperDeclarations = OverrideResolver.getDeepestSuperDeclarations(functionDescriptor)
-        if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            showChangeSignatureDialog(deepestSuperDeclarations)
-            return
-        }
-
-        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations == closestModifiableDescriptors) {
-            showChangeSignatureDialog(closestModifiableDescriptors)
-            return
-        }
-
-        val isSingleFunctionSelected = closestModifiableDescriptors.size() == 1
-        val selectedFunction = if (isSingleFunctionSelected) closestModifiableDescriptors.first() else functionDescriptor
-        val optionsForDialog = buildDialogOptions(isSingleFunctionSelected)
-        val code = showSuperFunctionWarningDialog(deepestSuperDeclarations, selectedFunction, optionsForDialog)
-        when {
-            performForWholeHierarchy(optionsForDialog, code) -> {
-                showChangeSignatureDialog(deepestSuperDeclarations)
-            }
-            performForSelectedFunctionOnly(optionsForDialog, code) -> {
-                showChangeSignatureDialog(closestModifiableDescriptors)
-            }
-            else -> {
-                //do nothing
-            }
-        }
-    }
-
-    private fun getClosestModifiableDescriptors(): Set<FunctionDescriptor> {
-        return when (functionDescriptor.getKind()) {
-            DECLARATION -> {
-                Collections.singleton(functionDescriptor)
-            }
-            DELEGATION, FAKE_OVERRIDE -> {
-                OverrideResolver.getDirectlyOverriddenDeclarations(functionDescriptor)
-            }
-            else -> {
-                throw IllegalStateException("Unexpected callable kind: ${functionDescriptor.getKind()}")
-            }
-        }
-    }
-
-    private fun showChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>) {
-        val dialog = createChangeSignatureDialog(descriptorsForSignatureChange)
-        if (dialog == null) {
-            return
-        }
+        [suppress("UNCHECKED_CAST")]
+        val dialog = createChangeSignatureDialog(descriptorsForChange as Collection<FunctionDescriptor>)
+        if (dialog == null) return
 
         val affectedFunctions = dialog.getMethodDescriptor().affectedFunctions.map { it.getElement() }.filterNotNull()
 
-        if (affectedFunctions.any { !checkModifiable(it) }) {
-            return
-        }
+        if (affectedFunctions.any { !checkModifiable(it) }) return
 
         if (configuration.performSilently(affectedFunctions)
-        || ApplicationManager.getApplication()!!.isUnitTestMode()) {
+            || ApplicationManager.getApplication()!!.isUnitTestMode()) {
             performRefactoringSilently(dialog)
         }
         else {
@@ -150,24 +102,6 @@ public class JetChangeSignature(val project: Project,
         return JetChangeSignatureDialog(project, changeSignatureData, defaultValueContext, commandName)
     }
 
-    private fun checkModifiable(function: PsiElement): Boolean {
-        if (QuickFixUtil.canModifyElement(function)) {
-            return true
-        }
-
-        val unmodifiableFile = function.getContainingFile()?.getVirtualFile()?.getPresentableUrl()
-        if (unmodifiableFile != null) {
-            val message = RefactoringBundle.message("refactoring.cannot.be.performed") + "\n" +
-                IdeBundle.message("error.message.cannot.modify.file.0", unmodifiableFile)
-            Messages.showErrorDialog(project, message, CommonBundle.getErrorTitle()!!)
-        }
-        else {
-            LOG.error("Could not find file for Psi element: " + function.getText())
-        }
-
-        return false
-    }
-
     private fun performRefactoringSilently(dialog: JetChangeSignatureDialog) {
         ApplicationManager.getApplication()!!.runWriteAction {
             dialog.createRefactoringProcessor().run()
@@ -184,42 +118,6 @@ public class JetChangeSignature(val project: Project,
         }
         //choose at random
         return descriptorsForSignatureChange.first()
-    }
-
-    private fun buildDialogOptions(isSingleFunctionSelected: Boolean): List<String> {
-        if (isSingleFunctionSelected) {
-            return arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
-        }
-        else {
-            return arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
-        }
-    }
-
-    private fun performForWholeHierarchy(dialogButtons: List<String>, code: Int): Boolean {
-        return buttonPressed(code, dialogButtons, Messages.YES_BUTTON) || buttonPressed(code, dialogButtons, Messages.OK_BUTTON)
-    }
-
-    private fun performForSelectedFunctionOnly(dialogButtons: List<String>, code: Int): Boolean {
-        return buttonPressed(code, dialogButtons, Messages.NO_BUTTON)
-    }
-
-    private fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
-        return code == dialogButtons indexOf button && button in dialogButtons
-    }
-
-    private fun showSuperFunctionWarningDialog(superFunctions: Collection<FunctionDescriptor>,
-                                               functionFromEditor: FunctionDescriptor,
-                                               options: List<String>): Int {
-        val superString = superFunctions.map {
-            it.getContainingDeclaration().getName().asString()
-        }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
-        val message = JetBundle.message("x.overrides.y.in.class.list",
-                                        DescriptorRenderer.COMPACT.render(functionFromEditor),
-                                        functionFromEditor.getContainingDeclaration().getName().asString(), superString,
-                                        "refactor")
-        val title = IdeBundle.message("title.warning")!!
-        val icon = Messages.getQuestionIcon()!!
-        return Messages.showDialog(message, title, options.copyToArray(), 0, icon)
     }
 }
 
