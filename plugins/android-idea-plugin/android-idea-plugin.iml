@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
+    <orderEntry type="module" module-name="light-classes" />
   </component>
 </module>

@@ -17,14 +17,13 @@
 package org.jetbrains.jet.codegen.extensions
 
 import org.jetbrains.jet.extensions.ProjectExtensionDescriptor
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.codegen.StackValue
-import org.jetbrains.jet.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.jet.codegen.ClassBodyCodegen
-import org.jetbrains.jet.codegen.ClassBuilder
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 public trait ExpressionCodegenExtension {
     class object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())

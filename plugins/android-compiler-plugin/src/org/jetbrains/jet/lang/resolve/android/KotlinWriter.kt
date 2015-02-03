@@ -17,12 +17,12 @@
 package org.jetbrains.jet.lang.resolve.android
 
 trait KotlinWriter {
-    fun output(): StringBuffer
+    fun toStringBuffer(): StringBuffer
 }
 
 class KotlinStringWriter : KotlinWriter {
 
-    private val ctx = org.jetbrains.jet.lang.resolve.android.Context()
+    private val ctx = Context()
     private val imports = ctx.fork()
     private val body = ctx.fork()
 
@@ -91,9 +91,13 @@ class KotlinStringWriter : KotlinWriter {
         body.newLine()
     }
 
-    override fun output(): StringBuffer {
+    override fun toStringBuffer(): StringBuffer {
         ctx.absorbChildren()
         return ctx.buffer
+    }
+
+    override fun toString(): String {
+        return ctx.buffer.toString()
     }
 }
 

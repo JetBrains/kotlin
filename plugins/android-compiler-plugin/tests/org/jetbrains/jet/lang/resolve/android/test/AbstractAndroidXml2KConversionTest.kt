@@ -21,17 +21,16 @@ import java.io.File
 import java.io.IOException
 import java.util.Scanner
 import java.io.FileWriter
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.junit.Assert
 import kotlin.test.fail
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
+import kotlin.test.assertEquals
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
@@ -41,7 +40,15 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
         val actual = parser.parse()
 
-        JetTestUtils.assertEqualsToFile(File(path + "/layout.kt"), actual)
+        val layoutFiles = File(path).listFiles {
+            it.isFile() && it.name.startsWith("layout") && it.name.endsWith(".kt")
+        }?.sortBy { it.name } ?: listOf()
+
+        assertEquals(layoutFiles.size(), actual.size())
+
+        for ((index, file) in layoutFiles.withIndex()) {
+            JetTestUtils.assertEqualsToFile(file, actual[index])
+        }
     }
 
     public fun doNoManifestTest(path: String) {

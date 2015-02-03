@@ -18,8 +18,6 @@ package org.jetbrains.jet.plugin.android
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.jet.asJava.*
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
@@ -30,15 +28,20 @@ import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
-import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.moduleInfo
 import org.jetbrains.jet.lang.resolve.android.nameToIdDeclaration
 import org.jetbrains.jet.lang.resolve.android.idToName
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
+import org.jetbrains.jet.lang.resolve.android.AndroidConst
+import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.moduleInfo
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
@@ -46,7 +49,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         // Either renaming synthetic property, or value in layout xml, or R class field
         return (element.namedUnwrappedElement is JetProperty &&
                 isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
-                isRClassField(element)
+               isRClassField(element)
     }
 
     private fun isRClassField(element: PsiElement): Boolean {

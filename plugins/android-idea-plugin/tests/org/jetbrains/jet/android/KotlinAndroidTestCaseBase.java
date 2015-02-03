@@ -28,7 +28,6 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -38,13 +37,11 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.sdk.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 
@@ -83,7 +80,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     }
 
     public static String getPluginTestDataPathBase() {
-        return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+        return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     public String getTestDataPath() {

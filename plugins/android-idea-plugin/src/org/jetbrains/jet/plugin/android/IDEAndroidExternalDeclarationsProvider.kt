@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.android
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
-import org.jetbrains.jet.analyzer.ModuleInfo
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
-import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.jet.lang.psi.moduleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.moduleInfo
 
 public class IDEAndroidExternalDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
@@ -32,9 +32,9 @@ public class IDEAndroidExternalDeclarationsProvider(private val project: Project
 
         val module = moduleInfo.module
         val parser = ModuleServiceManager.getService<AndroidUIXmlProcessor>(module, javaClass<AndroidUIXmlProcessor>())
-        val syntheticFile = parser.parseToPsi()
-        syntheticFile?.moduleInfo = moduleInfo
+        val syntheticFiles = parser.parseToPsi()
+        syntheticFiles?.forEach { it.moduleInfo = moduleInfo }
 
-        return if (syntheticFile != null) listOf(syntheticFile) else listOf()
+        return syntheticFiles ?: listOf()
     }
 }

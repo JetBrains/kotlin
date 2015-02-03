@@ -16,19 +16,17 @@
 
 package org.jetbrains.jet.android
 
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.TestJdkKind
 import org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.android.TestConst
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import com.intellij.openapi.module.ModuleManager
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
@@ -38,8 +36,8 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
         val cliParser = CliAndroidUIXmlProcessor(project, path + "../AndroidManifest.xml", path + getResDir() + "/layout/")
         val ideParser = IDEAndroidUIXmlProcessor(ModuleManager.getInstance(project).getModules()[0])
 
-        val cliResult = cliParser.parseToPsi()!!.getText()
-        val ideResult = ideParser.parseToPsi()!!.getText()
+        val cliResult = cliParser.parseToPsi()!!.joinToString("\n\n")
+        val ideResult = ideParser.parseToPsi()!!.joinToString("\n\n")
 
         assertEquals(cliResult, ideResult)
     }

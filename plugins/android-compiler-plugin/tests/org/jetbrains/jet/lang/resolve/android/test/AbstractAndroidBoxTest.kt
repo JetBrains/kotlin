@@ -16,20 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.android.test
 
-import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.jet.config.CompilerConfiguration
 import java.io.File
 import com.intellij.util.Processor
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.JetTestUtils
 import java.util.regex.Pattern
 import com.intellij.openapi.util.io.FileUtil
 import java.util.ArrayList
 import java.util.Collections
 import com.intellij.util.ArrayUtil
-import org.jetbrains.jet.JetTestCaseBuilder
-import org.jetbrains.jet.codegen.CodegenTestFiles
+import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.codegen.CodegenTestFiles
 
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
@@ -96,7 +95,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         myFiles = CodegenTestFiles.create(
                 myEnvironment!!.getProject(),
                 ArrayUtil.toStringArray(files),
-                JetTestCaseBuilder.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
+                JetTestUtils.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
         )
         blackBox();
     }

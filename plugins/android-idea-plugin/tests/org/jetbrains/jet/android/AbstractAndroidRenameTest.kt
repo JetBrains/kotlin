@@ -21,12 +21,11 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 
 public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
 

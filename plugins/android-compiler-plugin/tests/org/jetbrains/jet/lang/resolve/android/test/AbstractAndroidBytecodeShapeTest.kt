@@ -16,18 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.android.test
 
-import org.jetbrains.jet.codegen.AbstractBytecodeTextTest
-import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.TestJdkKind
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.config.CompilerConfiguration
 
 public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 

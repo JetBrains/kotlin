@@ -18,17 +18,16 @@ package org.jetbrains.jet.lang.resolve.android.test
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.utils.emptyOrSingletonList
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
-import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
-import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 
 private class AndroidTestExternalDeclarationsProvider(
         val project: Project,
@@ -37,7 +36,7 @@ private class AndroidTestExternalDeclarationsProvider(
 ) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
         val parser = CliAndroidUIXmlProcessor(project, manifestPath, resPath)
-        return emptyOrSingletonList(parser.parseToPsi())
+        return parser.parseToPsi() ?: listOf()
     }
 }
 

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.android
 
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertTrue
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction

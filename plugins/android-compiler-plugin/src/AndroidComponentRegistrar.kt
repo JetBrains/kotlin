@@ -17,40 +17,38 @@
 package org.jetbrains.kotlin.android
 
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.mock.MockProject
-import org.jetbrains.jet.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.android.*
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.utils.emptyOrSingletonList
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.codegen.StackValue
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.codegen.ClassBuilder
 import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.codegen.FunctionCodegen
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetClassBody
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.codegen.FunctionCodegen
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 public object AndroidConfigurationKeys {
 
@@ -83,7 +81,7 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
         val parser = ServiceManager.getService<AndroidUIXmlProcessor>(project, javaClass<AndroidUIXmlProcessor>())
-        return emptyOrSingletonList(parser.parseToPsi())
+        return parser.parseToPsi() ?: listOf()
     }
 }
 
@@ -218,7 +216,7 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val androidResPath = configuration.get(AndroidConfigurationKeys.ANDROID_RES_PATH)
         val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
-        project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidResPath, androidManifest))
+        project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidManifest, androidResPath))
 
         ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
         ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())

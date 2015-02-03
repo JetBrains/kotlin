@@ -21,7 +21,6 @@ import com.android.ide.common.rendering.RenderSecurityManager;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.ex.GlobalInspectionContextImpl;
 import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
@@ -43,13 +42,14 @@ import com.intellij.testFramework.TestLogger;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -147,7 +147,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         }
 
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
         KotlinInternalMode.OBJECT$.setEnabled(true);
@@ -233,7 +233,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     @Override
     public void tearDown() throws Exception {
         KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
@@ -293,10 +293,10 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         scope.invalidate();
 
         final InspectionManagerEx inspectionManager = (InspectionManagerEx)InspectionManager.getInstance(getProject());
-        final GlobalInspectionContextImpl globalContext =
+        final GlobalInspectionContextForTests globalContext =
                 CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, wrapper);
 
-        InspectionTestUtil.runTool(wrapper, scope, globalContext, inspectionManager);
+        InspectionTestUtil.runTool(wrapper, scope, globalContext);
         InspectionTestUtil.compareToolResults(globalContext, wrapper, false, getTestDataPath() + globalTestDir);
     }
 

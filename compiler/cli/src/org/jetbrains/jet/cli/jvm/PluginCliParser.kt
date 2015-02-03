@@ -17,19 +17,13 @@
 package org.jetbrains.jet.cli.jvm
 
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import kotlin.platform.*
 import java.util.jar.JarFile
 import java.util.jar.Attributes
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import java.util.regex.Pattern
-import org.jetbrains.jet.utils.valuesToMap
-import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import java.net.URLClassLoader
 import java.net.URL
 import java.io.File
@@ -39,6 +33,9 @@ import java.io.IOException
 import java.util.Enumeration
 import org.jetbrains.kotlin.compiler.plugin.parsePluginOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionValue
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.utils.valuesToMap
+import org.jetbrains.kotlin.config.CompilerConfiguration
 
 
 public object PluginCliParser {
