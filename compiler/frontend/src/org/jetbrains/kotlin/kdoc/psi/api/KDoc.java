@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.kdoc.psi.api;
 
 import com.intellij.psi.PsiComment;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
+import org.jetbrains.kotlin.psi.JetDeclaration;
 
 // Don't implement JetElement (or it will be treated as statement)
 public interface KDoc extends PsiComment {
+    JetDeclaration getOwner();
     KDocSection getDefaultSection();
 }

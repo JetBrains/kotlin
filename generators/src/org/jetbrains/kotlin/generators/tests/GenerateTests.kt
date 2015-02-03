@@ -669,6 +669,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlinCoverageOutputFilesTest>()) {
             model("coverage/outputFiles")
         }
+
+        testClass(javaClass<AbstractReferenceResolveTest>(), "org.jetbrains.kotlin.idea.kdoc.KdocResolveTestGenerated") {
+            model("kdoc/resolve")
+        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
@@ -733,10 +737,14 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
         val testClass = TestClass()
         testClass.init()
 
+        val lastDot = suiteTestClass.lastIndexOf('.')
+        val suiteTestClassName = if (lastDot == -1) suiteTestClass else suiteTestClass.substring(lastDot+1)
+        val suiteTestClassPackage = if (lastDot == -1) baseTestClass.getPackage().getName() else suiteTestClass.substring(0, lastDot)
+
         TestGenerator(
                 testsRoot,
-                baseTestClass.getPackage()!!.getName()!!,
-                suiteTestClass,
+                suiteTestClassPackage,
+                suiteTestClassName,
                 baseTestClass,
                 testClass.testModels
         ).generateAndSave()
