@@ -4322,6 +4322,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeNullArgumentForNonNullParameter.kt")
+        public void testNullArgumentForNonNullParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeNullArgumentForNonNullParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforePropertyTypeMismatch.kt")
         public void testPropertyTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforePropertyTypeMismatch.kt");
