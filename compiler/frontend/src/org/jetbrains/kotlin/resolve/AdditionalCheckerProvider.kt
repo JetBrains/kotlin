@@ -30,6 +30,7 @@ public abstract class AdditionalCheckerProvider(
 ) {
 
     public val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
+    public val additionalTypeCheckers: List<AdditionalTypeChecker> = listOf()
 
     public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf()) {}
 }

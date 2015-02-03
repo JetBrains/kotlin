@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -44,6 +45,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final StatementFilter statementFilter;
 
+    public final AdditionalTypeChecker additionalTypeChecker;
+
     public final boolean isAnnotationContext;
 
     public final boolean collectAllCandidates;
@@ -56,6 +59,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
+            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates
@@ -68,6 +72,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.resolutionResultsCache = resolutionResultsCache;
         this.callChecker = callChecker;
         this.statementFilter = statementFilter;
+        this.additionalTypeChecker = additionalTypeChecker;
         this.isAnnotationContext = isAnnotationContext;
         this.collectAllCandidates = collectAllCandidates;
     }

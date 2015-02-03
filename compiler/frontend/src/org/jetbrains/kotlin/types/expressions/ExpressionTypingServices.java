@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
@@ -401,5 +402,11 @@ public class ExpressionTypingServices {
     public CallChecker getCallChecker() {
         List<CallChecker> checkers = expressionTypingComponents.additionalCheckerProvider.getCallCheckers();
         return new CompositeChecker(checkers);
+    }
+
+    @NotNull
+    public AdditionalTypeChecker getAdditionalTypeChecker() {
+        List<AdditionalTypeChecker> checkers = expressionTypingComponents.additionalCheckerProvider.getAdditionalTypeCheckers();
+        return new AdditionalTypeChecker.Composite(checkers);
     }
 }

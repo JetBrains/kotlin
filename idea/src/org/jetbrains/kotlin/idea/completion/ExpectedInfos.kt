@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 
 enum class Tail {
     COMMA
@@ -172,6 +173,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
                 ContextDependency.INDEPENDENT,
                 CheckValueArgumentsMode.ENABLED,
                 CompositeChecker(listOf()),
+                AdditionalTypeChecker.Composite(listOf()),
                 false).replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),
