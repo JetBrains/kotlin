@@ -44,8 +44,7 @@ public class IncrementalPackageFragmentProvider(
         val storageManager: StorageManager,
         val deserializationComponents: DeserializationComponents,
         val incrementalCache: IncrementalCache,
-        val moduleId: String,
-        val javaDescriptorResolver: JavaDescriptorResolver
+        val moduleId: String
 ) : PackageFragmentProvider {
 
     val packagePartsToNotLoadFromCache = (

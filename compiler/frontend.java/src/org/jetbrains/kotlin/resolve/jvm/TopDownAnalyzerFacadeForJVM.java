@@ -139,7 +139,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                             new IncrementalPackageFragmentProvider(
                                     files, module, topDownAnalysisParameters.getStorageManager(),
                                     injector.getDeserializationComponentsForJava().getComponents(),
-                                    incrementalCache, moduleId, injector.getJavaDescriptorResolver()
+                                    incrementalCache, moduleId
                             )
                     );
                 }
