@@ -932,7 +932,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
             return JetTypeInfo.create(components.builtIns.getBooleanType(), dataFlowInfo);
         }
-        ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
         JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
 
@@ -946,16 +945,30 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
         traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, components.builtIns.getNullableAnyType());
 
-        Call call = CallMaker.makeCallWithExpressions(expression, receiver, null, operationSign, Collections.singletonList(right));
+        // Nothing? has no members, and `equals()` would be unresolved on it
+        JetType leftType = leftTypeInfo.getType();
+        if (leftType != null && KotlinBuiltIns.isNothingOrNullableNothing(leftType)) {
+            traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, left, components.builtIns.getNullableAnyType());
+        }
+
         ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
+        ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, newContext);
+        Call call = CallMaker.makeCallWithExpressions(
+                expression,
+                receiver,
+                // semantically, a call to `==` is a safe call
+                new JetPsiFactory(expression.getProject()).createSafeCallNode(),
+                operationSign,
+                Collections.singletonList(right)
+        );
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
                 components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorConventions.EQUALS);
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
             public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
-                // the type of the right expression isn't 'Any?' actually
-                if (key == right && slice == EXPRESSION_TYPE) return false;
+                // the type of the right (and sometimes left) expression isn't 'Any?' actually
+                if ((key == right || key == left) && slice == EXPRESSION_TYPE) return false;
 
                 // a hack due to KT-678
                 // without this line an smartcast is reported on the receiver (if it was previously checked for not-null)
@@ -1153,6 +1166,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else if (nullability == Nullability.NOT_NULL) {
             expressionIsAlways = !equality;
+        }
+        else if (nullability == Nullability.IMPOSSIBLE) {
+            expressionIsAlways = false;
         }
         else return;
 

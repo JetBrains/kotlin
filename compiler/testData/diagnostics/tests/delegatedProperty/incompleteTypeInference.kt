@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 class A
 
 class D {
@@ -8,7 +10,6 @@ val cTopLevel: Int by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>IncorrectThis<A>()<!>
 
 class IncorrectThis<T> {
     fun get<R>(t: Any?, p: PropertyMetadata): Int {
-        t.equals(p) // to avoid UNUSED_PARAMETER warning
         return 1
     }
 }

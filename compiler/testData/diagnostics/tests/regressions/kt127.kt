@@ -2,7 +2,6 @@
 
 class Foo() {}
 
-fun Any.equals(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
 fun Any?.equals1(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
 
 fun main(args: Array<String>) {
@@ -14,5 +13,6 @@ fun main(args: Array<String>) {
     //   .equals(null) => 1; // must be resolved
     //   ?.equals(null) => 1 // same here
     // }
-    command.equals(null)
+    command.equals1(null)
+    command?.equals(null)
 }

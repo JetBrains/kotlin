@@ -30,7 +30,7 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testAnyEqualsNullable() throws InvocationTargetException, IllegalAccessException {
-        loadText("fun foo(x: Any?) = x.equals(\"lala\")");
+        loadText("fun foo(x: Any?) = x?.equals(\"lala\")");
         Method foo = generateFunction();
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));

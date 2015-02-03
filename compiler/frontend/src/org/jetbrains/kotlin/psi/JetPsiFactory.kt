@@ -54,6 +54,10 @@ public class JetPsiFactory(private val project: Project) {
         return createParameterList("($text int x)").getParameters().first().getValOrVarNode()!!
     }
 
+    public fun createSafeCallNode(): ASTNode {
+        return (createExpression("a?.b") as JetSafeQualifiedExpression).getOperationTokenNode()
+    }
+
     public fun createExpression(text: String): JetExpression {
         return createProperty("val x = $text").getInitializer()!!
     }

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.context.LazinessToken
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.psi.debugText.getDebugText
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -237,7 +238,7 @@ public class TypeResolver(
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
         })
-        return result ?: type(ErrorUtils.createErrorType(typeElement?.getText() ?: "No type element"))
+        return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): JetScope {

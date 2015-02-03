@@ -1,7 +1,6 @@
 package-fragment kotlin
 
 public fun </*0*/ reified T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
-public fun kotlin.Any?.equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
 public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
 public fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
 public fun kotlin.Any?.toString(): kotlin.String

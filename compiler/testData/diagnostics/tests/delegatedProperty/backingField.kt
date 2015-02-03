@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 class B {
     val a: Int by Delegate()
 
@@ -6,7 +8,6 @@ class B {
 
 class Delegate {
   fun get(t: Any?, p: PropertyMetadata): Int {
-    t.equals(p) // to avoid UNUSED_PARAMETER warning
     return 1
   }
 }
