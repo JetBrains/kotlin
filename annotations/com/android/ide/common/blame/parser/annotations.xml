@@ -1,0 +1,9 @@
+<root>
+    <item
+        name='com.android.ide.common.blame.parser.PatternAwareOutputParser boolean parse(java.lang.String, com.android.ide.common.blame.parser.util.OutputLineReader, java.util.List&lt;com.android.ide.common.blame.output.GradleMessage&gt;, com.android.utils.ILogger)'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun parse(p0: String, p1: OutputLineReader, p2: List&lt;GradleMessage&gt;, p3: ILogger): Boolean&quot;"/>
+        </annotation>
+    </item>
+</root>

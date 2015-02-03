@@ -32,7 +32,7 @@ public fun initializeOutputParser() {
         modifiersField.setInt(field, field.getModifiers() and Modifier.FINAL.inv())
 
         [suppress("UNCHECKED_CAST")]
-        val patternAwareClass = Class.forName("com.android.tools.idea.gradle.output.parser.PatternAwareOutputParser") as Class<out Any>
+        val patternAwareClass = Class.forName("com.android.ide.common.blame.parser.PatternAwareOutputParser") as Class<out Any>
 
         val array = field.get(null) as Array<*>
         val arrayTypeInstance = java.lang.reflect.Array.newInstance(patternAwareClass, array.size + 1)
