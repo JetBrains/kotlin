@@ -105,6 +105,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
 
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
+
+        for (target in chunk.getTargets()) {
+            val removedFiles = dirtyFilesHolder.getRemovedFiles(target)
+            val cache = incrementalCaches[target]!!
+            removedFiles.forEach { cache.fileIsDeleted(File(it)) }
+        }
+
         val environment = createCompileEnvironment(incrementalCaches)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -272,6 +279,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): IncrementalCacheImpl.RecompilationDecision {
         if (!IncrementalCompilation.ENABLED) {
             return DO_NOTHING
+        }
+
+        if (!compilationErrors) {
+            incrementalCaches.values().forEach { it.clearRemovedPackageParts () }
         }
 
         for ((target, cache) in incrementalCaches) {

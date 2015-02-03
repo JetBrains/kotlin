@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
+import com.intellij.util.io.BooleanDataDescriptor
+import java.util.ArrayList
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -54,7 +56,7 @@ private val CACHE_DIRECTORY_NAME = "kotlin"
 class CacheFormatVersion(targetDataRoot: File) {
     class object {
         // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 1
+        private val INCREMENTAL_CACHE_OWN_VERSION = 2
         private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
         val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
@@ -84,6 +86,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val CONSTANTS_MAP = "constants.tab"
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
+        val REMOVED_PACKAGE_PARTS = "removed-package-parts.tab"
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
@@ -91,8 +94,9 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val constantsMap = ConstantsMap()
     private val inlineFunctionsMap = InlineFunctionsMap()
     private val packagePartMap = PackagePartMap()
+    private val removedPackagePartMap = RemovedPackagePartMap()
 
-    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
+    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, removedPackagePartMap)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
 
@@ -150,9 +154,21 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<File>, outDirectory: File, compilationSuccessful: Boolean) {
-        removedSourceFiles.forEach { packagePartMap.remove(it) }
+    public fun fileIsDeleted(sourceFile: File) {
+        val wasPackagePart = packagePartMap[sourceFile]
+        packagePartMap.remove(sourceFile)
+        if (wasPackagePart != null) {
+            removedPackagePartMap.add(wasPackagePart)
+        }
+    }
 
+    public fun clearRemovedPackageParts() {
+        removedPackagePartMap.clear()
+    }
+
+    // TODO transitional function
+    deprecated("transitional function")
+    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<File>, outDirectory: File, compilationSuccessful: Boolean) {
         if (compilationSuccessful) {
             inlineFunctionsMap.clearOutdated(outDirectory)
             constantsMap.clearOutdated(outDirectory)
@@ -160,8 +176,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String?>): Collection<String> {
-        return packagePartMap.getRemovedPackageParts(sourceFilesToCompileAndFqNames)
+    public override fun getObsoletePackageParts(sourceFilesToCompile: Collection<File>): Collection<String> {
+        return (removedPackagePartMap.getRemovedParts() + sourceFilesToCompile.map { packagePartMap[it] }.filterNotNull()).toSet()
     }
 
     public override fun getPackageData(fqName: String): ByteArray? {
@@ -465,29 +481,28 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             storage.remove(sourceFile.getAbsolutePath())
         }
 
-        public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String?>): Collection<String> {
-            val result = HashSet<String>()
+        public fun get(sourceFile: File): String? {
+            return storage[sourceFile.getAbsolutePath()]
+        }
+    }
 
-            storage.processKeysWithExistingMapping { key ->
-                val sourceFile = File(key!!)
+    private inner class RemovedPackagePartMap : BasicMap<Boolean>() {
+        override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
+                File(baseDir, REMOVED_PACKAGE_PARTS),
+                EnumeratorStringDescriptor(),
+                BooleanDataDescriptor.INSTANCE
+        )
 
-                val packagePartClassName = storage[key]!!
-                if (!sourceFile.exists()) {
-                    result.add(packagePartClassName)
-                }
-                else {
-                    if (sourceFile in compiledSourceFilesToFqName) {
-                        val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
-                        if (compiledSourceFilesToFqName[sourceFile] != previousPackageFqName.asString()) {
-                            result.add(packagePartClassName)
-                        }
-                    }
-                }
+        public fun add(name: String) {
+            storage.put(name, true)
+        }
 
-                true
-            }
+        public fun getRemovedParts(): Collection<String> {
+            return storage.getAllKeysWithExistingMapping()
+        }
 
-            return result
+        public fun clear() {
+            storage.getAllKeysWithExistingMapping().forEach { storage.remove(it) }
         }
     }
 
