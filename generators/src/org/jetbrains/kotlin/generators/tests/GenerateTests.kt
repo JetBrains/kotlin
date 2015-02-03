@@ -107,6 +107,7 @@ import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
+import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
@@ -142,6 +143,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractResolvedCallsTest>()) {
             model("resolvedCalls")
+        }
+
+        testClass(javaClass<AbstractResolvedConstructorDelegationCallsTests>()) {
+            model("resolveConstructorDelegationCalls")
         }
 
         testClass(javaClass<AbstractConstraintSystemTest>()) {

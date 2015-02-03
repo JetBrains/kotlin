@@ -1,0 +1,24 @@
+package
+
+internal val b1: B
+internal val b2: B
+internal val b3: B
+internal val b4: B
+internal fun </*0*/ T> array(/*0*/ vararg x: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+
+internal final class A : B {
+    public constructor A()
+    public constructor A(/*0*/ x: kotlin.String)
+    public constructor A(/*0*/ x: kotlin.String, /*1*/ y: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class B {
+    public constructor B(/*0*/ vararg y: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public constructor B(/*0*/ x: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -161,10 +161,23 @@ public class LazyDeclarationResolver {
                     function.getValueParameters();
                     return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                 }
+                else if (grandFather instanceof JetSecondaryConstructor) {
+                    ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) visitSecondaryConstructor(
+                            (JetSecondaryConstructor) grandFather, data
+                    );
+                    constructorDescriptor.getValueParameters();
+                    return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
+                }
                 else {
                     //TODO: support parameters in accessors and other places(?)
                     return super.visitParameter(parameter, data);
                 }
+            }
+
+            @Override
+            public DeclarationDescriptor visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
+                getClassDescriptor((JetClassOrObject) constructor.getParent().getParent()).getConstructors();
+                return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override

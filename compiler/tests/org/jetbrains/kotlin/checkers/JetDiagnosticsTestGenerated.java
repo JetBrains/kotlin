@@ -10397,15 +10397,63 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("argumentsResolveInBodyAndDelegationCall.kt")
+            public void testArgumentsResolveInBodyAndDelegationCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/argumentsResolveInBodyAndDelegationCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorCallType.kt")
             public void testConstructorCallType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/constructorCallType.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("generics.kt")
+            public void testGenerics() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/generics.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("memberAccessBeforeSuperCall.kt")
+            public void testMemberAccessBeforeSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/memberAccessBeforeSuperCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noPrimaryConstructor.kt")
             public void testNoPrimaryConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/noPrimaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superAnyNonEmpty.kt")
+            public void testSuperAnyNonEmpty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/superAnyNonEmpty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superSecondaryNonExisting.kt")
+            public void testSuperSecondaryNonExisting() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/superSecondaryNonExisting.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("thisNonExisting.kt")
+            public void testThisNonExisting() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/thisNonExisting.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varargsInDelegationCallToPrimary.kt")
+            public void testVarargsInDelegationCallToPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/varargsInDelegationCallToPrimary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varargsInDelegationCallToSecondary.kt")
+            public void testVarargsInDelegationCallToSecondary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/varargsInDelegationCallToSecondary.kt");
                 doTest(fileName);
             }
         }

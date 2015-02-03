@@ -1,0 +1,22 @@
+open class B {
+    constructor(vararg x: Int) {}
+}
+
+class A : B {
+    <caret>constructor(vararg x: Int): super(*x, *intArray(1, 2, 3), 4) {}
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor B(vararg x: Int) defined in B
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : IntArray = x
+SUCCESS  x : IntArray = intArray(1, 2, 3)
+SUCCESS  x : IntArray = 4

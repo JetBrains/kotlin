@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -238,7 +240,7 @@ public class CallResolver {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
         }
         else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
-            return resolveCallForThisExpression(context, (JetConstructorDelegationReferenceExpression) calleeExpression);
+            return resolveConstructorDelegationCall(context, (JetConstructorDelegationReferenceExpression) calleeExpression);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -288,25 +290,45 @@ public class CallResolver {
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
 
-    private OverloadResolutionResults<FunctionDescriptor> resolveCallForThisExpression(
+    @NotNull
+    private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression
     ) {
-        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
-        if (containingDeclaration instanceof ConstructorDescriptor) {
-            containingDeclaration = containingDeclaration.getContainingDeclaration();
-        }
-        assert containingDeclaration instanceof ClassDescriptor;
+        ClassDescriptor currentClassDescriptor = getClassDescriptorByConstructorContext(context);
 
-        Collection<ConstructorDescriptor> constructors = ((ClassDescriptor) containingDeclaration).getConstructors();
+        ClassDescriptor delegateClassDescriptor = calleeExpression.isThis() ? currentClassDescriptor :
+                                                   DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);
+        Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
+
         if (constructors.isEmpty()) {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
-        List<ResolutionCandidate<CallableDescriptor>> candidates =
-                ResolutionCandidate.<CallableDescriptor>convertCollection(context.call, constructors);
+
+        List<ResolutionCandidate<CallableDescriptor>> candidates = Lists.newArrayList();
+        ReceiverValue constructorDispatchReceiver = !delegateClassDescriptor.isInner() ? ReceiverValue.NO_RECEIVER :
+                                                    ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
+                                                            getThisAsReceiverParameter().getValue();
+
+        for (CallableDescriptor descriptor : constructors) {
+            candidates.add(ResolutionCandidate.create(
+                    context.call, descriptor, constructorDispatchReceiver, ReceiverValue.NO_RECEIVER,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+            ));
+        }
 
         return computeTasksFromCandidatesAndResolvedCall(context, calleeExpression, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+    }
+
+    @NotNull
+    private static ClassDescriptor getClassDescriptorByConstructorContext(@NotNull BasicCallResolutionContext context) {
+        DeclarationDescriptor containingDeclaration = context.scope.getContainingDeclaration();
+        if (containingDeclaration instanceof ConstructorDescriptor) {
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
+        assert containingDeclaration != null : "Grandparent of delegation call should be a class descriptor";
+        return (ClassDescriptor) containingDeclaration;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

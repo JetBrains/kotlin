@@ -1,0 +1,18 @@
+class A(x: Double) {
+    constructor(x: Int) {}
+    constructor(x: String) {}
+    <caret>constructor(): this("abc") {}
+}
+
+
+Resolved call:
+
+Resulting descriptor: constructor A(x: String) defined in A
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  x : String = "abc"

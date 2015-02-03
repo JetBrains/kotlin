@@ -1,0 +1,6 @@
+class A() {
+    <caret>constructor(): this() {}
+}
+
+
+null

@@ -1,0 +1,24 @@
+package
+
+internal val global: kotlin.Int = 1
+
+internal final class A : B {
+    public constructor A(/*0*/ x: B, /*1*/ y: kotlin.Int = ...)
+    public constructor A(/*0*/ x: kotlin.Double, /*1*/ y: kotlin.Int)
+    public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int = ...)
+    public constructor A(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Int)
+    internal final val myProp: kotlin.Int = 1
+    internal open override /*1*/ val parentProp: kotlin.Int = 1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class B {
+    public constructor B(/*0*/ parentProp: kotlin.Int)
+    internal open val parentProp: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

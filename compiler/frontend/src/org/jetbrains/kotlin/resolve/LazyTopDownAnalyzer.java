@@ -209,7 +209,6 @@ public class LazyTopDownAnalyzer {
                         @Override
                         public void visitClass(@NotNull JetClass klass) {
                             visitClassOrObject(klass);
-
                             registerPrimaryConstructorParameters(klass);
                         }
 
@@ -222,6 +221,15 @@ public class LazyTopDownAnalyzer {
                                     );
                                 }
                             }
+                        }
+
+                        @Override
+                        public void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
+                            c.getSecondaryConstructors().put(
+                                    constructor,
+                                    (ConstructorDescriptor) lazyDeclarationResolver.resolveToDescriptor(constructor)
+                            );
+                            registerScope(c, constructor);
                         }
 
                         @Override
