@@ -47,6 +47,8 @@ import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import com.intellij.util.io.BooleanDataDescriptor
 import java.util.ArrayList
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.utils.Printer
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -99,6 +101,11 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, removedPackagePartMap)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
+
+    TestOnly
+    public fun dump(): String {
+        return maps.map { it.dump() }.join("\n\n")
+    }
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
@@ -231,6 +238,26 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         public fun close() {
             storage.close()
         }
+
+        TestOnly
+        public fun dump(): String {
+            return with(StringBuilder()) {
+                with(Printer(this)) {
+                    println(this@BasicMap.javaClass.getSimpleName())
+                    pushIndent()
+
+                    for (key in storage.getAllKeysWithExistingMapping().sort()) {
+                        println("$key -> ${dumpValue(storage[key])}")
+                    }
+
+                    popIndent()
+                }
+
+                this
+            }.toString()
+        }
+
+        protected abstract fun dumpValue(value: V): String
     }
 
     private abstract class ClassFileBasedMap<V> : BasicMap<V>() {
@@ -275,6 +302,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         public fun get(className: JvmClassName): ByteArray? {
             return storage[className.getInternalName()]
         }
+
+        override fun dumpValue(value: ByteArray): String {
+            return java.lang.Long.toHexString(value.md5())
+        }
     }
 
     private inner class ConstantsMap : ClassFileBasedMap<Map<String, Any>>() {
@@ -318,6 +349,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 storage.remove(key)
             }
             return true
+        }
+
+        override fun dumpValue(value: Map<String, Any>): String {
+            return StringBuilder {
+                append("{")
+                for (key in value.keySet().sort()) {
+                    if (length() != 1) {
+                        append(", ")
+                    }
+                    append("$key -> ${value[key]}")
+                }
+                append("}")
+            }.toString()
         }
     }
 
@@ -437,6 +481,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             }
             return true
         }
+
+        override fun dumpValue(value: Map<String, Long>): String {
+            return StringBuilder {
+                append("{")
+                for (key in value.keySet().sort()) {
+                    if (length() != 1) {
+                        append(", ")
+                    }
+                    append("$key -> ${java.lang.Long.toHexString(value[key]!!)}")
+                }
+                append("}")
+            }.toString()
+        }
     }
 
     private object InlineFunctionsMapExternalizer : DataExternalizer<Map<String, Long>> {
@@ -484,6 +541,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         public fun get(sourceFile: File): String? {
             return storage[sourceFile.getAbsolutePath()]
         }
+
+        override fun dumpValue(value: String) = value
     }
 
     private inner class RemovedPackagePartMap : BasicMap<Boolean>() {
@@ -504,6 +563,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         public fun clear() {
             storage.getAllKeysWithExistingMapping().forEach { storage.remove(it) }
         }
+
+        override fun dumpValue(value: Boolean) = ""
     }
 
     enum class RecompilationDecision {
