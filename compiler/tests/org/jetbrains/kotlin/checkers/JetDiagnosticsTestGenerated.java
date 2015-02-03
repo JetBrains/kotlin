@@ -6780,6 +6780,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt6720_abstractProperty.kt")
+            public void testKt6720_abstractProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt6720_abstractProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("mutableIterator.kt")
             public void testMutableIterator() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");

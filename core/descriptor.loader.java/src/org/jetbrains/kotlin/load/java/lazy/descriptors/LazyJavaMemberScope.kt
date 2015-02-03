@@ -219,6 +219,8 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
+    protected abstract fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+
     private val properties = c.storageManager.createMemoizedFunction {
         (name: Name) ->
         val properties = ArrayList<PropertyDescriptor>()
@@ -288,9 +290,6 @@ public abstract class LazyJavaMemberScope(
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
 
-    // we do not have nameFilter here because it only makes sense in package but java package does not contain any properties
-    protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
-
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
@@ -321,7 +320,7 @@ public abstract class LazyJavaMemberScope(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
-            for (name in getAllPropertyNames()) {
+            for (name in getPropertyNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name))
                 }

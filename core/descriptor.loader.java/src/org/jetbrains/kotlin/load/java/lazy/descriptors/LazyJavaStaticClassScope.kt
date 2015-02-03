@@ -49,7 +49,10 @@ public class LazyJavaStaticClassScope(
         }
         return super.getFunctionNames(kindFilter, nameFilter)
     }
-    
+
+    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
+            memberIndex().getAllFieldNames()
+
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 

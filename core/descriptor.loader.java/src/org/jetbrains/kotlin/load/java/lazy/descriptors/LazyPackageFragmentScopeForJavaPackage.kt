@@ -110,7 +110,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun getSubPackages() = subPackages()
 
-    override fun getAllPropertyNames() = listOf<Name>()
+    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
