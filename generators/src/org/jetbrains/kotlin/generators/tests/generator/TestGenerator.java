@@ -48,6 +48,7 @@ public class TestGenerator {
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
     private static final Class RUNNER = JUnit3RunnerWithInners.class;
 
+    private final String baseTestClassPackage;
     private final String suiteClassPackage;
     private final String suiteClassName;
     private final String baseTestClassName;
@@ -63,6 +64,7 @@ public class TestGenerator {
     ) {
         this.suiteClassPackage = suiteClassPackage;
         this.suiteClassName = suiteClassName;
+        this.baseTestClassPackage = baseTestClass.getPackage().getName();
         this.baseTestClassName = baseTestClass.getSimpleName();
         this.testClassModels = Lists.newArrayList(testClassModels);
 
@@ -84,6 +86,9 @@ public class TestGenerator {
         p.println("import " + InnerTestClasses.class.getCanonicalName() + ";");
         p.println("import ", RUNNER.getCanonicalName(), ";");
         p.println("import " + JetTestUtils.class.getCanonicalName() + ";");
+        if (!suiteClassPackage.equals(baseTestClassPackage)) {
+            p.println("import " + baseTestClassPackage + "." + baseTestClassName + ";");
+        }
         p.println("import " + TestMetadata.class.getCanonicalName() + ";");
         p.println("import " + RunWith.class.getCanonicalName() + ";");
         p.println();
