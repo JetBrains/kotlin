@@ -15,7 +15,7 @@ open class AllEvenNum() {
                         }
 
                     }
-                (i = i + 1)
+                i = i + 1
             }
         }
 

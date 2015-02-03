@@ -416,11 +416,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
-        return basic.visitParenthesizedExpression(expression, context, true);
-    }
-
-    @Override
     public JetTypeInfo visitLabeledExpression(@NotNull JetLabeledExpression expression, ExpressionTypingContext context) {
         return basic.visitLabeledExpression(expression, context, true);
     }

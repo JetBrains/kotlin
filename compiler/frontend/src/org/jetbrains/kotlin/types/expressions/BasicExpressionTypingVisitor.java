@@ -107,15 +107,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
-        return visitParenthesizedExpression(expression, context, false);
-    }
-
-    public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context, boolean isStatement) {
         JetExpression innerExpression = expression.getExpression();
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
+        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
     }
 
     @Override
