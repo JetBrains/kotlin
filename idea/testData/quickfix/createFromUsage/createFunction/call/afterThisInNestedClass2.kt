@@ -7,7 +7,7 @@ class A<T>(val n: T) {
         }
     }
 
-    fun foo(i: Int, s: String): A<Int> {
+    private fun foo(i: Int, s: String): A<Int> {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

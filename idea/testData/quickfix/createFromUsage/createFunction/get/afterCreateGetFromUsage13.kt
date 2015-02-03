@@ -8,7 +8,7 @@ class Foo<T> {
         bar(z)
     }
 
-    fun <V> get(s: String, w: ArrayList<V>): String {
+    private fun <V> get(s: String, w: ArrayList<V>): String {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

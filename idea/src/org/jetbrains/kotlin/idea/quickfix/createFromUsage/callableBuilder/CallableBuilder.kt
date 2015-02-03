@@ -72,6 +72,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.actions.EditorActionUtil
 import com.intellij.openapi.editor.actions.LineEndAction
 import com.intellij.openapi.editor.actions.EnterAction
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -392,8 +393,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val psiFactory = JetPsiFactory(currentFile)
 
+                val modifiers =
+                        if (containingElement is JetClassOrObject && containingElement.isAncestor(config.originalElement))
+                            "private "
+                        else ""
+
                 val declaration : JetNamedDeclaration = when (callableInfo.kind) {
-                    CallableKind.FUNCTION -> psiFactory.createFunction("fun<> $header {}")
+                    CallableKind.FUNCTION -> psiFactory.createFunction("${modifiers}fun<> $header {}")
                     CallableKind.CONSTRUCTOR -> {
                         with((callableInfo as ConstructorInfo).classInfo) {
                             val classBody = when (kind) {
@@ -422,7 +428,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                     CallableKind.PROPERTY -> {
                         val valVar = if ((callableInfo as PropertyInfo).writable) "var" else "val"
-                        psiFactory.createProperty("$valVar<> $header")
+                        psiFactory.createProperty("$modifiers$valVar<> $header")
                     }
                 }
 

@@ -6,7 +6,7 @@ class Foo<S> {
         val z: Iterable<T> = y["", w]
     }
 
-    fun get(s: String, w: S): S {
+    private fun get(s: String, w: S): S {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
