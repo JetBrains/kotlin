@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.extensions
 
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.psi.JetFile
 
 public trait ExternalDeclarationsProvider {
     class object : ProjectExtensionDescriptor<ExternalDeclarationsProvider>(

@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.psi.JetFile
 import java.util.ArrayList
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
 import kotlin.platform.platformStatic
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.psi.JetFile
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,

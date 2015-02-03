@@ -32,17 +32,18 @@ public class CliAndroidUIXmlProcessor(
         CliAndroidResourceManager(project, manifestPath, mainResDirectory)
     }
 
-    override fun parseSingleFile(file: PsiFile): String {
-        val ids: MutableCollection<AndroidWidget> = ArrayList()
-        val handler = AndroidXmlHandler(resourceManager, { id, clazz -> ids.add(AndroidWidget(id, clazz)) })
+    override fun parseSingleFile(file: PsiFile): Collection<AndroidWidget> {
+        val widgets: MutableCollection<AndroidWidget> = ArrayList()
+        val handler = AndroidXmlHandler(resourceManager, { id, clazz -> widgets.add(AndroidWidget(id, clazz)) })
+
         try {
             val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
             resourceManager.saxParser.parse(inputStream, handler)
-            return produceKotlinProperties(KotlinStringWriter(), ids).toString()
+            return widgets
         }
         catch (e: Throwable) {
             LOG.error(e)
-            return ""
+            return listOf()
         }
     }
 }

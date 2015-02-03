@@ -18,11 +18,10 @@ package org.jetbrains.jet.android
 
 import com.intellij.openapi.application.PathManager
 import com.android.SdkConstants
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.fail
 import kotlin.test.assertEquals
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 
 public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 

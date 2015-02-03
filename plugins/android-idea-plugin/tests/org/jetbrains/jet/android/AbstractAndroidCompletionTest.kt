@@ -16,23 +16,19 @@
 
 package org.jetbrains.jet.android
 
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.application.PathManager
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import org.jetbrains.jet.completion.util.testCompletion
-import org.jetbrains.jet.plugin.project.TargetPlatform
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.openapi.startup.StartupManager
-import org.jetbrains.jet.JetTestCaseBuilder
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.PsiManager
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
 import com.android.SdkConstants
 import com.intellij.codeInsight.CodeInsightSettings
+import org.jetbrains.kotlin.completion.util.testCompletion
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 
 public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.compiler.plugin
 
-import org.jetbrains.jet.config.CompilerConfigurationKey
-import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.CompilerConfiguration
 
 public trait ComponentRegistrar {
     class object {

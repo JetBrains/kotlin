@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jet.jps.build.KotlinJpsCompilerArgumentsProvider
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {

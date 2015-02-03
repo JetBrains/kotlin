@@ -31,12 +31,13 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
 
     override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
 
-    override fun parseSingleFile(file: PsiFile): String {
-        val ids = arrayListOf<AndroidWidget>()
+    override fun parseSingleFile(file: PsiFile): List<AndroidWidget> {
+        val widgets = arrayListOf<AndroidWidget>()
         file.accept(AndroidXmlVisitor(resourceManager, { id, wClass, valueElement ->
-            ids.add(AndroidWidget(id, wClass))
+            widgets.add(AndroidWidget(id, wClass))
         }))
-        return produceKotlinProperties(KotlinStringWriter(), ids).toString()
+
+        return widgets
     }
 
 }

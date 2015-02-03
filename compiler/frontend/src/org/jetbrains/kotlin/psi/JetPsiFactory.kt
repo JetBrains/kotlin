@@ -31,7 +31,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiComment
-import org.jetbrains.jet.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())

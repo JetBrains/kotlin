@@ -46,10 +46,10 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
-import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -147,7 +147,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         }
 
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.OBJECT$.getEnabled();
         KotlinInternalMode.OBJECT$.setEnabled(true);
@@ -233,7 +233,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     @Override
     public void tearDown() throws Exception {
         KotlinInternalMode.OBJECT$.setEnabled(kotlinInternalModeOriginalValue);
-        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();

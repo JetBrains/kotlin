@@ -18,8 +18,8 @@ package org.jetbrains.jet.plugin.findUsages.handlers
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public trait SimpleNameReferenceExtension {
     class object {

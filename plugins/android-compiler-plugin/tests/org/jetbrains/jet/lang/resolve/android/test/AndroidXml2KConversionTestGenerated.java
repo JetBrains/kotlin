@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve.android.test;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
-import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.kotlin.test.InnerTestClasses;
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
+import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -36,7 +36,9 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Simple extends AbstractAndroidXml2KConversionTest {
         public void testAllFilesPresentInSimple() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/simple"), Pattern.compile("^([^\\.]+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(),
+                                                         new File("plugins/android-compiler-plugin/testData/android/converter/simple"),
+                                                         Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("fqNameInAttr")

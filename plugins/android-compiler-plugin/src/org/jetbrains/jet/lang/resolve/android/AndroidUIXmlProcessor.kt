@@ -59,61 +59,79 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
-    private val androidImports = arrayListOf("android.app.Activity",
-                                     "android.view.View",
-                                     "android.widget.*")
+    private val androidImports = listOf(
+            "android.app.Activity",
+            "android.view.View",
+            "android.widget.*")
 
-    private val cachedSourceText = CachedValuesManager.getManager(project).createCachedValue {
+    private val cachedSources = cachedValue {
         Result.create(parse(), ProjectRootModificationTracker.getInstance(project))
     }
 
-    private val cachedJetFile = CachedValuesManager.getManager(project).createCachedValue {
-        //TODO: dep checking .. cachedSourceText.getValue()
-        val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME, parse()) //cachedSourceTest.getValue()
-        val jetFile = PsiManager.getInstance(project).findFile(virtualFile) as JetFile
-
+    private val cachedJetFiles = cachedValue {
+        val psiManager = PsiManager.getInstance(project)
         val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
-        if (applicationPackage != null) jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
 
-        Result.create(jetFile, cachedSourceText)
+        val jetFiles = cachedSources.getValue().mapIndexed { (index, text) ->
+            val virtualFile = LightVirtualFile(AndroidConst.SYNTHETIC_FILENAME + index + ".kt", text)
+            val jetFile = psiManager.findFile(virtualFile) as JetFile
+            if (applicationPackage != null) {
+                jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
+            }
+            jetFile
+        }
+
+        Result.create(jetFiles, cachedSources)
     }
 
     public abstract val resourceManager: AndroidResourceManager
 
     protected val LOG: Logger = Logger.getInstance(javaClass)
 
-    public fun parse(): String {
-        val buffer = writeImports(KotlinStringWriter()).output()
-        for (file in resourceManager.getLayoutXmlFiles()) {
-            buffer.append(parseSingleFile(file))
-        }
-        return buffer.toString()
+    public fun parse(): List<String> {
+        return resourceManager.getLayoutXmlFiles().map { file ->
+            val widgets = parseSingleFile(file)
+            if (widgets.isNotEmpty()) {
+                val layoutPackage = file.genSyntheticPackageName()
+                val stringWriter = KotlinStringWriter()
+
+                stringWriter.writePackage(layoutPackage)
+                stringWriter.writeAndroidImports()
+                widgets.forEach { stringWriter.writeSyntheticActivityProperty(it) }
+
+                val contents = stringWriter.toStringBuffer().toString()
+                contents
+            } else null
+        }.filterNotNull()
     }
 
-    public fun parseToPsi(): JetFile? = cachedJetFile.getValue()
+    public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
 
-    protected abstract fun parseSingleFile(file: PsiFile): String
+    protected abstract fun parseSingleFile(file: PsiFile): Collection<AndroidWidget>
 
-    private fun writeImports(kw: KotlinStringWriter): KotlinWriter {
-        val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
-        if (applicationPackage != null) kw.writePackage(applicationPackage)
-
-        for (elem in androidImports) {
-            kw.writeImport(elem)
-        }
-
-        kw.writeEmptyLine()
-        return kw
+    private fun KotlinStringWriter.writeAndroidImports() {
+        androidImports.forEach { writeImport(it) }
+        writeEmptyLine()
     }
 
-    protected fun produceKotlinProperties(kw: KotlinStringWriter, ids: Collection<AndroidWidget>): StringBuffer {
-        for (id in ids) {
-            val body = arrayListOf("return findViewById(0) as ${id.className}")
-            kw.writeImmutableExtensionProperty(receiver = "Activity",
-                                               name = id.id,
-                                               retType = id.className,
-                                               getterBody = body)
-        }
-        return kw.output()
+    private fun PsiFile.genSyntheticPackageName(): String {
+        val name = getName()
+        val extensionIndex = name.lastIndexOf('.')
+        val nameWithoutExtension = if (extensionIndex < 0) name else name.substring(0, extensionIndex)
+        val subpackage = nameWithoutExtension.replace('.', '_')
+        return AndroidConst.SYNTHETIC_PACKAGE + subpackage
     }
+
+    private fun KotlinStringWriter.writeSyntheticActivityProperty(widget: AndroidWidget) {
+        val body = arrayListOf("return findViewById(0) as ${widget.className}")
+        writeImmutableExtensionProperty(receiver = "Activity",
+                                           name = widget.id,
+                                           retType = widget.className,
+                                           getterBody = body)
+    }
+
+    private fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
+        return CachedValuesManager.getManager(project).createCachedValue(result, false)
+    }
+
 }

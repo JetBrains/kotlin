@@ -54,6 +54,7 @@ public abstract class AndroidResourceManager(val project: Project) {
         val allChildren = resDirectory?.getAllChildren() ?: listOf()
 
         return allChildren
+                .filter { it.getParent().getName().startsWith("layout") && it.getName().toLowerCase().endsWith(".xml") }
                 .map { psiManager.findFile(it) }
                 .filterNotNull()
                 .sortBy { it.getName() }

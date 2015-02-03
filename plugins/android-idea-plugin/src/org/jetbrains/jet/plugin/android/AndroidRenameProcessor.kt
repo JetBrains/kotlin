@@ -18,8 +18,6 @@ package org.jetbrains.jet.plugin.android
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.jet.asJava.*
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
@@ -30,15 +28,20 @@ import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
-import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.moduleInfo
 import org.jetbrains.jet.lang.resolve.android.nameToIdDeclaration
 import org.jetbrains.jet.lang.resolve.android.idToName
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
+import org.jetbrains.jet.lang.resolve.android.AndroidConst
+import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.module.ModuleUtilCore
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.moduleInfo
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
@@ -54,9 +57,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             val outerClass = element.getParent()?.getParent()
             if (outerClass !is PsiClass) return false
 
-            val processor = ModuleServiceManager.getService<AndroidUIXmlProcessor>(element.getModule(), javaClass<AndroidUIXmlProcessor>())
-            val packageName = processor.resourceManager.androidModuleInfo?.applicationPackage ?: ""
-            if (outerClass.getQualifiedName()?.startsWith(packageName) ?: false)
+            if (outerClass.getQualifiedName()?.startsWith(AndroidConst.SYNTHETIC_PACKAGE) ?: false)
                 true else false
         }
         else false
@@ -109,7 +110,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         allRenames[XmlAttributeValueWrapper(attr.getValueElement())] = nameToIdDeclaration(newName)
         val name = AndroidResourceUtil.getResourceNameByReferenceText(newName)
         for (resField in AndroidResourceUtil.findIdFields(attr)) {
-            allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name!!))
+            allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name))
         }
     }
 
@@ -120,12 +121,13 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             scope: SearchScope
     ) {
         val element = LazyValueResourceElementWrapper.computeLazyElement(attribute)
-        val module = attribute.getModule()
+        val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
+                attribute.getContainingFile().getVirtualFile(), attribute.getProject())
         if (module == null) return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
         if (element == null) return
-        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue()!!)
+        val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
         val newPropName = idToName(newName)
         renameSyntheticProperties(allRenames, newPropName, oldPropName, processor)
     }
@@ -136,7 +138,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             oldPropName: String,
             processor: AndroidUIXmlProcessor
     ) {
-        val props = processor.parseToPsi()?.findChildrenByClass(javaClass<JetProperty>())
+        val props = processor.parseToPsi()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
         val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
         for (prop in matchedProps) {
             allRenames[prop] = newPropName

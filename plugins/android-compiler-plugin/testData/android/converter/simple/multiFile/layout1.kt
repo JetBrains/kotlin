@@ -1,18 +1,18 @@
-package kotlinx.android.synthetic.layout
+package kotlinx.android.synthetic.layout1
 
 import android.app.Activity
 import android.view.View
 import android.widget.*
 
-val Activity.item_detail_container: FrameLayout
+val Activity.frameLayout: FrameLayout
     get() = findViewById(0) as FrameLayout
 
-val Activity.textView1: TextView
+val Activity.passwordField: TextView
     get() = findViewById(0) as TextView
 
-val Activity.password: EditText
+val Activity.passwordCaption: EditText
     get() = findViewById(0) as EditText
 
-val Activity.login: Button
+val Activity.loginButton: Button
     get() = findViewById(0) as Button
 

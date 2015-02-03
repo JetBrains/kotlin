@@ -23,15 +23,15 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.PsiField
 import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.jet.plugin.caches.resolve.getModuleInfo
-import org.jetbrains.jet.plugin.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 

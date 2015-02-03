@@ -21,12 +21,11 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetProperty
 
 public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
 
@@ -38,32 +37,27 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         f.copyDirectoryToProject(getResDir()!!, "res")
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
         f.configureFromExistingVirtualFile(virtualFile)
+
         val editor = f.getEditor()
         val file = f.getFile()
         val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
-        val element = TargetElementUtilBase.findTargetElement(completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
+        val element = TargetElementUtilBase.findTargetElement(completionEditor,
+              TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
+
         assert(element != null)
         assertTrue(element is JetProperty)
 
-        // rename xml attribute by property
-        renameElementWithTextOccurences(element, NEW_NAME)
+        RenameProcessor(f.getProject(), element, NEW_NAME, false, true).run()
+
+        // Rename xml attribute by property
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
         assertEquals("\"@+id/$NEW_NAME\"", resolved?.getText())
 
-        // rename property by attribute
-        renameElementWithTextOccurences(resolved!!, "@+id/$OLD_NAME")
-        assertEquals(OLD_NAME, (f.getElementAtCaret() as JetProperty).getName())
-    }
+        // Rename property by attribute
+        val attributeElement = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
+        RenameProcessor(f.getProject(), attributeElement, "@+id/$OLD_NAME", false, true).run()
 
-    private fun renameElementWithTextOccurences(element: PsiElement, newName: String) {
-        val f = myFixture!!
-        object : WriteCommandAction.Simple<Unit>(f.getProject()) {
-            protected override fun run() {
-                val editor = f.getEditor()
-                val substitution = RenamePsiElementProcessor.forElement(element).substituteElementToRename(element, editor)
-                RenameProcessor(f.getProject(), substitution, newName, false, true).run()
-            }
-        }.execute().throwException()
+        assertEquals(OLD_NAME, (f.getElementAtCaret() as JetProperty).getName())
     }
 
     override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
