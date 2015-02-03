@@ -24,10 +24,11 @@ import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.getApproximationTo
 import org.jetbrains.kotlin.types.Approximation
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.resolve.BindingContext
-import kotlin.properties.Delegates
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 
 public class TypeApproximator : AdditionalTypeChecker {
     override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
@@ -51,4 +52,11 @@ public class TypeApproximator : AdditionalTypeChecker {
             c.trace.record(BindingContext.EXPRESSION_RESULT_APPROXIMATION, expression, approximationInfo)
         }
     }
+
+    override fun checkReceiver(
+            receiverParameter: ReceiverParameterDescriptor,
+            receiverArgument: ReceiverValue,
+            safeAccess: Boolean,
+            c: CallResolutionContext<*>
+    ) { }
 }

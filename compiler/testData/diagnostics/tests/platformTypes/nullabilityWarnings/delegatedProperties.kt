@@ -22,5 +22,5 @@ public class J {
 import p.*
 
 var A by J.staticNN
-var B by J.staticN
+var B by <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
 var C by J.staticJ

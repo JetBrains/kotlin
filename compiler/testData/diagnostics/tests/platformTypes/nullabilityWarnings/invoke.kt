@@ -21,7 +21,7 @@ import p.*
 
 fun test() {
     J.staticNN()
-    J.staticN()
+    J.<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>staticN<!>()
     J.staticJ()
 }
 

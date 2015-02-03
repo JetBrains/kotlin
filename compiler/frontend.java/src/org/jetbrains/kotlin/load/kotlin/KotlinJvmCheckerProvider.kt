@@ -52,6 +52,13 @@ import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
         annotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
@@ -152,16 +159,68 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         return null
     }
 
-    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
-        if (TypeUtils.noExpectedType(c.expectedType)) return
+    private fun doCheckType(
+            expressionType: JetType,
+            expectedType: JetType,
+            dataFlowValue: DataFlowValue,
+            dataFlowInfo: DataFlowInfo,
+            reportWarning: (expectedMustNotBeNull: NullabilityInformationSource, actualMayBeNull: NullabilityInformationSource) -> Unit
+    ) {
+        if (TypeUtils.noExpectedType(expectedType)) return
 
-        val expectedMustNotBeNull = c.expectedType.mustNotBeNull()
-        val actualNullabilityInKotlin = c.dataFlowInfo.getNullability(DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext()))
-        val actualMayBeNull = if (!actualNullabilityInKotlin.canBeNull()) null else expressionType.mayBeNull()
+        val expectedMustNotBeNull = expectedType.mustNotBeNull()
+        val actualNullabilityInKotlin = dataFlowInfo.getNullability(dataFlowValue)
+        val actualMayBeNull = if (actualNullabilityInKotlin == Nullability.NOT_NULL) null else expressionType.mayBeNull()
+
+        if (expectedMustNotBeNull == NullabilityInformationSource.KOTLIN && actualMayBeNull == NullabilityInformationSource.KOTLIN) {
+            // a type mismatch error will be reported elsewhere
+            return;
+        }
 
         if (expectedMustNotBeNull != null && actualMayBeNull != null) {
+            reportWarning(expectedMustNotBeNull, actualMayBeNull)
+        }
+    }
+
+    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
+        doCheckType(
+                expressionType,
+                c.expectedType,
+                DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext()),
+                c.dataFlowInfo
+        ) {
+            expectedMustNotBeNull,
+            actualMayBeNull ->
             c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedMustNotBeNull, actualMayBeNull))
         }
     }
 
+    override fun checkReceiver(
+            receiverParameter: ReceiverParameterDescriptor,
+            receiverArgument: ReceiverValue,
+            safeAccess: Boolean,
+            c: CallResolutionContext<*>
+    ) {
+        if (!safeAccess) {
+            doCheckType(
+                    receiverArgument.getType(),
+                    receiverParameter.getType(),
+                    DataFlowValueFactory.createDataFlowValue(receiverArgument, c.trace.getBindingContext()),
+                    c.dataFlowInfo
+            ) {
+                expectedMustNotBeNull,
+                actualMayBeNull ->
+                val reportOn =
+                        if (receiverArgument is ExpressionReceiver)
+                            receiverArgument.getExpression()
+                        else
+                            c.call.getCalleeExpression() ?: c.call.getCallElement()
+
+                c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(
+                        reportOn, expectedMustNotBeNull, actualMayBeNull
+                ))
+
+            }
+        }
+    }
 }

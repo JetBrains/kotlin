@@ -30,7 +30,7 @@ fun test() {
     val platformJ = J.staticJ
 
     val (a1, b1) = platformNN
-    val (a2, b2) = platformN
+    val (a2, b2) = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     val (a3, b3) = platformJ
 }
 

@@ -24,15 +24,15 @@ fun test() {
     var platformJ = J.staticJ
 
     +platformNN
-    +platformN
+    +<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     +platformJ
 
     ++platformNN
-    ++platformN
+    ++<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     ++platformJ
 
     platformNN++
-    platformN++
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>++
     platformJ++
 
     1 + platformNN
@@ -40,7 +40,7 @@ fun test() {
     1 + platformJ
 
     platformNN + 1
-    platformN + 1
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> + 1
     platformJ + 1
 
     1 plus platformNN
@@ -48,11 +48,11 @@ fun test() {
     1 plus platformJ
 
     platformNN plus 1
-    platformN plus 1
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> plus 1
     platformJ plus 1
 
     platformNN += 1
-    platformN += 1
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> += 1
     platformJ += 1
 }
 

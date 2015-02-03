@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 // FILE: p/J.java
 package p;
 
@@ -26,6 +28,19 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN.foo()
-    platformN.foo()
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>.foo()
     platformJ.foo()
+
+    with(platformNN) {
+        foo()
+    }
+    with(platformN) {
+        <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>foo<!>()
+    }
+    with(platformJ) {
+        foo()
+    }
 }
+
+fun <T> with(t: T, f: T.() -> Unit) {}
+

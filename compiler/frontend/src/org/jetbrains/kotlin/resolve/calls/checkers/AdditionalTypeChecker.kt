@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 
 public trait AdditionalTypeChecker {
 
@@ -28,7 +31,24 @@ public trait AdditionalTypeChecker {
                 checker.checkType(expression, expressionType, c)
             }
         }
+
+        override fun checkReceiver(
+                receiverParameter: ReceiverParameterDescriptor,
+                receiverArgument: ReceiverValue,
+                safeAccess: Boolean,
+                c: CallResolutionContext<*>
+        ) {
+            for (checker in checkers) {
+                checker.checkReceiver(receiverParameter, receiverArgument, safeAccess, c)
+            }
+        }
     }
 
     fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>)
+    fun checkReceiver(
+            receiverParameter: ReceiverParameterDescriptor, 
+            receiverArgument: ReceiverValue, 
+            safeAccess: Boolean,
+            c: CallResolutionContext<*>
+    )
 }

@@ -1,3 +1,4 @@
 package
 
 internal fun test(): kotlin.Unit
+internal fun </*0*/ T> with(/*0*/ t: T, /*1*/ f: T.() -> kotlin.Unit): kotlin.Unit
