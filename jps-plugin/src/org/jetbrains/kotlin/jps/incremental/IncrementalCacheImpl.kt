@@ -134,7 +134,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
 
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
-            assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
+            assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
             packagePartMap.putPackagePartSourceData(sourceFiles.first(), className)
             val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
@@ -307,7 +307,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
 
     private object ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
         override fun save(out: DataOutput, map: Map<String, Any>?) {
-            out.writeInt(map!!.size)
+            out.writeInt(map!!.size())
             for (name in map.keySet().toSortedList()) {
                 IOUtil.writeString(name, out)
                 val value = map[name]!!
@@ -425,7 +425,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
 
     private object InlineFunctionsMapExternalizer: DataExternalizer<Map<String, Long>> {
         override fun save(out: DataOutput, map: Map<String, Long>?) {
-            out.writeInt(map!!.size)
+            out.writeInt(map!!.size())
             for (name in map.keySet()) {
                 IOUtil.writeString(name, out)
                 out.writeLong(map[name]!!)
@@ -483,22 +483,6 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
                         }
                     }
                 }
-
-                true
-            }
-
-            return result
-        }
-
-        public fun getPackages(): Set<FqName> {
-            val result = HashSet<FqName>()
-
-            storage.processKeysWithExistingMapping { key ->
-                val packagePartClassName = storage[key!!]!!
-
-                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
-
-                result.add(packageFqName)
 
                 true
             }
