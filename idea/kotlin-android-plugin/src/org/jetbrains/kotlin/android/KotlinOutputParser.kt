@@ -102,7 +102,9 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
 
 private fun String.isNextMessage(): Boolean {
     val colonIndex1 = indexOf(COLON)
-    return (colonIndex1 >= 0 && substring(0, colonIndex1).parseSeverity() != null) || StringUtil.containsIgnoreCase(this, "FAILURE")
+    return (colonIndex1 >= 0 && substring(0, colonIndex1).parseSeverity() != null) ||
+           StringUtil.containsIgnoreCase(this, "FAILURE") ||
+           StringUtil.containsIgnoreCase(this, "FAILED")
 }
 
 private fun String.parseSeverity(): GradleMessage.Kind? {
