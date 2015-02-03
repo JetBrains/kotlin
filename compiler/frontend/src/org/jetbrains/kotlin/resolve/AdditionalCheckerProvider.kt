@@ -23,11 +23,12 @@ private val DEFAULT_TYPE_CHECKERS = listOf(TypeApproximator())
 
 public abstract class AdditionalCheckerProvider(
         public val annotationCheckers: List<AnnotationChecker>,
-        additionalCallCheckers: List<CallChecker>
+        additionalCallCheckers: List<CallChecker>,
+        additionalTypeCheckers: List<AdditionalTypeChecker>
 ) {
 
     public val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
-    public val additionalTypeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS
+    public val additionalTypeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
 
-    public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf()) {}
+    public object DefaultProvider : AdditionalCheckerProvider(listOf(), listOf(), listOf()) {}
 }

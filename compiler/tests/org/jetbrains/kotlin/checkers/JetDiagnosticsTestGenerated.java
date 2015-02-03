@@ -8262,7 +8262,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/platformTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.Intersection.class, PlatformTypes.MethodCall.class})
+        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.Intersection.class, PlatformTypes.MethodCall.class, PlatformTypes.NullabilityWarnings.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PlatformTypes extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInPlatformTypes() throws Exception {
@@ -8526,6 +8526,117 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("visitor.kt")
                 public void testVisitor() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/visitor.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NullabilityWarnings extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInNullabilityWarnings() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("arithmetic.kt")
+                public void testArithmetic() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/arithmetic.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("array.kt")
+                public void testArray() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/array.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("assignToVar.kt")
+                public void testAssignToVar() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/assignToVar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("conditions.kt")
+                public void testConditions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/conditions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dataFlowInfo.kt")
+                public void testDataFlowInfo() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/dataFlowInfo.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultParameters.kt")
+                public void testDefaultParameters() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/defaultParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("delegatedProperties.kt")
+                public void testDelegatedProperties() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/delegatedProperties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("delegation.kt")
+                public void testDelegation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/delegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("derefenceExtension.kt")
+                public void testDerefenceExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/derefenceExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("derefenceMember.kt")
+                public void testDerefenceMember() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/derefenceMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedType.kt")
+                public void testExpectedType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/expectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("for.kt")
+                public void testFor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/for.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("functionArguments.kt")
+                public void testFunctionArguments() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/functionArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("invoke.kt")
+                public void testInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/invoke.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multiDeclaration.kt")
+                public void testMultiDeclaration() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/multiDeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("passToJava.kt")
+                public void testPassToJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/passToJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("throw.kt")
+                public void testThrow() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/throw.kt");
                     doTest(fileName);
                 }
             }

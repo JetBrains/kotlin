@@ -1,0 +1,5 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun p.J?.bar(): kotlin.Unit
+internal fun p.J.foo(): kotlin.Unit

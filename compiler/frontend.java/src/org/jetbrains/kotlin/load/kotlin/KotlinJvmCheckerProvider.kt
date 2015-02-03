@@ -42,10 +42,21 @@ import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
+import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
+import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
         annotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
-        additionalCallCheckers = listOf(NeedSyntheticChecker())
+        additionalCallCheckers = listOf(NeedSyntheticChecker()),
+        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )
 
 public class LocalFunInlineChecker : AnnotationChecker {
@@ -126,4 +137,31 @@ private fun checkTypeParameterDescriptorsAreNotReified(
                 )
         )
     }
+}
+
+public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
+    private fun JetType.mayBeNull(): NullabilityInformationSource? {
+        if (!isFlexible() && TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+        if (getAnnotations().isMarkedNullable()) return NullabilityInformationSource.JAVA
+        return null
+    }
+
+    private fun JetType.mustNotBeNull(): NullabilityInformationSource? {
+        if (!isFlexible() && !TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+        if (getAnnotations().isMarkedNotNull()) return NullabilityInformationSource.JAVA
+        return null
+    }
+
+    override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {
+        if (TypeUtils.noExpectedType(c.expectedType)) return
+
+        val expectedMustNotBeNull = c.expectedType.mustNotBeNull()
+        val actualNullabilityInKotlin = c.dataFlowInfo.getNullability(DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext()))
+        val actualMayBeNull = if (!actualNullabilityInKotlin.canBeNull()) null else expressionType.mayBeNull()
+
+        if (expectedMustNotBeNull != null && actualMayBeNull != null) {
+            c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedMustNotBeNull, actualMayBeNull))
+        }
+    }
+
 }

@@ -1,0 +1,55 @@
+package
+
+internal final class A : kotlin.List<kotlin.String> {
+    public constructor A()
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun size(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B : kotlin.List<kotlin.String> {
+    public constructor B()
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun size(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class C : kotlin.List<kotlin.String> {
+    public constructor C()
+    public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<kotlin.String>
+    public open override /*1*/ /*delegation*/ fun size(): kotlin.Int
+    public open override /*1*/ /*delegation*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

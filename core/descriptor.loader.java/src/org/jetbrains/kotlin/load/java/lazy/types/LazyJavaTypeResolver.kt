@@ -362,7 +362,8 @@ class LazyJavaTypeAttributes(
 
 private fun Annotations.isMarkedReadOnly() = findAnnotation(JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null
 private fun Annotations.isMarkedMutable() = findAnnotation(JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null
-private fun Annotations.isMarkedNotNull() = findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
+internal fun Annotations.isMarkedNotNull() = findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
+internal fun Annotations.isMarkedNullable() = findAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION) != null
 
 fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
