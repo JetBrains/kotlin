@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,11 +36,13 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.JetTypeInfo;
+import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.Collection;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -161,50 +162,22 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkType(
-            @Nullable final JetType expressionType,
+            @Nullable JetType expressionType,
             @NotNull JetExpression expressionToCheck,
-            @NotNull final ResolutionContext c,
+            @NotNull ResolutionContext c,
             @Nullable Ref<Boolean> hasError
     ) {
         if (hasError != null) hasError.set(false);
 
-        final JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
         recordExpectedType(c.trace, expression, c.expectedType);
 
         if (expressionType == null) return null;
 
+        c.additionalTypeChecker.checkType(expression, expressionType, c);
+
         if (noExpectedType(c.expectedType) || !c.expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, c.expectedType)) {
-
-            if (!noExpectedType(c.expectedType)) {
-                Approximation.Info approximationInfo = TypesPackage.getApproximationTo(expressionType, c.expectedType,
-                        new Approximation.DataFlowExtras() {
-                            private DataFlowValue getDataFlowValue() {
-                                return DataFlowValueFactory.createDataFlowValue(expression, expressionType, c.trace.getBindingContext());
-                            }
-
-                            @Override
-                            public boolean getCanBeNull() {
-                                return c.dataFlowInfo.getNullability(getDataFlowValue()).canBeNull();
-                            }
-
-                            @Override
-                            public Set<JetType> getPossibleTypes() {
-                                return c.dataFlowInfo.getPossibleTypes(getDataFlowValue());
-                            }
-
-                            @NotNull
-                            @Override
-                            public String getPresentableText() {
-                                return StringUtil.trimMiddle(expression.getText(), 50);
-                            }
-                        }
-                );
-                if (approximationInfo != null) {
-                    c.trace.record(BindingContext.EXPRESSION_RESULT_APPROXIMATION, expression, approximationInfo);
-                }
-            }
-
             return expressionType;
         }
 
