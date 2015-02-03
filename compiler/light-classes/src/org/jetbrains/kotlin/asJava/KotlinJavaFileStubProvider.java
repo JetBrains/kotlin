@@ -26,7 +26,6 @@ import com.intellij.psi.ClassFileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
@@ -359,20 +358,19 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
         final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.asString(), true);
         javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
 
-        ClsFileImpl fakeFile =
-                new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
-                    @NotNull
-                    @Override
-                    public PsiClassHolderFileStub getStub() {
-                        return javaFileStub;
-                    }
+        ClsFileImpl fakeFile = new ClsFileImpl(new ClassFileViewProvider(manager, virtualFile)) {
+            @NotNull
+            @Override
+            public PsiClassHolderFileStub getStub() {
+                return javaFileStub;
+            }
 
-                    @NotNull
-                    @Override
-                    public String getPackageName() {
-                        return packageFqName.asString();
-                    }
-                };
+            @NotNull
+            @Override
+            public String getPackageName() {
+                return packageFqName.asString();
+            }
+        };
 
         fakeFile.setPhysical(false);
         javaFileStub.setPsi(fakeFile);
@@ -380,7 +378,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    private static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<JetFile> files) {
+    public static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<JetFile> files) {
         JetFile firstFile = files.iterator().next();
         VirtualFile virtualFile = files.size() == 1 ? firstFile.getVirtualFile() : new LightVirtualFile();
         assert virtualFile != null : "No virtual file for " + firstFile;

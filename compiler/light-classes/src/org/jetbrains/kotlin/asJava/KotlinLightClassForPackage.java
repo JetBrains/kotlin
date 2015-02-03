@@ -20,11 +20,14 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.light.LightEmptyImplementsList;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -137,6 +140,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     private final CachedValue<KotlinPackageLightClassData> lightClassDataCache;
     private final PsiModifierList modifierList;
     private final LightEmptyImplementsList implementsList;
+    private final ClsFileImpl packageClsFile;
 
     private KotlinLightClassForPackage(
             @NotNull PsiManager manager,
@@ -154,6 +158,22 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
         this.lightClassDataCache = FileStubCache.getInstance(getProject()).get(packageFqName, searchScope);
+
+        VirtualFile virtualFile = KotlinJavaFileStubProvider.getRepresentativeVirtualFile(files);
+        packageClsFile = new ClsFileImpl(new ClassFileViewProvider(PsiManager.getInstance(getProject()), virtualFile)) {
+            @NotNull
+            @Override
+            public PsiClassHolderFileStub getStub() {
+                return ((ClsFileImpl) getDelegate().getContainingFile()).getStub();
+            }
+
+            @NotNull
+            @Override
+            public String getPackageName() {
+                return KotlinLightClassForPackage.this.packageFqName.asString();
+            }
+        };
+        packageClsFile.setPhysical(false);
     }
 
     @Nullable
@@ -217,6 +237,11 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     @Override
     public PsiClass getContainingClass() {
         return null;
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+        return packageClsFile;
     }
 
     @Override
