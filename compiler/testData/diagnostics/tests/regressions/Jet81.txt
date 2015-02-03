@@ -10,7 +10,7 @@ internal object A {
 
 internal final class Test {
     public constructor Test()
-    private final val y: Test.<init>.<no name provided>
+    private final val y: Test.y.<no name provided>
     internal final val z: [ERROR : Type for y]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -19,7 +19,7 @@ internal final class Test {
 
 internal final class Test2 {
     public constructor Test2()
-    private final val a: Test2.<init>.<no name provided>
+    private final val a: Test2.a.<no name provided>
     internal final val b: [ERROR : <ERROR PROPERTY TYPE>]
     internal final val c: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
