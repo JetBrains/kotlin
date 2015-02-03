@@ -78,7 +78,7 @@ class CacheFormatVersion(targetDataRoot: File) {
     }
 }
 
-public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, IncrementalCache {
+public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
@@ -87,10 +87,10 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
-    private val protoMap =  ProtoMap()
-    private val constantsMap =  ConstantsMap()
-    private val inlineFunctionsMap =  InlineFunctionsMap()
-    private val packagePartMap =  PackagePartMap()
+    private val protoMap = ProtoMap()
+    private val constantsMap = ConstantsMap()
+    private val inlineFunctionsMap = InlineFunctionsMap()
+    private val packagePartMap = PackagePartMap()
 
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
@@ -98,7 +98,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
-        
+
         cacheFormatVersion.saveIfNeeded()
 
         val kotlinClass = LocalFileKotlinClass.create(classFile)
@@ -217,7 +217,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private abstract class ClassFileBasedMap<V>: BasicMap<V>() {
+    private abstract class ClassFileBasedMap<V> : BasicMap<V>() {
 
         // TODO may be too expensive, because it traverses all files in out directory
         public fun clearOutdated(outDirectory: File) {
@@ -239,7 +239,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private inner class ProtoMap: ClassFileBasedMap<ByteArray>() {
+    private inner class ProtoMap : ClassFileBasedMap<ByteArray>() {
         override fun createMap(): PersistentHashMap<String, ByteArray> = PersistentHashMap(
                 File(baseDir, PROTO_MAP),
                 EnumeratorStringDescriptor(),
@@ -261,7 +261,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private inner class ConstantsMap: ClassFileBasedMap<Map<String, Any>>() {
+    private inner class ConstantsMap : ClassFileBasedMap<Map<String, Any>>() {
         override fun createMap(): PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
                 File(baseDir, CONSTANTS_MAP),
                 EnumeratorStringDescriptor(),
@@ -305,7 +305,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private object ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
+    private object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
         override fun save(out: DataOutput, map: Map<String, Any>?) {
             out.writeInt(map!!.size())
             for (name in map.keySet().toSortedList()) {
@@ -363,7 +363,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private inner class InlineFunctionsMap: ClassFileBasedMap<Map<String, Long>>() {
+    private inner class InlineFunctionsMap : ClassFileBasedMap<Map<String, Long>>() {
         override fun createMap(): PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
                 File(baseDir, INLINE_FUNCTIONS),
                 EnumeratorStringDescriptor(),
@@ -423,7 +423,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private object InlineFunctionsMapExternalizer: DataExternalizer<Map<String, Long>> {
+    private object InlineFunctionsMapExternalizer : DataExternalizer<Map<String, Long>> {
         override fun save(out: DataOutput, map: Map<String, Long>?) {
             out.writeInt(map!!.size())
             for (name in map.keySet()) {
@@ -449,7 +449,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
     }
 
 
-    private inner class PackagePartMap: BasicMap<String>() {
+    private inner class PackagePartMap : BasicMap<String>() {
         // Format of serialization to string: <source file path>  -->  <package part JVM internal name>
         override fun createMap(): PersistentHashMap<String, String> = PersistentHashMap(
                 File(baseDir, PACKAGE_PARTS),
@@ -503,7 +503,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
     }
 }
 
-private val storageProvider = object: StorageProvider<IncrementalCacheImpl>() {
+private val storageProvider = object : StorageProvider<IncrementalCacheImpl>() {
     override fun createStorage(targetDataDir: File): IncrementalCacheImpl {
         return IncrementalCacheImpl(targetDataDir)
     }
@@ -516,17 +516,17 @@ public fun BuildDataManager.getKotlinCache(target: BuildTarget<*>): IncrementalC
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!
     return ((d[0].toLong() and 0xFFL)
-                    or ((d[1].toLong() and 0xFFL) shl 8)
-                    or ((d[2].toLong() and 0xFFL) shl 16)
-                    or ((d[3].toLong() and 0xFFL) shl 24)
-                    or ((d[4].toLong() and 0xFFL) shl 32)
-                    or ((d[5].toLong() and 0xFFL) shl 40)
-                    or ((d[6].toLong() and 0xFFL) shl 48)
-                    or ((d[7].toLong() and 0xFFL) shl 56)
-            )
+            or ((d[1].toLong() and 0xFFL) shl 8)
+            or ((d[2].toLong() and 0xFFL) shl 16)
+            or ((d[3].toLong() and 0xFFL) shl 24)
+            or ((d[4].toLong() and 0xFFL) shl 32)
+            or ((d[5].toLong() and 0xFFL) shl 40)
+            or ((d[6].toLong() and 0xFFL) shl 48)
+            or ((d[7].toLong() and 0xFFL) shl 56)
+           )
 }
 
-private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
+private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     override fun save(out: DataOutput, value: ByteArray) {
         out.writeInt(value.size())
         out.write(value)
