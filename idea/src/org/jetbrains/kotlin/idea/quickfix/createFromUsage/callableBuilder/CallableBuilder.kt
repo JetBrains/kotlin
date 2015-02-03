@@ -67,6 +67,11 @@ import org.jetbrains.kotlin.idea.util.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.idea.util.isUnit
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.editor.actions.EditorActionUtil
+import com.intellij.openapi.editor.actions.LineEndAction
+import com.intellij.openapi.editor.actions.EnterAction
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -718,6 +723,36 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             typeRef.replace(fullyQualifiedReceiverTypeRef)
         }
 
+        private fun setupEditor(declaration: JetNamedDeclaration) {
+            val caretModel = containingFileEditor.getCaretModel()
+
+            caretModel.moveToOffset(declaration.getNameIdentifier().getTextRange().getEndOffset())
+
+            fun positionBetween(left: PsiElement, right: PsiElement) {
+                val from = left.siblings(withItself = false, forward = true).firstOrNull { it !is PsiWhiteSpace } ?: return
+                val to = right.siblings(withItself = false, forward = false).firstOrNull { it !is PsiWhiteSpace } ?: return
+                val startOffset = from.getTextRange().getStartOffset()
+                val endOffset = to.getTextRange().getEndOffset()
+                caretModel.moveToOffset(endOffset)
+                containingFileEditor.getSelectionModel().setSelection(startOffset, endOffset)
+            }
+
+            when (declaration) {
+                is JetNamedFunction -> {
+                    (declaration.getBodyExpression() as? JetBlockExpression)?.let { positionBetween(it.getLBrace(), it.getRBrace()) }
+                }
+                is JetClassOrObject -> {
+                    caretModel.moveToOffset(declaration.getTextRange().getStartOffset())
+                }
+                is JetProperty -> {
+                    if (!declaration.hasInitializer()) {
+                        caretModel.moveToOffset(declaration.getTextRange().getEndOffset())
+                    }
+                }
+            }
+            containingFileEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)
+        }
+
         // build templates
         fun buildAndRunTemplate(onFinish: () -> Unit) {
             val declarationSkeleton = createDeclarationSkeleton()
@@ -790,11 +825,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         setupTypeReferencesForShortening(newDeclaration, elementsToShorten, parameterTypeExpressions)
                     }
 
+                    setupEditor(newDeclaration)
+
                     onFinish()
                 }
             })
         }
-
     }
 }
 
