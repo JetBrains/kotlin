@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.jps.build
 
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.CompileContext
 
