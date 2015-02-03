@@ -62,8 +62,8 @@ public class KotlinCodegenFacade {
             packageFqNameToFiles.putValue(file.getPackageFqName(), file);
         }
 
-        Set<FqName> removedPackageFiles = new HashSet<FqName>(state.getPackagesWithRemovedFiles());
-        for (FqName fqName : Sets.union(removedPackageFiles, packageFqNameToFiles.keySet())) {
+        Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
+        for (FqName fqName : Sets.union(packagesWithObsoleteParts, packageFqNameToFiles.keySet())) {
             generatePackage(state, fqName, packageFqNameToFiles.get(fqName), errorHandler);
         }
 

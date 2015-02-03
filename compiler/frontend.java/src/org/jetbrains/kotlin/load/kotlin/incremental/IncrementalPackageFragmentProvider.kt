@@ -47,10 +47,7 @@ public class IncrementalPackageFragmentProvider(
         val moduleId: String
 ) : PackageFragmentProvider {
 
-    val packagePartsToNotLoadFromCache = (
-            sourceFiles.map { PackagePartClassUtils.getPackagePartInternalName(it) }
-                    + incrementalCache.getRemovedPackageParts(sourceFiles).map { it.getInternalName() }
-            ).toSet()
+    val obsoletePackageParts = incrementalCache.getObsoletePackageParts(sourceFiles).map { it.getInternalName() }.toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
     val fqNamesToLoad: Set<FqName>
@@ -70,10 +67,7 @@ public class IncrementalPackageFragmentProvider(
             fqNameToPackageFragment[fqName] = IncrementalPackageFragment(fqName)
         }
 
-        fqNamesToLoad = (
-                PackagePartClassUtils.getPackageFilesWithCallables(sourceFiles).map { it.getPackageFqName() }
-                + incrementalCache.getPackagesWithRemovedFiles(sourceFiles)
-        ).toSet()
+        fqNamesToLoad = incrementalCache.getPackagesWithObsoleteParts(sourceFiles).toSet()
 
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
@@ -119,7 +113,7 @@ public class IncrementalPackageFragmentProvider(
                             if (member.hasExtension(JvmProtoBuf.implClassName)) {
                                 val shortName = packageData.getNameResolver().getName(member.getExtension(JvmProtoBuf.implClassName)!!)
                                 val internalName = JvmClassName.byFqNameWithoutInnerClasses(fqName.child(shortName)).getInternalName()
-                                internalName !in packagePartsToNotLoadFromCache
+                                internalName !in obsoletePackageParts
                             }
                             else {
                                 true

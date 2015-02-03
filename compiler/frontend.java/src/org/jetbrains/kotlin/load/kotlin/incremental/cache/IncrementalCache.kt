@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.load.kotlin.incremental.cache
 import java.io.File
 
 public trait IncrementalCache {
-    public fun getRemovedPackageParts(
-            // null value means source file has no top-level callables (won't produce package part)
-            sourceFilesToCompileAndFqNames: Map<File, String?>
-    ): Collection<String>
+    public fun getObsoletePackageParts(sourceFilesToCompile: Collection<File>): Collection<String>
 
     public fun getPackageData(fqName: String): ByteArray?
 

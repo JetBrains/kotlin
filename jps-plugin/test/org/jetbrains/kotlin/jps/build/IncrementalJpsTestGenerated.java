@@ -183,6 +183,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compilationErrorThenFixedWithPhantomPart")
+        public void testCompilationErrorThenFixedWithPhantomPart() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedWithPhantomPart/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compilationErrorThenFixedWithPhantomPart2")
+        public void testCompilationErrorThenFixedWithPhantomPart2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedWithPhantomPart2/");
+            doTest(fileName);
+        }
+
         @TestMetadata("conflictingPlatformDeclarations")
         public void testConflictingPlatformDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/conflictingPlatformDeclarations/");

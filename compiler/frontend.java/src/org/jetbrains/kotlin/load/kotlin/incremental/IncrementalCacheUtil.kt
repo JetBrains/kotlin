@@ -24,21 +24,13 @@ import java.util.HashMap
 import java.io.File
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 
-public fun IncrementalCache.getPackagesWithRemovedFiles(sourceFilesToCompile: Collection<JetFile>): Collection<FqName> {
-    return getRemovedPackageParts(sourceFilesToCompile).map { it.getPackageFqName() }
+// TODO JetFiles are redundant
+public fun IncrementalCache.getPackagesWithObsoleteParts(sourceFilesToCompile: Collection<JetFile>): Collection<FqName> {
+    return getObsoletePackageParts(sourceFilesToCompile).map { it.getPackageFqName() }
 }
 
-public fun IncrementalCache.getRemovedPackageParts(sourceFilesToCompile: Collection<JetFile>): Collection<JvmClassName> {
-    val sourceFilesToFqName = HashMap<File, String?>()
-    for (sourceFile in sourceFilesToCompile) {
-        sourceFilesToFqName[File(sourceFile.getVirtualFile()!!.getPath())] =
-                if (PackagePartClassUtils.fileHasCallables(sourceFile))
-                    sourceFile.getPackageFqName().asString()
-                else
-                    null
-    }
-
-    return getRemovedPackageParts(sourceFilesToFqName).map { JvmClassName.byInternalName(it) }
+public fun IncrementalCache.getObsoletePackageParts(sourceFilesToCompile: Collection<JetFile>): Collection<JvmClassName> {
+    return getObsoletePackageParts(sourceFilesToCompile.map { File(it.getVirtualFile()!!.getPath()) }).map { JvmClassName.byInternalName(it) }
 }
 
 public fun IncrementalCache.getPackageData(fqName: FqName): ByteArray? {

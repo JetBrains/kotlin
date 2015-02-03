@@ -338,13 +338,13 @@ public class KotlinToJVMBytecodeCompiler {
         CompilerConfiguration configuration = environment.getConfiguration();
         IncrementalCacheProvider incrementalCacheProvider = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER);
 
-        Collection<FqName> packagesWithRemovedFiles;
+        Collection<FqName> packagesWithObsoleteParts;
         if (moduleId == null || incrementalCacheProvider == null) {
-            packagesWithRemovedFiles = null;
+            packagesWithObsoleteParts = null;
         }
         else {
             IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
-            packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(incrementalCache, environment.getSourceFiles());
+            packagesWithObsoleteParts = IncrementalPackage.getPackagesWithObsoleteParts(incrementalCache, environment.getSourceFiles());
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
@@ -359,7 +359,7 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                packagesWithRemovedFiles,
+                packagesWithObsoleteParts,
                 moduleId,
                 diagnosticHolder,
                 outputDirectory

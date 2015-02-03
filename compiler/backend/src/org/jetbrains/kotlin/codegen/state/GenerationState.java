@@ -111,7 +111,7 @@ public class GenerationState {
     private final ModuleDescriptor module;
 
     @NotNull
-    private final Collection<FqName> packagesWithRemovedFiles;
+    private final Collection<FqName> packagesWithObsoleteParts;
 
     @Nullable
     private final String moduleId; // for PackageCodegen in incremental compilation mode
@@ -142,7 +142,7 @@ public class GenerationState {
             GenerateClassFilter generateClassFilter,
             boolean disableInline,
             boolean disableOptimization,
-            @Nullable Collection<FqName> packagesWithRemovedFiles,
+            @Nullable Collection<FqName> packagesWithObsoleteParts,
             @Nullable String moduleId,
             @NotNull DiagnosticSink diagnostics,
             @Nullable File outDirectory
@@ -152,7 +152,7 @@ public class GenerationState {
         this.module = module;
         this.files = files;
         this.moduleId = moduleId;
-        this.packagesWithRemovedFiles = packagesWithRemovedFiles == null ? Collections.<FqName>emptySet() : packagesWithRemovedFiles;
+        this.packagesWithObsoleteParts = packagesWithObsoleteParts == null ? Collections.<FqName>emptySet() : packagesWithObsoleteParts;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.disableInline = disableInline;
 
@@ -287,8 +287,8 @@ public class GenerationState {
     }
 
     @NotNull
-    public Collection<FqName> getPackagesWithRemovedFiles() {
-        return packagesWithRemovedFiles;
+    public Collection<FqName> getPackagesWithObsoleteParts() {
+        return packagesWithObsoleteParts;
     }
 
     @Nullable
