@@ -114,8 +114,10 @@ CODE_LINK=\[{CODE_LINK_START}{CODE_LINK_CHAR}*\]
 
     /* We're only interested in parsing links that can become code references,
        meaning they contain only identifier characters and characters that can be
-       used in type declarations. No brackets, backticks, asterisks or anything like that. */
-    {CODE_LINK} { yybegin(CONTENTS);
+       used in type declarations. No brackets, backticks, asterisks or anything like that.
+       Also if a link is followed by [ or (, then its destination is a regular HTTP
+       link and not a Kotlin identifier, so we don't need to do our parsing and resolution. */
+    {CODE_LINK} / [^\(\[] { yybegin(CONTENTS);
                   return KDocTokens.MARKDOWN_LINK; }
 
     .     { yybegin(CONTENTS);

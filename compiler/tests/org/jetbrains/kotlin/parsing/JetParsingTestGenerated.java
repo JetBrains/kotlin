@@ -1073,6 +1073,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("HttpLink.kt")
+            public void testHttpLink() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/HttpLink.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("Incomplete.kt")
             public void testIncomplete() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/Incomplete.kt");
