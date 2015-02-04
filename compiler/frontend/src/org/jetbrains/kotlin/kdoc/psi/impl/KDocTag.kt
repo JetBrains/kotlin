@@ -69,7 +69,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 .dropWhile { it.getElementType() == TokenType.WHITE_SPACE }
 
     /**
-     * Returns the contents of this tag (all text following the tag name and the subject if present,
+     * Returns the content of this tag (all text following the tag name and the subject if present,
      * with leading asterisks removed).
      */
     public fun getContent(): String {

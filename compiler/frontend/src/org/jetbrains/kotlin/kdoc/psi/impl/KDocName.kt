@@ -38,6 +38,10 @@ public class KDocName(node: ASTNode): JetElementImpl(node) {
 
     public fun getQualifier(): KDocName? = getChildOfType()
 
+    /**
+     * Returns the range within the element containing the name (in other words,
+     * the range of the element excluding the qualifier and dot, if present).
+     */
     public fun getNameTextRange(): TextRange {
         val dot = getNode().findChildByType(JetTokens.DOT)
         val textRange = getTextRange()

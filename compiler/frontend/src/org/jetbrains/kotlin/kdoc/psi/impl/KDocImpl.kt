@@ -35,7 +35,7 @@ public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocToken
 
     override fun getTokenType(): IElementType = JetTokens.DOC_COMMENT
 
-    override fun getOwner(): JetDeclaration = getParentOfType<JetDeclaration>(true)!!
+    override fun getOwner(): JetDeclaration? = getParentOfType<JetDeclaration>(true)
 
     override fun getDefaultSection(): KDocSection = getChildOfType<KDocSection>()!!
 }
