@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import kotlin.platform.platformStatic
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -63,27 +64,29 @@ class LazyJavaTypeResolver(
     }
 
     public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
-        val javaComponentType = arrayType.getComponentType()
-        if (javaComponentType is JavaPrimitiveType) {
-            val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
-            if (jetType != null) {
-                return if (PLATFORM_TYPES && attr.allowFlexible)
-                           FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
-                       else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
+        return run { (): JetType ->
+            val javaComponentType = arrayType.getComponentType()
+            if (javaComponentType is JavaPrimitiveType) {
+                val jetType = JavaToKotlinClassMap.INSTANCE.mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
+                if (jetType != null) {
+                    return@run if (PLATFORM_TYPES && attr.allowFlexible)
+                                   FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
+                               else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
+                }
             }
-        }
 
-        val componentType = transformJavaType(javaComponentType, TYPE_ARGUMENT.toAttributes(attr.allowFlexible))
+            val componentType = transformJavaType(javaComponentType, TYPE_ARGUMENT.toAttributes(attr.allowFlexible))
 
-        if (PLATFORM_TYPES && attr.allowFlexible) {
-            return FlexibleJavaClassifierTypeCapabilities.create(
-                    KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
-                    TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)))
-        }
+            if (PLATFORM_TYPES && attr.allowFlexible) {
+                return@run FlexibleJavaClassifierTypeCapabilities.create(
+                        KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
+                        TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)))
+            }
 
-        val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
-        val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
-        return TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
+            val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT || isVararg) OUT_VARIANCE else INVARIANT
+            val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
+            return@run TypeUtils.makeNullableAsSpecified(result, !attr.isMarkedNotNull)
+        }.replaceAnnotations(attr.annotations)
     }
 
     private class LazyStarProjection(

@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.DelegatingType
 
 fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
@@ -72,4 +74,13 @@ fun TypeProjection.substitute(doSubstitute: (JetType) -> JetType): TypeProjectio
     return if (isStarProjection())
         this
     else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
+}
+
+fun JetType.replaceAnnotations(newAnnotations: Annotations): JetType {
+    if (newAnnotations.isEmpty()) return this
+    return object : DelegatingType() {
+        override fun getDelegate() = this@replaceAnnotations
+
+        override fun getAnnotations() = newAnnotations
+    }
 }

@@ -5,10 +5,10 @@ import org.jetbrains.annotations.*;
 
 public class J {
     @NotNull
-    public static Integer[] staticNN;
+    public static int[] staticNN;
     @Nullable
-    public static Integer[] staticN;
-    public static Integer[] staticJ;
+    public static int[] staticN;
+    public static int[] staticJ;
 }
 
 // FILE: k.kt
