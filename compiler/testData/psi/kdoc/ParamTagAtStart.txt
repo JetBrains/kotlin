@@ -1,11 +1,9 @@
-JetFile: ParamTag.kt
+JetFile: ParamTagAtStart.kt
   PACKAGE_DIRECTIVE
     <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
-    PsiWhiteSpace('\n ')
     KDOC_SECTION
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@param')
@@ -13,6 +11,5 @@ JetFile: ParamTag.kt
         KDOC_LINK
           KDOC_NAME
             PsiElement(KDOC_TEXT_OR_LINK)('a')
-        PsiElement(KDOC_TEXT)(' The description of a.')
-    PsiWhiteSpace('\n ')
+        PsiElement(KDOC_TEXT)(' this is a ')
     PsiElement(KDOC_END)('*/')

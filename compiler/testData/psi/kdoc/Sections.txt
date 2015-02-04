@@ -14,7 +14,8 @@ JetFile: Sections.kt
         PsiElement(KDOC_TAG_NAME)('@param')
         PsiWhiteSpace(' ')
         KDOC_LINK
-          PsiElement(KDOC_TEXT_OR_LINK)('T')
+          KDOC_NAME
+            PsiElement(KDOC_TEXT_OR_LINK)('T')
         PsiElement(KDOC_TEXT)(' a type parameter.')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
@@ -32,7 +33,8 @@ JetFile: Sections.kt
         PsiElement(KDOC_TAG_NAME)('@param')
         PsiWhiteSpace(' ')
         KDOC_LINK
-          PsiElement(KDOC_TEXT_OR_LINK)('a')
+          KDOC_NAME
+            PsiElement(KDOC_TEXT_OR_LINK)('a')
         PsiElement(KDOC_TEXT)(' a constructor parameter.')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

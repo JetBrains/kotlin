@@ -33,7 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.JetNodeType;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.parser.KDocElementType;
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink;
 import org.jetbrains.kotlin.lexer.JetLexer;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -105,6 +107,9 @@ public class JetParserDefinition implements ParserDefinition {
         }
         else if (elementType instanceof KDocElementType) {
             return ((KDocElementType) elementType).createPsi(astNode);
+        }
+        else if (elementType == KDocTokens.MARKDOWN_LINK) {
+            return new KDocLink(astNode);
         }
         else {
             return ((JetNodeType) elementType).createPsi(astNode);

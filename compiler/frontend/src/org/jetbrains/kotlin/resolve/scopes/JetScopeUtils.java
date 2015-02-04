@@ -70,6 +70,19 @@ public final class JetScopeUtils {
     public static JetScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope outerScope,
+            @NotNull RedeclarationHandler redeclarationHandler
+    ) {
+        return getPropertyDeclarationInnerScope(propertyDescriptor,
+                                                outerScope,
+                                                propertyDescriptor.getTypeParameters(),
+                                                propertyDescriptor.getExtensionReceiverParameter(),
+                                                redeclarationHandler,
+                                                true);
+    }
+
+    public static JetScope getPropertyDeclarationInnerScope(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
             BindingTrace trace
@@ -95,8 +108,22 @@ public final class JetScopeUtils {
             BindingTrace trace,
             boolean addLabelForProperty
     ) {
+        TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
+        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, redeclarationHandler,
+                                                addLabelForProperty);
+    }
+
+    @NotNull
+    private static JetScope getPropertyDeclarationInnerScope(
+            @Nullable PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            @NotNull RedeclarationHandler redeclarationHandler,
+            boolean addLabelForProperty
+    ) {
         WritableScopeImpl result = new WritableScopeImpl(
-                outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
+                outerScope, outerScope.getContainingDeclaration(), redeclarationHandler,
                 "Property declaration inner scope");
         if (addLabelForProperty) {
             assert propertyDescriptor != null : "PropertyDescriptor can be null for property scope which hasn't label to property";

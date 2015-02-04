@@ -20,6 +20,8 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.*
 import com.intellij.util.ProcessingContext
 import com.intellij.patterns.PlatformPatterns
+import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 
 public class JetReferenceContributor() : PsiReferenceContributor() {
     public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -44,6 +46,9 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             }
             registerProvider(javaClass<JetMultiDeclaration>()) {
                 JetMultiDeclarationReference(it)
+            }
+            registerProvider(javaClass<KDocName>()) {
+                KDocReference(it)
             }
         }
     }

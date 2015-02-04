@@ -17,13 +17,32 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
+import org.jetbrains.kotlin.psi.JetElementImpl
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class KDocLink(node: ASTNode) : KDocElementImpl(node) {
-    fun getLinkText(): String {
+public class KDocLink(node: ASTNode) : JetElementImpl(node) {
+    public fun getLinkText(): String = getLinkTextRange().substring(getText())
+
+    public fun getLinkTextRange(): TextRange {
         val text = getText()
         if (text.startsWith('[') && text.endsWith(']')) {
-            return text.substring(1, text.length() - 1)
+            return TextRange(1, text.length() - 1)
         }
-        return text
+        return TextRange(0, text.length())
     }
+
+    /**
+     * If this link is the subject of a tag, returns the tag. Otherwise, returns null.
+     */
+    public fun getTagIfSubject(): KDocTag? {
+        val tag = getStrictParentOfType<KDocTag>()
+        return if (tag != null && tag.getSubjectLink() == this) tag else null
+    }
+
+    override fun getReferences(): Array<out PsiReference>? =
+        ReferenceProvidersRegistry.getReferencesFromProviders(this)
 }

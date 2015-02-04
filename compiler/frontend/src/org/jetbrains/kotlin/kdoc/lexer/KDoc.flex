@@ -53,13 +53,13 @@ ALPHA=[:jletter:]
 TAG_NAME={ALPHA}({ALPHA}|{DIGIT})*
 IDENTIFIER={ALPHA}({ALPHA}|{DIGIT}|".")*
 CODE_LINK_START={ALPHA}
-CODE_LINK_CHAR={ALPHA}|{DIGIT}|[()\-\.<>]
+CODE_LINK_CHAR={ALPHA}|{DIGIT}|[\.]
 CODE_LINK=\[{CODE_LINK_START}{CODE_LINK_CHAR}*\]
 
 %%
 
 
-<YYINITIAL> "/**"                         { yybegin(CONTENTS);
+<YYINITIAL> "/**"                         { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.START;            }
 "*"+ "/"                                  { if (isLastToken()) return KDocTokens.END;
                                             else return KDocTokens.TEXT; }

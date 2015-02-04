@@ -44,17 +44,23 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      * Returns the name of the entity documented by this tag (for example, the name of the parameter
      * for the @param tag), or null if this tag does not document any specific entity.
      */
-    public fun getSubjectName(): String? {
+    public fun getSubjectName(): String? = getSubjectLink()?.getLinkText()
+
+    public fun getSubjectLink(): KDocLink? {
         val children = childrenAfterTagName()
         if (hasSubject(children)) {
-            return (children.firstOrNull()?.getPsi() as? KDocLink)?.getLinkText()
+            return children.firstOrNull()?.getPsi() as? KDocLink
         }
         return null
     }
 
+    public val knownTag: KDocKnownTag?
+        get() {
+            val name = getName()
+            return if (name != null) KDocKnownTag.findByTagName(name) else null
+        }
+
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
-        val name = getName()
-        val knownTag = if (name != null) KDocKnownTag.findByTagName(name) else null
         if (knownTag?.isReferenceRequired() ?: false) {
             return contentChildren.firstOrNull()?.getElementType() == KDocElementTypes.KDOC_LINK;
         }
@@ -66,6 +72,10 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 .dropWhile { it.getElementType() == KDocTokens.TAG_NAME }
                 .dropWhile { it.getElementType() == TokenType.WHITE_SPACE }
 
+    /**
+     * Returns the content of this tag (all text following the tag name and the subject if present,
+     * with leading asterisks removed).
+     */
     public fun getContent(): String {
         val builder = StringBuilder()
 

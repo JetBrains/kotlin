@@ -26,18 +26,20 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser;
 import org.jetbrains.kotlin.kdoc.parser.KDocParser;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl;
+import org.jetbrains.kotlin.lexer.JetLexer;
 
 public interface KDocTokens {
     ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", JetLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
-            PsiElement  parentElement = chameleon.getTreeParent().getPsi();
-            Project     project = parentElement.getProject();
-            PsiBuilder  builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
-                                                                                chameleon.getText());
-            PsiParser   parser = new KDocParser();
+            PsiElement parentElement = chameleon.getTreeParent().getPsi();
+            Project project = parentElement.getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
+                                                                               chameleon.getText());
+            PsiParser parser = new KDocParser();
 
             return parser.parse(this, builder).getFirstChildNode();
         }
@@ -62,7 +64,18 @@ public interface KDocTokens {
      */
     KDocToken TEXT_OR_LINK          = new KDocToken("KDOC_TEXT_OR_LINK");
     KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME");
-    KDocToken MARKDOWN_LINK         = new KDocToken("KDOC_MARKDOWN_LINK");
+    ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", JetLanguage.INSTANCE) {
+        @Override
+        public ASTNode parseContents(ASTNode chameleon) {
+            PsiElement parentElement = chameleon.getTreeParent().getPsi();
+            Project project = parentElement.getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new JetLexer(), getLanguage(),
+                                                                               chameleon.getText());
+            PsiParser parser = new KDocLinkParser();
+
+            return parser.parse(this, builder).getFirstChildNode();
+        }
+    };
 
     KDocToken MARKDOWN_ESCAPED_CHAR = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
 

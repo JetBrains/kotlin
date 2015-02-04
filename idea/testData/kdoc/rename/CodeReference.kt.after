@@ -1,0 +1,6 @@
+/**
+ * This is the same as [xyzzy]
+ */
+fun foo() {}
+
+fun xyzzy() {}
