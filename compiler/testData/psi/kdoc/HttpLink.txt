@@ -1,0 +1,14 @@
+JetFile: HttpLink.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' [Kotlin](http://kotlinlang.org) is made by [JetBrains][1]')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' [1]: http://www.jetbrains.com/')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
