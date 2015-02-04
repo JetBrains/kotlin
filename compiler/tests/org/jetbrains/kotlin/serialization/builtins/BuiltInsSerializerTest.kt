@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 
 public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {
-        val source = "compiler/testData/serialization/$fileName"
+        val source = "compiler/testData/serialization/builtinsSerializer/$fileName"
         BuiltInsSerializer(dependOnOldBuiltIns = true).serialize(
                 tmpdir,
                 srcDirs = listOf(File(source)),
