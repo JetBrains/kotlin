@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.android
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.openapi.module.ModuleServiceManager

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import java.util.ArrayList
-import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import kotlin.platform.platformStatic
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.psi.JetFile

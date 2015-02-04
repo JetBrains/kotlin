@@ -21,7 +21,7 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.jet.lang.resolve.android.*
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project

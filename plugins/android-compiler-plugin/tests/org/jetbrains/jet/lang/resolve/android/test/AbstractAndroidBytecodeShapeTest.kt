@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.android.test
 
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
-import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest

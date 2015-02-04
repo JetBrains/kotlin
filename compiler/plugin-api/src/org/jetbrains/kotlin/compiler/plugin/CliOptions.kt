@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compiler.plugin
 
-import org.jetbrains.jet.config.CompilerConfiguration
 import java.util.regex.Pattern
 
 public class CliOption(
