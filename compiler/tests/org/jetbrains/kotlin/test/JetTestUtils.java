@@ -237,6 +237,9 @@ public class JetTestUtils {
     @SuppressWarnings("unchecked")
     private static final Class<? extends TestCase>[] NO_INNER_CLASSES = ArrayUtil.EMPTY_CLASS_ARRAY;
 
+    // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
+    private static final Pattern STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})");
+
     private JetTestUtils() {
     }
 
@@ -876,5 +879,14 @@ public class JetTestUtils {
     @NotNull
     public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
         return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
+    }
+
+    @NotNull
+    public static String replaceHashWithStar(@NotNull String string) {
+        Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
+        if (matcher.find()) {
+            return matcher.replaceAll("\\$*");
+        }
+        return string;
     }
 }
