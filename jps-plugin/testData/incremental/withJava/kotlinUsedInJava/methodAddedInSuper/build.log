@@ -4,6 +4,9 @@ End of files
 Compiling files:
 src/Super.kt
 End of files
+Cleaning output files:
+out/production/module/Sub.class
+End of files
 Compiling files:
 src/Sub.java
 End of files
