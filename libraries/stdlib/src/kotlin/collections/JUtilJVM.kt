@@ -3,12 +3,12 @@ package kotlin
 import java.util.*
 
 /**
- * Returns a new [[SortedSet]] with the initial elements
+ * Returns a new [SortedSet] with the given elements.
  */
 public fun sortedSetOf<T>(vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>())
 
 /**
- * Returns a new [[SortedSet]] with the given *comparator* and the initial elements
+ * Returns a new [SortedSet] with the given [comparator] and initial elements.
  */
 public fun sortedSetOf<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 

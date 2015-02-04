@@ -16,10 +16,30 @@
 
 package kotlin
 
+/**
+ * Marks the annotated class as a data class. Data classes have automatically generated
+ * equals()/hashCode(), toString(), componentN() and copy() functions.
+ * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
+ * for more information.
+ */
 public annotation class data
 
+/**
+ * Marks the annotated class, function or property as deprecated.
+ * @param value the message explaining the deprecation and recommening an alternative API to use.
+ */
 public annotation class deprecated(val value: String)
 
+/**
+ * Suppresses the given compilation warnings in the annotated element.
+ * @param names names of the compiler diagnostics to suppress.
+ */
 public annotation class suppress(vararg val names: String)
 
+/**
+ * Enables the tail call optimization for the annotated function. If the annotated function
+ * calls itself recursively as the last operation it performs, it will be executed without
+ * growing the stack depth. Tail call optimization is currently only supported by the JVM
+ * backend.
+ */
 public annotation class tailRecursive

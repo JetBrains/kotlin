@@ -21,15 +21,18 @@ private object EmptyMap : Map<Any, Any> {
 /** Returns an empty read-only map of specified type */
 public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
 
-/** Returns a new read-only map of given pairs, where the first value is the key, and the second is value */
+/**
+ * Returns a new read-only map with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
+ */
 public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() == 0) emptyMap() else linkedMapOf(*values)
 
 /** Returns an empty read-only map */
 public fun mapOf<K, V>(): Map<K, V> = emptyMap()
 
 /**
- * Returns a new [[HashMap]] populated with the given pairs where the first value in each pair
- * is the key and the second value is the value
+ * Returns a new [HashMap] with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt createUsingPairs
  */
@@ -40,9 +43,9 @@ public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
 }
 
 /**
- * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
- * is the key and the second value is the value. This map preserves insertion order so iterating through
- * the map's entries will be in the same order
+ * Returns a new [LinkedHashMap] with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
+ * This map preserves insertion order so iterating through the map's entries will be in the same order.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt createLinkedMap
  */
@@ -52,37 +55,65 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
     return answer
 }
 
-/** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
+/**
+ * Returns the [Map] if its not null, or the empty [Map] otherwise.
+ */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
        = if (this != null) this else emptyMap()
 
+/**
+ * Checks if the map contains the given key. This method allows to use the `x in map` syntax for checking
+ * whether an object is contained in the map.
+ */
 public fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 
-/** Returns the key of the entry */
+/**
+ * Allows to access the key of a map entry as a property. Equivalent to `getKey()`.
+ */
 public val <K, V> Map.Entry<K, V>.key: K
     get() = getKey()
 
-/** Returns the value of the entry */
+/**
+ * Allows to access the value of a map entry as a property. Equivalent to `getValue()`.
+ */
 public val <K, V> Map.Entry<K, V>.value: V
     get() = getValue()
 
-/** Returns the key of the entry */
+/**
+ * Returns the key of the map entry. This method allows to use multi-declarations when working with maps,
+ * for example:
+ * ```
+ * for ((key, value) in map) {
+ *     // do something with the key and the value
+ * }
+ * ```
+ */
 public fun <K, V> Map.Entry<K, V>.component1(): K {
     return getKey()
 }
 
-/** Returns the value of the entry */
+/**
+ * Returns the value of the map entry. This method allows to use multi-declarations when working with maps,
+ * for example:
+ * ```
+ * for ((key, value) in map) {
+ *     // do something with the key and the value
+ * }
+ * ```
+ */
 public fun <K, V> Map.Entry<K, V>.component2(): V {
     return getValue()
 }
 
-/** Converts entry to Pair with key being first component and value being second */
+/**
+ * Converts entry to [Pair] with key being first component and value being second
+ */
 public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
     return Pair(getKey(), getValue())
 }
 
 /**
- * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
+ * Returns the value for the given key, or the result of the [defaultValue] function if there was no entry for the given key.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt getOrElse
  */
@@ -95,7 +126,8 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
 }
 
 /**
- * Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned
+ * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
+ * puts its result into the map under the given key and returns it.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt getOrPut
  */
@@ -110,7 +142,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
 }
 
 /**
- * Returns an [[Iterator]] over the entries in the [[Map]]
+ * Returns an [Iterator] over the entries in the [Map].
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt iterateWithProperties
  */
@@ -120,7 +152,8 @@ public fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
 }
 
 /**
- * Populates the given *destination* [[Map]] with the value returned by applying the *transform* function on each [[Map.Entry]] in this [[Map]]
+ * Populates the given `destination` [Map] with entries having the keys of this map and the values obtained
+ * by applying the `transform` function to each entry in this [Map].
  */
 public inline fun <K, V, R, C : MutableMap<K, R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (e in this) {
@@ -131,7 +164,8 @@ public inline fun <K, V, R, C : MutableMap<K, R>> Map<K, V>.mapValuesTo(destinat
 }
 
 /**
- * Populates the given *destination* [[Map]] with the value returned by applying the *transform* function on each [[Map.Entry]] in this [[Map]]
+ * Populates the given `destination` [Map] with entries having the keys obtained
+ * by applying the `transform` function to each entry in this [Map] and the values of this map.
  */
 public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (e in this) {
@@ -142,7 +176,7 @@ public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destinatio
 }
 
 /**
- * Puts all the entries into this [[MutableMap]] with the first value in the pair being the key and the second the value
+ * Puts all the entries into this [MutableMap] with the first value in the pair being the key and the second the value
  */
 public fun <K, V> MutableMap<K, V>.putAll(vararg values: Pair<K, V>): Unit {
     for ((key, value) in values) {
@@ -151,7 +185,7 @@ public fun <K, V> MutableMap<K, V>.putAll(vararg values: Pair<K, V>): Unit {
 }
 
 /**
- * Puts all the entries into this [[MutableMap]] with the first value in the pair being the key and the second the value
+ * Puts all the entries into this [MutableMap] with the first value in the pair being the key and the second the value
  */
 public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
     for ((key, value) in values) {
@@ -160,7 +194,8 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
 }
 
 /**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ * Returns a new map with entries having the keys of this map and the values obtained by applying the `transform`
+ * function to each entry in this [Map].
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt mapValues
  */
@@ -169,7 +204,8 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
 }
 
 /**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ * Returns a new Map with entries having the keys obtained by applying the `transform` function to each entry in this
+ * [Map] and the values of this map.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt mapKeys
  */
@@ -178,7 +214,7 @@ public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R)
 }
 
 /**
- * Returns a map containing all key-value pairs matching keys with the given *predicate*
+ * Returns a map containing all key-value pairs with keys matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -191,7 +227,7 @@ public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K,
 }
 
 /**
- * Returns a map containing all key-value pairs matching values with the given *predicate*
+ * Returns a map containing all key-value pairs with values matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -205,7 +241,9 @@ public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<
 
 
 /**
- * Appends all elements matching the given *predicate* into the given *destination*
+ * Appends all entries matching the given [predicate] into the given [destination] mutable map.
+ *
+ * @return the destination map.
  */
 public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
@@ -217,14 +255,16 @@ public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterTo(destination: C
 }
 
 /**
- * Returns a map containing all key-value pairs matching the given *predicate*
+ * Returns a map containing all key-value pairs matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterTo(LinkedHashMap<K, V>(), predicate)
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *destination*
+ * Appends all entries not matching the given [predicate] into the given [destination].
+ *
+ * @return the destination map.
  */
 public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
@@ -236,7 +276,7 @@ public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterNotTo(destination
 }
 
 /**
- * Returns a map containing all key-value pairs matching the given *predicate*
+ * Returns a map containing all key-value pairs not matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
     return filterNotTo(LinkedHashMap<K, V>(), predicate)
@@ -250,7 +290,7 @@ public fun <K, V> MutableMap<K, V>.plusAssign(pair: Pair<K, V>) {
 }
 
 /**
- * Returns a map containing all key-value pairs from the given collection
+ * Returns a new map containing all key-value pairs from the given collection of pairs.
  */
 public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -261,6 +301,6 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
 }
 
 /**
- * Converts this [Map] to a [LinkedHashMap] so future insertion orders are maintained
+ * Converts this [Map] to a [LinkedHashMap], maintaining the insertion order of elements added to that map afterwards.
  */
 public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)

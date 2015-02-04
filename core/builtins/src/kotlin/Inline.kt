@@ -16,8 +16,17 @@
 
 package kotlin
 
+/**
+ * Marks the annotated lambda parameter passed to an inline function as not inlineable.
+ */
 public annotation class noinline
 
+/**
+ * Marks the annotated function and the function parameters (lambdas) that it takes as inlinable into the
+ * calling functions. Inline functions can use reified type parameters, and lambdas passed to inline
+ * functions can contain non-local returns.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/inline-functions.html) for more information.
+ */
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
 
 public enum class InlineStrategy {

@@ -1,7 +1,7 @@
 package kotlin
 
 /**
- * Adds all elements of the given *iterable* to this [[MutableCollection]]
+ * Adds all elements of the given [iterable] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(iterable: Iterable<T>) {
     when (iterable) {
@@ -11,21 +11,21 @@ public fun <T> MutableCollection<in T>.addAll(iterable: Iterable<T>) {
 }
 
 /**
- * Adds all elements of the given *stream* to this [[MutableCollection]]
+ * Adds all elements of the given [stream] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(stream: Stream<T>) {
     for (item in stream) add(item)
 }
 
 /**
- * Adds all elements of the given *array* to this [[MutableCollection]]
+ * Adds all elements of the given [array] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
     for (item in array) add(item)
 }
 
 /**
- * Removes all elements of the given *iterable* from this [[MutableCollection]]
+ * Removes all elements of the given [iterable] from this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.removeAll(iterable: Iterable<T>) {
     when (iterable) {
@@ -35,21 +35,21 @@ public fun <T> MutableCollection<in T>.removeAll(iterable: Iterable<T>) {
 }
 
 /**
- * Removes all elements of the given *stream* from this [[MutableCollection]]
+ * Removes all elements of the given [stream] from this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.removeAll(stream: Stream<T>) {
     for (item in stream) remove(item)
 }
 
 /**
- * Removes all elements of the given *array* from this [[MutableCollection]]
+ * Removes all elements of the given [array] from this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.removeAll(array: Array<out T>) {
     for (item in array) remove(item)
 }
 
 /**
- * Retains only elements of the given *iterable* in this [[MutableCollection]]
+ * Retains only elements of the given [iterable] in this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
     when (iterable) {
@@ -59,7 +59,7 @@ public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
 }
 
 /**
- * Retains only elements of the given *array* in this [[MutableCollection]]
+ * Retains only elements of the given [array] in this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.retainAll(array: Array<out T>) {
     retainAll(array.toSet())

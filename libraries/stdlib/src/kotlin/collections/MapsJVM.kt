@@ -11,14 +11,14 @@ import java.util.Properties
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
- * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
+ * Converts this [Map] to a [SortedMap] so iteration order will be in key order
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMap
  */
 public fun <K : Any, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
 /**
- * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
+ * Converts this [Map] to a [SortedMap] using the given [comparator] so that iteration order will be in the order
  * defined by the comparator
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMapWithComparator
@@ -30,8 +30,8 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,
 }
 
 /**
- * Returns a new [[SortedMap]] populated with the given pairs where the first value in each pair
- * is the key and the second value is the value
+ * Returns a new [SortedMap] with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt createSortedMap
  */
@@ -49,7 +49,7 @@ public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
 
 
 /**
- * Converts this [[Map]] to a [[Properties]] object
+ * Converts this [Map] to a [Properties] object
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toProperties
  */
