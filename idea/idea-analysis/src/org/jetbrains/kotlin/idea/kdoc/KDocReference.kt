@@ -70,6 +70,8 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
         val newLink = KDocElementFactory(getElement().getProject()).createNameFromText(newText)
         return getElement().replace(newLink)
     }
+
+    override fun getCanonicalText(): String = getElement().getNameText()
 }
 
 public fun resolveKDocLink(session: KotlinCodeAnalyzer,
