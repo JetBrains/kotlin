@@ -1620,7 +1620,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void putLocalVariableIntoFrameMap(@NotNull JetVariableDeclaration statement) {
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, statement);
-        assert variableDescriptor != null;
+        assert variableDescriptor != null : "Couldn't find variable declaration in binding context " + statement.getText();
 
         Type type = getVariableType(variableDescriptor);
         int index = myFrameMap.enter(variableDescriptor, type);
