@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android.test
+package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.testFramework.UsefulTestCase
-import java.io.File
-import java.io.IOException
-import java.util.Scanner
-import java.io.FileWriter
-import org.junit.Assert
-import kotlin.test.fail
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
+import java.io.File
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import kotlin.test.*
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 

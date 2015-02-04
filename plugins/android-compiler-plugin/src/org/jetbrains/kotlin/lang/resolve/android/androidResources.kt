@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.kotlin.lang.resolve.android
 
 public data class AndroidModuleInfo(val applicationPackage: String, val mainResDirectory: String?)
 

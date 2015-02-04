@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android.test
+package org.jetbrains.kotlin.lang.resolve.android.test
 
+import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.util.regex.Pattern
 import com.intellij.openapi.util.io.FileUtil
 import java.util.ArrayList
 import java.util.Collections
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {

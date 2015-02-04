@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android.test
+package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 
 private class AndroidTestExternalDeclarationsProvider(
         val project: Project,

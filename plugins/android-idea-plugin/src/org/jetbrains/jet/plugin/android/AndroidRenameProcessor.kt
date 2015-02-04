@@ -18,9 +18,7 @@ package org.jetbrains.jet.plugin.android
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
@@ -29,11 +27,11 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.resolve.android.nameToIdDeclaration
-import org.jetbrains.jet.lang.resolve.android.idToName
+import org.jetbrains.kotlin.lang.resolve.android.nameToIdDeclaration
+import org.jetbrains.kotlin.lang.resolve.android.idToName
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.lang.resolve.android.AndroidConst
+import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.kotlin.psi.JetProperty
@@ -42,6 +40,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.moduleInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import org.jetbrains.jet.lang.resolve.android.*
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
@@ -49,6 +48,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
 
 public object AndroidConfigurationKeys {
 

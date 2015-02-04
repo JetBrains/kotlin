@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.android
+package org.jetbrains.kotlin.lang.resolve.android
 
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes

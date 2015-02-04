@@ -147,9 +147,9 @@ import org.jetbrains.jet.android.AbstractAndroidGotoTest
 import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.jet.android.AbstractAndroidRenameTest
 import org.jetbrains.jet.android.AbstractAndroidFindUsagesTest
-import org.jetbrains.jet.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.jet.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
-import org.jetbrains.jet.lang.resolve.android.test.AbstractAndroidBoxTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.jet.android.AbstractParserResultEqualityTest
 
 fun main(args: Array<String>) {
