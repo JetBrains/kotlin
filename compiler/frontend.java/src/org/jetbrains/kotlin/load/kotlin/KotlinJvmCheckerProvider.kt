@@ -201,11 +201,12 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             safeAccess: Boolean,
             c: CallResolutionContext<*>
     ) {
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, c.trace.getBindingContext())
         if (!safeAccess) {
             doCheckType(
                     receiverArgument.getType(),
                     receiverParameter.getType(),
-                    DataFlowValueFactory.createDataFlowValue(receiverArgument, c.trace.getBindingContext()),
+                    dataFlowValue,
                     c.dataFlowInfo
             ) {
                 expectedMustNotBeNull,
@@ -219,6 +220,13 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                 c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(
                         reportOn, expectedMustNotBeNull, actualMayBeNull
                 ))
+
+            }
+        }
+        else {
+            if (c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
+                && receiverArgument.getType().mustNotBeNull() == NullabilityInformationSource.JAVA) {
+                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
 
             }
         }

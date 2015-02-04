@@ -8640,6 +8640,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("safeCall.kt")
+                public void testSafeCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/safeCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("throw.kt")
                 public void testThrow() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/throw.kt");
