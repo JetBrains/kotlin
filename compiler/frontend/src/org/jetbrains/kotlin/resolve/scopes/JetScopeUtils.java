@@ -70,7 +70,7 @@ public final class JetScopeUtils {
     public static JetScope getPropertyDeclarationInnerScope(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope outerScope,
-            RedeclarationHandler redeclarationHandler
+            @NotNull RedeclarationHandler redeclarationHandler
     ) {
         return getPropertyDeclarationInnerScope(propertyDescriptor,
                                                 outerScope,
@@ -119,7 +119,7 @@ public final class JetScopeUtils {
             @NotNull JetScope outerScope,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor receiver,
-            RedeclarationHandler redeclarationHandler,
+            @NotNull RedeclarationHandler redeclarationHandler,
             boolean addLabelForProperty
     ) {
         WritableScopeImpl result = new WritableScopeImpl(

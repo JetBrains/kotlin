@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -36,9 +37,21 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("ClassSelfReference.kt")
+    public void testClassSelfReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ClassSelfReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CodeReference.kt")
     public void testCodeReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CodeReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConstructorParamReference.kt")
+    public void testConstructorParamReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ConstructorParamReference.kt");
         doTest(fileName);
     }
 

@@ -54,9 +54,13 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         return null
     }
 
+    public val knownTag: KDocKnownTag?
+        get() {
+            val name = getName()
+            return if (name != null) KDocKnownTag.findByTagName(name) else null
+        }
+
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
-        val name = getName()
-        val knownTag = if (name != null) KDocKnownTag.findByTagName(name) else null
         if (knownTag?.isReferenceRequired() ?: false) {
             return contentChildren.firstOrNull()?.getElementType() == KDocElementTypes.KDOC_LINK;
         }

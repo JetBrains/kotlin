@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -54,7 +55,7 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
         if (declaration == null) {
             return arrayListOf()
         }
-        val declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+        val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
         val kdocLink = getElement().getStrictParentOfType<KDocLink>()!!
         return resolveKDocLink(session, declarationDescriptor, kdocLink.getTagIfSubject(), getElement().getQualifiedName())
     }
@@ -75,7 +76,7 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
                            fromDescriptor: DeclarationDescriptor,
                            fromSubjectOfTag: KDocTag?,
                            qualifiedName: List<String>): Collection<DeclarationDescriptor> {
-    if (fromSubjectOfTag?.getName() == "param") {
+    if (fromSubjectOfTag?.knownTag == KDocKnownTag.PARAM) {
         return resolveParamLink(fromDescriptor, qualifiedName)
     }
 
@@ -90,19 +91,20 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
 }
 
 private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
-    if (qualifiedName.size() != 1) {
-        return listOf()
-    }
-    if (fromDescriptor is CallableDescriptor) {
-        val valueParams = fromDescriptor.getValueParameters().filter { it.getName().asString() == qualifiedName[0] }
-        if (valueParams.isNotEmpty()) {
-            return valueParams
-        }
-    }
-    if (fromDescriptor is ClassifierDescriptor) {
-        val typeParams = fromDescriptor.getTypeConstructor().getParameters().filter { it.getName().asString() == qualifiedName[0] }
-        if (typeParams.isNotEmpty()) {
-            return typeParams
+    // TODO resolve parameters of functions passed as parameters
+    val name = qualifiedName.singleOrNull() ?: return listOf()
+    when(fromDescriptor) {
+        is CallableDescriptor ->
+            return fromDescriptor.getValueParameters().filter { it.getName().asString() == name }
+        is ClassifierDescriptor -> {
+            val typeParams = fromDescriptor.getTypeConstructor().getParameters().filter { it.getName().asString() == name }
+            if (typeParams.isNotEmpty()) {
+                return typeParams
+            }
+            if (fromDescriptor is ClassDescriptor) {
+                return resolveParamLink(fromDescriptor.getUnsubstitutedPrimaryConstructor(), qualifiedName)
+            }
+            return listOf()
         }
     }
 
@@ -126,7 +128,6 @@ private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor
     for (constructor in descriptor.getConstructors()) {
         headerScope.addFunctionDescriptor(constructor)
     }
-    headerScope.addLabeledDeclaration(descriptor)
     headerScope.changeLockLevel(WritableScope.LockLevel.READING)
 
     val classScope = ChainedScope(descriptor, "Class ${descriptor.getName()} scope", descriptor.getDefaultType().getMemberScope(), headerScope)
@@ -134,30 +135,30 @@ private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor
 }
 
 private fun getResolutionScope(session: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): JetScope {
-    when (descriptor) {
+    return when (descriptor) {
         is PackageFragmentDescriptor ->
-            return getPackageInnerScope(descriptor)
+            getPackageInnerScope(descriptor)
 
         is PackageViewDescriptor ->
-            return descriptor.getMemberScope()
+            descriptor.getMemberScope()
 
         is ClassDescriptor ->
-            return getClassInnerScope(getOuterScope(descriptor, session), descriptor)
+            getClassInnerScope(getOuterScope(descriptor, session), descriptor)
 
         is FunctionDescriptor ->
-            return FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, session),
-                                                                descriptor, RedeclarationHandler.DO_NOTHING)
+            FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, session),
+                                                         descriptor, RedeclarationHandler.DO_NOTHING)
 
         is PropertyDescriptor ->
-            return JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                                  getOuterScope(descriptor, session),
-                                                                  RedeclarationHandler.DO_NOTHING)
+            JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
+                                                           getOuterScope(descriptor, session),
+                                                           RedeclarationHandler.DO_NOTHING)
+
+        is DeclarationDescriptorNonRoot ->
+            getOuterScope(descriptor, session)
+
+        else -> throw IllegalArgumentException("Cannot find resolution scope for root $descriptor")
     }
-
-    if (descriptor is DeclarationDescriptorNonRoot)
-        return getOuterScope(descriptor, session)
-
-    throw IllegalArgumentException("Cannot find resolution scope for root $descriptor")
 }
 
 private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, session: KotlinCodeAnalyzer): JetScope {
