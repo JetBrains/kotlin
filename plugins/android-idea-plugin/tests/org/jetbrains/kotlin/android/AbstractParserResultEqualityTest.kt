@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android
+package org.jetbrains.kotlin.android
 
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
-import org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor
-import kotlin.test.assertEquals
-import org.jetbrains.jet.plugin.android.TestConst
-import org.jetbrains.kotlin.android.AndroidConfigurationKeys
-import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.plugin.android.TestConst
+import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
+import com.intellij.openapi.module.ModuleManager
+import org.jetbrains.kotlin.plugin.android.IDEAndroidUIXmlProcessor
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import kotlin.test.assertEquals
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {

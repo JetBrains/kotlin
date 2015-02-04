@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android;
+package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
 import com.android.ide.common.rendering.RenderSecurityManager;
@@ -46,6 +46,7 @@ import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.android.KotlinAndroidTestCaseBase;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.psi.JetFile;

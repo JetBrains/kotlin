@@ -12,19 +12,19 @@
   <depends optional="false">org.jetbrains.android</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-      <moduleService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
-                      serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
+      <moduleService serviceInterface="org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor"
+                      serviceImplementation="org.jetbrains.kotlin.plugin.android.IDEAndroidUIXmlProcessor"/>
       <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
-      <gotoDeclarationHandler implementation="org.jetbrains.jet.plugin.android.AndroidGotoDeclarationHandler"/>
+      <gotoDeclarationHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidGotoDeclarationHandler"/>
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
-                                 implementation="org.jetbrains.jet.plugin.android.AndroidRenameProcessor"
+                                 implementation="org.jetbrains.kotlin.plugin.android.AndroidRenameProcessor"
                                  order="first"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-      <externalDeclarationsProvider implementation="org.jetbrains.jet.plugin.android.IDEAndroidExternalDeclarationsProvider"/>
+      <externalDeclarationsProvider implementation="org.jetbrains.kotlin.plugin.android.IDEAndroidExternalDeclarationsProvider"/>
       <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
-      <findUsagesHandlerDecorator implementation="org.jetbrains.jet.plugin.android.AndroidFindUsageHandlerDecorator"/>
-      <simpleNameReferenceExtension implementation="org.jetbrains.jet.plugin.android.AndroidSimpleNameReferenceExtension"/>
+      <findUsagesHandlerDecorator implementation="org.jetbrains.kotlin.plugin.android.AndroidFindUsageHandlerDecorator"/>
+      <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.plugin.android.AndroidSimpleNameReferenceExtension"/>
   </extensions>
 </idea-plugin>

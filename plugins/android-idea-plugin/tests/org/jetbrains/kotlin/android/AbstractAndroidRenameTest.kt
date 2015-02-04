@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android
+package org.jetbrains.kotlin.android
 
-import com.intellij.openapi.command.WriteCommandAction
+import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.codeInsight.TargetElementUtilBase
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetProperty
+import kotlin.test.*
 
 public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
-import com.intellij.openapi.project.Project
-import java.util.ArrayList
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.resolve.android.AndroidWidget
-import org.jetbrains.jet.lang.resolve.android.KotlinStringWriter
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.resolve.android.CliAndroidResourceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import org.jetbrains.kotlin.lang.resolve.android.AndroidWidget
 
 class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
 

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
 import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
-import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
-import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import com.intellij.psi.PsiElement
+import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
 
 public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
     override fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean? {

@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.psi.moduleInfo
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.search.SearchScope
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.JetProperty
 import com.intellij.psi.xml.XmlAttributeValue
-import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
-import org.jetbrains.android.util.AndroidResourceUtil
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.openapi.module.ModuleServiceManager
-import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.lang.resolve.android.nameToIdDeclaration
-import org.jetbrains.kotlin.lang.resolve.android.idToName
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import com.intellij.openapi.module.ModuleUtil
-import com.intellij.openapi.module.ModuleUtilCore
-import org.jetbrains.kotlin.psi.JetProperty
+import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.moduleInfo
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import com.intellij.psi.xml.XmlAttribute
+import org.jetbrains.kotlin.lang.resolve.android
+import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
+import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.android.util.AndroidResourceUtil
+import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
+import org.jetbrains.kotlin.lang.resolve.android.nameToIdDeclaration
+import org.jetbrains.kotlin.lang.resolve.android.idToName
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android;
+package org.jetbrains.kotlin.plugin.android;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android
+package org.jetbrains.kotlin.android
 
-import com.intellij.openapi.application.PathManager
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import com.intellij.ide.startup.impl.StartupManagerImpl
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.openapi.startup.StartupManager
-import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.psi.PsiManager
-import com.android.SdkConstants
-import com.intellij.codeInsight.CodeInsightSettings
-import org.jetbrains.kotlin.completion.util.testCompletion
 import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.completion
+import org.jetbrains.kotlin.completion.util.testCompletion
+import java.io.File
 
 public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.psi.PsiElement
@@ -22,9 +22,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
-import org.jetbrains.jet.lang.resolve.android.isAndroidSyntheticElement
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.android.util.AndroidResourceUtil
 import java.util.ArrayList
@@ -33,6 +31,8 @@ import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecor
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
 
 class AndroidFindUsageHandlerDecorator : KotlinFindUsagesHandlerDecorator {
     override fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler {

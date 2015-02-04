@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.PsiField
-import com.intellij.openapi.module.ModuleServiceManager
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.openapi.actionSystem.DataContext
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 

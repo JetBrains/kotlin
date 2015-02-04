@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
-import com.intellij.openapi.module.ModuleServiceManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
 import org.jetbrains.kotlin.psi.moduleInfo
 
 public class IDEAndroidExternalDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {

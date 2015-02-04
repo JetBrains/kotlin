@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
+import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
-import org.jetbrains.kotlin.lang.resolve.android.idToName
 import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
+import org.jetbrains.kotlin.lang.resolve.android
+import org.jetbrains.kotlin.lang.resolve.android.idToName
 
 class AndroidXmlVisitor(
         val resourceManager: AndroidResourceManager,
@@ -51,4 +51,3 @@ class AndroidXmlVisitor(
         tag?.acceptChildren(this)
     }
 }
-

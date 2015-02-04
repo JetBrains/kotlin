@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.android
+package org.jetbrains.kotlin.plugin.android
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import java.util.HashMap
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.PsiFile
-import org.jetbrains.android.facet.AndroidFacet
-import com.intellij.openapi.module.ModuleManager
-import java.util.ArrayList
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.module.Module
-import com.intellij.psi.PsiManager
-import org.jetbrains.jet.lang.resolve.android.AndroidResourceManager
-import org.jetbrains.jet.lang.resolve.android.AndroidModuleInfo
+import com.intellij.psi.PsiElement
+import org.jetbrains.android.facet.AndroidFacet
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
+import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
+import org.jetbrains.kotlin.lang.resolve.android.AndroidModuleInfo
 
 public class IDEAndroidResourceManager(val module: Module) : AndroidResourceManager(module.getProject()) {
 

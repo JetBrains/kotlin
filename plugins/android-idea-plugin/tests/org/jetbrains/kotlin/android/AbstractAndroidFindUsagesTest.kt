@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.android
+package org.jetbrains.kotlin.android
 
-import kotlin.test.assertTrue
 import com.intellij.codeInsight.TargetElementUtilBase
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
-import kotlin.test.assertNotNull
 
 public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
@@ -33,10 +30,10 @@ public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
         val targetElement = TargetElementUtilBase.findTargetElement(f.getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED or TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED)
 
-        assertNotNull(targetElement)
+        kotlin.test.assertNotNull(targetElement)
 
         val propUsages = f.findUsages(targetElement)
 
-        assertTrue(propUsages.notEmpty)
+        kotlin.test.assertTrue(propUsages.notEmpty)
     }
 }
