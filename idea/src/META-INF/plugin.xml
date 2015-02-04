@@ -831,7 +831,13 @@
         enabledByDefault="true"
         level="WARNING"
         />
-      
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
+        displayName="Unresolved reference in KDoc"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>
