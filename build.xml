@@ -568,6 +568,16 @@
                         public protected *;
                     }
 
+                    -keep class org.jetbrains.kotlin.extensions.** {
+                        public protected *;
+                    }
+
+                    -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
+
+                    -keep class org.jetbrains.kotlin.codegen.extensions.** {
+                        public protected *;
+                    }
+
                     -keepclassmembers class com.intellij.openapi.vfs.VirtualFile {
                         public InputStream getInputStream();
                     }
