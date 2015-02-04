@@ -109,8 +109,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
+    protected String codegenTestBasePath() {
+        return "compiler/testData/codegen/";
+    }
+
+    @NotNull
     protected String relativePath(@NotNull File file) {
-        String stringToCut = "compiler/testData/codegen/";
+        String stringToCut = codegenTestBasePath();
         String systemIndependentPath = file.getPath().replace(File.separatorChar, '/');
         assert systemIndependentPath.startsWith(stringToCut) : "File path is not absolute: " + file;
         return systemIndependentPath.substring(stringToCut.length());

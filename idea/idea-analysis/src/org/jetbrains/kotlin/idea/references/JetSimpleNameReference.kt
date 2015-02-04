@@ -37,10 +37,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.openapi.extensions.Extensions
+import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
 ) : JetSimpleReference<JetSimpleNameExpression>(jetSimpleNameExpression) {
+
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        if (element != null) {
+            val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(
+                    SimpleNameReferenceExtension.EP_NAME).getExtensions()
+            for (extension in extensions) {
+                val value = extension.isReferenceTo(this, element)
+                if (value != null) {
+                    return value
+                }
+            }
+        }
+
+        return super.isReferenceTo(element)
+    }
 
     override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
 
@@ -69,7 +87,19 @@ public class JetSimpleNameReference(
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
             JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
-            else -> psiFactory.createNameIdentifier(newElementName)
+            else -> {
+                val extensions = Extensions.getArea(expression.getProject()).getExtensionPoint(
+                        SimpleNameReferenceExtension.EP_NAME).getExtensions()
+
+                var handled: PsiElement? = null
+                for (extension in extensions) {
+                    handled = extension.handleElementRename(this, psiFactory, newElementName)
+                    if (handled != null) {
+                        break
+                    }
+                }
+                handled ?: psiFactory.createNameIdentifier(newElementName)
+            }
         }
 
         var nameElement = expression.getReferencedNameElement()

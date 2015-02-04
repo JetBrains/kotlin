@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.CodegenUtilKt;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
@@ -379,6 +380,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         catch (RuntimeException e) {
             throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
+        }
+
+        for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
+            extension.generateClassSyntheticParts(v, myClass, descriptor);
         }
 
         generateTraitMethods();

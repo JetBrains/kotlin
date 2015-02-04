@@ -8,5 +8,17 @@
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
+        <extensionPoint name="externalDeclarationsProvider"
+                        interface="org.jetbrains.jet.extensions.ExternalDeclarationsProvider"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="expressionCodegenExtension"
+                        interface="org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="findUsagesHandlerDecorator"
+                        interface="org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="simpleNameReferenceExtension"
+                        interface="org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

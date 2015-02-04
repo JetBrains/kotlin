@@ -171,6 +171,9 @@
         <!-- Protocol Buffers -->
         <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
 
+        <!-- Android SDK platform -->
+        <get_android_sdk version.full="21_r01" version.number="21" version.buildtools="21.1.1"/>
+
         <!-- CLI Parser -->
         <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
 
@@ -214,6 +217,63 @@
             </then>
         </if>
     </target>
+
+    <macrodef name="get_android_sdk">
+        <attribute name="version.full"/>
+        <attribute name="version.number"/>
+        <attribute name="version.buildtools"/>
+        <sequential>
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+            <condition property="android.os.tag" value="windows">
+                <os family="windows"/>
+            </condition>
+
+            <condition property="android.os.tag" value="macosx">
+                <os family="mac"/>
+            </condition>
+
+            <condition property="android.os.tag" value="linux">
+                <and>
+                    <os family="unix"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+            </condition>
+
+            <delete dir="dependencies/androidSDK" failonerror="false"/>
+            <get
+                src="https://dl-ssl.google.com/android/repository/android-@{version.full}.zip"
+                dest="dependencies/android_sdk.zip" usetimestamp="true"/>
+
+            <unzip src="dependencies/android_sdk.zip" dest="dependencies/androidSDK/platforms/android-@{version.number}/">
+                <cutdirsmapper dirs="1"/>
+            </unzip>
+
+            <get
+                src="https://dl-ssl.google.com/android/repository/build-tools_r@{version.buildtools}-${android.os.tag}.zip"
+                dest="dependencies/android_buildtools.zip" usetimestamp="true"/>
+
+            <unzip src="dependencies/android_buildtools.zip" dest="dependencies/androidSDK/build-tools/@{version.buildtools}/">
+                <cutdirsmapper dirs="1"/>
+            </unzip>
+
+            <if>
+                <equals arg1="${android.os.tag}" arg2="windows"/>
+                <then />
+                <else>
+                    <exec executable="chmod">
+                        <arg value="a+x"/>
+                        <arg path="dependencies/androidSDK/build-tools/@{version.buildtools}/aapt"/>
+                        <arg path="dependencies/androidSDK/build-tools/@{version.buildtools}/aidl"/>
+                        <arg path="dependencies/androidSDK/build-tools/@{version.buildtools}/dx"/>
+                        <arg path="dependencies/androidSDK/build-tools/@{version.buildtools}/zipalign"/>
+                    </exec>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
 
     <macrodef name="get-asm-sources-and-rename-packages">
         <attribute name="asm.version"/>

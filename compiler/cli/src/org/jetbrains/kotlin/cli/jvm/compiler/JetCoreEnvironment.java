@@ -41,6 +41,8 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
@@ -49,6 +51,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.JetFileType;
@@ -249,6 +252,13 @@ public class JetCoreEnvironment {
         );
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
+
+        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
+        ExpressionCodegenExtension.OBJECT$.registerExtensionPoint(project);
+
+        for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
+            registrar.registerProjectComponents(project, configuration);
+        }
     }
 
     // made public for Upsource
