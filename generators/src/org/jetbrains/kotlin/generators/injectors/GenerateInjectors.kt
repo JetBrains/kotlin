@@ -144,6 +144,7 @@ private fun generatorForRuntimeDescriptorLoader() =
             publicParameter<ModuleDescriptor>()
 
             publicField<JavaDescriptorResolver>()
+            publicField<DeserializationComponentsForJava>()
 
             field<ExternalSignatureResolver>(init = GetSingleton.byField(javaClass<ExternalSignatureResolver>(), "DO_NOTHING"))
             field<MethodSignatureChecker>(init = GetSingleton.byField(javaClass<MethodSignatureChecker>(), "DO_NOTHING"))

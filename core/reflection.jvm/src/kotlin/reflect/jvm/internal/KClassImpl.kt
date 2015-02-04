@@ -38,11 +38,13 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     val descriptor by ReflectProperties.lazySoft {(): ClassDescriptor ->
         val moduleData = jClass.getOrCreateModule()
+        val classId = jClass.classId
 
-        val found = moduleData.module.findClassAcrossModuleDependencies(jClass.classId)
-        if (found != null) return@lazySoft found
+        val descriptor =
+                if (classId.isLocal()) moduleData.localClassResolver.resolveLocalClass(classId)
+                else moduleData.module.findClassAcrossModuleDependencies(classId)
 
-        throw KotlinReflectionInternalError("Class not resolved: $jClass")
+        descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
     }
 
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
