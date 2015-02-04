@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -1286,6 +1287,37 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
         context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
         return JetTypeInfo.create(null, context.dataFlowInfo);
+    }
+
+    @Override
+    public JetTypeInfo visitNamedFunction(
+            @NotNull JetNamedFunction function, ExpressionTypingContext data
+    ) {
+        return visitNamedFunction(function, data, false, null);
+    }
+
+    public JetTypeInfo visitNamedFunction(
+            @NotNull JetNamedFunction function,
+            @NotNull ExpressionTypingContext context,
+            boolean isStatement,
+            @Nullable WritableScope statementScope // must be not null if isStatement
+    ) {
+        SimpleFunctionDescriptor functionDescriptor = components.expressionTypingServices.getDescriptorResolver().
+                resolveFunctionDescriptorWithAnnotationArguments(
+                        context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
+
+        statementScope.addFunctionDescriptor(functionDescriptor);
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
+        components.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
+
+        components.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
+                                                                   context.scope, context.dataFlowInfo, context.trace);
+
+        ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function, functionDescriptor);
+        if (!function.hasBody()) {
+            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+        }
+        return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
     }
 
     @Override
