@@ -43,6 +43,9 @@ public abstract class JetTemplateContextType extends TemplateContextType {
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
+            if (element == null) {
+                element = file.findElementAt(offset - 1);
+            }
             if (element instanceof PsiWhiteSpace) {
                 return false;
             }
@@ -145,7 +148,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
                 }
                 e = e.getParent();
             }
-            return true;
+            return e != null;
         }
     }
 
