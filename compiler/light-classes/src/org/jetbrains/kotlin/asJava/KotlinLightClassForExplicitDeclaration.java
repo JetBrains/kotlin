@@ -31,6 +31,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
@@ -575,6 +576,12 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                         }
                 )
         );
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return getOrigin().getUseScope();
     }
 
     private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {

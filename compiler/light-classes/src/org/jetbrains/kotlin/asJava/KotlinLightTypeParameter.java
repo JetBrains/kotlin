@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava;
 import com.intellij.lang.Language;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
+import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
@@ -133,6 +134,12 @@ public class KotlinLightTypeParameter
     @Override
     public Language getLanguage() {
         return JetLanguage.INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return getOrigin().getUseScope();
     }
 
     @Override
