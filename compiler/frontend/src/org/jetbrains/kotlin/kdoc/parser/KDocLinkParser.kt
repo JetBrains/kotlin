@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
  */
 class KDocLinkParser(): PsiParser {
     override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
-        builder.setDebugMode(true)
         val rootMarker = builder.mark()
         if (builder.getTokenType() == JetTokens.LBRACKET) {
             builder.advanceLexer()

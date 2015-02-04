@@ -78,7 +78,7 @@ public class FunctionDescriptorUtil {
     public static JetScope getFunctionInnerScope(
             @NotNull JetScope outerScope,
             @NotNull FunctionDescriptor descriptor,
-            RedeclarationHandler redeclarationHandler
+            @NotNull RedeclarationHandler redeclarationHandler
     ) {
         WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope");
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();

@@ -1,0 +1,57 @@
+JetFile: MarkdownLinkWithError.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_LINK
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            KDOC_NAME
+              KDOC_NAME
+                PsiElement(IDENTIFIER)('A')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('B')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('C')
+          PsiErrorElement:Closing bracket expected
+            <empty list>
+          PsiElement(RANGE)('..')
+          PsiElement(DOT)('.')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' [....]')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_LINK
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('A')
+          PsiErrorElement:Closing bracket expected
+            <empty list>
+          PsiElement(RANGE)('..')
+          PsiElement(IDENTIFIER)('B')
+          PsiElement(RANGE)('..')
+          PsiElement(IDENTIFIER)('C')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ')
+      KDOC_LINK
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('A')
+          PsiElement(DOT)('.')
+          PsiErrorElement:Identifier expected
+            <empty list>
+          PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
