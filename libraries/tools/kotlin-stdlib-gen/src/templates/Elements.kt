@@ -25,7 +25,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("indexOf(element: T)") {
         exclude(Strings)
-        doc { "Returns first index of *element*, or -1 if the collection does not contain element" }
+        doc { "Returns first index of [element], or -1 if the collection does not contain element" }
         returns("Int")
         body {
             """
@@ -153,7 +153,12 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("first()") {
-        doc { "Returns first element" }
+        doc { """Returns first element.
+        @throws NoSuchElementException if the collection is empty.
+        """ }
+        doc(Strings) { """Returns first character.
+        @throws NoSuchElementException if the string is empty.
+        """ }
         returns("T")
         body {
             """
@@ -182,7 +187,8 @@ fun elements(): List<GenericFunction> {
         }
     }
     templates add f("firstOrNull()") {
-        doc { "Returns first element, or null if collection is empty" }
+        doc { "Returns the first element, or null if the collection is empty." }
+        doc(Strings) { "Returns the first character, or null if string is empty." }
         returns("T?")
         body {
             """
@@ -212,7 +218,10 @@ fun elements(): List<GenericFunction> {
     templates add f("first(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns first element matching the given *predicate*" }
+        doc { """"Returns the first element matching the given [predicate].
+        @throws NoSuchElementException if no such element is found.""" }
+        doc(Strings) { """Returns the first character matching the given [predicate].
+        @throws NoSuchElementException if no such character is found.""" }
         returns("T")
         body {
             """
@@ -225,7 +234,8 @@ fun elements(): List<GenericFunction> {
     templates add f("firstOrNull(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns first element matching the given *predicate*, or *null* if element was not found" }
+        doc { "Returns first element matching the given [predicate], or `null` if element was not found" }
+        doc(Strings) { "Returns first character matching the given [predicate], or `null` if character was not found" }
         returns("T?")
         body {
             """
@@ -236,7 +246,10 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("last()") {
-        doc { "Returns last element" }
+        doc { """Returns the last element.
+        @throws NoSuchElementException if the collection is empty.""" }
+        doc(Strings) { """"Returns the last character.
+        @throws NoSuchElementException if the string is empty.""" }
         returns("T")
         body {
             """
@@ -280,7 +293,8 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("lastOrNull()") {
-        doc { "Returns last element, or null if collection is empty" }
+        doc { "Returns the last element, or `null` if the collection is empty" }
+        doc(Strings) { "Returns the last character, or `null` if the string is empty" }
         returns("T?")
         body {
             """
@@ -323,7 +337,10 @@ fun elements(): List<GenericFunction> {
 
     templates add f("last(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns last element matching the given *predicate*" }
+        doc { """Returns the last element matching the given [predicate].
+        @throws NoSuchElementException if no such element is found.""" }
+        doc(Strings) { """"Returns the last character matching the given [predicate].
+        @throws NoSuchElementException if no such character is found.""" }
         returns("T")
         body {
             """
@@ -343,7 +360,8 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastOrNull(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns last element matching the given *predicate*, or null if element was not found" }
+        doc { "Returns the last element matching the given [predicate], or `null` if no such element was found." }
+        doc(Strings) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
         returns("T?")
         body {
             """
@@ -359,7 +377,8 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("single()") {
-        doc { "Returns single element, or throws exception if there is no or more than one element" }
+        doc { "Returns the single element, or throws an exception if the collection is empty or has more than one element." }
+        doc(Strings) { "Returns the single character, or throws an exception if the string is empty or has more than one character." }
         returns("T")
         body {
             """
@@ -402,7 +421,8 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("singleOrNull()") {
-        doc { "Returns single element, or null if collection is empty, or throws exception if there is more than one element" }
+        doc { "Returns single element, or `null` if the collection is empty or has more than one element." }
+        doc(Strings) { "Returns the single character, or `null` if the string is empty or has more than one character." }
         returns("T?")
         body {
             """
@@ -434,7 +454,8 @@ fun elements(): List<GenericFunction> {
 
     templates add f("single(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns single element matching the given *predicate*, or throws exception if there is no or more than one element" }
+        doc { "Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element" }
+        doc(Strings) { "Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character" }
         returns("T")
         body {
             """
@@ -455,7 +476,8 @@ fun elements(): List<GenericFunction> {
 
     templates add f("singleOrNull(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found" }
+        doc { "Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found" }
+        doc(Strings) { "Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found" }
         returns("T?")
         body {
             """

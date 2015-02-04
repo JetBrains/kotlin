@@ -39,11 +39,11 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
 
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
- * from {@code start} to {@code end} in case of a positive {@code increment}, or from {@code end} to {@code start} in case of a negative
+ * from [start] to [end] in case of a positive [increment], or from [end] to [start] in case of a negative
  * increment.
  *
- * <p>No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * {@code increment&nbsp;&gt; 0} and {@code start&nbsp;&lt;= end}, or {@code increment&nbsp;&lt; 0} and {@code start&nbsp;&gt;= end}.
+ * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
+ * `increment > 0` and `start >= end`, or `increment < 0` and`start >= end`.
  * @param start first element of the progression
  * @param end ending bound for the progression
  * @param increment increment, or difference of successive elements in the progression
@@ -60,11 +60,11 @@ public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int
 
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
- * from {@code start} to {@code end} in case of a positive {@code increment}, or from {@code end} to {@code start} in case of a negative
+ * from [start] to [end] in case of a positive [increment], or from [end] to [start] in case of a negative
  * increment.
  *
- * <p>No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * {@code increment&nbsp;&gt; 0} and {@code start&nbsp;&lt;= end}, or {@code increment&nbsp;&lt; 0} and {@code start&nbsp;&gt;= end}.
+ * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
+ * `increment > 0` and `start >= end`, or `increment < 0` and`start >= end`.
  * @param start first element of the progression
  * @param end ending bound for the progression
  * @param increment increment, or difference of successive elements in the progression

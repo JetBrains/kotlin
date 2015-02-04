@@ -13,8 +13,8 @@ private enum class State {
 }
 
 /**
- * A base class to simplify implementing iterators so that implementations only have to implement [[computeNext()]]
- * to implement the iterator, calling [[done()]] when the iteration is complete.
+ * A base class to simplify implementing iterators so that implementations only have to implement [computeNext]
+ * to implement the iterator, calling [done] when the iteration is complete.
  */
 public abstract class AbstractIterator<T>: Iterator<T> {
     private var state = State.NotReady
@@ -44,17 +44,17 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     /**
      * Computes the next item in the iterator.
      *
-     * This callback method should call one of these two methods
+     * This callback method should call one of these two methods:
      *
-     * * [[setNext(T)]] with the next value of the iteration
-     * * [[done()]] to indicate there are no more elements
+     * * [setNext] with the next value of the iteration
+     * * [done] to indicate there are no more elements
      *
      * Failure to call either method will result in the iteration terminating with a failed state
      */
     abstract protected fun computeNext(): Unit
 
     /**
-     * Sets the next value in the iteration, called from the [[computeNext()]] function
+     * Sets the next value in the iteration, called from the [computeNext] function
      */
     protected fun setNext(value: T): Unit {
         nextValue = value
@@ -62,7 +62,7 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     }
 
     /**
-     * Sets the state to done so that the iteration terminates
+     * Sets the state to done so that the iteration terminates.
      */
     protected fun done() {
         state = State.Done

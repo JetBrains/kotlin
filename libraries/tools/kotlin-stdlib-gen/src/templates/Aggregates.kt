@@ -47,7 +47,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("any(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns *true* if any element matches the given *predicate*" }
+        doc { "Returns *true* if any element matches the given [predicate]" }
         returns("Boolean")
         body {
             """
@@ -73,7 +73,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("count(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns the number of elements matching the given *predicate*" }
+        doc { "Returns the number of elements matching the given [predicate]" }
         returns("Int")
         body {
             """
@@ -105,7 +105,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumBy(transform: (T) -> Int)") {
         inline(true)
-        doc { "Returns the sum of all values produced by `transform` function from elements in the collection" }
+        doc { "Returns the sum of all values produced by [transform] function from elements in the collection" }
+        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string" }
         returns("Int")
         body {
             """
@@ -120,7 +121,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumByDouble(transform: (T) -> Double)") {
         inline(true)
-        doc { "Returns the sum of all values produced by `transform` function from elements in the collection" }
+        doc { "Returns the sum of all values produced by [transform] function from elements in the collection" }
+        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string" }
         returns("Double")
         body {
             """

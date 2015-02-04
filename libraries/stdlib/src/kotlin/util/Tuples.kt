@@ -9,11 +9,13 @@ import java.io.Serializable
  * Pair exhibits value semantics, i.e. two pairs are equal if both components are equal.
  *
  * An example of decomposing it into values:
- * ${code test.tuples.PairTest.pairMultiAssignment}
+ * @sample test.tuples.PairTest.pairMultiAssignment
  *
- * $constructor: Creates new instance of [Pair]
- * $first: First value
- * $second: Second value
+ * @param A type of the first value
+ * @param B type of the second value
+ * @param first First value
+ * @param second Second value
+ * @constructor Creates a new instance of Pair.
  */
 public data class Pair<out A, out B>(
         public val first: A,
@@ -27,7 +29,7 @@ public data class Pair<out A, out B>(
 }
 
 /**
- * Converts pair into a list
+ * Converts a pair into a list.
  */
 public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
 
@@ -37,11 +39,14 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * There is no meaning attached to values in this class, it can be used for any purpose.
  * Triple exhibits value semantics, i.e. two triples are equal if all three components are equal.
  * An example of decomposing it into values:
- * {code test.tuples.PairTest.pairMultiAssignment}
+ * @sample test.tuples.TripleTest.tripleMultiAssignment
  *
- * $first: First value
- * $second: Second value
- * $third: Third value
+ * @param A type of the first value
+ * @param B type of the second value
+ * @param C type of the third value
+ * @param first First value
+ * @param second Second value
+ * @param third Third value
  */
 public data class Triple<out A, out B, out C>(
         public val first: A,
@@ -50,7 +55,7 @@ public data class Triple<out A, out B, out C>(
                                              ) : Serializable {
 
     /**
-     * Returns string representation of the [Triple] including its [first] and [second] values.
+     * Returns string representation of the [Triple] including its [first], [second] and [third] values.
      */
     public override fun toString(): String = "($first, $second, $third)"
 }

@@ -16,13 +16,44 @@
 
 package kotlin
 
+/**
+ * Represents an array (specifically, a Java array when targeting the JVM platform).
+ * Array instances can be created using the [array] and [arrayOfNulls] standard
+ * library functions.
+ * See [Kotlin language documentation](http://kotlinlang.org/docs/reference/basic-types.html#arrays)
+ * for more information on arrays.
+ */
 public class Array<reified T> private (): Cloneable {
+    /**
+     * Returns the array element at the specified [index]. This method can be called using the
+     * index operator:
+     * ```
+     * value = arr[index]
+     * ```
+     */
     public fun get(index: Int): T
+
+    /**
+     * Sets the array element at the specified [index] to the specified [value]. This method can
+     * be called using the index operator:
+     * ```
+     * arr[index] = value
+     * ```
+     */
     public fun set(index: Int, value: T): Unit
 
+    /**
+     * Returns the number of elements in the array.
+     */
     public fun size(): Int
 
+    /**
+     * Creates an iterator for iterating over the elements of the array.
+     */
     public fun iterator(): Iterator<T>
 
+    /**
+     * Creates a shallow copy of the array.
+     */
     public override fun clone(): Array<T>
 }
