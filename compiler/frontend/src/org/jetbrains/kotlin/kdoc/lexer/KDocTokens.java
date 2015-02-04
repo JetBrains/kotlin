@@ -35,11 +35,11 @@ public interface KDocTokens {
     ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", JetLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
-            PsiElement  parentElement = chameleon.getTreeParent().getPsi();
-            Project     project = parentElement.getProject();
-            PsiBuilder  builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
-                                                                                chameleon.getText());
-            PsiParser   parser = new KDocParser();
+            PsiElement parentElement = chameleon.getTreeParent().getPsi();
+            Project project = parentElement.getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
+                                                                               chameleon.getText());
+            PsiParser parser = new KDocParser();
 
             return parser.parse(this, builder).getFirstChildNode();
         }
@@ -67,11 +67,11 @@ public interface KDocTokens {
     ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", JetLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
-            PsiElement  parentElement = chameleon.getTreeParent().getPsi();
-            Project     project = parentElement.getProject();
-            PsiBuilder  builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new JetLexer(), getLanguage(),
-                                                                                chameleon.getText());
-            PsiParser   parser = new KDocLinkParser();
+            PsiElement parentElement = chameleon.getTreeParent().getPsi();
+            Project project = parentElement.getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new JetLexer(), getLanguage(),
+                                                                               chameleon.getText());
+            PsiParser parser = new KDocLinkParser();
 
             return parser.parse(this, builder).getFirstChildNode();
         }
