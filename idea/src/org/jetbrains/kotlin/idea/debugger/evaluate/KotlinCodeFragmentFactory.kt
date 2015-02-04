@@ -105,7 +105,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
 
             if (elementAt is KotlinLightClass) {
-                return getContextElement(elementAt.origin)
+                return getContextElement(elementAt.getOrigin())
             }
 
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)

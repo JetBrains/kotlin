@@ -78,7 +78,7 @@ public class JetChangeSignatureData(
             val overrides = lightMethod?.let { OverridingMethodsSearch.search(it).findAll() } ?: Collections.emptyList()
             overrides.map { method ->
                 if (method is KotlinLightMethod) {
-                    val overridingDeclaration = method.origin
+                    val overridingDeclaration = method.getOrigin()
                     val overridingDescriptor = overridingDeclaration?.resolveToDescriptor() as FunctionDescriptor
                     JetFunctionDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                 }

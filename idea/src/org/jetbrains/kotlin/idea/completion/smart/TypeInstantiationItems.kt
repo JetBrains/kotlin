@@ -286,7 +286,7 @@ class TypeInstantiationItems(
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = if (inheritor is KotlinLightClass && inheritor !is KotlinLightClassForDecompiledDeclaration) {
-                    val origin = inheritor.origin ?: continue
+                    val origin = inheritor.getOrigin() ?: continue
                     val declaration = toFromOriginalFileMapper.toSyntheticFile(origin) ?: continue
                     resolutionFacade.resolveToDescriptor(declaration)
                 }

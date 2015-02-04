@@ -48,7 +48,7 @@ public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDes
 }
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor {
-    if (this is KotlinLightMethod) throw AssertionError("Light methods are not allowed here: ${origin?.getText()}")
+    if (this is KotlinLightMethod) throw AssertionError("Light methods are not allowed here: ${getOrigin()?.getText()}")
 
     val resolver = JavaResolveExtension.getResolver(getProject(), this)
     val methodDescriptor = when {

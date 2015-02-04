@@ -36,7 +36,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is JetNamedFunction || (element is KotlinLightMethod && element.origin is JetNamedFunction)
+        return element is JetNamedFunction || (element is KotlinLightMethod && element.getOrigin() is JetNamedFunction)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -50,7 +50,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
         return when (substitutedJavaElement) {
-            is KotlinLightMethod -> substitutedJavaElement.origin as? JetNamedFunction
+            is KotlinLightMethod -> substitutedJavaElement.getOrigin() as? JetNamedFunction
             else -> substitutedJavaElement
         }
     }

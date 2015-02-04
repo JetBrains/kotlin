@@ -210,7 +210,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val typeArguments = convertTypeArguments(expression)
 
         if (target is KotlinLightMethod) {
-            val origin = target.origin
+            val origin = target.getOrigin()
             val isTopLevel = origin?.getStrictParentOfType<JetClassOrObject>() == null
             if (origin is JetProperty || origin is JetPropertyAccessor || origin is JetParameter) {
                 val property = if (origin is JetPropertyAccessor)

@@ -111,7 +111,7 @@ private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleI
     if (this is KotlinLightClassForDecompiledDeclaration) {
         return getModuleInfoByVirtualFile(getProject(), getContainingFile().getVirtualFile(), false)
     }
-    val element = origin ?: when (this) {
+    val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KotlinLightClassForPackage -> this.getFiles().first()
         else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")

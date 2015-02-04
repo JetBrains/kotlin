@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
-        override val origin: JetClassOrObject?
+        private val origin: JetClassOrObject?
 ) : KotlinWrappingLightClass(clsClass.getManager()) {
     override fun copy() = this
 
@@ -38,5 +38,7 @@ class KotlinLightClassForDecompiledDeclaration(
 
     override fun getDelegate() = clsClass
 
-    override val fqName: FqName = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
+    override fun getOrigin() = origin
+
+    override fun getFqName() = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
 }
