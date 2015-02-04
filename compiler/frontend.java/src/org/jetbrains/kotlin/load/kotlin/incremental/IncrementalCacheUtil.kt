@@ -17,20 +17,11 @@
 package org.jetbrains.kotlin.load.kotlin.incremental
 
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.HashMap
-import java.io.File
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 
-// TODO JetFiles are redundant
-public fun IncrementalCache.getPackagesWithObsoleteParts(sourceFilesToCompile: Collection<JetFile>): Collection<FqName> {
-    return getObsoletePackageParts(sourceFilesToCompile).map { it.getPackageFqName() }
-}
-
-public fun IncrementalCache.getObsoletePackageParts(sourceFilesToCompile: Collection<JetFile>): Collection<JvmClassName> {
-    return getObsoletePackageParts(sourceFilesToCompile.map { File(it.getVirtualFile()!!.getPath()) }).map { JvmClassName.byInternalName(it) }
+public fun IncrementalCache.getPackagesWithObsoleteParts(): Collection<FqName> {
+    return getObsoletePackageParts().map { JvmClassName.byInternalName(it).getPackageFqName() }.toSet()
 }
 
 public fun IncrementalCache.getPackageData(fqName: FqName): ByteArray? {

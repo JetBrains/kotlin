@@ -187,7 +187,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         dirtyOutputClassesMap.clear()
     }
 
-    public override fun getObsoletePackageParts(sourceFilesToCompile: Collection<File>): Collection<String> {
+    public override fun getObsoletePackageParts(): Collection<String> {
         return dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
     }
 

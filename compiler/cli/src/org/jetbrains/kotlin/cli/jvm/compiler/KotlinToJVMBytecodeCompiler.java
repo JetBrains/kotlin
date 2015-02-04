@@ -344,7 +344,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
         else {
             IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
-            packagesWithObsoleteParts = IncrementalPackage.getPackagesWithObsoleteParts(incrementalCache, environment.getSourceFiles());
+            packagesWithObsoleteParts = IncrementalPackage.getPackagesWithObsoleteParts(incrementalCache);
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(

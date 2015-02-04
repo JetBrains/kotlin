@@ -47,7 +47,7 @@ public class IncrementalPackageFragmentProvider(
         val moduleId: String
 ) : PackageFragmentProvider {
 
-    val obsoletePackageParts = incrementalCache.getObsoletePackageParts(sourceFiles).map { it.getInternalName() }.toSet()
+    val obsoletePackageParts = incrementalCache.getObsoletePackageParts().toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
     val fqNamesToLoad: Set<FqName>
@@ -67,7 +67,7 @@ public class IncrementalPackageFragmentProvider(
             fqNameToPackageFragment[fqName] = IncrementalPackageFragment(fqName)
         }
 
-        fqNamesToLoad = incrementalCache.getPackagesWithObsoleteParts(sourceFiles).toSet()
+        fqNamesToLoad = obsoletePackageParts.map { JvmClassName.byInternalName(it).getPackageFqName() }.toSet()
 
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
