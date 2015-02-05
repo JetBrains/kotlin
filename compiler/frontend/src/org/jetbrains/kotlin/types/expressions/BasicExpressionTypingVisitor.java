@@ -74,6 +74,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.AS_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.AS_SAFE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getStaticNestedClassesScope;
+import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -792,7 +793,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DataFlowValue value = createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
-        return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
+        // The call to checkType() is only needed here to execute additionalTypeCheckers, hence the NO_EXPECTED_TYPE
+        JetType resultingType = TypeUtils.makeNotNullable(baseType);
+        if (context.contextDependency == DEPENDENT) {
+            return JetTypeInfo.create(resultingType, dataFlowInfo);
+        }
+        return DataFlowUtils.checkType(
+                resultingType,
+                expression,
+                context.replaceExpectedType(NO_EXPECTED_TYPE),
+                dataFlowInfo
+        );
     }
 
     @Override
@@ -1083,7 +1094,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (!TypeUtils.isNullableType(rightType) && TypeUtils.isNullableType(type)) {
             type = TypeUtils.makeNotNullable(type);
         }
-        return JetTypeInfo.create(type, dataFlowInfo);
+        if (context.contextDependency == DEPENDENT) {
+            return JetTypeInfo.create(type, dataFlowInfo);
+        }
+        return DataFlowUtils.checkType(type, expression, context, dataFlowInfo);
     }
 
     @NotNull

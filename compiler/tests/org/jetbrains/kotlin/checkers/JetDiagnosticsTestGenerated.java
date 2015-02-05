@@ -8598,6 +8598,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("elvis.kt")
+                public void testElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/elvis.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("expectedType.kt")
                 public void testExpectedType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/expectedType.kt");
@@ -8628,6 +8634,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("notNullAssertion.kt")
+                public void testNotNullAssertion() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAssertion.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("notNullAssertionInCall.kt")
+                public void testNotNullAssertionInCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAssertionInCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("passToJava.kt")
                 public void testPassToJava() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/passToJava.kt");
@@ -8649,6 +8667,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("throw.kt")
                 public void testThrow() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/throw.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uselessElvisInCall.kt")
+                public void testUselessElvisInCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/uselessElvisInCall.kt");
                     doTest(fileName);
                 }
             }
