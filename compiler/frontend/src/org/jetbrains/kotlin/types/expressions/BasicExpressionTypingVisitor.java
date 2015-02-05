@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -1135,7 +1136,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(resolutionResult.isSuccess() ? components.builtIns.getBooleanType() : null, dataFlowInfo);
     }
 
-    private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {
+    private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, final ExpressionTypingContext context) {
         JetExpression left = expression.getLeft();
         if (left == null) return;
 
@@ -1150,43 +1151,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (TypeUtils.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
-                checkSenselessComparisonWithNull(expression, left, right, context);
+                SenselessComparisonChecker.checkSenselessComparisonWithNull(
+                        expression, left, right, context,
+                        new Function1<JetExpression, JetType>() {
+                            @Override
+                            public JetType invoke(JetExpression expression) {
+                                return facade.getTypeInfo(expression, context).getType();
+                            }
+                        },
+                        new Function1<DataFlowValue, Nullability>() {
+                            @Override
+                            public Nullability invoke(DataFlowValue value) {
+                                return context.dataFlowInfo.getNullability(value);
+                            }
+                        }
+                );
             }
         }
-    }
-
-    private void checkSenselessComparisonWithNull(@NotNull JetBinaryExpression expression, @NotNull JetExpression left, @NotNull JetExpression right, @NotNull ExpressionTypingContext context) {
-        JetExpression expr;
-        if (JetPsiUtil.isNullConstant(left)) {
-            expr = right;
-        }
-        else if (JetPsiUtil.isNullConstant(right)) {
-            expr = left;
-        }
-        else return;
-
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
-        JetType type = facade.getTypeInfo(expr, context).getType();
-        if (type == null || type.isError()) return;
-
-        DataFlowValue value = createDataFlowValue(expr, type, context.trace.getBindingContext());
-        Nullability nullability = context.dataFlowInfo.getNullability(value);
-
-        boolean expressionIsAlways;
-        boolean equality = operationSign.getReferencedNameElementType() == JetTokens.EQEQ || operationSign.getReferencedNameElementType() == JetTokens.EQEQEQ;
-
-        if (nullability == Nullability.NULL) {
-            expressionIsAlways = equality;
-        }
-        else if (nullability == Nullability.NOT_NULL) {
-            expressionIsAlways = !equality;
-        }
-        else if (nullability == Nullability.IMPOSSIBLE) {
-            expressionIsAlways = false;
-        }
-        else return;
-
-        context.trace.report(SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways));
     }
 
     @NotNull
