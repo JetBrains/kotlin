@@ -229,6 +229,9 @@ public class DefaultErrorMessages {
 
         MAP.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, "Public or protected member should have specified type");
 
+        MAP.put(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE, "A function expression is not allowed to specify default values for its parameters");
+        MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
+
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);
@@ -570,6 +573,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
         MAP.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified");
         MAP.put(REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
+        MAP.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here");
 
         MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");
         MAP.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter");

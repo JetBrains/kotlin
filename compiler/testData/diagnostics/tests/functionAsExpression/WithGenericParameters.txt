@@ -1,0 +1,13 @@
+package
+
+internal val extension_generic_fun: [ERROR : T].(T) -> T
+internal val generic_fun: (T) -> T
+internal fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
+internal fun fun_with_where(): [ERROR : T].(T) -> T
+internal fun outer(): kotlin.Unit
+
+internal trait A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

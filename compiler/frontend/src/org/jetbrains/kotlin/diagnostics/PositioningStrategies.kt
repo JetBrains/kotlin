@@ -168,6 +168,18 @@ public object PositioningStrategies {
         }
     }
 
+    public val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : PositioningStrategy<JetDeclaration>() {
+        override fun mark(element: JetDeclaration): List<TextRange> {
+            if (element is JetTypeParameterListOwner) {
+                val jetTypeParameterList = element.getTypeParameterList()
+                if (jetTypeParameterList != null) {
+                    return markElement(jetTypeParameterList)
+                }
+            }
+            return DECLARATION_SIGNATURE.mark(element)
+        }
+    }
+
     public val ABSTRACT_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.ABSTRACT_KEYWORD)
 
     public val INNER_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.INNER_KEYWORD)

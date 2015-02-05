@@ -241,7 +241,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public SimpleFunctionDescriptor resolveAnonymousFunctionDescriptor(
+    public SimpleFunctionDescriptor resolveFunctionExpressionDescriptor(
             @NotNull DeclarationDescriptor containingDescriptor,
             @NotNull JetScope scope,
             @NotNull JetNamedFunction function,
