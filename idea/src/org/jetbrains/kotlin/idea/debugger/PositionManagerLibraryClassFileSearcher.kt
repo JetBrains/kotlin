@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import com.intellij.util.indexing.FileBasedIndex
 
 private val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.debugger")
 
@@ -115,9 +116,11 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
                     JdkScope(project, libraryEntry as JdkOrderEntry)
                 }
 
-    val packagePartFiles = FilenameIndex.getAllFilesByExt(project, "class", scope)
-            .filter { it.getName().startsWith(packagePartNameWoHash) }
-            .map {
+    val packagePartFiles = FilenameIndex.getAllFilenames(project).stream().filter {
+                it.startsWith(packagePartNameWoHash) && it.endsWith(".class")
+            }.flatMap {
+                FilenameIndex.getVirtualFilesByName(project, it, scope).stream()
+            }.map {
                 val packageFqName = file.getPackageFqName()
                 if (packageFqName.isRoot()) {
                     it.getNameWithoutExtension()
@@ -125,7 +128,7 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
                     "${packageFqName.asString()}.${it.getNameWithoutExtension()}"
                 }
             }
-    return packagePartFiles
+    return packagePartFiles.toList()
 }
 
 private fun render(desc: DeclarationDescriptor) = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(desc)
