@@ -1235,7 +1235,7 @@ public class JetParsing extends AbstractJetParsing {
 
         myBuilder.disableJoiningComplexTokens();
 
-        TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
+        TokenSet functionNameFollow = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
         boolean receiverFound = parseReceiverType("function", functionNameFollow);
 
         // function as expression has no name

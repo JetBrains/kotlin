@@ -276,11 +276,11 @@ JetFile: FunctionsWithFunctionReceivers.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
     PsiErrorElement:Expecting '.' before a function name
-      PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting function name
-      PsiElement(DOT)('.')
-    PsiErrorElement:Expecting '('
       <empty list>
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(DOT)('.')
   FUN
     MODIFIER_LIST
       ANNOTATION_ENTRY

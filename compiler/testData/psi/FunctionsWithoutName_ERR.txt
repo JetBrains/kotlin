@@ -3,11 +3,11 @@ JetFile: FunctionsWithoutName_ERR.kt
     <empty list>
   FUN
     PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting function name or receiver type
-      PsiElement(RPAR)(')')
     PsiErrorElement:Expecting '('
       <empty list>
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
   FUN
     PsiElement(fun)('fun')
