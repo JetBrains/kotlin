@@ -678,6 +678,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKDocHighlightingTest>()) {
             model("kdoc/highlighting")
         }
+
+        testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.kdoc.KDocCompletionTestGenerated") {
+            model("kdoc/completion")
+        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
@@ -734,6 +738,13 @@ fun main(args: Array<String>) {
 }
 
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
+    inline fun <reified T: TestCase> testClass(
+            suiteTestClass: String = getDefaultSuiteTestClass(javaClass<T>()),
+            [noinline] init: TestClass.() -> Unit
+    ) {
+        testClass(javaClass<T>(), suiteTestClass, init)
+    }
+
     fun testClass(
             baseTestClass: Class<out TestCase>,
             suiteTestClass: String = getDefaultSuiteTestClass(baseTestClass),

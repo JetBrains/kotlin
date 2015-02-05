@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 public class KDocName(node: ASTNode): JetElementImpl(node) {
     public fun getContainingDoc(): KDoc {
         val kdoc = getStrictParentOfType<KDoc>()
-        if (kdoc == null) {
-            throw IllegalStateException("KDocName must be inside a KDoc")
-        }
-        return kdoc
+        return kdoc ?: throw IllegalStateException("KDocName must be inside a KDoc")
+    }
+
+    public fun getContainingSection(): KDocSection {
+        val kdoc = getStrictParentOfType<KDocSection>()
+        return kdoc ?: throw IllegalStateException("KDocName must be inside a KDocSection")
     }
 
     public fun getQualifier(): KDocName? = getChildOfType()

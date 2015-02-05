@@ -276,6 +276,8 @@
                             id="JetCompletionContributor"
                             order="first"
                             implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor"/>
+    <completion.contributor language="jet"
+                            implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocCompletionContributor"/>
 
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"

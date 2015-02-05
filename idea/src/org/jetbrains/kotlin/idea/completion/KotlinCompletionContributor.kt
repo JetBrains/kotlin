@@ -192,6 +192,11 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val position = parameters.getPosition()
         if (position.getContainingFile() !is JetFile) return
 
+        if (position.getNonStrictParentOfType<PsiComment>() != null) {
+            // don't stop here, allow other contributors to run
+            return
+        }
+
         if (shouldSuppressCompletion(parameters, result.getPrefixMatcher())) {
             result.stopHere()
             return
@@ -234,10 +239,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
     private fun shouldSuppressCompletion(parameters: CompletionParameters, prefixMatcher: PrefixMatcher): Boolean {
         val position = parameters.getPosition()
         val invocationCount = parameters.getInvocationCount()
-
-        // no completion in comments
-        // TODO: this must be changed if we will have references in doc-comments
-        if (position.getNonStrictParentOfType<PsiComment>() != null) return true
 
         // no completion inside number literals
         if (AFTER_NUMBER_LITERAL.accepts(position)) return true
