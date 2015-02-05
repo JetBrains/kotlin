@@ -4,6 +4,7 @@ val prop: Int
 // EXIST: do
 // EXIST: false
 // EXIST: for
+// EXIST: fun
 // EXIST: if
 // EXIST: null
 // EXIST: object
@@ -14,4 +15,4 @@ val prop: Int
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 13
+// NUMBER: 14

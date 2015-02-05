@@ -3,6 +3,7 @@ var a : Int = <caret>
 // EXIST: do
 // EXIST: false
 // EXIST: for
+// EXIST: fun
 // EXIST: if
 // EXIST: null
 // EXIST: object
@@ -13,4 +14,4 @@ var a : Int = <caret>
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 13
+// NUMBER: 14

@@ -267,6 +267,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("FunctionExpressions.kt")
+        public void testFunctionExpressions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionExpressions.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("FunctionLiterals.kt")
         public void testFunctionLiterals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionLiterals.kt");
