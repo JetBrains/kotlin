@@ -649,22 +649,17 @@
 
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
-        <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}"/>
+
+        <new-kotlinc output="${output}/classes/android-compiler-plugin">
             <src>
-                <dirset dir="${basedir}/plugins">
-                    <include name="android-compiler-plugin/src"/>
-                </dirset>
+                <include name="plugins/android-compiler-plugin/src"/>
             </src>
-            <compilerarg value="-Xlint:all"/>
-            <classpath>
-                <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-                <fileset dir="${idea.sdk}" includes="core/*.jar"/>
-                <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
-                <file file="${bootstrap.runtime}"/>
-            </classpath>
-        </javac2>
+            <class-path>
+                <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement path="${bootstrap.runtime}"/>
+            </class-path>
+        </new-kotlinc>
 
         <jar destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
             <fileset dir="${output}/classes/android-compiler-plugin"/>
