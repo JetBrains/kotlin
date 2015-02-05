@@ -19,7 +19,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
 ## Building
 
-To build this project, first time you try to build you need to run this (requires Apache Ant 1.8 or higher):
+To build this project, first time you try to build you need to run this (requires Apache **Ant 1.8** or higher and **JDK 1.6**):
 
     ant -f update_dependencies.xml
 
