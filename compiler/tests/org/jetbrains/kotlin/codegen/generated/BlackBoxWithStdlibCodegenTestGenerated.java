@@ -2590,6 +2590,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("functionExpressionInProperty.kt")
+            public void testFunctionExpressionInProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/functionExpressionInProperty.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("kt6368.kt")
             public void testKt6368() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/kt6368.kt");
@@ -2701,6 +2707,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("localClassInTopLevelFunction.kt")
             public void testLocalClassInTopLevelFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/localClassInTopLevelFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("namedFunctionExpressionInProperty.kt")
+            public void testNamedFunctionExpressionInProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/namedFunctionExpressionInProperty.kt");
                 doTestWithStdlib(fileName);
             }
 

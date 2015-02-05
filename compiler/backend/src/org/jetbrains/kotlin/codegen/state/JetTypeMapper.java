@@ -621,9 +621,6 @@ public class JetTypeMapper {
 
             return isAccessor ? "access$" + accessorName : accessorName;
         }
-        else if (isLocalNamedFun(descriptor)) {
-            return "invoke";
-        }
         else if (descriptor instanceof AnonymousFunctionDescriptor) {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
             if (element instanceof JetFunctionLiteral) {
@@ -636,6 +633,9 @@ public class JetTypeMapper {
                 }
             }
 
+            return "invoke";
+        }
+        else if (isLocalFunOrLambda(descriptor)) {
             return "invoke";
         }
         else {

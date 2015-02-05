@@ -1346,6 +1346,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data) {
+        return visitNamedFunction(function, data, false);
+    }
+
+    public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data, boolean isStatement) {
         assert data == StackValue.none();
 
         if (JetPsiUtil.isScriptDeclaration(function)) {
@@ -1353,11 +1357,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         StackValue closure = genClosure(function, null, KotlinSyntheticClass.Kind.LOCAL_FUNCTION);
-        DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
-        int index = lookupLocalIndex(descriptor);
-        closure.put(OBJECT_TYPE, v);
-        v.store(index, OBJECT_TYPE);
-        return StackValue.none();
+        if (isStatement) {
+            DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
+            int index = lookupLocalIndex(descriptor);
+            closure.put(OBJECT_TYPE, v);
+            v.store(index, OBJECT_TYPE);
+            return StackValue.none();
+        }
+        else {
+            return closure;
+        }
     }
 
     @Override
