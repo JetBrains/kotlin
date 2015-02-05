@@ -26,7 +26,7 @@ public annotation class data
 
 /**
  * Marks the annotated class, function or property as deprecated.
- * @param value the message explaining the deprecation and recommening an alternative API to use.
+ * @param value the message explaining the deprecation and recommending an alternative API to use.
  */
 public annotation class deprecated(val value: String)
 
