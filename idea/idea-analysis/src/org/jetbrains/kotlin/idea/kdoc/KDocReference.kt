@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -92,25 +94,26 @@ public fun resolveKDocLink(session: KotlinCodeAnalyzer,
     return result
 }
 
-private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
+public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
     // TODO resolve parameters of functions passed as parameters
-    val name = qualifiedName.singleOrNull() ?: return listOf()
     when (fromDescriptor) {
         is CallableDescriptor ->
-            return fromDescriptor.getValueParameters().filter { it.getName().asString() == name }
+            return fromDescriptor.getValueParameters()
         is ClassifierDescriptor -> {
-            val typeParams = fromDescriptor.getTypeConstructor().getParameters().filter { it.getName().asString() == name }
-            if (typeParams.isNotEmpty()) {
-                return typeParams
-            }
+            val typeParams = fromDescriptor.getTypeConstructor().getParameters()
             if (fromDescriptor is ClassDescriptor) {
-                return resolveParamLink(fromDescriptor.getUnsubstitutedPrimaryConstructor(), qualifiedName)
+                return typeParams + fromDescriptor.getUnsubstitutedPrimaryConstructor().getValueParameters()
             }
-            return listOf()
+            return typeParams
         }
     }
 
     return listOf()
+}
+
+private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
+    val name = qualifiedName.singleOrNull() ?: return listOf()
+    return getParamDescriptors(fromDescriptor).filter { it.getName().asString() == name }
 }
 
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): JetScope {
@@ -136,7 +139,7 @@ private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor
     return classScope
 }
 
-private fun getResolutionScope(session: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): JetScope {
+public fun getResolutionScope(session: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): JetScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
             getPackageInnerScope(descriptor)
