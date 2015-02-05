@@ -23,7 +23,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.CodegenUtilKt;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;

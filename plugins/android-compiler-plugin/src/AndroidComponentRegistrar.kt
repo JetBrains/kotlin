@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.lang.resolve.android.test
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
-import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.android.AndroidExpressionCodegen
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo

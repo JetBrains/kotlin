@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm
+package org.jetbrains.kotlin.cli.jvm
 
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import kotlin.platform.*

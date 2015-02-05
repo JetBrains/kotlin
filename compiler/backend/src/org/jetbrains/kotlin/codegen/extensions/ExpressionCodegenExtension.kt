@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.extensions
+package org.jetbrains.kotlin.codegen.extensions
 
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
@@ -34,7 +34,7 @@ public trait ExpressionCodegenExtension {
     )
 
     // return null if not applicable
-    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue?
+    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue?
 
     public fun generateClassSyntheticParts(codegen: ClassBuilder, clazz: JetClassOrObject, descriptor: DeclarationDescriptor) {
 

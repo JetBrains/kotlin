@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.PluginCliParser;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.ExitCode;

@@ -56,7 +56,7 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
