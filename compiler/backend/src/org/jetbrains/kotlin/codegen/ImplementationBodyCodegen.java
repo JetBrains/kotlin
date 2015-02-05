@@ -744,7 +744,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.anew(thisDescriptorType);
                     iv.dup();
 
-                    ConstructorDescriptor constructor = getConstructorOfDataClass(descriptor);
+                    ConstructorDescriptor constructor = getPrimaryConstructorOfDataClass(descriptor);
                     assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                             "Number of parameters of copy function and constructor are different. " +
                             "Copy: " + function.getValueParameters().size() + ", " +
@@ -791,10 +791,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static ConstructorDescriptor getConstructorOfDataClass(@NotNull ClassDescriptor classDescriptor) {
-        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Data class must have only one constructor: " + classDescriptor.getConstructors();
-        return constructors.iterator().next();
+    @NotNull
+    private static ConstructorDescriptor getPrimaryConstructorOfDataClass(@NotNull ClassDescriptor classDescriptor) {
+        ConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        assert constructor != null : "Data class must have primary constructor: " + classDescriptor;
+        return constructor;
     }
 
     private void generateEnumMethodsAndConstInitializers() {
@@ -1071,10 +1072,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (ignoreIfTraitOrAnnotation()) return;
 
-        Collection<ConstructorDescriptor> constructors = descriptor.getConstructors();
-        assert constructors.size() == 1 : "Unexpected number of constructors for class: " + descriptor + " " + constructors;
-
-        ConstructorDescriptor constructorDescriptor = KotlinPackage.single(constructors);
+        ConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
+        if (constructorDescriptor == null) return;
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
