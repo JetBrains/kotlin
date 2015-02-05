@@ -275,7 +275,11 @@ public class BodyResolver {
                     // A "singleton in supertype" diagnostic will be reported later
                     return;
                 }
-                if (descriptor.getKind() != ClassKind.TRAIT && !superClass.getConstructors().isEmpty() && !ErrorUtils.isError(superClass)) {
+                if (descriptor.getKind() != ClassKind.TRAIT &&
+                    descriptor.getUnsubstitutedPrimaryConstructor() != null &&
+                    !superClass.getConstructors().isEmpty() &&
+                    !ErrorUtils.isError(superClass)
+                ) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
             }

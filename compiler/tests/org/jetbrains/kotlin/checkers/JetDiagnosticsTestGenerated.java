@@ -10427,6 +10427,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noSupertypeInitWithSecondaryConstructors.kt")
+            public void testNoSupertypeInitWithSecondaryConstructors() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/noSupertypeInitWithSecondaryConstructors.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("superAnyNonEmpty.kt")
             public void testSuperAnyNonEmpty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/superAnyNonEmpty.kt");

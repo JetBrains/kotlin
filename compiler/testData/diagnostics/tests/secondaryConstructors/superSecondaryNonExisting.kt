@@ -4,7 +4,7 @@ open class B(x: Double) {
     constructor(x: String): this(1.0) {}
 }
 trait C
-class A : <!SUPERTYPE_NOT_INITIALIZED!>B<!>, C {
+class A : B, C {
     constructor(): <!NONE_APPLICABLE!>super<!>(' ') { }
     constructor(x: Int) <!NONE_APPLICABLE!><!>{ }
 }

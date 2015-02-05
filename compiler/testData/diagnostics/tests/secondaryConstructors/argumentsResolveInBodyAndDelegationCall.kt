@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 open class B(open val parentProp: Int)
 val global: Int = 1
-class A : <!SUPERTYPE_NOT_INITIALIZED!>B<!> {
+class A : B {
     val myProp: Int = 1
     override val parentProp = 1
 
