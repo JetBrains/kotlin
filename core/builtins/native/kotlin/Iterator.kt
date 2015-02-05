@@ -16,26 +16,66 @@
 
 package kotlin
 
+/**
+ * An iterator over a collection. Allows to sequentially access the elements in a collection.
+ */
 public trait Iterator<out T> {
+    /**
+     * Returns the next element in the iteration.
+     */
     public fun next(): T
+
+    /**
+     * Returns `true` if the iteration has more elements.
+     */
     public fun hasNext(): Boolean
 }
 
+/**
+ * An iterator over a mutable collection. Provides the ability to remove elements while iterating.
+ * @see MutableCollection.iterator
+ */
 public trait MutableIterator<out T> : Iterator<T> {
+    /**
+     * Removes from the underlying collection the last element returned by this iterator.
+     */
     public fun remove(): Unit
 }
 
+/**
+ * An iterator over a collection that supports indexed access.
+ * @see List.listIterator
+ */
 public trait ListIterator<out T> : Iterator<T> {
     // Query Operations
     override fun next(): T
     override fun hasNext(): Boolean
 
+    /**
+     * Returns `true` if there are elements in the iteration before the current element.
+     */
     public fun hasPrevious(): Boolean
+
+    /**
+     * Returns the previous element in the iteration and moves the cursor position backwards.
+     */
     public fun previous(): T
+
+    /**
+     * Returns the index of the element that would be returned by a subsequent call to [next].
+     */
     public fun nextIndex(): Int
+
+    /**
+     * Returns the index of the element that would be returned by a subsequent call to [previous].
+     */
     public fun previousIndex(): Int
 }
 
+/**
+ * An iterator over a mutable collection that supports indexed access. Provides the ability
+ * to add, modify and remove elements while iterating.
+ */
 public trait MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
     // Query Operations
     override fun next(): T
@@ -43,6 +83,15 @@ public trait MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
 
     // Modification Operations
     override fun remove(): Unit
+
+    /**
+     * Replaces the last element returned by [next] or [previous] with the specified element [e].
+     */
     public fun set(e: T): Unit
+
+    /**
+     * Adds the specified element [e] into the underlying collection immediately before the element that would be
+     * returned by [next].
+     */
     public fun add(e: T): Unit
 }
