@@ -20,47 +20,49 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 
-fun renderKDoc(docComment: KDocTag): String {
-    val content = docComment.getContent()
-    val result = StringBuilder("<p>")
-    result.append(markdownToHtml(content))
-    if (docComment is KDocSection) {
-        val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
-        renderTagList(paramTags, "Parameters", result)
+object KDocRenderer {
+    fun renderKDoc(docComment: KDocTag): String {
+        val content = docComment.getContent()
+        val result = StringBuilder("<p>")
+        result.append(markdownToHtml(content))
+        if (docComment is KDocSection) {
+            val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
+            renderTagList(paramTags, "Parameters", result)
 
-        renderTag(docComment.findTagByName("return"), "Returns", result)
+            renderTag(docComment.findTagByName("return"), "Returns", result)
 
-        val throwsTags = (docComment.findTagsByName("exception").union(docComment.findTagsByName("throws")))
-                .filter { it.getSubjectName() != null }
-        renderTagList(throwsTags, "Throws", result)
+            val throwsTags = (docComment.findTagsByName("exception").union(docComment.findTagsByName("throws")))
+                    .filter { it.getSubjectName() != null }
+            renderTagList(throwsTags, "Throws", result)
 
-        renderTag(docComment.findTagByName("author"), "Author", result)
-        renderTag(docComment.findTagByName("since"), "Since", result)
+            renderTag(docComment.findTagByName("author"), "Author", result)
+            renderTag(docComment.findTagByName("since"), "Since", result)
+        }
+        result.append("</p>")
+        return result.toString()
     }
-    result.append("</p>")
-    return result.toString()
-}
 
-private fun renderTagList(tags: List<KDocTag>, title: String, to: StringBuilder) {
-    if (tags.isEmpty()) {
-        return
-    }
-    to.append("<dl><dt><b>${title}:</b></dt>")
-    tags.forEach {
-        to.append("<dd><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimLeading())}</dd>")
-    }
-    to.append("</dl>")
-}
-
-private fun renderTag(tag: KDocTag?, title: String, to: StringBuilder) {
-    if (tag != null) {
+    private fun renderTagList(tags: List<KDocTag>, title: String, to: StringBuilder) {
+        if (tags.isEmpty()) {
+            return
+        }
         to.append("<dl><dt><b>${title}:</b></dt>")
-        to.append("<dd>${markdownToHtml(tag.getContent())}</dd>")
+        tags.forEach {
+            to.append("<dd><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimLeading())}</dd>")
+        }
         to.append("</dl>")
     }
-}
 
-fun markdownToHtml(markdown: String): String {
-    // TODO Integrate a real Markdown parser
-    return StringUtil.replace(markdown, "\n", "<br/>");
+    private fun renderTag(tag: KDocTag?, title: String, to: StringBuilder) {
+        if (tag != null) {
+            to.append("<dl><dt><b>${title}:</b></dt>")
+            to.append("<dd>${markdownToHtml(tag.getContent())}</dd>")
+            to.append("</dl>")
+        }
+    }
+
+    fun markdownToHtml(markdown: String): String {
+        // TODO Integrate a real Markdown parser
+        return StringUtil.replace(markdown, "\n", "<br/>");
+    }
 }
