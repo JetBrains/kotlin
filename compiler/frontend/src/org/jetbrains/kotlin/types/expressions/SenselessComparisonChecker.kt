@@ -24,13 +24,14 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.diagnostics.Errors
 import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.BindingTrace
 
 object SenselessComparisonChecker {
     platformStatic fun checkSenselessComparisonWithNull(
             expression: JetBinaryExpression,
             left: JetExpression,
             right: JetExpression,
-            context: ExpressionTypingContext,
+            trace: BindingTrace,
             getType: (JetExpression) -> JetType?,
             getNullability: (DataFlowValue) -> Nullability
     ) {
@@ -43,10 +44,10 @@ object SenselessComparisonChecker {
         if (type == null || type.isError()) return
 
         val operationSign = expression.getOperationReference()
-        val value = DataFlowValueFactory.createDataFlowValue(expr, type, context.trace.getBindingContext())
-        val nullability = getNullability(value)
+        val value = DataFlowValueFactory.createDataFlowValue(expr, type, trace.getBindingContext())
 
         val equality = operationSign.getReferencedNameElementType() == JetTokens.EQEQ || operationSign.getReferencedNameElementType() == JetTokens.EQEQEQ
+        val nullability = getNullability(value)
 
         val expressionIsAlways =
                 if (nullability == Nullability.NULL) equality
@@ -54,6 +55,6 @@ object SenselessComparisonChecker {
                 else if (nullability == Nullability.IMPOSSIBLE) false
                 else return
 
-        context.trace.report(Errors.SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways))
+        trace.report(Errors.SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways))
     }
 }

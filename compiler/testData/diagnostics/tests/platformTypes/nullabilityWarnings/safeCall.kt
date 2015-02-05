@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -SENSELESS_COMPARISON
+
 // FILE: p/J.java
 package p;
 

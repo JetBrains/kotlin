@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
         annotationCheckers = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker(), NativeFunChecker()),
@@ -202,7 +203,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                     if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
                         val baseExpression = expression.getBaseExpression()
                         val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
-                        warnIfNotNull(
+                        doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c.trace.getBindingContext()),
                                 c
                         ) {
@@ -210,25 +211,42 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         }
                     }
             is JetBinaryExpression ->
-                    if (expression.getOperationToken() == JetTokens.ELVIS) {
+                when (expression.getOperationToken()) {
+                    JetTokens.ELVIS -> {
                         val baseExpression = expression.getLeft()
                         val baseExpressionType = c.trace.get(BindingContext.EXPRESSION_TYPE, baseExpression) ?: return
-                        warnIfNotNull(
+                        doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c.trace.getBindingContext()),
                                 c
                         ) {
                             c.trace.report(Errors.USELESS_ELVIS.on(expression.getOperationReference(), baseExpressionType))
                         }
                     }
+                    JetTokens.EQEQ,
+                    JetTokens.EXCLEQ,
+                    JetTokens.EQEQEQ,
+                    JetTokens.EXCLEQEQEQ -> {
+                        if (expression.getLeft() != null && expression.getRight() != null) {
+                            SenselessComparisonChecker.checkSenselessComparisonWithNull(
+                                    expression, expression.getLeft(), expression.getRight(), c.trace,
+                                    { c.trace.get(BindingContext.EXPRESSION_TYPE, it) },
+                                    {
+                                        value ->
+                                        doIfNotNull(value, c) { Nullability.NOT_NULL } ?: Nullability.UNKNOWN
+                                    }
+                            )
+                        }
+                    }
+                }
         }
     }
 
-    private fun warnIfNotNull(dataFlowValue: DataFlowValue, c: ResolutionContext<*>, reportWarning: () -> Unit) {
+    private fun <T: Any> doIfNotNull(dataFlowValue: DataFlowValue, c: ResolutionContext<*>, body: () -> T): T? {
         if (c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
             && dataFlowValue.getType().mustNotBeNull() == NullabilityInformationSource.JAVA) {
-            reportWarning()
+            return body()
         }
-
+        return null
     }
 
     override fun checkReceiver(
@@ -261,7 +279,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
         else {
             // TODO: Compiler bug
-            warnIfNotNull(dataFlowValue, c as ResolutionContext<*>) {
+            doIfNotNull(dataFlowValue, c as ResolutionContext<*>) {
                 c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
             }
         }

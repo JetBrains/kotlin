@@ -1152,7 +1152,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                        expression, left, right, context,
+                        expression, left, right, context.trace,
                         new Function1<JetExpression, JetType>() {
                             @Override
                             public JetType invoke(JetExpression expression) {
@@ -1164,8 +1164,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                             public Nullability invoke(DataFlowValue value) {
                                 return context.dataFlowInfo.getNullability(value);
                             }
-                        }
-                );
+                        });
             }
         }
     }
