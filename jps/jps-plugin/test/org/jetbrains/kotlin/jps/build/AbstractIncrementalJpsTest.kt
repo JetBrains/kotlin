@@ -38,6 +38,7 @@ import java.util.regex.Pattern
 import kotlin.test.assertEquals
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
@@ -221,7 +222,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     }
 
     private fun createMappingsDump(project: ProjectDescriptor) =
-            createKotlinIncrementalCacheDump(project)
+            createKotlinIncrementalCacheDump(project) + "\n\n\n" +
+            createCommonMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
         return StringBuilder {
@@ -231,6 +233,34 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                 append("</target $target>\n\n\n")
             }
         }.toString()
+    }
+
+    private fun createCommonMappingsDump(project: ProjectDescriptor): String {
+        val resultBuf = StringBuilder()
+        val result = Printer(resultBuf)
+
+        result.println("Begin of SourceToOutputMap")
+        result.pushIndent()
+
+        for (target in project.getBuildTargetIndex().getAllTargets()) {
+            result.println(target)
+            result.pushIndent()
+
+            val mapping = project.dataManager.getSourceToOutputMap(target)
+            mapping.getSources().forEach {
+                val outputs = mapping.getOutputs(it).sort()
+                if (outputs.isNotEmpty()) {
+                    result.println("source $it -> " + outputs)
+                }
+            }
+
+            result.popIndent()
+        }
+
+        result.popIndent()
+        result.println("End of SourceToOutputMap")
+
+        return resultBuf.toString()
     }
 
     private data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
