@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin.android
 
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
@@ -7,9 +8,12 @@ import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
 class AndroidGradleWrapper {
-  static def getRuntimeJars(BasePlugin basePlugin) {
+  static def getRuntimeJars(BasePlugin basePlugin, BaseExtension baseExtension) {
     if (basePlugin.getMetaClass().getMetaMethod("getRuntimeJarList")) {
       return basePlugin.getRuntimeJarList()
+    }
+    else if (baseExtension.getMetaClass().getMetaMethod("getBootClasspath")) {
+        return baseExtension.getBootClasspath()
     }
     else {
       return basePlugin.getBootClasspath()
