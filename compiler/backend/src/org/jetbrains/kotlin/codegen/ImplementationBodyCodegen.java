@@ -249,16 +249,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeEnclosingMethod() {
-        //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
-        DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
-
-        boolean isObjectLiteral = DescriptorUtils.isAnonymousObject(descriptor);
-
-        boolean isLocalOrAnonymousClass = isObjectLiteral ||
-                                          !(parentDescriptor instanceof PackageFragmentDescriptor || parentDescriptor instanceof ClassDescriptor);
         // Do not emit enclosing method in "light-classes mode" since currently we generate local light classes as if they're top level
-        if (isLocalOrAnonymousClass && state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
-            writeOuterClassAndEnclosingMethod(descriptor, descriptor, typeMapper, v);
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+            return;
+        }
+
+        //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
+        if (isAnonymousObject(descriptor) || !(descriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
+            writeOuterClassAndEnclosingMethod(descriptor);
         }
     }
 

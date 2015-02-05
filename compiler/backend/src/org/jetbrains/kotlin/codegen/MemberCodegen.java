@@ -20,6 +20,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -32,13 +33,11 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
@@ -248,6 +247,44 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
+    }
+
+    protected void writeOuterClassAndEnclosingMethod(@NotNull ClassDescriptor descriptor) {
+        ClassDescriptor outerClass = findOuterClass(descriptor);
+        String outerClassName = outerClass != null
+                                ? typeMapper.mapClass(outerClass).getInternalName()
+                                : PackagePartClassUtils.getPackagePartInternalName(element.getContainingJetFile());
+
+        FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
+        while (function != null && JvmCodegenUtil.isLambdaWhichWillBeInlined(bindingContext, function)) {
+            function = DescriptorUtils.getParentOfType(function, FunctionDescriptor.class);
+        }
+
+        if (function != null) {
+            Method method = typeMapper.mapSignature(function).getAsmMethod();
+            v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
+        }
+        else {
+            v.visitOuterClass(outerClassName, null, null);
+        }
+    }
+
+    @Nullable
+    private ClassDescriptor findOuterClass(@NotNull ClassDescriptor classDescriptor) {
+        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
+        while (container != null) {
+            if (container instanceof ClassDescriptor) {
+                return (ClassDescriptor) container;
+            }
+            else if (CodegenBinding.isLocalFunOrLambda(container) &&
+                     !JvmCodegenUtil.isLambdaWhichWillBeInlined(bindingContext, container)) {
+                return CodegenBinding.anonymousClassForFunction(bindingContext, (FunctionDescriptor) container);
+            }
+
+            container = container.getContainingDeclaration();
+        }
+
+        return null;
     }
 
     @NotNull
