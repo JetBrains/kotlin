@@ -30,6 +30,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.utils.LibraryUtils
 import com.intellij.openapi.util.io.FileUtil
+import org.apache.commons.io.FilenameUtils
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -48,38 +49,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     var compilerPluginClasspaths: Array<String> = array()
     var compilerPluginArguments: Array<String> = array()
-
-    // override setSource to track source directory sets
-    override fun setSource(source: Any?) {
-        srcDirsSources.clear()
-        if (source is SourceDirectorySet) {
-            srcDirsSources.add(source)
-        }
-        super.setSource(source)
-    }
-
-    // override source to track source directory sets
-    override fun source(vararg sources: Any?): SourceTask? {
-        for (source in sources) {
-            if (source is SourceDirectorySet) {
-                srcDirsSources.add(source)
-            }
-        }
-        return super.source(sources)
-    }
-
-    fun findSrcDirRoot(file: File): File? {
-        val absPath = file.getAbsolutePath()
-        for (source in srcDirsSources) {
-            for (root in source.getSrcDirs()) {
-                val rootAbsPath = root.getAbsolutePath()
-                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
-                    return root
-                }
-            }
-        }
-        return null
-    }
 
     [TaskAction]
     override fun compile() {

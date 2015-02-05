@@ -37,10 +37,7 @@ import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
 import java.util.ServiceLoader
-import org.jetbrains.kotlin.compiler.plugin.getPluginOptionString
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -454,7 +451,12 @@ private class SubpluginEnvironment(
     val subplugins: List<KotlinGradleSubplugin>
 ) {
 
-    fun addSubpluginArguments(project: Project, compileTask: KotlinCompile) {
+    private fun AbstractCompile.setKotlinTaskProperty(methodName: String, value: Array<String>) {
+        val function = javaClass.getMethod(methodName, javaClass<Array<String>>())
+        function.invoke(this, value)
+    }
+
+    fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
         val realPluginClasspaths = arrayListOf<String>()
         val pluginArguments = arrayListOf<String>()
 
@@ -463,14 +465,16 @@ private class SubpluginEnvironment(
             if (args != null) {
                 realPluginClasspaths.addAll(subpluginClasspaths[subplugin])
                 for (arg in args) {
+                    //TODO: fix (getPluginOptionString is in plugin-api)
+                    fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
                     val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
                     pluginArguments.add(option)
                 }
             }
         }
 
-        compileTask.compilerPluginClasspaths = realPluginClasspaths.copyToArray()
-        compileTask.compilerPluginArguments = pluginArguments.copyToArray()
+        compileTask.setKotlinTaskProperty("setCompilerPluginClasspaths", realPluginClasspaths.copyToArray())
+        compileTask.setKotlinTaskProperty("setCompilerPluginArguments", pluginArguments.copyToArray())
     }
 }
 
