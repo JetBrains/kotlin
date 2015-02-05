@@ -225,6 +225,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("fileWithConstantRemoved")
+        public void testFileWithConstantRemoved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/fileWithConstantRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fileWithInlineFunctionRemoved")
+        public void testFileWithInlineFunctionRemoved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/fileWithInlineFunctionRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("filesExchangePackages")
         public void testFilesExchangePackages() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/filesExchangePackages/");
