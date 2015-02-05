@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.idea.kdoc;
 
 import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest;
 
-/**
- * @author yole
- */
 public abstract class AbstractKDocHighlightingTest extends AbstractHighlightingTest {
     @Override
     protected void setUp() throws Exception {
