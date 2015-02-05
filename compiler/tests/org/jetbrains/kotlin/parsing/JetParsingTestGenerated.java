@@ -303,6 +303,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("FunctionsWithoutName.kt")
+        public void testFunctionsWithoutName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("FunctionsWithoutName_ERR.kt")
+        public void testFunctionsWithoutName_ERR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionsWithoutName_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Functions_ERR.kt")
         public void testFunctions_ERR() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Functions_ERR.kt");
