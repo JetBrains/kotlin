@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
     if (declaration is DeclarationDescriptorWithSource) {
@@ -34,7 +34,7 @@ fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
         }
     }
 
-    if (declaration is FunctionDescriptor) {
+    if (declaration is CallableDescriptor) {
         for (baseDescriptor in declaration.getOverriddenDescriptors()) {
             val baseKDoc = findKDoc(baseDescriptor)
             if (baseKDoc != null) {
