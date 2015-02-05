@@ -12,6 +12,6 @@ public class Nameless {
 import p.*
 
 class K : <!INVISIBLE_MEMBER!>Nameless<!>() {
-    fun<!SYNTAX!><!> () {}
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
     val<!SYNTAX!><!> : Int = 1
 }

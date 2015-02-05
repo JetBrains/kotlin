@@ -333,6 +333,8 @@ public interface Errors {
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<JetFunction> FUNCTION_DECLARATION_WITH_NO_NAME = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);

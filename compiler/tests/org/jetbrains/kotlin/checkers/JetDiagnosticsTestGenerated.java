@@ -2965,6 +2965,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FunctionWithMissingNames.kt")
+            public void testFunctionWithMissingNames() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/FunctionWithMissingNames.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("illegalModifiersOnClass.kt")
             public void testIllegalModifiersOnClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/illegalModifiersOnClass.kt");

@@ -1,0 +1,37 @@
+package
+
+a() internal fun <no name provided>(): kotlin.Unit
+internal fun <no name provided>(): kotlin.Unit
+internal fun outerFun(): kotlin.Unit
+internal fun A.<no name provided>(): kotlin.Unit
+internal fun A.<no name provided>(): kotlin.Unit
+
+internal trait A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait B {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Outer {
+    public constructor Outer()
+    a() internal final fun <no name provided>(): kotlin.Unit
+    internal final fun <no name provided>(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun A.<no name provided>(): kotlin.Unit
+    internal final fun B.<no name provided>(): kotlin.Unit
+}
+
+internal final annotation class a : kotlin.Annotation {
+    public constructor a()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

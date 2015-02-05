@@ -237,7 +237,19 @@ public class DescriptorResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
-                                         annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace));
+                                         annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace), false);
+    }
+
+    @NotNull
+    public SimpleFunctionDescriptor resolveAnonymousFunctionDescriptor(
+            @NotNull DeclarationDescriptor containingDescriptor,
+            @NotNull JetScope scope,
+            @NotNull JetNamedFunction function,
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
+                                         annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace), true);
     }
 
     @NotNull
@@ -249,7 +261,7 @@ public class DescriptorResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
        return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
-                                        annotationResolver.resolveAnnotationsWithoutArguments(scope, function.getModifierList(), trace));
+                                        annotationResolver.resolveAnnotationsWithoutArguments(scope, function.getModifierList(), trace), false);
     }
 
     @NotNull
@@ -259,12 +271,17 @@ public class DescriptorResolver {
             @NotNull final JetNamedFunction function,
             @NotNull final BindingTrace trace,
             @NotNull final DataFlowInfo dataFlowInfo,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            boolean nameCanBeOmitted
     ) {
+        if (!nameCanBeOmitted && function.getName() == null) {
+            trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function));
+        }
+
         final SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 containingDescriptor,
                 annotations,
-                JetPsiUtil.safeName(function.getName()),
+                function.getNameAsSafeName(),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(function)
         );

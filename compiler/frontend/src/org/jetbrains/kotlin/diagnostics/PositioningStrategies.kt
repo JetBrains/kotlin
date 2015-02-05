@@ -32,7 +32,9 @@ public object PositioningStrategies {
     private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
             if (element is JetNamedDeclaration &&
-                (element !is JetObjectDeclaration && element !is JetSecondaryConstructor)
+                element !is JetObjectDeclaration &&
+                element !is JetSecondaryConstructor &&
+                element !is JetNamedFunction
             ) {
                 if (element.getNameIdentifier() == null) {
                     return false
@@ -102,6 +104,9 @@ public object PositioningStrategies {
                     return markRange(startElement, nameIdentifier)
                 }
                 return markElement(nameIdentifier)
+            }
+            if (element is JetNamedFunction) {
+                return DECLARATION_SIGNATURE.mark(element)
             }
             return DEFAULT.mark(element)
         }
