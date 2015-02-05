@@ -289,7 +289,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (!compilationErrors) {
-            incrementalCaches.values().forEach { it.clearCacheForRemovedClasses() }
+            incrementalCaches.values().forEach {
+                val newDecision = it.clearCacheForRemovedClasses()
+                recompilationDecision = recompilationDecision.merge(newDecision)
+            }
         }
 
         return recompilationDecision

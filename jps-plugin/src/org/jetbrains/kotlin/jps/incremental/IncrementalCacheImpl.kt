@@ -176,15 +176,26 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedClasses() {
+    public fun clearCacheForRemovedClasses(): RecompilationDecision {
+        var recompilationDecision = DO_NOTHING
         for (internalClassName in dirtyOutputClassesMap.getDirtyOutputClasses()) {
             val className = JvmClassName.byInternalName(internalClassName)
+
+            val newDecision = when {
+                internalClassName in inlineFunctionsMap -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
+                internalClassName in constantsMap -> RECOMPILE_OTHERS_WITH_DEPENDANTS
+                internalClassName in protoMap -> RECOMPILE_OTHERS_IN_CHUNK
+                else -> DO_NOTHING
+            }
+            recompilationDecision = recompilationDecision.merge(newDecision)
+
             protoMap.remove(className)
             packagePartMap.remove(className)
             constantsMap.remove(className)
             inlineFunctionsMap.remove(className)
         }
         dirtyOutputClassesMap.clear()
+        return recompilationDecision
     }
 
     public override fun getObsoletePackageParts(): Collection<String> {
@@ -212,6 +223,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         protected var storage: PersistentHashMap<String, V> = createMap()
 
         protected abstract fun createMap(): PersistentHashMap<String, V>
+
+        public fun contains(key: String): Boolean = storage.containsMapping(key)
 
         public fun clean() {
             try {
