@@ -1,10 +1,10 @@
-<idea-plugin version="2" url="http://kotlin.jetbrains.org" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin version="2" url="http://kotlinlang.org" xmlns:xi="http://www.w3.org/2001/XInclude">
     <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
-  <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
+  <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
   <idea-version since-build="138.977" until-build="140.9999"/>
 
