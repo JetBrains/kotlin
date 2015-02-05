@@ -16,10 +16,25 @@
 
 package kotlin
 
+/**
+ * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
+ */
 public open class Any {
+    /**
+     * Indicates whether some other object is "equal to" this one. Implementations must follow
+     * the same contract as the [Java equals() method](http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#equals%28java.lang.Object%29).
+     * Note that the `==` operator in Kotlin code is translated into a null-safe call to [equals].
+     */
     public open fun equals(other: Any?): Boolean
 
+    /**
+     * Returns a hash code value for the object. Implementations must follow the same contract
+     * as the [Java hashCode() method](http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#hashCode%28%29).
+     */
     public open fun hashCode(): Int
 
+    /**
+     * Returns a string representation of the object.
+     */
     public open fun toString(): String
 }
