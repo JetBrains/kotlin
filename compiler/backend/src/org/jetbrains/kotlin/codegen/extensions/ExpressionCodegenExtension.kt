@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.*
 
 public trait ExpressionCodegenExtension {
     class object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())
@@ -36,7 +37,10 @@ public trait ExpressionCodegenExtension {
     // return null if not applicable
     public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue?
 
-    public fun generateClassSyntheticParts(codegen: ClassBuilder, clazz: JetClassOrObject, descriptor: DeclarationDescriptor) {
-
-    }
+    public fun generateClassSyntheticParts(
+            classBuilder: ClassBuilder,
+            bindingContext: BindingContext,
+            classOrObject: JetClassOrObject,
+            descriptor: ClassDescriptor
+    ) {}
 }

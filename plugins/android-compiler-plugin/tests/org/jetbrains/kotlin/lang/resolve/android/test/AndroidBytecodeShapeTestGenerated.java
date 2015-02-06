@@ -36,6 +36,18 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("baseClass")
+    public void testBaseClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/baseClass/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("extensionFunctions")
+    public void testExtensionFunctions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/extensionFunctions/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/fqNameInAttr/");

@@ -1,12 +1,17 @@
 package com.myapp
 
 import android.app.Activity
+import android.os.Bundle
+import java.io.File
 import kotlinx.android.synthetic.layout.*
-import kotlinx.android.synthetic.layout1.*
 
-class MyActivity: Activity() {
-    val button = this.login
-    val button1 = this.loginButton
+public class MyActivity : Activity() {
+
+}
+
+fun MyActivity.b() {
+    val x = login
+    val y = this.login
 }
 
 // 2 GETSTATIC
