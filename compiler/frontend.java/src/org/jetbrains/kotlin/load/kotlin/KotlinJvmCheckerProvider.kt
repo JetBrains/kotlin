@@ -173,8 +173,9 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         if (TypeUtils.noExpectedType(expectedType)) return
 
         val expectedMustNotBeNull = expectedType.mustNotBeNull()
-        val actualNullabilityInKotlin = dataFlowInfo.getNullability(dataFlowValue)
-        val actualMayBeNull = if (actualNullabilityInKotlin == Nullability.NOT_NULL) null else expressionType.mayBeNull()
+        if (dataFlowInfo.getNullability(dataFlowValue) == Nullability.NOT_NULL) return
+
+        val actualMayBeNull = expressionType.mayBeNull()
 
         if (expectedMustNotBeNull == NullabilityInformationSource.KOTLIN && actualMayBeNull == NullabilityInformationSource.KOTLIN) {
             // a type mismatch error will be reported elsewhere
