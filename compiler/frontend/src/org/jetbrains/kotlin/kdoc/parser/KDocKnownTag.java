@@ -27,7 +27,8 @@ public enum KDocKnownTag {
     SEE(true, false),
     SINCE(false, false),
     CONSTRUCTOR(false, true),
-    PROPERTY(true, true);
+    PROPERTY(true, true),
+    SAMPLE(true, false);
 
     private final boolean takesReference;
     private final boolean startsSection;

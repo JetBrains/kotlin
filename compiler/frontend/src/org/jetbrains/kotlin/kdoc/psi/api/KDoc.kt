@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kdoc.psi.api;
+package org.jetbrains.kotlin.kdoc.psi.api
 
-import com.intellij.psi.PsiComment;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 // Don't implement JetElement (or it will be treated as statement)
-public interface KDoc extends PsiComment {
-    @Nullable
-    JetDeclaration getOwner();
-    @NotNull
-    KDocSection getDefaultSection();
+public trait KDoc : PsiComment {
+    public fun getOwner(): JetDeclaration?
+    public fun getDefaultSection(): KDocSection
+    public fun findSectionByName(name: String): KDocSection?
+    public fun findSectionByTag(tag: KDocKnownTag): KDocSection?
 }

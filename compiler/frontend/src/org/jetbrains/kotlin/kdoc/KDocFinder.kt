@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
     if (declaration is DeclarationDescriptorWithSource) {
@@ -29,6 +31,13 @@ fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
         if (psiDeclaration is JetDeclaration) {
             val kdoc = psiDeclaration.getDocComment()
             if (kdoc != null) {
+                if (declaration is ConstructorDescriptor) {
+                    // ConstructorDescriptor resolves to the same JetDeclaration
+                    val constructorSection = kdoc.findSectionByTag(KDocKnownTag.CONSTRUCTOR)
+                    if (constructorSection != null) {
+                        return constructorSection
+                    }
+                }
                 return kdoc.getDefaultSection()
             }
         }

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
 
@@ -38,4 +40,10 @@ public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocToken
     override fun getOwner(): JetDeclaration? = getParentOfType<JetDeclaration>(true)
 
     override fun getDefaultSection(): KDocSection = getChildOfType<KDocSection>()!!
+
+    override fun findSectionByName(name: String): KDocSection? =
+        getChildrenOfType<KDocSection>().firstOrNull { it.getName() == name }
+
+    override fun findSectionByTag(tag: KDocKnownTag): KDocSection? =
+        findSectionByName(tag.name().toLowerCase())
 }
