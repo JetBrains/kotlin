@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.kdoc.KDocFinder;
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer;
-import org.jetbrains.kotlin.kdoc.KdocPackage;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetPackageDirective;
@@ -91,7 +91,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
         }
 
-        KDocTag comment = KdocPackage.findKDoc(declarationDescriptor);
+        KDocTag comment = KDocFinder.INSTANCE$.findKDoc(declarationDescriptor);
         if (comment != null) {
             renderedDecl = renderedDecl + "<br/>" + KDocRenderer.INSTANCE$.renderKDoc(comment);
         }

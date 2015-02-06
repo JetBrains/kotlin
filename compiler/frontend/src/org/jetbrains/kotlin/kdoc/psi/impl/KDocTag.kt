@@ -76,7 +76,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      * Returns the content of this tag (all text following the tag name and the subject if present,
      * with leading asterisks removed).
      */
-    public fun getContent(): String {
+    public open fun getContent(): String {
         val builder = StringBuilder()
 
         var contentStarted = false
