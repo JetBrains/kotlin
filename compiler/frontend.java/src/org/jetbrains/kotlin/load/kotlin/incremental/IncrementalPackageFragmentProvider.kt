@@ -90,7 +90,7 @@ public class IncrementalPackageFragmentProvider(
                 JetScope.Empty
             }
             else {
-                val packageDataBytes = incrementalCache.getPackageData(fqName)
+                val packageDataBytes = incrementalCache.getPackageData(fqName.asString())
                 if (packageDataBytes == null) {
                     JetScope.Empty
                 }
