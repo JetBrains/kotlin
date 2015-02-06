@@ -78,8 +78,7 @@ public class KotlinLightClassForPackage private(
         assert(!files.isEmpty()) { "No files for package " + packageFqName }
     }
 
-    public val files: Collection<JetFile> =
-            Sets.newHashSet<JetFile>(files) // needed for hashCode
+    public val files: Collection<JetFile> = files.toSet() // needed for hashCode
 
     private val packageClassFqName: FqName =
             PackageClassUtils.getPackageClassFqName(packageFqName)
