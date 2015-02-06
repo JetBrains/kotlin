@@ -6,6 +6,7 @@ fun main(args: Array<String>) {
 
 class A {
     val prop1 = 1
+    fun myFun() = 1
 
     fun test() {
         val val1 = 1
@@ -36,3 +37,6 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: prop1 + val1 + val2
 // RESULT: 3: I
+
+// EXPRESSION: myFun()
+// RESULT: 1: I

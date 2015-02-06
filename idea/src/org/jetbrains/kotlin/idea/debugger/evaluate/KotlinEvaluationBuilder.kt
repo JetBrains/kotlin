@@ -409,15 +409,17 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 if (`$this` != null) return `$this`
             }
             else -> {
-                val eval4j = JDIEval(frame.virtualMachine()!!,
-                                     getClassLoader()!!,
-                                     getSuspendContext().getThread()?.getThreadReference()!!,
-                                     getSuspendContext().getInvokePolicy())
 
-                fun JDIEval.getField(owner: Value, name: String, asmType: Type?, checkType: Boolean): Value? {
-                    val fieldDescription = FieldDescription(owner.asmType.getInternalName(), name, asmType?.getDescriptor() ?: "", isStatic = false)
+                fun getField(owner: Value, name: String, asmType: Type?, checkType: Boolean): Value? {
                     try {
-                        val fieldValue = getField(owner, fieldDescription)
+                        val obj = owner.asJdiValue(frame.virtualMachine(), owner.asmType)
+                        if (obj !is ObjectReference) return null
+
+                        val _class = obj.referenceType()
+                        val field = _class.fieldByName(name)
+                        if (field == null) return null
+
+                        val fieldValue = obj.getValue(field).asValue()
                         if (isValueOfCorrectType(fieldValue, asmType, checkType)) return fieldValue
                         return null
                     }
@@ -430,8 +432,8 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     return expectedType != null && this.asmType == StackValue.sharedTypeForType(expectedType)
                 }
 
-                fun JDIEval.getValueForSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
-                    val sharedVarValue = this.getField(value, "element", expectedType, checkType)
+                fun getValueForSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
+                    val sharedVarValue = getField(value, "element", expectedType, checkType)
                     if (sharedVarValue != null && isValueOfCorrectType(sharedVarValue, expectedType, checkType)) {
                         return sharedVarValue
                     }
@@ -442,7 +444,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 if (localVariable != null) {
                     val eval4jValue = frame.getValue(localVariable).asValue()
                     if (eval4jValue.isSharedVar(asmType)) {
-                        val sharedVarValue = eval4j.getValueForSharedVar(eval4jValue, asmType, checkType)
+                        val sharedVarValue = getValueForSharedVar(eval4jValue, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue
                         }
@@ -457,9 +459,9 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     var thisObj: Value? = thisObject.asValue()
 
                     while (result == null && thisObj != null) {
-                        result = eval4j.getField(thisObj!!, name, asmType, checkType)
+                        result = getField(thisObj!!, name, asmType, checkType)
                         if (result == null) {
-                            thisObj = eval4j.getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null, false)
+                            thisObj = getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null, false)
                         }
                     }
                     return result
@@ -469,7 +471,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 val capturedVal = findCapturedVal(capturedValName)
                 if (capturedVal != null) {
                     if (capturedVal.isSharedVar(asmType)) {
-                        val sharedVarValue = eval4j.getValueForSharedVar(capturedVal, asmType, checkType)
+                        val sharedVarValue = getValueForSharedVar(capturedVal, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue
                         }

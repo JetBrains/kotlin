@@ -9,6 +9,7 @@ fun main(args: Array<String>) {
 
 object O {
     val obProp = 1
+    fun obMyFun() = 1
 }
 
 fun foo(f: () -> Unit) {
@@ -18,4 +19,7 @@ fun foo(f: () -> Unit) {
 // PRINT_FRAME
 
 // EXPRESSION: O.obProp
+// RESULT: 1: I
+
+// EXPRESSION: O.obMyFun()
 // RESULT: 1: I

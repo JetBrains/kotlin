@@ -1,11 +1,12 @@
-LineBreakpoint created at frameThis0.kt:15
+LineBreakpoint created at frameThis0.kt:16
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameThis0.FrameThis0Package
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameThis0.kt:15
+frameThis0.kt:16
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for prop1
 Compile bytecode for prop1 + val1 + val2
+Compile bytecode for myFun()
 package frameThis0
 
 fun main(args: Array<String>) {
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
 
 class A {
     val prop1 = 1
+    fun myFun() = 1
 
     fun test() {
         val val1 = 1
@@ -42,12 +44,15 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: prop1 + val1 + val2
 // RESULT: 3: I
- frame    = invoke():15, A$test$1 {frameThis0}
+
+// EXPRESSION: myFun()
+// RESULT: 1: I
+ frame    = invoke():16, A$test$1 {frameThis0}
    this     = this = {frameThis0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameThis0.A = {frameThis0.A@uniqueID} (sp = null)
        field    = prop1: int = 1 (sp = frameThis0.kt, 8)
      field    = $val1: int = 1 (sp = null)
-   local    = val2: int = 1 (sp = frameThis0.kt, 13)
+   local    = val2: int = 1 (sp = frameThis0.kt, 14)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

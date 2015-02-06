@@ -1,11 +1,12 @@
-LineBreakpoint created at frameThis0This0.kt:16
+LineBreakpoint created at frameThis0This0.kt:17
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameThis0This0.FrameThis0This0Package
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameThis0This0.kt:16
+frameThis0This0.kt:17
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for prop1
 Compile bytecode for prop1 + val1 + val2
+Compile bytecode for myFun()
 package frameThis0This0
 
 fun main(args: Array<String>) {
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
 
 class A {
     val prop1 = 1
+    fun myFun() = 1
 
     fun test() {
         val val1 = 1
@@ -44,7 +46,10 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: prop1 + val1 + val2
 // RESULT: 3: I
- frame    = invoke():16, A$test$1$1 {frameThis0This0}
+
+// EXPRESSION: myFun()
+// RESULT: 1: I
+ frame    = invoke():17, A$test$1$1 {frameThis0This0}
    this     = this = {frameThis0This0.A$test$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameThis0This0.A$test$1 = {frameThis0This0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit> (sp = null)
        field    = this$0: frameThis0This0.A = {frameThis0This0.A@uniqueID} (sp = null)

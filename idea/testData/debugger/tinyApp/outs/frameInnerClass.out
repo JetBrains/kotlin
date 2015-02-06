@@ -1,9 +1,11 @@
-LineBreakpoint created at frameInnerClass.kt:15
+LineBreakpoint created at frameInnerClass.kt:17
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInnerClass.FrameInnerClassPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameInnerClass.kt:15
+frameInnerClass.kt:17
 Compile bytecode for prop1
 Compile bytecode for prop2
+Compile bytecode for myFun1()
+Compile bytecode for myFun2()
 package frameInnerClass
 
 fun main(args: Array<String>) {
@@ -12,9 +14,11 @@ fun main(args: Array<String>) {
 
 class A {
     val prop1 = 1
+    fun myFun1() = 1
 
     inner class Inner {
         val prop2 = 1
+        fun myFun2() = 1
 
         fun test() {
             //Breakpoint!
@@ -30,9 +34,15 @@ class A {
 
 // EXPRESSION: prop2
 // RESULT: 1: I
- frame    = test():15, A$Inner {frameInnerClass}
+
+// EXPRESSION: myFun1()
+// RESULT: 1: I
+
+// EXPRESSION: myFun2()
+// RESULT: 1: I
+ frame    = test():17, A$Inner {frameInnerClass}
    this     = this = {frameInnerClass.A$Inner@uniqueID}
-     field    = prop2: int = 1 (sp = frameInnerClass.kt, 11)
+     field    = prop2: int = 1 (sp = frameInnerClass.kt, 12)
      field    = this$0: frameInnerClass.A = {frameInnerClass.A@uniqueID} (sp = null)
        field    = prop1: int = 1 (sp = frameInnerClass.kt, 8)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

@@ -3,6 +3,7 @@ LineBreakpoint created at frameObject.kt:6
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameObject.kt:6
 Compile bytecode for O.obProp
+Compile bytecode for O.obMyFun()
 package frameObject
 
 fun main(args: Array<String>) {
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
 
 object O {
     val obProp = 1
+    fun obMyFun() = 1
 }
 
 fun foo(f: () -> Unit) {
@@ -23,6 +25,9 @@ fun foo(f: () -> Unit) {
 // PRINT_FRAME
 
 // EXPRESSION: O.obProp
+// RESULT: 1: I
+
+// EXPRESSION: O.obMyFun()
 // RESULT: 1: I
  frame    = invoke():6, FrameObjectPackage$@packagePartHASH$main$1 {frameObject}
    this     = this = {frameObject.FrameObjectPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
