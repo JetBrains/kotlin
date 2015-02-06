@@ -119,6 +119,14 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
+    private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
+            when {
+                inlinesChanged -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
+                constantsChanged -> RECOMPILE_OTHERS_WITH_DEPENDANTS
+                protoChanged -> RECOMPILE_OTHERS_IN_CHUNK
+                else -> DO_NOTHING
+            }
+
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
 
@@ -137,22 +145,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            when {
-                header.isCompatiblePackageFacadeKind() -> {
-                    return if (protoMap.put(className, data)) RECOMPILE_OTHERS_IN_CHUNK else DO_NOTHING
-                }
-                header.isCompatibleClassKind() -> {
-                    val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-                    val protoChanged = protoMap.put(className, data)
-                    val constantsChanged = constantsMap.process(className, fileBytes)
-
-                    return when {
-                        inlinesChanged -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
-                        constantsChanged -> RECOMPILE_OTHERS_WITH_DEPENDANTS
-                        protoChanged -> RECOMPILE_OTHERS_IN_CHUNK
-                        else -> DO_NOTHING
-                    }
-                }
+            return when {
+                header.isCompatiblePackageFacadeKind() ->
+                    getRecompilationDecision(
+                            protoChanged = protoMap.put(className, data),
+                            constantsChanged = false,
+                            inlinesChanged = false
+                    )
+                header.isCompatibleClassKind() ->
+                    getRecompilationDecision(
+                            protoChanged = protoMap.put(className, data),
+                            constantsChanged = constantsMap.process(className, fileBytes),
+                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                    )
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
                 }
@@ -163,14 +168,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
             packagePartMap.addPackagePart(className)
-            val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-            val constantsChanged = constantsMap.process(className, fileBytes)
 
-            return when {
-                inlinesChanged -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
-                constantsChanged -> RECOMPILE_OTHERS_WITH_DEPENDANTS
-                else -> DO_NOTHING
-            }
+            return getRecompilationDecision(
+                    protoChanged = false,
+                    constantsChanged = constantsMap.process(className, fileBytes),
+                    inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+            )
         }
 
         return DO_NOTHING
@@ -181,12 +184,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         for (internalClassName in dirtyOutputClassesMap.getDirtyOutputClasses()) {
             val className = JvmClassName.byInternalName(internalClassName)
 
-            val newDecision = when {
-                internalClassName in inlineFunctionsMap -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
-                internalClassName in constantsMap -> RECOMPILE_OTHERS_WITH_DEPENDANTS
-                internalClassName in protoMap -> RECOMPILE_OTHERS_IN_CHUNK
-                else -> DO_NOTHING
-            }
+            val newDecision = getRecompilationDecision(
+                    protoChanged = internalClassName in protoMap,
+                    constantsChanged = internalClassName in constantsMap,
+                    inlinesChanged = internalClassName in inlineFunctionsMap
+            )
+
             recompilationDecision = recompilationDecision.merge(newDecision)
 
             protoMap.remove(className)
