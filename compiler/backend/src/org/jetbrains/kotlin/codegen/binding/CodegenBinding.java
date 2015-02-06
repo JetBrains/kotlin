@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -262,6 +263,10 @@ public class CodegenBinding {
             return descriptor.getVisibility() == Visibilities.LOCAL;
         }
         return false;
+    }
+
+    public static boolean isLambda(@Nullable DeclarationDescriptor fd) {
+        return fd instanceof AnonymousFunctionDescriptor;
     }
 
     @NotNull

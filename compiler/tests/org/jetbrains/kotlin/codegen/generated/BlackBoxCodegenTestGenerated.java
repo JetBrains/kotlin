@@ -3704,6 +3704,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionExpressionWithThisReference.kt")
+        public void testFunctionExpressionWithThisReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpressionWithThisReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionLiteralExpression.kt")
         public void testFunctionLiteralExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionLiteralExpression.kt");
@@ -3845,6 +3851,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/localFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localReturnInsideFunctionExpression.kt")
+        public void testLocalReturnInsideFunctionExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/localReturnInsideFunctionExpression.kt");
             doTest(fileName);
         }
 

@@ -1820,7 +1820,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Nullable
     private NonLocalReturnInfo getNonLocalReturnInfo(@NotNull CallableMemberDescriptor descriptor, @NotNull JetReturnExpression expression) {
         //call inside lambda
-        if (isLocalFunOrLambda(descriptor) && descriptor.getName().isSpecial()) {
+        if (isLambda(descriptor)) {
             if (expression.getLabelName() == null) {
                 //non labeled return couldn't be local in lambda
                 FunctionDescriptor containingFunction =
