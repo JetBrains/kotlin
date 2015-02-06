@@ -1,4 +1,4 @@
-JetFile: ParamTag.kt
+JetFile: SeeLink.kt
   PACKAGE_DIRECTIVE
     <empty list>
   KDoc
@@ -8,11 +8,13 @@ JetFile: ParamTag.kt
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
       KDOC_TAG
-        PsiElement(KDOC_TAG_NAME)('@param')
+        PsiElement(KDOC_TAG_NAME)('@see')
         PsiWhiteSpace(' ')
         KDOC_MARKDOWN_LINK
           KDOC_NAME
-            PsiElement(IDENTIFIER)('a')
-        PsiElement(KDOC_TEXT)(' The description of a.')
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('Foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

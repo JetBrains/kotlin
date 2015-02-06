@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
+import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -76,6 +75,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("QualifiedCodeReference.kt")
     public void testQualifiedCodeReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedCodeReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SeeReference.kt")
+    public void testSeeReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");
         doTest(fileName);
     }
 

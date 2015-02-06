@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.kdoc.parser;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 public enum KDocKnownTag {
     AUTHOR(false, false),
     THROWS(true, false),
     EXCEPTION(true, false),
     PARAM(true, false),
     RETURN(false, false),
-    SEE(false, false),
+    SEE(true, false),
     SINCE(false, false),
     CONSTRUCTOR(false, true),
     PROPERTY(true, true);
@@ -43,12 +45,12 @@ public enum KDocKnownTag {
         return startsSection;
     }
 
-    public static KDocKnownTag findByTagName(String tagName) {
-        if (tagName.startsWith("@")) {
-            tagName = tagName.substring(1);
+    public static KDocKnownTag findByTagName(CharSequence tagName) {
+        if (StringUtil.startsWith(tagName, "@")) {
+            tagName = tagName.subSequence(1, tagName.length());
         }
         try {
-            return valueOf(tagName.toUpperCase());
+            return valueOf(tagName.toString().toUpperCase());
         }
         catch (IllegalArgumentException ignored) {
         }

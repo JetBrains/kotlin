@@ -21,25 +21,53 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.JetLexer
+import com.intellij.lang.PsiBuilderFactory
 
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
 class KDocLinkParser(): PsiParser {
+    class object {
+        public fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
+            val parentElement = chameleon.getTreeParent().getPsi()
+            val project = parentElement.getProject()
+            val builder = PsiBuilderFactory.getInstance().createBuilder(project,
+                                                                        chameleon,
+                                                                        JetLexer(),
+                                                                        root.getLanguage(),
+                                                                        chameleon.getText())
+            val parser = KDocLinkParser()
+
+            return parser.parse(root, builder).getFirstChildNode()
+        }
+    }
+
     override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
         val rootMarker = builder.mark()
-        if (builder.getTokenType() == JetTokens.LBRACKET) {
+        val hasLBracket = builder.getTokenType() == JetTokens.LBRACKET
+        if (hasLBracket) {
             builder.advanceLexer()
         }
         parseQualifiedName(builder)
-        if (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
-            builder.error("Closing bracket expected")
-            while (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
+        if (hasLBracket) {
+            if (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
+                builder.error("Closing bracket expected")
+                while (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
+                    builder.advanceLexer()
+                }
+            }
+            if (builder.getTokenType() == JetTokens.RBRACKET) {
                 builder.advanceLexer()
             }
         }
-        if (builder.getTokenType() == JetTokens.RBRACKET) {
-            builder.advanceLexer()
+        else {
+            if (!builder.eof()) {
+                builder.error("Expression expected");
+                while (!builder.eof()) {
+                    builder.advanceLexer();
+                }
+            }
         }
         rootMarker.done(root)
         return builder.getTreeBuilt()

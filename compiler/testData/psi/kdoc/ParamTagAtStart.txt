@@ -8,8 +8,8 @@ JetFile: ParamTagAtStart.kt
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@param')
         PsiWhiteSpace(' ')
-        KDOC_LINK
+        KDOC_MARKDOWN_LINK
           KDOC_NAME
-            PsiElement(KDOC_TEXT_OR_LINK)('a')
+            PsiElement(IDENTIFIER)('a')
         PsiElement(KDOC_TEXT)(' this is a ')
     PsiElement(KDOC_END)('*/')

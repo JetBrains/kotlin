@@ -62,7 +62,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
         if (knownTag?.isReferenceRequired() ?: false) {
-            return contentChildren.firstOrNull()?.getElementType() == KDocElementTypes.KDOC_LINK;
+            return contentChildren.firstOrNull()?.getElementType() == KDocTokens.MARKDOWN_LINK
         }
         return false
     }
@@ -88,7 +88,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         }
         for (node in children) {
             val type = node.getElementType()
-            if (KDocTokens.CONTENT_TOKENS.contains(type) || type == KDocElementTypes.KDOC_LINK) {
+            if (KDocTokens.CONTENT_TOKENS.contains(type)) {
                 contentStarted = true
                 builder.append(if (afterAsterisk) StringUtil.trimLeading(node.getText()) else node.getText())
                 afterAsterisk = false

@@ -10,14 +10,13 @@ JetFile: TwoTags.kt
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@author')
         PsiWhiteSpace(' ')
-        PsiElement(KDOC_TEXT_OR_LINK)('Dmitry')
-        PsiElement(KDOC_TEXT)(' Jemerov')
+        PsiElement(KDOC_TEXT)('Dmitry Jemerov')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@since')
         PsiWhiteSpace(' ')
-        PsiElement(KDOC_TEXT_OR_LINK)('M12')
+        PsiElement(KDOC_TEXT)('M12')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
