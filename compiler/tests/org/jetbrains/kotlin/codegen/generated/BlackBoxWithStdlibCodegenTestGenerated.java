@@ -2492,6 +2492,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("kt6691_lambdaInSamConstructor.kt")
+                public void testKt6691_lambdaInSamConstructor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/kt6691_lambdaInSamConstructor.kt");
+                    doTestWithStdlib(fileName);
+                }
+
                 @TestMetadata("lambdaInConstructor.kt")
                 public void testLambdaInConstructor() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/lambda/lambdaInConstructor.kt");

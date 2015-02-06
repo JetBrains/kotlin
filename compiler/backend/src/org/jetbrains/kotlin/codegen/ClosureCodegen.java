@@ -161,8 +161,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
         }
 
-        JvmMethodSignature jvmMethodSignature =
-                typeMapper.mapSignature(funDescriptor).replaceName(erasedInterfaceFunction.getName().toString());
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(funDescriptor);
         generateBridge(typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
 
         functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), jvmMethodSignature, funDescriptor, strategy);

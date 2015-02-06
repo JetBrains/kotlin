@@ -58,13 +58,6 @@ public class JvmMethodSignature {
         return asmMethod.getReturnType();
     }
 
-    @NotNull
-    public JvmMethodSignature replaceName(@NotNull String newName) {
-        return newName.equals(asmMethod.getName()) ?
-               this :
-               new JvmMethodSignature(new Method(newName, asmMethod.getDescriptor()), genericsSignature, valueParameters);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
