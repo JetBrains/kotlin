@@ -9,7 +9,7 @@ import java.io.Serializable
  * Pair exhibits value semantics, i.e. two pairs are equal if both components are equal.
  *
  * An example of decomposing it into values:
- * ${code test.tuples.PairTest.pairMultiAssignment}
+ * @sample test.tuples.PairTest.pairMultiAssignment
  *
  * @param first First value
  * @param second Second value
@@ -37,7 +37,7 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * There is no meaning attached to values in this class, it can be used for any purpose.
  * Triple exhibits value semantics, i.e. two triples are equal if all three components are equal.
  * An example of decomposing it into values:
- * {code test.tuples.PairTest.pairMultiAssignment}
+ * @sample test.tuples.TripleTest.tripleMultiAssignment
  *
  * @param A type of the first value
  * @param B type of the second value
