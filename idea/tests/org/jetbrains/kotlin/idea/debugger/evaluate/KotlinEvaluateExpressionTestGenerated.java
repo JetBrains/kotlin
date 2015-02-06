@@ -488,6 +488,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("funFromOuterClassInLamdba.kt")
+        public void testFunFromOuterClassInLamdba() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/funFromOuterClassInLamdba.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("whenEntry.kt")
         public void testWhenEntry() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/whenEntry.kt");
