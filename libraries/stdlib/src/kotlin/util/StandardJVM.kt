@@ -22,7 +22,6 @@ public fun Throwable.printStackTrace(stream: PrintStream): Unit {
 /**
  * Returns the list of stack trace elements in a Kotlin stack trace.
  */
-
 public fun Throwable.getStackTrace(): Array<StackTraceElement> {
     val jlt = this as java.lang.Throwable
     return jlt.getStackTrace()!!

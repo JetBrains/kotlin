@@ -17,6 +17,7 @@
 package kotlin
 
 /**
- * Nothing has no instances
+ * Nothing has no instances. You can use Nothing as the return type of a function to indicate
+ * that it never returns (always throws an exception).
  */
 public class Nothing private () {}
