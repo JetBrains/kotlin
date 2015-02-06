@@ -96,16 +96,8 @@ public class KotlinLightClassForPackage private(
     private val implementsList: LightEmptyImplementsList =
             LightEmptyImplementsList(manager)
 
-    private val packageClsFile: ClsFileImpl
-
-    {
-        val virtualFile = KotlinJavaFileStubProvider.getRepresentativeVirtualFile(files)
-        packageClsFile = object : ClsFileImpl(ClassFileViewProvider(PsiManager.getInstance(getProject()), virtualFile)) {
-            override fun getStub() = (getDelegate().getContainingFile() as ClsFileImpl).getStub()
-            override fun getPackageName() = this@KotlinLightClassForPackage.packageFqName.asString()
-        }
-
-        packageClsFile.setPhysical(false)
+    private val packageClsFile: ClsFileImpl = KotlinJavaFileStubProvider.createFakeClsFile(manager.getProject(), packageClassFqName, files) {
+        (getDelegate().getContainingFile() as ClsFileImpl).getStub()
     }
 
     override fun getOrigin(): JetClassOrObject? = null
