@@ -20,9 +20,15 @@ import kotlin.jvm.internal.Intrinsic
 Retention(RetentionPolicy.SOURCE)
 public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
 
+/**
+ * Returns the runtime Java class of this object.
+ */
 [Intrinsic("kotlin.javaClass.property")] public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
+/**
+ * Returns the Java class for the specified type.
+ */
 [Intrinsic("kotlin.javaClass.function")] public fun <reified T: Any> javaClass(): Class<T> = null as Class<T>
 
 public inline fun <R> synchronized(lock: Any, block: () -> R): R {

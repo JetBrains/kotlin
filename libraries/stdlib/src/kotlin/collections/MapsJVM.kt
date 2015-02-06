@@ -21,7 +21,7 @@ public fun <K : Any, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
  * Converts this [Map] to a [SortedMap] using the given [comparator] so that iteration order will be in the order
  * defined by the comparator
  *
- * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMapWithComparator
+ * @sample test.collections.MapJVMTest.toSortedMapWithComparator
  */
 public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K, V> {
     val result = TreeMap<K, V>(comparator)
@@ -33,7 +33,7 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,
  * Returns a new [SortedMap] with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value.
  *
- * @includeFunctionBody ../../test/collections/MapTest.kt createSortedMap
+ * @sample test.collections.MapJVMTest.createSortedMap
  */
 public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
     val answer = TreeMap<K, V>()

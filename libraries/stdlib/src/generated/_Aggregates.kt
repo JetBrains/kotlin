@@ -218,7 +218,7 @@ public fun String.any(): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -226,7 +226,7 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -234,7 +234,7 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -242,7 +242,7 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -250,7 +250,7 @@ public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -258,7 +258,7 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -266,7 +266,7 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -274,7 +274,7 @@ public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -282,7 +282,7 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -290,7 +290,7 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -298,7 +298,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -306,7 +306,7 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -314,7 +314,7 @@ public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given *predicate*
+ * Returns *true* if any element matches the given [predicate]
  */
 public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -424,7 +424,7 @@ public fun String.count(): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -433,7 +433,7 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
     var count = 0
@@ -442,7 +442,7 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
     var count = 0
@@ -451,7 +451,7 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
     var count = 0
@@ -460,7 +460,7 @@ public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
     var count = 0
@@ -469,7 +469,7 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
     var count = 0
@@ -478,7 +478,7 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
     var count = 0
@@ -487,7 +487,7 @@ public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
     var count = 0
@@ -496,7 +496,7 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
     var count = 0
@@ -505,7 +505,7 @@ public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -514,7 +514,7 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
@@ -523,7 +523,7 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -532,7 +532,7 @@ public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given *predicate*
+ * Returns the number of elements matching the given [predicate]
  */
 public inline fun String.count(predicate: (Char) -> Boolean): Int {
     var count = 0
@@ -2243,7 +2243,7 @@ public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Array<out T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2254,7 +2254,7 @@ public inline fun <T> Array<out T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun BooleanArray.sumBy(transform: (Boolean) -> Int): Int {
     var sum: Int = 0
@@ -2265,7 +2265,7 @@ public inline fun BooleanArray.sumBy(transform: (Boolean) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun ByteArray.sumBy(transform: (Byte) -> Int): Int {
     var sum: Int = 0
@@ -2276,7 +2276,7 @@ public inline fun ByteArray.sumBy(transform: (Byte) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun CharArray.sumBy(transform: (Char) -> Int): Int {
     var sum: Int = 0
@@ -2287,7 +2287,7 @@ public inline fun CharArray.sumBy(transform: (Char) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun DoubleArray.sumBy(transform: (Double) -> Int): Int {
     var sum: Int = 0
@@ -2298,7 +2298,7 @@ public inline fun DoubleArray.sumBy(transform: (Double) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun FloatArray.sumBy(transform: (Float) -> Int): Int {
     var sum: Int = 0
@@ -2309,7 +2309,7 @@ public inline fun FloatArray.sumBy(transform: (Float) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun IntArray.sumBy(transform: (Int) -> Int): Int {
     var sum: Int = 0
@@ -2320,7 +2320,7 @@ public inline fun IntArray.sumBy(transform: (Int) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun LongArray.sumBy(transform: (Long) -> Int): Int {
     var sum: Int = 0
@@ -2331,7 +2331,7 @@ public inline fun LongArray.sumBy(transform: (Long) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun ShortArray.sumBy(transform: (Short) -> Int): Int {
     var sum: Int = 0
@@ -2342,7 +2342,7 @@ public inline fun ShortArray.sumBy(transform: (Short) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2353,7 +2353,7 @@ public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Stream<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2364,7 +2364,7 @@ public inline fun <T> Stream<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from characters in the string
  */
 public inline fun String.sumBy(transform: (Char) -> Int): Int {
     var sum: Int = 0
@@ -2375,7 +2375,7 @@ public inline fun String.sumBy(transform: (Char) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Array<out T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2386,7 +2386,7 @@ public inline fun <T> Array<out T>.sumByDouble(transform: (T) -> Double): Double
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun BooleanArray.sumByDouble(transform: (Boolean) -> Double): Double {
     var sum: Double = 0.0
@@ -2397,7 +2397,7 @@ public inline fun BooleanArray.sumByDouble(transform: (Boolean) -> Double): Doub
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun ByteArray.sumByDouble(transform: (Byte) -> Double): Double {
     var sum: Double = 0.0
@@ -2408,7 +2408,7 @@ public inline fun ByteArray.sumByDouble(transform: (Byte) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun CharArray.sumByDouble(transform: (Char) -> Double): Double {
     var sum: Double = 0.0
@@ -2419,7 +2419,7 @@ public inline fun CharArray.sumByDouble(transform: (Char) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun DoubleArray.sumByDouble(transform: (Double) -> Double): Double {
     var sum: Double = 0.0
@@ -2430,7 +2430,7 @@ public inline fun DoubleArray.sumByDouble(transform: (Double) -> Double): Double
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun FloatArray.sumByDouble(transform: (Float) -> Double): Double {
     var sum: Double = 0.0
@@ -2441,7 +2441,7 @@ public inline fun FloatArray.sumByDouble(transform: (Float) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun IntArray.sumByDouble(transform: (Int) -> Double): Double {
     var sum: Double = 0.0
@@ -2452,7 +2452,7 @@ public inline fun IntArray.sumByDouble(transform: (Int) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun LongArray.sumByDouble(transform: (Long) -> Double): Double {
     var sum: Double = 0.0
@@ -2463,7 +2463,7 @@ public inline fun LongArray.sumByDouble(transform: (Long) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun ShortArray.sumByDouble(transform: (Short) -> Double): Double {
     var sum: Double = 0.0
@@ -2474,7 +2474,7 @@ public inline fun ShortArray.sumByDouble(transform: (Short) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2485,7 +2485,7 @@ public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double 
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection
  */
 public inline fun <T> Stream<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2496,7 +2496,7 @@ public inline fun <T> Stream<T>.sumByDouble(transform: (T) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by `transform` function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from characters in the string
  */
 public inline fun String.sumByDouble(transform: (Char) -> Double): Double {
     var sum: Double = 0.0

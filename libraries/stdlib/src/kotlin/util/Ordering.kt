@@ -19,7 +19,10 @@ package kotlin
 import java.util.Comparator
 
 /**
- * Compares two values using the sequence of functions to calculate a result of comparison.
+ * Compares two values using the specified sequence of functions to calculate the result of the comparison.
+ * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
+ * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
+ * compare as equal, the result of that comparison is returned.
  */
 public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
     require(functions.size() > 0)
@@ -36,7 +39,7 @@ public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comp
 }
 
 /**
- * Compares two [Comparable] nullable values, null is considered less than any value.
+ * Compares two nullable [Comparable] values. Null is considered less than any value.
  */
 public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a identityEquals b) return 0
@@ -48,6 +51,9 @@ public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
 
 /**
  * Creates a comparator using the sequence of functions to calculate a result of comparison.
+ * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
+ * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
+ * compare as equal, the result of that comparison is returned from the [Comparator].
  */
 public fun <T> compareBy(vararg functions: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {

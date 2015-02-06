@@ -6,7 +6,7 @@ fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("drop(n: Int)") {
-        doc { "Returns a list containing all elements except first *n* elements" }
+        doc { "Returns a list containing all elements except first [n] elements" }
         returns("List<T>")
         body {
             """
@@ -19,7 +19,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Streams) { "Returns a stream containing all elements except first *n* elements" }
+        doc(Streams) { "Returns a stream containing all elements except first [n] elements" }
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
@@ -27,6 +27,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string with the first [n] characters removed"}
         body(Strings) { "return substring(Math.min(n, length()))" }
         returns(Strings) { "String" }
 
@@ -46,7 +47,7 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("take(n: Int)") {
-        doc { "Returns a list containing first *n* elements" }
+        doc { "Returns a list containing first [n] elements" }
         returns("List<T>")
         body {
             """
@@ -61,6 +62,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter"}
         body(Strings) { "return substring(0, Math.min(n, length()))" }
         returns(Strings) { "String" }
 
@@ -91,7 +93,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("dropWhile(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns a list containing all elements except first elements that satisfy the given *predicate*" }
+        doc { "Returns a list containing all elements except first elements that satisfy the given [predicate]" }
         returns("List<T>")
         body {
             """
@@ -108,6 +110,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string containing all characters except first characters that satisfy the given [predicate]" }
         returns(Strings) { "String" }
         body(Strings) {
             """
@@ -120,7 +123,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements except first elements that satisfy the given *predicate*" }
+        doc(Streams) { "Returns a stream containing all elements except first elements that satisfy the given [predicate]" }
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
@@ -133,7 +136,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("takeWhile(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns a list containing first elements satisfying the given *predicate*" }
+        doc { "Returns a list containing first elements satisfying the given [predicate]" }
         returns("List<T>")
         body {
             """
@@ -147,6 +150,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string containing the first characters that satisfy the given [predicate]"}
         returns(Strings) { "String" }
         body(Strings) {
             """
@@ -159,7 +163,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         inline(false, Streams)
-        doc(Streams) { "Returns a stream containing first elements satisfying the given *predicate*" }
+        doc(Streams) { "Returns a stream containing first elements satisfying the given [predicate]" }
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
@@ -171,7 +175,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filter(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns a list containing all elements matching the given *predicate*" }
+        doc { "Returns a list containing all elements matching the given [predicate]" }
         returns("List<T>")
         body {
             """
@@ -179,6 +183,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string containing only those characters from the original string that match the given [predicate]" }
         returns(Strings) { "String" }
         body(Strings) {
             """
@@ -187,7 +192,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements matching the given *predicate*" }
+        doc(Streams) { "Returns a stream containing all elements matching the given [predicate]" }
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
@@ -199,7 +204,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Appends all elements matching the given *predicate* into the given *destination*" }
+        doc { "Appends all elements matching the given [predicate] into the given [destination]" }
         typeParam("C : TCollection")
         returns("C")
 
@@ -210,7 +215,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Appends all characters matching the given *predicate* to the given *destination*" }
+        doc(Strings) { "Appends all characters matching the given [predicate] to the given [destination]" }
         body(Strings) {
             """
             for (index in 0..length - 1) {
@@ -225,7 +230,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterNot(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns a list containing all elements not matching the given *predicate*" }
+        doc { "Returns a list containing all elements not matching the given [predicate]" }
         returns("List<T>")
         body {
             """
@@ -233,6 +238,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string containing only those characters from the original string that do not match the given [predicate]" }
         returns(Strings) { "String" }
         body(Strings) {
             """
@@ -241,7 +247,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         inline(false, Streams)
-        doc(Streams) { "Returns a stream containing all elements not matching the given *predicate*" }
+        doc(Streams) { "Returns a stream containing all elements not matching the given [predicate]" }
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
@@ -253,7 +259,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterNotTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Appends all elements not matching the given *predicate* to the given *destination*" }
+        doc { "Appends all elements not matching the given [predicate] to the given [destination]" }
         typeParam("C : TCollection")
         returns("C")
 
@@ -264,7 +270,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Appends all characters not matching the given *predicate* to the given *destination*" }
+        doc(Strings) { "Appends all characters not matching the given [predicate] to the given [destination]" }
         body(Strings) {
             """
             for (element in this) if (!predicate(element)) destination.append(element)
@@ -296,7 +302,7 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("filterNotNullTo(destination: C)") {
         exclude(ArraysOfPrimitives, Strings)
-        doc { "Appends all elements that are not null to the given *destination*" }
+        doc { "Appends all elements that are not null to the given [destination]" }
         returns("C")
         typeParam("C : TCollection")
         typeParam("T : Any")
@@ -323,6 +329,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        doc { "Returns a string containing characters at specified positions" }
         returns(Strings) { "String" }
         body(Strings) {
             """
