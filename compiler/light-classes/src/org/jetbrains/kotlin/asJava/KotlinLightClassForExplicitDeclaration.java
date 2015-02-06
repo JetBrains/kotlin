@@ -285,7 +285,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         protected PsiFile compute() {
             VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
             assert virtualFile != null : "No virtual file for " + classOrObject.getText();
-            return new ClsFileImpl((PsiManagerImpl) getManager(), new ClassFileViewProvider(getManager(), virtualFile)) {
+            return new ClsFileImpl(new ClassFileViewProvider(getManager(), virtualFile)) {
                 @NotNull
                 @Override
                 public String getPackageName() {
