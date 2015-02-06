@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil.findFilesWithExactPackage
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil
 import org.jetbrains.kotlin.psi.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 object DebuggerUtils {
@@ -49,8 +51,11 @@ object DebuggerUtils {
         if (!KOTLIN_EXTENSIONS.contains(extension)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
-        val filesInPackage = findFilesWithExactPackage(className.packageFqName, searchScope, project)
-        val filesWithExactName = filesInPackage.filter { it.name == fileName }
+        val filesWithExactName = findFilesByNameInPackage(className, fileName, project, searchScope).check { it.isNotEmpty() }
+                                 // Source files for libraries aren't included into ModuleWithDependencies scope
+                                 ?: findFilesByNameInPackage(
+                                            className, fileName, project,
+                                            KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project))
 
         if (filesWithExactName.isEmpty()) return null
 
@@ -73,6 +78,9 @@ object DebuggerUtils {
 
         return filesWithExactName.first()
     }
+
+    private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope)
+            = findFilesWithExactPackage(className.packageFqName, searchScope, project).filter { it.name == fileName }
 
     fun analyzeInlinedFunctions(
             resolutionFacadeForFile: ResolutionFacade,

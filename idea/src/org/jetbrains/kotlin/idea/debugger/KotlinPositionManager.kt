@@ -30,7 +30,6 @@ import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
 import com.intellij.util.ThreeState
@@ -100,7 +99,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, javaClassName, javaSourceFileName)
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -197,7 +196,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, className, sourceName)
     }
 
     private fun defaultInternalName(location: Location): String {
