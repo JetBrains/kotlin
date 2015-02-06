@@ -1,9 +1,9 @@
 package
 
-internal val extension_generic_fun: [ERROR : T].(T) -> T
+internal val extension_generic_fun: T.(T) -> T
 internal val generic_fun: (T) -> T
 internal fun devNull(/*0*/ a: kotlin.Any?): kotlin.Unit
-internal fun fun_with_where(): [ERROR : T].(T) -> T
+internal fun fun_with_where(): T.(T) -> T
 internal fun outer(): kotlin.Unit
 
 internal trait A {

@@ -4,9 +4,9 @@ trait A
 fun devNull(a: Any?){}
 
 val generic_fun = fun<!TYPE_PARAMETERS_NOT_ALLOWED!><T><!>(t: T): T = null!!
-val extension_generic_fun = fun<!TYPE_PARAMETERS_NOT_ALLOWED!><T><!><!UNRESOLVED_REFERENCE!>T<!>.(t: T): T = null!!
+val extension_generic_fun = fun<!TYPE_PARAMETERS_NOT_ALLOWED!><T><!>T.(t: T): T = null!!
 
-fun fun_with_where() = fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> <!UNRESOLVED_REFERENCE!>T<!>.(t: T): T where T: A {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun fun_with_where() = fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> T.(t: T): T where T: A = null!!
 
 
 fun outer() {
