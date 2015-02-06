@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,7 +69,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
-        final String testDataPath = getTestDataPath();
+        String testDataPath = getTestDataPath();
         File mainFile = new File(testDataPath + beforeFileName);
         final String originalFileText = FileUtil.loadFile(mainFile, true);
 
@@ -184,6 +185,24 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             }
 
             checkResultByFile(testFullPath.replace(".before.Main.", ".after."));
+
+            PsiFile mainFile = myFile;
+            String extraFileNamePrefix = mainFile.getName().replace(".Main.kt", ".data.Sample.");
+            for (PsiFile file : mainFile.getContainingDirectory().getFiles()) {
+                if (!file.getName().startsWith(extraFileNamePrefix)) continue;
+
+                myFile = file;
+                String extraFileFullPath = testFullPath.replace(mainFile.getName(), file.getName());
+                try {
+                    checkResultByFile(extraFileFullPath.replace(".before.", ".after."));
+                }
+                catch (AssertionError e) {
+                    if (e.getMessage().startsWith("Cannot find file")) {
+                        checkResultByFile(extraFileFullPath);
+                    }
+                    else throw e;
+                }
+            }
         }
     }
 
