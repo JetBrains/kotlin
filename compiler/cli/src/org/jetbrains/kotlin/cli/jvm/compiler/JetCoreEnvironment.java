@@ -37,6 +37,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -243,6 +244,13 @@ public class JetCoreEnvironment {
                         }
                 )
         );
+
+        ContainerUtil.sort(sourceFiles, new Comparator<JetFile>() {
+            @Override
+            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
+                return o1.getVirtualFile().getPath().compareToIgnoreCase(o2.getVirtualFile().getPath());
+            }
+        });
 
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY)
