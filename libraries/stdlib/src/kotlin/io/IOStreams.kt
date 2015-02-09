@@ -69,3 +69,17 @@ public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteAr
     this.copyTo(buffer)
     return buffer.toByteArray()
 }
+
+/**
+ * Constructs a new FileInputStream of this file and returns it as a result.
+ */
+public fun File.inputStream(): InputStream {
+    return FileInputStream(this)
+}
+
+/**
+ * Constructs a new FileOutputStream of this file and returns it as a result.
+ */
+public fun File.outputStream(): OutputStream {
+    return FileOutputStream(this)
+}
