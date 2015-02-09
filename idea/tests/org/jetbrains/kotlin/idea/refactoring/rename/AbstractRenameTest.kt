@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.junit.Assert
@@ -34,7 +33,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -44,11 +42,13 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.idea.refactoring.move.getString
 import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import org.jetbrains.kotlin.idea.KotlinMultiFileTestCase
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.name.FqName
 
 private enum class RenameType {
     JAVA_CLASS
@@ -179,10 +179,10 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         }
     }
 
-    private fun doRenameInKotlinClass(renameParamsObject: JsonObject, context: TestContext,
-                                      findDescriptorToRename: (ClassDescriptor) -> DeclarationDescriptor
+    private fun doRenameInKotlinClass(
+            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (ClassDescriptor) -> DeclarationDescriptor
     ) {
-        val classFqName = FqNameUnsafe(renameParamsObject.getString("classFQN"))
+        val classFqName = FqName(renameParamsObject.getString("classFQN"))
         val newName = renameParamsObject.getString("newName")
         val mainFilePath = renameParamsObject.getNullableString("mainFile") ?: "${getTestDirName(false)}.kt"
 
@@ -191,8 +191,8 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
 
-            val bindingContext = jetFile.analyzeFully()
-            val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
+            val module = jetFile.analyzeFullyAndGetResult().moduleDescriptor
+            val classDescriptor = module.resolveTopLevelClass(classFqName)!!
 
             val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(classDescriptor))!!
 
