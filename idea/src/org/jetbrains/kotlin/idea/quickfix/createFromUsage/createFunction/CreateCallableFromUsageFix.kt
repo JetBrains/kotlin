@@ -76,7 +76,7 @@ public class CreateCallableFromUsageFix(
             val containers = receiverTypeCandidates
                     .map { candidate ->
                         val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
-                        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor)
+                        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor)
                         if (declaration is JetClassOrObject || declaration is PsiClass) candidate to declaration else null
                     }
                     .filterNotNull()

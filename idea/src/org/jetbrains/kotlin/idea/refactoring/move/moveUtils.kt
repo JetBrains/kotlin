@@ -83,7 +83,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
     fun processReference(refExpr: JetSimpleNameExpression, bindingContext: BindingContext): UsageInfo? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor) ?: return null
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(getProject(), descriptor) ?: return null
         if (isAncestor(declaration, false)) return null
 
         val isCallable = descriptor is CallableDescriptor

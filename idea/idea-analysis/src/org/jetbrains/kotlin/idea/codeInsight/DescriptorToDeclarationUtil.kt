@@ -30,10 +30,6 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public object DescriptorToDeclarationUtil {
-    public fun getDeclaration(file: JetFile, descriptor: DeclarationDescriptor): PsiElement? {
-        return getDeclaration(file.getProject(), descriptor)
-    }
-
     public fun getDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
         var elements: Collection<PsiElement> = DescriptorToSourceUtils.descriptorToDeclarations(descriptor)
         if (elements.isEmpty()) {
