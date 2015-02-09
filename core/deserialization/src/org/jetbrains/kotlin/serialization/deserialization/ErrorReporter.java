@@ -32,4 +32,24 @@ public interface ErrorReporter {
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 
     void reportLoadingError(@NotNull String message, @Nullable Exception exception);
+
+    ErrorReporter DO_NOTHING = new ErrorReporter() {
+        @Override
+        public void reportIncompatibleAbiVersion(
+                @NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion
+        ) {
+        }
+
+        @Override
+        public void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses) {
+        }
+
+        @Override
+        public void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+        }
+
+        @Override
+        public void reportLoadingError(@NotNull String message, @Nullable Exception exception) {
+        }
+    };
 }
