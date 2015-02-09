@@ -1127,6 +1127,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("SeeEmpty.kt")
+            public void testSeeEmpty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/SeeEmpty.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("SeeLink.kt")
             public void testSeeLink() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/SeeLink.kt");

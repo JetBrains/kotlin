@@ -92,5 +92,5 @@ class KDocLinkParser(): PsiParser {
         }
     }
 
-    private fun isName(tokenType: IElementType) = tokenType == JetTokens.IDENTIFIER || tokenType in JetTokens.KEYWORDS
+    private fun isName(tokenType: IElementType?) = tokenType == JetTokens.IDENTIFIER || tokenType in JetTokens.KEYWORDS
 }
