@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
@@ -118,34 +120,39 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        ClassDescriptor classDescriptor = getBindingContext().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
-        if (classDescriptor != null) {
-            PsiElement element = DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
-            if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
-                return Collections.singletonList((JetClassOrObject) element);
-            }
-        }
-
+    public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
         if (JvmAbi.isClassObjectFqName(fqName)) {
             Collection<JetClassOrObject> parentClasses = findClassOrObjectDeclarations(fqName.parent(), searchScope);
-            return ContainerUtil.mapNotNull(parentClasses,
-                                            new Function<JetClassOrObject, JetClassOrObject>() {
-                                                @Override
-                                                public JetClassOrObject fun(JetClassOrObject classOrObject) {
-                                                    if (classOrObject instanceof JetClass) {
-                                                        JetClass jetClass = (JetClass) classOrObject;
-                                                        JetClassObject classObject = jetClass.getClassObject();
-                                                        if (classObject != null) {
-                                                            return classObject.getObjectDeclaration();
-                                                        }
-                                                    }
-                                                    return null;
-                                                }
-                                            });
+            return ContainerUtil.mapNotNull(
+                    parentClasses,
+                    new Function<JetClassOrObject, JetClassOrObject>() {
+                        @Override
+                        public JetClassOrObject fun(JetClassOrObject classOrObject) {
+                            if (classOrObject instanceof JetClass) {
+                                JetClassObject classObject = ((JetClass) classOrObject).getClassObject();
+                                if (classObject != null) {
+                                    return classObject.getObjectDeclaration();
+                                }
+                            }
+                            return null;
+                        }
+                    }
+            );
         }
 
-        return Collections.emptyList();
+        Collection<ClassDescriptor> classDescriptors =
+                ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(getModule(), fqName, Predicates.<ClassDescriptor>alwaysTrue());
+
+        return ContainerUtil.mapNotNull(classDescriptors, new Function<ClassDescriptor, JetClassOrObject>() {
+            @Override
+            public JetClassOrObject fun(ClassDescriptor descriptor) {
+                PsiElement element = DescriptorToSourceUtils.classDescriptorToDeclaration(descriptor);
+                if (element instanceof JetClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
+                    return (JetClassOrObject) element;
+                }
+                return null;
+            }
+        });
     }
 
     @NotNull
