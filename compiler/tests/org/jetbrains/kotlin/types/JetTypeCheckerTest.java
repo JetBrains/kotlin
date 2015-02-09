@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -593,8 +593,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         BindingTraceContext trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), trace, true);
-        ModuleDescriptor module = injector.getModule();
+        InjectorForLazyResolveWithJava injector = InjectorForLazyResolveWithJavaUtil.create(getProject(), trace, true);
+        ModuleDescriptor module = injector.getResolveSession().getModuleDescriptor();
         for (ImportPath defaultImport : module.getDefaultImports()) {
             FqName fqName = defaultImport.fqnPart();
             if (defaultImport.isAllUnder()) {

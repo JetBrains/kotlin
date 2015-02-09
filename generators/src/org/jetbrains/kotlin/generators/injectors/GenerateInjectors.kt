@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.generators.injectors
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.resolve.*
@@ -40,20 +39,17 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.NoFileScopeProvider
-import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorManager
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -79,7 +75,6 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForLazyTopDownAnalyzerBasic(),
                 generatorForLazyLocalClassifierAnalyzer(),
                 generatorForTopDownAnalyzerForJvm(),
-                generatorForJavaDescriptorResolver(),
                 generatorForLazyResolveWithJava(),
                 generatorForTopDownAnalyzerForJs(),
                 generatorForMacro(),
@@ -147,42 +142,11 @@ private fun generatorForTopDownAnalyzerForJvm() =
             commonForJavaTopDownAnalyzer()
         }
 
-private fun generatorForJavaDescriptorResolver() =
-        generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForJavaDescriptorResolver") {
-            parameter<Project>()
-            parameter<BindingTrace>()
-
-            publicField<GlobalContextImpl>(useAsContext = true,
-                        init = GivenExpression("org.jetbrains.kotlin.context.ContextPackage.GlobalContext()"))
-            publicField<ModuleDescriptorImpl>(name = "module",
-                        init = GivenExpression(javaClass<TopDownAnalyzerFacadeForJVM>().getName() + ".createJavaModule(\"<fake-jdr-module>\")"))
-            publicField<JavaDescriptorResolver>()
-            publicField<JavaClassFinderImpl>()
-
-            field<GlobalSearchScope>(
-                  init = GivenExpression(javaClass<GlobalSearchScope>().getName() + ".allScope(project)"))
-
-            field<TraceBasedExternalSignatureResolver>()
-            field<TraceBasedJavaResolverCache>()
-            field<TraceBasedErrorReporter>()
-            field<PsiBasedMethodSignatureChecker>()
-            field<PsiBasedExternalAnnotationResolver>()
-            field<JavaPropertyInitializerEvaluatorImpl>()
-            field<SamConversionResolverImpl>()
-            field<JavaSourceElementFactoryImpl>()
-            field<SingleModuleClassResolver>()
-            field<JavaDescriptorResolverPostConstruct>()
-
-            field<VirtualFileFinder>(
-                  init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
-        }
-
 private fun generatorForLazyResolveWithJava() =
         generator("compiler/frontend.java/src", DI_DEFAULT_PACKAGE, "InjectorForLazyResolveWithJava") {
             commonForResolveSessionBased()
 
             parameter<GlobalSearchScope>(name = "moduleContentScope")
-
             parameter<ModuleClassResolver>()
 
             publicField<JavaDescriptorResolver>()
@@ -192,7 +156,7 @@ private fun generatorForLazyResolveWithJava() =
                                          + ".SERVICE.getInstance(project).create(moduleContentScope)")
             )
 
-            field<JavaClassFinderImpl>()
+            publicField<JavaClassFinderImpl>()
             field<TraceBasedExternalSignatureResolver>()
             field<LazyResolveBasedCache>()
             field<TraceBasedErrorReporter>()

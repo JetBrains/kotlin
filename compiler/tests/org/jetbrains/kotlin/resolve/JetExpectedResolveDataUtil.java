@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
@@ -117,7 +117,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         BindingTraceContext trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, trace, false);
+        InjectorForLazyResolveWithJava injector = InjectorForLazyResolveWithJavaUtil.create(project, trace, false);
         JavaClass javaClass = injector.getJavaClassFinder().findClass(ClassId.topLevel(new FqName(qualifiedName)));
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
         assertInstanceOf(javaClass, JavaClassImpl.class);

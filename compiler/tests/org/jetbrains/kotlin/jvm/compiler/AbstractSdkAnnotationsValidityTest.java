@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
@@ -75,17 +75,17 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                InjectorForJavaDescriptorResolver injector =
-                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace, false);
+                InjectorForLazyResolveWithJava injector =
+                        InjectorForLazyResolveWithJavaUtil.create(commonEnvironment.getProject(), trace, false);
+                ModuleDescriptor module = injector.getResolveSession().getModuleDescriptor();
 
-                BindingContext bindingContext = trace.getBindingContext();
-
-                AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
+                AlternativeSignatureErrorFindingVisitor visitor =
+                        new AlternativeSignatureErrorFindingVisitor(trace.getBindingContext(), errors);
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = resolveTopLevelClass(injector.getModule(), javaClass);
-                    PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
+                    ClassDescriptor topLevelClass = resolveTopLevelClass(module, javaClass);
+                    PackageViewDescriptor topLevelPackage = module.getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }

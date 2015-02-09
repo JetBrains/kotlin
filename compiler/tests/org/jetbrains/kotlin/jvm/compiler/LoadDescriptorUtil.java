@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -93,9 +93,9 @@ public final class LoadDescriptorUtil {
         JetCoreEnvironment jetCoreEnvironment =
                 JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForJavaDescriptorResolver injector =
-                InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace, true);
-        ModuleDescriptorImpl module = injector.getModule();
+        InjectorForLazyResolveWithJava injector =
+                InjectorForLazyResolveWithJavaUtil.create(jetCoreEnvironment.getProject(), trace, true);
+        ModuleDescriptor module = injector.getResolveSession().getModuleDescriptor();
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;

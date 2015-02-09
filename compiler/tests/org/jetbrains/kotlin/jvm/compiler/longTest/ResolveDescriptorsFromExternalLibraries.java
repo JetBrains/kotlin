@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.kotlin.di.InjectorForJavaDescriptorResolverUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -179,9 +179,9 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-        InjectorForJavaDescriptorResolver injector =
-                InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), new BindingTraceContext(), false);
-        ModuleDescriptor moduleDescriptor = injector.getModule();
+        InjectorForLazyResolveWithJava injector =
+                InjectorForLazyResolveWithJavaUtil.create(jetCoreEnvironment.getProject(), new BindingTraceContext(), false);
+        ModuleDescriptor moduleDescriptor = injector.getResolveSession().getModuleDescriptor();
 
         boolean hasErrors;
         try {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.storage.StorageManager
 import com.intellij.openapi.vfs.VirtualFile
 import java.util.HashSet
+import kotlin.platform.platformStatic
 
 public abstract class DeclarationProviderFactoryService {
 
@@ -35,8 +36,7 @@ public abstract class DeclarationProviderFactoryService {
     ): DeclarationProviderFactory
 
     class object {
-
-        public fun createDeclarationProviderFactory(
+        public platformStatic fun createDeclarationProviderFactory(
                 project: Project,
                 storageManager: StorageManager,
                 syntheticFiles: Collection<JetFile>,

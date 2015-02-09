@@ -172,7 +172,7 @@ public class InjectorForLazyResolveWithJava {
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
         this.samConversionResolver = SamConversionResolverImpl.INSTANCE$;
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, moduleClassResolver);
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, getJavaClassFinder(), virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, moduleClassResolver);
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, module);
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module);
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
@@ -220,9 +220,9 @@ public class InjectorForLazyResolveWithJava {
         scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
         scopeProvider.setDeclarationScopeProvider(declarationScopeProvider);
 
-        javaClassFinder.setComponentPostConstruct(javaLazyAnalyzerPostConstruct);
-        javaClassFinder.setProject(project);
-        javaClassFinder.setScope(moduleContentScope);
+        this.javaClassFinder.setComponentPostConstruct(javaLazyAnalyzerPostConstruct);
+        this.javaClassFinder.setProject(project);
+        this.javaClassFinder.setScope(moduleContentScope);
 
         traceBasedExternalSignatureResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
         traceBasedExternalSignatureResolver.setProject(project);
@@ -323,6 +323,10 @@ public class InjectorForLazyResolveWithJava {
 
     public JavaDescriptorResolver getJavaDescriptorResolver() {
         return this.javaDescriptorResolver;
+    }
+
+    public JavaClassFinderImpl getJavaClassFinder() {
+        return this.javaClassFinder;
     }
 
 }
