@@ -116,6 +116,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
+        if (codeFragment.getText().isEmpty()) {
+            return context.getDebugProcess().getVirtualMachineProxy().mirrorOf()
+        }
+
         var isCompiledDataFromCache = true
         try {
             val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
