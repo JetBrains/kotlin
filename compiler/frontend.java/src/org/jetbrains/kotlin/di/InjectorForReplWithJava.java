@@ -179,7 +179,7 @@ public class InjectorForReplWithJava {
         this.kotlinBuiltIns = module.getBuiltIns();
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
-        this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.moduleContentScope = moduleContentScope;
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
@@ -197,11 +197,11 @@ public class InjectorForReplWithJava {
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
         this.singleModuleClassResolver = new SingleModuleClassResolver();
         this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, singleModuleClassResolver);
-        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, module);
-        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module);
+        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
+        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
-        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModule(), storageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, getModule(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
         this.javaLazyAnalyzerPostConstruct = new JavaLazyAnalyzerPostConstruct();
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
         this.kotlinJvmCheckerProvider = KotlinJvmCheckerProvider.INSTANCE$;
@@ -218,10 +218,10 @@ public class InjectorForReplWithJava {
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), javaFlexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.reflectionTypes = new ReflectionTypes(module);
+        this.reflectionTypes = new ReflectionTypes(getModule());
         this.callExpressionResolver = new CallExpressionResolver();
         this.statementFilter = new StatementFilter();
         this.candidateResolver = new CandidateResolver();
@@ -390,6 +390,10 @@ public class InjectorForReplWithJava {
 
     @PreDestroy
     public void destroy() {
+    }
+
+    public ModuleDescriptorImpl getModule() {
+        return this.module;
     }
 
     public ResolveSession getResolveSession() {

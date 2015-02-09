@@ -242,7 +242,7 @@ private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
     parameter<Project>()
     parameter<GlobalContext>(useAsContext = true)
     parameter<BindingTrace>()
-    parameter<ModuleDescriptorImpl>(name = "module", useAsContext = true)
+    publicParameter<ModuleDescriptorImpl>(name = "module", useAsContext = true)
     parameter<DeclarationProviderFactory>()
 
     publicField<ResolveSession>()

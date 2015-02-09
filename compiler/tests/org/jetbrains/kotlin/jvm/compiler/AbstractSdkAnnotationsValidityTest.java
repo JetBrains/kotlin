@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
@@ -77,7 +77,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 InjectorForLazyResolveWithJava injector =
                         InjectorForLazyResolveWithJavaUtil.create(commonEnvironment.getProject(), trace, false);
-                ModuleDescriptor module = injector.getResolveSession().getModuleDescriptor();
+                ModuleDescriptor module = injector.getModule();
 
                 AlternativeSignatureErrorFindingVisitor visitor =
                         new AlternativeSignatureErrorFindingVisitor(trace.getBindingContext(), errors);

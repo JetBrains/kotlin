@@ -157,7 +157,7 @@ public class InjectorForLazyResolveWithJava {
         this.kotlinBuiltIns = module.getBuiltIns();
         this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
-        this.resolveSession = new ResolveSession(project, globalContext, module, declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.moduleContentScope = moduleContentScope;
         this.moduleClassResolver = moduleClassResolver;
@@ -173,8 +173,8 @@ public class InjectorForLazyResolveWithJava {
         this.samConversionResolver = SamConversionResolverImpl.INSTANCE$;
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
         this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, getJavaClassFinder(), virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, moduleClassResolver);
-        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, module);
-        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module);
+        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
+        this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
         this.lazyResolveToken = new LazyResolveToken();
         this.javaLazyAnalyzerPostConstruct = new JavaLazyAnalyzerPostConstruct();
@@ -190,10 +190,10 @@ public class InjectorForLazyResolveWithJava {
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken, dynamicTypesSettings);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), javaFlexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken, dynamicTypesSettings);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.reflectionTypes = new ReflectionTypes(module);
+        this.reflectionTypes = new ReflectionTypes(getModule());
         this.callExpressionResolver = new CallExpressionResolver();
         this.statementFilter = new StatementFilter();
         this.candidateResolver = new CandidateResolver();
@@ -205,8 +205,8 @@ public class InjectorForLazyResolveWithJava {
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, virtualFileFinder, traceBasedErrorReporter);
-        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModule(), storageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, getModule(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -315,6 +315,10 @@ public class InjectorForLazyResolveWithJava {
 
     @PreDestroy
     public void destroy() {
+    }
+
+    public ModuleDescriptorImpl getModule() {
+        return this.module;
     }
 
     public ResolveSession getResolveSession() {

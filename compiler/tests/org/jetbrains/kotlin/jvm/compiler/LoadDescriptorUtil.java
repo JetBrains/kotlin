@@ -33,10 +33,9 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
+import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -95,9 +94,8 @@ public final class LoadDescriptorUtil {
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         InjectorForLazyResolveWithJava injector =
                 InjectorForLazyResolveWithJavaUtil.create(jetCoreEnvironment.getProject(), trace, true);
-        ModuleDescriptor module = injector.getResolveSession().getModuleDescriptor();
 
-        PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor packageView = injector.getModule().getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;
 
         return Pair.create(packageView, trace.getBindingContext());
