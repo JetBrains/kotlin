@@ -17,7 +17,8 @@
 package kotlin
 
 /**
- * An iterator over a collection. Allows to sequentially access the elements in a collection.
+ * An iterator over a collection or another entity that can be represented as a sequence of elements.
+ * Allows to sequentially access the elements.
  */
 public trait Iterator<out T> {
     /**
@@ -91,7 +92,11 @@ public trait MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
 
     /**
      * Adds the specified element [e] into the underlying collection immediately before the element that would be
-     * returned by [next].
+     * returned by [next], if any, and after the element that would be returned by [previous], if any.
+     * (If the collection contains no elements, the new element becomes the sole element in the collection.)
+     * The new element is inserted before the implicit cursor: a subsequent call to [next] would be unaffected,
+     * and a subsequent call to [previous] would return the new element. (This call increases by one the value \
+     * that would be returned by a call to [nextIndex] or [previousIndex].)
      */
     public fun add(e: T): Unit
 }

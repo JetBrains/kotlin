@@ -25,6 +25,7 @@ public fun Any?.identityEquals(other: Any?): Boolean // = this === other
 /**
  * Returns true if the receiver and the [other] object are "equal" to each other, or if they are
  * both null.
+ * @see Any.equals
  */
 public fun Any?.equals(other: Any?): Boolean
 

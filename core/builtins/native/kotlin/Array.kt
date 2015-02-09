@@ -26,24 +26,24 @@ package kotlin
 public class Array<reified T> private (): Cloneable {
     /**
      * Returns the array element at the specified [index]. This method can be called using the
-     * brackets notation:
+     * index operator:
      * ```
-     * val = arr[index]
+     * value = arr[index]
      * ```
      */
     public fun get(index: Int): T
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
-     * be called using the brackets notation:
+     * be called using the index operator:
      * ```
-     * arr[index] = val
+     * arr[index] = value
      * ```
      */
     public fun set(index: Int, value: T): Unit
 
     /**
-     * Returns the length of the array.
+     * Returns the number of elements in the array.
      */
     public fun size(): Int
 

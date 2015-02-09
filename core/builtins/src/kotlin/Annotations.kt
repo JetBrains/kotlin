@@ -17,8 +17,8 @@
 package kotlin
 
 /**
- * Marks the annotated class as a data class. Data classes have automatically generated
- * equals()/hashCode(), toString(), componentN() and copy() functions.
+ * Marks the annotated class as a data class. The compiler automatically generates
+ * equals()/hashCode(), toString(), componentN() and copy() functions for data classes.
  * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
  * for more information.
  */

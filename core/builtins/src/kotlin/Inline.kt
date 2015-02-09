@@ -17,7 +17,7 @@
 package kotlin
 
 /**
- * Annotates the parameter of a function annotates as [inline] and forbids inlining of
+ * Annotates the parameter of a function annotated as [inline] and forbids inlining of
  * function literals passed as arguments for this parameter.
  */
 public annotation class noinline
@@ -27,6 +27,8 @@ public annotation class noinline
  * calling functions. Inline functions can use reified type parameters, and lambdas passed to inline
  * functions can contain non-local returns.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/inline-functions.html) for more information.
+ * @see noinline
+ * @see inlineOptions
  */
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
 

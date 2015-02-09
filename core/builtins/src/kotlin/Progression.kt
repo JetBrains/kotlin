@@ -24,7 +24,7 @@ package kotlin
  */
 public trait Progression<out N : Any> : Iterable<N> {
     /**
-     * The start value of a progression.
+     * The start value of the progression.
      */
     public val start: N
 
