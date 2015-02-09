@@ -26,15 +26,9 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.name.FqName
 import javax.inject.Inject
 import kotlin.properties.Delegates
-import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.name.tail
-import org.jetbrains.kotlin.name.each
 
 public class LazyResolveBasedCache() : JavaResolverCache {
-    class object {
-        private val LOG = Logger.getInstance(javaClass<TraceBasedJavaResolverCache>())
-    }
-
     private var resolveSession by Delegates.notNull<ResolveSession>()
     private val traceBasedCache = TraceBasedJavaResolverCache()
 
@@ -88,5 +82,12 @@ public class LazyResolveBasedCache() : JavaResolverCache {
         }
 
         return result
+    }
+
+    tailRecursive
+    private fun FqName.each(operation: (FqName) -> Boolean) {
+        if (operation(this) && !isRoot()) {
+            parent().each(operation)
+        }
     }
 }

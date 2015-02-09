@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetUserType
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.resolve.ImportPath
 
 /**
  * Returns FqName for given declaration (either Java or Kotlin)
@@ -74,3 +75,17 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
         else -> elementToReplace.replace(psiFactory.createExpression(text))
     } as JetElement
 }
+
+public fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
+    return when {
+        skipAliasedImports && importPath.hasAlias() -> false
+        importPath.isAllUnder() && !isRoot() -> importPath.fqnPart() == this.parent()
+        else -> importPath.fqnPart() == this
+    }
+}
+
+public fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
+    return if (isAllUnder() || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
+}
+
+public fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }

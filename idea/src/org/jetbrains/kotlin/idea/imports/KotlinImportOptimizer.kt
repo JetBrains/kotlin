@@ -29,6 +29,7 @@ import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 

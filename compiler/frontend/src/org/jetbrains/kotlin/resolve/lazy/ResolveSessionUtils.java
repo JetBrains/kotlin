@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class ResolveSessionUtils {
 
@@ -105,15 +106,16 @@ public class ResolveSessionUtils {
             return null;
         }
 
-        Name firstName = NamePackage.getFirstSegment(path);
+        List<Name> pathSegments = path.pathSegments();
+        Name firstName = pathSegments.get(0);
 
-        // Search in internal class
         ClassifierDescriptor classifier = jetScope.getClassifier(firstName);
         if (classifier instanceof ClassDescriptor) {
             return findByQualifiedName(
                     ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope(),
-                    NamePackage.withoutFirstSegment(path),
-                    filter);
+                    new FqName(path.asString().substring(firstName.asString().length() + 1)),
+                    filter
+            );
         }
 
         // TODO: search in class object

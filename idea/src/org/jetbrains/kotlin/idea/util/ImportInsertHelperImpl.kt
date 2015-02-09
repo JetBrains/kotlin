@@ -54,6 +54,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
     /**
