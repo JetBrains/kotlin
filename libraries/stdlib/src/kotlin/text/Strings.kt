@@ -79,7 +79,7 @@ public val String.indices: IntRange
 
 /**
  * Returns a character at the given index in a [CharSequence]. Allows to use the
- * brackets notation for working with character sequences:
+ * index operator for working with character sequences:
  * ```
  * val c = charSequence[5]
  * ```
@@ -208,7 +208,7 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
 }
 
 /**
- * Replace the part of string at given the range with the [replacement] string.
+ * Replaces the part of the string at the given range with the [replacement] string.
  * @param firstIndex the index of the first character to be replaced.
  * @param lastIndex the index of the first character after the replacement to keep in the string.
  */

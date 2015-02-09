@@ -762,7 +762,7 @@ public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (C
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
     val list = ArrayList<T>()
@@ -773,7 +773,7 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
     val list = ArrayList<Boolean>()
@@ -784,7 +784,7 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
     val list = ArrayList<Byte>()
@@ -795,7 +795,7 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
     val list = ArrayList<Char>()
@@ -806,7 +806,7 @@ public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
     val list = ArrayList<Double>()
@@ -817,7 +817,7 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
     val list = ArrayList<Float>()
@@ -828,7 +828,7 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
     val list = ArrayList<Int>()
@@ -839,7 +839,7 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
     val list = ArrayList<Long>()
@@ -850,7 +850,7 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
     val list = ArrayList<Short>()
@@ -861,7 +861,7 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
 }
 
 /**
- * Returns a string containing characters at specified positions
+ * Returns a list containing elements at specified positions
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
     val list = ArrayList<T>()

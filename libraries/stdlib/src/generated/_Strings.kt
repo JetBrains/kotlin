@@ -10,7 +10,7 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -30,7 +30,7 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String 
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -50,7 +50,7 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = "
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -70,7 +70,7 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", "
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -90,7 +90,7 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", "
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -110,7 +110,7 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ",
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -130,7 +130,7 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", 
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -150,7 +150,7 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ",
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -170,7 +170,7 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", "
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -190,7 +190,7 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", 
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
@@ -210,7 +210,7 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String =
 }
 
 /**
- * Appends the string from all the elements separated using [separator] and using the given [prefix] and *postfix* if supplied.
+ * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */

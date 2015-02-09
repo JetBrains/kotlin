@@ -329,7 +329,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc { "Returns a string containing characters at specified positions" }
+        doc(Strings) { "Returns a string containing characters at specified positions" }
         returns(Strings) { "String" }
         body(Strings) {
             """

@@ -64,7 +64,7 @@ public object Delegates {
      * Returns a property delegate for a read-only property that is initialized on first access by calling the
      * specified block of code under a specified lock. Supports lazy initialization semantics for properties and
      * concurrent access.
-     * @param lock the object the semaphore of which is locked before calling the initializer block. If not specified,
+     * @param lock the object the monitor of which is locked before calling the initializer block. If not specified,
      *             the property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */

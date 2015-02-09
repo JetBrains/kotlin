@@ -11,6 +11,8 @@ import java.io.Serializable
  * An example of decomposing it into values:
  * @sample test.tuples.PairTest.pairMultiAssignment
  *
+ * @param A type of the first value
+ * @param B type of the second value
  * @param first First value
  * @param second Second value
  * @constructor Creates a new instance of Pair.

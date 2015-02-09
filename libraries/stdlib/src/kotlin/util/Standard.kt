@@ -9,7 +9,7 @@ package kotlin
 public fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
- * Runs the specified function.
+ * Calls the specified function.
  */
 public inline fun <T> run(f: () -> T): T = f()
 
