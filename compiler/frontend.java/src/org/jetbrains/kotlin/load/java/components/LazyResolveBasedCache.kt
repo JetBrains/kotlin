@@ -39,14 +39,7 @@ public class LazyResolveBasedCache() : JavaResolverCache {
     }
 
     override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
-        val descriptor = traceBasedCache.getClassResolvedFromSource(fqName)
-        if (descriptor != null) return descriptor
-
-        return resolveSession.findInPackageFragments(fqName) { packageFragmentDescriptor ->
-            ResolveSessionUtils.findByQualifiedName(
-                    packageFragmentDescriptor.getMemberScope(),
-                    fqName.tail(packageFragmentDescriptor.fqName))
-        }
+        return traceBasedCache.getClassResolvedFromSource(fqName) ?: findInPackageFragments(fqName)
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
@@ -60,34 +53,25 @@ public class LazyResolveBasedCache() : JavaResolverCache {
     override fun recordField(field: JavaField, descriptor: PropertyDescriptor) {
         traceBasedCache.recordField(field, descriptor)
     }
+
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {
         traceBasedCache.recordClass(javaClass, descriptor)
     }
 
-    private fun <T: Any> ResolveSession.findInPackageFragments(fqName: FqName, find: (PackageFragmentDescriptor) -> T?): T? {
-        var result: T? = null
-        (if (fqName.isRoot()) fqName else fqName.parent()).each { (parentFqName: FqName) : Boolean ->
-            val packageDescriptor = resolveSession.getPackageFragment(parentFqName)
-            if (packageDescriptor == null) {
-                return@each false // Stop iteration
-            }
+    private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {
+        var fqName = if (fullFqName.isRoot()) fullFqName else fullFqName.parent()
 
-            val findResult = find(packageDescriptor)
-            if (findResult != null) {
-                result = findResult
-                return@each false // Stop iteration
-            }
+        while (true) {
+            val packageDescriptor = resolveSession.getPackageFragment(fqName)
+            if (packageDescriptor == null) break
 
-            true // Continue search
+            val result = ResolveSessionUtils.findByQualifiedName(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
+            if (result != null) return result
+
+            if (fqName.isRoot()) break
+            fqName = fqName.parent()
         }
 
-        return result
-    }
-
-    tailRecursive
-    private fun FqName.each(operation: (FqName) -> Boolean) {
-        if (operation(this) && !isRoot()) {
-            parent().each(operation)
-        }
+        return null
     }
 }
