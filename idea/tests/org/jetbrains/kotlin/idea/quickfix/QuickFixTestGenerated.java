@@ -412,6 +412,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeSAMConstructorFromLambda.kt")
+        public void testSAMConstructorFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeSAMConstructorFromLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeUnresolvedReferenceInCall.kt")
         public void testUnresolvedReferenceInCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/beforeUnresolvedReferenceInCall.kt");

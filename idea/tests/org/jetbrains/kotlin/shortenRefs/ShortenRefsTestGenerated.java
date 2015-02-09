@@ -147,6 +147,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SAMConstructorFromLambda.kt")
+        public void testSAMConstructorFromLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/SAMConstructorFromLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("WorksForClassNameRange.kt")
         public void testWorksForClassNameRange() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/WorksForClassNameRange.kt");

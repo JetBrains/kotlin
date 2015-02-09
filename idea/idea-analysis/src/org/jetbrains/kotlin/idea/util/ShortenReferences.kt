@@ -58,9 +58,23 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                 = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
         private fun JetReferenceExpression.targets(context: BindingContext): Collection<DeclarationDescriptor> {
-            return context[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it.getImportableDescriptor()) }
-                   ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]?.map { it.getImportableDescriptor() }?.toSet()
-                   ?: listOf()
+            val targets = context[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
+                          ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
+                          ?: listOf()
+            return targets.map { descriptorToImport(it) }.toSet()
+        }
+
+        private fun descriptorToImport(target: DeclarationDescriptor): DeclarationDescriptor {
+            val descriptor = target.getImportableDescriptor()
+            // if there is a class with the same fq-name then prefer to consider it as target (otherwise we won't insert import)
+            if (descriptor is CallableDescriptor) {
+                val container = descriptor.getContainingDeclaration()
+                if (container is PackageFragmentDescriptor) {
+                    val classifier = container.getMemberScope().getClassifier(descriptor.getName())
+                    if (classifier != null) return classifier
+                }
+            }
+            return descriptor
         }
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
