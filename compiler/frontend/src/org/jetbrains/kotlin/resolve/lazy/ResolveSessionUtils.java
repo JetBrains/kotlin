@@ -38,28 +38,12 @@ import java.util.Collections;
 
 public class ResolveSessionUtils {
 
-    public static final Predicate<ClassDescriptor> NON_SINGLETON_FILTER = new Predicate<ClassDescriptor>() {
-        @Override
-        public boolean apply(@Nullable ClassDescriptor descriptor) {
-            assert descriptor != null;
-            return !descriptor.getKind().isSingleton();
-        }
-    };
-
-    public static final Predicate<ClassDescriptor> SINGLETON_FILTER = new Predicate<ClassDescriptor>() {
-        @Override
-        public boolean apply(@Nullable ClassDescriptor descriptor) {
-            assert descriptor != null;
-            return descriptor.getKind().isSingleton();
-        }
-    };
-
     private ResolveSessionUtils() {
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ModuleDescriptor moduleDescriptor, @NotNull FqName fqName) {
-        return getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, NON_SINGLETON_FILTER);
+        return getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, Predicates.<ClassDescriptor>alwaysTrue());
     }
 
     @NotNull

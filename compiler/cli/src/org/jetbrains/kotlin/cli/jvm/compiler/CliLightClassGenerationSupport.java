@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -140,8 +139,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
             );
         }
 
-        Collection<ClassDescriptor> classDescriptors =
-                ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(getModule(), fqName, Predicates.<ClassDescriptor>alwaysTrue());
+        Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(getModule(), fqName);
 
         return ContainerUtil.mapNotNull(classDescriptors, new Function<ClassDescriptor, JetClassOrObject>() {
             @Override
