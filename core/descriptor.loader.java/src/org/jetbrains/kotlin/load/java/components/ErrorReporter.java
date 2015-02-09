@@ -19,10 +19,15 @@ package org.jetbrains.kotlin.load.java.components;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+
+import java.util.List;
 
 public interface ErrorReporter {
     void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion);
+
+    void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses);
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 

@@ -20,10 +20,15 @@ import org.jetbrains.kotlin.load.java.components.ErrorReporter
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
 class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
     override fun reportLoadingError(message: String, exception: Exception?) {
         log.error(message, exception)
+    }
+
+    override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
+        log.error("Incomplete hierarchy for $descriptor. Super classes are not found: $unresolvedSuperClasses")
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {

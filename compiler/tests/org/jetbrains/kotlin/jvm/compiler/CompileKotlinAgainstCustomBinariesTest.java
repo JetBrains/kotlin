@@ -18,11 +18,15 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.CliBaseTest;
+import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -180,5 +184,31 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         AnalyzerWithCompilerReport.reportDiagnostics(bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
+    }
+
+    public void testIncompleteHierarchyInJava() throws Exception {
+        // This test compiles a Java library of two classes (Super and Sub), then deletes Super.class and attempts to compile a Kotlin
+        // source against this broken library. The expected result is an "incomplete hierarchy" error message from the compiler
+
+        JetTestUtils.compileJavaFiles(
+                Arrays.asList(
+                        new File(getTestDataDirectory() + "/library/test/Super.java"),
+                        new File(getTestDataDirectory() + "/library/test/Sub.java")
+                ),
+                Arrays.asList("-d", tmpdir.getPath())
+        );
+
+        File superClassFile = new File(tmpdir + "/test/Super.class");
+        assert superClassFile.delete() : "Can't delete " + superClassFile;
+
+        File source = new File(getTestDataDirectory(), "source.kt");
+
+        Pair<String, ExitCode> pair = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+                source.getPath(),
+                "-classpath", tmpdir.getPath(),
+                "-d", tmpdir.getPath()
+        ));
+
+        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), pair.first);
     }
 }

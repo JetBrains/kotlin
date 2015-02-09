@@ -1,0 +1,3 @@
+ERROR: compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt: (5, 22) Unresolved reference: foo
+ERROR: The following classes have incomplete hierarchies:
+    test.Sub, unresolved: [Super]

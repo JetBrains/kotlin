@@ -104,12 +104,16 @@ public final class AnalyzerWithCompilerReport {
 
     private void reportIncompleteHierarchies() {
         assert analysisResult != null;
-        Collection<ClassDescriptor> incompletes = analysisResult.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
-        if (!incompletes.isEmpty()) {
+        BindingContext bindingContext = analysisResult.getBindingContext();
+        Collection<ClassDescriptor> classes = bindingContext.getKeys(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY);
+        if (!classes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
-            for (ClassDescriptor incomplete : incompletes) {
-                String fqName = DescriptorUtils.getFqName(incomplete).asString();
-                message.append("    ").append(fqName).append("\n");
+            for (ClassDescriptor descriptor : classes) {
+                String fqName = DescriptorUtils.getFqName(descriptor).asString();
+                List<String> unresolved = bindingContext.get(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY, descriptor);
+                assert unresolved != null && !unresolved.isEmpty() :
+                        "Incomplete hierarchy should be reported with names of unresolved superclasses: " + fqName;
+                message.append("    ").append(fqName).append(", unresolved: ").append(unresolved).append("\n");
             }
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }

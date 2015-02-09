@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -28,11 +29,13 @@ import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class TraceBasedErrorReporter implements ErrorReporter {
     private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
 
     public static final WritableSlice<VirtualFileKotlinClass, Integer> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
+    public static final WritableSlice<ClassDescriptor, List<String>> INCOMPLETE_HIERARCHY = Slices.createCollectiveSlice();
 
     private BindingTrace trace;
 
@@ -44,6 +47,11 @@ public class TraceBasedErrorReporter implements ErrorReporter {
     @Override
     public void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion) {
         trace.record(ABI_VERSION_ERRORS, (VirtualFileKotlinClass) kotlinClass, actualVersion);
+    }
+
+    @Override
+    public void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses) {
+        trace.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses);
     }
 
     @Override
