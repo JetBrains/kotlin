@@ -244,6 +244,22 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
     }
 
+    public void testIncompleteHierarchyInKotlin() throws Exception {
+        // Analogous to testIncompleteHierarchyInJava, but with a Kotlin library
+
+        File library = copyJarFileWithoutEntry(compileLibrary("library"), "test/Super.class");
+
+        File source = new File(getTestDataDirectory(), "source.kt");
+
+        Pair<String, ExitCode> pair = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+                source.getPath(),
+                "-classpath", library.getPath(),
+                "-d", tmpdir.getPath()
+        ));
+
+        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), pair.first);
+    }
+
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {
         File inlineSource = new File(getTestDataDirectory(), "sourceInline.kt");
@@ -265,7 +281,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                     //skip debug info
                 }
             }, 0);
-        } finally {
+        }
+        finally {
             is.close();
         }
 
@@ -299,7 +316,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                     debugInfo.set(debug);
                 }
             }, 0);
-        } finally {
+        }
+        finally {
             resultStream.close();
         }
 
@@ -316,7 +334,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         if (InlineCodegenUtil.GENERATE_SMAP) {
             assertEquals(expected, debugInfo.get());
-        } else {
+        }
+        else {
             assertEquals(null, debugInfo.get());
         }
     }
