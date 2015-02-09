@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.google.common.collect.Sets
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
@@ -34,10 +33,9 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
-
 import javax.swing.*
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 public class KotlinLightClassForPackage private(
         manager: PsiManager,
