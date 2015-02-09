@@ -1,0 +1,6 @@
+// ALL_UNDER_IMPORTS: true
+package foo
+
+import bar.*
+
+fun foo(p: Class1): Class2 { }

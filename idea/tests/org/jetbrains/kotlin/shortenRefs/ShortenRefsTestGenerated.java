@@ -49,6 +49,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("descriptorsChangeAfterImportInsertion.kt")
+    public void testDescriptorsChangeAfterImportInsertion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/JavaStaticMethod.kt");
