@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.HashSet
 import org.jetbrains.kotlin.psi.JetElement
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 
 public class CreateCallableFromUsageFix(
         originalExpression: JetExpression,
@@ -71,11 +73,11 @@ public class CreateCallableFromUsageFix(
         val popupTitle = JetBundle.message("choose.target.class.or.trait.title")
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
-            // TODO: Support generation of Java class members
             val containers = receiverTypeCandidates
                     .map { candidate ->
                         val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
-                        (DescriptorToDeclarationUtil.getDeclaration(file, descriptor) as? JetClassOrObject)?.let { candidate to it }
+                        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor)
+                        if (declaration is JetClassOrObject || declaration is PsiClass) candidate to declaration else null
                     }
                     .filterNotNull()
 

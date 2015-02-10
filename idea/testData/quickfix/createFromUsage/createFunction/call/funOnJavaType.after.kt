@@ -5,6 +5,6 @@ fun test(): Int {
     return A().foo(1, "2")
 }
 
-fun Any.foo(i: Int, s: String): Int {
+fun A.foo(i: Int, s: String): Int {
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
