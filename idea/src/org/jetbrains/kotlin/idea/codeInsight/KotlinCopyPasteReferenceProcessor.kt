@@ -313,9 +313,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
 
         private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
                 javaClass<JetImportDirective>(),
-                javaClass<JetPackageDirective>(),
-                javaClass<JetSuperExpression>(),
-                javaClass<JetThisExpression>()
+                javaClass<JetPackageDirective>()
         )
     }
 
