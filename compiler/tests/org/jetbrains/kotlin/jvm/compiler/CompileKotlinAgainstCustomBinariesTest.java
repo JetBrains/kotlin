@@ -208,7 +208,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 "-classpath", tmpdir.getPath(),
                 "-d", tmpdir.getPath()
         ));
+        String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), pair.first);
+        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
     }
 }
