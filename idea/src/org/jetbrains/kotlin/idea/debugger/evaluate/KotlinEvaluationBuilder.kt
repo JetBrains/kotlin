@@ -78,6 +78,7 @@ import com.intellij.openapi.diagnostic.Attachment
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvocationException
+import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -169,18 +170,36 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction)
 
             // KT-4509
-            val outputFiles = (classFileFactory : OutputFileCollection).asList().filter { it.relativePath != "$packageInternalName.class" }
-            if (outputFiles.size() != 1) exception("Expression compiles to more than one class file. Note that lambdas, classes and objects are unsupported yet. List of files: ${outputFiles.joinToString(",")}")
+            val outputFiles = (classFileFactory : OutputFileCollection).asList()
+                                    .filter { it.relativePath != "$packageInternalName.class" }
+                                    .sortBy { it.relativePath.length() }
 
             val funName = extractedFunction.getName()
             if (funName == null) {
                 throw IllegalStateException("Extracted function should have a name: ${extractedFunction.getText()}")
             }
-            return CompiledDataDescriptor(outputFiles.first().asByteArray(), sourcePosition, funName, extractedFunction.getParametersForDebugger())
+
+            val additionalFiles = if (outputFiles.size() < 2) emptyList()
+                                  else outputFiles.subList(1, outputFiles.size()).map { getClassName(it.relativePath) to it.asByteArray() }
+
+            return CompiledDataDescriptor(
+                    outputFiles.first().asByteArray(),
+                    additionalFiles,
+                    sourcePosition,
+                    funName,
+                    extractedFunction.getParametersForDebugger())
+        }
+
+        private fun getClassName(fileName: String): String {
+            return fileName.substringBeforeLast(".class").replaceAll("/", ".")
         }
 
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+
+            if (compiledData.additionalClasses.isNotEmpty()) {
+                loadClasses(context, compiledData.additionalClasses)
+            }
 
             var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
