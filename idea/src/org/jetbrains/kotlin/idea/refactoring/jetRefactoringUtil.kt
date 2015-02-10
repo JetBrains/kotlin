@@ -75,9 +75,18 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiTypeParameterList
+import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
+import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.PsiClass
+import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -410,12 +419,72 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
 }
 
 public fun PsiElement.canRefactor(): Boolean {
-    return when (this) {
-        is PsiPackage ->
+    return when {
+        this is PsiPackage ->
             getDirectories().any { it.canRefactor() }
-        is JetElement, is PsiDirectory ->
+        this is JetElement,
+        this is PsiMember && getLanguage() == JavaLanguage.INSTANCE,
+        this is PsiDirectory ->
             isWritable() && ProjectRootsUtil.isInProjectSource(this)
         else ->
             false
     }
+}
+
+private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, withPsiModifiers: Boolean = true) {
+    if (withPsiModifiers) {
+        for (modifier in PsiModifier.MODIFIERS) {
+            if (from.hasExplicitModifier(modifier)) {
+                to.setModifierProperty(modifier, true)
+            }
+        }
+    }
+    for (annotation in from.getAnnotations()) {
+        to.addAnnotation(annotation.getQualifiedName())
+    }
+}
+
+public fun createJavaMethod(function: JetNamedFunction, targetClass: PsiClass): PsiMethod {
+    val template = LightClassUtil.getLightClassMethod(function)
+                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(function)}")
+
+    val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
+    val method = targetClass.add(factory.createMethod(template.getName(), template.getReturnType())) as PsiMethod
+
+    copyModifierListItems(template.getModifierList(), method.getModifierList())
+
+    val templateTypeParamList = template.getTypeParameterList()
+    if (templateTypeParamList != null) {
+        val targetTypeParamList = method.addAfter(factory.createTypeParameterList(), method.getModifierList()) as PsiTypeParameterList
+        val newTypeParams = templateTypeParamList.getTypeParameters()
+                .map { factory.createTypeParameter(it.getName(), it.getExtendsList().getReferencedTypes()) }
+        ChangeSignatureUtil.synchronizeList(
+                targetTypeParamList,
+                newTypeParams,
+                { it.getTypeParameters().toList() },
+                BooleanArray(newTypeParams.size())
+        )
+    }
+
+    val targetParamList = method.getParameterList()
+    val newParams = template.getParameterList().getParameters().map {
+        val param = factory.createParameter(it.getName(), it.getType())
+        copyModifierListItems(it.getModifierList(), param.getModifierList())
+        param
+    }
+    ChangeSignatureUtil.synchronizeList(
+            targetParamList,
+            newParams,
+            { it.getParameters().toList() },
+            BooleanArray(newParams.size())
+    )
+
+    if (template.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT) || targetClass.isInterface()) {
+        method.getBody().delete()
+    }
+    else {
+        CreateFromUsageUtils.setupMethodBody(method)
+    }
+
+    return method
 }

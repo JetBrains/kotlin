@@ -1,6 +1,7 @@
 // "Create function 'foo'" "true"
 // ERROR: Unresolved reference: foo
 
-fun test(): Int? {
-    return A().<caret>foo(1, "2")
+fun test(a: A): Int? {
+    return a.foo<String, Int>(1, "2")
 }
+

@@ -1,4 +1,4 @@
-// "Create function 'foo'" "true"
+// "Create extension function 'foo'" "true"
 // ERROR: Unresolved reference: foo
 
 fun test(): Int? {
