@@ -191,12 +191,9 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         genClosureFields(closure, v, typeMapper);
 
-        functionCodegen.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
-                                                typeMapper.mapSignature(funDescriptor),
-                                                funDescriptor,
-                                                context.getContextKind(),
-                                                DefaultParameterValueLoader.DEFAULT,
-                                                null);
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
+        );
     }
 
     @Override

@@ -753,7 +753,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             });
 
             functionCodegen.generateDefaultIfNeeded(
-                    context.intoFunction(function), typeMapper.mapSignature(function), function, OwnerKind.IMPLEMENTATION,
+                    context.intoFunction(function), function, OwnerKind.IMPLEMENTATION,
                     new DefaultParameterValueLoader() {
                         @Override
                         public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
@@ -1056,8 +1056,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    }
         );
 
-        functionCodegen.generateDefaultIfNeeded(constructorContext, typeMapper.mapSignature(constructorDescriptor), constructorDescriptor,
-                                                OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT, null);
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
+                                                DefaultParameterValueLoader.DEFAULT, null);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v, myClass);
