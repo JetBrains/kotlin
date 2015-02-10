@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -161,10 +160,12 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
         }
 
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(funDescriptor);
-        generateBridge(typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
+        generateBridge(
+                typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(),
+                typeMapper.mapSignature(funDescriptor).getAsmMethod()
+        );
 
-        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
+        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {

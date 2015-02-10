@@ -110,8 +110,7 @@ public class FunctionCodegen {
         JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || function.hasBody()) {
-            generateMethod(OtherOrigin(function, functionDescriptor),
-                           method, functionDescriptor,
+            generateMethod(OtherOrigin(function, functionDescriptor), functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
 
@@ -121,24 +120,23 @@ public class FunctionCodegen {
 
     public void generateMethod(
             @NotNull JvmDeclarationOrigin origin,
-            @NotNull JvmMethodSignature jvmSignature,
-            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        generateMethod(origin, jvmSignature, functionDescriptor, owner.intoFunction(functionDescriptor), strategy);
+        generateMethod(origin, descriptor, owner.intoFunction(descriptor), strategy);
     }
 
     public void generateMethod(
             @NotNull JvmDeclarationOrigin origin,
-            @NotNull JvmMethodSignature jvmSignature,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        OwnerKind methodContextKind = methodContext.getContextKind();
+        OwnerKind contextKind = methodContext.getContextKind();
+        JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, contextKind);
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        int flags = getMethodAsmFlags(functionDescriptor, methodContextKind);
+        int flags = getMethodAsmFlags(functionDescriptor, contextKind);
         boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
 
         if (isNative && owner instanceof PackageContext && !(owner instanceof PackageFacadeContext)) {
@@ -176,7 +174,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, contextKind)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -184,7 +182,7 @@ public class FunctionCodegen {
                     getThisTypeForFunction(functionDescriptor, methodContext, typeMapper),
                     new Label(),
                     new Label(),
-                    methodContextKind
+                    contextKind
             );
 
             mv.visitEnd();
@@ -851,10 +849,8 @@ public class FunctionCodegen {
             final ClassDescriptor toClass,
             final StackValue field
     ) {
-        final JvmMethodSignature jvmDelegateMethodSignature = typeMapper.mapSignature(delegateFunction);
-        final JvmMethodSignature jvmDelegateToMethodSignature = typeMapper.mapSignature(delegatedTo);
         generateMethod(
-                OtherOrigin(delegateFunction), jvmDelegateMethodSignature, delegateFunction,
+                OtherOrigin(delegateFunction), delegateFunction,
                 new FunctionGenerationStrategy() {
                     @Override
                     public void generateBody(
@@ -864,8 +860,8 @@ public class FunctionCodegen {
                             @NotNull MethodContext context,
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
-                        Method delegateToMethod = jvmDelegateToMethodSignature.getAsmMethod();
-                        Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
+                        Method delegateToMethod = typeMapper.mapSignature(delegatedTo).getAsmMethod();
+                        Method delegateMethod = typeMapper.mapSignature(delegateFunction).getAsmMethod();
 
                         Type[] argTypes = delegateMethod.getArgumentTypes();
                         Type[] originalArgTypes = delegateToMethod.getArgumentTypes();
@@ -893,7 +889,8 @@ public class FunctionCodegen {
                                 TypesPackage.getApproximationTo(
                                         delegatedTo.getReturnType(),
                                         delegateFunction.getReturnType(),
-                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)"))
+                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
+                                )
                         );
 
                         stackValue.put(delegateMethod.getReturnType(), iv);

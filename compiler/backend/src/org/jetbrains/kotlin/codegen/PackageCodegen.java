@@ -174,8 +174,7 @@ public class PackageCodegen {
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
-                        JvmMethodSignature signature = state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE);
-                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), signature, function,
+                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), function,
                                                                      new FunctionGenerationStrategy() {
                                                                          @Override
                                                                          public void generateBody(
@@ -191,9 +190,9 @@ public class PackageCodegen {
                         );
 
                         memberCodegen.functionCodegen.generateDefaultIfNeeded(
-                                context.intoFunction(function), signature, function, OwnerKind.PACKAGE,
-                                DefaultParameterValueLoader.DEFAULT, null);
-
+                                context.intoFunction(function), state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE),
+                                function, OwnerKind.PACKAGE, DefaultParameterValueLoader.DEFAULT, null
+                        );
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
                         memberCodegen.propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);

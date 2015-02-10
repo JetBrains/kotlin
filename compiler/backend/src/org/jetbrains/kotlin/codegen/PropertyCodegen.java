@@ -341,8 +341,7 @@ public class PropertyCodegen {
             strategy = new FunctionGenerationStrategy.FunctionDefault(state, accessorDescriptor, accessor);
         }
 
-        JvmMethodSignature signature = typeMapper.mapSignature(accessorDescriptor, kind);
-        functionCodegen.generateMethod(OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), signature, accessorDescriptor, strategy);
+        functionCodegen.generateMethod(OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), accessorDescriptor, strategy);
     }
 
     public static int indexOfDelegatedProperty(@NotNull JetProperty property) {
