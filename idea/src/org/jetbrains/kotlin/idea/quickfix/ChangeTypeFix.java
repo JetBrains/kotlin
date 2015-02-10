@@ -61,7 +61,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetTypeReference newTypeRef = (JetTypeReference) element.replace(JetPsiFactory(file).createType(renderedType));
-        ShortenReferences.INSTANCE$.process(newTypeRef);
+        ShortenReferences.DEFAULT.process(newTypeRef);
     }
 
     @NotNull

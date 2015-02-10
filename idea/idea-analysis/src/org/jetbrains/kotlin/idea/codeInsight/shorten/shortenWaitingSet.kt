@@ -26,8 +26,11 @@ import java.util.HashSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
-private var Project.elementsToShorten: MutableSet<SmartPsiElementPointer<JetElement>>?
+class ShorteningRequest(val pointer: SmartPsiElementPointer<JetElement>, val options: Options)
+
+private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
         by UserDataProperty(Key.create("ELEMENTS_TO_SHORTEN_KEY"))
 
 /*
@@ -37,7 +40,7 @@ private var Project.elementsToShorten: MutableSet<SmartPsiElementPointer<JetElem
 public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
         by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
 
-private fun Project.getOrCreateElementsToShorten(): MutableSet<SmartPsiElementPointer<JetElement>> {
+private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest> {
     var elements = elementsToShorten
     if (elements == null) {
         elements = HashSet()
@@ -47,16 +50,17 @@ private fun Project.getOrCreateElementsToShorten(): MutableSet<SmartPsiElementPo
     return elements!!
 }
 
-public fun JetElement.addToShorteningWaitSet() {
+public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
     val project = getProject()
-    project.getOrCreateElementsToShorten().add(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this))
+    val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
+    project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))
 }
 
-public fun withElementsToShorten(project: Project, f: (Set<SmartPsiElementPointer<JetElement>>) -> Unit) {
-    project.elementsToShorten?.let { bindRequests ->
+public fun withElementsToShorten(project: Project, f: (Set<ShorteningRequest>) -> Unit) {
+    project.elementsToShorten?.let { requests ->
         project.elementsToShorten = null
-        f(bindRequests)
+        f(requests)
     }
 
 }

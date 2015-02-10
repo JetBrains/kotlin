@@ -80,7 +80,7 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
 
         val replaced = replaceWithIfThenThrowExpression(element)
 
-        ShortenReferences.process(replaced.getThen()!!)
+        ShortenReferences.DEFAULT.process(replaced.getThen()!!)
 
         fun replaceMessage() {
             val thrownExpression = ((replaced.getThen() as JetBlockExpression).getStatements().first() as JetThrowExpression).getThrownExpression()

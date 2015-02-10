@@ -54,8 +54,8 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -295,7 +295,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                     functionLiteral.addAfter(whitespaceToAdd, openBraceElement);
                 }
             }
-            ShortenReferences.INSTANCE$.process(functionLiteralExpression.getValueParameters());
+            ShortenReferences.DEFAULT.process(functionLiteralExpression.getValueParameters());
         }
     }
 
@@ -337,7 +337,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetPsiFactory psiFactory = JetPsiFactory(containingFile);
         for (JetCallExpression call : callsToAddArguments) {
             call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
-            ShortenReferences.INSTANCE$.process(call.getTypeArgumentList());
+            ShortenReferences.DEFAULT.process(call.getTypeArgumentList());
         }
     }
 

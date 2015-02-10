@@ -69,7 +69,7 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
                 val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
 
-                ShortenReferences.process(file, classNameStart, classNameEnd)
+                ShortenReferences.DEFAULT.process(file, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
                 if (rangeMarker.isValid() && wholeRangeMarker.isValid()) {

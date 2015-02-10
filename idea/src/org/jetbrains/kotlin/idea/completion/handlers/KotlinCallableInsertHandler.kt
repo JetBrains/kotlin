@@ -269,7 +269,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
 
             val expr = receiver.replace(parentCast) as JetParenthesizedExpression
 
-            ShortenReferences.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
+            ShortenReferences.DEFAULT.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
         }
     }
 }

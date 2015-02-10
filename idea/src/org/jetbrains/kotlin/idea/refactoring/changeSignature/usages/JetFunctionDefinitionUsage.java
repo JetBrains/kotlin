@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
@@ -185,7 +186,10 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
-                    ShortenPackage.addToShorteningWaitSet(function.setTypeReference(JetPsiFactory(function).createType(returnTypeText)));
+                    ShortenPackage.addToShorteningWaitSet(
+                            function.setTypeReference(JetPsiFactory(function).createType(returnTypeText)),
+                            Options.DEFAULT
+                    );
                 }
             }
         }
@@ -205,7 +209,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 paramIndex++;
             }
 
-            ShortenPackage.addToShorteningWaitSet(parameterList);
+            ShortenPackage.addToShorteningWaitSet(parameterList, Options.DEFAULT);
         }
 
         if (changeInfo.isVisibilityChanged() && !JetPsiUtil.isLocal((JetDeclaration) element)) {
@@ -284,7 +288,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
 
         if (newParameterList != null) {
-            ShortenPackage.addToShorteningWaitSet(newParameterList);
+            ShortenPackage.addToShorteningWaitSet(newParameterList, Options.DEFAULT);
         }
     }
 

@@ -114,7 +114,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                     elementsToCompact.add((JetElement) added);
                 }
 
-                ShortenReferences.INSTANCE$.process(elementsToCompact);
+                ShortenReferences.DEFAULT.process(elementsToCompact);
 
                 if (firstGenerated == null) return;
 

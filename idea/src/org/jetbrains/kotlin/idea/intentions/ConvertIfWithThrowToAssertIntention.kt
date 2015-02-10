@@ -86,7 +86,7 @@ public class ConvertIfWithThrowToAssertIntention :
         val assertExpr = psiFactory.createExpression(assertText)
 
         val newExpr = element.replace(assertExpr) as JetExpression
-        ShortenReferences.process(newExpr)
+        ShortenReferences.DEFAULT.process(newExpr)
     }
 
     private fun getSelector(element: JetExpression?): JetExpression? {

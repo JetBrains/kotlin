@@ -35,8 +35,11 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
 
     override fun performOperation(project: Project, operationData: Any?) {
         ApplicationManager.getApplication()!!.runWriteAction {
-            withElementsToShorten(project) { bindRequests ->
-                ShortenReferences.process(bindRequests.map() { it.getElement() }.filterNotNull())
+            withElementsToShorten(project) { requests ->
+                val elements = requests.map { it.pointer.getElement() }
+                val options = requests.map { it.options }
+                val elementToOptions = (elements zip options).toMap()
+                ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
             }
         }
     }

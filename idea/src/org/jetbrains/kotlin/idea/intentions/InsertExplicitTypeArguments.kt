@@ -56,7 +56,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         if (callee == null) return
 
         element.addAfter(argumentList, callee)
-        ShortenReferences.process(element.getTypeArgumentList()!!)
+        ShortenReferences.DEFAULT.process(element.getTypeArgumentList()!!)
     }
 
     class object {

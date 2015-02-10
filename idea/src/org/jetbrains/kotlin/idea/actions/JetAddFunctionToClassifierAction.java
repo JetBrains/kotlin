@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassBody;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -105,7 +105,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                         PsiElement anchor = body.getRBrace();
                         JetNamedFunction insertedFunctionElement = (JetNamedFunction) body.addBefore(functionElement, anchor);
 
-                        ShortenReferences.INSTANCE$.process(insertedFunctionElement);
+                        ShortenReferences.DEFAULT.process(insertedFunctionElement);
                     }
                 });
             }

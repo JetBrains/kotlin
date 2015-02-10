@@ -123,7 +123,7 @@ public class JetSimpleNameReference(
                 PsiTreeUtil.getParentOfType(expression, javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) == null
         if (needToShorten) {
             if (shorteningMode == ShorteningMode.FORCED_SHORTENING) {
-                ShortenReferences.process(newQualifiedElement)
+                ShortenReferences.DEFAULT.process(newQualifiedElement)
             }
             else {
                 newQualifiedElement.addToShorteningWaitSet()

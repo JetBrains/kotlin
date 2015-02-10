@@ -86,7 +86,7 @@ public class MoveDeclarationsOutHelper {
             dummyFirstStatement.delete();
         }
 
-        ShortenReferences.INSTANCE$.process(propertiesDeclarations);
+        ShortenReferences.DEFAULT.process(propertiesDeclarations);
 
         return PsiUtilCore.toPsiElementArray(resultStatements);
     }

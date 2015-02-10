@@ -93,7 +93,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
 
         JetTypeReference typeRef = castExpression.getRight();
         assert typeRef != null;
-        ShortenReferences.INSTANCE$.process(typeRef);
+        ShortenReferences.DEFAULT.process(typeRef);
     }
 
     @NotNull

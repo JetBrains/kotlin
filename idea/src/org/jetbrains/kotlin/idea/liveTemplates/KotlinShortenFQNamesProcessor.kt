@@ -35,7 +35,7 @@ public class KotlinShortenFQNamesProcessor : TemplateOptionalProcessor {
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
         val file = PsiUtilBase.getPsiFileInEditor(editor, project) as? JetFile ?: return
-        ShortenReferences.process(file, templateRange.getStartOffset(), templateRange.getEndOffset())
+        ShortenReferences.DEFAULT.process(file, templateRange.getStartOffset(), templateRange.getEndOffset())
 
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
     }

@@ -70,6 +70,6 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
         JetTypeReference newTypeRef = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         newTypeRef = element.setTypeReference(newTypeRef);
         assert newTypeRef != null;
-        ShortenReferences.INSTANCE$.process(newTypeRef);
+        ShortenReferences.DEFAULT.process(newTypeRef);
     }
 }

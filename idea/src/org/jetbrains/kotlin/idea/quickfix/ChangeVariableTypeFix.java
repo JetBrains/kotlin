@@ -105,7 +105,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
             }
         }
 
-        ShortenReferences.INSTANCE$.process(toShorten);
+        ShortenReferences.DEFAULT.process(toShorten);
     }
 
     @NotNull

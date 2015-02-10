@@ -201,7 +201,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             runWriteAction { context.buildAndRunTemplate { buildNext(iterator) } }
         }
         else {
-            ShortenReferences.process(elementsToShorten)
+            ShortenReferences.DEFAULT.process(elementsToShorten)
         }
     }
 
