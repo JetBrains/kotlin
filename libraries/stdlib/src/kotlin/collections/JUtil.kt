@@ -34,33 +34,38 @@ private object EmptySet : Set<Any> {
     override fun toString(): String = set.toString()
 }
 
+/** Returns an empty read-only list. */
 public fun emptyList<T>(): List<T> = EmptyList as List<T>
+/** Returns an empty read-only set. */
 public fun emptySet<T>(): Set<T> = EmptySet as Set<T>
 
 /** Returns a new read-only list of given elements */
 public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) emptyList() else arrayListOf(*values)
 
-/** Returns an empty read-only list */
+/** Returns an empty read-only list. */
 public fun listOf<T>(): List<T> = emptyList()
 
-/** Returns a new read-only ordered set of given elements */
+/** Returns a new read-only ordered set with the given elements. */
 public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>())
 
-/** Returns an empty read-only set */
+/** Returns an empty read-only set. */
 public fun setOf<T>(): Set<T> = emptySet()
 
-/** Returns a new LinkedList with a variable number of initial elements */
+/** Returns a new LinkedList with the given elements. */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
 
-/** Returns a new ArrayList with a variable number of initial elements */
+/** Returns a new ArrayList with the given elements. */
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
 
-/** Returns a new HashSet with a variable number of initial elements */
+/** Returns a new HashSet with the given elements. */
 public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(values.size()))
 
-/** Returns a new LinkedHashSet with a variable number of initial elements */
+/** Returns a new LinkedHashSet with the given elements. */
 public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(values.size()))
 
+/**
+ * Returns the valid indices for this collection.
+ */
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1
 
@@ -70,7 +75,7 @@ public val Int.indices: IntRange
 /**
  * Returns the index of the last item in the list or -1 if the list is empty
  *
- * @includeFunctionBody ../../test/collections/ListSpecificTest.kt lastIndex
+ * @sample test.collections.ListSpecificTest.lastIndex
  */
 public val <T> List<T>.lastIndex: Int
     get() = this.size() - 1
@@ -78,13 +83,13 @@ public val <T> List<T>.lastIndex: Int
 /** Returns true if the collection is not empty */
 public fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
-/** Returns the Collection if its not null otherwise it returns the empty list */
+/** Returns this Collection if it's not null and the empty list otherwise. */
 public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
-/** Returns the List if its not null otherwise returns the empty list */
+/** Returns this List if it's not null and the empty list otherwise. */
 public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
-/** Returns the List if its not null otherwise returns the empty list */
+/** Returns this Set if it's not null and the empty set otherwise. */
 public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
 public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) size() else null

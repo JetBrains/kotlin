@@ -13,8 +13,7 @@ public fun sortedSetOf<T>(vararg values: T): TreeSet<T> = values.toCollection(Tr
 public fun sortedSetOf<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 
 /**
- * Returns a list containing the elements returned by the
- * specified enumeration in the order they are returned by the
- * enumeration.
+ * Returns a list containing the elements returned by this enumeration
+ * in the order they are returned by the enumeration.
  */
 public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
