@@ -64,6 +64,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
+    private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
+
+    private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
+            javaClass<JetImportDirective>(),
+            javaClass<JetPackageDirective>()
+    )
 
     override fun extractTransferableData(content: Transferable): List<ReferenceTransferableData> {
         if (CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
@@ -284,15 +290,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         dialog.show()
         val selectedFqNames = dialog.getSelectedElements()!!.toSet()
         return referencesToRestore.filter { ref -> selectedFqNames.contains(ref.fqName.asString()) }
-    }
-
-    class object {
-        private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
-
-        private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
-                javaClass<JetImportDirective>(),
-                javaClass<JetPackageDirective>()
-        )
     }
 
     private fun createQualifiedExpression(psiFactory: JetPsiFactory, text: String)
