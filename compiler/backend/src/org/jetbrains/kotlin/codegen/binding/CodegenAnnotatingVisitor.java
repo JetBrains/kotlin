@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -414,6 +415,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         CallableDescriptor descriptor = call.getResultingDescriptor();
         if (!(descriptor instanceof FunctionDescriptor)) return;
 
+        recordSamConstructorIfNeeded(expression, call);
+
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
         if (original == null) return;
 
@@ -434,6 +437,26 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
             bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samType);
         }
+    }
+
+    private void recordSamConstructorIfNeeded(@NotNull JetCallExpression expression, @NotNull ResolvedCall<?> call) {
+        CallableDescriptor callableDescriptor = call.getResultingDescriptor();
+        if (!(callableDescriptor.getOriginal() instanceof SamConstructorDescriptor)) return;
+
+        List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
+        if (valueArguments == null || valueArguments.size() != 1) return;
+
+        ResolvedValueArgument valueArgument = valueArguments.get(0);
+        if (!(valueArgument instanceof ExpressionValueArgument)) return;
+        ValueArgument argument = ((ExpressionValueArgument) valueArgument).getValueArgument();
+        if (argument == null) return;
+
+        JetExpression argumentExpression = argument.getArgumentExpression();
+        bindingTrace.record(SAM_CONSTRUCTOR_TO_ARGUMENT, expression, argumentExpression);
+
+        //noinspection ConstantConditions
+        SamType samType = SamType.create(callableDescriptor.getReturnType());
+        bindingTrace.record(SAM_VALUE, argumentExpression, samType);
     }
 
     @Override
