@@ -256,7 +256,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
         if (isAnonymousObject(descriptor) || !(descriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
-            writeOuterClassAndEnclosingMethod(descriptor);
+            writeOuterClassAndEnclosingMethod();
         }
     }
 

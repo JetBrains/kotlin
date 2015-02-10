@@ -203,7 +203,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @Override
     protected void done() {
-        writeOuterClassAndEnclosingMethod(classDescriptor);
+        writeOuterClassAndEnclosingMethod();
         super.done();
     }
 
