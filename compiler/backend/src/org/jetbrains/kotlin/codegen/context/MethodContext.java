@@ -79,11 +79,6 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     }
 
     @Override
-    public boolean isStatic() {
-        return getParentContext().isStatic();
-    }
-
-    @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
         return getParentContext().getOuterExpression(prefix, false);
     }

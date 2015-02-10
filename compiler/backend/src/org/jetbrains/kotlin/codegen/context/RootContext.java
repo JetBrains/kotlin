@@ -24,14 +24,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-class RootContext extends CodegenContext {
+class RootContext extends CodegenContext<RootContext.FakeDescriptor> {
     public RootContext() {
         super(new FakeDescriptor(), OwnerKind.PACKAGE, null, null, null, null);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return true;
     }
 
     @Override
@@ -39,7 +34,7 @@ class RootContext extends CodegenContext {
         return "ROOT";
     }
 
-    private static class FakeDescriptor implements DeclarationDescriptor {
+    static class FakeDescriptor implements DeclarationDescriptor {
         @NotNull
         @Override
         public DeclarationDescriptor getOriginal() {

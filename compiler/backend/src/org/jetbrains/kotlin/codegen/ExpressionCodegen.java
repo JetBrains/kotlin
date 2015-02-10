@@ -1390,13 +1390,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Nullable SamType samType,
             @NotNull KotlinSyntheticClass.Kind kind
     ) {
-        Type asmType = asmTypeForAnonymousClass(bindingContext, descriptor);
-        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
-        ClassContext closureContext = context.intoClosure(descriptor, this, typeMapper);
+        ClassBuilder cv = state.getFactory().newVisitor(
+                OtherOrigin(declaration, descriptor),
+                asmTypeForAnonymousClass(bindingContext, descriptor),
+                declaration.getContainingFile()
+        );
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, descriptor, samType, closureContext, kind,
-                strategy, parentCodegen, cv, asmType
+                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper), kind, strategy, parentCodegen, cv
         );
 
         closureCodegen.generate();
@@ -1410,7 +1411,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final StackValue receiver) {
+    public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
         final ObjectLiteralResult objectLiteralResult = generateObjectLiteral(expression);
         final ClassDescriptor classDescriptor = objectLiteralResult.classDescriptor;
         final Type type = typeMapper.mapType(classDescriptor);
@@ -2481,8 +2482,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
-            if (context.hasThisDescriptor() &&
-                context.getThisDescriptor().equals(calleeContainingClass) &&
+            if (calleeContainingClass.equals(context.getThisDescriptor()) &&
                 !AnnotationsPackage.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }

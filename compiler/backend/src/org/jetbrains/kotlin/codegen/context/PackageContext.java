@@ -32,11 +32,6 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
     }
 
     @Override
-    public boolean isStatic() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "Package: " + getContextDescriptor().getName();
     }
