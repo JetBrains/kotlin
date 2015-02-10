@@ -144,7 +144,7 @@ import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
 import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
-import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
+import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
 import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest

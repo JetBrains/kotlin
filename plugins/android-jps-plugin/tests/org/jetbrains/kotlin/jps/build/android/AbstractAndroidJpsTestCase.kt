@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jps.build.android
+package org.jetbrains.kotlin.jps.build.android
 
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.android.model.JpsAndroidSdkProperties
-import org.jetbrains.jps.android.model.JpsAndroidSdkType
-import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.library.sdk.JpsSdk
+import org.jetbrains.jps.android.model.JpsAndroidSdkType
 import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
-
+import org.jetbrains.jps.model.library.JpsOrderRootType
 import java.io.File
 
 public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {

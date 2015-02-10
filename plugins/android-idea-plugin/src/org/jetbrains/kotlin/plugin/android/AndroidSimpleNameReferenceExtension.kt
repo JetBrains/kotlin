@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.plugin.android
 
-import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
+import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper

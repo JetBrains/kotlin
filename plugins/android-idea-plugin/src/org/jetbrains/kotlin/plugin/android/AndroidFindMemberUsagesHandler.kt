@@ -27,7 +27,7 @@ import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.android.util.AndroidResourceUtil
 import java.util.ArrayList
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
-import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
+import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.idea.util.application.runReadAction

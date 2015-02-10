@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
-import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
+import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import com.intellij.openapi.extensions.Extensions
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
