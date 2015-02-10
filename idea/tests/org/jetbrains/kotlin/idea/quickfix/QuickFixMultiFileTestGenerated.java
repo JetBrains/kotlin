@@ -152,6 +152,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("noImportForNestedInPrivate.before.Main.kt")
+        public void testNoImportForNestedInPrivate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForNestedInPrivate.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("noImportForPrivateClass.before.Main.kt")
         public void testNoImportForPrivateClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForPrivateClass.before.Main.kt");
