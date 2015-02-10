@@ -83,7 +83,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    override fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
+    private fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
         val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)

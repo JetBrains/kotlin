@@ -37,8 +37,6 @@ public abstract class ImportInsertHelper {
 
     public abstract fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
 
-    public abstract fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective
-
     public abstract fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean
 
     public enum class ImportDescriptorResult {
