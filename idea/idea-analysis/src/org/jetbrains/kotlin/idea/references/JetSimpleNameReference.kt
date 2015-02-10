@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.jet.plugin.findUsages.handlers.SimpleNameReferenceExtension
+import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
