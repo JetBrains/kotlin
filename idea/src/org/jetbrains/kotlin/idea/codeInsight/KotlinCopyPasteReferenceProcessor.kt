@@ -254,7 +254,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
 
             conflict -> {
                 val mustBeReferencedWithReceiver = referencedDescriptors.any { it.isExtension }
-                if (!mustBeReferencedWithReceiver && LengthenReferences.canLengthenReferenceExpression(expression, originalReferencedFqName)) {
+                if (!mustBeReferencedWithReceiver && canLengthenReferenceExpression(expression, originalReferencedFqName)) {
                     return ReferenceToRestoreData(expression, originalReferencedFqName, lengthenReference = true)
                 }
             }
@@ -269,7 +269,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             }
             else {
                 //TODO: try to shorten reference after (sometimes is possible), need shorten reference to support all relevant cases
-                LengthenReferences.lengthenReference(referenceExpression, fqName)
+                lengthenReference(referenceExpression, fqName)
             }
         }
     }
@@ -295,35 +295,32 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         )
     }
 
-    private object LengthenReferences {
+    private fun createQualifiedExpression(psiFactory: JetPsiFactory, text: String)
+            = psiFactory.createExpression(text) as JetDotQualifiedExpression
 
-        private fun createQualifiedExpression(psiFactory: JetPsiFactory, text: String)
-                = psiFactory.createExpression(text) as JetDotQualifiedExpression
-
-        fun lengthenReference(expression: JetElement, fqName: FqName) {
-            assert(canLengthenReferenceExpression(expression, fqName))
-            val parent = expression.getParent()
-            val prefixToInsert = IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName.parent())
-            val psiFactory = JetPsiFactory(expression)
-            if (parent is JetCallExpression) {
-                val text = prefixToInsert + "." + parent.getText()
-                parent.replace(createQualifiedExpression(psiFactory, text))
-            }
-            else if (parent is JetUserType) {
-                val typeReference = expression.getStrictParentOfType<JetTypeReference>()!!
-                typeReference.replace(psiFactory.createType(prefixToInsert + "." + typeReference.getText()))
-            }
-            else {
-                expression.replace(createQualifiedExpression(psiFactory, IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName)))
-            }
+    private fun lengthenReference(expression: JetElement, fqName: FqName) {
+        assert(canLengthenReferenceExpression(expression, fqName))
+        val parent = expression.getParent()
+        val prefixToInsert = IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName.parent())
+        val psiFactory = JetPsiFactory(expression)
+        if (parent is JetCallExpression) {
+            val text = prefixToInsert + "." + parent.getText()
+            parent.replace(createQualifiedExpression(psiFactory, text))
         }
+        else if (parent is JetUserType) {
+            val typeReference = expression.getStrictParentOfType<JetTypeReference>()!!
+            typeReference.replace(psiFactory.createType(prefixToInsert + "." + typeReference.getText()))
+        }
+        else {
+            expression.replace(createQualifiedExpression(psiFactory, IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName)))
+        }
+    }
 
-        fun canLengthenReferenceExpression(expression: JetElement, fqName: FqName): Boolean {
-            return when {
-                fqName.pathSegments().size() < 2 -> false
-                expression is JetSimpleNameExpression && expression.getReceiverExpression() == null -> true
-                else -> false
-            }
+    private fun canLengthenReferenceExpression(expression: JetElement, fqName: FqName): Boolean {
+        return when {
+            fqName.pathSegments().size() < 2 -> false
+            expression is JetSimpleNameExpression && expression.getReceiverExpression() == null -> true
+            else -> false
         }
     }
 
