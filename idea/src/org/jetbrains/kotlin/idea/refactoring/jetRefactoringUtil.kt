@@ -68,13 +68,14 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.refactoring.util.RefactoringUIUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.kotlin.resolve.OverridingUtil
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -389,6 +390,17 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
     if (compareDescriptors(currentDescriptor, originalDescriptor)) return true
     if (originalDescriptor is CallableDescriptor) {
         if (!OverridingUtil.traverseOverridenDescriptors(originalDescriptor) { !compareDescriptors(currentDescriptor, it) }) return true
+        if (originalDescriptor !is CallableMemberDescriptor || currentDescriptor !is CallableMemberDescriptor) return false
+        val kind = originalDescriptor.getKind()
+        if (kind != Kind.FAKE_OVERRIDE && kind != Kind.DELEGATION) return false
+        if (currentDescriptor.getKind() != kind) return false
+
+        val originalOverriddenDescriptors = originalDescriptor.getOverriddenDescriptors()
+        val currentOverriddenDescriptors = currentDescriptor.getOverriddenDescriptors()
+        if (originalOverriddenDescriptors.size() != currentOverriddenDescriptors.size()) return false
+        return (currentOverriddenDescriptors zip originalOverriddenDescriptors ).all {
+            comparePossiblyOverridingDescriptors(it.first, it.second)
+        }
     }
 
     return false
