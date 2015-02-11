@@ -260,6 +260,9 @@ public class InlineCodegen extends CallGenerator {
 
 
         MethodNode adapter = InlineCodegenUtil.createEmptyMethodNode();
+        //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
+        adapter.visitInsn(Opcodes.NOP);
+
         InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
         result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
