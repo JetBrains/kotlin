@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -178,8 +177,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-        InjectorForLazyResolveWithJava injector =
-                InjectorForLazyResolveWithJavaUtil.create(jetCoreEnvironment.getProject(), new BindingTraceContext(), false);
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(jetCoreEnvironment.getProject());
 
         boolean hasErrors;
         try {
@@ -211,7 +209,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = resolveTopLevelClass(injector.getModule(), new FqName(className));
+                    ClassDescriptor clazz = resolveTopLevelClass(module, new FqName(className));
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

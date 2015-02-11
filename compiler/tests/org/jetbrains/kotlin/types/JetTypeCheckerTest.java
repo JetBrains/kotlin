@@ -21,14 +21,11 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -578,8 +575,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private WritableScope getDeclarationsScope(String path) throws IOException {
         ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolve(
-                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path))),
-                getEnvironment()
+                getProject(),
+                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path)))
         );
 
         FqName fqName = new FqName("testData");
@@ -591,10 +588,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     @SuppressWarnings("ConstantConditions")
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
-                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        BindingTraceContext trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForLazyResolveWithJava injector = InjectorForLazyResolveWithJavaUtil.create(getProject(), trace, true);
-        ModuleDescriptor module = injector.getModule();
+                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports"
+        );
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(getProject());
         for (ImportPath defaultImport : module.getDefaultImports()) {
             FqName fqName = defaultImport.fqnPart();
             if (defaultImport.isAllUnder()) {

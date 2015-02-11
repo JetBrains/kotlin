@@ -156,7 +156,7 @@ private fun generatorForLazyResolveWithJava() =
                                          + ".SERVICE.getInstance(project).create(moduleContentScope)")
             )
 
-            publicField<JavaClassFinderImpl>()
+            field<JavaClassFinderImpl>()
             field<TraceBasedExternalSignatureResolver>()
             field<LazyResolveBasedCache>()
             field<TraceBasedErrorReporter>()

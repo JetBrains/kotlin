@@ -25,19 +25,20 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -75,9 +76,9 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                InjectorForLazyResolveWithJava injector =
-                        InjectorForLazyResolveWithJavaUtil.create(commonEnvironment.getProject(), trace, false);
-                ModuleDescriptor module = injector.getModule();
+                ModuleDescriptor module = LazyResolveTestUtil.resolve(
+                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList()
+                );
 
                 AlternativeSignatureErrorFindingVisitor visitor =
                         new AlternativeSignatureErrorFindingVisitor(trace.getBindingContext(), errors);

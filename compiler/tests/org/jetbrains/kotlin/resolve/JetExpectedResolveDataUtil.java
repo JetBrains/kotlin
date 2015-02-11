@@ -20,33 +20,28 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.kotlin.di.InjectorForTests;
-import org.jetbrains.kotlin.load.java.structure.JavaClass;
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
-import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.junit.Assert;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
+import static org.junit.Assert.assertNotNull;
 
 public class JetExpectedResolveDataUtil {
     private JetExpectedResolveDataUtil() {
@@ -91,7 +86,7 @@ public class JetExpectedResolveDataUtil {
         nameToDeclaration.put("java::java.io.PrintStream.print(char[])", methods[6]);
         nameToDeclaration.put("java::java.io.PrintStream.print(Double)", methods[5]);
         PsiField outField = java_lang_System.findFieldByName("out", true);
-        Assert.assertNotNull("'out' property wasn't found", outField);
+        assertNotNull("'out' property wasn't found", outField);
         nameToDeclaration.put("java::java.lang.System.out", outField);
         PsiClass java_lang_Number = findClass("java.lang.Number", project);
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
@@ -104,7 +99,7 @@ public class JetExpectedResolveDataUtil {
     private static PsiElement findPackage(String qualifiedName, Project project) {
         JavaPsiFacade javaFacade = JavaPsiFacade.getInstance(project);
         PsiPackage javaFacadePackage = javaFacade.findPackage(qualifiedName);
-        Assert.assertNotNull("Package wasn't found: " + qualifiedName, javaFacadePackage);
+        assertNotNull("Package wasn't found: " + qualifiedName, javaFacadePackage);
         return javaFacadePackage;
     }
 
@@ -116,12 +111,12 @@ public class JetExpectedResolveDataUtil {
 
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
-        BindingTraceContext trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForLazyResolveWithJava injector = InjectorForLazyResolveWithJavaUtil.create(project, trace, false);
-        JavaClass javaClass = injector.getJavaClassFinder().findClass(ClassId.topLevel(new FqName(qualifiedName)));
-        Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
-        assertInstanceOf(javaClass, JavaClassImpl.class);
-        return ((JavaClassImpl) javaClass).getPsi();
+        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project);
+        ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName));
+        assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);
+        PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.classDescriptorToDeclaration(classDescriptor);
+        assertNotNull("Class declaration wasn't found: " + classDescriptor, psiClass);
+        return psiClass;
     }
 
     @NotNull

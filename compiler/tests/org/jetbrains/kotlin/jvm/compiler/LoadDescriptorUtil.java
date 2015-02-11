@@ -33,15 +33,15 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava;
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJavaUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
@@ -89,13 +90,13 @@ public final class LoadDescriptorUtil {
                 javaRoot,
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
-        JetCoreEnvironment jetCoreEnvironment =
+        JetCoreEnvironment environment =
                 JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        InjectorForLazyResolveWithJava injector =
-                InjectorForLazyResolveWithJavaUtil.create(jetCoreEnvironment.getProject(), trace, true);
 
-        PackageViewDescriptor packageView = injector.getModule().getPackage(TEST_PACKAGE_FQNAME);
+        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
+        ModuleDescriptor module = LazyResolveTestUtil.resolve(environment.getProject(), trace, Collections.<JetFile>emptyList());
+
+        PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;
 
         return Pair.create(packageView, trace.getBindingContext());
