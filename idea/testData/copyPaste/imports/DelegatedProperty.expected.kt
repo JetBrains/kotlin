@@ -1,9 +1,9 @@
 package to
 
-import a.A
 import a.get
 import a.set
+import a.A
 
 class B {
-    var a by A()
+    var v by A()
 }

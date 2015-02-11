@@ -20,9 +20,8 @@ import com.intellij.refactoring.RefactoringHelper
 import com.intellij.usageView.UsageInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.idea.codeInsight.shorten.prepareElementsToShorten
-import org.jetbrains.kotlin.idea.codeInsight.shorten.withElementsToShorten
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.codeInsight.shorten.*
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
@@ -35,12 +34,7 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
 
     override fun performOperation(project: Project, operationData: Any?) {
         ApplicationManager.getApplication()!!.runWriteAction {
-            withElementsToShorten(project) { requests ->
-                val elements = requests.map { it.pointer.getElement() }
-                val options = requests.map { it.options }
-                val elementToOptions = (elements zip options).toMap()
-                ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
-            }
+            performDelayedShortening(project)
         }
     }
 }

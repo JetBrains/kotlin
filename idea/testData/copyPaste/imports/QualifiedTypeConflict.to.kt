@@ -5,4 +5,6 @@ class A {
     }
 }
 
+val v: A? = null
+
 <caret>

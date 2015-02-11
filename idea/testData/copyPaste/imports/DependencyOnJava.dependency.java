@@ -11,6 +11,6 @@ public class JavaClass {
     public class InnerClass {
     }
 
-    public class NestedClass {
+    public static class NestedClass {
     }
 }

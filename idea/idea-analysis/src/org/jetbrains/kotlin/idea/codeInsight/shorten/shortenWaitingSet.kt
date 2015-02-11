@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import java.util.HashSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import java.util.*
 
 class ShorteningRequest(val pointer: SmartPsiElementPointer<JetElement>, val options: Options)
 
@@ -43,7 +44,7 @@ public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
 private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest> {
     var elements = elementsToShorten
     if (elements == null) {
-        elements = HashSet()
+        elements = LinkedHashSet()
         elementsToShorten = elements
     }
 
@@ -57,12 +58,14 @@ public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT)
     project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))
 }
 
-public fun withElementsToShorten(project: Project, f: (Set<ShorteningRequest>) -> Unit) {
+public fun performDelayedShortening(project: Project) {
     project.elementsToShorten?.let { requests ->
         project.elementsToShorten = null
-        f(requests)
+        val elements = requests.map { it.pointer.getElement() }
+        val options = requests.map { it.options }
+        val elementToOptions = (elements zip options).toMap()
+        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
     }
-
 }
 
 private val LOG = Logger.getInstance(javaClass<Project>().getCanonicalName())

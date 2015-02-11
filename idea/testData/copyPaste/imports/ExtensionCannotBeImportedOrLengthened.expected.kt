@@ -1,6 +1,8 @@
 package to
 
 import a.A
+import a.ext
+import a.p
 
 fun A.ext() {
 }

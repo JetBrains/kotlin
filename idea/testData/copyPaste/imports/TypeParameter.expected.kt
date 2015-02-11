@@ -1,6 +1,6 @@
 package to
 
-import a.T
 import a.A
+import a.T
 
 fun f(): T<A>
