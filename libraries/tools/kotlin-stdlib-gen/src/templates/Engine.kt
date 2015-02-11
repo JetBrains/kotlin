@@ -16,6 +16,8 @@ enum class Family {
     ArraysOfObjects
     ArraysOfPrimitives
     Strings
+    RangesOfPrimitives
+    ProgressionsOfPrimitives
 }
 
 enum class PrimitiveType(val name: String) {
@@ -30,7 +32,7 @@ enum class PrimitiveType(val name: String) {
 }
 
 
-class GenericFunction(val signature: String) : Comparable<GenericFunction> {
+class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
     val defaultFamilies = array(Iterables, Streams, ArraysOfObjects, ArraysOfPrimitives, Strings)
 
     var toNullableT: Boolean = false
@@ -50,6 +52,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
 
     var defaultBody: String = ""
     val bodies = HashMap<Family, String>()
+    val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
 
     var defaultReturnType = ""
     val returnTypes = HashMap<Family, String>()
@@ -64,6 +67,13 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                 include(f)
                 bodies[f] = b()
             }
+        }
+    }
+
+    fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: () -> String) {
+        include(family)
+        for (f in primitiveTypes) {
+            customPrimitiveBodies.put(family to f, b())
         }
     }
 
@@ -149,7 +159,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
     }
 
     fun build(builder: StringBuilder, f: Family) {
-        if (f == ArraysOfPrimitives) {
+        if (f == ArraysOfPrimitives || f == RangesOfPrimitives || f  == ProgressionsOfPrimitives) {
             for (primitive in buildPrimitives.sortBy { it.name() })
                 build(builder, f, primitive)
         } else {
@@ -172,6 +182,8 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
             ArraysOfObjects -> "Array<$isAsteriskOrT>"
             Strings -> "String"
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
+            RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
+            ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
             else -> throw IllegalStateException("Invalid family")
         }
 
@@ -187,7 +199,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                                   "PRIMITIVE" -> primitive?.name() ?: token
                                   "SUM" -> {
                                       when (primitive) {
-                                          PrimitiveType.Byte, PrimitiveType.Short -> "Int"
+                                          PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Char -> "Int"
                                           else -> primitive
                                       }
                                   }
@@ -195,6 +207,18 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                                       PrimitiveType.Double -> "0.0"
                                       PrimitiveType.Float -> "0.0f"
                                       else -> "0"
+                                  }
+                                  "ONE" -> when (primitive) {
+                                      PrimitiveType.Double -> "1.0"
+                                      PrimitiveType.Float -> "1.0f"
+                                      PrimitiveType.Long -> "1.toLong()"
+                                      else -> "1"
+                                  }
+                                  "-ONE" -> when (primitive) {
+                                      PrimitiveType.Double -> "-1.0"
+                                      PrimitiveType.Float -> "-1.0f"
+                                      PrimitiveType.Long -> "-1.toLong()"
+                                      else -> "-1"
                                   }
                                   "TCollection" -> {
                                       when (f) {
@@ -209,6 +233,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                                           else -> primitive?.name() ?: token
                                       }
                                   }
+                                  "TProgression" -> primitive!!.name + "Progression"
                                   else -> token
                               })
             }
@@ -253,7 +278,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         if (inlineFamilies[f] ?: defaultInline)
             builder.append("inline ")
 
-        builder.append("fun ")
+        builder.append("$keyword ")
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
@@ -267,9 +292,10 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
 
 
         builder.append(receiverType)
-        builder.append(".${signature.renderType()}: ${returnType.renderType()} {")
+        builder.append(".${signature.renderType()}: ${returnType.renderType()}")
+        if (keyword == "fun") builder.append(" {")
 
-        val body = (bodies[f] ?: defaultBody).trim("\n")
+        val body = (customPrimitiveBodies[f to primitive] ?: bodies[f] ?: defaultBody).trim("\n")
         val indent: Int = body.takeWhile { it == ' ' }.length()
 
         builder.append('\n')
@@ -281,7 +307,8 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                 builder.append("\n")
             }
         }
-        builder.append("}\n\n")
+        if (keyword == "fun") builder.append("}\n")
+        builder.append("\n")
     }
 
     public override fun compareTo(other: GenericFunction): Int = this.signature.compareTo(other.signature)
@@ -295,6 +322,18 @@ fun String.trimTrailingSpaces(): String {
 
 fun f(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
     val gf = GenericFunction(signature)
+    gf.init()
+    return gf
+}
+
+fun pval(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
+    val gf = GenericFunction(signature, "val")
+    gf.init()
+    return gf
+}
+
+fun pvar(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
+    val gf = GenericFunction(signature, "var")
     gf.init()
     return gf
 }
