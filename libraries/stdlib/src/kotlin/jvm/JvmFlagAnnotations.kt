@@ -20,8 +20,8 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
 /**
- * Marks the JVM backing field of the annotated property as `volatile`, meaning that it can
- * be modified asynchronously by concurrently running threads.
+ * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
+ * are immediately made visible to other threads.
  */
 Retention(RetentionPolicy.SOURCE)
 public annotation class volatile

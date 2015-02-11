@@ -51,20 +51,20 @@ public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet
 /** Returns an empty read-only set. */
 public fun setOf<T>(): Set<T> = emptySet()
 
-/** Returns a new LinkedList with the given elements. */
+/** Returns a new [LinkedList] with the given elements. */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
 
-/** Returns a new ArrayList with the given elements. */
+/** Returns a new [ArrayList] with the given elements. */
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
 
-/** Returns a new HashSet with the given elements. */
+/** Returns a new [HashSet] with the given elements. */
 public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(values.size()))
 
-/** Returns a new LinkedHashSet with the given elements. */
+/** Returns a new [LinkedHashSet] with the given elements. */
 public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(values.size()))
 
 /**
- * Returns the valid indices for this collection.
+ * Returns an IntRange of the valid indices for this collection.
  */
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1

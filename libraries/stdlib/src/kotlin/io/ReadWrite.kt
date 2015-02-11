@@ -140,11 +140,11 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
     return result
 }
 
-/** Creates a buffered reader wrapping this Reader, or returns self if Reader is already buffered */
+/** Creates a buffered reader wrapping this Reader, or returns this Reader if it is already buffered. */
 public fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
         = if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-/** Creates a buffered writer wrapping this Writer, or returns self if Writer is already buffered */
+/** Creates a buffered writer wrapping this Writer, or returns this Writer if it is already buffered. */
 public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
         = if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
