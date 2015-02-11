@@ -382,8 +382,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) classObjectInfo).getName();
         assert name != null;
-        ClassifierDescriptor classObjectDescriptor = getScopeForMemberLookup().getClassifier(name);
+        getScopeForMemberLookup().getClassifier(name);
+        ClassDescriptor classObjectDescriptor = c.getTrace().get(BindingContext.CLASS, classObject);
         if (classObjectDescriptor instanceof LazyClassDescriptor) {
+            assert DescriptorUtils.isClassObject(classObjectDescriptor) : "Not a class object: " + classObjectDescriptor;
             return (LazyClassDescriptor) classObjectDescriptor;
         }
         else {
