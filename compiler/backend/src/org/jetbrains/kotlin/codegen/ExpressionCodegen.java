@@ -3056,7 +3056,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             rightType = boxType(rightType);
         }
 
-        return genEqualsForExpressionsOnStack(opToken, genLazy(left, leftType), genLazy(right, rightType));
+        StackValue leftValue = genLazy(left, leftType);
+        StackValue rightValue = genLazy(right, rightType);
+
+        if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
+            // TODO: always casting to the type of the left operand in case of primitives looks wrong
+            Type operandType = isPrimitive(leftType) ? leftType : OBJECT_TYPE;
+            return StackValue.cmp(opToken, operandType, leftValue, rightValue);
+        }
+
+        return genEqualsForExpressionsOnStack(opToken, leftValue, rightValue);
     }
 
     private boolean isIntZero(JetExpression expr, Type exprType) {

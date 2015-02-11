@@ -527,10 +527,6 @@ public class AsmUtil {
             return StackValue.cmp(opToken, leftType, left, right);
         }
 
-        if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            return StackValue.cmp(opToken, leftType, left, right);
-        }
-
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {

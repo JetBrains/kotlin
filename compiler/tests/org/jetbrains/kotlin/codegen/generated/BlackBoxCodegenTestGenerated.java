@@ -282,6 +282,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt6747_identityEquals.kt")
+        public void testKt6747_identityEquals() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt6747_identityEquals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("longOverflow.kt")
         public void testLongOverflow() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/longOverflow.kt");
@@ -5276,6 +5282,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("identityEquals.kt")
+            public void testIdentityEquals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/identityEquals.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inc.kt")
             public void testInc() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/inc.kt");
@@ -5339,12 +5351,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("toString.kt")
             public void testToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/toString.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("udentityEquals.kt")
-            public void testUdentityEquals() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/udentityEquals.kt");
                 doTest(fileName);
             }
 
