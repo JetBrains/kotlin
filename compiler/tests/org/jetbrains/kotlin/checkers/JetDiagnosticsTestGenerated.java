@@ -10403,6 +10403,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("classInitializersWithoutPrimary.kt")
+            public void testClassInitializersWithoutPrimary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/classInitializersWithoutPrimary.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorCallType.kt")
             public void testConstructorCallType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/constructorCallType.kt");
