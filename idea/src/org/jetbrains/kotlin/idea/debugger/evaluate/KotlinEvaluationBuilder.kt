@@ -16,69 +16,63 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import org.jetbrains.kotlin.idea.debugger.evaluate.*
-import com.intellij.psi.PsiElement
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.evaluation.*
+import com.intellij.debugger.engine.SuspendContext
+import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
-import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.idea.JetLanguage
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.PsiFileFactory
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
-import org.jetbrains.org.objectweb.asm.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.testFramework.LightVirtualFile
+import com.sun.jdi.*
+import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
+import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
-import org.jetbrains.eval4j.jdi.makeInitialFrame
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import com.sun.jdi.request.EventRequest
-import com.sun.jdi.ObjectReference
-import com.intellij.debugger.engine.SuspendContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import com.sun.jdi.VirtualMachine
-import org.jetbrains.kotlin.codegen.AsmUtil
-import com.sun.jdi.InvalidStackFrameException
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.types.Flexibility
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
-import com.intellij.openapi.diagnostic.Attachment
-import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
-import com.sun.jdi.ClassType
-import com.sun.jdi.InvocationException
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
+import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.types.Flexibility
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -126,7 +120,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
                 fragment, position ->
                 isCompiledDataFromCache = false
-                extractAndCompile(fragment, position)
+                extractAndCompile(fragment, position, context)
             }
             val result = runEval4j(context, compiledData)
 
@@ -134,7 +128,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition)).toJdiValue(virtualMachine)
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(virtualMachine)
             }
 
             return result.toJdiValue(virtualMachine)
@@ -159,7 +153,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
     }
 
     class object {
-        private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition): CompiledDataDescriptor {
+        private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
             codeFragment.checkForErrors()
 
             val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
@@ -167,7 +161,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
 
-            val classFileFactory = createClassFileFactory(codeFragment, extractedFunction)
+            val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context)
 
             // KT-4509
             val outputFiles = (classFileFactory : OutputFileCollection).asList()
@@ -273,7 +267,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return parameterNames.zip(parameterTypes).map { this.findLocalVariable(it.first, it.second, checkType = false, failIfNotFound = true)!! }
         }
 
-        private fun createClassFileFactory(codeFragment: JetCodeFragment, extractedFunction: JetNamedFunction): ClassFileFactory {
+        private fun createClassFileFactory(codeFragment: JetCodeFragment, extractedFunction: JetNamedFunction, context: EvaluationContextImpl): ClassFileFactory {
             return runReadAction {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
@@ -287,9 +281,41 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         listOf(file)
                 )
 
+                extractedFunction.getReceiverTypeReference()?.let {
+                    state.recordAnonymousType(it, THIS_NAME, context)
+                }
+
+                for (param in extractedFunction.getValueParameters()) {
+                    val paramRef = param.getTypeReference()
+                    val paramName = param.getName()
+                    if (paramRef == null || paramName == null) {
+                        logger.error("Each parameter for extracted function should have a name and a type reference",
+                                     Attachment("codeFragment.txt", codeFragment.getText()),
+                                     Attachment("extractedFunction.txt", extractedFunction.getText()))
+
+                        exception("An exception occurs during Evaluate Expression Action")
+                    }
+
+                    state.recordAnonymousType(paramRef, paramName, context)
+                }
+
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
 
                 state.getFactory()
+            }
+        }
+
+        private fun GenerationState.recordAnonymousType(typeReference: JetTypeReference, localVariableName: String, context: EvaluationContextImpl) {
+            val paramAnonymousType = typeReference.debugTypeInfo
+            if (paramAnonymousType != null) {
+                val declarationDescriptor = paramAnonymousType.getConstructor().getDeclarationDescriptor()
+                if (declarationDescriptor is ClassDescriptor) {
+                    val localVariable = context.findLocalVariable(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
+                    if (localVariable == null) {
+                        exception("Couldn't find local variable this in current frame to get classType for anonymous type ${paramAnonymousType}}")
+                    }
+                    getBindingTrace().record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
+                }
             }
         }
 
@@ -351,6 +377,18 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
 
     val jetFile = codeFragment.createJetFile("debugFile.kt", fileText)
     jetFile.suppressDiagnosticsInDebugMode = true
+
+    val list = jetFile.getDeclarations()
+    val function = list.get(0) as JetNamedFunction
+
+    function.getReceiverTypeReference()?.debugTypeInfo = extractedFunction.getReceiverTypeReference()?.debugTypeInfo
+
+    for ((newParam, oldParam) in function.getValueParameters().zip(extractedFunction.getValueParameters())) {
+        newParam.getTypeReference()?.debugTypeInfo = oldParam.getTypeReference()?.debugTypeInfo
+    }
+
+    function.getTypeReference()?.debugTypeInfo = extractedFunction.getTypeReference()?.debugTypeInfo
+
     return jetFile
 }
 
@@ -451,8 +489,8 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     }
                 }
 
-                fun Value.isSharedVar(expectedType: Type?): Boolean  {
-                    return expectedType != null && this.asmType == StackValue.sharedTypeForType(expectedType)
+                fun Value.isSharedVar(): Boolean  {
+                    return this.asmType.getSort() == Type.OBJECT && this.asmType.getInternalName().startsWith(AsmTypes.REF_TYPE_PREFIX)
                 }
 
                 fun getValueForSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {
@@ -466,7 +504,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 val localVariable = frame.visibleVariableByName(name)
                 if (localVariable != null) {
                     val eval4jValue = frame.getValue(localVariable).asValue()
-                    if (eval4jValue.isSharedVar(asmType)) {
+                    if (eval4jValue.isSharedVar()) {
                         val sharedVarValue = getValueForSharedVar(eval4jValue, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue
@@ -493,7 +531,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                 val capturedValName = getCapturedFieldName(name)
                 val capturedVal = findCapturedVal(capturedValName)
                 if (capturedVal != null) {
-                    if (capturedVal.isSharedVar(asmType)) {
+                    if (capturedVal.isSharedVar()) {
                         val sharedVarValue = getValueForSharedVar(capturedVal, asmType, checkType)
                         if (sharedVarValue != null) {
                             return sharedVarValue

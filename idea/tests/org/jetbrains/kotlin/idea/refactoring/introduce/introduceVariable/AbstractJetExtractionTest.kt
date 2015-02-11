@@ -44,6 +44,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import kotlin.test.assertTrue
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
@@ -96,7 +97,9 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 if (it.isNotEmpty()) {
                     [suppress("CAST_NEVER_SUCCEEDS")]
                     val args = it.map { it.toBoolean() }.copyToArray() as Array<Any?>
-                    javaClass<ExtractionOptions>().getConstructors()[0].newInstance(*args) as ExtractionOptions
+                    val constructor = javaClass<ExtractionOptions>().getConstructors()[0]
+                    assertTrue(constructor.getParameterTypes().size() == args.size(), "Wrong number of parameters was passed for ExtractOptions constructor: expected = ${constructor.getParameterTypes().size()}, actual = ${args.size()}. \nTest directive: // OPTIONS: $it")
+                    constructor.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
             }
 
@@ -118,7 +121,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                                 val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
                                 val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                                 val actualTypes = allParameters.map {
-                                    it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                                    it.getParameterTypeCandidates(extractionOptions.allowSpecialClassNames).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                                 }.joinToString()
 
                                 assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")

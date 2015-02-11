@@ -55,10 +55,11 @@ import org.jetbrains.kotlin.idea.refactoring.compareDescriptors
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean,
-        val enableListBoxing: Boolean
+        val enableListBoxing: Boolean,
+        val allowSpecialClassNames: Boolean
 ) {
     class object {
-        val DEFAULT = ExtractionOptions(true, false)
+        val DEFAULT = ExtractionOptions(true, false, false)
     }
 }
 

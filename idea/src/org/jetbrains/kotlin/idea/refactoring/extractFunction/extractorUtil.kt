@@ -16,49 +16,39 @@
 
 package org.jetbrains.kotlin.idea.refactoring.extractFunction
 
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import java.util.HashMap
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
-import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import java.util.LinkedHashMap
-import java.util.Collections
-import org.jetbrains.kotlin.psi.psiUtil.isFunctionLiteralOutsideParentheses
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
-import org.jetbrains.kotlin.psi.psiUtil.appendElement
-import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ParameterUpdate
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Jump
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.ParameterUpdate
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValueBoxer.AsTuple
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
+import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
+import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import java.util.Collections
+import java.util.HashMap
+import java.util.LinkedHashMap
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
@@ -77,16 +67,20 @@ fun ExtractableCodeDescriptor.getDeclarationText(
 
         builder.typeParams(typeParameters.map { it.originalDeclaration.getText()!! })
 
-        receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) }
+        fun JetType.typeAsString(): String {
+            return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
+        }
+
+        receiverParameter?.let { builder.receiver(it.getParameterType(extractionData.options.allowSpecialClassNames).typeAsString()) }
 
         builder.name(if (name != "") name else DEFAULT_FUNCTION_NAME)
 
         parameters.forEach { parameter ->
-            builder.param(parameter.name, descriptorRenderer.renderType(parameter.parameterType))
+            builder.param(parameter.name, parameter.getParameterType(extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
         with(controlFlow.outputValueBoxer.returnType) {
-            if (isDefault() || isError()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
+            if (isDefault() || isError()) builder.noReturnType() else builder.returnType(this.typeAsString())
         }
 
         builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
@@ -97,6 +91,10 @@ fun ExtractableCodeDescriptor.getDeclarationText(
 
         builder.asString()
     }
+}
+
+fun JetType.isSpecial(): Boolean {
+    return this.getConstructor().getDeclarationDescriptor()?.getName()?.isSpecial() ?: false
 }
 
 fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNameExpression, JetSimpleNameExpression> {
@@ -172,7 +170,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
         return if (matched) newControlFlow else null
     }
 
-    val unifierParameters = parameters.map { UnifierParameter(it.originalDescriptor, it.parameterType) }
+    val unifierParameters = parameters.map { UnifierParameter(it.originalDescriptor, it.getParameterType(extractionData.options.allowSpecialClassNames)) }
 
     val unifier = JetPsiUnifier(unifierParameters, true)
 
@@ -526,6 +524,18 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
 
     val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it, anchor) }
     adjustDeclarationBody(declaration)
+
+    if (declaration is JetNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
+        declaration.getReceiverTypeReference()?.debugTypeInfo = receiverParameter?.getParameterType(true)
+
+        for ((i, param) in declaration.getValueParameters().withIndex()) {
+            param.getTypeReference()?.debugTypeInfo = parameters[i].getParameterType(true)
+        }
+
+        if (declaration.getTypeReference() != null) {
+            declaration.getTypeReference()?.debugTypeInfo = KotlinBuiltIns.getInstance().getAnyType()
+        }
+    }
 
     if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)
 

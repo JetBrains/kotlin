@@ -63,6 +63,8 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SourcePositionProvider
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.ui.impl.watch.WatchItemDescriptor
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -353,8 +355,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
     private fun Value.asString(): String {
         if (this is ObjectValue && this.value is ObjectReference) {
-            return this.toString().replaceFirst("id=[0-9]*", "id=ID")
+            val regexMatcher = PACKAGE_PART_PATTERN.matcher(this.toString())
+            return regexMatcher.replaceAll("$1@packagePartHASH").replaceFirst("id=[0-9]*", "id=ID")
         }
         return this.toString()
     }
 }
+
+private val PACKAGE_PART_PATTERN = Pattern.compile("(Package\\$[\\w]*\\$)([0-9a-f]+)");

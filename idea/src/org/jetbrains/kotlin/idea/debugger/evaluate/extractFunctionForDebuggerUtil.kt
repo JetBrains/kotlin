@@ -95,7 +95,7 @@ fun getFunctionForExtractedFragment(
         if (targetSibling == null) return null
 
         val analysisResult = ExtractionData(
-                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true)
+                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true, true)
         ).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))

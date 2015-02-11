@@ -243,6 +243,24 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ceAnonymousObject.kt")
+            public void testCeAnonymousObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceAnonymousObject.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceAnonymousObjectCapturedInClosure.kt")
+            public void testCeAnonymousObjectCapturedInClosure() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceAnonymousObjectCapturedInClosure.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("ceAnonymousObjectThisAsReceiver.kt")
+            public void testCeAnonymousObjectThisAsReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceAnonymousObjectThisAsReceiver.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("ceLambda.kt")
             public void testCeLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/compilingEvaluator/ceLambda.kt");

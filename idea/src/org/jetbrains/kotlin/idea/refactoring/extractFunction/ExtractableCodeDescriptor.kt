@@ -63,9 +63,11 @@ trait Parameter {
     val originalDescriptor: DeclarationDescriptor
     val name: String
     val mirrorVarName: String?
-    val parameterType: JetType
-    val parameterTypeCandidates: List<JetType>
     val receiverCandidate: Boolean
+
+    fun getParameterType(allowSpecialClassNames: Boolean): JetType
+
+    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType>
 
     fun copy(name: String, parameterType: JetType): Parameter
 }
@@ -143,7 +145,7 @@ trait OutputValue {
             val parameter: Parameter,
             override val originalExpressions: List<JetExpression>
     ): OutputValue {
-        override val valueType: JetType get() = parameter.parameterType
+        override val valueType: JetType get() = parameter.getParameterType(false)
     }
 
     class Initializer(

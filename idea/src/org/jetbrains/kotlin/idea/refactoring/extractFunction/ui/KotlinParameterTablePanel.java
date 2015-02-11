@@ -55,7 +55,7 @@ public class KotlinParameterTablePanel extends JPanel {
         public ParameterInfo(Parameter originalParameter) {
             this.originalParameter = originalParameter;
             this.name = originalParameter.getName();
-            this.type = originalParameter.getParameterType();
+            this.type = originalParameter.getParameterType(false);
         }
 
         public Parameter getOriginalParameter() {
@@ -176,7 +176,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 ParameterInfo info = parameterInfos.get(row);
 
                 myEditorComponent.setCell(table, row, column);
-                myEditorComponent.setOptions(info.getOriginalParameter().getParameterTypeCandidates().toArray());
+                myEditorComponent.setOptions(info.getOriginalParameter().getParameterTypeCandidates(false).toArray());
                 myEditorComponent.setDefaultValue(info.getType());
                 myEditorComponent.setToString(new Function<Object, String>() {
                     @Override
@@ -360,7 +360,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 case PARAMETER_NAME_COLUMN:
                     return isEnabled() && info.isEnabled();
                 case PARAMETER_TYPE_COLUMN:
-                    return isEnabled() && info.isEnabled() && info.getOriginalParameter().getParameterTypeCandidates().size() > 1;
+                    return isEnabled() && info.isEnabled() && info.getOriginalParameter().getParameterTypeCandidates(false).size() > 1;
                 default:
                     return false;
             }

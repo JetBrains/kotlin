@@ -441,6 +441,7 @@ private fun JetType.isExtractable(): Boolean {
 private fun JetType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>,
+        options: ExtractionOptions,
         processTypeArguments: Boolean = true
 ): Boolean {
     return collectReferencedTypes(processTypeArguments).fold(true) { (extractable, typeToCheck) ->
@@ -456,6 +457,9 @@ private fun JetType.processTypeIfExtractable(
             }
 
             typeToCheck.canBeReferencedViaImport() ->
+                extractable
+
+            options.allowSpecialClassNames && typeToCheck.isSpecial() ->
                 extractable
 
             typeToCheck.isError() ->
@@ -501,7 +505,7 @@ private class MutableParameter(
         CommonSupertypes.commonSupertype(defaultTypes)
     }
 
-    override val parameterTypeCandidates: List<JetType> by Delegates.lazy {
+    private val parameterTypeCandidates: List<JetType> by Delegates.lazy {
         writable = false
 
         val typePredicate = and(typePredicates)
@@ -522,10 +526,20 @@ private class MutableParameter(
             typeList.add(superType)
         }
 
-        typeList.filter { it.isExtractable() }
+        typeList
     }
 
-    override val parameterType: JetType by Delegates.lazy { parameterTypeCandidates.firstOrNull() ?: defaultType }
+    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType> {
+            return if (!allowSpecialClassNames) {
+                parameterTypeCandidates.filter { it.isExtractable() }
+            } else {
+                parameterTypeCandidates
+            }
+    }
+
+    override fun getParameterType(allowSpecialClassNames: Boolean): JetType {
+        return getParameterTypeCandidates(allowSpecialClassNames).firstOrNull() ?: defaultType
+    }
 
     override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(this, name, parameterType)
 }
@@ -533,9 +547,10 @@ private class MutableParameter(
 private class DelegatingParameter(
         val original: Parameter,
         override val name: String,
-        override val parameterType: JetType
+        val parameterType: JetType
 ): Parameter by original {
     override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(original, name, parameterType)
+    override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
 
 private class ParametersInfo {
@@ -596,7 +611,7 @@ private fun ExtractionData.inferParametersInfo(
 
         if (referencedClassDescriptor != null) {
             if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
-                    info.typeParameters, info.nonDenotableTypes, false
+                    info.typeParameters, info.nonDenotableTypes, options, false
             )) continue
 
             info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.importableFqNameSafe)
@@ -657,11 +672,11 @@ private fun ExtractionData.inferParametersInfo(
     )
 
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
-        if (!parameter.parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
+        if (!parameter.getParameterType(options.allowSpecialClassNames).processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options)) continue
 
         with (parameter) {
             if (currentName == null) {
-                currentName = JetNameSuggester.suggestNames(parameterType, varNameValidator, "p").first()
+                currentName = JetNameSuggester.suggestNames(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
             }
             mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(name) else null
             info.parameters.add(this)
@@ -669,7 +684,7 @@ private fun ExtractionData.inferParametersInfo(
     }
 
     for (typeToCheck in info.typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
-        typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)
+        typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options)
     }
 
 
@@ -763,7 +778,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     controlFlowMessage?.let { messages.add(it) }
 
     val returnType = controlFlow.outputValueBoxer.returnType
-    returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
+    returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes, options)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
         val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()

@@ -1,3 +1,0 @@
-object {}
-
-// RESULT: Cannot perform an action because following types are unavailable from debugger scope: <no name provided>
