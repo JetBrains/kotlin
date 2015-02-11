@@ -3,6 +3,11 @@ public final class ClassObjectField implements kotlin.jvm.internal.KObject {
     public static final java.lang.String x = "";
     private static final java.lang.String y = "";
     public static final ClassObjectField.Default Default;
+    /**
+     * @deprecated
+     */
+    @java.lang.Deprecated
+    public static final ClassObjectField.Default OBJECT$;
 
     public ClassObjectField() { /* compiled code */ }
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 
@@ -198,6 +199,14 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.STATIC));
         assertTrue(instance.hasModifierProperty(PsiModifier.FINAL));
+
+        PsiField deprecatedAccessor = theClass.findFieldByName(JvmAbi.DEPRECATED_CLASS_OBJECT_FIELD, false);
+        assertNotNull(deprecatedAccessor);
+        assertEquals("foo.TheClass." + defaultClassObjectName, deprecatedAccessor.getType().getCanonicalText());
+        assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.PUBLIC));
+        assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.STATIC));
+        assertTrue(deprecatedAccessor.hasModifierProperty(PsiModifier.FINAL));
+        assertTrue(deprecatedAccessor.isDeprecated());
 
         PsiMethod[] methods = classObjectClass.findMethodsByName("getOut", false);
 

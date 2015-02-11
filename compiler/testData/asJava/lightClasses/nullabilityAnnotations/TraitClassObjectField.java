@@ -1,5 +1,10 @@
 public interface TraitClassObjectField {
     TraitClassObjectField.Default Default;
+    /**
+     * @deprecated
+     */
+    @java.lang.Deprecated
+    TraitClassObjectField.Default OBJECT$;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 
