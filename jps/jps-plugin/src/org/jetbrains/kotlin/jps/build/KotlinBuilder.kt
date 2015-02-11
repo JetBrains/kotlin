@@ -60,6 +60,10 @@ import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.jps.incremental.fs.CompilationRound
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -247,18 +251,41 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
     ) {
+        fun getOldSourceFiles(outputFile: File, previousMappings: Mappings, target: ModuleBuildTarget): Collection<File> {
+            if (!outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
+
+            val kotlinClass = LocalFileKotlinClass.create(outputFile)
+            if (kotlinClass == null || !kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
+
+            val classInternalName = JvmClassName.byClassId(kotlinClass.getClassId()).getInternalName()
+            val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
+            if (oldClassSources == null) return emptySet()
+
+            val sources = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+            sources.addAll(oldClassSources)
+            sources.removeAll(filesToCompile[target])
+            sources.removeAll(dirtyFilesHolder.getRemovedFiles(target).map { File(it) })
+            return sources
+        }
+
         if (!IncrementalCompilation.ENABLED) {
             return
         }
 
-        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
-        val callback = delta!!.getCallback()!!
+        val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
+        val delta = previousMappings.createDelta()
+        val callback = delta.getCallback()
 
-        for ((outputItem, _) in outputsItemsAndTargets) {
+        for ((outputItem, target) in outputsItemsAndTargets) {
             val outputFile = outputItem.getOutputFile()
+            val classReader = ClassReader(outputFile.readBytes())
+
+            // For package facade classes: we need to report all source files for it, not only currently compiled
+            val allSourcesIncludingOld = getOldSourceFiles(outputFile, previousMappings, target) + outputItem.getSourceFiles()
+
             callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputFile.readBytes())
+                               allSourcesIncludingOld.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                               classReader
             )
         }
 
