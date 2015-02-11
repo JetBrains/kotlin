@@ -41,7 +41,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     var receiverAsterisk = false
     val inlineFamilies = HashMap<Family, Boolean>()
 
-    val buildFamilies = HashSet(defaultFamilies.filter { it != RangesOfPrimitives && it != ProgressionsOfPrimitives }.toList())
+    val buildFamilies = HashSet(defaultFamilies.toList())
     private val buildPrimitives = HashSet(PrimitiveType.values().toList())
 
     var deprecate: String = ""
