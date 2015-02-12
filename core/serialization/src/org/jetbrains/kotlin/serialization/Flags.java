@@ -154,7 +154,7 @@ public class Flags {
         else if (visibility == Visibilities.PROTECTED) {
             return ProtoBuf.Visibility.PROTECTED;
         }
-        return ProtoBuf.Visibility.EXTRA;
+        throw new IllegalArgumentException("Unknown visibility: " + visibility);
     }
 
     @NotNull

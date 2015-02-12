@@ -175,7 +175,6 @@ message Class {
       is_inner
    */
   optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
-  optional string extra_visibility = 2; // for things like java-specific visibilities
 
   required int32 fq_name = 3;
 
@@ -240,7 +239,6 @@ message Callable {
      hasConstant
    */
   optional int32 flags = 1;
-  optional string extra_visibility = 2; // for things like java-specific visibilities
 
   /*
      isNotDefault
@@ -295,5 +293,4 @@ enum Visibility {
   PROTECTED = 0x02;
   PUBLIC = 0x03;
   PRIVATE_TO_THIS = 0x04;
-  EXTRA = 0x05; // there's an extra field for the actual visibility
 }

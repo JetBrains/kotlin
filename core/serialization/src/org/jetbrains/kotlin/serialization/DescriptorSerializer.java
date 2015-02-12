@@ -83,8 +83,6 @@ public class DescriptorSerializer {
                                         classDescriptor.getModality(), classDescriptor.getKind(), classDescriptor.isInner());
         builder.setFlags(flags);
 
-        // TODO extra visibility
-
         builder.setFqName(getClassId(classDescriptor));
 
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
@@ -196,7 +194,6 @@ public class DescriptorSerializer {
                 hasSetter,
                 hasConstant
         ));
-        //TODO builder.setExtraVisibility()
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
