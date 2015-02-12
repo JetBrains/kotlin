@@ -1,6 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="5177179"/>
-    <property name="public.buildserver.build.id" value="188174"/>
+    <property name="ideaVersion" value="135.1306"/>
 
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
@@ -22,11 +21,15 @@
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
-        <execute_update base.url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:${public.buildserver.build.id}"/>
+        <execute_update_with_id_resolve
+            teamcity.server.url="https://teamcity.jetbrains.com"
+            build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}"/>
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/id:${jb.buildserver.build.id}"/>
+        <execute_update_with_id_resolve
+            teamcity.server.url="http://buildserver.labs.intellij.net"
+            build.locator.request="buildType:bt3498,status:SUCCESS,branch:/idea/${ideaVersion}"/>
     </target>
 
     <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
