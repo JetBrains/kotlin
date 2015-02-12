@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.config;
 
-import static com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR;
-
 public class SettingConstants {
     private SettingConstants() {}
 
@@ -27,5 +25,4 @@ public class SettingConstants {
     public static final String KOTLIN_COMPILER_SETTINGS_SECTION = "KotlinCompilerSettings";
 
     public static final String KOTLIN_COMPILER_SETTINGS_FILE = "kotlinc.xml";
-    public static final String KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + KOTLIN_COMPILER_SETTINGS_FILE;
 }
