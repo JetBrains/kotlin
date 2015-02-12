@@ -27,13 +27,9 @@ import kotlin.platform.platformStatic
 
 public abstract class ImportInsertHelper {
 
-    public abstract fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile)
-
     public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
 
     public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
-
-    public fun needImport(fqName: FqName, file: JetFile): Boolean = needImport(ImportPath(fqName, false), file)
 
     public abstract fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective> = file.getImportDirectives()): Boolean
 

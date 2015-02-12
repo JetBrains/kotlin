@@ -57,21 +57,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
-    /**
-     * Add import directive into the PSI tree for the given package.
-     *
-     * @param importFqn full name of the import
-     * @param file File where directive should be added.
-     */
-    override fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile) {
-        val importPath = ImportPath(importFqn, false)
-
-        optimizeImportsOnTheFly(file)
-
-        if (needImport(importPath, file)) {
-            writeImportToFile(importPath, file)
-        }
-    }
 
     override fun optimizeImportsOnTheFly(file: JetFile): Boolean {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
