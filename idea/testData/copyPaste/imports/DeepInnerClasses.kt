@@ -16,10 +16,6 @@ class Outer {
     }
 
     inner class Inner {
-        class IN {
-        }
-        class IN2 {
-        }
         inner class II {
         }
         inner class II2 {
@@ -29,12 +25,11 @@ class Outer {
 
 fun <T> with(v: T, body: T.() -> Unit) = v.body()
 
-<selection>fun f(p1: NN, p2: NI, p3: IN, p4: II) {
+<selection>fun f(p1: NN, p2: NI, p3: II) {
     NN2()
     with(Outer.Nested()) {
         NI2()
     }
-    IN2()
     with(Outer().Inner()) {
         II2()
     }
