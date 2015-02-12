@@ -127,6 +127,11 @@ public class BodyResolver {
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             resolveSecondaryConstructorBody(c, entry.getKey(), entry.getValue());
         }
+        if (c.getSecondaryConstructors().isEmpty()) return;
+        Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
+        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+            checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
+        }
     }
 
     private void resolveSecondaryConstructorBody(
@@ -172,6 +177,58 @@ public class BodyResolver {
         if (results.isSuccess()) {
             recordConstructorDelegationCall(trace, descriptor, results.getResultingCall());
         }
+    }
+
+    private void checkCyclicConstructorDelegationCall(
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull Set<ConstructorDescriptor> visitedConstructors
+    ) {
+        if (visitedConstructors.contains(constructorDescriptor)) return;
+
+        // if visit constructor that is already in current chain
+        // such constructor is on cycle
+        Set<ConstructorDescriptor> visitedInCurrentChain = Sets.newHashSet();
+        ConstructorDescriptor currentConstructorDescriptor = constructorDescriptor;
+        while (true) {
+            visitedInCurrentChain.add(currentConstructorDescriptor);
+            ConstructorDescriptor delegatedConstructorDescriptor = getDelegatedConstructor(currentConstructorDescriptor);
+            if (delegatedConstructorDescriptor == null) break;
+
+            // if next delegation call is super or primary constructor or already visited
+            if (!constructorDescriptor.getContainingDeclaration().equals(delegatedConstructorDescriptor.getContainingDeclaration()) ||
+                    delegatedConstructorDescriptor.isPrimary() ||
+                    visitedConstructors.contains(delegatedConstructorDescriptor)) {
+                 break;
+            }
+
+            if (visitedInCurrentChain.contains(delegatedConstructorDescriptor)) {
+                reportEachConstructorOnCycle(delegatedConstructorDescriptor);
+                break;
+            }
+            currentConstructorDescriptor = delegatedConstructorDescriptor;
+        }
+        visitedConstructors.addAll(visitedInCurrentChain);
+    }
+
+    private void reportEachConstructorOnCycle(@NotNull ConstructorDescriptor startConstructor) {
+        ConstructorDescriptor currentConstructor = startConstructor;
+        do {
+            PsiElement constructorToReport = DescriptorToSourceUtils.descriptorToDeclaration(currentConstructor);
+            if (constructorToReport != null) {
+                JetConstructorDelegationCall call = ((JetSecondaryConstructor) constructorToReport).getDelegationCall();
+                assert call != null : "resolved call can't be null";
+                trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call));
+            }
+
+            currentConstructor = getDelegatedConstructor(currentConstructor);
+            assert currentConstructor != null : "Delegated constructor should not be null in cycle";
+        } while (startConstructor != currentConstructor);
+    }
+
+    @Nullable
+    private ConstructorDescriptor getDelegatedConstructor(@NotNull ConstructorDescriptor constructor) {
+        ResolvedCall<ConstructorDescriptor> call = trace.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor);
+        return call == null ? null : call.getResultingDescriptor();
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext c) {
