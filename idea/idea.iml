@@ -30,7 +30,7 @@
     <orderEntry type="library" scope="PROVIDED" name="copyright-plugin" level="project" />
     <orderEntry type="module" module-name="j2k" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
-    <orderEntry type="module" module-name="ide-compiler-runner" />
+    <orderEntry type="module" module-name="idea-jps-common" />
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
