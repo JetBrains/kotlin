@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.imports.*
 
 public class ShortenReferences(val options: (JetElement) -> Options = { Options.DEFAULT }) {
     public data class Options(
@@ -61,25 +62,12 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val targets = context[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
                           ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
                           ?: listOf()
-            return targets.map { descriptorToImport(it) }.toSet()
-        }
-
-        private fun descriptorToImport(target: DeclarationDescriptor): DeclarationDescriptor {
-            val descriptor = target.getImportableDescriptor()
-            // if there is a class with the same fq-name then prefer to consider it as target (otherwise we won't insert import)
-            if (descriptor is CallableDescriptor) {
-                val container = descriptor.getContainingDeclaration()
-                if (container is PackageFragmentDescriptor) {
-                    val classifier = container.getMemberScope().getClassifier(descriptor.getName())
-                    if (classifier != null) return classifier
-                }
-            }
-            return descriptor
+            return targets.map { it.getImportableDescriptor() }.toSet()
         }
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
-            if (descriptor !is ClassDescriptor && descriptor !is PackageViewDescriptor) return false
-            return ImportInsertHelper.getInstance(file.getProject()).mayImportByCodeStyle(descriptor)
+            return descriptor.canBeReferencedViaImport()
+                   && ImportInsertHelper.getInstance(file.getProject()).mayImportByCodeStyle(descriptor)
         }
     }
 

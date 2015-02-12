@@ -1,10 +1,12 @@
 package c
 
 import b.Test
+import b.test
+import b.TEST
 
 fun bar() {
     val t: Test = Test()
-    b.test()
-    println(b.TEST)
-    b.TEST = ""
+    test()
+    println(TEST)
+    TEST = ""
 }

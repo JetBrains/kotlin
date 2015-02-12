@@ -161,9 +161,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {
         val importable = descriptor.getImportableDescriptor()
         return when (importable) {
-            is ClassDescriptor -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes
             is PackageViewDescriptor -> JetCodeStyleSettings.getInstance(project).IMPORT_PACKAGES
-            else -> true
+            else -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes and non-top-level declarations
         }
     }
 

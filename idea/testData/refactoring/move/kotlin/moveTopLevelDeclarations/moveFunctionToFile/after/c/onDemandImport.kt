@@ -1,7 +1,8 @@
 package c
 
 import a.*
+import b.test
 
 fun bar() {
-    b.test()
+    test()
 }

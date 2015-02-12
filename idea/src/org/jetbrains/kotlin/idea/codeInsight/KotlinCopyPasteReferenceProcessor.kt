@@ -257,7 +257,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         )
 
         val bindingRequests = ArrayList<BindingRequest>()
-        val descriptorsToImport = ArrayList<CallableDescriptor>()
+        val extensionsToImport = ArrayList<CallableDescriptor>()
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
@@ -266,13 +266,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 bindingRequests.add(BindingRequest(pointer, fqName))
             }
 
-            //TODO: this may sometimes cause insertion of redundant imports (see 3 ignored tests)
-            if (refData.kind == KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE || refData.kind == KotlinReferenceData.Kind.EXTENSION_CALLABLE) {
-                descriptorsToImport.addIfNotNull(findCallableToImport(fqName, file))
+            if (refData.kind == KotlinReferenceData.Kind.EXTENSION_CALLABLE) {
+                extensionsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
 
-        for (descriptor in descriptorsToImport) {
+        for (descriptor in extensionsToImport) {
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {

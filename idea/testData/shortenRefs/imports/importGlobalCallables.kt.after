@@ -1,0 +1,6 @@
+import p.globalVal
+import p.globalFun
+
+fun foo() {
+    globalFun(globalVal)
+}
