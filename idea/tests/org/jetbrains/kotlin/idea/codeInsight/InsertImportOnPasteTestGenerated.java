@@ -87,12 +87,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
-        @TestMetadata("Conflict.kt")
-        public void testConflict() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Conflict.kt");
-            doTestCopy(fileName);
-        }
-
         @TestMetadata("ConflictForTypeWithTypeParameter.kt")
         public void testConflictForTypeWithTypeParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
@@ -102,12 +96,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ConflictWithClass.kt")
         public void testConflictWithClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithClass.kt");
-            doTestCopy(fileName);
-        }
-
-        @TestMetadata("ConflictWithFun.kt")
-        public void testConflictWithFun() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithFun.kt");
             doTestCopy(fileName);
         }
 
@@ -318,12 +306,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("PartiallyQualified.kt")
         public void testPartiallyQualified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PartiallyQualified.kt");
-            doTestCopy(fileName);
-        }
-
-        @TestMetadata("PropertyResolvedToPackage.kt")
-        public void testPropertyResolvedToPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
             doTestCopy(fileName);
         }
 
@@ -426,12 +408,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCut(fileName);
         }
 
-        @TestMetadata("Conflict.kt")
-        public void testConflict() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Conflict.kt");
-            doTestCut(fileName);
-        }
-
         @TestMetadata("ConflictForTypeWithTypeParameter.kt")
         public void testConflictForTypeWithTypeParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictForTypeWithTypeParameter.kt");
@@ -441,12 +417,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ConflictWithClass.kt")
         public void testConflictWithClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithClass.kt");
-            doTestCut(fileName);
-        }
-
-        @TestMetadata("ConflictWithFun.kt")
-        public void testConflictWithFun() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/ConflictWithFun.kt");
             doTestCut(fileName);
         }
 
@@ -657,12 +627,6 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("PartiallyQualified.kt")
         public void testPartiallyQualified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PartiallyQualified.kt");
-            doTestCut(fileName);
-        }
-
-        @TestMetadata("PropertyResolvedToPackage.kt")
-        public void testPropertyResolvedToPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/PropertyResolvedToPackage.kt");
             doTestCut(fileName);
         }
 
