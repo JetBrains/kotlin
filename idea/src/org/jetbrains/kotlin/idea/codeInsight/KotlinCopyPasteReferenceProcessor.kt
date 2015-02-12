@@ -137,22 +137,26 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             val fqName = descriptor.importableFqName ?: continue
             if (!descriptor.canBeReferencedViaImport()) continue
 
-            val kind = when (descriptor.getImportableDescriptor()) {
-                is ClassDescriptor ->
-                    KotlinReferenceData.Kind.CLASS
-
-                is PackageViewDescriptor ->
-                    KotlinReferenceData.Kind.PACKAGE
-
-                is CallableDescriptor ->
-                    if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_CALLABLE else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
-
-                else ->
-                    continue
-            }
+            val kind = referenceDataKind(descriptor) ?: continue
             collectedData.add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
         }
         return collectedData
+    }
+
+    private fun referenceDataKind(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
+        return when (descriptor.getImportableDescriptor()) {
+            is ClassDescriptor ->
+                KotlinReferenceData.Kind.CLASS
+
+            is PackageViewDescriptor ->
+                KotlinReferenceData.Kind.PACKAGE
+
+            is CallableDescriptor ->
+                if (descriptor.isExtension) KotlinReferenceData.Kind.EXTENSION_CALLABLE else KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE
+
+            else ->
+                null
+        }
     }
 
     private data class ReferenceToRestoreData(
@@ -232,10 +236,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             LOG.error("Failed to analyze reference (${element.getText()}) after copy paste", e)
             return null
         }
-        val referencedFqNames = referencedDescriptors.filterNot { ErrorUtils.isError(it) }.map { it.importableFqName }.filterNotNull()
+        val referencedFqNames = referencedDescriptors
+                .filterNot { ErrorUtils.isError(it) }
+                .map { it.importableFqName }
+                .filterNotNull()
         val originalFqName = FqName(refData.fqName)
         val referencesSame = referencedFqNames.any { it == originalFqName }
-        val conflict = referencedFqNames.any { it != originalFqName && it.shortName() == originalFqName.shortName() }
+        val conflict = referencedFqNames.any { it != originalFqName }
         if (referencesSame && !conflict) return null
         return ReferenceToRestoreData(reference, refData)
     }
@@ -259,6 +266,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 bindingRequests.add(BindingRequest(pointer, fqName))
             }
 
+            //TODO: this may sometimes cause insertion of redundant imports (see 3 ignored tests)
             if (refData.kind == KotlinReferenceData.Kind.NON_EXTENSION_CALLABLE || refData.kind == KotlinReferenceData.Kind.EXTENSION_CALLABLE) {
                 descriptorsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
