@@ -37,6 +37,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("classObjectAccessor")
+    public void testClassObjectAccessor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/classObjectAccessor/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");
