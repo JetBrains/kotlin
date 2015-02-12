@@ -43,4 +43,8 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
     public void testAccessing() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testNamedClassObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

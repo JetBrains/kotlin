@@ -22,10 +22,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetQualifiedExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setQualifier;
@@ -51,8 +53,12 @@ public final class ReferenceTranslator {
     ) {
         JsExpression simpleName = translateSimpleName(expression, context);
 
-        // Ignore qualifier if expression is EnumEntry and use always use FQ name.
+        // Ignore qualifier if expression is EnumEntry or default object reference and use always use FQ name.
         DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        //TODO: should go away when objects inside classes are supported
+        if (DescriptorUtils.isClassObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
+            return simpleName;
+        }
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor entryClass = (ClassDescriptor) descriptor;
             if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
