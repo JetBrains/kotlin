@@ -263,6 +263,11 @@ public class DescriptorValidator {
                 }
             }
 
+            ClassDescriptor defaultObjectDescriptor = descriptor.getDefaultObjectDescriptor();
+            if (defaultObjectDescriptor != null && defaultObjectDescriptor.getKind() != ClassKind.CLASS_OBJECT) {
+                report(collector, defaultObjectDescriptor, "Default object should be of kind " + ClassKind.CLASS_OBJECT);
+            }
+
             return true;
         }
 
