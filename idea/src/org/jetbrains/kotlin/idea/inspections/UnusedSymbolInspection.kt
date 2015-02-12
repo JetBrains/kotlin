@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -126,6 +128,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
         // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
         if (declaration.getAnnotationEntries().any { it.getTypeReference().getText().endsWith("native") }) return false
+        if (ProjectStructureUtil.isJsKotlinModule(declaration.getContainingJetFile())) return false
 
         val lightElement: PsiElement? = when (declaration) {
             is JetClassOrObject -> declaration.toLightClass()
