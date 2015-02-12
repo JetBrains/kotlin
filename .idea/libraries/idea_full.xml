@@ -2,6 +2,7 @@
   <library name="idea-full">
     <ANNOTATIONS>
       <root url="file://$PROJECT_DIR$/annotations" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/lib" />
@@ -10,6 +11,7 @@
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/dependencies/guava-17.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/gradle-tooling-extension-impl/java-production" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/groovy-psi/java-production" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/jetgroovy/java-production" />
@@ -18,7 +20,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/spellchecker/java-test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/testFramework-java/java-production" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/testFramework/java-production" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/testFramework/java-test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/util/java-test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/RegExpSupport/gen" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/RegExpSupport/src" />
@@ -73,6 +74,9 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-serialization/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/plugin-system/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/standalone-builder/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/json/gen" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/json/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/json/tests/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/analysis-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/analysis-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/annotations/src" />
@@ -81,6 +85,8 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/core-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/core-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/duplicates-analysis/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/dvcs-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/dvcs-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/editor-ui-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/editor-ui-ex/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/extensions/src" />
@@ -131,6 +137,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/vcs-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/vcs-api/vcs-api-core/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/vcs-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/vcs-impl/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/vcs-log/api/src" />
@@ -178,6 +185,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/eclipse/resources" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/eclipse/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/eclipse/testSources" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/editorconfig/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/generate-tostring/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/generate-tostring/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/git4idea/remote-servers-git/src" />
@@ -188,9 +196,9 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/git4idea/tests" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/github/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/github/test" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/gen" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/jps-plugin/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/jps-plugin/testSource" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/resources" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/runtime/source" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/source" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/google-app-engine/testSource" />
@@ -212,8 +220,10 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/groovy/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/hg4idea/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/hg4idea/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/test" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/engine/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/engine/test" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/plugin/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-decompiler/plugin/test" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-i18n/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/java-i18n/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/javaFX/FxBuilderEmbedder/src" />
@@ -267,9 +277,16 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/xslt-debugger/rt/impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/xslt-debugger/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/IntelliLang-python/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/course-creator/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/course-creator/tests" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/learn-python/gen" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/learn-python/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/learn-python/tests" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/edu/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/gen" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/ide/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/ipnb/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/ipnb/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/openapi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/pluginSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/python/pluginTestSrc" />
@@ -317,7 +334,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-psi-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-structure-view-api/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/xml/xml-structure-view-impl/src" />
-      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1-sources.jar!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" />
   </library>
