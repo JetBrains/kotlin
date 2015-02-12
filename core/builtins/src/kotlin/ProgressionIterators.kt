@@ -20,6 +20,7 @@ package kotlin
 
 import kotlin.internal.getProgressionFinalElement
 
+/** An iterator over a progression of values of type Byte. */
 class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : ByteIterator() {
     private var next = start.toInt()
     private val finalElement: Byte = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toByte()
@@ -39,6 +40,7 @@ class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : Byte
     }
 }
 
+/** An iterator over a progression of values of type Char. */
 class CharProgressionIterator(start: Char, end: Char, val increment: Int) : CharIterator() {
     private var next = start.toInt()
     private val finalElement: Char = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toChar()
@@ -58,6 +60,7 @@ class CharProgressionIterator(start: Char, end: Char, val increment: Int) : Char
     }
 }
 
+/** An iterator over a progression of values of type Short. */
 class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : ShortIterator() {
     private var next = start.toInt()
     private val finalElement: Short = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toShort()
@@ -77,6 +80,7 @@ class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : S
     }
 }
 
+/** An iterator over a progression of values of type Int. */
 class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIterator() {
     private var next = start
     private val finalElement: Int = getProgressionFinalElement(start, end, increment)
@@ -96,6 +100,7 @@ class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIter
     }
 }
 
+/** An iterator over a progression of values of type Long. */
 class LongProgressionIterator(start: Long, end: Long, val increment: Long) : LongIterator() {
     private var next = start
     private val finalElement: Long = getProgressionFinalElement(start, end, increment)
@@ -115,6 +120,7 @@ class LongProgressionIterator(start: Long, end: Long, val increment: Long) : Lon
     }
 }
 
+/** An iterator over a progression of values of type Float. */
 class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
     private var next = start
 
@@ -127,6 +133,7 @@ class FloatProgressionIterator(start: Float, val end: Float, val increment: Floa
     }
 }
 
+/** An iterator over a progression of values of type Double. */
 class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
     private var next = start
 
