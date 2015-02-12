@@ -127,13 +127,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 else -> DO_NOTHING
             }
 
-    public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
-        if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
-
+    public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
         cacheFormatVersion.saveIfNeeded()
-
-        val kotlinClass = LocalFileKotlinClass.create(classFile)
-        if (kotlinClass == null) return DO_NOTHING
 
         val fileBytes = kotlinClass.getFileContents()
         val className = JvmClassName.byClassId(kotlinClass.getClassId())
