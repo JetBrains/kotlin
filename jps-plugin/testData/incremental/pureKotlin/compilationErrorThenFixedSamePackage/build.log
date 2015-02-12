@@ -9,10 +9,6 @@ COMPILATION FAILED
 Expecting an expression
 
 
-Cleaning output files:
-out/production/module/_DefaultPackage$fun$*.class
-End of files
 Compiling files:
-src/fun.kt
 src/usage.kt
 End of files

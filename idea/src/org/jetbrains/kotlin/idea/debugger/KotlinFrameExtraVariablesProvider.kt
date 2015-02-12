@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.FrameExtraVariablesProvider
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.TextWithImports
@@ -39,14 +38,14 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
-public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
-    override fun isAvailable(sourcePosition: SourcePosition?, evalContext: EvaluationContext?): Boolean {
+public class KotlinFrameExtraVariablesProvider {
+    fun isAvailable(sourcePosition: SourcePosition?, evalContext: EvaluationContext?): Boolean {
         if (sourcePosition == null) return false
         if (sourcePosition.getLine() < 0) return false
         return sourcePosition.getFile().getFileType() == JetFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
     }
 
-    override fun collectVariables(sourcePosition: SourcePosition?, evalContext: EvaluationContext?, alreadyCollected: Set<String>?
+    fun collectVariables(sourcePosition: SourcePosition?, evalContext: EvaluationContext?, alreadyCollected: Set<String>?
     ): Set<TextWithImports>? {
         if (sourcePosition != null) {
             return runReadAction { findAdditionalExpressions(sourcePosition) }
