@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -43,7 +43,7 @@ import java.io.File
 import java.util.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
+import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.kotlin.utils.keysToMap

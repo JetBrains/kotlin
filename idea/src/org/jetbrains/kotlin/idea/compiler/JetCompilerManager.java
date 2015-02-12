@@ -38,8 +38,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
-import static org.jetbrains.kotlin.compilerRunner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
+import static org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+import static org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
 
 public class JetCompilerManager implements ProjectComponent {
     private static final Logger LOG = Logger.getInstance(JetCompilerManager.class);

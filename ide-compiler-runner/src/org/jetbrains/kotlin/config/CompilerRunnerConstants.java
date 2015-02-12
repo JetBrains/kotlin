@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.compilerRunner;
+package org.jetbrains.kotlin.config;
 
 public class CompilerRunnerConstants {
     public static final String KOTLIN_COMPILER_NAME = "Kotlin";
