@@ -65,7 +65,10 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             out.println(
-"""public class $progression(
+"""/**
+ * A progression of values of type $t.
+ */
+public class $progression(
         override val start: $t,
         override val end: $t,
         override val increment: $incrementType
@@ -76,6 +79,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, increment)
 
+    /** Checks if the progression is empty. */
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
