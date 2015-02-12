@@ -1,8 +1,8 @@
 package target
 
 import library.JavaClass
-import library.KtObject
 import library.KtClass
+import library.KtObject
 
 class Foo {
     val jv1 = JavaClass.foo()

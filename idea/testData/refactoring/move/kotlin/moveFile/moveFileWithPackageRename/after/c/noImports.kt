@@ -1,8 +1,8 @@
 package c
 
+import b.TEST
 import b.Test
 import b.test
-import b.TEST
 
 fun bar() {
     val t: Test = Test()

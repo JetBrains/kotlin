@@ -1,7 +1,7 @@
 package to
 
-import a.JavaM
 import a.JavaF
+import a.JavaM
 
 fun f() {
     JavaM.staticMethod()

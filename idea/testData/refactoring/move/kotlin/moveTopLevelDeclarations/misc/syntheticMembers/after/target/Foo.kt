@@ -1,8 +1,8 @@
 package target
 
 import library.JavaEnum
-import library.KtEnum
 import library.KtData
+import library.KtEnum
 
 class Foo {
     val javaEnum = JavaEnum.values()

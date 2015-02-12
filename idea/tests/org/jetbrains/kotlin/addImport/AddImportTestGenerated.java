@@ -221,4 +221,10 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported2.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("StdlibImportsLast.kt")
+    public void testStdlibImportsLast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/StdlibImportsLast.kt");
+        doTest(fileName);
+    }
 }

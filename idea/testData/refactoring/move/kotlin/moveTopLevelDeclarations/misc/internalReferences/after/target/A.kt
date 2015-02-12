@@ -1,7 +1,7 @@
 package target
 
-import library.bar
 import library.B
+import library.bar
 
 public class A: B() {
     fun test() {

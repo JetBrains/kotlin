@@ -1,0 +1,3 @@
+package xxx
+
+trait Dependency

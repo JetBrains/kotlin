@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
+import java.util.*
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
 
@@ -68,7 +67,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    private fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
+    private fun addImport(file: JetFile, importPath: ImportPath): JetImportDirective {
         val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)
@@ -79,18 +78,50 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         val importList = file.getImportList()
         if (importList != null) {
             val newDirective = psiFactory.createImportDirective(importPath)
-            importList.add(psiFactory.createNewLine())
-            return importList.add(newDirective) as JetImportDirective
+            val imports = importList.getImports()
+            if (imports.isEmpty()) { //TODO: strange hack
+                importList.add(psiFactory.createNewLine())
+                return importList.add(newDirective) as JetImportDirective
+            }
+            else {
+                val insertAfter = imports
+                        .reverse()
+                        .firstOrNull {
+                            val directivePath = it.getImportPath()
+                            directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                        }
+                return importList.addAfter(newDirective, insertAfter) as JetImportDirective
+            }
         }
         else {
             val newImportList = psiFactory.createImportDirectiveWithImportList(importPath)
             val packageDirective = file.getPackageDirective()
-            if (packageDirective == null) {
-                throw IllegalStateException("Scripts are not supported: " + file.getName())
-            }
-
+                                   ?: throw IllegalStateException("Scripts are not supported: " + file.getName())
             val addedImportList = packageDirective.getParent().addAfter(newImportList, packageDirective) as JetImportList
             return addedImportList.getImports().single()
+        }
+    }
+
+    private object ImportPathComparator : Comparator<ImportPath> {
+        override fun compare(import1: ImportPath, import2: ImportPath): Int {
+            // alias imports placed last
+            if (import1.hasAlias() != import2.hasAlias()) {
+                return if (import1.hasAlias()) +1 else -1
+            }
+
+            // standard library imports last
+            val stdlib1 = isJavaOrKotlinStdlibImport(import1)
+            val stdlib2 = isJavaOrKotlinStdlibImport(import2)
+            if (stdlib1 != stdlib2) {
+                return if (stdlib1) +1 else -1
+            }
+
+            return import1.toString().compareTo(import2.toString())
+        }
+
+        private fun isJavaOrKotlinStdlibImport(path: ImportPath): Boolean {
+            val s = path.getPathStr()
+            return s.startsWith("java.") || s.startsWith("javax.")|| s.startsWith("kotlin.")
         }
     }
 
@@ -383,7 +414,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
 
         private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective {
-            return writeImportToFile(ImportPath(fqName, allUnder), file)
+            return addImport(file, ImportPath(fqName, allUnder))
         }
     }
 }

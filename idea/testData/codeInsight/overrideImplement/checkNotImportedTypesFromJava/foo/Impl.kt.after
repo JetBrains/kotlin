@@ -1,8 +1,8 @@
 package foo
 
-import java.util.ArrayList
-import bar.Other
 import bar.Bar
+import bar.Other
+import java.util.ArrayList
 
 class Impl: Foo() {
     override fun foo(list: ArrayList<Int>?, other: Other?): Bar? {
