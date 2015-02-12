@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -99,6 +98,12 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
     @TestMetadata("OnInheritedMethodUsage.kt")
     public void testOnInheritedMethodUsage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnInheritedMethodUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnInheritedPropertyUsage.kt")
+    public void testOnInheritedPropertyUsage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnInheritedPropertyUsage.kt");
         doTest(fileName);
     }
 

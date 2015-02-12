@@ -24,4 +24,6 @@ public interface TypeProjection {
 
     @NotNull
     JetType getType();
+
+    boolean isStarProjection();
 }

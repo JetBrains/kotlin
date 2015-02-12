@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.idea.references.JetReference
 import java.util.HashSet
 import java.util.ArrayList
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinImportOptimizer() : ImportOptimizer {
@@ -44,6 +44,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         val directivesAfterCurrent = ArrayList(jetFile.getImportDirectives())
 
         ApplicationManager.getApplication()!!.runWriteAction(Runnable {
+            val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
             // Remove only unnecessary imports
             for (anImport in directives) {
                 directivesAfterCurrent.remove(anImport)
@@ -54,8 +55,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
                 if (isUseful(importPath, usedQualifiedNames)
-                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesBeforeCurrent)
-                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesAfterCurrent)
+                    && importInsertHelper.needImport(importPath, jetFile, directivesBeforeCurrent)
+                    && importInsertHelper.needImport(importPath, jetFile, directivesAfterCurrent)
                 ) {
                     directivesBeforeCurrent.add(anImport)
                 }

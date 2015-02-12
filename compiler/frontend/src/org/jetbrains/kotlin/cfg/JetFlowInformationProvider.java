@@ -641,16 +641,20 @@ public class JetFlowInformationProvider {
                                     report(Errors.UNUSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor), ctxt);
                                 }
                                 else if (element instanceof JetParameter) {
-                                    PsiElement psiElement = element.getParent().getParent();
-                                    if (psiElement instanceof JetFunction) {
+                                    PsiElement owner = element.getParent().getParent();
+                                    if (owner instanceof JetFunction) {
                                         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
-                                        boolean isMain = (psiElement instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) psiElement);
-                                        if (psiElement instanceof JetFunctionLiteral) return;
-                                        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
-                                        assert descriptor instanceof FunctionDescriptor : psiElement.getText();
+                                        boolean isMain = (owner instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) owner);
+                                        if (owner instanceof JetFunctionLiteral) return;
+                                        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
+                                        assert descriptor instanceof FunctionDescriptor : owner.getText();
                                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                         if (!isMain && !functionDescriptor.getModality().isOverridable()
                                                 && functionDescriptor.getOverriddenDescriptors().isEmpty()) {
+                                            report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
+                                        }
+                                    } else if (owner instanceof JetClass) {
+                                        if (!((JetParameter) element).hasValOrVarNode() && !((JetClass) owner).isAnnotation()) {
                                             report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
                                         }
                                     }

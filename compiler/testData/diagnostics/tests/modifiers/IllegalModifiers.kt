@@ -27,20 +27,20 @@ class FinalClass() {
 annotation class annotated(val text: String = "not given")
 
 //Check legal modifiers in constructor
-class LegalModifier(val a: Int, annotated private var b: String, annotated vararg v: Int)
+class LegalModifier(val a: Int, annotated private var b: String, annotated vararg <!UNUSED_PARAMETER!>v<!>: Int)
 
 //Check illegal modifier in constructor parameters
-class IllegalModifiers1(<!ILLEGAL_MODIFIER!>private<!> a: Int)
+class IllegalModifiers1(<!ILLEGAL_MODIFIER!>private<!> <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
-class IllegalModifiers2(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>abstract<!> a: Int)
+class IllegalModifiers2(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
 
 
 //Check annotations with illegal modifiers in constructor
-class IllegalModifiers3(annotated <!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>abstract<!> b: String)
+class IllegalModifiers3(annotated <!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>abstract<!> <!UNUSED_PARAMETER!>b<!>: String)
 
 //Check annotations and vararg with illegal modifiers in constructor
-class IllegalModifiers4(val a: Int, annotated("a text") <!ILLEGAL_MODIFIER!>protected<!> vararg v: Int)
+class IllegalModifiers4(val a: Int, annotated("a text") <!ILLEGAL_MODIFIER!>protected<!> vararg <!UNUSED_PARAMETER!>v<!>: Int)
 
 //Check illegal modifiers for functions and catch block
 abstract class IllegalModifiers5() {

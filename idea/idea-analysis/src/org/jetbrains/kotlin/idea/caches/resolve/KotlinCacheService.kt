@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -64,6 +65,10 @@ public class KotlinCacheService(val project: Project) {
 
             override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
                 return cache.getAnalysisResultsForElements(elements)
+            }
+
+            override fun getFileTopLevelScope(file: JetFile): JetScope {
+                return getLazyResolveSession(file).getScopeProvider().getFileScope(file)
             }
 
             override fun <T> get(extension: CacheExtension<T>): T {

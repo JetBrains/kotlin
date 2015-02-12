@@ -37,7 +37,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var focusCycleRoot: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
         invisible_fake final override /*1*/ /*fake_override*/ var focusMgr: [ERROR : Unresolved java classifier: FocusManager]!
-        invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)>!
+        invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<*>!>!
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeysEnabled: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicy: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicyProvider: kotlin.Boolean
@@ -98,7 +98,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var prefSizeSet: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var preserveBackgroundColor: [ERROR : Unresolved java classifier: Color]!
         invisible_fake final override /*1*/ /*fake_override*/ var printing: kotlin.Boolean
-        invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+        invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: kotlin.(Mutable)Set<*>!
         invisible_fake final override /*1*/ /*fake_override*/ var resizable: kotlin.Boolean
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var rootPane: [ERROR : Unresolved java classifier: JRootPane]!
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var rootPaneCheckingEnabled: kotlin.Boolean
@@ -290,7 +290,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun getFocusOwner(): java.awt.Component!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-        invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+        invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<*>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
         public open override /*1*/ /*fake_override*/ fun getFocusableWindowState(): kotlin.Boolean
         [ERROR : java.beans.Transient]() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!

@@ -61,6 +61,7 @@ import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -92,6 +93,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                     else -> return
                 }
 
+                if (!ProjectRootsUtil.isInProjectSource(declaration)) return
+
                 // Simple PSI-based checks
                 if (declaration.getName() == null) return
                 if (declaration is JetEnumEntry) return
@@ -120,6 +123,10 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
+        // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
+        // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
+        if (declaration.getAnnotationEntries().any { it.getTypeReference().getText().endsWith("native") }) return false
+
         val lightElement: PsiElement? = when (declaration) {
             is JetClassOrObject -> declaration.toLightClass()
             is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)

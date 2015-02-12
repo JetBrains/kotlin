@@ -25,7 +25,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.codeInsight.editorActions.ReferenceTransferableData
 import com.intellij.codeInsight.daemon.impl.CollectHighlightsUtil
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -220,7 +220,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             return Collections.emptyList()
         }
         return referenceData.map {
-            if (ImportInsertHelper.getInstance().needImport(it.fqName, file)) {
+            if (ImportInsertHelper.getInstance(file.getProject()).needImport(it.fqName, file)) {
                 val referenceExpression = findReference(it, file, bounds)
                 if (referenceExpression != null) createReferenceToRestoreData(referenceExpression, it.fqName) else null
             }
@@ -284,7 +284,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     private fun restoreReferences(referencesToRestore: Collection<ReferenceToRestoreData>, file: JetFile) {
         for ((referenceExpression, fqName, shouldLengthen) in referencesToRestore) {
             if (!shouldLengthen) {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(fqName, file)
+                ImportInsertHelper.getInstance(file.getProject()).addImportDirectiveIfNeeded(fqName, file)
             }
             else {
                 //TODO: try to shorten reference after (sometimes is possible), need shorten reference to support all relevant cases

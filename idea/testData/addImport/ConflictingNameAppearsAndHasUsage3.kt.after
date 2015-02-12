@@ -1,0 +1,8 @@
+// IMPORT: java.util.ArrayList
+package p
+
+import dependency.*
+import java.util.*
+import dependency.Date
+
+val d = Date(1, 2)

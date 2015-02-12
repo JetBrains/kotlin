@@ -45,12 +45,12 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetPropertyDelegate
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -175,10 +175,9 @@ fun JetExpression.guessTypes(
         }
         parent is JetPropertyDelegate && module != null -> {
             val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
-            val delegateClassName = if (property.isVar() ) "ReadWriteProperty" else "ReadOnlyProperty"
-            val delegateClass =
-                    ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.properties.$delegateClassName")).firstOrNull()
-                    ?: return array(builtIns.getAnyType())
+            val delegateClassName = if (property.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
+            val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
+                                ?: return array(builtIns.getAnyType())
             val receiverType = (property.getExtensionReceiverParameter() ?: property.getDispatchReceiverParameter())?.getType()
                                ?: builtIns.getNullableNothingType()
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))

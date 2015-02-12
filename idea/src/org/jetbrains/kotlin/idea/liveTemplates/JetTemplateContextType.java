@@ -43,8 +43,14 @@ public abstract class JetTemplateContextType extends TemplateContextType {
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
-            if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
+            if (element == null) {
+                element = file.findElementAt(offset - 1);
+            }
+            if (element instanceof PsiWhiteSpace) {
                 return false;
+            }
+            else if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
+                return isCommentInContext();
             }
             else if (PsiTreeUtil.getParentOfType(element, JetPackageDirective.class) != null
                     || PsiTreeUtil.getParentOfType(element, JetImportDirective.class) != null) {
@@ -71,6 +77,10 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         return false;
     }
 
+    protected boolean isCommentInContext() {
+        return false;
+    }
+
     protected abstract boolean isInContext(@NotNull PsiElement element);
 
     public static class Generic extends JetTemplateContextType {
@@ -80,6 +90,11 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
+            return true;
+        }
+
+        @Override
+        protected boolean isCommentInContext() {
             return true;
         }
     }
@@ -133,7 +148,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
                 }
                 e = e.getParent();
             }
-            return true;
+            return e != null;
         }
     }
 
@@ -168,6 +183,22 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             return element.getParent() instanceof JetExpression && !(element.getParent() instanceof JetConstantExpression) &&
                    !(element.getParent().getParent() instanceof JetDotQualifiedExpression)
                    && !(element.getParent() instanceof JetParameter);
+        }
+    }
+
+    public static class Comment extends JetTemplateContextType {
+        public Comment() {
+            super("KOTLIN_COMMENT", "Comment", Generic.class);
+        }
+
+        @Override
+        protected boolean isInContext(@NotNull PsiElement element) {
+            return false;
+        }
+
+        @Override
+        protected boolean isCommentInContext() {
+            return true;
         }
     }
 }

@@ -18,23 +18,34 @@ package org.jetbrains.kotlin.idea.intentions;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Convertor;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.DirectiveBasedActionUtils;
+import org.jetbrains.kotlin.idea.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.util.application.ApplicationPackage;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
+public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
     private static IntentionAction createIntention(File testDataFile) throws Exception {
         List<File> candidateFiles = Lists.newArrayList();
 
@@ -60,12 +71,45 @@ public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
         return (IntentionAction) Class.forName(className).newInstance();
     }
 
+    private static final String[] EXTENSIONS = { ".kt", ".java", ".groovy" };
+
     protected void doTest(@NotNull String path) throws Exception {
-        IntentionAction intentionAction = createIntention(new File(path));
+        File mainFile = new File(path);
+        String mainFileName = FileUtil.getNameWithoutExtension(mainFile);
+        IntentionAction intentionAction = createIntention(mainFile);
+        List<String> sourceFilePaths = new ArrayList<String>();
+        File parentDir = mainFile.getParentFile();
+        extraFileLoop:
+        //noinspection ForLoopThatDoesntUseLoopVariable
+        for (int i = 1; true; i++) {
+            for (String extension : EXTENSIONS) {
+                File extraFile = new File(parentDir, mainFileName + "." + i + extension);
+                if (extraFile.exists()) {
+                    sourceFilePaths.add(extraFile.getPath());
+                    continue extraFileLoop;
+                }
+            }
+            break;
+        }
+        sourceFilePaths.add(path);
 
-        configureByFile(path);
+        Map<String, PsiFile> pathToFile = ContainerUtil.newMapFromKeys(
+                sourceFilePaths.iterator(),
+                new Convertor<String, PsiFile>() {
+                    @Override
+                    public PsiFile convert(String path) {
+                        try {
+                            configureByFile(path);
+                        }
+                        catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        return myFile;
+                    }
+                }
+        );
 
-        String fileText = FileUtil.loadFile(new File(path), true);
+        String fileText = FileUtil.loadFile(mainFile, true);
 
         String minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ");
         if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return;
@@ -79,16 +123,16 @@ public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
 
             DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
 
-            doTestFor(path, intentionAction, fileText);
+            doTestFor(pathToFile, intentionAction, fileText);
         }
         finally {
             if (isWithRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getTestProjectJdk());
             }
         }
     }
 
-    private void doTestFor(String path, IntentionAction intentionAction, String fileText) {
+    private void doTestFor(Map<String, PsiFile> pathToFile, final IntentionAction intentionAction, String fileText) throws Exception {
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
@@ -106,11 +150,26 @@ public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
 
         try {
             if (isApplicableExpected) {
-                intentionAction.invoke(getProject(), getEditor(), getFile());
+                ApplicationPackage.executeWriteCommand(
+                        getProject(),
+                        intentionAction.getText(),
+                        new Function0<Object>() {
+                            @Override
+                            public Object invoke() {
+                                intentionAction.invoke(getProject(), getEditor(), getFile());
+                                return null;
+                            }
+                        }
+                );
                 // Don't bother checking if it should have failed.
                 if (shouldFailString == null) {
-                    String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(path + ".after");
-                    checkResultByFile(canonicalPathToExpectedFile);
+                    for (Map.Entry<String, PsiFile> entry: pathToFile.entrySet()) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
+                        myFile = entry.getValue();
+                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(entry.getKey() + ".after");
+
+                        checkResultByFile(canonicalPathToExpectedFile);
+                    }
                 }
             }
             assertNull("Expected test to fail.", shouldFailString);
@@ -118,6 +177,15 @@ public abstract class AbstractIntentionTest extends LightCodeInsightTestCase {
         catch (IntentionTestException e) {
             assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
+        catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
+            assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
+        }
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
     @NotNull

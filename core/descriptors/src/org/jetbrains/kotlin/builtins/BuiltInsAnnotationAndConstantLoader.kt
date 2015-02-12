@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.types.JetType
 
 class BuiltInsAnnotationAndConstantLoader(
         module: ModuleDescriptor
@@ -61,9 +62,9 @@ class BuiltInsAnnotationAndConstantLoader(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
-            kind: AnnotatedCallableKind
+            expectedType: JetType
     ): CompileTimeConstant<*>? {
-        // TODO: support deserialization of compile time constants in built-ins when needed
-        throw UnsupportedOperationException()
+        val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
+        return deserializer.resolveValue(expectedType, value, nameResolver)
     }
 }

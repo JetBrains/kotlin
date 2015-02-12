@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import java.util.LinkedHashSet
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,
@@ -232,6 +233,14 @@ public class LazyJavaClassMemberScope(
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keySet() + enumEntryIndex().keySet()
+
+    override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
+            memberIndex().getAllFieldNames() +
+            getContainingDeclaration().getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
+                supertype.getMemberScope().getDescriptors(kindFilter, nameFilter).map { variable ->
+                    variable.getName()
+                }
+            }
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

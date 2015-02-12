@@ -16,7 +16,13 @@
 
 package kotlin
 
+/**
+ * Represents a property in a Kotlin class.
+ */
 public trait PropertyMetadata {
+    /**
+     * The name of the property.
+     */
     public val name: String
 }
 

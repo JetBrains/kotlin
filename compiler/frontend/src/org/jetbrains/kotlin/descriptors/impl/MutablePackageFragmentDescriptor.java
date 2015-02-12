@@ -26,24 +26,17 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 
 public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorImpl {
     private final WritableScope scope;
-    private final PackageLikeBuilder builder;
 
     public MutablePackageFragmentDescriptor(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
         super(module, fqName);
 
         scope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        builder = new ScopeBasedPackageLikeBuilder(this, scope);
     }
 
     @NotNull
     @Override
     public WritableScope getMemberScope() {
         return scope;
-    }
-
-    @NotNull
-    public PackageLikeBuilder getBuilder() {
-        return builder;
     }
 }

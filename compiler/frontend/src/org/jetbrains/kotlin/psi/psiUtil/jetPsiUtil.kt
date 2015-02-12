@@ -87,6 +87,14 @@ inline public fun PsiElement.getNonStrictParentOfType<reified T: PsiElement>(): 
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
 }
 
+inline public fun PsiElement.getChildOfType<reified T: PsiElement>(): T? {
+    return PsiTreeUtil.getChildOfType(this, javaClass<T>())
+}
+
+inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T> {
+    return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: array()
+}
+
 public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
     return PsiTreeUtil.isAncestor(this, element, strict)
 }

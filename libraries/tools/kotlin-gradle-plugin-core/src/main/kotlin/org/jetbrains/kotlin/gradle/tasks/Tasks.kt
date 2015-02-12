@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.utils.LibraryUtils
+import com.intellij.openapi.util.io.FileUtil
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -121,7 +122,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noParamAssertions = kotlinOptions.noParamAssertions
     }
 
-    private fun getJavaSourceRoots(): Set<File> = 
+    private fun getJavaSourceRoots(): Set<File> =
             getSource()
             .filter { isJava(it) }
             .map { findSrcDirRoot(it) }
@@ -160,7 +161,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     fun findSrcDirRoot(file: File): File? {
         for (source in srcDirsSources) {
             for (root in source.getSrcDirs()) {
-                if (FileUtils.directoryContains(root, file)) {
+                if (FileUtil.isAncestor(root, file, false)) {
                     return root
                 }
             }

@@ -35,7 +35,6 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
@@ -213,9 +212,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
             parametersScope = ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
         else if (function instanceof JetFunction)
-            parametersScope = getFunctionBodyScope((JetFunction) function, bindingContext);
+            parametersScope = RefactoringPackage.getBodyScope((JetFunction) function, bindingContext);
 
-        JetScope functionScope = getFunctionScope(bindingContext, containingDeclaration);
+        JetScope functionScope = RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
         if (!ChangeSignaturePackage.getIsConstructor(changeInfo) && functionScope != null && !info.getNewName().isEmpty()) {
             for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
@@ -261,36 +260,6 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
 
         return result;
-    }
-
-    @Nullable
-    private static JetScope getFunctionScope(BindingContext bindingContext, DeclarationDescriptor containingDeclaration) {
-        if (containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
-            return ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
-        else if (containingDeclaration instanceof FunctionDescriptorImpl) {
-            PsiElement container = DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration);
-
-            if (container instanceof JetFunction)
-                return getFunctionBodyScope((JetFunction) container, bindingContext);
-        }
-        else if (containingDeclaration instanceof PackageFragmentDescriptor)
-            return ((PackageFragmentDescriptor) containingDeclaration).getMemberScope();
-
-        return null;
-    }
-
-    @Nullable
-    static JetScope getFunctionBodyScope(JetFunction element, BindingContext bindingContext) {
-        JetExpression body = element.getBodyExpression();
-
-        if (body != null) {
-            for (PsiElement child : body.getChildren()) {
-                if (child instanceof JetExpression)
-                    return bindingContext.get(BindingContext.RESOLUTION_SCOPE, (JetExpression)child);
-            }
-        }
-
-        return null;
     }
 
     private static List<JetType> getFunctionParameterTypes(FunctionDescriptor descriptor) {

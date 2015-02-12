@@ -584,9 +584,7 @@ public class TypeUtils {
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new TypeProjectionImpl(parameterDescriptor.getVariance() == Variance.OUT_VARIANCE
-                                      ? Variance.INVARIANT
-                                      : Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
+        return new StarProjectionImpl(parameterDescriptor.getUpperBoundsAsType());
     }
 
     @Nullable

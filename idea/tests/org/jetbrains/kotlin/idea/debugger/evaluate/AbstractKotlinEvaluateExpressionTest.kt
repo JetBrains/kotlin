@@ -59,8 +59,9 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.debugger.settings.NodeRendererSettings
-import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.SourcePosition
+import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.debugger.ui.impl.watch.WatchItemDescriptor
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -108,7 +109,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
-        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
+        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").joinToString("\n") }
 
         createDebugProcess(path)
 
@@ -128,7 +129,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                     }
                 }
 
-                for ((i, block) in blocks.withIndices()) {
+                for ((i, block) in blocks.withIndex()) {
                     mayThrow(exceptions, block) {
                         evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
                     }
@@ -182,7 +183,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
         for (breakpoint in breakpoints) {
             val position = breakpoint.split(".kt:")
-            assert(position.size == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
+            assert(position.size() == 2, "Couldn't parse position from test directive: directive = ${breakpoint}")
             createBreakpoint(position[0], position[1])
         }
     }
@@ -218,12 +219,15 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val tree = FrameVariablesTree(getProject()!!)
         Disposer.register(getTestRootDisposable()!!, tree);
 
-        val debuggerContext = createDebuggerContext(this)
         invokeRatherLater(this) {
             tree.rebuild(debuggerContext)
             expandAll(tree, Runnable {
                 try {
-                    Printer(debuggerContext).printTree(tree)
+                    val printer = Printer()
+                    printer.printTree(tree)
+                    for (extra in getExtraVars()) {
+                        printer.printDescriptor(tree.getNodeFactory().getWatchItemDescriptor(null, extra, null), 2)
+                    }
                 }
                 finally {
                     resume(this@printFrame)
@@ -232,7 +236,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         }
     }
 
-    private inner class Printer(val debuggerContext: DebuggerContextImpl) {
+    fun getExtraVars(): Set<TextWithImports> {
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.getSourcePosition(), evaluationContext, hashSetOf())!!
+    }
+
+    private inner class Printer() {
         fun printTree(tree: DebuggerTree) {
             val root = tree.getMutableModel()!!.getRoot() as DebuggerTreeNodeImpl
             printNode(root, 0)
@@ -240,22 +248,29 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
         private fun printNode(node: DebuggerTreeNodeImpl, indent: Int) {
             val descriptor: NodeDescriptorImpl = node.getDescriptor()!!
-            if (descriptor is DefaultNodeDescriptor) return
+
+            if (printDescriptor(descriptor, indent)) return
+
+            printChildren(node, indent + 2)
+        }
+
+        fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
+            if (descriptor is DefaultNodeDescriptor) return true
 
             val label = descriptor.getLabel()!!.replaceAll("Package\\$[\\w]*\\$[0-9a-f]+", "Package\\$@packagePartHASH")
-            if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return
+            if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return true
 
             val curIndent = " ".repeat(indent)
             when (descriptor) {
                 is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
+                is WatchItemDescriptor ->     logDescriptor(descriptor, "$curIndent extra    = ${descriptor.calcValueName()}\n")
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
-
-            printChildren(node, indent + 2)
+            return false
         }
 
         private fun printChildren(node: DebuggerTreeNodeImpl, indent: Int) {
@@ -267,11 +282,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
-        if (!exceptions.empty) {
+        if (!exceptions.isEmpty()) {
             for (exc in exceptions.values()) {
                 exc.printStackTrace()
             }
-            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
+            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.joinToString("\n"))
         }
     }
 
@@ -287,7 +302,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
-        assert(directives.size == expected.size, "Sizes of test directives are different")
+        assert(directives.size() == expected.size(), "Sizes of test directives are different")
         return directives.zip(expected)
     }
 
@@ -317,7 +332,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-                val value = evaluator.evaluate(createEvaluationContext(this))
+                val value = evaluator.evaluate(evaluationContext)
                 val actualResult = value.asValue().asString()
 
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)

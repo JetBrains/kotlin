@@ -1,5 +1,5 @@
 class SortedSet
 
-fun test() {
+fun test(set: SortedSet) {
   val a = SortedSet<caret>
 }

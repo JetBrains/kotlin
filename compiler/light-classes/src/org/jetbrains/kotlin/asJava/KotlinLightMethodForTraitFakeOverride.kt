@@ -24,11 +24,15 @@ import com.intellij.psi.PsiElement
 
 public class KotlinLightMethodForTraitFakeOverride(
         manager: PsiManager,
-        override val delegate: PsiMethod,
-        override val origin: JetDeclaration,
+        private val delegate: PsiMethod,
+        private val origin: JetDeclaration,
         containingClass: PsiClass
 ) : KotlinLightMethodForDeclaration(manager, delegate, origin, containingClass) {
+    override fun getDelegate(): PsiMethod = delegate
+
+    override fun getOrigin(): JetDeclaration = origin
+
     override fun copy(): PsiElement {
-        return KotlinLightMethodForTraitFakeOverride(getManager()!!, delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
+        return KotlinLightMethodForTraitFakeOverride(getManager(), delegate, origin.copy() as JetDeclaration, getContainingClass())
     }
 }

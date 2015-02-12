@@ -3,7 +3,7 @@ package kotlin
 import java.util.Enumeration
 
 /**
- * Helper to make java.util.Enumeration usable in for
+ * Creates an [Iterator] for an [Enumeration], allowing to use it in `for` loops.
  */
 public fun <T> Enumeration<T>.iterator(): Iterator<T> = object : Iterator<T> {
     override fun hasNext(): Boolean = hasMoreElements()
@@ -12,7 +12,7 @@ public fun <T> Enumeration<T>.iterator(): Iterator<T> = object : Iterator<T> {
 }
 
 /**
- * Returns the given iterator itself. This allows to use an instance of iterator in a ranged for-loop
+ * Returns the given iterator itself. This allows to use an instance of iterator in a `for` loop.
  */
 public fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
@@ -26,7 +26,7 @@ public class IndexingIterable<out T>(private val iteratorFactory: () -> Iterator
 }
 
 /**
- * Iterator transforming original *iterator* into iterator of [IndexedValue], counting index from zero.
+ * Iterator transforming original `iterator` into iterator of [IndexedValue], counting index from zero.
  */
 public class IndexingIterator<out T>(private val iterator: Iterator<T>) : Iterator<IndexedValue<T>> {
     private var index = 0

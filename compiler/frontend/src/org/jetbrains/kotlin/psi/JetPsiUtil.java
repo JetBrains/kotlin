@@ -834,15 +834,24 @@ public class JetPsiUtil {
             }
         }
 
-        //noinspection unchecked
-        JetElement container = PsiTreeUtil.getParentOfType(
-                declaration,
-                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class, JetParameter.class
-        );
-        if (container == null) return null;
-        if (container.getParent() instanceof JetScript) return null;
+        // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
+        PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
+        while (current != null) {
+            PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
+            if (parent instanceof JetScript) return null;
+            if (current instanceof JetClassInitializer) {
+                return ((JetClassInitializer) current).getBody();
+            }
+            if (current instanceof JetBlockExpression ||
+                current instanceof JetProperty ||
+                current instanceof JetParameter ||
+                current instanceof JetFunction) {
+                return (JetElement) current;
+            }
 
-        return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;
+            current = parent;
+        }
+        return null;
     }
 
     public static boolean isLocal(@NotNull JetDeclaration declaration) {

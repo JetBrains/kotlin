@@ -22,6 +22,7 @@ import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import com.intellij.psi.PsiElement
 
 public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
@@ -32,7 +33,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      * or the code has a syntax error.
      */
     override fun getName(): String? {
-        val tagName = findChildByType(KDocTokens.TAG_NAME)
+        val tagName: PsiElement? = findChildByType(KDocTokens.TAG_NAME)
         if (tagName != null) {
             return tagName.getText().substring(1)
         }
@@ -43,19 +44,25 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      * Returns the name of the entity documented by this tag (for example, the name of the parameter
      * for the @param tag), or null if this tag does not document any specific entity.
      */
-    public fun getSubjectName(): String? {
+    public fun getSubjectName(): String? = getSubjectLink()?.getLinkText()
+
+    public fun getSubjectLink(): KDocLink? {
         val children = childrenAfterTagName()
         if (hasSubject(children)) {
-            return (children.firstOrNull()?.getPsi() as? KDocLink)?.getLinkText()
+            return children.firstOrNull()?.getPsi() as? KDocLink
         }
         return null
     }
 
+    public val knownTag: KDocKnownTag?
+        get() {
+            val name = getName()
+            return if (name != null) KDocKnownTag.findByTagName(name) else null
+        }
+
     private fun hasSubject(contentChildren: List<ASTNode>): Boolean {
-        val name = getName()
-        val knownTag = if (name != null) KDocKnownTag.findByTagName(name) else null
         if (knownTag?.isReferenceRequired() ?: false) {
-            return contentChildren.firstOrNull()?.getElementType() == KDocElementTypes.KDOC_LINK;
+            return contentChildren.firstOrNull()?.getElementType() == KDocTokens.MARKDOWN_LINK
         }
         return false
     }
@@ -65,7 +72,11 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 .dropWhile { it.getElementType() == KDocTokens.TAG_NAME }
                 .dropWhile { it.getElementType() == TokenType.WHITE_SPACE }
 
-    public fun getContent(): String {
+    /**
+     * Returns the content of this tag (all text following the tag name and the subject if present,
+     * with leading asterisks removed).
+     */
+    public open fun getContent(): String {
         val builder = StringBuilder()
 
         var contentStarted = false
@@ -77,7 +88,7 @@ public open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         }
         for (node in children) {
             val type = node.getElementType()
-            if (KDocTokens.CONTENT_TOKENS.contains(type) || type == KDocElementTypes.KDOC_LINK) {
+            if (KDocTokens.CONTENT_TOKENS.contains(type)) {
                 contentStarted = true
                 builder.append(if (afterAsterisk) StringUtil.trimLeading(node.getText()) else node.getText())
                 afterAsterisk = false

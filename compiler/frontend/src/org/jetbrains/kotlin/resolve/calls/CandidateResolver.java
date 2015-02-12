@@ -51,7 +51,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
-import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.deparenthesizeArgument;
+import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke;
@@ -279,9 +279,9 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression)) return;
+        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression, context)) return;
 
-        JetFunctionLiteralExpression functionLiteralExpression = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression);
+        JetFunctionLiteralExpression functionLiteralExpression = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression, context);
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
@@ -379,8 +379,8 @@ public class CandidateResolver {
                     ? TypeUtils.makeNotNullable(receiverArgument.getType())
                     : receiverArgument.getType();
             if (receiverArgument instanceof ExpressionReceiver) {
-                receiverType = updateResultTypeForSmartCasts(receiverType, ((ExpressionReceiver) receiverArgument).getExpression(),
-                                                             context.dataFlowInfo, context.trace);
+                receiverType = updateResultTypeForSmartCasts(
+                        receiverType, ((ExpressionReceiver) receiverArgument).getExpression(), context);
             }
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position());
         }
@@ -424,7 +424,8 @@ public class CandidateResolver {
                 argumentExpression, newContext, resolveFunctionArgumentBodies);
         context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.getDataFlowInfo());
 
-        JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, dataFlowInfoForArgument, context.trace);
+        JetType type = updateResultTypeForSmartCasts(
+                typeInfoForCall.getType(), argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument));
         constraintSystem.addSubtypeConstraint(
                 type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
     }
@@ -433,16 +434,15 @@ public class CandidateResolver {
     private static JetType updateResultTypeForSmartCasts(
             @Nullable JetType type,
             @Nullable JetExpression argumentExpression,
-            @NotNull DataFlowInfo dataFlowInfoForArgument,
-            @NotNull BindingTrace trace
+            @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedArgument = deparenthesizeArgument(argumentExpression);
+        JetExpression deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context);
         if (deparenthesizedArgument == null || type == null) return type;
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context.trace.getBindingContext());
         if (!dataFlowValue.isStableIdentifier()) return type;
 
-        Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
+        Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 
         return TypeUtils.intersect(JetTypeChecker.DEFAULT, possibleTypes);

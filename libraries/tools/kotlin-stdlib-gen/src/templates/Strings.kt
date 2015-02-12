@@ -8,10 +8,10 @@ fun strings(): List<GenericFunction> {
     templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
-            Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+            Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
 
-            If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
-            a special *truncated* separator (which defaults to "...")
+            If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+            elements will be appended, followed by the [truncated] string (which defaults to "...").
             """
         }
         typeParam("A : Appendable")
@@ -54,10 +54,10 @@ fun strings(): List<GenericFunction> {
     templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
-            Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+            Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
 
-            If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
-            a special *truncated* separator (which defaults to "..."
+            If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+            elements will be appended, followed by the [truncated] string (which defaults to "...").
             """
         }
 

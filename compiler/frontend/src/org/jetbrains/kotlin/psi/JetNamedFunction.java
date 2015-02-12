@@ -77,6 +77,13 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
         return getEqualsToken() == null;
     }
 
+    @NotNull
+    public PsiElement getFunToken() {
+        PsiElement element = findChildByType(JetTokens.FUN_KEYWORD);
+        assert element != null : "'fun' must be present: " + JetPsiUtil.getElementTextWithContext(this);
+        return element;
+    }
+
     @Override
     @Nullable
     public PsiElement getEqualsToken() {

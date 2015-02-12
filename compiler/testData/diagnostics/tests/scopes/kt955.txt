@@ -31,7 +31,7 @@ package java {
             // Static members
             private final var APP_CONTEXT_CACHE_KEY: kotlin.Any!
             private final var APP_CONTEXT_KEYSTROKE_KEY: java.awt.AWTKeyStroke!
-            private final var modifierKeywords: (kotlin.MutableMap<out kotlin.Any?, out kotlin.Any?>..kotlin.Map<out kotlin.Any?, kotlin.Any?>?)
+            private final var modifierKeywords: kotlin.(Mutable)Map<*, *>!
             public/*package*/ final val serialVersionUID: kotlin.Long = -6430539691155161871.toLong()
             private final var vks: [ERROR : Unresolved java classifier: VKCollection]!
             public open fun getAWTKeyStroke(/*0*/ p0: kotlin.Char): java.awt.AWTKeyStroke!
@@ -39,17 +39,17 @@ package java {
             public open fun getAWTKeyStroke(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): java.awt.AWTKeyStroke!
             public open fun getAWTKeyStroke(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean): java.awt.AWTKeyStroke!
             public open fun getAWTKeyStroke(/*0*/ p0: kotlin.String!): java.awt.AWTKeyStroke!
-            private open fun getAWTKeyStrokeClass(): java.lang.Class<out kotlin.Any?>!
+            private open fun getAWTKeyStrokeClass(): java.lang.Class<*>!
             public open fun getAWTKeyStrokeForEvent(/*0*/ p0: [ERROR : Unresolved java classifier: KeyEvent]!): java.awt.AWTKeyStroke!
             private open fun getCachedStroke(/*0*/ p0: kotlin.Char, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Boolean): java.awt.AWTKeyStroke!
-            private open fun getCtor(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): java.lang.reflect.Constructor<out kotlin.Any?>!
+            private open fun getCtor(/*0*/ p0: java.lang.Class<*>!): java.lang.reflect.Constructor<*>!
             public/*package*/ open fun getModifiersText(/*0*/ p0: kotlin.Int): kotlin.String!
             private open fun getVKCollection(): [ERROR : Unresolved java classifier: VKCollection]!
             public/*package*/ open fun getVKText(/*0*/ p0: kotlin.Int): kotlin.String!
             private open fun getVKValue(/*0*/ p0: kotlin.String!): kotlin.Int
             private open fun mapNewModifiers(/*0*/ p0: kotlin.Int): kotlin.Int
             private open fun mapOldModifiers(/*0*/ p0: kotlin.Int): kotlin.Int
-            protected/*protected static*/ open fun registerSubclass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+            protected/*protected static*/ open fun registerSubclass(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
         }
 
         public abstract class Component : java.io.Serializable {
@@ -74,7 +74,7 @@ package java {
             public/*package*/ final var eventCache: kotlin.Array<(out) [ERROR : Unresolved java classifier: EventQueueItem]!>!
             public/*package*/ final var eventMask: kotlin.Long
             public/*package*/ final var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
-            public/*package*/ final var focusTraversalKeys: kotlin.Array<(out) (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)>!
+            public/*package*/ final var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<*>!>!
             private final var focusTraversalKeysEnabled: kotlin.Boolean
             private final var focusable: kotlin.Boolean
             public/*package*/ final var font: [ERROR : Unresolved java classifier: Font]!
@@ -216,7 +216,7 @@ package java {
             public open fun getFocusListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: FocusListener]!>!
             public open fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
             public open fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-            public/*package*/ final fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            public/*package*/ final fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<*>!
             [ERROR : java.beans.Transient]() public open fun getFont(): [ERROR : Unresolved java classifier: Font]!
             public open fun getFontMetrics(/*0*/ p0: [ERROR : Unresolved java classifier: Font]!): [ERROR : Unresolved java classifier: FontMetrics]!
             public/*package*/ final fun getFont_NoClientCode(): [ERROR : Unresolved java classifier: Font]!
@@ -749,8 +749,8 @@ package java {
             public final val TOP_ALIGNMENT: kotlin.Float = 0.0.toFloat()
             public/*package*/ final val actionListenerK: kotlin.String = "actionL"
             public/*package*/ final val adjustmentListenerK: kotlin.String = "adjustmentL"
-            private final val coalesceEventsParams: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-            private final val coalesceMap: kotlin.(Mutable)Map<java.lang.Class<out kotlin.Any?>!, kotlin.Boolean!>!
+            private final val coalesceEventsParams: kotlin.Array<(out) java.lang.Class<*>!>!
+            private final val coalesceMap: kotlin.(Mutable)Map<java.lang.Class<*>!, kotlin.Boolean!>!
             public/*package*/ final val componentListenerK: kotlin.String = "componentL"
             public/*package*/ final val containerListenerK: kotlin.String = "containerL"
             private final val eventLog: [ERROR : Unresolved java classifier: PlatformLogger]!
@@ -777,7 +777,7 @@ package java {
             public/*package*/ final val windowListenerK: kotlin.String = "windowL"
             public/*package*/ final val windowStateListenerK: kotlin.String = "windowStateL"
             private open fun initIDs(): kotlin.Unit
-            private open fun isCoalesceEventsOverriden(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            private open fun isCoalesceEventsOverriden(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             public/*package*/ open fun isInstanceOf(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.String!): kotlin.Boolean
             public/*package*/ open fun setRequestFocusController(/*0*/ p0: [ERROR : Unresolved java classifier: RequestFocusController]!): kotlin.Unit
         }
@@ -810,7 +810,7 @@ package java {
             public/*package*/ final override /*1*/ /*fake_override*/ var eventMask: kotlin.Long
             private final var focusCycleRoot: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
-            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)>!
+            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<*>!>!
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeysEnabled: kotlin.Boolean
             private final var focusTraversalPolicy: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             private final var focusTraversalPolicyProvider: kotlin.Boolean
@@ -855,7 +855,7 @@ package java {
             public/*package*/ final override /*1*/ /*fake_override*/ var prefSizeSet: kotlin.Boolean
             public/*package*/ final var preserveBackgroundColor: [ERROR : Unresolved java classifier: Color]!
             private final var printing: kotlin.Boolean
-            private final var printingThreads: (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            private final var printingThreads: kotlin.(Mutable)Set<*>!
             invisible_fake final override /*1*/ /*fake_override*/ var valid: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var visible: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var width: kotlin.Int
@@ -1000,7 +1000,7 @@ package java {
             public open override /*1*/ /*fake_override*/ fun getFocusListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: FocusListener]!>!
             public open override /*1*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<*>!
             public open fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             [ERROR : java.beans.Transient]() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
             public open override /*1*/ /*fake_override*/ fun getFontMetrics(/*0*/ p0: [ERROR : Unresolved java classifier: Font]!): [ERROR : Unresolved java classifier: FontMetrics]!
@@ -1453,7 +1453,7 @@ package java {
             invisible_fake final override /*1*/ /*fake_override*/ var focusCycleRoot: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
             invisible_fake final override /*1*/ /*fake_override*/ var focusMgr: [ERROR : Unresolved java classifier: FocusManager]!
-            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)>!
+            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<*>!>!
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeysEnabled: kotlin.Boolean
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicy: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicyProvider: kotlin.Boolean
@@ -1514,7 +1514,7 @@ package java {
             public/*package*/ final override /*1*/ /*fake_override*/ var prefSizeSet: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var preserveBackgroundColor: [ERROR : Unresolved java classifier: Color]!
             invisible_fake final override /*1*/ /*fake_override*/ var printing: kotlin.Boolean
-            invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: kotlin.(Mutable)Set<*>!
             public/*package*/ final var resizable: kotlin.Boolean
             invisible_fake final override /*1*/ /*fake_override*/ var securityWarningAlignmentX: kotlin.Float
             invisible_fake final override /*1*/ /*fake_override*/ var securityWarningAlignmentY: kotlin.Float
@@ -1699,7 +1699,7 @@ package java {
             public open override /*1*/ /*fake_override*/ fun getFocusOwner(): java.awt.Component!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<*>!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             public open override /*1*/ /*fake_override*/ fun getFocusableWindowState(): kotlin.Boolean
             [ERROR : java.beans.Transient]() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
@@ -2242,7 +2242,7 @@ package java {
             invisible_fake final override /*1*/ /*fake_override*/ var focusCycleRoot: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
             private final var focusMgr: [ERROR : Unresolved java classifier: FocusManager]!
-            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)>!
+            public/*package*/ final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<*>!>!
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeysEnabled: kotlin.Boolean
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicy: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicyProvider: kotlin.Boolean
@@ -2298,7 +2298,7 @@ package java {
             public/*package*/ final override /*1*/ /*fake_override*/ var prefSizeSet: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var preserveBackgroundColor: [ERROR : Unresolved java classifier: Color]!
             invisible_fake final override /*1*/ /*fake_override*/ var printing: kotlin.Boolean
-            invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: kotlin.(Mutable)Set<*>!
             private final var securityWarningAlignmentX: kotlin.Float
             private final var securityWarningAlignmentY: kotlin.Float
             private final var securityWarningHeight: kotlin.Int
@@ -2478,7 +2478,7 @@ package java {
             public open fun getFocusOwner(): java.awt.Component!
             public open override /*1*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            public/*package*/ final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<*>!
             public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
             public open fun getFocusableWindowState(): kotlin.Boolean
             [ERROR : java.beans.Transient]() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
@@ -3033,68 +3033,68 @@ package java {
                 public constructor BeanContextServicesSupport(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: java.util.Locale!)
                 public constructor BeanContextServicesSupport(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: java.util.Locale!, /*2*/ p2: kotlin.Boolean)
                 public constructor BeanContextServicesSupport(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: java.util.Locale!, /*2*/ p2: kotlin.Boolean, /*3*/ p3: kotlin.Boolean)
-                protected/*protected and package*/ final var bcsListeners: java.util.ArrayList<out kotlin.Any?>!
+                protected/*protected and package*/ final var bcsListeners: java.util.ArrayList<*>!
                 protected/*protected and package*/ final var proxy: java.beans.beancontext.BeanContextServicesSupport.BCSSProxyServiceProvider!
                 protected/*protected and package*/ final var serializable: kotlin.Int
-                protected/*protected and package*/ final var services: java.util.HashMap<out kotlin.Any?, out kotlin.Any?>!
+                protected/*protected and package*/ final var services: java.util.HashMap<*, *>!
                 public open fun addBeanContextServicesListener(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServicesListener]!): kotlin.Unit
-                public open fun addService(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!): kotlin.Boolean
-                protected/*protected and package*/ open fun addService(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p2: kotlin.Boolean): kotlin.Boolean
+                public open fun addService(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!): kotlin.Boolean
+                protected/*protected and package*/ open fun addService(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p2: kotlin.Boolean): kotlin.Boolean
                 protected/*protected and package*/ open fun bcsPreDeserializationHook(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
                 protected/*protected and package*/ open fun bcsPreSerializationHook(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
                 protected/*protected and package*/ open fun childJustRemovedHook(/*0*/ p0: kotlin.Any!, /*1*/ p1: [ERROR : Unresolved java classifier: BCSChild]!): kotlin.Unit
                 protected/*protected and package*/ open fun createBCSChild(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): [ERROR : Unresolved java classifier: BCSChild]!
-                protected/*protected and package*/ open fun createBCSSServiceProvider(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!): java.beans.beancontext.BeanContextServicesSupport.BCSSServiceProvider!
+                protected/*protected and package*/ open fun createBCSSServiceProvider(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!): java.beans.beancontext.BeanContextServicesSupport.BCSSServiceProvider!
                 protected/*protected and package*/ final fun fireServiceAdded(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServiceAvailableEvent]!): kotlin.Unit
-                protected/*protected and package*/ final fun fireServiceAdded(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+                protected/*protected and package*/ final fun fireServiceAdded(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
                 protected/*protected and package*/ final fun fireServiceRevoked(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!): kotlin.Unit
-                protected/*protected and package*/ final fun fireServiceRevoked(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+                protected/*protected and package*/ final fun fireServiceRevoked(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
                 public open fun getBeanContextServicesPeer(): [ERROR : Unresolved java classifier: BeanContextServices]!
-                public open fun getCurrentServiceClasses(): kotlin.(Mutable)Iterator<kotlin.Any?>!
-                public open fun getCurrentServiceSelectors(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.(Mutable)Iterator<kotlin.Any?>!
-                public final /*synthesized*/ fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextChild]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: kotlin.Any!, /*4*/ p4: (([ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!) -> kotlin.Unit)!): kotlin.Any!
-                public open fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextChild]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: kotlin.Any!, /*4*/ p4: java.beans.beancontext.BeanContextServiceRevokedListener!): kotlin.Any!
-                public open fun hasService(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+                public open fun getCurrentServiceClasses(): kotlin.(Mutable)Iterator<*>!
+                public open fun getCurrentServiceSelectors(/*0*/ p0: java.lang.Class<*>!): kotlin.(Mutable)Iterator<*>!
+                public final /*synthesized*/ fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextChild]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: kotlin.Any!, /*4*/ p4: (([ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!) -> kotlin.Unit)!): kotlin.Any!
+                public open fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextChild]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: kotlin.Any!, /*4*/ p4: java.beans.beancontext.BeanContextServiceRevokedListener!): kotlin.Any!
+                public open fun hasService(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
                 public open fun initialize(): kotlin.Unit
                 protected/*protected and package*/ open fun initializeBeanContextResources(): kotlin.Unit
                 private open fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
                 protected/*protected and package*/ open fun releaseBeanContextResources(): kotlin.Unit
                 public open fun releaseService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextChild]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Unit
                 public open fun removeBeanContextServicesListener(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServicesListener]!): kotlin.Unit
-                public open fun revokeService(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
+                public open fun revokeService(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
                 public open fun serviceAvailable(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServiceAvailableEvent]!): kotlin.Unit
                 public open fun serviceRevoked(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!): kotlin.Unit
                 private open fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 
                 protected/*protected and package*/ open inner class BCSSChild {
                     public/*package*/ constructor BCSSChild(/*0*/ p2: kotlin.Any!, /*1*/ p3: kotlin.Any!)
-                    private final var serviceClasses: java.util.HashMap<out kotlin.Any?, out kotlin.Any?>!
-                    private final var serviceRequestors: java.util.HashMap<out kotlin.Any?, out kotlin.Any?>!
+                    private final var serviceClasses: java.util.HashMap<*, *>!
+                    private final var serviceRequestors: java.util.HashMap<*, *>!
                     public/*package*/ open fun cleanupReferences(): kotlin.Unit
                     public/*package*/ open fun releaseService(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Unit
                     public/*package*/ open fun revokeAllDelegatedServicesNow(): kotlin.Unit
-                    public/*package*/ open fun revokeService(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: kotlin.Boolean): kotlin.Unit
-                    public/*package*/ final /*synthesized*/ fun usingService(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: (([ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!) -> kotlin.Unit)!): kotlin.Unit
-                    public/*package*/ open fun usingService(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: java.beans.beancontext.BeanContextServiceRevokedListener!): kotlin.Unit
+                    public/*package*/ open fun revokeService(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: kotlin.Boolean): kotlin.Unit
+                    public/*package*/ final /*synthesized*/ fun usingService(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: (([ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!) -> kotlin.Unit)!): kotlin.Unit
+                    public/*package*/ open fun usingService(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: java.beans.beancontext.BeanContextServiceRevokedListener!): kotlin.Unit
 
                     public/*package*/ open inner class BCSSCServiceClassRef {
-                        public/*package*/ constructor BCSSCServiceClassRef(/*0*/ p2: java.lang.Class<out kotlin.Any?>!, /*1*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p4: kotlin.Boolean)
+                        public/*package*/ constructor BCSSCServiceClassRef(/*0*/ p2: java.lang.Class<*>!, /*1*/ p3: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!, /*2*/ p4: kotlin.Boolean)
                         public/*package*/ final var delegateProvider: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
                         public/*package*/ final var delegateRefs: kotlin.Int
-                        public/*package*/ final var requestors: java.util.HashMap<out kotlin.Any?, out kotlin.Any?>!
-                        public/*package*/ final var serviceClass: java.lang.Class<out kotlin.Any?>!
+                        public/*package*/ final var requestors: java.util.HashMap<*, *>!
+                        public/*package*/ final var serviceClass: java.lang.Class<*>!
                         public/*package*/ final var serviceProvider: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
                         public/*package*/ final var serviceRefs: kotlin.Int
                         public/*package*/ open fun addRef(/*0*/ p0: kotlin.Boolean): kotlin.Unit
                         public/*package*/ final /*synthesized*/ fun addRequestor(/*0*/ p0: kotlin.Any!, /*1*/ p1: (([ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!) -> kotlin.Unit)!): kotlin.Unit
                         public/*package*/ open fun addRequestor(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.beans.beancontext.BeanContextServiceRevokedListener!): kotlin.Unit
-                        public/*package*/ open fun cloneOfEntries(): kotlin.(Mutable)Iterator<kotlin.Any?>!
-                        public/*package*/ open fun entries(): kotlin.(Mutable)Iterator<kotlin.Any?>!
+                        public/*package*/ open fun cloneOfEntries(): kotlin.(Mutable)Iterator<*>!
+                        public/*package*/ open fun entries(): kotlin.(Mutable)Iterator<*>!
                         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                         public/*package*/ open fun getDelegateProvider(): [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
                         public/*package*/ open fun getDelegateRefs(): kotlin.Int
                         public/*package*/ open fun getRefs(): kotlin.Int
-                        public/*package*/ open fun getServiceClass(): java.lang.Class<out kotlin.Any?>!
+                        public/*package*/ open fun getServiceClass(): java.lang.Class<*>!
                         public/*package*/ open fun getServiceProvider(): [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
                         public/*package*/ open fun getServiceRefs(): kotlin.Int
                         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -3130,8 +3130,8 @@ package java {
                     public/*package*/ constructor BCSSProxyServiceProvider(/*0*/ p2: [ERROR : Unresolved java classifier: BeanContextServices]!)
                     private final var nestingCtxt: [ERROR : Unresolved java classifier: BeanContextServices]!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                    public open fun getCurrentServiceSelectors(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!): kotlin.(Mutable)Iterator<kotlin.Any?>!
-                    public open fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: kotlin.Any!): kotlin.Any!
+                    public open fun getCurrentServiceSelectors(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: java.lang.Class<*>!): kotlin.(Mutable)Iterator<*>!
+                    public open fun getService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: kotlin.Any!): kotlin.Any!
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open fun releaseService(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServices]!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Unit
                     public open override /*1*/ fun serviceRevoked(/*0*/ p0: [ERROR : Unresolved java classifier: BeanContextServiceRevokedEvent]!): kotlin.Unit
@@ -3139,7 +3139,7 @@ package java {
                 }
 
                 protected/*protected static*/ open class BCSSServiceProvider : java.io.Serializable {
-                    public/*package*/ constructor BCSSServiceProvider(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!)
+                    public/*package*/ constructor BCSSServiceProvider(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!)
                     protected/*protected and package*/ final var serviceProvider: [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     protected/*protected and package*/ open fun getServiceProvider(): [ERROR : Unresolved java classifier: BeanContextServiceProvider]!
@@ -3731,11 +3731,11 @@ package java {
             public open fun readBoolean(): kotlin.Boolean
             public open fun readByte(): kotlin.Byte
             public open fun readChar(): kotlin.Char
-            private open fun readClass(/*0*/ p0: kotlin.Boolean): java.lang.Class<out kotlin.Any?>!
+            private open fun readClass(/*0*/ p0: kotlin.Boolean): java.lang.Class<*>!
             private open fun readClassDesc(/*0*/ p0: kotlin.Boolean): [ERROR : Unresolved java classifier: ObjectStreamClass]!
             protected/*protected and package*/ open fun readClassDescriptor(): [ERROR : Unresolved java classifier: ObjectStreamClass]!
             public open fun readDouble(): kotlin.Double
-            private open fun readEnum(/*0*/ p0: kotlin.Boolean): kotlin.Enum<out kotlin.Enum<E>>!
+            private open fun readEnum(/*0*/ p0: kotlin.Boolean): kotlin.Enum<*>!
             private open fun readExternalData(/*0*/ p0: java.io.Externalizable!, /*1*/ p1: [ERROR : Unresolved java classifier: ObjectStreamClass]!): kotlin.Unit
             private open fun readFatalException(): java.io.IOException!
             public open fun readFields(): java.io.ObjectInputStream.GetField!
@@ -3764,9 +3764,9 @@ package java {
             public open fun readUnsignedShort(): kotlin.Int
             public open fun registerValidation(/*0*/ p0: [ERROR : Unresolved java classifier: ObjectInputValidation]!, /*1*/ p1: kotlin.Int): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun reset(): kotlin.Unit
-            protected/*protected and package*/ open fun resolveClass(/*0*/ p0: [ERROR : Unresolved java classifier: ObjectStreamClass]!): java.lang.Class<out kotlin.Any?>!
+            protected/*protected and package*/ open fun resolveClass(/*0*/ p0: [ERROR : Unresolved java classifier: ObjectStreamClass]!): java.lang.Class<*>!
             protected/*protected and package*/ open fun resolveObject(/*0*/ p0: kotlin.Any!): kotlin.Any!
-            protected/*protected and package*/ open fun resolveProxyClass(/*0*/ p0: kotlin.Array<(out) kotlin.String!>!): java.lang.Class<out kotlin.Any?>!
+            protected/*protected and package*/ open fun resolveProxyClass(/*0*/ p0: kotlin.Array<(out) kotlin.String!>!): java.lang.Class<*>!
             public open override /*2*/ /*fake_override*/ fun skip(/*0*/ p0: kotlin.Long): kotlin.Long
             public open fun skipBytes(/*0*/ p0: kotlin.Int): kotlin.Int
             private open fun skipCustomData(): kotlin.Unit
@@ -3886,7 +3886,7 @@ package java {
                 public open override /*1*/ fun get(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Int
                 public open override /*1*/ fun get(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Long): kotlin.Long
                 public open override /*1*/ fun get(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Short): kotlin.Short
-                private open fun getFieldOffset(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!): kotlin.Int
+                private open fun getFieldOffset(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<*>!): kotlin.Int
                 public open override /*1*/ fun getObjectStreamClass(): [ERROR : Unresolved java classifier: ObjectStreamClass]!
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public/*package*/ open fun readFields(): kotlin.Unit
@@ -3976,9 +3976,9 @@ package java {
 
             // Static members
             private final val NULL_HANDLE: kotlin.Int = -1
-            private final val primClasses: java.util.HashMap<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!
+            private final val primClasses: java.util.HashMap<kotlin.String!, java.lang.Class<*>!>!
             private final val unsharedMarker: kotlin.Any!
-            private open fun auditSubclass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            private open fun auditSubclass(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             private open fun bytesToDoubles(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.DoubleArray!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit
             private open fun bytesToFloats(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.FloatArray!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit
             private open fun cloneArray(/*0*/ p0: kotlin.Any!): kotlin.Any!
@@ -4011,8 +4011,8 @@ package java {
             private final var primVals: kotlin.ByteArray!
             private final var protocol: kotlin.Int
             private final val subs: java.io.ObjectOutputStream.ReplaceTable!
-            protected/*protected and package*/ open fun annotateClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
-            protected/*protected and package*/ open fun annotateProxyClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+            protected/*protected and package*/ open fun annotateClass(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
+            protected/*protected and package*/ open fun annotateProxyClass(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
             private open fun clear(): kotlin.Unit
             public open override /*2*/ fun close(): kotlin.Unit
             private open fun defaultWriteFields(/*0*/ p0: kotlin.Any!, /*1*/ p1: [ERROR : Unresolved java classifier: ObjectStreamClass]!): kotlin.Unit
@@ -4038,11 +4038,11 @@ package java {
             public open fun writeBytes(/*0*/ p0: kotlin.String!): kotlin.Unit
             public open fun writeChar(/*0*/ p0: kotlin.Int): kotlin.Unit
             public open fun writeChars(/*0*/ p0: kotlin.String!): kotlin.Unit
-            private open fun writeClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+            private open fun writeClass(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
             private open fun writeClassDesc(/*0*/ p0: [ERROR : Unresolved java classifier: ObjectStreamClass]!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
             protected/*protected and package*/ open fun writeClassDescriptor(/*0*/ p0: [ERROR : Unresolved java classifier: ObjectStreamClass]!): kotlin.Unit
             public open fun writeDouble(/*0*/ p0: kotlin.Double): kotlin.Unit
-            private open fun writeEnum(/*0*/ p0: kotlin.Enum<out kotlin.Enum<E>>!, /*1*/ p1: [ERROR : Unresolved java classifier: ObjectStreamClass]!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
+            private open fun writeEnum(/*0*/ p0: kotlin.Enum<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: ObjectStreamClass]!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
             private open fun writeExternalData(/*0*/ p0: java.io.Externalizable!): kotlin.Unit
             private open fun writeFatalException(/*0*/ p0: java.io.IOException!): kotlin.Unit
             public open fun writeFields(): kotlin.Unit
@@ -4183,7 +4183,7 @@ package java {
                 private final val objVals: kotlin.Array<(out) kotlin.Any!>!
                 private final val primVals: kotlin.ByteArray!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                private open fun getFieldOffset(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!): kotlin.Int
+                private open fun getFieldOffset(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<*>!): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun put(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Any!): kotlin.Unit
                 public open override /*1*/ fun put(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
@@ -4215,7 +4215,7 @@ package java {
 
             // Static members
             private final val extendedDebugInfo: kotlin.Boolean
-            private open fun auditSubclass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            private open fun auditSubclass(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             private open fun doublesToBytes(/*0*/ p0: kotlin.DoubleArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.ByteArray!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit
             private open fun floatsToBytes(/*0*/ p0: kotlin.FloatArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.ByteArray!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit
         }
@@ -7044,7 +7044,7 @@ package java {
             private final var genericInfo: [ERROR : Unresolved java classifier: ClassRepository]!
             private final var lastRedefinedCount: kotlin.Int
             private final var name: kotlin.String!
-            private final var newInstanceCallerCache: java.lang.Class<out kotlin.Any?>!
+            private final var newInstanceCallerCache: java.lang.Class<*>!
             private final var publicConstructors: [ERROR : Unresolved java classifier: SoftReference<Constructor<T>[]>]!
             private final var publicFields: [ERROR : Unresolved java classifier: SoftReference<Field[]>]!
             private final var publicMethods: [ERROR : Unresolved java classifier: SoftReference<Method[]>]!
@@ -7062,27 +7062,27 @@ package java {
             public open fun getCanonicalName(): kotlin.String!
             public open fun getClassLoader(): java.lang.ClassLoader!
             public/*package*/ open fun getClassLoader0(): java.lang.ClassLoader!
-            public open fun getClasses(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-            public open fun getComponentType(): java.lang.Class<out kotlin.Any?>!
+            public open fun getClasses(): kotlin.Array<(out) java.lang.Class<*>!>!
+            public open fun getComponentType(): java.lang.Class<*>!
             public/*package*/ open fun getConstantPool(): [ERROR : Unresolved java classifier: ConstantPool]!
-            public open fun getConstructor(/*0*/ vararg parameterTypes: java.lang.Class<out kotlin.Any?>! /*kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!*/): java.lang.reflect.Constructor<T!>!
-            private open fun getConstructor0(/*0*/ p0: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!, /*1*/ p1: kotlin.Int): java.lang.reflect.Constructor<T!>!
-            public open fun getConstructors(): kotlin.Array<(out) java.lang.reflect.Constructor<out kotlin.Any?>!>!
+            public open fun getConstructor(/*0*/ vararg parameterTypes: java.lang.Class<*>! /*kotlin.Array<(out) java.lang.Class<*>!>!*/): java.lang.reflect.Constructor<T!>!
+            private open fun getConstructor0(/*0*/ p0: kotlin.Array<(out) java.lang.Class<*>!>!, /*1*/ p1: kotlin.Int): java.lang.reflect.Constructor<T!>!
+            public open fun getConstructors(): kotlin.Array<(out) java.lang.reflect.Constructor<*>!>!
             public open override /*1*/ fun getDeclaredAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
-            public open fun getDeclaredClasses(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-            private open fun getDeclaredClasses0(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-            public open fun getDeclaredConstructor(/*0*/ vararg parameterTypes: java.lang.Class<out kotlin.Any?>! /*kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!*/): java.lang.reflect.Constructor<T!>!
-            public open fun getDeclaredConstructors(): kotlin.Array<(out) java.lang.reflect.Constructor<out kotlin.Any?>!>!
+            public open fun getDeclaredClasses(): kotlin.Array<(out) java.lang.Class<*>!>!
+            private open fun getDeclaredClasses0(): kotlin.Array<(out) java.lang.Class<*>!>!
+            public open fun getDeclaredConstructor(/*0*/ vararg parameterTypes: java.lang.Class<*>! /*kotlin.Array<(out) java.lang.Class<*>!>!*/): java.lang.reflect.Constructor<T!>!
+            public open fun getDeclaredConstructors(): kotlin.Array<(out) java.lang.reflect.Constructor<*>!>!
             private open fun getDeclaredConstructors0(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Constructor<T!>!>!
             public open fun getDeclaredField(/*0*/ name: kotlin.String!): java.lang.reflect.Field!
             public open fun getDeclaredFields(): kotlin.Array<(out) java.lang.reflect.Field!>!
             private open fun getDeclaredFields0(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Field!>!
-            public open fun getDeclaredMethod(/*0*/ name: kotlin.String!, /*1*/ vararg parameterTypes: java.lang.Class<out kotlin.Any?>! /*kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!*/): java.lang.reflect.Method!
+            public open fun getDeclaredMethod(/*0*/ name: kotlin.String!, /*1*/ vararg parameterTypes: java.lang.Class<*>! /*kotlin.Array<(out) java.lang.Class<*>!>!*/): java.lang.reflect.Method!
             public open fun getDeclaredMethods(): kotlin.Array<(out) java.lang.reflect.Method!>!
             private open fun getDeclaredMethods0(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Method!>!
-            public open fun getDeclaringClass(): java.lang.Class<out kotlin.Any?>!
-            public open fun getEnclosingClass(): java.lang.Class<out kotlin.Any?>!
-            public open fun getEnclosingConstructor(): java.lang.reflect.Constructor<out kotlin.Any?>!
+            public open fun getDeclaringClass(): java.lang.Class<*>!
+            public open fun getEnclosingClass(): java.lang.Class<*>!
+            public open fun getEnclosingConstructor(): java.lang.reflect.Constructor<*>!
             public open fun getEnclosingMethod(): java.lang.reflect.Method!
             private open fun getEnclosingMethod0(): kotlin.Array<(out) kotlin.Any!>!
             private open fun getEnclosingMethodInfo(): java.lang.Class.EnclosingMethodInfo!
@@ -7096,9 +7096,9 @@ package java {
             public open fun getGenericInterfaces(): kotlin.Array<(out) java.lang.reflect.Type!>!
             private open fun getGenericSignature(): kotlin.String!
             public open fun getGenericSuperclass(): java.lang.reflect.Type!
-            public open fun getInterfaces(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-            public open fun getMethod(/*0*/ name: kotlin.String!, /*1*/ vararg parameterTypes: java.lang.Class<out kotlin.Any?>! /*kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!*/): java.lang.reflect.Method!
-            private open fun getMethod0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!): java.lang.reflect.Method!
+            public open fun getInterfaces(): kotlin.Array<(out) java.lang.Class<*>!>!
+            public open fun getMethod(/*0*/ name: kotlin.String!, /*1*/ vararg parameterTypes: java.lang.Class<*>! /*kotlin.Array<(out) java.lang.Class<*>!>!*/): java.lang.reflect.Method!
+            private open fun getMethod0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Array<(out) java.lang.Class<*>!>!): java.lang.reflect.Method!
             public open fun getMethods(): kotlin.Array<(out) java.lang.reflect.Method!>!
             public open fun getModifiers(): kotlin.Int
             public open fun getName(): kotlin.String!
@@ -7120,7 +7120,7 @@ package java {
             public open override /*1*/ fun isAnnotationPresent(/*0*/ annotationClass: java.lang.Class<out kotlin.Annotation!>!): kotlin.Boolean
             public open fun isAnonymousClass(): kotlin.Boolean
             public open fun isArray(): kotlin.Boolean
-            public open fun isAssignableFrom(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            public open fun isAssignableFrom(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             public open fun isEnum(): kotlin.Boolean
             public open fun isInstance(/*0*/ obj: kotlin.Any!): kotlin.Boolean
             public open fun isInterface(): kotlin.Boolean
@@ -7134,7 +7134,7 @@ package java {
             private open fun privateGetDeclaredConstructors(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Constructor<T!>!>!
             private open fun privateGetDeclaredFields(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Field!>!
             private open fun privateGetDeclaredMethods(/*0*/ p0: kotlin.Boolean): kotlin.Array<(out) java.lang.reflect.Method!>!
-            private open fun privateGetPublicFields(/*0*/ p0: kotlin.(Mutable)Set<java.lang.Class<out kotlin.Any?>!>!): kotlin.Array<(out) java.lang.reflect.Field!>!
+            private open fun privateGetPublicFields(/*0*/ p0: kotlin.(Mutable)Set<java.lang.Class<*>!>!): kotlin.Array<(out) java.lang.reflect.Field!>!
             private open fun privateGetPublicMethods(): kotlin.Array<(out) java.lang.reflect.Method!>!
             private open fun resolveName(/*0*/ p0: kotlin.String!): kotlin.String!
             private open fun searchFields(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Field!>!, /*1*/ p1: kotlin.String!): java.lang.reflect.Field!
@@ -7146,11 +7146,11 @@ package java {
             private final class EnclosingMethodInfo {
                 private constructor EnclosingMethodInfo(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!)
                 private final var descriptor: kotlin.String!
-                private final var enclosingClass: java.lang.Class<out kotlin.Any?>!
+                private final var enclosingClass: java.lang.Class<*>!
                 private final var name: kotlin.String!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public/*package*/ open fun getDescriptor(): kotlin.String!
-                public/*package*/ open fun getEnclosingClass(): java.lang.Class<out kotlin.Any?>!
+                public/*package*/ open fun getEnclosingClass(): java.lang.Class<*>!
                 public/*package*/ open fun getName(): kotlin.String!
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public/*package*/ open fun isConstructor(): kotlin.Boolean
@@ -7189,22 +7189,22 @@ package java {
             private final val serialVersionUID: kotlin.Long = 3206093459760846163.toLong()
             private final var useCaches: kotlin.Boolean
             private open fun addAll(/*0*/ p0: kotlin.(Mutable)Collection<java.lang.reflect.Field!>!, /*1*/ p1: kotlin.Array<(out) java.lang.reflect.Field!>!): kotlin.Unit
-            private open fun argumentTypesToString(/*0*/ p0: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!): kotlin.String!
+            private open fun argumentTypesToString(/*0*/ p0: kotlin.Array<(out) java.lang.Class<*>!>!): kotlin.String!
             private open fun arrayContentsEq(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!): kotlin.Boolean
             private open fun checkInitted(): kotlin.Unit
             private open fun </*0*/ U> copyConstructors(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Constructor<U!>!>!): kotlin.Array<(out) java.lang.reflect.Constructor<U!>!>!
             private open fun copyFields(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Field!>!): kotlin.Array<(out) java.lang.reflect.Field!>!
             private open fun copyMethods(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Method!>!): kotlin.Array<(out) java.lang.reflect.Method!>!
-            private open fun desiredAssertionStatus0(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
-            public open fun forName(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            public open fun forName(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: java.lang.ClassLoader!): java.lang.Class<out kotlin.Any?>!
-            private open fun forName0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: java.lang.ClassLoader!): java.lang.Class<out kotlin.Any?>!
-            public/*package*/ open fun getPrimitiveClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            private open fun desiredAssertionStatus0(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
+            public open fun forName(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            public open fun forName(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: java.lang.ClassLoader!): java.lang.Class<*>!
+            private open fun forName0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: java.lang.ClassLoader!): java.lang.Class<*>!
+            public/*package*/ open fun getPrimitiveClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
             private open fun getReflectionFactory(): [ERROR : Unresolved java classifier: ReflectionFactory]!
             private open fun isAsciiDigit(/*0*/ p0: kotlin.Char): kotlin.Boolean
             private open fun registerNatives(): kotlin.Unit
-            private open fun searchMethods(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Method!>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!): java.lang.reflect.Method!
-            private open fun toClass(/*0*/ p0: java.lang.reflect.Type!): java.lang.Class<out kotlin.Any?>!
+            private open fun searchMethods(/*0*/ p0: kotlin.Array<(out) java.lang.reflect.Method!>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<*>!>!): java.lang.reflect.Method!
+            private open fun toClass(/*0*/ p0: java.lang.reflect.Type!): java.lang.Class<*>!
         }
 
         public open class ClassCastException : java.lang.RuntimeException {
@@ -7237,33 +7237,33 @@ package java {
             private final val packages: java.util.HashMap<kotlin.String!, [ERROR : Unresolved java classifier: Package]!>!
             private final val parallelLockMap: [ERROR : Unresolved java classifier: ConcurrentHashMap<String, Object>]!
             private final val parent: java.lang.ClassLoader!
-            public/*package*/ open fun addClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+            public/*package*/ open fun addClass(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
             private open fun checkCerts(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: CodeSource]!): kotlin.Unit
             private open fun checkName(/*0*/ p0: kotlin.String!): kotlin.Boolean
-            private open fun checkPackageAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: ProtectionDomain]!): kotlin.Unit
+            private open fun checkPackageAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: ProtectionDomain]!): kotlin.Unit
             public open fun clearAssertionStatus(): kotlin.Unit
             private open fun compareCerts(/*0*/ p0: kotlin.Array<(out) [ERROR : Unresolved java classifier: Certificate]!>!, /*1*/ p1: kotlin.Array<(out) [ERROR : Unresolved java classifier: Certificate]!>!): kotlin.Boolean
-            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): java.lang.Class<out kotlin.Any?>!
-            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: ByteBuffer]!, /*2*/ p2: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<out kotlin.Any?>!
-            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int): java.lang.Class<out kotlin.Any?>!
-            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<out kotlin.Any?>!
-            private open fun defineClass0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<out kotlin.Any?>!
-            private open fun defineClass1(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            private open fun defineClass2(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: ByteBuffer]!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            kotlin.deprecated(value = "Deprecated in Java": kotlin.String) protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.ByteArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): java.lang.Class<*>!
+            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: ByteBuffer]!, /*2*/ p2: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<*>!
+            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int): java.lang.Class<*>!
+            protected/*protected and package*/ final fun defineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<*>!
+            private open fun defineClass0(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!): java.lang.Class<*>!
+            private open fun defineClass1(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: kotlin.String!): java.lang.Class<*>!
+            private open fun defineClass2(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: ByteBuffer]!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: kotlin.String!): java.lang.Class<*>!
             private open fun defineClassSourceLocation(/*0*/ p0: [ERROR : Unresolved java classifier: ProtectionDomain]!): kotlin.String!
             protected/*protected and package*/ open fun definePackage(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.String!, /*4*/ p4: kotlin.String!, /*5*/ p5: kotlin.String!, /*6*/ p6: kotlin.String!, /*7*/ p7: java.net.URL!): [ERROR : Unresolved java classifier: Package]!
-            private open fun defineTransformedClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: [ERROR : Unresolved java classifier: ClassFormatError]!, /*6*/ p6: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            private open fun defineTransformedClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.ByteArray!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: [ERROR : Unresolved java classifier: ProtectionDomain]!, /*5*/ p5: [ERROR : Unresolved java classifier: ClassFormatError]!, /*6*/ p6: kotlin.String!): java.lang.Class<*>!
             public/*package*/ open fun desiredAssertionStatus(/*0*/ p0: kotlin.String!): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            private open fun findBootstrapClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            private open fun findBootstrapClassOrNull(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            protected/*protected and package*/ open fun findClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            private open fun findBootstrapClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            private open fun findBootstrapClassOrNull(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            protected/*protected and package*/ open fun findClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
             protected/*protected and package*/ open fun findLibrary(/*0*/ p0: kotlin.String!): kotlin.String!
-            protected/*protected and package*/ final fun findLoadedClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            private final fun findLoadedClass0(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            protected/*protected and package*/ final fun findLoadedClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            private final fun findLoadedClass0(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
             protected/*protected and package*/ open fun findResource(/*0*/ p0: kotlin.String!): java.net.URL!
             protected/*protected and package*/ open fun findResources(/*0*/ p0: kotlin.String!): java.util.Enumeration<java.net.URL!>!
-            protected/*protected and package*/ final fun findSystemClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            protected/*protected and package*/ final fun findSystemClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
             protected/*protected and package*/ open fun getClassLoadingLock(/*0*/ p0: kotlin.String!): kotlin.Any!
             protected/*protected and package*/ open fun getPackage(/*0*/ p0: kotlin.String!): [ERROR : Unresolved java classifier: Package]!
             protected/*protected and package*/ open fun getPackages(): kotlin.Array<(out) [ERROR : Unresolved java classifier: Package]!>!
@@ -7274,22 +7274,22 @@ package java {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             private open fun initializeJavaAssertionMaps(): kotlin.Unit
             public/*package*/ open fun isAncestor(/*0*/ p0: java.lang.ClassLoader!): kotlin.Boolean
-            public open fun loadClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            protected/*protected and package*/ open fun loadClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean): java.lang.Class<out kotlin.Any?>!
-            private open fun loadClassInternal(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
-            private open fun postDefineClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: ProtectionDomain]!): kotlin.Unit
+            public open fun loadClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            protected/*protected and package*/ open fun loadClass(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean): java.lang.Class<*>!
+            private open fun loadClassInternal(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
+            private open fun postDefineClass(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: ProtectionDomain]!): kotlin.Unit
             private open fun preDefineClass(/*0*/ p0: kotlin.String!, /*1*/ p1: [ERROR : Unresolved java classifier: ProtectionDomain]!): [ERROR : Unresolved java classifier: ProtectionDomain]!
-            protected/*protected and package*/ final fun resolveClass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
-            private open fun resolveClass0(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+            protected/*protected and package*/ final fun resolveClass(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
+            private open fun resolveClass0(/*0*/ p0: java.lang.Class<*>!): kotlin.Unit
             public open fun setClassAssertionStatus(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
             public open fun setDefaultAssertionStatus(/*0*/ p0: kotlin.Boolean): kotlin.Unit
             public open fun setPackageAssertionStatus(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
-            protected/*protected and package*/ final fun setSigners(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!): kotlin.Unit
+            protected/*protected and package*/ final fun setSigners(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             public/*package*/ open class NativeLibrary {
-                public constructor NativeLibrary(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.String!)
-                private final var fromClass: java.lang.Class<out kotlin.Any?>!
+                public constructor NativeLibrary(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.String!)
+                private final var fromClass: java.lang.Class<*>!
                 public/*package*/ final var handle: kotlin.Long
                 private final var jniVersion: kotlin.Int
                 public/*package*/ final var name: kotlin.String!
@@ -7302,7 +7302,7 @@ package java {
                 public/*package*/ open fun unload(): kotlin.Unit
 
                 // Static members
-                public/*package*/ open fun getFromClass(): java.lang.Class<out kotlin.Any?>!
+                public/*package*/ open fun getFromClass(): java.lang.Class<*>!
             }
 
             private open class ParallelLoaders {
@@ -7339,9 +7339,9 @@ package java {
             public open fun getSystemResources(/*0*/ p0: kotlin.String!): java.util.Enumeration<java.net.URL!>!
             private open fun initSystemClassLoader(): kotlin.Unit
             private open fun initializePath(/*0*/ p0: kotlin.String!): kotlin.Array<(out) kotlin.String!>!
-            public/*package*/ open fun loadLibrary(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
-            private open fun loadLibrary0(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.io.File!): kotlin.Boolean
-            private open fun loadLibrary1(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.io.File!): kotlin.Boolean
+            public/*package*/ open fun loadLibrary(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
+            private open fun loadLibrary0(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.io.File!): kotlin.Boolean
+            private open fun loadLibrary1(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.io.File!): kotlin.Boolean
             protected/*protected static*/ open fun registerAsParallelCapable(): kotlin.Boolean
             private open fun registerNatives(): kotlin.Unit
             private open fun retrieveDirectives(): [ERROR : Unresolved java classifier: AssertionStatusDirectives]!
@@ -7862,7 +7862,7 @@ package java {
             protected/*protected and package*/ open fun clone(): kotlin.Any!
             public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
             protected/*protected and package*/ open fun finalize(): kotlin.Unit
-            public final fun getClass(): java.lang.Class<out kotlin.Any?>!
+            public final fun getClass(): java.lang.Class<*>!
             public open override /*1*/ fun hashCode(): kotlin.Int
             public final fun notify(): kotlin.Unit
             public final fun notifyAll(): kotlin.Unit
@@ -8237,7 +8237,7 @@ package java {
             public open fun currentTimeMillis(): kotlin.Long
             public open fun exit(/*0*/ p0: kotlin.Int): kotlin.Unit
             public open fun gc(): kotlin.Unit
-            public/*package*/ open fun getCallerClass(): java.lang.Class<out kotlin.Any?>!
+            public/*package*/ open fun getCallerClass(): java.lang.Class<*>!
             public open fun getProperties(): java.util.Properties!
             public open fun getProperty(/*0*/ p0: kotlin.String!): kotlin.String!
             public open fun getProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.String!
@@ -8505,7 +8505,7 @@ package java {
             }
 
             public/*package*/ open class WeakClassKey {
-                public/*package*/ constructor WeakClassKey(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: [ERROR : Unresolved java classifier: ReferenceQueue<Class<?>>]!)
+                public/*package*/ constructor WeakClassKey(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: [ERROR : Unresolved java classifier: ReferenceQueue<Class<?>>]!)
                 private final val hash: kotlin.Int
                 public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                 public open override /*1*/ fun hashCode(): kotlin.Int
@@ -8522,7 +8522,7 @@ package java {
             private final var threadSeqNumber: kotlin.Long
             public final /*synthesized*/ fun UncaughtExceptionHandler(/*0*/ function: (java.lang.Thread!, kotlin.Throwable!) -> kotlin.Unit): java.lang.Thread.UncaughtExceptionHandler
             public open fun activeCount(): kotlin.Int
-            private open fun auditSubclass(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            private open fun auditSubclass(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             public open fun currentThread(): java.lang.Thread!
             public open fun dumpStack(): kotlin.Unit
             private open fun dumpThreads(/*0*/ p0: kotlin.Array<(out) java.lang.Thread!>!): kotlin.Array<(out) kotlin.Array<(out) [ERROR : Unresolved java classifier: StackTraceElement]!>!>!
@@ -8532,7 +8532,7 @@ package java {
             private open fun getThreads(): kotlin.Array<(out) java.lang.Thread!>!
             public open fun holdsLock(/*0*/ p0: kotlin.Any!): kotlin.Boolean
             public open fun interrupted(): kotlin.Boolean
-            private open fun isCCLOverridden(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.Boolean
+            private open fun isCCLOverridden(/*0*/ p0: java.lang.Class<*>!): kotlin.Boolean
             private open fun nextThreadID(): kotlin.Long
             private open fun nextThreadNum(): kotlin.Int
             public/*package*/ open fun processQueue(/*0*/ p0: [ERROR : Unresolved java classifier: ReferenceQueue<Class<?>>]!, /*1*/ p1: [ERROR : Unresolved java classifier: ConcurrentMap<? extends WeakReference<Class<?>>, ?>]!): kotlin.Unit
@@ -8561,7 +8561,7 @@ package java {
 
             public/*package*/ open class ThreadLocalMap {
                 private constructor ThreadLocalMap(/*0*/ p0: java.lang.ThreadLocal.ThreadLocalMap!)
-                public/*package*/ constructor ThreadLocalMap(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!, /*1*/ p1: kotlin.Any!)
+                public/*package*/ constructor ThreadLocalMap(/*0*/ p0: java.lang.ThreadLocal<*>!, /*1*/ p1: kotlin.Any!)
                 private final var size: kotlin.Int
                 private final var table: kotlin.Array<(out) java.lang.ThreadLocal.ThreadLocalMap.Entry!>!
                 private final var threshold: kotlin.Int
@@ -8569,19 +8569,19 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 private open fun expungeStaleEntries(): kotlin.Unit
                 private open fun expungeStaleEntry(/*0*/ p0: kotlin.Int): kotlin.Int
-                private open fun getEntry(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!): java.lang.ThreadLocal.ThreadLocalMap.Entry!
-                private open fun getEntryAfterMiss(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.lang.ThreadLocal.ThreadLocalMap.Entry!): java.lang.ThreadLocal.ThreadLocalMap.Entry!
+                private open fun getEntry(/*0*/ p0: java.lang.ThreadLocal<*>!): java.lang.ThreadLocal.ThreadLocalMap.Entry!
+                private open fun getEntryAfterMiss(/*0*/ p0: java.lang.ThreadLocal<*>!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.lang.ThreadLocal.ThreadLocalMap.Entry!): java.lang.ThreadLocal.ThreadLocalMap.Entry!
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 private open fun rehash(): kotlin.Unit
-                private open fun remove(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!): kotlin.Unit
-                private open fun replaceStaleEntry(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Int): kotlin.Unit
+                private open fun remove(/*0*/ p0: java.lang.ThreadLocal<*>!): kotlin.Unit
+                private open fun replaceStaleEntry(/*0*/ p0: java.lang.ThreadLocal<*>!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Int): kotlin.Unit
                 private open fun resize(): kotlin.Unit
-                private open fun set(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!, /*1*/ p1: kotlin.Any!): kotlin.Unit
+                private open fun set(/*0*/ p0: java.lang.ThreadLocal<*>!, /*1*/ p1: kotlin.Any!): kotlin.Unit
                 private open fun setThreshold(/*0*/ p0: kotlin.Int): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
                 public/*package*/ open class Entry {
-                    public/*package*/ constructor Entry(/*0*/ p0: java.lang.ThreadLocal<out kotlin.Any?>!, /*1*/ p1: kotlin.Any!)
+                    public/*package*/ constructor Entry(/*0*/ p0: java.lang.ThreadLocal<*>!, /*1*/ p1: kotlin.Any!)
                     public/*package*/ final var value: kotlin.Any!
                 }
 
@@ -8935,7 +8935,7 @@ package java {
 
             public open class IncompleteAnnotationException : java.lang.RuntimeException {
                 public constructor IncompleteAnnotationException(/*0*/ p0: java.lang.Class<out kotlin.Annotation!>!, /*1*/ p1: kotlin.String!)
-                private final var annotationType: java.lang.Class<out kotlin.Any?>!
+                private final var annotationType: java.lang.Class<*>!
                 private final var elementName: kotlin.String!
                 public open fun annotationType(): java.lang.Class<out kotlin.Annotation!>!
                 public open fun elementName(): kotlin.String!
@@ -9055,7 +9055,7 @@ package java {
                 protected/*protected and package*/ constructor AccessibleObject()
                 public/*package*/ final var override: kotlin.Boolean
                 public/*package*/ final var securityCheckCache: kotlin.Any!
-                public/*package*/ open fun checkAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
+                public/*package*/ open fun checkAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ fun </*0*/ T : kotlin.Annotation!> getAnnotation(/*0*/ annotationClass: java.lang.Class<T!>!): T!
                 public open override /*1*/ fun getAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
@@ -9064,7 +9064,7 @@ package java {
                 public open fun isAccessible(): kotlin.Boolean
                 public open override /*1*/ fun isAnnotationPresent(/*0*/ annotationClass: java.lang.Class<out kotlin.Annotation!>!): kotlin.Boolean
                 public open fun setAccessible(/*0*/ p0: kotlin.Boolean): kotlin.Unit
-                public/*package*/ open fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+                public/*package*/ open fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<*>!): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
                 // Static members
@@ -9101,10 +9101,10 @@ package java {
                 public open fun getLength(/*0*/ p0: kotlin.Any!): kotlin.Int
                 public open fun getLong(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int): kotlin.Long
                 public open fun getShort(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int): kotlin.Short
-                private open fun multiNewArray(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.IntArray!): kotlin.Any!
-                private open fun newArray(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.Int): kotlin.Any!
-                public open fun newInstance(/*0*/ componentType: java.lang.Class<out kotlin.Any?>!, /*1*/ length: kotlin.Int): kotlin.Any!
-                public open fun newInstance(/*0*/ componentType: java.lang.Class<out kotlin.Any?>!, /*1*/ vararg dimensions: kotlin.Int /*kotlin.IntArray!*/): kotlin.Any!
+                private open fun multiNewArray(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.IntArray!): kotlin.Any!
+                private open fun newArray(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Int): kotlin.Any!
+                public open fun newInstance(/*0*/ componentType: java.lang.Class<*>!, /*1*/ length: kotlin.Int): kotlin.Any!
+                public open fun newInstance(/*0*/ componentType: java.lang.Class<*>!, /*1*/ vararg dimensions: kotlin.Int /*kotlin.IntArray!*/): kotlin.Any!
                 public open fun set(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Any!): kotlin.Unit
                 public open fun setBoolean(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean): kotlin.Unit
                 public open fun setByte(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Byte): kotlin.Unit
@@ -9117,23 +9117,23 @@ package java {
             }
 
             public final class Constructor</*0*/ T> : java.lang.reflect.AccessibleObject, java.lang.reflect.GenericDeclaration, java.lang.reflect.Member {
-                public/*package*/ constructor Constructor</*0*/ T>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.String!, /*6*/ p6: kotlin.ByteArray!, /*7*/ p7: kotlin.ByteArray!)
+                public/*package*/ constructor Constructor</*0*/ T>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: kotlin.Array<(out) java.lang.Class<*>!>!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<*>!>!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.String!, /*6*/ p6: kotlin.ByteArray!, /*7*/ p7: kotlin.ByteArray!)
                 private final var annotations: kotlin.ByteArray!
                 private final var clazz: java.lang.Class<T!>!
                 private final var constructorAccessor: [ERROR : Unresolved java classifier: ConstructorAccessor]!
                 private final var declaredAnnotations: kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
-                private final var exceptionTypes: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                private final var exceptionTypes: kotlin.Array<(out) java.lang.Class<*>!>!
                 private final var genericInfo: [ERROR : Unresolved java classifier: ConstructorRepository]!
                 private final var modifiers: kotlin.Int
                 public/*package*/ final override /*1*/ /*fake_override*/ var override: kotlin.Boolean
                 private final var parameterAnnotations: kotlin.ByteArray!
-                private final var parameterTypes: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                private final var parameterTypes: kotlin.Array<(out) java.lang.Class<*>!>!
                 private final var root: java.lang.reflect.Constructor<T!>!
                 public/*package*/ final override /*1*/ /*fake_override*/ var securityCheckCache: kotlin.Any!
                 private final var signature: kotlin.String!
                 private final var slot: kotlin.Int
                 private open fun acquireConstructorAccessor(): [ERROR : Unresolved java classifier: ConstructorAccessor]!
-                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
                 public/*package*/ open fun copy(): java.lang.reflect.Constructor<T!>!
                 private open fun declaredAnnotations(): kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
                 public open override /*3*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
@@ -9142,7 +9142,7 @@ package java {
                 public/*package*/ open fun getConstructorAccessor(): [ERROR : Unresolved java classifier: ConstructorAccessor]!
                 public open override /*1*/ fun getDeclaredAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
                 public open override /*1*/ fun getDeclaringClass(): java.lang.Class<T!>!
-                public open fun getExceptionTypes(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                public open fun getExceptionTypes(): kotlin.Array<(out) java.lang.Class<*>!>!
                 private open fun getFactory(): [ERROR : Unresolved java classifier: GenericsFactory]!
                 public open fun getGenericExceptionTypes(): kotlin.Array<(out) java.lang.reflect.Type!>!
                 private open fun getGenericInfo(): [ERROR : Unresolved java classifier: ConstructorRepository]!
@@ -9150,7 +9150,7 @@ package java {
                 public open override /*1*/ fun getModifiers(): kotlin.Int
                 public open override /*1*/ fun getName(): kotlin.String!
                 public open fun getParameterAnnotations(): kotlin.Array<(out) kotlin.Array<(out) kotlin.Annotation!>!>!
-                public open fun getParameterTypes(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                public open fun getParameterTypes(): kotlin.Array<(out) java.lang.Class<*>!>!
                 public/*package*/ open fun getRawAnnotations(): kotlin.ByteArray!
                 public/*package*/ open fun getRawParameterAnnotations(): kotlin.ByteArray!
                 public/*package*/ open fun getSignature(): kotlin.String!
@@ -9164,15 +9164,15 @@ package java {
                 public open fun newInstance(/*0*/ vararg p0: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): T!
                 public open override /*1*/ /*fake_override*/ fun setAccessible(/*0*/ p0: kotlin.Boolean): kotlin.Unit
                 public/*package*/ open fun setConstructorAccessor(/*0*/ p0: [ERROR : Unresolved java classifier: ConstructorAccessor]!): kotlin.Unit
-                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<*>!): kotlin.Unit
                 public open fun toGenericString(): kotlin.String!
                 public open override /*3*/ fun toString(): kotlin.String!
             }
 
             public final class Field : java.lang.reflect.AccessibleObject, java.lang.reflect.Member {
-                public/*package*/ constructor Field(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.String!, /*6*/ p6: kotlin.ByteArray!)
+                public/*package*/ constructor Field(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<*>!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.String!, /*6*/ p6: kotlin.ByteArray!)
                 private final var annotations: kotlin.ByteArray!
-                private final var clazz: java.lang.Class<out kotlin.Any?>!
+                private final var clazz: java.lang.Class<*>!
                 private final var declaredAnnotations: kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
                 private final var fieldAccessor: [ERROR : Unresolved java classifier: FieldAccessor]!
                 private final var genericInfo: [ERROR : Unresolved java classifier: FieldRepository]!
@@ -9184,9 +9184,9 @@ package java {
                 public/*package*/ final override /*1*/ /*fake_override*/ var securityCheckCache: kotlin.Any!
                 private final var signature: kotlin.String!
                 private final var slot: kotlin.Int
-                private final var type: java.lang.Class<out kotlin.Any?>!
+                private final var type: java.lang.Class<*>!
                 private open fun acquireFieldAccessor(/*0*/ p0: kotlin.Boolean): [ERROR : Unresolved java classifier: FieldAccessor]!
-                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
                 public/*package*/ open fun copy(): java.lang.reflect.Field!
                 private open fun declaredAnnotations(): kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
                 private open fun doSecurityCheck(/*0*/ p0: kotlin.Any!): kotlin.Unit
@@ -9198,7 +9198,7 @@ package java {
                 public open fun getByte(/*0*/ p0: kotlin.Any!): kotlin.Byte
                 public open fun getChar(/*0*/ p0: kotlin.Any!): kotlin.Char
                 public open override /*1*/ fun getDeclaredAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
-                public open override /*1*/ fun getDeclaringClass(): java.lang.Class<out kotlin.Any?>!
+                public open override /*1*/ fun getDeclaringClass(): java.lang.Class<*>!
                 public open fun getDouble(/*0*/ p0: kotlin.Any!): kotlin.Double
                 private open fun getFactory(): [ERROR : Unresolved java classifier: GenericsFactory]!
                 private open fun getFieldAccessor(/*0*/ p0: kotlin.Any!): [ERROR : Unresolved java classifier: FieldAccessor]!
@@ -9212,7 +9212,7 @@ package java {
                 public open override /*1*/ fun getModifiers(): kotlin.Int
                 public open override /*1*/ fun getName(): kotlin.String!
                 public open fun getShort(/*0*/ p0: kotlin.Any!): kotlin.Short
-                public open fun getType(): java.lang.Class<out kotlin.Any?>!
+                public open fun getType(): java.lang.Class<*>!
                 public open override /*2*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun isAccessible(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun isAnnotationPresent(/*0*/ annotationClass: java.lang.Class<out kotlin.Annotation!>!): kotlin.Boolean
@@ -9229,12 +9229,12 @@ package java {
                 public open fun setInt(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int): kotlin.Unit
                 public open fun setLong(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Long): kotlin.Unit
                 public open fun setShort(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Short): kotlin.Unit
-                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<*>!): kotlin.Unit
                 public open fun toGenericString(): kotlin.String!
                 public open override /*2*/ fun toString(): kotlin.String!
 
                 // Static members
-                public/*package*/ open fun getTypeName(/*0*/ p0: java.lang.Class<out kotlin.Any?>!): kotlin.String!
+                public/*package*/ open fun getTypeName(/*0*/ p0: java.lang.Class<*>!): kotlin.String!
             }
 
             public trait GenericDeclaration {
@@ -9246,7 +9246,7 @@ package java {
 
             public trait Member {
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public abstract fun getDeclaringClass(): java.lang.Class<out kotlin.Any?>!
+                public abstract fun getDeclaringClass(): java.lang.Class<*>!
                 public abstract fun getModifiers(): kotlin.Int
                 public abstract fun getName(): kotlin.String!
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9259,35 +9259,35 @@ package java {
             }
 
             public final class Method : java.lang.reflect.AccessibleObject, java.lang.reflect.GenericDeclaration, java.lang.reflect.Member {
-                public/*package*/ constructor Method(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!, /*3*/ p3: java.lang.Class<out kotlin.Any?>!, /*4*/ p4: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!, /*5*/ p5: kotlin.Int, /*6*/ p6: kotlin.Int, /*7*/ p7: kotlin.String!, /*8*/ p8: kotlin.ByteArray!, /*9*/ p9: kotlin.ByteArray!, /*10*/ p10: kotlin.ByteArray!)
+                public/*package*/ constructor Method(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Array<(out) java.lang.Class<*>!>!, /*3*/ p3: java.lang.Class<*>!, /*4*/ p4: kotlin.Array<(out) java.lang.Class<*>!>!, /*5*/ p5: kotlin.Int, /*6*/ p6: kotlin.Int, /*7*/ p7: kotlin.String!, /*8*/ p8: kotlin.ByteArray!, /*9*/ p9: kotlin.ByteArray!, /*10*/ p10: kotlin.ByteArray!)
                 private final var annotationDefault: kotlin.ByteArray!
                 private final var annotations: kotlin.ByteArray!
-                private final var clazz: java.lang.Class<out kotlin.Any?>!
+                private final var clazz: java.lang.Class<*>!
                 private final var declaredAnnotations: kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
-                private final var exceptionTypes: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                private final var exceptionTypes: kotlin.Array<(out) java.lang.Class<*>!>!
                 private final var genericInfo: [ERROR : Unresolved java classifier: MethodRepository]!
                 private final var methodAccessor: [ERROR : Unresolved java classifier: MethodAccessor]!
                 private final var modifiers: kotlin.Int
                 private final var name: kotlin.String!
                 public/*package*/ final override /*1*/ /*fake_override*/ var override: kotlin.Boolean
                 private final var parameterAnnotations: kotlin.ByteArray!
-                private final var parameterTypes: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-                private final var returnType: java.lang.Class<out kotlin.Any?>!
+                private final var parameterTypes: kotlin.Array<(out) java.lang.Class<*>!>!
+                private final var returnType: java.lang.Class<*>!
                 private final var root: java.lang.reflect.Method!
                 public/*package*/ final override /*1*/ /*fake_override*/ var securityCheckCache: kotlin.Any!
                 private final var signature: kotlin.String!
                 private final var slot: kotlin.Int
                 private open fun acquireMethodAccessor(): [ERROR : Unresolved java classifier: MethodAccessor]!
-                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
                 public/*package*/ open fun copy(): java.lang.reflect.Method!
                 private open fun declaredAnnotations(): kotlin.(Mutable)Map<java.lang.Class<out kotlin.Annotation!>!, kotlin.Annotation!>!
                 public open override /*3*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                 public open override /*1*/ fun </*0*/ T : kotlin.Annotation!> getAnnotation(/*0*/ annotationClass: java.lang.Class<T!>!): T!
                 public open override /*1*/ /*fake_override*/ fun getAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
                 public open override /*1*/ fun getDeclaredAnnotations(): kotlin.Array<(out) kotlin.Annotation!>!
-                public open override /*1*/ fun getDeclaringClass(): java.lang.Class<out kotlin.Any?>!
+                public open override /*1*/ fun getDeclaringClass(): java.lang.Class<*>!
                 public open fun getDefaultValue(): kotlin.Any!
-                public open fun getExceptionTypes(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                public open fun getExceptionTypes(): kotlin.Array<(out) java.lang.Class<*>!>!
                 private open fun getFactory(): [ERROR : Unresolved java classifier: GenericsFactory]!
                 public open fun getGenericExceptionTypes(): kotlin.Array<(out) java.lang.reflect.Type!>!
                 private open fun getGenericInfo(): [ERROR : Unresolved java classifier: MethodRepository]!
@@ -9298,8 +9298,8 @@ package java {
                 public open override /*1*/ fun getModifiers(): kotlin.Int
                 public open override /*1*/ fun getName(): kotlin.String!
                 public open fun getParameterAnnotations(): kotlin.Array<(out) kotlin.Array<(out) kotlin.Annotation!>!>!
-                public open fun getParameterTypes(): kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
-                public open fun getReturnType(): java.lang.Class<out kotlin.Any?>!
+                public open fun getParameterTypes(): kotlin.Array<(out) java.lang.Class<*>!>!
+                public open fun getReturnType(): java.lang.Class<*>!
                 public open override /*1*/ fun getTypeParameters(): kotlin.Array<(out) [ERROR : Unresolved java classifier: TypeVariable<Method>]!>!
                 public open override /*3*/ fun hashCode(): kotlin.Int
                 public open fun invoke(/*0*/ p0: kotlin.Any!, /*1*/ vararg p1: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Any!
@@ -9310,7 +9310,7 @@ package java {
                 public open fun isVarArgs(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun setAccessible(/*0*/ p0: kotlin.Boolean): kotlin.Unit
                 public/*package*/ open fun setMethodAccessor(/*0*/ p0: [ERROR : Unresolved java classifier: MethodAccessor]!): kotlin.Unit
-                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<out kotlin.Any?>!): kotlin.Unit
+                public/*package*/ open override /*1*/ /*fake_override*/ fun slowCheckMemberAccess(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: java.lang.Class<*>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int, /*4*/ p4: java.lang.Class<*>!): kotlin.Unit
                 public open fun toGenericString(): kotlin.String!
                 public open override /*3*/ fun toString(): kotlin.String!
             }
@@ -9430,7 +9430,7 @@ package java {
             public/*package*/ final val ST_CONNECTED_NO_IMPL: kotlin.Int = 2
             public/*package*/ final val ST_NOT_CONNECTED: kotlin.Int = 0
             public/*package*/ final var factory: [ERROR : Unresolved java classifier: DatagramSocketImplFactory]!
-            public/*package*/ final var implClass: java.lang.Class<out kotlin.Any?>!
+            public/*package*/ final var implClass: java.lang.Class<*>!
             public open fun setDatagramSocketImplFactory(/*0*/ p0: [ERROR : Unresolved java classifier: DatagramSocketImplFactory]!): kotlin.Unit
         }
 
@@ -9943,7 +9943,7 @@ package java {
             public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
             public open fun getAuthority(): kotlin.String!
             public final fun getContent(): kotlin.Any!
-            public final fun getContent(/*0*/ p0: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public final fun getContent(/*0*/ p0: kotlin.Array<(out) java.lang.Class<*>!>!): kotlin.Any!
             public open fun getDefaultPort(): kotlin.Int
             public open fun getFile(): kotlin.String!
             public open fun getHost(): kotlin.String!
@@ -9999,7 +9999,7 @@ package java {
             public open fun getAllowUserInteraction(): kotlin.Boolean
             public open fun getConnectTimeout(): kotlin.Int
             public open fun getContent(): kotlin.Any!
-            public open fun getContent(/*0*/ p0: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public open fun getContent(/*0*/ p0: kotlin.Array<(out) java.lang.Class<*>!>!): kotlin.Any!
             public open fun getContentEncoding(): kotlin.String!
             public/*package*/ open fun getContentHandler(): [ERROR : Unresolved java classifier: ContentHandler]!
             private open fun getContentHandlerPkgPrefixes(): kotlin.String!
@@ -10115,7 +10115,7 @@ package java {
                 private final var extendedProvider: [ERROR : Unresolved java classifier: CharsetProvider]!
                 private final var extendedProviderLock: kotlin.Any!
                 private final var extendedProviderProbed: kotlin.Boolean
-                private final var gate: java.lang.ThreadLocal<java.lang.ThreadLocal<out kotlin.Any?>!>!
+                private final var gate: java.lang.ThreadLocal<java.lang.ThreadLocal<*>!>!
                 private final var standardProvider: [ERROR : Unresolved java classifier: CharsetProvider]!
                 public/*package*/ open fun atBugLevel(/*0*/ p0: kotlin.String!): kotlin.Boolean
                 public open fun availableCharsets(): java.util.SortedMap<kotlin.String!, java.nio.charset.Charset!>!
@@ -10129,7 +10129,7 @@ package java {
                 private open fun lookupExtendedCharset(/*0*/ p0: kotlin.String!): java.nio.charset.Charset!
                 private open fun lookupViaProviders(/*0*/ p0: kotlin.String!): java.nio.charset.Charset!
                 private open fun probeExtendedProvider(): kotlin.Unit
-                private open fun providers(): kotlin.(Mutable)Iterator<kotlin.Any?>!
+                private open fun providers(): kotlin.(Mutable)Iterator<*>!
                 private open fun put(/*0*/ p0: kotlin.(Mutable)Iterator<java.nio.charset.Charset!>!, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.nio.charset.Charset!>!): kotlin.Unit
             }
         }
@@ -10335,7 +10335,7 @@ package java {
             public open fun getVersion(): kotlin.Double
             private open fun implClear(): kotlin.Unit
             private open fun implPut(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any!
-            private open fun implPutAll(/*0*/ p0: (kotlin.MutableMap<out kotlin.Any?, out kotlin.Any?>..kotlin.Map<out kotlin.Any?, kotlin.Any?>?)): kotlin.Unit
+            private open fun implPutAll(/*0*/ p0: kotlin.(Mutable)Map<*, *>!): kotlin.Unit
             private open fun implRemove(/*0*/ p0: kotlin.Any!): kotlin.Any!
             private open fun implRemoveService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
             public open fun keySet(): kotlin.(Mutable)Set<kotlin.Any!>!
@@ -10348,9 +10348,9 @@ package java {
             invisible_fake open override /*1*/ /*fake_override*/ fun loadConvert(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.CharArray!): kotlin.String!
             public open override /*1*/ /*fake_override*/ fun loadFromXML(/*0*/ p0: java.io.InputStream!): kotlin.Unit
             private open fun parseLegacyPut(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun propertyNames(): java.util.Enumeration<out kotlin.Any?>!
+            public open override /*1*/ /*fake_override*/ fun propertyNames(): java.util.Enumeration<*>!
             public open fun put(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any!
-            public open fun putAll(/*0*/ p0: (kotlin.MutableMap<out kotlin.Any?, out kotlin.Any?>..kotlin.Map<out kotlin.Any?, kotlin.Any?>?)): kotlin.Unit
+            public open fun putAll(/*0*/ p0: kotlin.(Mutable)Map<*, *>!): kotlin.Unit
             private open fun putId(): kotlin.Unit
             private open fun putPropertyStrings(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
             protected/*protected and package*/ open fun putService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
@@ -10373,12 +10373,12 @@ package java {
 
             private open class EngineDescription {
                 public/*package*/ constructor EngineDescription(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: kotlin.String!)
-                private final var constructorParameterClass: java.lang.Class<out kotlin.Any?>!
+                private final var constructorParameterClass: java.lang.Class<*>!
                 public/*package*/ final val constructorParameterClassName: kotlin.String!
                 public/*package*/ final val name: kotlin.String!
                 public/*package*/ final val supportsParameter: kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public/*package*/ open fun getConstructorParameterClass(): java.lang.Class<out kotlin.Any?>!
+                public/*package*/ open fun getConstructorParameterClass(): java.lang.Class<*>!
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -10394,7 +10394,7 @@ package java {
                 private final var hasKeyAttributes: kotlin.Boolean!
                 private final val provider: java.security.Provider!
                 private final var registered: kotlin.Boolean
-                private final var supportedClasses: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                private final var supportedClasses: kotlin.Array<(out) java.lang.Class<*>!>!
                 private final var supportedFormats: kotlin.Array<(out) kotlin.String!>!
                 private final var type: kotlin.String!
                 private open fun addAlias(/*0*/ p0: kotlin.String!): kotlin.Unit
@@ -10404,8 +10404,8 @@ package java {
                 private final fun getAliases(): kotlin.(Mutable)List<kotlin.String!>!
                 public final fun getAttribute(/*0*/ p0: kotlin.String!): kotlin.String!
                 public final fun getClassName(): kotlin.String!
-                private open fun getImplClass(): java.lang.Class<out kotlin.Any?>!
-                private open fun getKeyClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+                private open fun getImplClass(): java.lang.Class<*>!
+                private open fun getKeyClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
                 public final fun getProvider(): java.security.Provider!
                 public final fun getType(): kotlin.String!
                 private open fun hasKeyAttributes(): kotlin.Boolean
@@ -10419,7 +10419,7 @@ package java {
                 public open override /*1*/ fun toString(): kotlin.String!
 
                 // Static members
-                private final val CLASS0: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
+                private final val CLASS0: kotlin.Array<(out) java.lang.Class<*>!>!
             }
 
             private open class ServiceKey {
@@ -10472,7 +10472,7 @@ package java {
             // Static members
             private final var props: java.util.Properties!
             private final val sdebug: [ERROR : Unresolved java classifier: Debug]!
-            private final val spiMap: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!
+            private final val spiMap: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!
             public open fun addProvider(/*0*/ p0: java.security.Provider!): kotlin.Int
             private open fun check(/*0*/ p0: kotlin.String!): kotlin.Unit
             kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open fun getAlgorithmProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.String!
@@ -10491,7 +10491,7 @@ package java {
             public open fun getProviders(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, kotlin.String!>!): kotlin.Array<(out) java.security.Provider!>!
             public open fun getProviders(/*0*/ p0: kotlin.String!): kotlin.Array<(out) java.security.Provider!>!
             private open fun getProvidersNotUsingCache(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.String!, /*4*/ p4: kotlin.Array<(out) java.security.Provider!>!): [ERROR : Unresolved java classifier: LinkedHashSet<Provider>]!
-            private open fun getSpiClass(/*0*/ p0: kotlin.String!): java.lang.Class<out kotlin.Any?>!
+            private open fun getSpiClass(/*0*/ p0: kotlin.String!): java.lang.Class<*>!
             private open fun initialize(): kotlin.Unit
             private open fun initializeStatic(): kotlin.Unit
             public open fun insertProviderAt(/*0*/ p0: java.security.Provider!, /*1*/ p1: kotlin.Int): kotlin.Int
@@ -10547,15 +10547,15 @@ package java {
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public abstract fun free(): kotlin.Unit
             public abstract fun getArray(): kotlin.Any!
-            public abstract fun getArray(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getArray(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract fun getArray(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Any!
-            public abstract fun getArray(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getArray(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract fun getBaseType(): kotlin.Int
             public abstract fun getBaseTypeName(): kotlin.String!
             public abstract fun getResultSet(): java.sql.ResultSet!
-            public abstract fun getResultSet(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): java.sql.ResultSet!
+            public abstract fun getResultSet(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): java.sql.ResultSet!
             public abstract fun getResultSet(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): java.sql.ResultSet!
-            public abstract fun getResultSet(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): java.sql.ResultSet!
+            public abstract fun getResultSet(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): java.sql.ResultSet!
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
@@ -10678,10 +10678,10 @@ package java {
             public abstract fun getNString(/*0*/ p0: kotlin.String!): kotlin.String!
             public abstract fun getObject(/*0*/ p0: kotlin.Int): kotlin.Any!
             public abstract fun </*0*/ T> getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: java.lang.Class<T!>!): T!
-            public abstract fun getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract fun getObject(/*0*/ p0: kotlin.String!): kotlin.Any!
             public abstract fun </*0*/ T> getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<T!>!): T!
-            public abstract fun getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract override /*1*/ /*fake_override*/ fun getParameterMetaData(): java.sql.ParameterMetaData!
             public abstract override /*1*/ /*fake_override*/ fun getQueryTimeout(): kotlin.Int
             public abstract fun getRef(/*0*/ p0: kotlin.Int): java.sql.Ref!
@@ -10868,7 +10868,7 @@ package java {
             public abstract fun getNetworkTimeout(): kotlin.Int
             public abstract fun getSchema(): kotlin.String!
             public abstract fun getTransactionIsolation(): kotlin.Int
-            public abstract fun getTypeMap(): kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!
+            public abstract fun getTypeMap(): kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!
             public abstract fun getWarnings(): java.sql.SQLWarning!
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public abstract fun isClosed(): kotlin.Boolean
@@ -10898,7 +10898,7 @@ package java {
             public abstract fun setSavepoint(/*0*/ p0: kotlin.String!): java.sql.Savepoint!
             public abstract fun setSchema(/*0*/ p0: kotlin.String!): kotlin.Unit
             public abstract fun setTransactionIsolation(/*0*/ p0: kotlin.Int): kotlin.Unit
-            public abstract fun setTypeMap(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Unit
+            public abstract fun setTypeMap(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             // Static members
@@ -11419,7 +11419,7 @@ package java {
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public abstract fun getBaseTypeName(): kotlin.String!
             public abstract fun getObject(): kotlin.Any!
-            public abstract fun getObject(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getObject(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public abstract fun setObject(/*0*/ p0: kotlin.Any!): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -11484,10 +11484,10 @@ package java {
             public abstract fun getNString(/*0*/ p0: kotlin.String!): kotlin.String!
             public abstract fun getObject(/*0*/ p0: kotlin.Int): kotlin.Any!
             public abstract fun </*0*/ T> getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: java.lang.Class<T!>!): T!
-            public abstract fun getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getObject(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract fun getObject(/*0*/ p0: kotlin.String!): kotlin.Any!
             public abstract fun </*0*/ T> getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: java.lang.Class<T!>!): T!
-            public abstract fun getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Any!
+            public abstract fun getObject(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Any!
             public abstract fun getRef(/*0*/ p0: kotlin.Int): java.sql.Ref!
             public abstract fun getRef(/*0*/ p0: kotlin.String!): java.sql.Ref!
             public abstract fun getRow(): kotlin.Int
@@ -11871,7 +11871,7 @@ package java {
         public trait Struct {
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public abstract fun getAttributes(): kotlin.Array<(out) kotlin.Any!>!
-            public abstract fun getAttributes(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<out kotlin.Any?>!>!): kotlin.Array<(out) kotlin.Any!>!
+            public abstract fun getAttributes(/*0*/ p0: kotlin.(Mutable)Map<kotlin.String!, java.lang.Class<*>!>!): kotlin.Array<(out) kotlin.Any!>!
             public abstract fun getSQLTypeName(): kotlin.String!
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -12024,14 +12024,14 @@ package java {
             public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public open override /*1*/ fun clear(): kotlin.Unit
             public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ fun isEmpty(): kotlin.Boolean
             public abstract override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
             public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-            public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+            public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public abstract override /*1*/ fun size(): kotlin.Int
             public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
             public open fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -12039,7 +12039,7 @@ package java {
 
             // Static members
             private final val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
-            private open fun </*0*/ T> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.(Mutable)Iterator<kotlin.Any?>!): kotlin.Array<(out) T!>!
+            private open fun </*0*/ T> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
             private open fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
         }
 
@@ -12174,7 +12174,7 @@ package java {
             public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public open override /*1*/ fun clear(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open fun element(): E!
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -12182,8 +12182,8 @@ package java {
             public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
             public open fun remove(): E!
             public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
             public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -12236,7 +12236,7 @@ package java {
             public open override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
             public abstract override /*2*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<E!>
             public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-            public open override /*2*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*2*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
             public abstract override /*2*/ /*fake_override*/ fun size(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -12255,7 +12255,7 @@ package java {
             public open override /*2*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E!): kotlin.Unit
             public open override /*2*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public open override /*2*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
-            private open fun batchRemove(/*0*/ p0: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?), /*1*/ p1: kotlin.Boolean): kotlin.Boolean
+            private open fun batchRemove(/*0*/ p0: kotlin.(Mutable)Collection<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Boolean
             public open override /*2*/ fun clear(): kotlin.Unit
             public open override /*1*/ fun clone(): kotlin.Any!
             public open override /*2*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
@@ -12280,9 +12280,9 @@ package java {
             private open fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
             public open override /*2*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
             public open override /*2*/ fun remove(/*0*/ index: kotlin.Int): E!
-            public open override /*2*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*2*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             protected/*protected and package*/ open override /*1*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
-            public open override /*2*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open override /*2*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*2*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: E!): E!
             public open override /*2*/ fun size(): kotlin.Int
             public open override /*2*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.(Mutable)List<E!>!
@@ -12528,7 +12528,7 @@ package java {
             private open fun legacyMergeSort(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!): kotlin.Unit
             private open fun legacyMergeSort(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Unit
             private open fun mergeSort(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit
-            private open fun mergeSort(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: java.util.Comparator<out kotlin.Any?>!): kotlin.Unit
+            private open fun mergeSort(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Array<(out) kotlin.Any!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: java.util.Comparator<*>!): kotlin.Unit
             private open fun rangeCheck(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Unit
             public final /*synthesized*/ fun </*0*/ T> sort(/*0*/ a: kotlin.Array<(out) T!>!, /*1*/ c: ((T!, T!) -> kotlin.Int)!): kotlin.Unit
             public open fun </*0*/ T> sort(/*0*/ a: kotlin.Array<(out) T!>!, /*1*/ c: java.util.Comparator<in T!>!): kotlin.Unit
@@ -12746,14 +12746,14 @@ package java {
             public abstract fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public abstract fun clear(): kotlin.Unit
             public abstract fun contains(/*0*/ p0: kotlin.Any!): kotlin.Boolean
-            public abstract fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public abstract fun isEmpty(): kotlin.Boolean
             public abstract override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
             public abstract fun remove(/*0*/ p0: kotlin.Any!): kotlin.Boolean
-            public abstract fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-            public abstract fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+            public abstract fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public abstract fun size(): kotlin.Int
             public abstract fun toArray(): kotlin.Array<(out) kotlin.Any!>!
             public abstract fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -12773,7 +12773,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun element(): E!
                 public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -12784,8 +12784,8 @@ package java {
                 public open fun poll(): E!
                 public open override /*1*/ fun remove(): E!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open override /*1*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -12806,14 +12806,14 @@ package java {
                 public/*package*/ open fun checkedCopyOf(/*0*/ p0: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.(Mutable)Collection<E!>!
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -12897,17 +12897,17 @@ package java {
                     private final val valueType: java.lang.Class<V!>!
                     public open override /*1*/ fun add(/*0*/ e: kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!): kotlin.Boolean
                     public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>..kotlin.Collection<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>?)): kotlin.Boolean
-                    private open fun batchRemove(/*0*/ p0: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?), /*1*/ p1: kotlin.Boolean): kotlin.Boolean
+                    private open fun batchRemove(/*0*/ p0: kotlin.(Mutable)Collection<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Boolean
                     public open override /*1*/ fun clear(): kotlin.Unit
                     public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                     public open override /*1*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ fun isEmpty(): kotlin.Boolean
                     public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                     public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                    public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                    public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ fun size(): kotlin.Int
                     public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                     public open fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -13151,7 +13151,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*3*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                 public open override /*1*/ fun get(/*0*/ index: kotlin.Int): E!
                 public open override /*3*/ fun hashCode(): kotlin.Int
@@ -13231,14 +13231,14 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 private open fun readResolve(): kotlin.Any!
                 public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -13290,15 +13290,15 @@ package java {
                 public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
                 public open override /*2*/ fun clear(): kotlin.Unit
                 public open override /*2*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*2*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*2*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*3*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                 public open override /*3*/ fun hashCode(): kotlin.Int
                 public open override /*2*/ fun isEmpty(): kotlin.Boolean
                 public open override /*2*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 private open fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
                 public open override /*2*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*2*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*2*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*2*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*2*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*2*/ fun size(): kotlin.Int
                 public open override /*1*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open override /*1*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -13387,7 +13387,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -13407,14 +13407,14 @@ package java {
                 public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -13637,14 +13637,14 @@ package java {
                 public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -13719,7 +13719,7 @@ package java {
                     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
                     public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
@@ -13879,9 +13879,9 @@ package java {
             // Static members
             private final val BINARYSEARCH_THRESHOLD: kotlin.Int = 5000
             private final val COPY_THRESHOLD: kotlin.Int = 10
-            public final val EMPTY_LIST: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
-            public final val EMPTY_MAP: (kotlin.MutableMap<out kotlin.Any?, out kotlin.Any?>..kotlin.Map<out kotlin.Any?, kotlin.Any?>?)
-            public final val EMPTY_SET: (kotlin.MutableSet<out kotlin.Any?>..kotlin.Set<kotlin.Any?>?)
+            public final val EMPTY_LIST: kotlin.(Mutable)List<*>!
+            public final val EMPTY_MAP: kotlin.(Mutable)Map<*, *>!
+            public final val EMPTY_SET: kotlin.(Mutable)Set<*>!
             private final val FILL_THRESHOLD: kotlin.Int = 25
             private final val INDEXOFSUBLIST_THRESHOLD: kotlin.Int = 35
             private final val REPLACEALL_THRESHOLD: kotlin.Int = 11
@@ -13902,7 +13902,7 @@ package java {
             public open fun </*0*/ K, /*1*/ V> checkedSortedMap(/*0*/ m: java.util.SortedMap<K!, V!>!, /*1*/ keyType: java.lang.Class<K!>!, /*2*/ valueType: java.lang.Class<V!>!): java.util.SortedMap<K!, V!>!
             public open fun </*0*/ E> checkedSortedSet(/*0*/ s: java.util.SortedSet<E!>!, /*1*/ _type: java.lang.Class<E!>!): java.util.SortedSet<E!>!
             public open fun </*0*/ T> copy(/*0*/ dest: kotlin.(Mutable)List<in T!>!, /*1*/ src: (kotlin.MutableList<out T!>..kotlin.List<T!>?)): kotlin.Unit
-            public open fun disjoint(/*0*/ c1: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?), /*1*/ c2: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public open fun disjoint(/*0*/ c1: kotlin.(Mutable)Collection<*>!, /*1*/ c2: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open fun </*0*/ T> emptyEnumeration(): java.util.Enumeration<T!>!
             public open fun </*0*/ T> emptyIterator(): kotlin.(Mutable)Iterator<T!>!
             public final fun </*0*/ T> emptyList(): kotlin.(Mutable)List<T!>!
@@ -13912,16 +13912,16 @@ package java {
             public open fun </*0*/ T> enumeration(/*0*/ c: kotlin.(Mutable)Collection<T!>!): java.util.Enumeration<T!>!
             public/*package*/ open fun eq(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
             public open fun </*0*/ T> fill(/*0*/ list: kotlin.(Mutable)List<in T!>!, /*1*/ obj: T!): kotlin.Unit
-            public open fun frequency(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?), /*1*/ o: kotlin.Any!): kotlin.Int
+            public open fun frequency(/*0*/ c: kotlin.(Mutable)Collection<*>!, /*1*/ o: kotlin.Any!): kotlin.Int
             private open fun </*0*/ T> get(/*0*/ p0: (kotlin.MutableListIterator<out T!>..kotlin.ListIterator<T!>?), /*1*/ p1: kotlin.Int): T!
-            public open fun indexOfSubList(/*0*/ source: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ target: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Int
+            public open fun indexOfSubList(/*0*/ source: kotlin.(Mutable)List<*>!, /*1*/ target: kotlin.(Mutable)List<*>!): kotlin.Int
             private final /*synthesized*/ fun </*0*/ T> indexedBinarySearch(/*0*/ p0: (kotlin.MutableList<out T!>..kotlin.List<T!>?), /*1*/ p1: T!, /*2*/ p2: ((T!, T!) -> kotlin.Int)!): kotlin.Int
             private open fun </*0*/ T> indexedBinarySearch(/*0*/ p0: (kotlin.MutableList<out T!>..kotlin.List<T!>?), /*1*/ p1: T!, /*2*/ p2: java.util.Comparator<in T!>!): kotlin.Int
             private open fun </*0*/ T> indexedBinarySearch(/*0*/ p0: (kotlin.MutableList<out kotlin.Comparable<T!>!>..kotlin.List<kotlin.Comparable<T!>!>?), /*1*/ p1: T!): kotlin.Int
             private final /*synthesized*/ fun </*0*/ T> iteratorBinarySearch(/*0*/ p0: (kotlin.MutableList<out T!>..kotlin.List<T!>?), /*1*/ p1: T!, /*2*/ p2: ((T!, T!) -> kotlin.Int)!): kotlin.Int
             private open fun </*0*/ T> iteratorBinarySearch(/*0*/ p0: (kotlin.MutableList<out T!>..kotlin.List<T!>?), /*1*/ p1: T!, /*2*/ p2: java.util.Comparator<in T!>!): kotlin.Int
             private open fun </*0*/ T> iteratorBinarySearch(/*0*/ p0: (kotlin.MutableList<out kotlin.Comparable<T!>!>..kotlin.List<kotlin.Comparable<T!>!>?), /*1*/ p1: T!): kotlin.Int
-            public open fun lastIndexOfSubList(/*0*/ source: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ target: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Int
+            public open fun lastIndexOfSubList(/*0*/ source: kotlin.(Mutable)List<*>!, /*1*/ target: kotlin.(Mutable)List<*>!): kotlin.Int
             public open fun </*0*/ T> list(/*0*/ e: java.util.Enumeration<T!>!): java.util.ArrayList<T!>!
             public open fun </*0*/ T : kotlin.Any!> max(/*0*/ coll: (kotlin.MutableCollection<out T!>..kotlin.Collection<T!>?)): T! where T : kotlin.Comparable<T!>!
             public final /*synthesized*/ fun </*0*/ T> max(/*0*/ coll: (kotlin.MutableCollection<out T!>..kotlin.Collection<T!>?), /*1*/ comp: ((T!, T!) -> kotlin.Int)!): T!
@@ -13932,15 +13932,15 @@ package java {
             public open fun </*0*/ T> nCopies(/*0*/ p0: kotlin.Int, /*1*/ p1: T!): kotlin.(Mutable)List<T!>!
             public open fun </*0*/ E> newSetFromMap(/*0*/ map: kotlin.(Mutable)Map<E!, kotlin.Boolean!>!): kotlin.(Mutable)Set<E!>!
             public open fun </*0*/ T> replaceAll(/*0*/ list: kotlin.(Mutable)List<T!>!, /*1*/ oldVal: T!, /*2*/ newVal: T!): kotlin.Boolean
-            public open fun reverse(/*0*/ list: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Unit
+            public open fun reverse(/*0*/ list: kotlin.(Mutable)List<*>!): kotlin.Unit
             public open fun </*0*/ T> reverseOrder(): java.util.Comparator<T!>!
             public final /*synthesized*/ fun </*0*/ T> reverseOrder(/*0*/ cmp: ((T!, T!) -> kotlin.Int)!): java.util.Comparator<T!>!
             public open fun </*0*/ T> reverseOrder(/*0*/ cmp: java.util.Comparator<T!>!): java.util.Comparator<T!>!
-            public open fun rotate(/*0*/ list: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ distance: kotlin.Int): kotlin.Unit
+            public open fun rotate(/*0*/ list: kotlin.(Mutable)List<*>!, /*1*/ distance: kotlin.Int): kotlin.Unit
             private open fun </*0*/ T> rotate1(/*0*/ p0: kotlin.(Mutable)List<T!>!, /*1*/ p1: kotlin.Int): kotlin.Unit
-            private open fun rotate2(/*0*/ p0: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ p1: kotlin.Int): kotlin.Unit
-            public open fun shuffle(/*0*/ list: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)): kotlin.Unit
-            public open fun shuffle(/*0*/ list: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ rnd: java.util.Random!): kotlin.Unit
+            private open fun rotate2(/*0*/ p0: kotlin.(Mutable)List<*>!, /*1*/ p1: kotlin.Int): kotlin.Unit
+            public open fun shuffle(/*0*/ list: kotlin.(Mutable)List<*>!): kotlin.Unit
+            public open fun shuffle(/*0*/ list: kotlin.(Mutable)List<*>!, /*1*/ rnd: java.util.Random!): kotlin.Unit
             public open fun </*0*/ T> singleton(/*0*/ o: T!): kotlin.(Mutable)Set<T!>!
             public/*package*/ open fun </*0*/ E> singletonIterator(/*0*/ p0: E!): kotlin.(Mutable)Iterator<E!>!
             public open fun </*0*/ T> singletonList(/*0*/ o: T!): kotlin.(Mutable)List<T!>!
@@ -13948,7 +13948,7 @@ package java {
             public open fun </*0*/ T : kotlin.Comparable<T!>!> sort(/*0*/ list: kotlin.(Mutable)List<T!>!): kotlin.Unit
             public final /*synthesized*/ fun </*0*/ T> sort(/*0*/ list: kotlin.(Mutable)List<T!>!, /*1*/ c: ((T!, T!) -> kotlin.Int)!): kotlin.Unit
             public open fun </*0*/ T> sort(/*0*/ list: kotlin.(Mutable)List<T!>!, /*1*/ c: java.util.Comparator<in T!>!): kotlin.Unit
-            public open fun swap(/*0*/ list: (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?), /*1*/ i: kotlin.Int, /*2*/ j: kotlin.Int): kotlin.Unit
+            public open fun swap(/*0*/ list: kotlin.(Mutable)List<*>!, /*1*/ i: kotlin.Int, /*2*/ j: kotlin.Int): kotlin.Unit
             private open fun swap(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Unit
             public open fun </*0*/ T> synchronizedCollection(/*0*/ c: kotlin.(Mutable)Collection<T!>!): kotlin.(Mutable)Collection<T!>!
             public/*package*/ open fun </*0*/ T> synchronizedCollection(/*0*/ p0: kotlin.(Mutable)Collection<T!>!, /*1*/ p1: kotlin.Any!): kotlin.(Mutable)Collection<T!>!
@@ -14264,7 +14264,7 @@ package java {
             public/*package*/ open fun resize(/*0*/ p0: kotlin.Int): kotlin.Unit
             public open override /*2*/ fun size(): kotlin.Int
             public open override /*4*/ /*fake_override*/ fun toString(): kotlin.String
-            public/*package*/ open fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.HashMap.Entry<out kotlin.Any?, out kotlin.Any?>!>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+            public/*package*/ open fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.HashMap.Entry<*, *>!>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
             public open override /*2*/ fun values(): kotlin.(Mutable)Collection<V!>!
             private open fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 
@@ -14311,7 +14311,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -14373,7 +14373,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<K!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -14402,14 +14402,14 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out V!>..kotlin.Collection<V!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -14535,7 +14535,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -14587,7 +14587,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<K!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -14617,14 +14617,14 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out V!>..kotlin.Collection<V!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<V!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -14659,7 +14659,7 @@ package java {
             public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public abstract override /*1*/ fun clear(): kotlin.Unit
             public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public abstract override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public abstract fun get(/*0*/ index: kotlin.Int): E!
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -14671,8 +14671,8 @@ package java {
             public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.(Mutable)ListIterator<E!>!
             public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
             public abstract fun remove(/*0*/ index: kotlin.Int): E!
-            public abstract override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-            public abstract override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+            public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public abstract fun set(/*0*/ index: kotlin.Int, /*1*/ element: E!): E!
             public abstract override /*1*/ fun size(): kotlin.Int
             public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.(Mutable)List<E!>!
@@ -14993,7 +14993,7 @@ package java {
             private open fun load0(/*0*/ p0: java.util.Properties.LineReader!): kotlin.Unit
             private open fun loadConvert(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.CharArray!): kotlin.String!
             public open fun loadFromXML(/*0*/ p0: java.io.InputStream!): kotlin.Unit
-            public open fun propertyNames(): java.util.Enumeration<out kotlin.Any?>!
+            public open fun propertyNames(): java.util.Enumeration<*>!
             kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open fun save(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!): kotlin.Unit
             private open fun saveConvert(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: kotlin.Boolean): kotlin.String!
             public open fun setProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Any!
@@ -15074,14 +15074,14 @@ package java {
             public abstract override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
             public abstract override /*1*/ fun clear(): kotlin.Unit
             public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public abstract override /*1*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
             public abstract override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<E!>!
             public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-            public abstract override /*1*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-            public abstract override /*1*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+            public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+            public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
             public abstract override /*1*/ fun size(): kotlin.Int
             public abstract fun toArray(): kotlin.Array<(out) kotlin.Any!>!
             public abstract fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -15215,8 +15215,8 @@ package java {
             private final var size: kotlin.Int
             public/*package*/ final override /*1*/ /*fake_override*/ var values: kotlin.(Mutable)Collection<V!>!
             public/*package*/ open fun addAllForTreeSet(/*0*/ p0: java.util.SortedSet<out K!>!, /*1*/ p1: V!): kotlin.Unit
-            private open fun buildFromSorted(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Iterator<kotlin.Any?>!, /*2*/ p2: java.io.ObjectInputStream!, /*3*/ p3: V!): kotlin.Unit
-            private final fun buildFromSorted(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.(Mutable)Iterator<kotlin.Any?>!, /*5*/ p5: java.io.ObjectInputStream!, /*6*/ p6: V!): java.util.TreeMap.Entry<K!, V!>!
+            private open fun buildFromSorted(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.(Mutable)Iterator<*>!, /*2*/ p2: java.io.ObjectInputStream!, /*3*/ p3: V!): kotlin.Unit
+            private final fun buildFromSorted(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.(Mutable)Iterator<*>!, /*5*/ p5: java.io.ObjectInputStream!, /*6*/ p6: V!): java.util.TreeMap.Entry<K!, V!>!
             public open fun ceilingEntry(/*0*/ p0: K!): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
             public open fun ceilingKey(/*0*/ p0: K!): K!
             public open override /*1*/ fun clear(): kotlin.Unit
@@ -15367,7 +15367,7 @@ package java {
                     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                     public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun size(): kotlin.Int
                     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -15485,7 +15485,7 @@ package java {
                     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                     public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun size(): kotlin.Int
                     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -15540,7 +15540,7 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -15589,7 +15589,7 @@ package java {
                 public open fun pollFirst(): E!
                 public open fun pollLast(): E!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open fun subSet(/*0*/ p0: E!, /*1*/ p1: E!): java.util.SortedSet<E!>!
@@ -15722,7 +15722,7 @@ package java {
                     public open override /*1*/ fun isEmpty(): kotlin.Boolean
                     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!>
                     public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
                     public open override /*1*/ fun size(): kotlin.Int
                     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -15857,14 +15857,14 @@ package java {
                 public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out V!>..kotlin.Collection<V!>?)): kotlin.Boolean
                 public open override /*1*/ fun clear(): kotlin.Unit
                 public open override /*1*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
                 public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<V!>!
                 public open override /*1*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
                 public open override /*1*/ fun size(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
                 public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -15879,7 +15879,7 @@ package java {
             private open fun </*0*/ K, /*1*/ V> colorOf(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!): kotlin.Boolean
             private open fun computeRedLevel(/*0*/ p0: kotlin.Int): kotlin.Int
             public/*package*/ open fun </*0*/ K, /*1*/ V> exportEntry(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
-            public/*package*/ open fun </*0*/ K> key(/*0*/ p0: java.util.TreeMap.Entry<K!, out kotlin.Any?>!): K!
+            public/*package*/ open fun </*0*/ K> key(/*0*/ p0: java.util.TreeMap.Entry<K!, *>!): K!
             public/*package*/ open fun </*0*/ K, /*1*/ V> keyOrNull(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!): K!
             private open fun </*0*/ K, /*1*/ V> leftOf(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!): java.util.TreeMap.Entry<K!, V!>!
             private open fun </*0*/ K, /*1*/ V> parentOf(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!): java.util.TreeMap.Entry<K!, V!>!
@@ -16347,7 +16347,7 @@ package java {
 
                     private open class AtomicIntegerFieldUpdaterImpl</*0*/ T> : java.util.concurrent.atomic.AtomicIntegerFieldUpdater<T!> {
                         public/*package*/ constructor AtomicIntegerFieldUpdaterImpl</*0*/ T>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: kotlin.String!)
-                        private final val cclass: java.lang.Class<out kotlin.Any?>!
+                        private final val cclass: java.lang.Class<*>!
                         private final val offset: kotlin.Long
                         private final val tclass: java.lang.Class<T!>!
                         public open override /*1*/ /*fake_override*/ fun addAndGet(/*0*/ p0: T!, /*1*/ p1: kotlin.Int): kotlin.Int
@@ -16460,7 +16460,7 @@ package java {
 
                     private open class CASUpdater</*0*/ T> : java.util.concurrent.atomic.AtomicLongFieldUpdater<T!> {
                         public/*package*/ constructor CASUpdater</*0*/ T>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: kotlin.String!)
-                        private final val cclass: java.lang.Class<out kotlin.Any?>!
+                        private final val cclass: java.lang.Class<*>!
                         private final val offset: kotlin.Long
                         private final val tclass: java.lang.Class<T!>!
                         public open override /*1*/ /*fake_override*/ fun addAndGet(/*0*/ p0: T!, /*1*/ p1: kotlin.Long): kotlin.Long
@@ -16487,7 +16487,7 @@ package java {
 
                     private open class LockedUpdater</*0*/ T> : java.util.concurrent.atomic.AtomicLongFieldUpdater<T!> {
                         public/*package*/ constructor LockedUpdater</*0*/ T>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: kotlin.String!)
-                        private final val cclass: java.lang.Class<out kotlin.Any?>!
+                        private final val cclass: java.lang.Class<*>!
                         private final val offset: kotlin.Long
                         private final val tclass: java.lang.Class<T!>!
                         public open override /*1*/ /*fake_override*/ fun addAndGet(/*0*/ p0: T!, /*1*/ p1: kotlin.Long): kotlin.Long
@@ -16546,7 +16546,7 @@ package java {
                     // Static members
                     private final val UNSAFE: [ERROR : Unresolved java classifier: Unsafe]!
                     private final val pairOffset: kotlin.Long
-                    public/*package*/ open fun objectFieldOffset(/*0*/ p0: [ERROR : Unresolved java classifier: Unsafe]!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!): kotlin.Long
+                    public/*package*/ open fun objectFieldOffset(/*0*/ p0: [ERROR : Unresolved java classifier: Unsafe]!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<*>!): kotlin.Long
                 }
 
                 public open class AtomicReference</*0*/ V> : java.io.Serializable {
@@ -16611,7 +16611,7 @@ package java {
 
                     private final class AtomicReferenceFieldUpdaterImpl</*0*/ T, /*1*/ V> : java.util.concurrent.atomic.AtomicReferenceFieldUpdater<T!, V!> {
                         public/*package*/ constructor AtomicReferenceFieldUpdaterImpl</*0*/ T, /*1*/ V>(/*0*/ p0: java.lang.Class<T!>!, /*1*/ p1: java.lang.Class<V!>!, /*2*/ p2: kotlin.String!)
-                        private final val cclass: java.lang.Class<out kotlin.Any?>!
+                        private final val cclass: java.lang.Class<*>!
                         private final val offset: kotlin.Long
                         private final val tclass: java.lang.Class<T!>!
                         private final val vclass: java.lang.Class<V!>!
@@ -16666,7 +16666,7 @@ package java {
                     // Static members
                     private final val UNSAFE: [ERROR : Unresolved java classifier: Unsafe]!
                     private final val pairOffset: kotlin.Long
-                    public/*package*/ open fun objectFieldOffset(/*0*/ p0: [ERROR : Unresolved java classifier: Unsafe]!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<out kotlin.Any?>!): kotlin.Long
+                    public/*package*/ open fun objectFieldOffset(/*0*/ p0: [ERROR : Unresolved java classifier: Unsafe]!, /*1*/ p1: kotlin.String!, /*2*/ p2: java.lang.Class<*>!): kotlin.Long
                 }
             }
 

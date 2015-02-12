@@ -11,7 +11,7 @@ internal final class MyListOfPairs</*0*/ T> : java.util.ArrayList<Pair<T, T>> {
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: Pair<T, T>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out Pair<T, T>!>..kotlin.Collection<Pair<T, T>!>?)): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: (kotlin.MutableCollection<out Pair<T, T>!>..kotlin.Collection<Pair<T, T>!>?)): kotlin.Boolean
-    invisible_fake open override /*1*/ /*fake_override*/ fun batchRemove(/*0*/ p0: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?), /*1*/ p1: kotlin.Boolean): kotlin.Boolean
+    invisible_fake open override /*1*/ /*fake_override*/ fun batchRemove(/*0*/ p0: kotlin.(Mutable)Collection<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any!): kotlin.Boolean
@@ -36,9 +36,9 @@ internal final class MyListOfPairs</*0*/ T> : java.util.ArrayList<Pair<T, T>> {
     invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ index: kotlin.Int): Pair<T, T>!
-    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: (kotlin.MutableCollection<out kotlin.Any?>..kotlin.Collection<kotlin.Any?>?)): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.(Mutable)Collection<*>!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: Pair<T, T>!): Pair<T, T>!
     public open override /*1*/ /*fake_override*/ fun size(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.(Mutable)List<Pair<T, T>!>!

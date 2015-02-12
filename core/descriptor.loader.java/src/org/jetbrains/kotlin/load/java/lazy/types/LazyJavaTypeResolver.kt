@@ -91,9 +91,12 @@ class LazyJavaTypeResolver(
             val typeParameter: TypeParameterDescriptor,
             val attr: JavaTypeAttributes
     ) : TypeProjectionBase() {
+        override fun isStarProjection() = true
+
         override fun getProjectionKind() =
                 // projections are not allowed in immediate arguments of supertypes
                 if (typeParameter.getVariance() == OUT_VARIANCE || attr.howThisTypeIsUsed == SUPERTYPE) INVARIANT else OUT_VARIANCE
+
         override fun getType() = typeParameter.getUpperBoundsAsType()
     }
 

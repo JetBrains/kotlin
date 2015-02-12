@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +50,7 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
         ApplicationManager.getApplication()?.runWriteAction {
             val fileText = FileUtil.loadFile(File(filePath), true)
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(FqName(it), (myFixture.getFile() as JetFile))
+                ImportInsertHelper.getInstance(getProject()).addImportDirectiveIfNeeded(FqName(it), (myFixture.getFile() as JetFile))
             }
         }
 

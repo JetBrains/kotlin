@@ -368,10 +368,10 @@
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
-        <javac2 destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+        <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <src refid="preloaderSources.path"/>
-        </javac2>
+        </javac>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-preloader.jar">
             <fileset dir="${output}/classes/preloader"/>
@@ -390,13 +390,17 @@
 
     <target name="serialize-builtins">
         <cleandir dir="${output}/builtins"/>
-        <java classname="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"
-              classpath="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"
+        <java classname="org.jetbrains.kotlin.preloading.Preloader"
+              classpath="${bootstrap.compiler.home}/lib/kotlin-preloader.jar"
               failonerror="true"
               fork="true">
             <assertions>
                 <enable/>
             </assertions>
+            <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
+            <arg value="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"/>
+            <arg value="4096"/>
+            <arg value="notime"/>
             <arg value="${output}/builtins"/>
             <arg value="core/builtins/native"/>
             <arg value="core/builtins/src"/>
@@ -662,17 +666,10 @@
         <attribute name="output"/>
         <attribute name="withJava" default="true"/>
         <element name="src"/>
-        <!-- This element should have been named "classpath" but it conflicts with classpath elements present in java and javac tasks -->
         <element name="class-path"/>
 
         <sequential>
             <cleandir dir="@{output}"/>
-
-            <!-- All properties declared in this macro should be local because otherwise their value won't change after the first run,
-                 which effectively would make this macro non-reusable -->
-            <local name="src.paths"/>
-            <local name="src.line"/>
-            <local name="classpath.paths"/>
 
             <dirset dir="${basedir}" id="src.dirset">
                 <src/>
@@ -682,12 +679,9 @@
                 <class-path/>
             </path>
 
-            <!-- Source paths separated by the system path separator -->
-            <pathconvert property="src.paths" refid="src.dirset"/>
             <!-- Source paths separated by space (to pass to "arg line" below) -->
+            <local name="src.line"/>
             <pathconvert property="src.line" refid="src.dirset" pathsep=" "/>
-            <!-- Classpath separated by the system path separator -->
-            <pathconvert property="classpath.paths" refid="classpath.path"/>
 
             <java classname="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
                 <classpath>
@@ -702,15 +696,14 @@
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
                 <arg value="-classpath"/>
-                <!-- Include source paths to classpath for Kotlin compiler to resolve symbols from Java sources -->
-                <arg value="${src.paths}${path.separator}${classpath.paths}"/>
+                <arg value="${toString:classpath.path}"/>
             </java>
 
             <if>
                 <equals arg1="@{withJava}" arg2="true"/>
                 <then>
-                    <javac2 srcdir="${src.paths}" destdir="@{output}" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                            source="${java.target}" target="${java.target}">
+                    <javac2 srcdir="${toString:src.dirset}" destdir="@{output}" debug="true" debuglevel="lines,vars,source"
+                            includeAntRuntime="false" source="${java.target}" target="${java.target}">
                         <classpath>
                             <path refid="classpath.path"/>
                             <!-- Include @{output} here for Java compiler to resolve symbols from Kotlin sources -->
@@ -729,7 +722,10 @@
                 <include name="core/runtime.jvm/src"/>
                 <include name="core/reflection/src"/>
             </src>
-            <class-path/>
+            <class-path>
+                <!-- Need something to pass to compiler's "-classpath" here -->
+                <pathelement location="core/builtins/src"/>
+            </class-path>
         </new-kotlinc>
     </target>
 

@@ -1,3 +1,5 @@
 import java.lang.reflect
 
+fun foo(array: Array<String>){}
+
 val v: reflect.Array

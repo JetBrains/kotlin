@@ -1,2 +1,4 @@
+package f
+
 fun f() {
 }

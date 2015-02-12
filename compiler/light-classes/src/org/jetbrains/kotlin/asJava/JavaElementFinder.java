@@ -263,6 +263,10 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
             result = 31 * result + (scope.hashCode());
             return result;
         }
+
+        @Override
+        public String toString() {
+            return fqName + " in " + scope;
+        }
     }
 }
-

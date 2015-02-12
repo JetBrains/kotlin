@@ -72,6 +72,7 @@ private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor
 
 public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?): TypeProjection? {
     if (typeProjection == null) return null
+    if (typeProjection.isStarProjection()) return typeProjection
 
     val type = typeProjection.getType()
     if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {

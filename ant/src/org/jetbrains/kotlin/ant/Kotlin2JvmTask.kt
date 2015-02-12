@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ant
 
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
-import java.io.File
 import java.io.File.pathSeparator
 
 public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
@@ -60,17 +59,10 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
         args.add("-d")
         args.add(output!!.canonicalPath)
 
-        val classpath = arrayListOf<String>()
-        compileClasspath?.let { classpath.addAll(it.list()) }
-        src!!.list().forEach {
-            val file = File(it)
-            if (file.isDirectory() || file.extension != "kt") {
-                classpath.add(it)
-            }
+        compileClasspath?.let {
+            args.add("-classpath")
+            args.add(it.list().join(pathSeparator))
         }
-
-        args.add("-classpath")
-        args.add(classpath.join(pathSeparator))
 
         externalAnnotations?.let {
             args.add("-annotations")

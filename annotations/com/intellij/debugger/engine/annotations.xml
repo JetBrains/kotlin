@@ -2,7 +2,14 @@
   <item name='com.intellij.debugger.engine.DebugProcessImpl com.intellij.debugger.jdi.VirtualMachineProxyImpl getVirtualMachineProxy()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item
+    <item
+        name='com.intellij.debugger.engine.FrameExtraVariablesProvider java.util.Set&lt;com.intellij.debugger.engine.evaluation.TextWithImports&gt; collectVariables(com.intellij.debugger.SourcePosition, com.intellij.debugger.engine.evaluation.EvaluationContext, java.util.Set&lt;java.lang.String&gt;)'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun collectVariables(sourcePosition: SourcePosition?, evalContext: EvaluationContext?, alreadyCollected: Set&lt;String&gt;?): Set&lt;TextWithImports&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item
       name='com.intellij.debugger.engine.MethodFilter boolean locationMatches(com.intellij.debugger.engine.DebugProcessImpl, com.sun.jdi.Location) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

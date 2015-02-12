@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.cli;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Charsets;
+import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -33,7 +34,10 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 public class CliBaseTest {
@@ -46,7 +50,7 @@ public class CliBaseTest {
     public final TestName testName = new TestName();
 
     @NotNull
-    private static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origErr = System.err;
         try {
@@ -88,7 +92,7 @@ public class CliBaseTest {
             @NotNull final String testDataDir,
             @NotNull final String tempDir
     ) throws IOException {
-        List<String> lines = FileUtil.loadLines(new FileInputStream(argsFilePath));
+        List<String> lines = IoPackage.readLines(new File(argsFilePath), Charsets.UTF_8);
 
         return ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override

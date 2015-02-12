@@ -257,6 +257,8 @@ public class AsmUtil {
     public static int getVisibilityAccessFlagForClass(ClassDescriptor descriptor) {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor) ||
             descriptor.getVisibility() == Visibilities.PUBLIC ||
+            // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
+            descriptor.getVisibility() == Visibilities.LOCAL ||
             descriptor.getVisibility() == Visibilities.INTERNAL) {
             return ACC_PUBLIC;
         }
@@ -281,7 +283,8 @@ public class AsmUtil {
     }
 
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
-        return getVisibilityAccessFlag(innerClass) |
+        int visibility = (innerClass.getVisibility() == Visibilities.LOCAL) ? ACC_PUBLIC : getVisibilityAccessFlag(innerClass);
+        return visibility |
                innerAccessFlagsForModalityAndKind(innerClass) |
                (innerClass.isInner() ? 0 : ACC_STATIC);
     }
@@ -594,18 +597,33 @@ public class AsmUtil {
         // Private method is not accessible from other classes, no assertions needed
         if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
 
-        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            JetType type = parameter.getReturnType();
-            if (type == null || isNullableType(type)) continue;
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        if (receiverParameter != null) {
+            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver");
+        }
 
-            int index = frameMap.getIndex(parameter);
-            Type asmType = state.getTypeMapper().mapType(type);
-            if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
-                v.load(index, asmType);
-                v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
-                               "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-            }
+        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
+            genParamAssertion(v, state.getTypeMapper(), frameMap, parameter, parameter.getName().asString());
+        }
+    }
+
+    private static void genParamAssertion(
+            @NotNull InstructionAdapter v,
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull FrameMap frameMap,
+            @NotNull CallableDescriptor parameter,
+            @NotNull String name
+    ) {
+        JetType type = parameter.getReturnType();
+        if (type == null || isNullableType(type)) return;
+        
+        int index = frameMap.getIndex(parameter);
+        Type asmType = typeMapper.mapType(type);
+        if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
+            v.load(index, asmType);
+            v.visitLdcInsn(name);
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
+                           "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
 

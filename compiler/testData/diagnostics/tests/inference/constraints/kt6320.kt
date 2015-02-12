@@ -3,7 +3,7 @@
 
 class A<X, Y : X>
 
-class B<X, Y : X>(foo: A<X, Y>) {
+class B<X, Y : X>(<!UNUSED_PARAMETER!>foo<!>: A<X, Y>) {
     fun test1(a: A<X, Y>) {
         B(a)
         val b: B<X, Y> = B(a)
@@ -13,7 +13,7 @@ class B<X, Y : X>(foo: A<X, Y>) {
 
 class C<X, Z, Y : X>
 
-class D<X, Z, Y : X>(foo: C<X, Z, Y>) {
+class D<X, Z, Y : X>(<!UNUSED_PARAMETER!>foo<!>: C<X, Z, Y>) {
     fun test(a: C<Y, Y, Y>) {
         val d: D<X, Y, Y> = <!TYPE_MISMATCH!>D(a)<!>
     }

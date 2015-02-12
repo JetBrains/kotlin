@@ -17,34 +17,25 @@
 package org.jetbrains.kotlin.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 
 import java.util.Collection;
 
-public interface KotlinCodeAnalyzer {
-    @Nullable
-    LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName);
+public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
 
     @NotNull
     ModuleDescriptor getModuleDescriptor();
 
     @NotNull
-    @ReadOnly
-    Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName);
-
-    @NotNull
     ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject);
-
-    @NotNull
-    ScriptDescriptor getScriptDescriptor(@NotNull JetScript script);
 
     @NotNull
     BindingContext getBindingContext();

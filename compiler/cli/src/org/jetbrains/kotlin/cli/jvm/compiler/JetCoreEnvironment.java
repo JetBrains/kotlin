@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
@@ -38,6 +39,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -59,14 +61,13 @@ import org.jetbrains.kotlin.parsing.JetParserDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer;
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING;
@@ -97,7 +98,7 @@ public class JetCoreEnvironment {
             }
         });
         JetCoreEnvironment environment =
-                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configFilePaths), configuration);
+                new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration);
 
         synchronized (APPLICATION_LOCK) {
             ourProjectCount++;
@@ -113,16 +114,18 @@ public class JetCoreEnvironment {
             @NotNull List<String> extensionConfigs
     ) {
         // Tests are supposed to create a single project and dispose it right after use
-        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, extensionConfigs), configuration);
+        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration);
     }
 
     @NotNull
-    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction(@NotNull List<String> configFilePaths) {
+    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction(
+            @NotNull CompilerConfiguration configuration,
+            @NotNull List<String> configFilePaths) {
         synchronized (APPLICATION_LOCK) {
             if (ourApplicationEnvironment != null) return ourApplicationEnvironment;
 
             Disposable parentDisposable = Disposer.newDisposable();
-            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configFilePaths);
+            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths);
             ourProjectCount = 0;
             Disposer.register(parentDisposable, new Disposable() {
                 @Override
@@ -148,12 +151,13 @@ public class JetCoreEnvironment {
     @NotNull
     private static JavaCoreApplicationEnvironment createApplicationEnvironment(
             @NotNull Disposable parentDisposable,
+            @NotNull CompilerConfiguration configuration,
             @NotNull List<String> configFilePaths
     ) {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
-        for (String config : configFilePaths) {
-            registerApplicationExtensionPointsAndExtensionsFrom(config);
+        for (String configPath : configFilePaths) {
+            registerApplicationExtensionPointsAndExtensionsFrom(configuration, configPath);
         }
 
         registerApplicationServicesForCLI(applicationEnvironment);
@@ -162,9 +166,10 @@ public class JetCoreEnvironment {
         return applicationEnvironment;
     }
 
-    private static void registerApplicationExtensionPointsAndExtensionsFrom(String configFilePath) {
+    private static void registerApplicationExtensionPointsAndExtensionsFrom(@NotNull CompilerConfiguration configuration, @NotNull String configFilePath) {
         IdeaPluginDescriptorImpl descriptor;
-        File jar = PathUtil.getPathUtilJar();
+        CompilerJarLocator locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR);
+        File jar = locator == null ? PathUtil.getPathUtilJar() : locator.getCompilerJar();
         if (jar.isFile()) {
             descriptor = PluginManagerCoreProxy.loadDescriptorFromJar(jar, configFilePath);
         }
@@ -235,17 +240,29 @@ public class JetCoreEnvironment {
             addExternalAnnotationsRoot(path);
         }
         sourceFiles.addAll(
-                CompileEnvironmentUtil
-                        .getJetFiles(getProject(), configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY),
-                                     new Function1<String, Unit>() {
-                                         @Override
-                                         public Unit invoke(String s) {
-                                             report(ERROR, s);
-                                             return Unit.INSTANCE$;
-                                         }
-                                     }));
+                CompileEnvironmentUtil.getJetFiles(
+                        getProject(),
+                        getSourceRootsCheckingForDuplicates(),
+                        new Function1<String, Unit>() {
+                            @Override
+                            public Unit invoke(String s) {
+                                report(ERROR, s);
+                                return Unit.INSTANCE$;
+                            }
+                        }
+                )
+        );
+
+        ContainerUtil.sort(sourceFiles, new Comparator<JetFile>() {
+            @Override
+            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
+                return o1.getVirtualFile().getPath().compareToIgnoreCase(o2.getVirtualFile().getPath());
+            }
+        });
+
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
-                configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
+                configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY)
+        );
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
     }
@@ -255,6 +272,7 @@ public class JetCoreEnvironment {
         MockProject project = projectEnvironment.getProject();
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
 
+        project.registerService(KotlinJavaPsiFacade.class, new KotlinJavaPsiFacade(project));
         project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
     }
 
@@ -317,6 +335,19 @@ public class JetCoreEnvironment {
             projectEnvironment.addSourcesToClasspath(root);
             classPath.add(root);
         }
+    }
+
+    @NotNull
+    private Collection<String> getSourceRootsCheckingForDuplicates() {
+        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
+
+        for (String sourceRoot : configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
+            if (!uniqueSourceRoots.add(sourceRoot)) {
+                report(WARNING, "Duplicate source root: " + sourceRoot);
+            }
+        }
+
+        return uniqueSourceRoots;
     }
 
     @NotNull

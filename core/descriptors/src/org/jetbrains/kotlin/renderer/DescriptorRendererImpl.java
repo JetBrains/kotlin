@@ -480,10 +480,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void appendTypeProjections(@NotNull List<TypeProjection> typeProjections, @NotNull StringBuilder builder) {
         for (Iterator<TypeProjection> iterator = typeProjections.iterator(); iterator.hasNext(); ) {
             TypeProjection typeProjection = iterator.next();
-            if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
-                builder.append(typeProjection.getProjectionKind()).append(" ");
+            if (typeProjection.isStarProjection()) {
+                builder.append("*");
             }
-            builder.append(renderNormalizedType(typeProjection.getType()));
+            else {
+                if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
+                    builder.append(typeProjection.getProjectionKind()).append(" ");
+                }
+                builder.append(renderNormalizedType(typeProjection.getType()));
+            }
             if (iterator.hasNext()) {
                 builder.append(", ");
             }

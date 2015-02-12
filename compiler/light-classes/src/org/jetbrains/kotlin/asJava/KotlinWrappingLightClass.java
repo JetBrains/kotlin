@@ -33,6 +33,7 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
@@ -45,6 +46,10 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     protected KotlinWrappingLightClass(PsiManager manager) {
         super(manager, JetLanguage.INSTANCE);
     }
+
+    @Nullable
+    @Override
+    public abstract JetClassOrObject getOrigin();
 
     @NotNull
     @Override

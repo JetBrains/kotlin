@@ -26,6 +26,10 @@ import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.kotlin.idea.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.debugger.SourcePosition
+import kotlin.properties.Delegates
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
@@ -34,6 +38,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun onBreakpoint(doOnBreakpoint: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint {
+            initContexts(it)
             it.printContext()
             it.doOnBreakpoint()
         }
@@ -41,6 +46,14 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun SuspendContextImpl.stepInto() {
         this.stepInto(false, null)
+    }
+
+    protected var evaluationContext: EvaluationContextImpl by Delegates.notNull()
+    protected var debuggerContext: DebuggerContextImpl by Delegates.notNull()
+
+    protected fun initContexts(suspendContext: SuspendContextImpl) {
+        evaluationContext = createEvaluationContext(suspendContext)
+        debuggerContext = createDebuggerContext(suspendContext)
     }
 
     protected fun SuspendContextImpl.stepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
@@ -54,23 +67,27 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
 
             val sourcePosition = PositionUtil.getSourcePosition(this)
-            if (sourcePosition == null) {
-                return@runReadAction println("SourcePosition is null", ProcessOutputTypes.SYSTEM)
-            }
-
-            val virtualFile = sourcePosition.getFile().getVirtualFile()
-            if (virtualFile == null) {
-                return@runReadAction println("VirtualFile for position is null", ProcessOutputTypes.SYSTEM)
-            }
-
-            val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
-            if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                         libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
-                return@runReadAction println(FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!", ProcessOutputTypes.SYSTEM)
-            }
-
-            println(virtualFile.getName() + ":" + (sourcePosition.getLine() + 1), ProcessOutputTypes.SYSTEM)
+            println(renderSourcePosition(sourcePosition), ProcessOutputTypes.SYSTEM)
         }
+    }
+
+    protected fun renderSourcePosition(sourcePosition: SourcePosition?): String {
+        if (sourcePosition == null) {
+            return "null"
+        }
+
+        val virtualFile = sourcePosition.getFile().getVirtualFile()
+        if (virtualFile == null) {
+            return "VirtualFile for position is null"
+        }
+
+        val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
+        if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
+                                     libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
+            return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
+        }
+
+        return virtualFile.getName() + ":" + (sourcePosition.getLine() + 1)
     }
 
     protected fun finish() {

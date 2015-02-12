@@ -116,7 +116,6 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolvePackage.analyzeFully((JetFile) callElement.getContainingFile());
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
-        QuickFixUtil.shortenReferencesOfTypes(typesToShorten, file);
     }
 
     private JetChangeSignatureConfiguration addParameterConfiguration() {

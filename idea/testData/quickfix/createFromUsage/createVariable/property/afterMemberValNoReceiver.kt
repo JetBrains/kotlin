@@ -3,7 +3,7 @@
 
 class A {
     class B {
-        val foo: Int
+        private val foo: Int
 
         fun test(): Int {
             return foo

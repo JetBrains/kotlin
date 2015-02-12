@@ -22,10 +22,12 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetImportDirective;
+import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -35,7 +37,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ScopeProvider {
+public class ScopeProvider implements DeclarationScopeProvider, FileScopeProvider {
+
     public static class AdditionalFileScopeProvider {
         @NotNull
         public List<JetScope> scopes(@NotNull JetFile file) {
@@ -49,12 +52,17 @@ public class ScopeProvider {
 
     private final MemoizedFunctionToNotNull<JetFile, LazyFileScope> fileScopes;
 
-    @SuppressWarnings("ConstantConditions") @NotNull
-    private AdditionalFileScopeProvider additionalFileScopeProvider = null;
+    private AdditionalFileScopeProvider additionalFileScopeProvider;
+    private DeclarationScopeProvider declarationScopeProvider;
 
     @Inject
     public void setAdditionalFileScopesProvider(@NotNull AdditionalFileScopeProvider additionalFileScopeProvider) {
         this.additionalFileScopeProvider = additionalFileScopeProvider;
+    }
+
+    @Inject
+    public void setDeclarationScopeProvider(@NotNull DeclarationScopeProviderImpl declarationScopeProvider) {
+        this.declarationScopeProvider = declarationScopeProvider;
     }
 
     public ScopeProvider(@NotNull final ResolveSession resolveSession) {
@@ -84,6 +92,7 @@ public class ScopeProvider {
         });
     }
 
+    @Override
     @NotNull
     public LazyFileScope getFileScope(@NotNull JetFile file) {
         return fileScopes.invoke(file);
@@ -102,43 +111,14 @@ public class ScopeProvider {
     }
 
     @NotNull
+    @Override
     public JetScope getResolutionScopeForDeclaration(@NotNull PsiElement elementOfDeclaration) {
-        JetDeclaration jetDeclaration = JetStubbedPsiUtil.getPsiOrStubParent(elementOfDeclaration, JetDeclaration.class, false);
+        return declarationScopeProvider.getResolutionScopeForDeclaration(elementOfDeclaration);
+    }
 
-        assert !(elementOfDeclaration instanceof JetDeclaration) || jetDeclaration == elementOfDeclaration :
-                "For JetDeclaration element getParentOfType() should return itself.";
-        assert jetDeclaration != null : "Should be contained inside declaration.";
-
-        JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(jetDeclaration);
-
-        if (jetDeclaration instanceof JetPropertyAccessor) {
-            parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(parentDeclaration, JetDeclaration.class);
-        }
-
-        if (parentDeclaration == null) {
-            return getFileScope((JetFile) elementOfDeclaration.getContainingFile());
-        }
-
-        if (parentDeclaration instanceof JetClassOrObject) {
-            JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
-            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
-            if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
-                return classDescriptor.getScopeForInitializerResolution();
-            }
-            return classDescriptor.getScopeForMemberDeclarationResolution();
-        }
-
-        if (parentDeclaration instanceof JetClassObject) {
-            assert jetDeclaration instanceof JetObjectDeclaration : "Should be situation for getting scope for object in class [object {...}]";
-
-            JetClassObject classObject = (JetClassObject) parentDeclaration;
-            LazyClassDescriptor classObjectDescriptor =
-                    (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
-
-            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
-        }
-
-        throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + "\n" +
-                                        JetPsiUtil.getElementTextWithContext(jetDeclaration));
+    @NotNull
+    @Override
+    public DataFlowInfo getOuterDataFlowInfoForDeclaration(@NotNull PsiElement elementOfDeclaration) {
+        return declarationScopeProvider.getOuterDataFlowInfoForDeclaration(elementOfDeclaration);
     }
 }

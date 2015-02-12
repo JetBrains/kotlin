@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
@@ -34,7 +35,6 @@ import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
@@ -47,8 +47,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies;
-import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProcessor;
-import static org.jetbrains.kotlin.modules.KotlinModuleDescriptionBuilder.DependencyProvider;
 
 public class KotlinBuilderModuleScriptGenerator {
 
@@ -60,9 +58,7 @@ public class KotlinBuilderModuleScriptGenerator {
             ModuleChunk chunk,
             MultiMap<ModuleBuildTarget, File> sourceFiles, // ignored for non-incremental compilation
             boolean hasRemovedFiles
-    )
-            throws IOException, ProjectBuildException
-    {
+    ) throws IOException, ProjectBuildException {
         KotlinModuleDescriptionBuilder builder = FACTORY.create();
 
         boolean noSources = true;
@@ -91,8 +87,10 @@ public class KotlinBuilderModuleScriptGenerator {
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
-                    getKotlinModuleDependencies(context, target),
                     moduleSources,
+                    findSourceRoots(context, target),
+                    findClassPathRoots(target),
+                    findAnnotationRoots(target),
                     target.isTests(),
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs
@@ -117,27 +115,15 @@ public class KotlinBuilderModuleScriptGenerator {
         return outputDir;
     }
 
-    private static DependencyProvider getKotlinModuleDependencies(final CompileContext context, final ModuleBuildTarget target) {
-        return new DependencyProvider() {
-            @Override
-            public void processClassPath(@NotNull DependencyProcessor processor) {
-                processor.processClassPathSection("Classpath", findClassPathRoots(target));
-                processor.processClassPathSection("Java Source Roots", findSourceRoots(context, target));
-                processor.processAnnotationRoots(findAnnotationRoots(target));
-            }
-        };
-    }
-
     @NotNull
     private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
-
         return getAllDependencies(target).classes().getRoots();
     }
 
     @NotNull
-    private static Collection<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
+    private static List<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
         List<JavaSourceRootDescriptor> roots = context.getProjectDescriptor().getBuildRootIndex().getTargetRoots(target, context);
-        Collection<File> result = ContainerUtil.newArrayList();
+        List<File> result = ContainerUtil.newArrayList();
         for (JavaSourceRootDescriptor root : roots) {
             File file = root.getRootFile();
             if (file.exists()) {
@@ -149,7 +135,7 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static List<File> findAnnotationRoots(@NotNull ModuleBuildTarget target) {
-        List<File> annotationRootFiles = ContainerUtil.newArrayList();
+        LinkedHashSet<File> annotationRootFiles = new LinkedHashSet<File>();
 
         JpsModule module = target.getModule();
         JpsSdk sdk = module.getSdk(getSdkType(module));
@@ -171,7 +157,7 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
 
-        return annotationRootFiles;
+        return KotlinPackage.toList(annotationRootFiles);
     }
 
     @NotNull
@@ -182,21 +168,6 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
         return JpsJavaSdkType.INSTANCE;
-    }
-
-    @Nullable
-    private static JpsLibrary getLibrary(@NotNull JpsDependencyElement dependencyElement) {
-        if (dependencyElement instanceof JpsSdkDependency) {
-            JpsSdkDependency sdkDependency = (JpsSdkDependency) dependencyElement;
-            return sdkDependency.resolveSdk();
-        }
-
-        if (dependencyElement instanceof JpsLibraryDependency) {
-            JpsLibraryDependency libraryDependency = (JpsLibraryDependency) dependencyElement;
-            return libraryDependency.getLibrary();
-        }
-
-        return null;
     }
 
     private KotlinBuilderModuleScriptGenerator() {}

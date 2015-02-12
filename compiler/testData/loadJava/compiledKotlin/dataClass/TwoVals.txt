@@ -8,5 +8,5 @@ kotlin.data() internal final class DataClass {
         internal final fun <get-y>(): kotlin.Int
     internal final /*synthesized*/ fun component1(): kotlin.String
     internal final /*synthesized*/ fun component2(): kotlin.Int
-    internal final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.Int = ...): test.DataClass
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.Int = ...): test.DataClass
 }

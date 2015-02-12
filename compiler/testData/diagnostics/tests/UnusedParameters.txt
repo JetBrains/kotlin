@@ -1,0 +1,12 @@
+package
+
+internal fun f(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int = ...): kotlin.Unit
+
+internal final class C {
+    public constructor C(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int, /*4*/ e: kotlin.Int = ..., /*5*/ f: kotlin.String)
+    internal final val f: kotlin.String
+    internal final val g: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

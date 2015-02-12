@@ -5,6 +5,6 @@
 import kotlin.properties.ReadWriteProperty
 
 class A<T> {
-    val foo: ReadWriteProperty<A<T>, A<Int>>
+    private val foo: ReadWriteProperty<A<T>, A<Int>>
     var x: A<Int> by foo
 }

@@ -1660,6 +1660,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforePrivateForMembers.kt")
+                public void testPrivateForMembers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforePrivateForMembers.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforePropertyOnUserType.kt")
                 public void testPropertyOnUserType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforePropertyOnUserType.kt");
@@ -2516,6 +2522,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeObjectMemberValNoReceiver.kt")
                 public void testObjectMemberValNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeObjectMemberValNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforePrivateForMembers.kt")
+                public void testPrivateForMembers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforePrivateForMembers.kt");
                     doTest(fileName);
                 }
 
@@ -4319,6 +4331,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeNoReturnInFunctionWithBlockBody.kt")
         public void testNoReturnInFunctionWithBlockBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeNoReturnInFunctionWithBlockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeNullArgumentForNonNullParameter.kt")
+        public void testNullArgumentForNonNullParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeNullArgumentForNonNullParameter.kt");
             doTest(fileName);
         }
 

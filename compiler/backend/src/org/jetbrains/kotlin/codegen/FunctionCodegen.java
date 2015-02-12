@@ -731,7 +731,13 @@ public class FunctionCodegen {
         }
 
         for (JvmMethodParameterSignature parameter : signature.getValueParameters()) {
-            if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
+            if (parameter.getKind() == JvmMethodParameterKind.RECEIVER) {
+                ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
+                if (receiverParameter != null) {
+                    frameMap.enter(receiverParameter, state.getTypeMapper().mapType(receiverParameter));
+                }
+            }
+            else if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
                 frameMap.enterTemp(parameter.getAsmType());
             }
         }

@@ -110,8 +110,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 FileBasedDeclarationProviderFactory declarationFactory =
                         new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), jetBuiltInsFiles);
 
-                LazyTopDownAnalyzer analyzer = new InjectorForLazyTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, trace, module, declarationFactory).getLazyTopDownAnalyzer();
+                LazyTopDownAnalyzerForTopLevel analyzer = new InjectorForLazyTopDownAnalyzerBasic(
+                        myProject, topDownAnalysisParameters, trace, module, declarationFactory).getLazyTopDownAnalyzerForTopLevel();
 
                 analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles, Collections.<PackageFragmentProvider>emptyList());
 

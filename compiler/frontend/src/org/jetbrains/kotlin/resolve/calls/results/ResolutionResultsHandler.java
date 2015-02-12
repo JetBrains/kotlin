@@ -102,7 +102,7 @@ public class ResolutionResultsHandler {
             // This check is needed for the following case:
             //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
             if (task.checkArguments == CheckValueArgumentsMode.DISABLED ||
-                    !CallUtilPackage.hasUnresolvedArguments(task.call, task.trace.getBindingContext())) {
+                    !CallUtilPackage.hasUnresolvedArguments(task.call, task)) {
                 if (allCandidatesIncomplete) {
                     task.tracing.cannotCompleteResolve(task.trace, results.getResultingCalls());
                 }

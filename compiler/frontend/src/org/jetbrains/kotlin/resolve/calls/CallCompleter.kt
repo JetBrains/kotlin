@@ -226,7 +226,7 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression()
-        val deparenthesized = ArgumentTypeResolver.deparenthesizeArgument(expression)
+        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context as ResolutionContext<*>)
         if (deparenthesized == null) return
 
         val recordedType = context.trace[BindingContext.EXPRESSION_TYPE, expression]
@@ -248,9 +248,9 @@ public class CallCompleter(
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression)) {
+        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression, context as ResolutionContext<*>)) {
             argumentTypeResolver.getFunctionLiteralTypeInfo(
-                    expression, ArgumentTypeResolver.getFunctionLiteralArgument(expression),
+                    expression, ArgumentTypeResolver.getFunctionLiteralArgument(expression, context as ResolutionContext<*>),
                     context as CallResolutionContext<*>, RESOLVE_FUNCTION_ARGUMENTS)
         }
 

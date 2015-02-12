@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.CollectionClassMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import java.util.LinkedHashSet
+import org.jetbrains.kotlin.types.typeUtil.substitute
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -53,7 +54,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
             jetType.getAnnotations(),
             jetType.getConstructor(),
             jetType.isMarkedNullable(),
-            jetType.getArguments().map { TypeProjectionImpl(it.getProjectionKind(), approximateFlexibleTypes(it.getType(), false)) },
+            jetType.getArguments().map { it.substitute { type -> approximateFlexibleTypes(type, false)} },
             ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }

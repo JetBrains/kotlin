@@ -14,7 +14,7 @@ Inv<out Fun<T, R>>
   T = in Int. R = out String. lower: Inv<out Fun<Any?, Nothing>>; upper: Inv<out Fun<Int, String>>; substitution: Inv<out Fun<Int, String>>
 
 Fun<In<T>, In<R>>
-  T = in Int. R = out String. lower: Fun<In<Int>, In<String>>; upper: Fun<In<Any?>, In<Nothing>>; substitution: Fun<In<Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Fun<In<Int>, In<String>>; upper: Fun<In<Any?>, In<Nothing>>; substitution: Fun<In<Int>, In<*>>
 
 Fun<In<T>, Out<R>>
   T = in Int. R = out String. lower: Fun<In<Int>, Out<Nothing>>; upper: Fun<In<Any?>, Out<String>>; substitution: Fun<In<Int>, Out<String>>
@@ -29,22 +29,22 @@ Fun<In<T>, Inv<out R>>
   T = in Int. R = out String. lower: Fun<In<Int>, Inv<Nothing>>; upper: Fun<In<Any?>, Inv<out String>>; substitution: Fun<In<Int>, Inv<out String>>
 
 Fun<Out<T>, In<R>>
-  T = in Int. R = out String. lower: Fun<Out<Any?>, In<String>>; upper: Fun<Out<Int>, In<Nothing>>; substitution: Fun<Out<Any?>, In<out Any?>>
+  T = in Int. R = out String. lower: Fun<Out<Any?>, In<String>>; upper: Fun<Out<Int>, In<Nothing>>; substitution: Fun<Out<*>, In<*>>
 
 Fun<Out<T>, Out<R>>
-  T = in Int. R = out String. lower: Fun<Out<Any?>, Out<Nothing>>; upper: Fun<Out<Int>, Out<String>>; substitution: Fun<Out<Any?>, Out<String>>
+  T = in Int. R = out String. lower: Fun<Out<Any?>, Out<Nothing>>; upper: Fun<Out<Int>, Out<String>>; substitution: Fun<Out<*>, Out<String>>
 
 Fun<Out<T>, Inv<R>>
-  T = in Int. R = out String. lower: Fun<Out<Any?>, Nothing>; upper: Fun<Out<Int>, Inv<out String>>; substitution: Fun<Out<Any?>, Inv<out String>>
+  T = in Int. R = out String. lower: Fun<Out<Any?>, Nothing>; upper: Fun<Out<Int>, Inv<out String>>; substitution: Fun<Out<*>, Inv<out String>>
 
 Fun<Out<T>, Inv<in R>>
-  T = in Int. R = out String. lower: Fun<Out<Any?>, Inv<in String>>; upper: Fun<Out<Int>, Inv<out Any?>>; substitution: Fun<Out<Any?>, Inv<in String>>
+  T = in Int. R = out String. lower: Fun<Out<Any?>, Inv<in String>>; upper: Fun<Out<Int>, Inv<out Any?>>; substitution: Fun<Out<*>, Inv<in String>>
 
 Fun<Out<T>, Inv<out R>>
-  T = in Int. R = out String. lower: Fun<Out<Any?>, Inv<Nothing>>; upper: Fun<Out<Int>, Inv<out String>>; substitution: Fun<Out<Any?>, Inv<out String>>
+  T = in Int. R = out String. lower: Fun<Out<Any?>, Inv<Nothing>>; upper: Fun<Out<Int>, Inv<out String>>; substitution: Fun<Out<*>, Inv<out String>>
 
 Fun<Inv<T>, In<R>>
-  T = in Int. R = out String. lower: Fun<Inv<in Int>, In<String>>; upper: Fun<Nothing, In<Nothing>>; substitution: Fun<Inv<in Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Fun<Inv<in Int>, In<String>>; upper: Fun<Nothing, In<Nothing>>; substitution: Fun<Inv<in Int>, In<*>>
 
 Fun<Inv<T>, Out<R>>
   T = in Int. R = out String. lower: Fun<Inv<in Int>, Out<Nothing>>; upper: Fun<Nothing, Out<String>>; substitution: Fun<Inv<in Int>, Out<String>>
@@ -59,7 +59,7 @@ Fun<Inv<T>, Inv<out R>>
   T = in Int. R = out String. lower: Fun<Inv<in Int>, Inv<Nothing>>; upper: Fun<Nothing, Inv<out String>>; substitution: Fun<Inv<in Int>, Inv<out String>>
 
 Fun<Inv<in T>, In<R>>
-  T = in Int. R = out String. lower: Fun<Inv<in Int>, In<String>>; upper: Fun<Inv<Any?>, In<Nothing>>; substitution: Fun<Inv<in Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Fun<Inv<in Int>, In<String>>; upper: Fun<Inv<Any?>, In<Nothing>>; substitution: Fun<Inv<in Int>, In<*>>
 
 Fun<Inv<in T>, Out<R>>
   T = in Int. R = out String. lower: Fun<Inv<in Int>, Out<Nothing>>; upper: Fun<Inv<Any?>, Out<String>>; substitution: Fun<Inv<in Int>, Out<String>>
@@ -74,7 +74,7 @@ Fun<Inv<in T>, Inv<out R>>
   T = in Int. R = out String. lower: Fun<Inv<in Int>, Inv<Nothing>>; upper: Fun<Inv<Any?>, Inv<out String>>; substitution: Fun<Inv<in Int>, Inv<out String>>
 
 Fun<Inv<out T>, In<R>>
-  T = in Int. R = out String. lower: Fun<Inv<out Any?>, In<String>>; upper: Fun<Inv<out Int>, In<Nothing>>; substitution: Fun<Inv<out Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Fun<Inv<out Any?>, In<String>>; upper: Fun<Inv<out Int>, In<Nothing>>; substitution: Fun<Inv<out Int>, In<*>>
 
 Fun<Inv<out T>, Out<R>>
   T = in Int. R = out String. lower: Fun<Inv<out Any?>, Out<Nothing>>; upper: Fun<Inv<out Int>, Out<String>>; substitution: Fun<Inv<out Int>, Out<String>>
@@ -104,7 +104,7 @@ Inv<out Inv2<T, R>>
   T = in Int. R = out String. lower: Inv<Nothing>; upper: Inv<out Inv2<in Int, out String>>; substitution: Inv<out Inv2<in Int, out String>>
 
 Inv2<In<T>, In<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out In<Int>, out In<Nothing>>; substitution: Inv2<In<Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out In<Int>, out In<Nothing>>; substitution: Inv2<In<Int>, In<*>>
 
 Inv2<In<T>, Out<R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out In<Int>, out Out<String>>; substitution: Inv2<In<Int>, Out<String>>
@@ -119,22 +119,22 @@ Inv2<In<T>, Inv<out R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out In<Int>, out Inv<out String>>; substitution: Inv2<In<Int>, Inv<out String>>
 
 Inv2<Out<T>, In<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out In<Nothing>>; substitution: Inv2<Out<Any?>, In<out Any?>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out In<Nothing>>; substitution: Inv2<Out<*>, In<*>>
 
 Inv2<Out<T>, Out<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Out<String>>; substitution: Inv2<Out<Any?>, Out<String>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Out<String>>; substitution: Inv2<Out<*>, Out<String>>
 
 Inv2<Out<T>, Inv<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out String>>; substitution: Inv2<Out<Any?>, Inv<out String>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out String>>; substitution: Inv2<Out<*>, Inv<out String>>
 
 Inv2<Out<T>, Inv<in R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out Any?>>; substitution: Inv2<Out<Any?>, Inv<in String>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out Any?>>; substitution: Inv2<Out<*>, Inv<in String>>
 
 Inv2<Out<T>, Inv<out R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out String>>; substitution: Inv2<Out<Any?>, Inv<out String>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Out<Any?>, out Inv<out String>>; substitution: Inv2<Out<*>, Inv<out String>>
 
 Inv2<Inv<T>, In<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out In<Nothing>>; substitution: Inv2<Inv<in Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out In<Nothing>>; substitution: Inv2<Inv<in Int>, In<*>>
 
 Inv2<Inv<T>, Out<R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out Out<String>>; substitution: Inv2<Inv<in Int>, Out<String>>
@@ -149,7 +149,7 @@ Inv2<Inv<T>, Inv<out R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out Inv<out String>>; substitution: Inv2<Inv<in Int>, Inv<out String>>
 
 Inv2<Inv<in T>, In<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out In<Nothing>>; substitution: Inv2<Inv<in Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out In<Nothing>>; substitution: Inv2<Inv<in Int>, In<*>>
 
 Inv2<Inv<in T>, Out<R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out Out<String>>; substitution: Inv2<Inv<in Int>, Out<String>>
@@ -164,7 +164,7 @@ Inv2<Inv<in T>, Inv<out R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<in Int>, out Inv<out String>>; substitution: Inv2<Inv<in Int>, Inv<out String>>
 
 Inv2<Inv<out T>, In<R>>
-  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<out Any?>, out In<Nothing>>; substitution: Inv2<Inv<out Int>, In<out Any?>>
+  T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<out Any?>, out In<Nothing>>; substitution: Inv2<Inv<out Int>, In<*>>
 
 Inv2<Inv<out T>, Out<R>>
   T = in Int. R = out String. lower: Nothing; upper: Inv2<out Inv<out Any?>, out Out<String>>; substitution: Inv2<Inv<out Int>, Out<String>>

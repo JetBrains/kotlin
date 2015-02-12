@@ -38,11 +38,6 @@ public class KDocParser implements PsiParser {
             if (builder.getTokenType() == KDocTokens.TAG_NAME) {
                 currentSectionMarker = parseTag(builder, currentSectionMarker);
             }
-            else if (builder.getTokenType() == KDocTokens.MARKDOWN_LINK) {
-                PsiBuilder.Marker linkStart = builder.mark();
-                builder.advanceLexer();
-                linkStart.done(KDocElementTypes.KDOC_LINK);
-            }
             else if (builder.getTokenType() == KDocTokens.END) {
                 if (currentSectionMarker != null) {
                     currentSectionMarker.done(KDocElementTypes.KDOC_SECTION);
@@ -72,21 +67,8 @@ public class KDocParser implements PsiParser {
         PsiBuilder.Marker tagStart = builder.mark();
         builder.advanceLexer();
 
-        if (knownTag != null && knownTag.isReferenceRequired() && builder.getTokenType() == KDocTokens.TEXT_OR_LINK) {
-            PsiBuilder.Marker referenceMarker = builder.mark();
-            builder.advanceLexer();
-            referenceMarker.done(KDocElementTypes.KDOC_LINK);
-        }
-
         while (!builder.eof() && !isAtEndOfTag(builder)) {
-            if (builder.getTokenType() == KDocTokens.MARKDOWN_LINK) {
-                PsiBuilder.Marker linkStart = builder.mark();
-                builder.advanceLexer();
-                linkStart.done(KDocElementTypes.KDOC_LINK);
-            }
-            else {
-                builder.advanceLexer();
-            }
+            builder.advanceLexer();
         }
         tagStart.done(KDocElementTypes.KDOC_TAG);
         return currentSectionMarker;

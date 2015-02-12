@@ -3,7 +3,7 @@
 
 import kotlin.modules.ModuleBuilder
 
-fun foo(): ModuleBuilder {
-    val module: kotlin.modules.Module = ModuleBuilder("", "")
+fun foo(): kotlin.modules.ModuleBuilder {
+    val module: kotlin.modules.Module = kotlin.modules.ModuleBuilder("", "")
     return module as ModuleBuilder
 }

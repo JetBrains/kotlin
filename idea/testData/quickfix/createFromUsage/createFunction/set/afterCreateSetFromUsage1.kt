@@ -4,7 +4,7 @@ class Foo<T> {
         y["", w] = w
     }
 
-    fun set(s: String, w: T, value: T) {
+    private fun set(s: String, w: T, value: T) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

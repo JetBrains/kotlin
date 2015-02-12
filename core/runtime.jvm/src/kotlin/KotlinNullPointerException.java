@@ -16,13 +16,5 @@
 
 package kotlin;
 
-import kotlin.jvm.internal.Intrinsics;
-import org.jetbrains.annotations.NotNull;
-
 public class KotlinNullPointerException extends NullPointerException {
-    @Override
-    public synchronized Throwable fillInStackTrace() {
-        super.fillInStackTrace();
-        return Intrinsics.sanitizeStackTrace(this);
-    }
 }

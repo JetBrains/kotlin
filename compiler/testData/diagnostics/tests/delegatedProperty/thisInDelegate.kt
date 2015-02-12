@@ -4,7 +4,7 @@ class A {
   val Int.a by Delegate(<!TYPE_MISMATCH!>this<!>)
 }
 
-class Delegate(i: Int) {
+class Delegate(<!UNUSED_PARAMETER!>i<!>: Int) {
   fun get(t: Any?, p: PropertyMetadata): Int {
     t.equals(p) // to avoid UNUSED_PARAMETER warning
     return 1

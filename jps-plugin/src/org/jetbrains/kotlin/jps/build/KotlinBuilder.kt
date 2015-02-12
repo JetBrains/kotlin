@@ -102,6 +102,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
 
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
+
         val environment = createCompileEnvironment(incrementalCaches)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -119,6 +120,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
         else {
+            if (IncrementalCompilation.ENABLED) {
+                for (target in chunk.getTargets()) {
+                    val cache = incrementalCaches[target]!!
+                    val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
+                    cache.markOutputClassesDirty(removedAndDirtyFiles)
+                }
+            }
+
             compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
         }
 
@@ -136,7 +145,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
         }
         else {
-            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
+            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, outputsItemsAndTargets)
         }
 
         if (compilationErrors) {
@@ -220,7 +229,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
-            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
     ): IncrementalCacheImpl.RecompilationDecision {
@@ -228,19 +236,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
         }
 
-        for ((target, cache) in incrementalCaches) {
-            cache.clearCacheForRemovedFiles(
-                    KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
-                    target.getOutputDir()!!,
-                    !compilationErrors
-            )
-        }
-
         var recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
         for ((outputItem, target) in outputsItemsAndTargets) {
             val newDecision = incrementalCaches[target]!!.saveFileToCache(outputItem.getSourceFiles(), outputItem.getOutputFile())
             recompilationDecision = recompilationDecision.merge(newDecision)
         }
+
+        if (!compilationErrors) {
+            incrementalCaches.values().forEach {
+                val newDecision = it.clearCacheForRemovedClasses()
+                recompilationDecision = recompilationDecision.merge(newDecision)
+            }
+        }
+
         return recompilationDecision
     }
 

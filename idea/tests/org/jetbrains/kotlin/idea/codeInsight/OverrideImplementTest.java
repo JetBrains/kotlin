@@ -197,4 +197,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testLocalClass() {
         doImplementFileTest();
     }
+
+    public void testStarProjections() {
+        doImplementFileTest();
+    }
 }

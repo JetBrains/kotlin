@@ -37,16 +37,17 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.kotlin.name.FqName;
@@ -57,15 +58,14 @@ import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -99,8 +99,13 @@ public class KotlinToJVMBytecodeCompiler {
             boolean jarRuntime,
             @Nullable FqName mainClass
     ) {
-        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
-        CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, outputFiles, messageCollector);
+        if (jarPath != null) {
+            CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles);
+        }
+        else {
+            MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
+            OutputUtilsPackage.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
+        }
     }
 
     public static boolean compileModules(
@@ -161,10 +166,8 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         CompilerConfiguration configuration = base.copy();
 
-        List<String> sourceRoots = Lists.newArrayList();
-
         for (Module module : chunk) {
-            sourceRoots.addAll(getAbsolutePaths(directory, module));
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
 
             for (String classpathRoot : module.getClasspathRoots()) {
                 configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
@@ -176,8 +179,6 @@ public class KotlinToJVMBytecodeCompiler {
 
             configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
         }
-
-        CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, sourceRoots);
 
         return configuration;
     }
@@ -335,13 +336,16 @@ public class KotlinToJVMBytecodeCompiler {
         CompilerConfiguration configuration = environment.getConfiguration();
         IncrementalCacheProvider incrementalCacheProvider = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER);
 
-        Collection<FqName> packagesWithRemovedFiles;
+        Collection<FqName> packagesWithObsoleteParts;
         if (moduleId == null || incrementalCacheProvider == null) {
-            packagesWithRemovedFiles = null;
+            packagesWithObsoleteParts = null;
         }
         else {
             IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
-            packagesWithRemovedFiles = IncrementalPackage.getPackagesWithRemovedFiles(incrementalCache, environment.getSourceFiles());
+            packagesWithObsoleteParts = new HashSet<FqName>();
+            for (String internalName : incrementalCache.getObsoletePackageParts()) {
+                packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
+            }
         }
         BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
@@ -356,7 +360,7 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                packagesWithRemovedFiles,
+                packagesWithObsoleteParts,
                 moduleId,
                 diagnosticHolder,
                 outputDirectory

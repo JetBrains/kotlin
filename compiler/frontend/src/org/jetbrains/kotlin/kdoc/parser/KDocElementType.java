@@ -17,26 +17,26 @@
 package org.jetbrains.kotlin.kdoc.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetLanguage;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocElementImpl;
 
 import java.lang.reflect.Constructor;
 
 public class KDocElementType extends IElementType {
-    private final Constructor<? extends KDocElementImpl> psiFactory;
+    private final Constructor<? extends PsiElement> psiFactory;
 
-    public KDocElementType(String debugName, @NotNull Class<? extends KDocElementImpl> psiClass) {
+    public KDocElementType(String debugName, @NotNull Class<? extends PsiElement> psiClass) {
         super(debugName, JetLanguage.INSTANCE);
         try {
-            psiFactory = psiClass != null ? psiClass.getConstructor(ASTNode.class) : null;
+            psiFactory = psiClass.getConstructor(ASTNode.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Must have a constructor with ASTNode");
         }
     }
 
-    public KDocElementImpl createPsi(ASTNode node) {
+    public PsiElement createPsi(ASTNode node) {
         assert node.getElementType() == this;
 
         try {

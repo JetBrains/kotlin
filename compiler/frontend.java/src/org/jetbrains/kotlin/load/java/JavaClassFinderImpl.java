@@ -24,6 +24,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 
@@ -74,8 +74,14 @@ public class JavaClassFinderImpl implements JavaClassFinder {
             public Project getProject() {
                 return project;
             }
+
+            @Override
+            public String toString() {
+                return "JCFI: " + baseScope;
+            }
         };
-        javaFacade = new KotlinJavaPsiFacade(project, javaSearchScope);
+
+        javaFacade = KotlinJavaPsiFacade.getInstance(project);
     }
 
     @Nullable
@@ -102,7 +108,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Nullable
     @Override
     public JavaPackage findPackage(@NotNull FqName fqName) {
-        PsiPackage psiPackage = javaFacade.findPackage(fqName.asString());
+        PsiPackage psiPackage = javaFacade.findPackage(fqName.asString(), javaSearchScope);
         return psiPackage == null ? null : new JavaPackageImpl(psiPackage, javaSearchScope);
     }
 }

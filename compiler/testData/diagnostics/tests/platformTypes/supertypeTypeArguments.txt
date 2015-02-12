@@ -61,7 +61,7 @@ internal final class HashMapEx</*0*/ K, /*1*/ V> : java.util.HashMap<K, V>, ExtM
     invisible_fake open override /*1*/ /*fake_override*/ fun resize(/*0*/ p0: kotlin.Int): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun size(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
-    invisible_fake open override /*1*/ /*fake_override*/ fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.HashMap.Entry<out kotlin.Any?, out kotlin.Any?>!>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.HashMap.Entry<*, *>!>!, /*1*/ p1: kotlin.Boolean): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun values(): kotlin.Collection<V>
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 }

@@ -4,23 +4,23 @@ public trait SubclassWithRawType {
 
     public trait Sub : test.SubclassWithRawType.Super {
         public abstract override /*1*/ fun array1(): kotlin.Array<(out) kotlin.(Mutable)List<kotlin.String!>!>!
-        public abstract override /*1*/ fun array2(): kotlin.Array<(out) (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)>!
+        public abstract override /*1*/ fun array2(): kotlin.Array<(out) kotlin.(Mutable)List<*>!>!
         public abstract override /*1*/ fun boundWildcard1(): (kotlin.MutableList<out kotlin.(Mutable)List<kotlin.String!>!>..kotlin.List<kotlin.(Mutable)List<kotlin.String!>!>?)
         public abstract override /*1*/ fun boundWildcard2(): kotlin.(Mutable)List<in (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)>!
         public abstract override /*1*/ fun simple1(): kotlin.(Mutable)List<kotlin.String!>!
         public abstract override /*1*/ fun simple2(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
-        public abstract override /*1*/ fun simple3(): (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
-        public abstract override /*1*/ fun wildcard(): (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
+        public abstract override /*1*/ fun simple3(): kotlin.(Mutable)List<*>!
+        public abstract override /*1*/ fun wildcard(): kotlin.(Mutable)List<*>!
     }
 
     public trait Super {
-        public abstract fun array1(): kotlin.Array<(out) (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)>!
+        public abstract fun array1(): kotlin.Array<(out) kotlin.(Mutable)List<*>!>!
         public abstract fun array2(): kotlin.Array<(out) kotlin.(Mutable)List<kotlin.String!>!>!
         public abstract fun boundWildcard1(): (kotlin.MutableList<out (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)>..kotlin.List<(kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)>?)
         public abstract fun boundWildcard2(): kotlin.(Mutable)List<in kotlin.(Mutable)List<kotlin.String!>!>!
-        public abstract fun simple1(): (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
-        public abstract fun simple2(): (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
+        public abstract fun simple1(): kotlin.(Mutable)List<*>!
+        public abstract fun simple2(): kotlin.(Mutable)List<*>!
         public abstract fun simple3(): kotlin.(Mutable)List<kotlin.String!>!
-        public abstract fun wildcard(): (kotlin.MutableList<out kotlin.Any?>..kotlin.List<kotlin.Any?>?)
+        public abstract fun wildcard(): kotlin.(Mutable)List<*>!
     }
 }

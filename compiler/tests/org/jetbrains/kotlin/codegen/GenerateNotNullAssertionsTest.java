@@ -37,6 +37,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 
@@ -162,6 +163,25 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/noAssertionForNullableGenericMethodCall.kt");
 
         assertNoIntrinsicsMethodIsCalled("A");
+    }
+
+    public void testParamAssertionMessage() throws Exception {
+        setUpEnvironment(false, false);
+
+        loadText("class A { fun foo(s: String) {} }");
+        Class<?> a = generateClass("A");
+        try {
+            a.getDeclaredMethod("foo", String.class).invoke(a.newInstance(), new Object[] {null});
+        }
+        catch (InvocationTargetException ite) {
+            Throwable e = ite.getTargetException();
+            //noinspection ThrowableResultOfMethodCallIgnored
+            assertInstanceOf(e, IllegalArgumentException.class);
+            assertEquals("Parameter specified as non-null is null: method A.foo, parameter s", e.getMessage());
+            return;
+        }
+
+        fail("Assertion should have been fired");
     }
 
     private void assertNoIntrinsicsMethodIsCalled(String className) {

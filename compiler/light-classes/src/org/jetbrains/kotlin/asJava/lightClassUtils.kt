@@ -97,7 +97,7 @@ public fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 public val PsiElement.unwrapped: PsiElement?
-    get() = if (this is KotlinLightElement<*, *>) origin else this
+    get() = if (this is KotlinLightElement<*, *>) getOrigin() else this
 
 public val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()

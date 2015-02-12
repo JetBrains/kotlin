@@ -40,9 +40,9 @@
 
 }
 
-<info>open</info> class Super(i : Int)
+<info>open</info> class Super(<warning>i</warning> : Int)
 
-class TestPCParameters(w : Int, x : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
+class TestPCParameters(w : Int, <warning>x</warning> : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
 
   val <info>xx</info> = w
 

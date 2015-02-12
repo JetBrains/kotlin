@@ -139,6 +139,8 @@ import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTe
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
 import org.jetbrains.kotlin.completion.handlers.AbstractKeywordCompletionHandlerTest
+import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
+import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -593,6 +595,9 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractShortenRefsTest>()) {
             model("shortenRefs", pattern = """^([^\.]+)\.kt$""")
         }
+        testClass(javaClass<AbstractAddImportTest>()) {
+            model("addImport", pattern = """^([^\.]+)\.kt$""")
+        }
 
         testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {
             model("completion/injava", extension = "java")
@@ -672,6 +677,18 @@ fun main(args: Array<String>) {
             model("coverage/outputFiles")
         }
         */
+
+        testClass(javaClass<AbstractReferenceResolveTest>(), "org.jetbrains.kotlin.idea.kdoc.KdocResolveTestGenerated") {
+            model("kdoc/resolve")
+        }
+
+        testClass(javaClass<AbstractKDocHighlightingTest>()) {
+            model("kdoc/highlighting")
+        }
+
+        testClass<AbstractJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.kdoc.KDocCompletionTestGenerated") {
+            model("kdoc/completion")
+        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
@@ -728,6 +745,13 @@ fun main(args: Array<String>) {
 }
 
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
+    inline fun <reified T: TestCase> testClass(
+            suiteTestClass: String = getDefaultSuiteTestClass(javaClass<T>()),
+            [noinline] init: TestClass.() -> Unit
+    ) {
+        testClass(javaClass<T>(), suiteTestClass, init)
+    }
+
     fun testClass(
             baseTestClass: Class<out TestCase>,
             suiteTestClass: String = getDefaultSuiteTestClass(baseTestClass),
@@ -736,10 +760,14 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
         val testClass = TestClass()
         testClass.init()
 
+        val lastDot = suiteTestClass.lastIndexOf('.')
+        val suiteTestClassName = if (lastDot == -1) suiteTestClass else suiteTestClass.substring(lastDot+1)
+        val suiteTestClassPackage = if (lastDot == -1) baseTestClass.getPackage().getName() else suiteTestClass.substring(0, lastDot)
+
         TestGenerator(
                 testsRoot,
-                baseTestClass.getPackage()!!.getName()!!,
-                suiteTestClass,
+                suiteTestClassPackage,
+                suiteTestClassName,
                 baseTestClass,
                 testClass.testModels
         ).generateAndSave()

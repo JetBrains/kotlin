@@ -26,6 +26,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser;
 import org.jetbrains.kotlin.kdoc.parser.KDocParser;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl;
 
@@ -33,11 +34,11 @@ public interface KDocTokens {
     ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", JetLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
-            PsiElement  parentElement = chameleon.getTreeParent().getPsi();
-            Project     project = parentElement.getProject();
-            PsiBuilder  builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
-                                                                                chameleon.getText());
-            PsiParser   parser = new KDocParser();
+            PsiElement parentElement = chameleon.getTreeParent().getPsi();
+            Project project = parentElement.getProject();
+            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
+                                                                               chameleon.getText());
+            PsiParser parser = new KDocParser();
 
             return parser.parse(this, builder).getFirstChildNode();
         }
@@ -55,17 +56,16 @@ public interface KDocTokens {
 
     KDocToken TEXT                  = new KDocToken("KDOC_TEXT");
 
-    /**
-     * First word following the tag name (@xxx). Depending on the tag name, this can be
-     * either a link (@param xxx) or just a plain text word (@since version).
-     * We understand which one it is during parsing.
-     */
-    KDocToken TEXT_OR_LINK          = new KDocToken("KDOC_TEXT_OR_LINK");
     KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME");
-    KDocToken MARKDOWN_LINK         = new KDocToken("KDOC_MARKDOWN_LINK");
+    ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", JetLanguage.INSTANCE) {
+        @Override
+        public ASTNode parseContents(ASTNode chameleon) {
+            return KDocLinkParser.OBJECT$.parseMarkdownLink(this, chameleon);
+        }
+    };
 
     KDocToken MARKDOWN_ESCAPED_CHAR = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
 
     TokenSet KDOC_HIGHLIGHT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR);
-    TokenSet CONTENT_TOKENS = TokenSet.create(TEXT, TAG_NAME, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR, TEXT_OR_LINK);
+    TokenSet CONTENT_TOKENS = TokenSet.create(TEXT, TAG_NAME, MARKDOWN_LINK, MARKDOWN_ESCAPED_CHAR);
 }

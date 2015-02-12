@@ -258,7 +258,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testInOutProjectionDeclarationSite() throws Exception {
         doTest(
-                "In<out Any?>",
+                "In<*>",
                 "In<T>",
                 map("T", "out String")
         );
@@ -266,7 +266,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testOutInProjectionDeclarationSite() throws Exception {
         doTest(
-                "Out<Any?>",
+                "Out<*>",
                 "Out<T>",
                 map("T", "in String")
         );
@@ -386,5 +386,21 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     //            map("R", "T")
     //    );
     //}
+
+    public void testStarProjection() throws Exception {
+        doTest(
+                "Rec<*>",
+                "Rec<*>",
+                map("T", "String")
+        );
+    }
+
+    public void testStarProjectionOut() throws Exception {
+        doTest(
+                "Out<*>",
+                "Out<*>",
+                map("T", "String")
+        );
+    }
 
 }

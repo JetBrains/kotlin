@@ -5,7 +5,7 @@ trait T {
     val v : Int
 }
 
-open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br<!>(t : T) : T {
+open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br<!>(<!UNUSED_PARAMETER!>t<!> : T) : T {
 
 }
 

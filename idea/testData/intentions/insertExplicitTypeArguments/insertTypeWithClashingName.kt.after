@@ -1,8 +1,10 @@
+import kotlin.Array
+
 // IS_APPLICABLE: true
 class Array
 
 fun test() {
-    bar<kotlin.Array<out String>>(foo(""))
+    bar<Array<out String>>(foo(""))
 }
 
 fun foo(vararg x: String) = x

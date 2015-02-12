@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 /**
  * The part of a doc comment which describes a single class, method or property
@@ -26,12 +27,18 @@ import com.intellij.psi.util.PsiTreeUtil
  * properties defined in the primary constructor.
  */
 public class KDocSection(node: ASTNode) : KDocTag(node) {
+    /**
+     * Returns the name of the section (the name of the doc tag introducing the section,
+     * or null for the default section).
+     */
+    override fun getName(): String? =
+            (getFirstChild() as? KDocTag)?.getName()
+
+    override fun getContent(): String =
+            (getFirstChild() as? KDocTag)?.getContent() ?: super.getContent()
+
     public fun findTagsByName(name: String): List<KDocTag> {
-        val tags = PsiTreeUtil.getChildrenOfType<KDocTag>(this, javaClass<KDocTag>())
-        if (tags == null) {
-            return listOf()
-        }
-        return tags.filter { it.getName() == name }
+        return getChildrenOfType<KDocTag>().filter { it.getName() == name }
     }
 
     public fun findTagByName(name: String): KDocTag?

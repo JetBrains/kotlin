@@ -45,6 +45,11 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
+import com.intellij.util.io.BooleanDataDescriptor
+import java.util.ArrayList
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.utils.Printer
+import java.io.DataInputStream
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -54,7 +59,7 @@ private val CACHE_DIRECTORY_NAME = "kotlin"
 class CacheFormatVersion(targetDataRoot: File) {
     class object {
         // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 1
+        private val INCREMENTAL_CACHE_OWN_VERSION = 2
         private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
         val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
@@ -78,27 +83,53 @@ class CacheFormatVersion(targetDataRoot: File) {
     }
 }
 
-public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, IncrementalCache {
+public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, IncrementalCache {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
+        val SOURCE_TO_CLASSES = "source-to-classes.tab"
+        val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
-    private val protoMap =  ProtoMap()
-    private val constantsMap =  ConstantsMap()
-    private val inlineFunctionsMap =  InlineFunctionsMap()
-    private val packagePartMap =  PackagePartMap()
+    private val protoMap = ProtoMap()
+    private val constantsMap = ConstantsMap()
+    private val inlineFunctionsMap = InlineFunctionsMap()
+    private val packagePartMap = PackagePartMap()
+    private val sourceToClassesMap = SourceToClassesMap()
+    private val dirtyOutputClassesMap = DirtyOutputClassesMap()
 
-    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
+    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, sourceToClassesMap, dirtyOutputClassesMap)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
 
+    TestOnly
+    public fun dump(): String {
+        return maps.map { it.dump() }.join("\n\n")
+    }
+
+    public fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
+        for (sourceFile in removedAndCompiledSources) {
+            val classes = sourceToClassesMap[sourceFile]
+            classes.forEach { dirtyOutputClassesMap.markDirty(it.getInternalName()) }
+
+            sourceToClassesMap.clearOutputsForSource(sourceFile)
+        }
+    }
+
+    private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
+            when {
+                inlinesChanged -> RECOMPILE_ALL
+                constantsChanged -> COMPILE_OTHERS
+                protoChanged -> COMPILE_OTHERS
+                else -> DO_NOTHING
+            }
+
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
         if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
-        
+
         cacheFormatVersion.saveIfNeeded()
 
         val kotlinClass = LocalFileKotlinClass.create(classFile)
@@ -108,48 +139,69 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         val className = JvmClassName.byClassId(kotlinClass.getClassId())
         val header = kotlinClass.getClassHeader()
 
+        dirtyOutputClassesMap.notDirty(className.getInternalName())
+        sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, className) }
+
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            when {
-                header.isCompatiblePackageFacadeKind() -> {
-                    return if (protoMap.put(className, data)) COMPILE_OTHERS else DO_NOTHING
-                }
-                header.isCompatibleClassKind() -> {
-                    val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-                    val protoChanged = protoMap.put(className, data)
-                    val constantsChanged = constantsMap.process(className, fileBytes)
-
-                    return if (inlinesChanged) RECOMPILE_ALL else if (protoChanged || constantsChanged) COMPILE_OTHERS else DO_NOTHING
-                }
+            return when {
+                header.isCompatiblePackageFacadeKind() ->
+                    getRecompilationDecision(
+                            protoChanged = protoMap.put(className, data),
+                            constantsChanged = false,
+                            inlinesChanged = false
+                    )
+                header.isCompatibleClassKind() ->
+                    getRecompilationDecision(
+                            protoChanged = protoMap.put(className, data),
+                            constantsChanged = constantsMap.process(className, fileBytes),
+                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                    )
                 else -> {
                     throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
                 }
             }
         }
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
-            assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
-            packagePartMap.putPackagePartSourceData(sourceFiles.first(), className)
-            val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-            val constantsChanged = constantsMap.process(className, fileBytes)
-            return if (inlinesChanged) RECOMPILE_ALL else if (constantsChanged) COMPILE_OTHERS else DO_NOTHING
+            assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+
+            packagePartMap.addPackagePart(className)
+
+            return getRecompilationDecision(
+                    protoChanged = false,
+                    constantsChanged = constantsMap.process(className, fileBytes),
+                    inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+            )
         }
 
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<File>, outDirectory: File, compilationSuccessful: Boolean) {
-        removedSourceFiles.forEach { packagePartMap.remove(it) }
+    public fun clearCacheForRemovedClasses(): RecompilationDecision {
+        var recompilationDecision = DO_NOTHING
+        for (internalClassName in dirtyOutputClassesMap.getDirtyOutputClasses()) {
+            val className = JvmClassName.byInternalName(internalClassName)
 
-        if (compilationSuccessful) {
-            inlineFunctionsMap.clearOutdated(outDirectory)
-            constantsMap.clearOutdated(outDirectory)
-            protoMap.clearOutdated(outDirectory)
+            val newDecision = getRecompilationDecision(
+                    protoChanged = internalClassName in protoMap,
+                    constantsChanged = internalClassName in constantsMap,
+                    inlinesChanged = internalClassName in inlineFunctionsMap
+            )
+
+            recompilationDecision = recompilationDecision.merge(newDecision)
+
+            protoMap.remove(className)
+            packagePartMap.remove(className)
+            constantsMap.remove(className)
+            inlineFunctionsMap.remove(className)
         }
+        dirtyOutputClassesMap.clear()
+        return recompilationDecision
     }
 
-    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String?>): Collection<String> {
-        return packagePartMap.getRemovedPackageParts(sourceFilesToCompileAndFqNames)
+    public override fun getObsoletePackageParts(): Collection<String> {
+        return dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
     }
 
     public override fun getPackageData(fqName: String): ByteArray? {
@@ -173,6 +225,8 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         protected var storage: PersistentHashMap<String, V> = createMap()
 
         protected abstract fun createMap(): PersistentHashMap<String, V>
+
+        public fun contains(key: String): Boolean = storage.containsMapping(key)
 
         public fun clean() {
             try {
@@ -203,31 +257,29 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         public fun close() {
             storage.close()
         }
-    }
 
-    private abstract class ClassFileBasedMap<V>: BasicMap<V>() {
+        TestOnly
+        public fun dump(): String {
+            return with(StringBuilder()) {
+                with(Printer(this)) {
+                    println(this@BasicMap.javaClass.getSimpleName())
+                    pushIndent()
 
-        // TODO may be too expensive, because it traverses all files in out directory
-        public fun clearOutdated(outDirectory: File) {
-            val keysToRemove = HashSet<String>()
+                    for (key in storage.getAllKeysWithExistingMapping().sort()) {
+                        println("$key -> ${dumpValue(storage[key])}")
+                    }
 
-            storage.processKeysWithExistingMapping { key ->
-                val className = JvmClassName.byInternalName(key!!)
-                val classFile = File(outDirectory, FileUtil.toSystemDependentName(className.getInternalName()) + ".class")
-                if (!classFile.exists()) {
-                    keysToRemove.add(key)
+                    popIndent()
                 }
 
-                true
-            }
-
-            for (key in keysToRemove) {
-                storage.remove(key)
-            }
+                this
+            }.toString()
         }
+
+        protected abstract fun dumpValue(value: V): String
     }
 
-    private inner class ProtoMap: ClassFileBasedMap<ByteArray>() {
+    private inner class ProtoMap : BasicMap<ByteArray>() {
         override fun createMap(): PersistentHashMap<String, ByteArray> = PersistentHashMap(
                 File(baseDir, PROTO_MAP),
                 EnumeratorStringDescriptor(),
@@ -247,9 +299,17 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         public fun get(className: JvmClassName): ByteArray? {
             return storage[className.getInternalName()]
         }
+
+        public fun remove(className: JvmClassName) {
+            storage.remove(className.getInternalName())
+        }
+
+        override fun dumpValue(value: ByteArray): String {
+            return java.lang.Long.toHexString(value.md5())
+        }
     }
 
-    private inner class ConstantsMap: ClassFileBasedMap<Map<String, Any>>() {
+    private inner class ConstantsMap : BasicMap<Map<String, Any>>() {
         override fun createMap(): PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
                 File(baseDir, CONSTANTS_MAP),
                 EnumeratorStringDescriptor(),
@@ -291,11 +351,28 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
             }
             return true
         }
+
+        public fun remove(className: JvmClassName) {
+            put(className, null)
+        }
+
+        override fun dumpValue(value: Map<String, Any>): String {
+            return StringBuilder {
+                append("{")
+                for (key in value.keySet().sort()) {
+                    if (length() != 1) {
+                        append(", ")
+                    }
+                    append("$key -> ${value[key]}")
+                }
+                append("}")
+            }.toString()
+        }
     }
 
-    private object ConstantsMapExternalizer: DataExternalizer<Map<String, Any>> {
+    private object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
         override fun save(out: DataOutput, map: Map<String, Any>?) {
-            out.writeInt(map!!.size)
+            out.writeInt(map!!.size())
             for (name in map.keySet().toSortedList()) {
                 IOUtil.writeString(name, out)
                 val value = map[name]!!
@@ -351,7 +428,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
         }
     }
 
-    private inner class InlineFunctionsMap: ClassFileBasedMap<Map<String, Long>>() {
+    private inner class InlineFunctionsMap : BasicMap<Map<String, Long>>() {
         override fun createMap(): PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
                 File(baseDir, INLINE_FUNCTIONS),
                 EnumeratorStringDescriptor(),
@@ -409,11 +486,28 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
             }
             return true
         }
+
+        public fun remove(className: JvmClassName) {
+            put(className, null)
+        }
+
+        override fun dumpValue(value: Map<String, Long>): String {
+            return StringBuilder {
+                append("{")
+                for (key in value.keySet().sort()) {
+                    if (length() != 1) {
+                        append(", ")
+                    }
+                    append("$key -> ${java.lang.Long.toHexString(value[key]!!)}")
+                }
+                append("}")
+            }.toString()
+        }
     }
 
-    private object InlineFunctionsMapExternalizer: DataExternalizer<Map<String, Long>> {
+    private object InlineFunctionsMapExternalizer : DataExternalizer<Map<String, Long>> {
         override fun save(out: DataOutput, map: Map<String, Long>?) {
-            out.writeInt(map!!.size)
+            out.writeInt(map!!.size())
             for (name in map.keySet()) {
                 IOUtil.writeString(name, out)
                 out.writeLong(map[name]!!)
@@ -436,63 +530,74 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
 
     }
 
-
-    private inner class PackagePartMap: BasicMap<String>() {
-        // Format of serialization to string: <source file path>  -->  <package part JVM internal name>
-        override fun createMap(): PersistentHashMap<String, String> = PersistentHashMap(
+    private inner class PackagePartMap : BasicMap<Boolean>() {
+        override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
                 File(baseDir, PACKAGE_PARTS),
                 EnumeratorStringDescriptor(),
-                EnumeratorStringDescriptor()
+                BooleanDataDescriptor.INSTANCE
         )
 
-        public fun putPackagePartSourceData(sourceFile: File, className: JvmClassName) {
-            storage.put(sourceFile.getAbsolutePath(), className.getInternalName())
+        public fun addPackagePart(className: JvmClassName) {
+            storage.put(className.getInternalName(), true)
         }
 
-        public fun remove(sourceFile: File) {
+        public fun remove(className: JvmClassName) {
+            storage.remove(className.getInternalName())
+        }
+
+        public fun isPackagePart(className: JvmClassName): Boolean {
+            return storage.containsMapping(className.getInternalName())
+        }
+
+        override fun dumpValue(value: Boolean) = ""
+    }
+
+    private inner class SourceToClassesMap : BasicMap<List<String>>() {
+        override fun createMap(): PersistentHashMap<String, List<String>> = PersistentHashMap(
+                File(baseDir, SOURCE_TO_CLASSES),
+                EnumeratorStringDescriptor(),
+                StringListExternalizer
+        )
+
+        public fun clearOutputsForSource(sourceFile: File) {
             storage.remove(sourceFile.getAbsolutePath())
         }
 
-        public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String?>): Collection<String> {
-            val result = HashSet<String>()
-
-            storage.processKeysWithExistingMapping { key ->
-                val sourceFile = File(key!!)
-
-                val packagePartClassName = storage[key]!!
-                if (!sourceFile.exists()) {
-                    result.add(packagePartClassName)
-                }
-                else {
-                    if (sourceFile in compiledSourceFilesToFqName) {
-                        val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
-                        if (compiledSourceFilesToFqName[sourceFile] != previousPackageFqName.asString()) {
-                            result.add(packagePartClassName)
-                        }
-                    }
-                }
-
-                true
-            }
-
-            return result
+        public fun addSourceToClass(sourceFile: File, className: JvmClassName) {
+            storage.appendData(sourceFile.getAbsolutePath(), { out -> IOUtil.writeUTF(out, className.getInternalName()) })
         }
 
-        public fun getPackages(): Set<FqName> {
-            val result = HashSet<FqName>()
-
-            storage.processKeysWithExistingMapping { key ->
-                val packagePartClassName = storage[key!!]!!
-
-                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
-
-                result.add(packageFqName)
-
-                true
-            }
-
-            return result
+        public fun get(sourceFile: File): Collection<JvmClassName> {
+            return storage[sourceFile.getAbsolutePath()].orEmpty().map { JvmClassName.byInternalName(it) }
         }
+
+        override fun dumpValue(value: List<String>) = value.toString()
+    }
+
+    private inner class DirtyOutputClassesMap : BasicMap<Boolean>() {
+        override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
+                File(baseDir, DIRTY_OUTPUT_CLASSES),
+                EnumeratorStringDescriptor(),
+                BooleanDataDescriptor.INSTANCE
+        )
+
+        public fun markDirty(className: String) {
+            storage.put(className, true)
+        }
+
+        public fun notDirty(className: String) {
+            storage.remove(className)
+        }
+
+        public fun getDirtyOutputClasses(): Collection<String> {
+            return storage.getAllKeysWithExistingMapping()
+        }
+
+        public fun clear() {
+            storage.getAllKeysWithExistingMapping().forEach { storage.remove(it) }
+        }
+
+        override fun dumpValue(value: Boolean) = ""
     }
 
     enum class RecompilationDecision {
@@ -506,7 +611,7 @@ public class IncrementalCacheImpl(targetDataRoot: File): StorageOwner, Increment
     }
 }
 
-private val storageProvider = object: StorageProvider<IncrementalCacheImpl>() {
+private val storageProvider = object : StorageProvider<IncrementalCacheImpl>() {
     override fun createStorage(targetDataDir: File): IncrementalCacheImpl {
         return IncrementalCacheImpl(targetDataDir)
     }
@@ -519,17 +624,17 @@ public fun BuildDataManager.getKotlinCache(target: BuildTarget<*>): IncrementalC
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!
     return ((d[0].toLong() and 0xFFL)
-                    or ((d[1].toLong() and 0xFFL) shl 8)
-                    or ((d[2].toLong() and 0xFFL) shl 16)
-                    or ((d[3].toLong() and 0xFFL) shl 24)
-                    or ((d[4].toLong() and 0xFFL) shl 32)
-                    or ((d[5].toLong() and 0xFFL) shl 40)
-                    or ((d[6].toLong() and 0xFFL) shl 48)
-                    or ((d[7].toLong() and 0xFFL) shl 56)
-            )
+            or ((d[1].toLong() and 0xFFL) shl 8)
+            or ((d[2].toLong() and 0xFFL) shl 16)
+            or ((d[3].toLong() and 0xFFL) shl 24)
+            or ((d[4].toLong() and 0xFFL) shl 32)
+            or ((d[5].toLong() and 0xFFL) shl 40)
+            or ((d[6].toLong() and 0xFFL) shl 48)
+            or ((d[7].toLong() and 0xFFL) shl 56)
+           )
 }
 
-private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
+private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     override fun save(out: DataOutput, value: ByteArray) {
         out.writeInt(value.size())
         out.write(value)
@@ -540,5 +645,19 @@ private object ByteArrayExternalizer: DataExternalizer<ByteArray> {
         val buf = ByteArray(length)
         `in`.readFully(buf)
         return buf
+    }
+}
+
+private object StringListExternalizer : DataExternalizer<List<String>> {
+    override fun save(out: DataOutput, value: List<String>) {
+        value.forEach { IOUtil.writeUTF(out, it) }
+    }
+
+    override fun read(`in`: DataInput): List<String> {
+        val result = ArrayList<String>()
+        while ((`in` as DataInputStream).available() > 0) {
+            result.add(IOUtil.readUTF(`in`))
+        }
+        return result
     }
 }

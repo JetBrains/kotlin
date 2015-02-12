@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.types.*;
@@ -69,7 +70,17 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
-        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, new TraceBasedRedeclarationHandler(trace), "Function inner scope");
+        TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
+        return getFunctionInnerScope(outerScope, descriptor, redeclarationHandler);
+    }
+
+    @NotNull
+    public static JetScope getFunctionInnerScope(
+            @NotNull JetScope outerScope,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull RedeclarationHandler redeclarationHandler
+    ) {
+        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope");
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         if (receiver != null) {
             parameterScope.setImplicitReceiver(receiver);

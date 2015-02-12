@@ -16,10 +16,25 @@
 
 package kotlin
 
+/**
+ * Represents a sequence of numbers or characters with a given start value, end value and step.
+ * This class is intended to be used in 'for' loops, and the JVM backend suggests efficient
+ * bytecode generation for it. Progressions with a step of -1 can be created through the
+ * `downTo` method on classes representing primitive types.
+ */
 public trait Progression<out N : Any> : Iterable<N> {
+    /**
+     * The start value of the progression.
+     */
     public val start: N
 
+    /**
+     * The end value of the progression (inclusive).
+     */
     public val end: N
 
+    /**
+     * The step of the progression.
+     */
     public val increment: Number
 }

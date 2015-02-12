@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
+import java.util.ArrayList
+import org.jetbrains.kotlin.utils.toReadOnlyList
+import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContext,
@@ -106,23 +109,35 @@ class LazyJavaClassDescriptor(
             jClass.getTypeParameters().map {
                 p ->
                 c.typeParameterResolver.resolveTypeParameter(p)
-                    ?: throw AssertionError("Parameter $p surely belongs to class ${jClass}, so it must be resolved")
+                    ?: throw AssertionError("Parameter $p surely belongs to class $jClass, so it must be resolved")
             }
         }
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()
 
         private val supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
-            jClass.getSupertypes().stream()
-                    .map {
-                        supertype ->
-                        c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
-                    }
-                    .filter { supertype -> !supertype.isError() && !KotlinBuiltIns.isAnyOrNullableAny(supertype) }
-                    .toList()
-                    .ifEmpty {
-                        listOf(KotlinBuiltIns.getInstance().getAnyType())
-                    }
+            val javaTypes = jClass.getSupertypes()
+            val result = ArrayList<JetType>(javaTypes.size())
+            val incomplete = ArrayList<JavaType>(0)
+
+            for (javaType in javaTypes) {
+                val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
+                if (jetType.isError()) {
+                    incomplete.add(javaType)
+                    continue
+                }
+                if (!KotlinBuiltIns.isAnyOrNullableAny(jetType)) {
+                    result.add(jetType)
+                }
+            }
+
+            if (incomplete.isNotEmpty()) {
+                c.errorReporter.reportIncompleteHierarchy(getDeclarationDescriptor(), incomplete.map { javaType ->
+                    (javaType as JavaClassifierType).getPresentableText()
+                })
+            }
+
+            if (result.isNotEmpty()) result.toReadOnlyList() else listOf(KotlinBuiltIns.getInstance().getAnyType())
         }
 
         override fun getSupertypes(): Collection<JetType> = supertypes()

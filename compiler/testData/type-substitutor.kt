@@ -11,3 +11,4 @@ class In<in T>
 class Out<out T>
 class P<X1, X2>
 
+class Rec<T: Rec<T>>

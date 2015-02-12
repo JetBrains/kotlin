@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 // resolved call
 
@@ -63,12 +64,12 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valu
 
 // call
 
-public fun Call.hasUnresolvedArguments(context: BindingContext): Boolean {
+public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = getValueArguments().map { it?.getArgumentExpression() }
     return arguments.any {
         argument ->
-        val expressionType = context[BindingContext.EXPRESSION_TYPE, argument]
-        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument)
+        val expressionType = context.trace.getBindingContext()[BindingContext.EXPRESSION_TYPE, argument]
+        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument, context as ResolutionContext<*>)
                 && (expressionType == null || expressionType.isError())
     }
 }

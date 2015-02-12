@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
@@ -66,4 +68,8 @@ public fun JetType.isSubtypeOf(superType: JetType): Boolean = JetTypeChecker.DEF
 
 public fun JetType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
-
+fun TypeProjection.substitute(doSubstitute: (JetType) -> JetType): TypeProjection {
+    return if (isStarProjection())
+        this
+    else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
+}

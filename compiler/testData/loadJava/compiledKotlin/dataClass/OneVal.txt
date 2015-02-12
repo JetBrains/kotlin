@@ -5,5 +5,5 @@ kotlin.data() internal final class DataClass {
     internal final val x: kotlin.String
         internal final fun <get-x>(): kotlin.String
     internal final /*synthesized*/ fun component1(): kotlin.String
-    internal final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): test.DataClass
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): test.DataClass
 }

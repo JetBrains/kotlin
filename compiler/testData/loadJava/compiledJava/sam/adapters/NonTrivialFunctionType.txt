@@ -8,5 +8,5 @@ public open class NonTrivialFunctionType {
     public open fun foo(/*0*/ p0: java.util.Comparator<kotlin.String!>!): kotlin.Unit
     public final /*synthesized*/ fun wildcardBound(/*0*/ p0: ((kotlin.CharSequence!, kotlin.CharSequence!) -> kotlin.Int)!): kotlin.Unit
     public open fun wildcardBound(/*0*/ p0: java.util.Comparator<in kotlin.CharSequence!>!): kotlin.Unit
-    public open fun wildcardUnbound(/*0*/ p0: java.util.Comparator<out kotlin.Any?>!): kotlin.Unit
+    public open fun wildcardUnbound(/*0*/ p0: java.util.Comparator<*>!): kotlin.Unit
 }

@@ -58,11 +58,6 @@ public class SpecialFiles {
     }
 
     private static void fillExcludedFiles() {
-        excludedFiles.add("boxAgainstJava");  // Must compile Java files before
-        excludedFiles.add("boxWithJava");  // Must compile Java files before
-        excludedFiles.add("boxMultiFile"); // MultiFileTest not supported yet
-        excludedFiles.add("boxInline"); // MultiFileTest not supported yet
-
         excludedFiles.add("native"); // Reflection is used to check full class name
 
         excludedFiles.add("reflection");
@@ -82,9 +77,6 @@ public class SpecialFiles {
         excludedFiles.add("innerAnonymousObject.kt"); // Cannot change package name
         excludedFiles.add("nestedReifiedSignature.kt"); // Cannot change package name
         excludedFiles.add("recursiveInnerAnonymousObject.kt"); // Cannot change package name
-
-        excludedFiles.add("kt326.kt"); // Commented
-        excludedFiles.add("kt1213.kt"); // Commented
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 

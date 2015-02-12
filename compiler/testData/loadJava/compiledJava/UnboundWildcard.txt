@@ -2,7 +2,8 @@ package test
 
 public final class UnboundWildcard {
     public constructor UnboundWildcard()
-    public final fun foo(): test.UnboundWildcard.MyClass<out kotlin.CharSequence!>!
+    public final fun collection(): kotlin.(Mutable)Collection<*>!
+    public final fun foo(): test.UnboundWildcard.MyClass<*>!
 
     public trait MyClass</*0*/ T : kotlin.CharSequence!> {
     }

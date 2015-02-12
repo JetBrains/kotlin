@@ -5,15 +5,15 @@ import java.util.HashMap
 
 //KT-250 Incorrect variable resolve in constructor arguments of superclass
 open class A(val x: Int)
-class B(y: Int) : A(<!UNRESOLVED_REFERENCE!>x<!>)  //x is resolved as a property in a, so no error is generated
+class B(<!UNUSED_PARAMETER!>y<!>: Int) : A(<!UNRESOLVED_REFERENCE!>x<!>)  //x is resolved as a property in a, so no error is generated
 
 //KT-617 Prohibit dollars in call to superclass constructors
-open class M(p: Int)
+open class M(<!UNUSED_PARAMETER!>p<!>: Int)
 class N(val p: Int) : A(<!UNRESOLVED_REFERENCE!>$p<!>)
 
 //KT-10 Don't allow to use properties in supertype initializers
 open class Element()
-class TextElement(name: String) : Element()
+class TextElement(<!UNUSED_PARAMETER!>name<!>: String) : Element()
 
 abstract class Tag(val name : String) {
   val children = ArrayList<Element>()
@@ -36,7 +36,7 @@ class Body1() : BodyTag(<!NO_THIS!>this<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!
 
 //more tests
 
-open class X(p: Int, r: Int) {
+open class X(<!UNUSED_PARAMETER!>p<!>: Int, <!UNUSED_PARAMETER!>r<!>: Int) {
     val s = "s"
 }
 

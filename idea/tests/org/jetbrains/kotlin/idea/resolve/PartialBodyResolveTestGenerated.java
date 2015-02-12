@@ -54,6 +54,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("BangBangHasPlatformTypeBug.kt")
+    public void testBangBangHasPlatformTypeBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBangHasPlatformTypeBug.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("BangBangInIfCondition.kt")
     public void testBangBangInIfCondition() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBangInIfCondition.kt");
@@ -249,6 +255,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("InIfExpressionElse.kt")
     public void testInIfExpressionElse() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/InIfExpressionElse.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IntConstantTypeBug.kt")
+    public void testIntConstantTypeBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IntConstantTypeBug.kt");
         doTest(fileName);
     }
 

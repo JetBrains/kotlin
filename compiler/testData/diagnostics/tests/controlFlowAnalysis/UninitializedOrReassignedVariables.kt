@@ -192,7 +192,7 @@ fun reassignFunParams(a: Int) {
     <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>1<!>
 }
 
-open class Open(a: Int, w: Int) {}
+open class Open(<!UNUSED_PARAMETER!>a<!>: Int, <!UNUSED_PARAMETER!>w<!>: Int) {}
 
 class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int

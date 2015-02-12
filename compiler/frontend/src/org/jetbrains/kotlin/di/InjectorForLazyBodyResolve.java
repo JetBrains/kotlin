@@ -20,12 +20,17 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel;
+import org.jetbrains.kotlin.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl;
+import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver;
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.kotlin.resolve.BodyResolver;
 import org.jetbrains.kotlin.resolve.AnnotationResolver;
@@ -37,15 +42,15 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.kotlin.types.expressions.LocalClassifierAnalyzer;
-import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
-import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.kotlin.context.LazinessToken;
-import org.jetbrains.kotlin.resolve.PartialBodyResolveProvider;
+import org.jetbrains.kotlin.types.reflect.ReflectionTypes;
+import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
+import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.CallCompleter;
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver;
 import org.jetbrains.kotlin.resolve.calls.tasks.TaskPrioritizer;
@@ -55,14 +60,8 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver;
 import org.jetbrains.kotlin.resolve.DeclarationResolver;
-import org.jetbrains.kotlin.resolve.ImportsResolver;
-import org.jetbrains.kotlin.psi.JetImportsFactory;
 import org.jetbrains.kotlin.resolve.OverloadResolver;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.TopDownAnalyzer;
-import org.jetbrains.kotlin.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.kotlin.resolve.TypeHierarchyResolver;
-import org.jetbrains.kotlin.resolve.ScriptHeaderResolver;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -75,12 +74,17 @@ public class InjectorForLazyBodyResolve {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final KotlinCodeAnalyzer analyzer;
+    private final ModuleDescriptor moduleDescriptor;
+    private final ScopeProvider scopeProvider;
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final DynamicTypesSettings dynamicTypesSettings;
-    private final ModuleDescriptor moduleDescriptor;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final LazyTopDownAnalyzerForTopLevel lazyTopDownAnalyzerForTopLevel;
+    private final AdditionalFileScopeProvider additionalFileScopeProvider;
+    private final DeclarationScopeProviderImpl declarationScopeProvider;
+    private final LazyDeclarationResolver lazyDeclarationResolver;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
@@ -92,15 +96,15 @@ public class InjectorForLazyBodyResolve {
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final LocalClassifierAnalyzer localClassifierAnalyzer;
-    private final ReflectionTypes reflectionTypes;
-    private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final LazinessToken lazinessToken;
-    private final PartialBodyResolveProvider partialBodyResolveProvider;
+    private final ReflectionTypes reflectionTypes;
+    private final CallExpressionResolver callExpressionResolver;
+    private final StatementFilter statementFilter;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     private final TaskPrioritizer taskPrioritizer;
@@ -110,14 +114,8 @@ public class InjectorForLazyBodyResolve {
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
     private final DeclarationResolver declarationResolver;
-    private final ImportsResolver importsResolver;
-    private final JetImportsFactory jetImportsFactory;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
-    private final TopDownAnalyzer topDownAnalyzer;
-    private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final TypeHierarchyResolver typeHierarchyResolver;
-    private final ScriptHeaderResolver scriptHeaderResolver;
     private final VarianceChecker varianceChecker;
 
     public InjectorForLazyBodyResolve(
@@ -132,12 +130,17 @@ public class InjectorForLazyBodyResolve {
         this.globalContext = globalContext;
         this.storageManager = globalContext.getStorageManager();
         this.analyzer = analyzer;
+        this.moduleDescriptor = analyzer.getModuleDescriptor();
+        this.scopeProvider = analyzer.getScopeProvider();
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.dynamicTypesSettings = dynamicTypesSettings;
-        this.moduleDescriptor = analyzer.getModuleDescriptor();
         this.kotlinBuiltIns = moduleDescriptor.getBuiltIns();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
+        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
+        this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
+        this.declarationScopeProvider = new DeclarationScopeProviderImpl(lazyDeclarationResolver);
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -148,16 +151,16 @@ public class InjectorForLazyBodyResolve {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
         this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver, kotlinBuiltIns);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
-        this.localClassifierAnalyzer = new LocalClassifierAnalyzer();
-        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
-        this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
-        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
         this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesSettings);
-        this.partialBodyResolveProvider = new PartialBodyResolveProvider();
+        this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, typeResolver, annotationResolver);
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
+        this.callExpressionResolver = new CallExpressionResolver();
+        this.statementFilter = new StatementFilter();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
@@ -167,25 +170,29 @@ public class InjectorForLazyBodyResolve {
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.declarationResolver = new DeclarationResolver();
-        this.importsResolver = new ImportsResolver();
-        this.jetImportsFactory = new JetImportsFactory();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
-        this.topDownAnalyzer = new TopDownAnalyzer();
-        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(moduleDescriptor);
-        this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.varianceChecker = new VarianceChecker(bindingTrace);
 
-        this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
-        this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.lazyTopDownAnalyzer.setKotlinCodeAnalyzer(analyzer);
-        this.lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
-        this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
-        this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.lazyTopDownAnalyzer.setTopDownAnalyzer(topDownAnalyzer);
-        this.lazyTopDownAnalyzer.setTrace(bindingTrace);
-        this.lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
+        this.lazyTopDownAnalyzerForTopLevel.setKotlinCodeAnalyzer(analyzer);
+        this.lazyTopDownAnalyzerForTopLevel.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
+
+        declarationScopeProvider.setFileScopeProvider(scopeProvider);
+
+        lazyDeclarationResolver.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyDeclarationResolver.setTopLevelDescriptorProvider(analyzer);
+
+        lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
+        lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
+        lazyTopDownAnalyzer.setDeclarationScopeProvider(declarationScopeProvider);
+        lazyTopDownAnalyzer.setFileScopeProvider(scopeProvider);
+        lazyTopDownAnalyzer.setLazyDeclarationResolver(lazyDeclarationResolver);
+        lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
+        lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
+        lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
+        lazyTopDownAnalyzer.setTopLevelDescriptorProvider(analyzer);
+        lazyTopDownAnalyzer.setTrace(bindingTrace);
+        lazyTopDownAnalyzer.setVarianceChecker(varianceChecker);
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
@@ -217,8 +224,8 @@ public class InjectorForLazyBodyResolve {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        expressionTypingServices.setPartialBodyResolveProvider(partialBodyResolveProvider);
         expressionTypingServices.setProject(project);
+        expressionTypingServices.setStatementFilter(statementFilter);
         expressionTypingServices.setTypeResolver(typeResolver);
 
         expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
@@ -239,8 +246,6 @@ public class InjectorForLazyBodyResolve {
         forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
         forLoopConventionsChecker.setProject(project);
 
-        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
-
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setBuiltIns(kotlinBuiltIns);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
@@ -251,6 +256,8 @@ public class InjectorForLazyBodyResolve {
         delegatedPropertyResolver.setBuiltIns(kotlinBuiltIns);
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
@@ -265,38 +272,11 @@ public class InjectorForLazyBodyResolve {
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setDescriptorResolver(descriptorResolver);
-        declarationResolver.setImportsResolver(importsResolver);
         declarationResolver.setTrace(bindingTrace);
-
-        importsResolver.setImportsFactory(jetImportsFactory);
-        importsResolver.setModuleDescriptor(moduleDescriptor);
-        importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-        importsResolver.setTrace(bindingTrace);
-
-        jetImportsFactory.setProject(project);
 
         overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setTrace(bindingTrace);
-
-        topDownAnalyzer.setBodyResolver(bodyResolver);
-        topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
-        topDownAnalyzer.setOverloadResolver(overloadResolver);
-        topDownAnalyzer.setOverrideResolver(overrideResolver);
-        topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-        topDownAnalyzer.setVarianceChecker(varianceChecker);
-
-        typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
-        typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        typeHierarchyResolver.setTrace(bindingTrace);
-
-        scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTrace(bindingTrace);
 
     }
 
@@ -304,8 +284,8 @@ public class InjectorForLazyBodyResolve {
     public void destroy() {
     }
 
-    public LazyTopDownAnalyzer getLazyTopDownAnalyzer() {
-        return this.lazyTopDownAnalyzer;
+    public LazyTopDownAnalyzerForTopLevel getLazyTopDownAnalyzerForTopLevel() {
+        return this.lazyTopDownAnalyzerForTopLevel;
     }
 
 }

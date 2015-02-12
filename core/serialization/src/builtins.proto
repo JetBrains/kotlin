@@ -32,6 +32,7 @@ extend Class {
 
 extend Callable {
   repeated Annotation callable_annotation = 150;
+  optional Annotation.Argument.Value compile_time_value = 151;
 }
 
 extend Callable.ValueParameter {

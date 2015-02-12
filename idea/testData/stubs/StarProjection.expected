@@ -1,0 +1,8 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  PROPERTY:[fqName=v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=true, isVar=false, name=v]
+    TYPE_REFERENCE:
+      USER_TYPE:[isAbsoluteInRootPackage=false]
+        REFERENCE_EXPRESSION:[referencedName=Foo]
+        TYPE_ARGUMENT_LIST:
+          TYPE_PROJECTION:[projectionKind=STAR]

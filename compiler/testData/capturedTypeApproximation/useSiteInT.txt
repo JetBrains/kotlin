@@ -1,6 +1,6 @@
 In<in T>
   in Int. lower: In<Any?>; upper: In<Int>; substitution: In<Int>
-  out Int. lower: In<Int>; upper: In<Nothing>; substitution: In<out Any?>
+  out Int. lower: In<Int>; upper: In<Nothing>; substitution: In<*>
 
 Out<in T>
   compiler error
@@ -17,7 +17,7 @@ Inv<out in T>
 
 In<In<in T>>
   in Int. lower: In<In<Int>>; upper: In<In<Any?>>; substitution: In<In<Int>>
-  out Int. lower: In<In<Nothing>>; upper: In<In<Int>>; substitution: In<In<out Any?>>
+  out Int. lower: In<In<Nothing>>; upper: In<In<Int>>; substitution: In<In<*>>
 
 In<Out<in T>>
   compiler error
@@ -34,7 +34,7 @@ In<Inv<out in T>>
 
 Out<In<in T>>
   in Int. lower: Out<In<Any?>>; upper: Out<In<Int>>; substitution: Out<In<Int>>
-  out Int. lower: Out<In<Int>>; upper: Out<In<Nothing>>; substitution: Out<In<out Any?>>
+  out Int. lower: Out<In<Int>>; upper: Out<In<Nothing>>; substitution: Out<In<*>>
 
 Out<Out<in T>>
   compiler error
@@ -51,7 +51,7 @@ Out<Inv<out in T>>
 
 Inv<In<in T>>
   in Int. lower: Nothing; upper: Inv<out In<Int>>; substitution: Inv<In<Int>>
-  out Int. lower: Nothing; upper: Inv<out In<Nothing>>; substitution: Inv<In<out Any?>>
+  out Int. lower: Nothing; upper: Inv<out In<Nothing>>; substitution: Inv<In<*>>
 
 Inv<Out<in T>>
   compiler error
@@ -68,7 +68,7 @@ Inv<Inv<out in T>>
 
 Inv<in In<in T>>
   in Int. lower: Inv<in In<Int>>; upper: Inv<in In<Any?>>; substitution: Inv<in In<Int>>
-  out Int. lower: Inv<in In<Nothing>>; upper: Inv<in In<Int>>; substitution: Inv<in In<out Any?>>
+  out Int. lower: Inv<in In<Nothing>>; upper: Inv<in In<Int>>; substitution: Inv<in In<*>>
 
 Inv<in Out<in T>>
   compiler error
@@ -85,7 +85,7 @@ Inv<in Inv<out in T>>
 
 Inv<out In<in T>>
   in Int. lower: Inv<out In<Any?>>; upper: Inv<out In<Int>>; substitution: Inv<out In<Int>>
-  out Int. lower: Inv<out In<Int>>; upper: Inv<out In<Nothing>>; substitution: Inv<out In<out Any?>>
+  out Int. lower: Inv<out In<Int>>; upper: Inv<out In<Nothing>>; substitution: Inv<out In<*>>
 
 Inv<out Out<in T>>
   compiler error
@@ -108,7 +108,7 @@ Out<Out<Out<in T>>>
 
 Inv<Inv<in In<in T>>>
   in Int. lower: Nothing; upper: Inv<out Inv<in In<Any?>>>; substitution: Inv<Inv<in In<Int>>>
-  out Int. lower: Nothing; upper: Inv<out Inv<in In<Int>>>; substitution: Inv<Inv<in In<out Any?>>>
+  out Int. lower: Nothing; upper: Inv<out Inv<in In<Int>>>; substitution: Inv<Inv<in In<*>>>
 
 Inv<out Inv<Out<in T>>>
   compiler error
@@ -119,7 +119,7 @@ Inv<in Inv<Inv<in T>>>
 
 Out<Inv<In<in T>>>
   in Int. lower: Out<Nothing>; upper: Out<Inv<out In<Int>>>; substitution: Out<Inv<In<Int>>>
-  out Int. lower: Out<Nothing>; upper: Out<Inv<out In<Nothing>>>; substitution: Out<Inv<In<out Any?>>>
+  out Int. lower: Out<Nothing>; upper: Out<Inv<out In<Nothing>>>; substitution: Out<Inv<In<*>>>
 
 Inv<out Out<Out<in T>>>
   compiler error
@@ -156,7 +156,7 @@ Inv<out Out<Inv<out Inv<in in T>>>>
 
 Out<Inv<out Inv<out In<in T>>>>
   in Int. lower: Out<Inv<out Inv<out In<Any?>>>>; upper: Out<Inv<out Inv<out In<Int>>>>; substitution: Out<Inv<out Inv<out In<Int>>>>
-  out Int. lower: Out<Inv<out Inv<out In<Int>>>>; upper: Out<Inv<out Inv<out In<Nothing>>>>; substitution: Out<Inv<out Inv<out In<out Any?>>>>
+  out Int. lower: Out<Inv<out Inv<out In<Int>>>>; upper: Out<Inv<out Inv<out In<Nothing>>>>; substitution: Out<Inv<out Inv<out In<*>>>>
 
 In<Inv<in In<Inv<in in T>>>>
   compiler error
@@ -171,7 +171,7 @@ Out<Inv<in Inv<in Inv<in T>>>>
 
 In<In<Inv<In<In<in T>>>>>
   in Int. lower: In<In<Nothing>>; upper: In<In<Inv<out In<In<Any?>>>>>; substitution: In<In<Inv<In<In<Int>>>>>
-  out Int. lower: In<In<Nothing>>; upper: In<In<Inv<out In<In<Int>>>>>; substitution: In<In<Inv<In<In<out Any?>>>>>
+  out Int. lower: In<In<Nothing>>; upper: In<In<Inv<out In<In<Int>>>>>; substitution: In<In<Inv<In<In<*>>>>>
 
 Inv<Inv<Inv<Out<Inv<in in T>>>>>
   compiler error
@@ -206,11 +206,11 @@ In<Inv<Out<In<Inv<Inv<in T>>>>>>
 
 Out<Inv<Inv<out Inv<Inv<in In<in T>>>>>>
   in Int. lower: Out<Nothing>; upper: Out<Inv<out Inv<out Inv<out Inv<in In<Any?>>>>>>; substitution: Out<Inv<Inv<out Inv<Inv<in In<Int>>>>>>
-  out Int. lower: Out<Nothing>; upper: Out<Inv<out Inv<out Inv<out Inv<in In<Int>>>>>>; substitution: Out<Inv<Inv<out Inv<Inv<in In<out Any?>>>>>>
+  out Int. lower: Out<Nothing>; upper: Out<Inv<out Inv<out Inv<out Inv<in In<Int>>>>>>; substitution: Out<Inv<Inv<out Inv<Inv<in In<*>>>>>>
 
 Inv<Out<In<In<Inv<in In<in T>>>>>>
   in Int. lower: Nothing; upper: Inv<out Out<In<In<Inv<in In<Any?>>>>>>; substitution: Inv<Out<In<In<Inv<in In<Int>>>>>>
-  out Int. lower: Nothing; upper: Inv<out Out<In<In<Inv<in In<Int>>>>>>; substitution: Inv<Out<In<In<Inv<in In<out Any?>>>>>>
+  out Int. lower: Nothing; upper: Inv<out Out<In<In<Inv<in In<Int>>>>>>; substitution: Inv<Out<In<In<Inv<in In<*>>>>>>
 
 Inv<In<Inv<Inv<in Inv<out Inv<out in T>>>>>>
   compiler error
@@ -220,7 +220,7 @@ In<Inv<out Inv<in Inv<Inv<in Inv<out in T>>>>>>
 
 In<Inv<Inv<out Inv<out In<In<in T>>>>>>
   in Int. lower: In<Inv<out Inv<out Inv<out In<In<Any?>>>>>>; upper: In<Nothing>; substitution: In<Inv<Inv<out Inv<out In<In<Int>>>>>>
-  out Int. lower: In<Inv<out Inv<out Inv<out In<In<Int>>>>>>; upper: In<Nothing>; substitution: In<Inv<Inv<out Inv<out In<In<out Any?>>>>>>
+  out Int. lower: In<Inv<out Inv<out Inv<out In<In<Int>>>>>>; upper: In<Nothing>; substitution: In<Inv<Inv<out Inv<out In<In<*>>>>>>
 
 Out<In<Inv<Out<Inv<Out<in T>>>>>>
   compiler error

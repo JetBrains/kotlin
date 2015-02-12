@@ -38,7 +38,7 @@ import com.intellij.psi.PsiClass
 import java.util.HashSet
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
@@ -150,7 +150,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             val fqName = importPath.fqnPart()
             return when {
                 JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
-                ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                ImportInsertHelper.getInstance(file.getProject()).isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
                 importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
                 importCache.isImportedWithAllUnderImport(fqName) -> Weight.allUnderImport
                 importCache.hasPreciseImportFromPackage(fqName.parent()) -> Weight.hasImportFromSamePackage

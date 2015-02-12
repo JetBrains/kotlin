@@ -38,12 +38,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
@@ -64,6 +62,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.*;
@@ -72,12 +71,6 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.N
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
-
-    @Nullable
-    private static File getRuntimeJarPath() {
-        File runtimePath = PathUtil.getKotlinPathsForCompiler().getRuntimePath();
-        return runtimePath.exists() ? runtimePath : null;
-    }
 
     @NotNull
     public static ModuleScriptData loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
@@ -218,27 +211,26 @@ public class CompileEnvironmentUtil {
     }
 
     private static void writeRuntimeToJar(JarOutputStream stream) throws IOException {
-        File runtimeJarPath = getRuntimeJarPath();
-        if (runtimeJarPath != null) {
-            JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
-            try {
-                while (true) {
-                    JarEntry e = jis.getNextJarEntry();
-                    if (e == null) {
-                        break;
-                    }
-                    if (FileUtilRt.extensionEquals(e.getName(), "class")) {
-                        stream.putNextEntry(e);
-                        FileUtil.copy(jis, stream);
-                    }
+        File runtimePath = PathUtil.getKotlinPathsForCompiler().getRuntimePath();
+        if (!runtimePath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find runtime library");
+        }
+
+        JarInputStream jis = new JarInputStream(new FileInputStream(runtimePath));
+        try {
+            while (true) {
+                JarEntry e = jis.getNextJarEntry();
+                if (e == null) {
+                    break;
+                }
+                if (FileUtilRt.extensionEquals(e.getName(), "class")) {
+                    stream.putNextEntry(e);
+                    FileUtil.copy(jis, stream);
                 }
             }
-            finally {
-                jis.close();
-            }
         }
-        else {
-            throw new CompileEnvironmentException("Couldn't find runtime library");
+        finally {
+            jis.close();
         }
     }
 
@@ -252,26 +244,10 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    static void writeOutputToDirOrJar(
-            @Nullable File jar,
-            @Nullable File outputDir,
-            boolean includeRuntime,
-            @Nullable FqName mainClass,
-            @NotNull ClassFileFactory outputFiles,
-            @NotNull MessageCollector messageCollector
-    ) {
-        if (jar != null) {
-            writeToJar(jar, includeRuntime, mainClass, outputFiles);
-        }
-        else {
-            OutputUtilsPackage.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
-        }
-    }
-
     @NotNull
     public static List<JetFile> getJetFiles(
             @NotNull final Project project,
-            @NotNull List<String> sourceRoots,
+            @NotNull Collection<String> sourceRoots,
             @NotNull Function1<String, Unit> reportError
     ) {
         final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
@@ -313,24 +289,5 @@ public class CompileEnvironmentUtil {
         }
 
         return result;
-    }
-
-    public static void addSourceFilesCheckingForDuplicates(@NotNull CompilerConfiguration configuration, @NotNull List<String> sourceRoots) {
-        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        assert messageCollector != null : "messageCollector should be set: " + configuration;
-
-        Set<String> uniqueSourceRoots = Sets.newLinkedHashSet();
-
-        for (String sourceRoot : sourceRoots) {
-            if (!uniqueSourceRoots.add(sourceRoot)) {
-                messageCollector.report(
-                        CompilerMessageSeverity.WARNING,
-                        "Duplicate source roots: " + sourceRoot,
-                        NO_LOCATION
-                );
-            }
-        }
-
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, new ArrayList<String>(uniqueSourceRoots));
     }
 }

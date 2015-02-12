@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Express
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.idea.refactoring.extractFunction.OutputValue.Jump
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
@@ -57,6 +56,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.isUnit
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 
 trait Parameter {
     val argumentText: String
@@ -206,8 +206,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             fun getType(): JetType {
                 val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
-                    2 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Pair")).first()
-                    3 -> ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.Triple")).first()
+                    2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"))!!
+                    3 -> module.resolveTopLevelClass(FqName("kotlin.Triple"))!!
                     else -> return DEFAULT_RETURN_TYPE
                 }
                 return TypeUtils.substituteParameters(boxingClass, outputValueTypes)

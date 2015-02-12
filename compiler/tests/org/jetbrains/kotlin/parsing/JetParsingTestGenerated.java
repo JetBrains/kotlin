@@ -1073,6 +1073,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("HttpLink.kt")
+            public void testHttpLink() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/HttpLink.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("Incomplete.kt")
             public void testIncomplete() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/Incomplete.kt");
@@ -1085,9 +1091,27 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("MarkdownLinkWithError.kt")
+            public void testMarkdownLinkWithError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/MarkdownLinkWithError.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("MarkdownQualifiedName.kt")
+            public void testMarkdownQualifiedName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("ParamTag.kt")
             public void testParamTag() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ParamTag.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("ParamTagAtStart.kt")
+            public void testParamTagAtStart() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/ParamTagAtStart.kt");
                 doParsingTest(fileName);
             }
 
@@ -1100,6 +1124,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("Sections.kt")
             public void testSections() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/Sections.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("SeeEmpty.kt")
+            public void testSeeEmpty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/SeeEmpty.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("SeeLink.kt")
+            public void testSeeLink() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/SeeLink.kt");
                 doParsingTest(fileName);
             }
 

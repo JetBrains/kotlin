@@ -46,7 +46,7 @@ public class JetHighlightingColors {
     public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("KOTLIN_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
     public static final TextAttributesKey DOC_COMMENT = createTextAttributesKey("KOTLIN_DOC_COMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT);
     public static final TextAttributesKey KDOC_TAG = createTextAttributesKey("KDOC_TAG_NAME", DefaultLanguageHighlighterColors.DOC_COMMENT_TAG);
-    public static final TextAttributesKey KDOC_TAG_VALUE = createTextAttributesKey("KDOC_TAG_VALUE", DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
+    public static final TextAttributesKey KDOC_LINK = createTextAttributesKey("KDOC_LINK", DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
 
     // class kinds
     public static final TextAttributesKey CLASS = createTextAttributesKey("KOTLIN_CLASS", CodeInsightColors.CLASS_NAME_ATTRIBUTES);

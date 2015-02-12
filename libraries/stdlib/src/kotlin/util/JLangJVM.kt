@@ -10,21 +10,34 @@ import kotlin.jvm.internal.Intrinsic
  *
  * Example:
  *
- *      throws(javaClass<IOException>())
- *      fun readFile(name: String): String {...}
+ * ```
+ * throws(javaClass<IOException>())
+ * fun readFile(name: String): String {...}
+ * ```
  *
  * will be translated to
  *
- *      String readFile(String name) throws IOException {...}
+ * ```
+ * String readFile(String name) throws IOException {...}
+ * ```
  */
 Retention(RetentionPolicy.SOURCE)
 public annotation class throws(public vararg val exceptionClasses: Class<out Throwable>)
 
+/**
+ * Returns the runtime Java class of this object.
+ */
 [Intrinsic("kotlin.javaClass.property")] public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
+/**
+ * Returns the Java class for the specified type.
+ */
 [Intrinsic("kotlin.javaClass.function")] public fun <reified T: Any> javaClass(): Class<T> = null as Class<T>
 
+/**
+ * Executes the given function [block] while holding the monitor of the given object [lock].
+ */
 public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     monitorEnter(lock)
     try {

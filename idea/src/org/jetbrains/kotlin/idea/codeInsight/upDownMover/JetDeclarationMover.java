@@ -109,6 +109,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         if (element == null) return null;
 
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class, false);
+        if (declaration instanceof JetParameter) return null;
         if (declaration instanceof JetTypeParameter) {
             return getMovableDeclaration(declaration.getParent());
         }

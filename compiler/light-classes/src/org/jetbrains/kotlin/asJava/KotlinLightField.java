@@ -56,7 +56,7 @@ public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiFi
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        return delegate.getUseScope();
+        return origin.getUseScope();
     }
 
     @Override

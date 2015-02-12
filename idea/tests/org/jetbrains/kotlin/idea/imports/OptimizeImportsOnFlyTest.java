@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.imports;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.kotlin.idea.quickfix.ImportInsertHelper;
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 
@@ -33,7 +33,7 @@ public class OptimizeImportsOnFlyTest extends LightDaemonAnalyzerTestCase {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
-                    ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.HashSet"), (JetFile) getFile());
+                    ImportInsertHelper.getInstance(getProject()).addImportDirectiveIfNeeded(new FqName("java.util.HashSet"), (JetFile) getFile());
                 }
             });
         }

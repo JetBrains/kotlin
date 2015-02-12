@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.test;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MockLibraryUtil {
 
-    private static Class<?> compilerClass = null;
+    private static SoftReference<Class<?>> compilerClassRef = new SoftReference<Class<?>>(null);
 
     @NotNull
     public static File compileLibraryToJar(
@@ -97,23 +97,14 @@ public class MockLibraryUtil {
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
+    private static void runCompiler(@NotNull List<String> args) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Class<?> compilerClass = getCompilerClass();
-            Object compilerObject = compilerClass.newInstance();
+            Object compiler = compilerClass.newInstance();
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
-            List<String> classpath = new ArrayList<String>();
-            classpath.add(sourcesPath);
-            Collections.addAll(classpath, extraClasspath);
-            String newClasspath = StringUtil.join(classpath, File.pathSeparator);
-
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
-                    compilerObject, new PrintStream(outStream),
-                    new String[] {sourcesPath, "-d", outDir.getAbsolutePath(), "-classpath", newClasspath}
-            );
+            Enum<?> invocationResult = (Enum<?>) execMethod.invoke(compiler, new PrintStream(outStream), ArrayUtil.toStringArray(args));
 
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }
@@ -122,15 +113,35 @@ public class MockLibraryUtil {
         }
     }
 
+    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
+        List<String> classpath = new ArrayList<String>();
+        classpath.add(sourcesPath);
+        Collections.addAll(classpath, extraClasspath);
+
+        List<String> args = new ArrayList<String>();
+        args.add(sourcesPath);
+        args.add("-d");
+        args.add(outDir.getAbsolutePath());
+        args.add("-classpath");
+        args.add(StringUtil.join(classpath, File.pathSeparator));
+
+        runCompiler(args);
+    }
+
+    public static void compileKotlinModule(@NotNull String modulePath) {
+        runCompiler(Arrays.asList("-no-stdlib", "-module", modulePath));
+    }
+
     @NotNull
-    private static Class<?> getCompilerClass() throws MalformedURLException, ClassNotFoundException {
+    private static synchronized Class<?> getCompilerClass() throws IOException, ClassNotFoundException {
+        Class<?> compilerClass = compilerClassRef.get();
         if (compilerClass == null) {
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
-            File kotlinRuntimeJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-runtime.jar");
-            URLClassLoader classLoader = new URLClassLoader(new URL[] {kotlinCompilerJar.toURI().toURL(), kotlinRuntimeJar.toURI().toURL()},
-                                                            Object.class.getClassLoader());
+            ClassLoader classLoader =
+                    ClassPreloadingUtils.preloadClasses(Collections.singletonList(kotlinCompilerJar), 4096, null, null, null);
 
             compilerClass = classLoader.loadClass(K2JVMCompiler.class.getName());
+            compilerClassRef = new SoftReference<Class<?>>(compilerClass);
         }
         return compilerClass;
     }

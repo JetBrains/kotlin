@@ -50,4 +50,12 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
         }
     }
+
+    Test fun testKotlinInJavaRoot() {
+        Project("kotlinInJavaRoot", "1.6").build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertContains(":compileKotlin", ":compileTestKotlin")
+        }
+    }
 }

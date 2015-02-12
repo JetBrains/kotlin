@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.JetAddImportAction
 import org.jetbrains.kotlin.idea.caches.JetShortNamesCache
@@ -44,32 +42,27 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
-import com.intellij.openapi.module.ModuleUtilCore
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Errors
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.completion.isVisible
 import org.jetbrains.kotlin.utils.CachedValueProperty
+import org.jetbrains.kotlin.idea.util.psiClassToDescriptor.psiClassToDescriptor
 
 /**
  * Check possibility and perform fix for unresolved references.
  */
 public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<JetSimpleNameExpression>(element), HighPriorityAction {
-    private val module = ModuleUtilCore.findModuleForPsiElement(element)
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
     volatile private var anySuggestionFound: Boolean? = null
 
-    private val suggestions: Collection<FqName> by CachedValueProperty(
+    private val suggestions: Collection<DeclarationDescriptor> by CachedValueProperty(
             {
-                val fqNames = computeSuggestions(element)
-                anySuggestionFound = !fqNames.isEmpty()
-                fqNames
+                val descriptors = computeSuggestions(element)
+                anySuggestionFound = !descriptors.isEmpty()
+                descriptors
             },
             { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
 
@@ -81,7 +74,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         if (suggestions.isEmpty()) return false
 
         if (!ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            val hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.first().asString())
+            val hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, DescriptorUtils.getFqNameSafe(suggestions.first()).asString())
 
             val project = editor.getProject() ?: return false
             HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), createAction(project, editor))
@@ -109,7 +102,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private fun createAction(project: Project, editor: Editor) = JetAddImportAction(project, editor, element, suggestions)
 
-    private fun computeSuggestions(element: JetSimpleNameExpression): Collection<FqName> {
+    private fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
         if (!element.isValid()) return listOf()
 
         val file = element.getContainingFile() as? JetFile ?: return listOf()
@@ -143,38 +136,32 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             return true
         }
 
-        val result = ArrayList<PrioritizedFqName>()
+        val result = ArrayList<DeclarationDescriptor>()
 
         val moduleDescriptor = resolutionFacade.findModuleDescriptor(element)
         val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, bindingContext, searchScope, moduleDescriptor, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
-            result.addAll(getClassNames(referenceName, file, searchScope))
+            result.addAll(getClasses(referenceName, file, searchScope))
             result.addAll(getTopLevelCallables(referenceName, element, indicesHelper))
         }
 
         result.addAll(getExtensions(referenceName, element, indicesHelper))
 
         return result
-                .filter { ImportInsertHelper.getInstance().needImport(ImportPath(it.fqName, false), file) }
-                .sortBy { it.priority }
-                .map { it.fqName }
     }
 
-    private fun getTopLevelCallables(name: String, context: JetExpression, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
+    private fun getTopLevelCallables(name: String, context: JetExpression, indicesHelper: KotlinIndicesHelper): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallablesByName(name, context)
-            .map { PrioritizedFqName(it) }
-            .toSet()
 
-    private fun getExtensions(name: String, expression: JetSimpleNameExpression, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
+    private fun getExtensions(name: String, expression: JetSimpleNameExpression, indicesHelper: KotlinIndicesHelper): Collection<DeclarationDescriptor>
             = indicesHelper.getCallableExtensions({ it == name }, expression)
-            .map { PrioritizedFqName(it) }
-            .toSet()
 
-    private fun getClassNames(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<PrioritizedFqName>
+    private fun getClasses(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<DeclarationDescriptor>
             = getShortNamesCache(file).getClassesByName(name, searchScope)
             .filter { JetPsiHeuristicsUtil.isAccessible(it, file) }
-            .map { PrioritizedFqName(it.unwrapped, FqName(it.getQualifiedName()!!)) }
+            .map { element.getResolutionFacade().psiClassToDescriptor(it) }
+            .filterNotNull()
             .toSet()
 
     private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache {
@@ -183,31 +170,6 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             JetShortNamesCache.getKotlinInstance(jetFile.getProject())
         else
             PsiShortNamesCache.getInstance(jetFile.getProject())
-    }
-
-    private enum class Priority {
-        MODULE
-        PROJECT
-        OTHER
-    }
-    private data class PrioritizedFqName(val fqName: FqName, val priority: Priority)
-
-    private fun PrioritizedFqName(declaration: PsiElement?, fqName: FqName): PrioritizedFqName {
-        val priority = when {
-            declaration == null -> Priority.OTHER
-            ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
-            ProjectRootsUtil.isInProjectSource(declaration) -> Priority.PROJECT
-            else -> Priority.OTHER
-        }
-
-        return PrioritizedFqName(fqName, priority)
-    }
-
-    private fun PrioritizedFqName(descriptor: DeclarationDescriptor): PrioritizedFqName {
-        return PrioritizedFqName(
-                DescriptorToDeclarationUtil.getDeclaration(element.getContainingJetFile(), descriptor),
-                DescriptorUtils.getFqNameSafe(descriptor)
-        )
     }
 
     class object {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 
@@ -46,7 +47,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
+                ImportInsertHelper.getInstance(getProject()).addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
@@ -58,7 +59,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
+                ImportInsertHelper.getInstance(getProject()).addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
@@ -70,7 +71,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName(importString), (JetFile) getFile());
+                ImportInsertHelper.getInstance(getProject()).addImportDirectiveIfNeeded(new FqName(importString), (JetFile) getFile());
             }
         });
         checkResultByFile(getTestName(false) + ".kt.after");

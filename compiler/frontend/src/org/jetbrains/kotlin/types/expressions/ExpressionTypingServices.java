@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.types.expressions;
 import com.google.common.base.Function;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
@@ -67,7 +65,7 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     private TypeResolver typeResolver;
     private AnnotationResolver annotationResolver;
-    private PartialBodyResolveProvider partialBodyResolveProvider;
+    private StatementFilter statementFilter;
     private KotlinBuiltIns builtIns;
 
     @NotNull
@@ -131,13 +129,13 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    private PartialBodyResolveProvider getPartialBodyResolveProvider() {
-        return partialBodyResolveProvider;
+    private StatementFilter getStatementFilter() {
+        return statementFilter;
     }
 
     @Inject
-    public void setPartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
-        this.partialBodyResolveProvider = partialBodyResolveProvider;
+    public void setStatementFilter(@NotNull StatementFilter statementFilter) {
+        this.statementFilter = statementFilter;
     }
 
     @Inject
@@ -210,12 +208,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetElement> block = expression.getStatements();
-
-        Function1<JetElement, Boolean> filter = getPartialBodyResolveProvider().getFilter();
-        if (filter != null && !(expression instanceof JetPsiUtil.JetExpressionWrapper)) {
-            block = KotlinPackage.filter(block, filter);
-        }
+        List<JetElement> block = ResolvePackage.filterStatements(getStatementFilter(), expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
@@ -235,7 +228,8 @@ public class ExpressionTypingServices {
             r = DataFlowUtils.checkType(builtIns.getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
-            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, context.trace);
+            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
+                                                      context.replacestatementFilter(getStatementFilter()));
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -276,15 +270,14 @@ public class ExpressionTypingServices {
             @NotNull WritableScope scope,
             @NotNull List<? extends JetElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull BindingTrace trace
+            @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
             return JetTypeInfo.create(builtIns.getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
-        ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
+        ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
@@ -350,12 +343,6 @@ public class ExpressionTypingServices {
             }
         }
         return result;
-    }
-
-    private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency, oldContext.resolutionResultsCache,
-                oldContext.callChecker, oldContext.isAnnotationContext);
     }
 
     @Nullable

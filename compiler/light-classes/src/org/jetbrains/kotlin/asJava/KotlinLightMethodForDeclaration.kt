@@ -34,8 +34,8 @@ import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 
 open public class KotlinLightMethodForDeclaration(
         manager: PsiManager,
-        override val delegate: PsiMethod,
-        override val origin: JetDeclaration,
+        private val delegate: PsiMethod,
+        private val origin: JetDeclaration,
         containingClass: PsiClass
 ): LightMethod(manager, delegate, containingClass), KotlinLightMethod {
 
@@ -65,8 +65,12 @@ open public class KotlinLightMethodForDeclaration(
         }, false)
     }
 
-    override fun getNavigationElement() : PsiElement = origin
-    override fun getOriginalElement() : PsiElement = origin
+    override fun getNavigationElement(): PsiElement = origin
+    override fun getOriginalElement(): PsiElement = origin
+
+    override fun getDelegate(): PsiMethod = delegate
+
+    override fun getOrigin(): JetDeclaration = origin
 
     override fun getParent(): PsiElement? = getContainingClass()
 
@@ -82,7 +86,7 @@ open public class KotlinLightMethodForDeclaration(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KotlinLightMethod && origin == another.origin) {
+        if (another is KotlinLightMethod && origin == another.getOrigin()) {
             return true
         }
 

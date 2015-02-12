@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.types.JetType
 
 public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         storageManager: StorageManager,
@@ -130,11 +132,11 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
-            kind: AnnotatedCallableKind
+            expectedType: JetType
     ): C? {
-        val signature = getCallableSignature(proto, nameResolver, kind) ?: return null
+        val signature = getCallableSignature(proto, nameResolver, AnnotatedCallableKind.PROPERTY) ?: return null
 
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind)
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, AnnotatedCallableKind.PROPERTY)
         if (kotlinClass == null) {
             errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.getFqName(nameResolver)}", null)
             return null

@@ -61,6 +61,10 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         doTest("simple.kt")
     }
 
+    fun testCompileTimeConstants() {
+        doTest("compileTimeConstants.kt")
+    }
+
     fun testAnnotationTargets() {
         doTest("annotationTargets.kt")
     }

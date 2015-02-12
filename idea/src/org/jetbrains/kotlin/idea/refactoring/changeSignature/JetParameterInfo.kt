@@ -41,7 +41,7 @@ public class JetParameterInfo(
     var currentTypeText: String = getOldTypeText()
     var valOrVar: JetValVar = valOrVarNode.toValVar()
 
-    private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: ""
+    private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
 
     override fun getOldIndex(): Int = originalIndex
 

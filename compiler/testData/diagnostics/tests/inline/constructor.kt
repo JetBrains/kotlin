@@ -1,4 +1,4 @@
-class Z(s: (Int) -> Int) {
+class Z(<!UNUSED_PARAMETER!>s<!>: (Int) -> Int) {
 
 }
 

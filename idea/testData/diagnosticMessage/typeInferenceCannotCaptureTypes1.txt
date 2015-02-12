@@ -1,0 +1,2 @@
+<!-- typeInferenceCannotCaptureTypes1 -->
+Type inference failed: 'R' cannot capture 'out Int'. Only top-level type projections can be captured

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.debugText.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.Importer
-import org.jetbrains.kotlin.resolve.ImportsResolver
 import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -35,6 +34,9 @@ import kotlin.properties.Delegates
 import com.google.common.collect.ImmutableListMultimap
 import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
 import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameMultiSelector
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 trait IndexedImports {
     val imports: List<JetImportDirective>
@@ -108,7 +110,7 @@ class LazyImportResolver(
                                                                       importer, traceForImportResolve, mode)
                         importer.doImport(directiveImportScope)
                         if (mode == LookupMode.EVERYTHING) {
-                            ImportsResolver.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
+                            org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
                         }
                     }
                     finally {
@@ -135,9 +137,39 @@ class LazyImportResolver(
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
             val fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile())
-            ImportsResolver.reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
+            reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }
+
+    private fun reportConflictingImport(
+            importDirective: JetImportDirective,
+            fileScope: JetScope,
+            resolvedTo: Collection<DeclarationDescriptor>?,
+            trace: BindingTrace
+    ) {
+
+        val importedReference = importDirective.getImportedReference()
+        if (importedReference == null || resolvedTo == null) return
+
+        val aliasName = JetPsiUtil.getAliasName(importDirective)
+        if (aliasName == null) return
+
+        if (resolvedTo.size() != 1) return
+
+        when (resolvedTo.single()) {
+            is ClassDescriptor -> {
+                if (fileScope.getClassifier(aliasName) == null) {
+                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
+                }
+            }
+            is PackageViewDescriptor -> {
+                if (fileScope.getPackage(aliasName) == null) {
+                    trace.report(Errors.CONFLICTING_IMPORT.on(importedReference, aliasName.asString()))
+                }
+            }
+        }
+    }
+
 
     public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
@@ -194,55 +226,65 @@ class LazyImportResolver(
 
 class LazyImportScope(
         private val importResolver: LazyImportResolver,
-        private val filter: (DeclarationDescriptor) -> Boolean,
+        private val filteringKind: LazyImportScope.FilteringKind,
         private val debugName: String
 ) : JetScope {
 
-    private inner class FilteringScopeByNameSelector<D : DeclarationDescriptor>(
-            private val selector: ScopeByNameSelector<D>
-    ) : ScopeByNameSelector<D> {
-        override fun get(scope: JetScope, name: Name): D? {
-            val descriptor = selector.get(scope, name)
-            return if (descriptor != null && filter(descriptor)) descriptor else null
-        }
+    enum class FilteringKind {
+        ALL
+        VISIBLE_CLASSES
+        INVISIBLE_CLASSES
     }
 
-    private inner class FilteringScopeByNameMultiSelector<D : DeclarationDescriptor>(
-            private val selector: ScopeByNameMultiSelector<D>
-    ) : ScopeByNameMultiSelector<D> {
-        override fun get(scope: JetScope, name: Name): Collection<D> {
-            return selector.get(scope, name).filter(filter)
+    private val classifierDescriptorSelector = object : ScopeByNameSelector<ClassifierDescriptor> {
+        override fun get(scope: JetScope, name: Name): ClassifierDescriptor? {
+            val descriptor = JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR.get(scope, name)
+            return if (descriptor != null && filter(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
+        }
+
+        private fun filter(descriptor: ClassDescriptor): Boolean {
+            if (filteringKind == FilteringKind.ALL) return true
+            val visibility = descriptor.getVisibility()
+            val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
+            if (!visibility.mustCheckInImports()) return includeVisible
+            return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.packageView) == includeVisible
         }
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
-        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, FilteringScopeByNameSelector(JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR))
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, classifierDescriptorSelector)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
-        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, FilteringScopeByNameSelector(JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR))
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return null
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, FilteringScopeByNameMultiSelector(JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR))
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
     }
 
     override fun getLocalVariable(name: Name) = null
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, FilteringScopeByNameMultiSelector(JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR))
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
     }
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
         return importResolver.resolveSession.getStorageManager().compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
             for (directive in importResolver.indexedImports.imports) {
                 val importPath = directive.getImportPath() ?: continue
                 val importedName = importPath.getImportedName()
                 if (importedName == null || nameFilter(importedName)) {
-                    importResolver.getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter).filterTo(descriptors, filter)
+                    descriptors.addAll(importResolver.getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
                 }
             }
             descriptors

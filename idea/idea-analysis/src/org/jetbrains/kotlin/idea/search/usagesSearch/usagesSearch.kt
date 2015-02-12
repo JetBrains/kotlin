@@ -77,7 +77,7 @@ public data class UsagesSearchLocation(
 
 public data class UsagesSearchTarget<out T : PsiElement>(
         val element: T,
-        private val scope: SearchScope,
+        private val scope: SearchScope = element.getUseScope(),
         val location: UsagesSearchLocation = UsagesSearchLocation.DEFAULT,
         val restrictByTargetScope: Boolean = true
 ) {

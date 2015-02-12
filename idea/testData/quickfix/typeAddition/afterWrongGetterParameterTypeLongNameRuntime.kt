@@ -3,6 +3,6 @@
 import kotlin.modules.Module
 
 class A() {
-    val i: Module
+    val i: kotlin.modules.Module
         get(): <caret>Module = kotlin.modules.ModuleBuilder("", "")
 }

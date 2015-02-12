@@ -18,72 +18,283 @@ package org.jetbrains.kotlin.resolve.jvm;
 
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.PackageIndex;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.reference.SoftReference;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.Processor;
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
+import com.intellij.util.containers.ConcurrentHashMap;
+import com.intellij.util.messages.MessageBus;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 public class KotlinJavaPsiFacade {
-    private final KotlinJavaPsiFacadeWrapper javaPsiFacadeWrapper;
+    private volatile KotlinPsiElementFinderWrapper[] elementFinders;
 
-    public KotlinJavaPsiFacade(Project project, GlobalSearchScope searchScope) {
-        javaPsiFacadeWrapper = new KotlinJavaPsiFacadeWrapper(project, searchScope);
+    private static class PackageCache {
+        final ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> packageInScopeCache =
+                new ConcurrentHashMap<Pair<String, GlobalSearchScope>, PsiPackage>();
+        final ConcurrentMap<String, Boolean> hasPackageInAllScopeCache =
+                new ConcurrentHashMap<String, Boolean>();
+    }
+
+    private volatile SoftReference<PackageCache> packageCache;
+
+    private final Project project;
+
+    public static KotlinJavaPsiFacade getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinJavaPsiFacade.class);
+    }
+
+    public KotlinJavaPsiFacade(@NotNull Project project) {
+        this.project = project;
+
+        final PsiModificationTracker modificationTracker = PsiManager.getInstance(project).getModificationTracker();
+        MessageBus bus = project.getMessageBus();
+
+        bus.connect().subscribe(PsiModificationTracker.TOPIC, new PsiModificationTracker.Listener() {
+            private long lastTimeSeen = -1L;
+
+            @Override
+            public void modificationCountChanged() {
+                long now = modificationTracker.getJavaStructureModificationCount();
+                if (lastTimeSeen != now) {
+                    lastTimeSeen = now;
+
+                    packageCache = null;
+                }
+            }
+        });
     }
 
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-        return javaPsiFacadeWrapper.findClass(qualifiedName, scope);
-    }
+        ProgressIndicatorProvider.checkCanceled();
 
-    public PsiPackage findPackage(@NotNull String qualifiedName) {
-        return javaPsiFacadeWrapper.findPackage(qualifiedName);
-    }
-
-    static class KotlinJavaPsiFacadeWrapper extends JavaPsiFacadeImpl {
-        private final GlobalSearchScope searchScope;
-
-        public KotlinJavaPsiFacadeWrapper(Project project, GlobalSearchScope searchScope) {
-            super(project, PsiManager.getInstance(project), findJavaFileManager(project), null);
-            this.searchScope = searchScope;
+        // TODO: Update in IDEA 14
+        if (DumbService.getInstance(getProject()).isDumb()) {
+            PsiClass[] classes = findClassesInDumbMode(qualifiedName, scope);
+            if (classes.length != 0) {
+                return classes[0];
+            }
+            return null;
         }
 
-        @NotNull
-        @Override
-        protected PsiElementFinder[] calcFinders() {
-            List<PsiElementFinder> filteredBaseFinders = KotlinPackage.filter(
-                    super.calcFinders(), new Function1<PsiElementFinder, Boolean>() {
-                @Override
-                public Boolean invoke(PsiElementFinder finder) {
-                    if (finder instanceof KotlinFinderMarker) return false;
+        for (KotlinPsiElementFinderWrapper finder : finders()) {
+            PsiClass aClass = finder.findClass(qualifiedName, scope);
+            if (aClass != null) return aClass;
+        }
 
-                    if (finder.getClass().getName().equals("org.jetbrains.kotlin.resolve.jvm.JavaPsiFacadeImpl$PsiElementFinderImpl")) {
-                        // TODO: Replace with instanceof check in idea 14
-                        return false;
+        return null;
+    }
+
+    @NotNull
+    private PsiClass[] findClassesInDumbMode(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+        String packageName = StringUtil.getPackageName(qualifiedName);
+        PsiPackage pkg = findPackage(packageName, scope);
+        String className = StringUtil.getShortName(qualifiedName);
+        if (pkg == null && packageName.length() < qualifiedName.length()) {
+            PsiClass[] containingClasses = findClassesInDumbMode(packageName, scope);
+            if (containingClasses.length == 1) {
+                return PsiElementFinder.filterByName(className, containingClasses[0].getInnerClasses());
+            }
+
+            return PsiClass.EMPTY_ARRAY;
+        }
+
+        if (pkg == null || !pkg.containsClassNamed(className)) {
+            return PsiClass.EMPTY_ARRAY;
+        }
+
+        return pkg.findClassByShortName(className, scope);
+    }
+
+    @NotNull
+    private KotlinPsiElementFinderWrapper[] finders() {
+        KotlinPsiElementFinderWrapper[] answer = elementFinders;
+        if (answer == null) {
+            answer = calcFinders();
+            elementFinders = answer;
+        }
+
+        return answer;
+    }
+
+    @NotNull
+    protected KotlinPsiElementFinderWrapper[] calcFinders() {
+        List<KotlinPsiElementFinderWrapper> elementFinders = new ArrayList<KotlinPsiElementFinderWrapper>();
+        elementFinders.add(new KotlinPsiElementFinderImpl(getProject()));
+
+        List<PsiElementFinder> nonKotlinFinders = KotlinPackage.filter(
+                getProject().getExtensions(PsiElementFinder.EP_NAME), new Function1<PsiElementFinder, Boolean>() {
+                    @Override
+                    public Boolean invoke(PsiElementFinder finder) {
+                        // TODO: Filter out PsiElementFinderImpl in idea 14
+                        return !(finder instanceof KotlinFinderMarker);
                     }
+                });
 
-                    return true;
+        elementFinders.addAll(KotlinPackage.map(nonKotlinFinders, new Function1<PsiElementFinder, KotlinPsiElementFinderWrapper>() {
+            @Override
+            public KotlinPsiElementFinderWrapper invoke(PsiElementFinder finder) {
+                return wrap(finder);
+            }
+        }));
+
+        return elementFinders.toArray(new KotlinPsiElementFinderWrapper[elementFinders.size()]);
+    }
+
+    public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
+        PackageCache cache = SoftReference.dereference(packageCache);
+        if (cache == null) {
+            packageCache = new SoftReference<PackageCache>(cache = new PackageCache());
+        }
+
+        Pair<String, GlobalSearchScope> key = new Pair<String, GlobalSearchScope>(qualifiedName, searchScope);
+        PsiPackage aPackage = cache.packageInScopeCache.get(key);
+        if (aPackage != null) {
+            return aPackage;
+        }
+
+        KotlinPsiElementFinderWrapper[] finders = filteredFinders();
+
+        Boolean packageFoundInAllScope = cache.hasPackageInAllScopeCache.get(qualifiedName);
+        if (packageFoundInAllScope != null) {
+            if (!packageFoundInAllScope.booleanValue()) return null;
+
+            // Package was found in AllScope with some of finders but is absent in packageCache for current scope.
+            // We check only finders that depend on scope.
+            for (KotlinPsiElementFinderWrapper finder : finders) {
+                if (!finder.isSameResultForAnyScope()) {
+                    aPackage = finder.findPackage(qualifiedName, searchScope);
+                    if (aPackage != null) {
+                        return ConcurrencyUtil.cacheOrGet(cache.packageInScopeCache, key, aPackage);
+                    }
                 }
-            });
+            }
+        }
+        else {
+            for (KotlinPsiElementFinderWrapper finder : finders) {
+                aPackage = finder.findPackage(qualifiedName, searchScope);
 
-            List<PsiElementFinder> elementFinders = new ArrayList<PsiElementFinder>();
-            elementFinders.add(new KotlinPsiElementFinderImpl(getProject(), searchScope));
-            elementFinders.addAll(filteredBaseFinders);
+                if (aPackage != null) {
+                    return ConcurrencyUtil.cacheOrGet(cache.packageInScopeCache, key, aPackage);
+                }
+            }
 
-            return elementFinders.toArray(new PsiElementFinder[elementFinders.size()]);
+            boolean found = false;
+            for (KotlinPsiElementFinderWrapper finder : finders) {
+                if (!finder.isSameResultForAnyScope()) {
+                    aPackage = finder.findPackage(qualifiedName, GlobalSearchScope.allScope(project));
+                    if (aPackage != null) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            cache.hasPackageInAllScopeCache.put(qualifiedName, found);
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private KotlinPsiElementFinderWrapper[] filteredFinders() {
+        DumbService dumbService = DumbService.getInstance(getProject());
+        KotlinPsiElementFinderWrapper[] finders = finders();
+        if (dumbService.isDumb()) {
+            List<KotlinPsiElementFinderWrapper> list = dumbService.filterByDumbAwareness(Arrays.asList(finders));
+            finders = list.toArray(new KotlinPsiElementFinderWrapper[list.size()]);
+        }
+        return finders;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project;
+    }
+
+    public static KotlinPsiElementFinderWrapper wrap(PsiElementFinder finder) {
+        return finder instanceof DumbAware
+               ? new KotlinPsiElementFinderWrapperImplDumbAware(finder)
+               : new KotlinPsiElementFinderWrapperImpl(finder);
+    }
+
+    interface KotlinPsiElementFinderWrapper {
+        PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
+        PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
+        boolean isSameResultForAnyScope();
+    }
+
+    private static class KotlinPsiElementFinderWrapperImpl implements KotlinPsiElementFinderWrapper {
+        private final PsiElementFinder finder;
+
+        private KotlinPsiElementFinderWrapperImpl(@NotNull PsiElementFinder finder) {
+            this.finder = finder;
+        }
+
+        @Override
+        public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            return finder.findClass(qualifiedName, scope);
+        }
+
+        @Override
+        public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            // Original element finder can't search packages with scope
+            return finder.findPackage(qualifiedName);
+        }
+
+        @Override
+        public boolean isSameResultForAnyScope() {
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return finder.toString();
+        }
+    }
+
+    private static class KotlinPsiElementFinderWrapperImplDumbAware extends KotlinPsiElementFinderWrapperImpl implements DumbAware {
+        private KotlinPsiElementFinderWrapperImplDumbAware(PsiElementFinder finder) {
+            super(finder);
+        }
+    }
+
+    static class KotlinPsiElementFinderImpl implements KotlinPsiElementFinderWrapper, DumbAware {
+        private final JavaFileManager javaFileManager;
+        private final boolean isCoreJavaFileManager;
+
+        private final PsiManager psiManager;
+        private final PackageIndex packageIndex;
+
+        public KotlinPsiElementFinderImpl(Project project) {
+            this.javaFileManager = findJavaFileManager(project);
+            this.isCoreJavaFileManager = javaFileManager instanceof CoreJavaFileManager;
+
+            this.packageIndex = PackageIndex.getInstance(project);
+            this.psiManager = PsiManager.getInstance(project);
         }
 
         @NotNull
@@ -96,97 +307,45 @@ public class KotlinJavaPsiFacade {
             return javaFileManager;
         }
 
-        static class KotlinPsiElementFinderImpl extends PsiElementFinder implements DumbAware {
-            private final GlobalSearchScope searchScope;
 
-            private final JavaFileManager javaFileManager;
-            private final boolean isCoreJavaFileManager;
-
-            private final PsiManager psiManager;
-            private final PackageIndex packageIndex;
-
-            public KotlinPsiElementFinderImpl(Project project, GlobalSearchScope searchScope) {
-                this.searchScope = searchScope;
-
-                this.javaFileManager = findJavaFileManager(project);
-                this.isCoreJavaFileManager = javaFileManager instanceof CoreJavaFileManager;
-
-                this.packageIndex = PackageIndex.getInstance(project);
-                this.psiManager = PsiManager.getInstance(project);
-            }
-
-            @Override
-            public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-                PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);
-                if (aClass != null) {
-                    //TODO: (module refactoring) CoreJavaFileManager should check scope
-                    if (!isCoreJavaFileManager || scope.contains(aClass.getContainingFile().getOriginalFile().getVirtualFile())) {
-                        return aClass;
-                    }
+        @Override
+        public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);
+            if (aClass != null) {
+                //TODO: (module refactoring) CoreJavaFileManager should check scope
+                if (!isCoreJavaFileManager || scope.contains(aClass.getContainingFile().getOriginalFile().getVirtualFile())) {
+                    return aClass;
                 }
-
-                return null;
             }
 
-            @Override
-            public PsiPackage findPackage(@NotNull String qualifiedName) {
-                if (isCoreJavaFileManager) {
-                    return javaFileManager.findPackage(qualifiedName);
+            return null;
+        }
+
+        @Override
+        public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            if (isCoreJavaFileManager) {
+                return javaFileManager.findPackage(qualifiedName);
+            }
+
+            Query<VirtualFile> dirs = packageIndex.getDirsByPackageName(qualifiedName, true);
+            return hasDirectoriesInScope(dirs, scope) ? new PsiPackageImpl(psiManager, qualifiedName) : null;
+        }
+
+        @Override
+        public boolean isSameResultForAnyScope() {
+            return false;
+        }
+
+        private static boolean hasDirectoriesInScope(Query<VirtualFile> dirs, final GlobalSearchScope scope) {
+            CommonProcessors.FindProcessor<VirtualFile> findProcessor = new CommonProcessors.FindProcessor<VirtualFile>() {
+                @Override
+                protected boolean accept(VirtualFile file) {
+                    return scope.accept(file);
                 }
+            };
 
-                Query<VirtualFile> dirs = packageIndex.getDirsByPackageName(qualifiedName, true);
-                return hasDirectoriesInScope(dirs) ? new PsiPackageImpl(psiManager, qualifiedName) : null;
-            }
-
-            private boolean hasDirectoriesInScope(Query<VirtualFile> dirs) {
-                CommonProcessors.FindProcessor<VirtualFile> findProcessor = new CommonProcessors.FindProcessor<VirtualFile>() {
-                    @Override
-                    protected boolean accept(VirtualFile file) {
-                        return searchScope.accept(file);
-                    }
-                };
-
-                dirs.forEach(findProcessor);
-                return findProcessor.isFound();
-            }
-
-            @Override
-            @NotNull
-            public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            @NotNull
-            public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            @NotNull
-            public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            @NotNull
-            public PsiClass[] getClasses(@Nullable String shortName, @NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-                throw new UnsupportedOperationException();
-            }
-
-            @NotNull
-            @Override
-            public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean processPackageDirectories(@NotNull PsiPackage psiPackage,
-                    @NotNull GlobalSearchScope scope,
-                    @NotNull Processor<PsiDirectory> consumer,
-                    boolean includeLibrarySources) {
-                throw new UnsupportedOperationException();
-            }
+            dirs.forEach(findProcessor);
+            return findProcessor.isFound();
         }
     }
 }

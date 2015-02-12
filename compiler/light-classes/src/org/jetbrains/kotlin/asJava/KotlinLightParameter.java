@@ -20,6 +20,8 @@ import com.intellij.lang.Language;
 import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,5 +106,12 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
     @Override
     public Language getLanguage() {
         return JetLanguage.INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        JetParameter origin = getOrigin();
+        return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
     }
 }

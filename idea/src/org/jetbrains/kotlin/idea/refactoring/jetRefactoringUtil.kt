@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import com.intellij.refactoring.util.RefactoringUIUtil
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -179,6 +180,14 @@ public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, S
     }
 
     onAccept()
+}
+
+public fun reportDeclarationConflict(
+        conflicts: MultiMap<PsiElement, String>,
+        declaration: PsiElement,
+        message: (renderedDeclaration: String) -> String
+) {
+    conflicts.putValue(declaration, message(RefactoringUIUtil.getDescription(declaration, true).capitalize()))
 }
 
 public fun <T, E: PsiElement> getPsiElementPopup(

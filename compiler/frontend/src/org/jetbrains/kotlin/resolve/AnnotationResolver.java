@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker;
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
+import org.jetbrains.kotlin.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -346,7 +350,11 @@ public class AnnotationResolver {
                 CompileTimeConstant<?> constant = ConstantExpressionEvaluator.OBJECT$.evaluate(argumentExpression, trace, expectedType);
                 if (constant instanceof IntegerValueTypeConstant) {
                     JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
-                    ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
+                    SimpleResolutionContext context =
+                            new SimpleResolutionContext(trace, JetScope.Empty.INSTANCE$, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
+                                                        ContextDependency.INDEPENDENT,
+                                                        new CompositeChecker(Lists.<CallChecker>newArrayList()), StatementFilter.NONE);
+                    ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context);
                 }
                 if (constant != null) {
                     constants.add(constant);

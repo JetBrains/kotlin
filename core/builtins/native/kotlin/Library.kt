@@ -16,13 +16,32 @@
 
 package kotlin
 
+/**
+ * Returns true if the receiver and the [other] object are the same object instance, or if they
+ * are both null.
+ */
 public fun Any?.identityEquals(other: Any?): Boolean // = this === other
 
+/**
+ * Returns true if the receiver and the [other] object are "equal" to each other, or if they are
+ * both null.
+ * @see Any.equals
+ */
 public fun Any?.equals(other: Any?): Boolean
 
-// Returns "null" for null
+/**
+ * Returns a string representation of the object. Can be called with a null receiver, in which case
+ * it returns the string "null".
+ */
 public fun Any?.toString(): String
 
+/**
+ * Concatenates this string with the string representation of the given [other] object. If either the receiver
+ * or the [other] object are null, they are represented as the string "null".
+ */
 public fun String?.plus(other: Any?): String
 
+/**
+ * Returns an array of objects of the given type with the given [size], initialized with null values.
+ */
 public fun arrayOfNulls<reified T>(size: Int): Array<T?>

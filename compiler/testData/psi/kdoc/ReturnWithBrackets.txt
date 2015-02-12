@@ -10,15 +10,17 @@ JetFile: ReturnWithBrackets.kt
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@return')
         PsiWhiteSpace(' ')
-        PsiElement(KDOC_TEXT_OR_LINK)('This')
-        PsiElement(KDOC_TEXT)(' is not a reference')
+        PsiElement(KDOC_TEXT)('This is not a reference')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
       PsiElement(KDOC_TEXT)(' ')
       KDOC_TAG
         PsiElement(KDOC_TAG_NAME)('@return')
-        KDOC_LINK
-          PsiElement(KDOC_MARKDOWN_LINK)('[x]')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('x')
+          PsiElement(RBRACKET)(']')
         PsiElement(KDOC_TEXT)(' This is a reference')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

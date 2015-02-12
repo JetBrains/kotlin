@@ -26,7 +26,6 @@ import com.intellij.psi.ClassFileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
@@ -39,6 +38,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
@@ -303,7 +303,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
         LightClassConstructionContext context = stubGenerationStrategy.getContext(files);
 
-        PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, getRepresentativeVirtualFile(files));
+        PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, files);
         BindingContext bindingContext;
         BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
         try {
@@ -353,28 +353,45 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    private PsiJavaFileStub createJavaFileStub(@NotNull final FqName packageFqName, @NotNull VirtualFile virtualFile) {
+    public static ClsFileImpl createFakeClsFile(
+            @NotNull Project project,
+            @NotNull final FqName packageFqName,
+            @NotNull Collection<JetFile> files,
+            @NotNull final Function0<? extends PsiClassHolderFileStub> fileStubProvider
+    ) {
         PsiManager manager = PsiManager.getInstance(project);
 
+        VirtualFile virtualFile = getRepresentativeVirtualFile(files);
+        ClsFileImpl fakeFile = new ClsFileImpl(new ClassFileViewProvider(manager, virtualFile)) {
+            @NotNull
+            @Override
+            public PsiClassHolderFileStub getStub() {
+                return fileStubProvider.invoke();
+            }
+
+            @NotNull
+            @Override
+            public String getPackageName() {
+                return packageFqName.asString();
+            }
+        };
+
+        fakeFile.setPhysical(false);
+        return fakeFile;
+    }
+
+    @NotNull
+    private PsiJavaFileStub createJavaFileStub(@NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
         final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.asString(), true);
         javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
 
-        ClsFileImpl fakeFile =
-                new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
-                    @NotNull
-                    @Override
-                    public PsiClassHolderFileStub getStub() {
-                        return javaFileStub;
-                    }
+        ClsFileImpl fakeFile = createFakeClsFile(project, packageFqName, files, new Function0<PsiClassHolderFileStub>() {
+            @Override
+            public PsiClassHolderFileStub invoke() {
+                return javaFileStub;
+            }
+        });
 
-                    @NotNull
-                    @Override
-                    public String getPackageName() {
-                        return packageFqName.asString();
-                    }
-                };
-
-        fakeFile.setPhysical(false);
         javaFileStub.setPsi(fakeFile);
         return javaFileStub;
     }

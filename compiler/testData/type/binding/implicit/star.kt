@@ -3,9 +3,9 @@ fun <T> getT(): T = null!!
 val foo = getT<List<*>>()
 /*
 psi: val foo = getT<List<*>>()
-type: List<Any?>
+type: List<*>
     typeParameter: <out E> defined in kotlin.List
-    typeProjection: Any?
+    typeProjection: *
     psi: val foo = getT<List<*>>()
     type: Any?
 */

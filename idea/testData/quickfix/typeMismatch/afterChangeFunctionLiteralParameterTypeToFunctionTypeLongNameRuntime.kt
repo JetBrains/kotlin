@@ -3,7 +3,7 @@
 import kotlin.modules.ModuleBuilder
 import kotlin.modules.Module
 
-fun foo(f: ((ModuleBuilder) -> Module) -> String) {
+fun foo(f: ((kotlin.modules.ModuleBuilder) -> kotlin.modules.Module) -> String) {
     foo {
         (f: (ModuleBuilder) -> Module) -> "42"
     }

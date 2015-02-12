@@ -31,6 +31,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
@@ -284,7 +285,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         protected PsiFile compute() {
             VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
             assert virtualFile != null : "No virtual file for " + classOrObject.getText();
-            return new ClsFileImpl((PsiManagerImpl) getManager(), new ClassFileViewProvider(getManager(), virtualFile)) {
+            return new ClsFileImpl(new ClassFileViewProvider(getManager(), virtualFile)) {
                 @NotNull
                 @Override
                 public String getPackageName() {
@@ -575,6 +576,12 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                         }
                 )
         );
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return getOrigin().getUseScope();
     }
 
     private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {

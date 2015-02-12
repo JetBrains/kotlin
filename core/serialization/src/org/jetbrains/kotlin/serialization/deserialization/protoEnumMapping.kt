@@ -66,4 +66,5 @@ fun variance(variance: ProtoBuf.Type.Argument.Projection) = when (variance) {
     ProtoBuf.Type.Argument.Projection.IN -> Variance.IN_VARIANCE
     ProtoBuf.Type.Argument.Projection.OUT -> Variance.OUT_VARIANCE
     ProtoBuf.Type.Argument.Projection.INV -> Variance.INVARIANT
+    else -> throw IllegalArgumentException("Only IN, OUT and INV are supported. Actual argument: $variance")
 }

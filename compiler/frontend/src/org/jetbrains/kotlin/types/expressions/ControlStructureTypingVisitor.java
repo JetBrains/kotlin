@@ -164,7 +164,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext newContext = context.replaceDataFlowInfo(presentInfo).replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT);
         JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
-                presentScope, Collections.singletonList(presentBranch), CoercionStrategy.NO_COERCION, newContext, context.trace);
+                presentScope, Collections.singletonList(presentBranch), CoercionStrategy.NO_COERCION, newContext);
         JetType type = typeInfo.getType();
         DataFlowInfo dataFlowInfo;
         if (type != null && KotlinBuiltIns.isNothing(type)) {
@@ -195,7 +195,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo conditionInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
             components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
-                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
+                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
         }
 
         if (!containsJumpOutOfLoop(expression, context)) {
@@ -260,7 +260,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (!functionLiteral.hasParameterSpecification()) {
                 WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
                 conditionScope = writableScope;
-                components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
+                components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                        writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context);
                 context.trace.record(BindingContext.BLOCK, function);
             }
             else {
@@ -277,7 +278,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 block = Collections.<JetElement>singletonList(body);
             }
-            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context, context.trace);
+            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                    writableScope, block, CoercionStrategy.NO_COERCION, context);
         }
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
@@ -333,7 +335,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression body = expression.getBody();
         if (body != null) {
             components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
-                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo), context.trace);
+                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo));
         }
 
         return DataFlowUtils.checkType(components.builtIns.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);

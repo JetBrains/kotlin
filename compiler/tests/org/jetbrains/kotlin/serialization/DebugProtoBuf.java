@@ -6370,6 +6370,10 @@ public final class DebugProtoBuf {
          * <code>INV = 2;</code>
          */
         INV(2, 2),
+        /**
+         * <code>STAR = 3;</code>
+         */
+        STAR(3, 3),
         ;
 
         /**
@@ -6384,6 +6388,10 @@ public final class DebugProtoBuf {
          * <code>INV = 2;</code>
          */
         public static final int INV_VALUE = 2;
+        /**
+         * <code>STAR = 3;</code>
+         */
+        public static final int STAR_VALUE = 3;
 
 
         public final int getNumber() { return value; }
@@ -6393,6 +6401,7 @@ public final class DebugProtoBuf {
             case 0: return IN;
             case 1: return OUT;
             case 2: return INV;
+            case 3: return STAR;
             default: return null;
           }
         }
@@ -17720,7 +17729,7 @@ public final class DebugProtoBuf {
       "HAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010\n\004LONG\020\004\022\t\n\005F" +
       "LOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLEAN\020\007\022\n\n\006STRIN" +
       "G\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n\nANNOTATION\020\013" +
-      "\022\t\n\005ARRAY\020\014\"\365\004\n\004Type\022I\n\013constructor\030\001 \002(",
+      "\022\t\n\005ARRAY\020\014\"\377\004\n\004Type\022I\n\013constructor\030\001 \002(",
       "\01324.org.jetbrains.kotlin.serialization.T" +
       "ype.Constructor\022C\n\010argument\030\002 \003(\01321.org." +
       "jetbrains.kotlin.serialization.Type.Argu" +
@@ -17731,61 +17740,62 @@ public final class DebugProtoBuf {
       "kind\030\001 \001(\01629.org.jetbrains.kotlin.serial" +
       "ization.Type.Constructor.Kind:\005CLASS\022\n\n\002" +
       "id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022\n\016TYPE_PARA",
-      "METER\020\001\032\301\001\n\010Argument\022U\n\nprojection\030\001 \001(\016" +
+      "METER\020\001\032\313\001\n\010Argument\022U\n\nprojection\030\001 \001(\016" +
       "2<.org.jetbrains.kotlin.serialization.Ty" +
       "pe.Argument.Projection:\003INV\0226\n\004type\030\002 \002(" +
       "\0132(.org.jetbrains.kotlin.serialization.T" +
-      "ype\"&\n\nProjection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003IN" +
-      "V\020\002\"\371\001\n\rTypeParameter\022\n\n\002id\030\001 \002(\005\022\014\n\004nam" +
-      "e\030\002 \002(\005\022\026\n\007reified\030\003 \001(\010:\005false\022Q\n\010varia" +
-      "nce\030\004 \001(\0162:.org.jetbrains.kotlin.seriali" +
-      "zation.TypeParameter.Variance:\003INV\022=\n\013up" +
-      "per_bound\030\005 \003(\0132(.org.jetbrains.kotlin.s",
-      "erialization.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n" +
-      "\003OUT\020\001\022\007\n\003INV\020\002\"\364\005\n\005Class\022\020\n\005flags\030\001 \001(\005" +
-      ":\0010\022\030\n\020extra_visibility\030\002 \001(\t\022\017\n\007fq_name" +
-      "\030\003 \002(\005\022K\n\014class_object\030\004 \001(\01325.org.jetbr" +
-      "ains.kotlin.serialization.Class.ClassObj" +
-      "ect\022I\n\016type_parameter\030\005 \003(\01321.org.jetbra" +
-      "ins.kotlin.serialization.TypeParameter\022;" +
-      "\n\tsupertype\030\006 \003(\0132(.org.jetbrains.kotlin" +
-      ".serialization.Type\022\031\n\021nested_class_name" +
-      "\030\007 \003(\005\022<\n\006member\030\013 \003(\0132,.org.jetbrains.k",
-      "otlin.serialization.Callable\022\022\n\nenum_ent" +
-      "ry\030\014 \003(\005\022Y\n\023primary_constructor\030\r \001(\0132<." +
-      "org.jetbrains.kotlin.serialization.Class" +
-      ".PrimaryConstructor\032F\n\013ClassObject\0227\n\004da" +
-      "ta\030\001 \001(\0132).org.jetbrains.kotlin.serializ" +
-      "ation.Class\032P\n\022PrimaryConstructor\022:\n\004dat" +
-      "a\030\001 \001(\0132,.org.jetbrains.kotlin.serializa" +
-      "tion.Callable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAI" +
-      "T\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020A" +
-      "NNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_O",
-      "BJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001 \003(" +
-      "\0132,.org.jetbrains.kotlin.serialization.C" +
-      "allable*\005\010d\020\310\001\"\332\005\n\010Callable\022\r\n\005flags\030\001 \001" +
-      "(\005\022\030\n\020extra_visibility\030\002 \001(\t\022\024\n\014getter_f" +
-      "lags\030\t \001(\005\022\024\n\014setter_flags\030\n \001(\005\022I\n\016type" +
-      "_parameter\030\004 \003(\01321.org.jetbrains.kotlin." +
-      "serialization.TypeParameter\022?\n\rreceiver_" +
-      "type\030\005 \001(\0132(.org.jetbrains.kotlin.serial" +
-      "ization.Type\022\014\n\004name\030\006 \002(\005\022T\n\017value_para" +
-      "meter\030\007 \003(\0132;.org.jetbrains.kotlin.seria",
-      "lization.Callable.ValueParameter\022=\n\013retu" +
-      "rn_type\030\010 \002(\0132(.org.jetbrains.kotlin.ser" +
-      "ialization.Type\032\263\001\n\016ValueParameter\022\r\n\005fl" +
-      "ags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004type\030\003 \002(\0132(." +
-      "org.jetbrains.kotlin.serialization.Type\022" +
-      "E\n\023vararg_element_type\030\004 \001(\0132(.org.jetbr" +
-      "ains.kotlin.serialization.Type*\005\010d\020\310\001\"Q\n" +
-      "\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVE" +
-      "RRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003" +
-      "\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VA",
-      "R\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022" +
-      "\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*b\n\nVi" +
-      "sibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tP" +
-      "ROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THI" +
-      "S\020\004\022\t\n\005EXTRA\020\005B\022B\rDebugProtoBuf\210\001\000"
+      "ype\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003IN" +
+      "V\020\002\022\010\n\004STAR\020\003\"\371\001\n\rTypeParameter\022\n\n\002id\030\001 " +
+      "\002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reified\030\003 \001(\010:\005fals" +
+      "e\022Q\n\010variance\030\004 \001(\0162:.org.jetbrains.kotl" +
+      "in.serialization.TypeParameter.Variance:" +
+      "\003INV\022=\n\013upper_bound\030\005 \003(\0132(.org.jetbrain",
+      "s.kotlin.serialization.Type\"$\n\010Variance\022" +
+      "\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\364\005\n\005Class\022\020\n\005f" +
+      "lags\030\001 \001(\005:\0010\022\030\n\020extra_visibility\030\002 \001(\t\022" +
+      "\017\n\007fq_name\030\003 \002(\005\022K\n\014class_object\030\004 \001(\01325" +
+      ".org.jetbrains.kotlin.serialization.Clas" +
+      "s.ClassObject\022I\n\016type_parameter\030\005 \003(\01321." +
+      "org.jetbrains.kotlin.serialization.TypeP" +
+      "arameter\022;\n\tsupertype\030\006 \003(\0132(.org.jetbra" +
+      "ins.kotlin.serialization.Type\022\031\n\021nested_" +
+      "class_name\030\007 \003(\005\022<\n\006member\030\013 \003(\0132,.org.j",
+      "etbrains.kotlin.serialization.Callable\022\022" +
+      "\n\nenum_entry\030\014 \003(\005\022Y\n\023primary_constructo" +
+      "r\030\r \001(\0132<.org.jetbrains.kotlin.serializa" +
+      "tion.Class.PrimaryConstructor\032F\n\013ClassOb" +
+      "ject\0227\n\004data\030\001 \001(\0132).org.jetbrains.kotli" +
+      "n.serialization.Class\032P\n\022PrimaryConstruc" +
+      "tor\022:\n\004data\030\001 \001(\0132,.org.jetbrains.kotlin" +
+      ".serialization.Callable\"p\n\004Kind\022\t\n\005CLASS" +
+      "\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_EN" +
+      "TRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022",
+      "\020\n\014CLASS_OBJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006m" +
+      "ember\030\001 \003(\0132,.org.jetbrains.kotlin.seria" +
+      "lization.Callable*\005\010d\020\310\001\"\332\005\n\010Callable\022\r\n" +
+      "\005flags\030\001 \001(\005\022\030\n\020extra_visibility\030\002 \001(\t\022\024" +
+      "\n\014getter_flags\030\t \001(\005\022\024\n\014setter_flags\030\n \001" +
+      "(\005\022I\n\016type_parameter\030\004 \003(\01321.org.jetbrai" +
+      "ns.kotlin.serialization.TypeParameter\022?\n" +
+      "\rreceiver_type\030\005 \001(\0132(.org.jetbrains.kot" +
+      "lin.serialization.Type\022\014\n\004name\030\006 \002(\005\022T\n\017" +
+      "value_parameter\030\007 \003(\0132;.org.jetbrains.ko",
+      "tlin.serialization.Callable.ValueParamet" +
+      "er\022=\n\013return_type\030\010 \002(\0132(.org.jetbrains." +
+      "kotlin.serialization.Type\032\263\001\n\016ValueParam" +
+      "eter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004typ" +
+      "e\030\003 \002(\0132(.org.jetbrains.kotlin.serializa" +
+      "tion.Type\022E\n\023vararg_element_type\030\004 \001(\0132(" +
+      ".org.jetbrains.kotlin.serialization.Type" +
+      "*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021" +
+      "\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYN" +
+      "THESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003V",
+      "AL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n" +
+      "\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRA" +
+      "CT\020\002*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
+      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
+      "ATE_TO_THIS\020\004\022\t\n\005EXTRA\020\005B\022B\rDebugProtoBu" +
+      "f\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

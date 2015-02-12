@@ -1,3 +1,5 @@
+import kotlin.String
+
 class String {}
 
-val x: kotlin.String = ""
+val x: String = ""

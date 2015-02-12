@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm;
 
+import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
@@ -30,7 +31,8 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<File>> CLASSPATH_KEY = CompilerConfigurationKey.create("classpath");
     public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY = CompilerConfigurationKey.create("annotations path");
 
-    public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS = CompilerConfigurationKey.create("script");
+    public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS =
+            CompilerConfigurationKey.create("script");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
@@ -43,6 +45,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<IncrementalCacheProvider> INCREMENTAL_CACHE_PROVIDER =
             CompilerConfigurationKey.create("incremental cache provider");
+
+    public static final CompilerConfigurationKey<CompilerJarLocator> COMPILER_JAR_LOCATOR =
+            CompilerConfigurationKey.create("Compiler jar locator");
 
     public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
             CompilerConfigurationKey.create("module id strings");

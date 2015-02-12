@@ -5,6 +5,6 @@
 import kotlin.properties.ReadOnlyProperty
 
 class A<T> {
-    val foo: ReadOnlyProperty<A<T>, A<Int>>
+    private val foo: ReadOnlyProperty<A<T>, A<Int>>
     val x: A<Int> by foo
 }

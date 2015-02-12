@@ -253,7 +253,7 @@ private object KotlinResolveDataProvider {
                     trace,
                     targetPlatform.getAdditionalCheckerProvider(),
                     targetPlatform.getDynamicTypesSettings()
-            ).getLazyTopDownAnalyzer()!!
+            ).getLazyTopDownAnalyzerForTopLevel()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(
                     TopDownAnalysisParameters.create(

@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.name.FqName
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
-        override val origin: JetClassOrObject?
+        private val origin: JetClassOrObject?
 ) : KotlinWrappingLightClass(clsClass.getManager()) {
     override fun copy() = this
 
@@ -36,4 +37,8 @@ class KotlinLightClassForDecompiledDeclaration(
     override fun getNavigationElement() = origin?.getNavigationElement() ?: super.getNavigationElement()
 
     override fun getDelegate() = clsClass
+
+    override fun getOrigin() = origin
+
+    override fun getFqName() = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
 }

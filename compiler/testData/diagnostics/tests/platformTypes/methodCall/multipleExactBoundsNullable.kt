@@ -5,8 +5,8 @@ trait ResolverForProject<M1> {
 }
 
 class ResolverForProjectImpl<M>(
-        descriptorByModule: Map<M, String>,
-        delegateResolver: ResolverForProject<M>
+        <!UNUSED_PARAMETER!>descriptorByModule<!>: Map<M, String>,
+        <!UNUSED_PARAMETER!>delegateResolver<!>: ResolverForProject<M>
 ) : ResolverForProject<M>
 
 trait WithFoo {

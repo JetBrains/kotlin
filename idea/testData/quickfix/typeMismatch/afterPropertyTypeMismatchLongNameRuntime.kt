@@ -3,5 +3,5 @@
 import kotlin.properties.Delegates
 
 fun foo() {
-    var f: (Delegates) -> Unit = { (x: Delegates) ->  }<caret>
+    var f: (Delegates) -> Unit = { (x: kotlin.properties.Delegates) ->  }<caret>
 }

@@ -1,4 +1,4 @@
 package
 
 internal fun testArrays(/*0*/ ci: kotlin.List<kotlin.Int>): kotlin.Unit
-internal fun </*0*/ E> kotlin.List<kotlin.Any?>.toArray(/*0*/ ar: kotlin.Array<E>): kotlin.Array<E>
+internal fun </*0*/ E> kotlin.List<*>.toArray(/*0*/ ar: kotlin.Array<E>): kotlin.Array<E>

@@ -4,7 +4,7 @@ class Foo<T> {
         val z: Iterable<T> = y["", w]
     }
 
-    fun <V> get(s: String, w: Iterable<V>): T {
+    private fun <V> get(s: String, w: Iterable<V>): T {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

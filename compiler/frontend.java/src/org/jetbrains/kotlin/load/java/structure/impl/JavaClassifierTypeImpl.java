@@ -69,7 +69,9 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     }
 
     @NotNull
-    private Map<JavaTypeParameter, JavaType> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
+    private static Map<JavaTypeParameter, JavaType> convertSubstitutionMap(@NotNull Map<PsiTypeParameter, PsiType> psiMap) {
+        if (psiMap.isEmpty()) return Collections.emptyMap();
+
         Map<JavaTypeParameter, JavaType> substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
         for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
             PsiType value = entry.getValue();

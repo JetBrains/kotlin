@@ -526,6 +526,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UnusedParameters.kt")
+        public void testUnusedParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedParameters.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnusedVariables.kt")
         public void testUnusedVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedVariables.kt");
@@ -2013,6 +2019,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("tryReturnType.kt")
             public void testTryReturnType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/tryReturnType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeInferenceForExclExcl.kt")
+            public void testTypeInferenceForExclExcl() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/typeInferenceForExclExcl.kt");
                 doTest(fileName);
             }
 
@@ -4513,7 +4525,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/generics")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Generics.TpAsReified.class, Generics.VarProjection.class})
+        @InnerTestClasses({Generics.StarProjections.class, Generics.TpAsReified.class, Generics.VarProjection.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Generics extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInGenerics() throws Exception {
@@ -4596,6 +4608,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testResolveGenericBoundsBeforeSupertypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/resolveGenericBoundsBeforeSupertypes.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/starProjections")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class StarProjections extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInStarProjections() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/starProjections"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("collectionInheritedFromJava.kt")
+                public void testCollectionInheritedFromJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/collectionInheritedFromJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inheritedFromJava.kt")
+                public void testInheritedFromJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/inheritedFromJava.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inheritedFromKotlin.kt")
+                public void testInheritedFromKotlin() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/inheritedFromKotlin.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified")
@@ -6738,6 +6777,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt3311.kt")
             public void testKt3311() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt3311.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt6720_abstractProperty.kt")
+            public void testKt6720_abstractProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt6720_abstractProperty.kt");
                 doTest(fileName);
             }
 

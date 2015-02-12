@@ -24,8 +24,8 @@ internal final annotation class AnnAnn : kotlin.Annotation {
 }
 
 internal final annotation class AnnJC : kotlin.Annotation {
-    public constructor AnnJC(/*0*/ vararg i: java.lang.Class<out kotlin.Any?> /*kotlin.Array<out java.lang.Class<out kotlin.Any?>>*/)
-    internal final val i: kotlin.Array<out java.lang.Class<out kotlin.Any?>>
+    public constructor AnnJC(/*0*/ vararg i: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/)
+    internal final val i: kotlin.Array<out java.lang.Class<*>>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

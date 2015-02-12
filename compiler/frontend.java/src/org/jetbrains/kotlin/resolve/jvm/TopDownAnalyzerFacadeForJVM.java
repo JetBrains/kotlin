@@ -139,14 +139,14 @@ public enum TopDownAnalyzerFacadeForJVM {
                             new IncrementalPackageFragmentProvider(
                                     files, module, topDownAnalysisParameters.getStorageManager(),
                                     injector.getDeserializationComponentsForJava().getComponents(),
-                                    incrementalCache, moduleId, injector.getJavaDescriptorResolver()
+                                    incrementalCache, moduleId
                             )
                     );
                 }
             }
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getLazyTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
+            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
             return AnalysisResult.success(trace.getBindingContext(), module);
         }
         finally {

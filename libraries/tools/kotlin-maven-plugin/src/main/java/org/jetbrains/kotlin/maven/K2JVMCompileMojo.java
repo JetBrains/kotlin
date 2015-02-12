@@ -98,24 +98,17 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         // don't include runtime, it should be in maven dependencies
         arguments.noStdlib = true;
 
-        ArrayList<String> classpathList = new ArrayList<String>();
-
         if (module != null) {
             LOG.info("Compiling Kotlin module " + module);
             arguments.module = module;
         }
-        else {
-            // TODO: Move it compiler
-            classpathList.addAll(getSources());
-        }
 
-        classpathList.addAll(classpath);
-
+        ArrayList<String> classpathList = new ArrayList<String>(classpath);
         if (classpathList.remove(output)) {
             LOG.debug("Removed target directory from compiler classpath (" + output + ")");
         }
 
-        if (classpathList.size() > 0) {
+        if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
             LOG.info("Classpath: " + classPathString);
             arguments.classpath = classPathString;

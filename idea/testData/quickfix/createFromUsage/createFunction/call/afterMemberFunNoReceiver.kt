@@ -6,7 +6,7 @@ class A {
             return foo(2, "2")
         }
 
-        fun foo(i: Int, s: String): Int {
+        private fun foo(i: Int, s: String): Int {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
