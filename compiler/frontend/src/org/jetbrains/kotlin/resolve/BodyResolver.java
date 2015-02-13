@@ -305,7 +305,9 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
                 if (primaryConstructor == null) {
-                    assert descriptor.getKind() == ClassKind.TRAIT;
+                    if (descriptor.getKind() != ClassKind.TRAIT) {
+                        trace.report(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR.on(call));
+                    }
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                     return;
                 }

@@ -10433,6 +10433,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("headerSupertypeInitialization.kt")
+            public void testHeaderSupertypeInitialization() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerSupertypeInitialization.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("memberAccessBeforeSuperCall.kt")
             public void testMemberAccessBeforeSuperCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/memberAccessBeforeSuperCall.kt");
