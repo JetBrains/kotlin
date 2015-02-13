@@ -107,16 +107,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         }
     }
 
-    public void removePrimaryConstructorModifier(@NotNull JetModifierKeywordToken modifier) {
-        JetModifierList list = getPrimaryConstructorModifierList();
-        if (list != null) {
-            PsiElement token = list.getModifier(modifier);
-            if (token != null) {
-                token.delete();
-            }
-        }
-    }
-
     @Override
     @NotNull
     public List<JetClassInitializer> getAnonymousInitializers() {
