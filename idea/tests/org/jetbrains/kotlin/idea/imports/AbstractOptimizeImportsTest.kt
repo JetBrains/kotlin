@@ -18,43 +18,17 @@ package org.jetbrains.kotlin.idea.imports
 
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
-import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import java.io.File
 import org.junit.Assert
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.psi.*
 
-public abstract class AbstractOptimizeImportsTest() : JetLightCodeInsightFixtureTestCase() {
-
-    public fun doTest(path: String) {
-        val fixture = myFixture!!
-        fixture.setTestDataPath(path)
-        val (expectedFile, testFiles) = findTestFiles(path)
-        fixture.configureByFiles(*testFiles.map { it.name : String? }.copyToArray())
-        CommandProcessor.getInstance()!!.executeCommand(
-                getProject(),
-                KotlinImportOptimizer().processFile(fixture.getFile()),
-                "Optimize Imports",
-                null,
-                UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
-        )
-        fixture.checkResultByFile(expectedFile.name, true)
+public abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
+    override fun doTest(file: JetFile) {
+        KotlinImportOptimizer().processFile(file).run()
     }
 
-    private fun findTestFiles(path: String): Pair<File, List<File>> {
-        val files = File(path).listFiles()!!
-        val testName = getTestName(false)
-
-        val expectedFileName = "$testName.after.kt"
-        val expectedFile = files.find { it.name == expectedFileName }
-        Assert.assertNotNull("Can't find $expectedFileName", expectedFile)
-
-        val fileToBeOptimizedName = "$testName.kt"
-        val fileToBeOptimized = files.find { it.name == fileToBeOptimizedName }
-        Assert.assertNotNull("Can't find $fileToBeOptimizedName", fileToBeOptimized)
-
-        val testFiles = listOf(fileToBeOptimized!!) + files.filter { it != fileToBeOptimized && it != expectedFile }
-        return Pair(expectedFile!!, testFiles)
-    }
-
-    override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/editor/optimizeImports/${getTestName(false)}"
+    override val preferAllUnderImportsDefault: Boolean
+        get() = false
 }

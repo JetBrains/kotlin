@@ -634,7 +634,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractOptimizeImportsTest>()) {
-            model("editor/optimizeImports", extension = null, recursive = false)
+            model("editor/optimizeImports", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractJetPositionManagerTest>()) {
