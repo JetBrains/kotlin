@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.load.kotlin.header;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.load.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
@@ -36,7 +39,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     private int version = AbiVersionUtil.INVALID_VERSION;
     static {
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
+        HEADER_KINDS.put(KotlinClass.CLASS_NAME, CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
         HEADER_KINDS.put(KotlinSyntheticClass.CLASS_NAME, SYNTHETIC_CLASS);
 
@@ -183,10 +186,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             @Override
             public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-                if (enumClassId.equals(KotlinSyntheticClass.KIND_CLASS_ID) && name.equals(KotlinSyntheticClass.KIND_FIELD_NAME)) {
-                    // Don't call KotlinSyntheticClass.Kind.valueOf() here, because it will throw an exception if there's no such value,
-                    // but we don't want to fail if we're loading the header with an _incompatible_ ABI version
-                    syntheticClassKind = KotlinSyntheticClass.Kind.valueOfOrNull(enumEntryName.asString());
+                if (enumClassId.equals(KotlinSyntheticClass.KIND_CLASS_ID) && name.asString().equals(KIND_FIELD_NAME)) {
+                    syntheticClassKind = valueOfOrNull(KotlinSyntheticClass.Kind.class, enumEntryName.asString());
                     if (syntheticClassKind != null) return;
                 }
                 if (isAbiVersionCompatible(version)) {
@@ -222,5 +223,17 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             throw new IllegalStateException("Unexpected argument " + name + " for annotation " + annotationClassName);
         }
         return null;
+    }
+
+    // This function is needed here because Enum.valueOf() throws exception if there's no such value,
+    // but we don't want to fail if we're loading the header with an _incompatible_ ABI version
+    @Nullable
+    private static <E extends Enum<E>> E valueOfOrNull(@NotNull Class<E> enumClass, @NotNull String entry) {
+        try {
+            return Enum.valueOf(enumClass, entry);
+        }
+        catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

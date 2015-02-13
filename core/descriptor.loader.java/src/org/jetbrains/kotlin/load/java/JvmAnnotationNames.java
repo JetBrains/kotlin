@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -28,13 +27,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class JvmAnnotationNames {
-    public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
+    public static final FqName KOTLIN_CLASS = KotlinClass.CLASS_NAME.getFqNameForClassNameWithoutDollars();
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
 
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
+    public static final String KIND_FIELD_NAME = "kind";
     public static final String DATA_FIELD_NAME = "data";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 
@@ -43,13 +43,15 @@ public final class JvmAnnotationNames {
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
 
+    public static class KotlinClass {
+        public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinClass");
+    }
+
     public static class KotlinSyntheticClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
         public static final ClassId KIND_CLASS_ID =
                 ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
-
-        public static final Name KIND_FIELD_NAME = Name.identifier("kind");
 
         /**
          * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}, because this code can't depend on "runtime.jvm".
@@ -67,19 +69,6 @@ public final class JvmAnnotationNames {
             LOCAL_CLASS,
             ANONYMOUS_OBJECT,
             ;
-
-            @Nullable
-            public static Kind valueOfOrNull(@NotNull String name) {
-                try {
-                    return valueOf(name);
-                }
-                catch (IllegalArgumentException e) {
-                    return null;
-                }
-            }
-        }
-
-        private KotlinSyntheticClass() {
         }
     }
 

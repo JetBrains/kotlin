@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -821,9 +822,11 @@ public class AsmUtil {
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull KotlinSyntheticClass.Kind kind) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
         av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
-        av.visitEnum(KotlinSyntheticClass.KIND_FIELD_NAME.asString(),
-                     Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
-                     kind.toString());
+        av.visitEnum(
+                JvmAnnotationNames.KIND_FIELD_NAME,
+                Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
+                kind.toString()
+        );
         av.visitEnd();
     }
 

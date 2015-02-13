@@ -29,8 +29,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
@@ -147,7 +146,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         assertNotNull(version);
         assertTrue("KotlinSyntheticClass annotation is written with an unsupported format", AbiVersionUtil.isAbiVersionCompatible(version));
 
-        Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KotlinSyntheticClass.KIND_FIELD_NAME.asString());
+        Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KIND_FIELD_NAME);
         assertNotNull(actualKind);
         assertEquals("KotlinSyntheticClass annotation has the wrong kind", expectedKind.toString(), actualKind.toString());
     }
