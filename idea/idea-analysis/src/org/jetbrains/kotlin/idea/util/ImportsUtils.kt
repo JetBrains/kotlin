@@ -60,8 +60,3 @@ public fun JetType.canBeReferencedViaImport(): Boolean {
     val descriptor = getConstructor().getDeclarationDescriptor()
     return descriptor != null && descriptor.canBeReferencedViaImport()
 }
-
-public fun isInReceiverScope(referenceElement: PsiElement, referencedDescriptor: DeclarationDescriptor): Boolean {
-    val isExpressionWithReceiver = referenceElement is JetSimpleNameExpression && referenceElement.getReceiverExpression() != null
-    return isExpressionWithReceiver && !referencedDescriptor.isExtension
-}

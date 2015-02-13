@@ -1,5 +1,5 @@
-import java.io as JavaIO
 import java.util.ArrayList
+import java.io as JavaIO
 import java.util.ArrayList as SomeThing
 
 class Action {

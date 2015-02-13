@@ -102,6 +102,9 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
+    override val importSortComparator: Comparator<ImportPath>
+        get() = ImportPathComparator
+
     private object ImportPathComparator : Comparator<ImportPath> {
         override fun compare(import1: ImportPath, import2: ImportPath): Int {
             // alias imports placed last
@@ -125,53 +128,12 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    /**
-     * Check that import is useless.
-     */
-    private fun isImportedByDefault(importPath: ImportPath, jetFile: JetFile): Boolean {
-        if (importPath.fqnPart().isRoot()) {
-            return true
-        }
-
-        if (!importPath.isAllUnder() && !importPath.hasAlias()) {
-            // Single element import without .* and alias is useless
-            if (importPath.fqnPart().isOneSegmentFQN()) {
-                return true
-            }
-
-            // There's no need to import a declaration from the package of current file
-            if (jetFile.getPackageFqName() == importPath.fqnPart().parent()) {
-                return true
-            }
-        }
-
-        return isImportedWithDefault(importPath, jetFile)
-    }
-
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean {
         val defaultImports = if (ProjectStructureUtil.isJsKotlinModule(contextFile))
             TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
         else
             TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS
         return importPath.isImported(defaultImports)
-    }
-
-    override fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean {
-        if (isImportedByDefault(importPath, file)) {
-            return false
-        }
-
-        if (!importDirectives.isEmpty()) {
-            // Check if import is already present
-            for (directive in importDirectives) {
-                val existentImportPath = directive.getImportPath()
-                if (existentImportPath != null && importPath.isImported(existentImportPath)) {
-                    return false
-                }
-            }
-        }
-
-        return true
     }
 
     override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {

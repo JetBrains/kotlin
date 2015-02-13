@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.imports;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -57,6 +56,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("ComponentFunction")
     public void testComponentFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ComponentFunction/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CurrentPackage")
+    public void testCurrentPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/CurrentPackage/");
         doTest(fileName);
     }
 
@@ -123,6 +128,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("Kt2709")
     public void testKt2709() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/Kt2709/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MembersInScope")
+    public void testMembersInScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/MembersInScope/");
         doTest(fileName);
     }
 

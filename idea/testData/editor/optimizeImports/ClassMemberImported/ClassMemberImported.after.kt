@@ -1,6 +1,7 @@
 package test
 
-import dependency.*
+import dependency.A
+import dependency.T
 
 fun f(a: A, t: T) {
     a.f()

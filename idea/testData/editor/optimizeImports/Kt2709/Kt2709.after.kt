@@ -1,4 +1,4 @@
-import MyClass.*
+import MyClass.TEST
 
 fun main() {
     TEST
