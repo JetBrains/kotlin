@@ -21,8 +21,10 @@ import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +39,14 @@ public class PluginManagerCoreProxy {
 
     @Nullable
     public static IdeaPluginDescriptorImpl loadDescriptorFromJar(@NotNull File file, @NotNull String fileName) {
-        return PluginManagerCore.loadDescriptorFromJar(file, fileName);
+        try {
+            Method loadDescriptorFromJar = PluginManagerCore.class.getDeclaredMethod("loadDescriptorFromJar", File.class, String.class);
+            loadDescriptorFromJar.setAccessible(true);
+            return (IdeaPluginDescriptorImpl) loadDescriptorFromJar.invoke(null, file, fileName);
+        }
+        catch (Exception e) {
+            throw UtilsPackage.rethrow(e);
+        }
     }
 
     // copied as is from PluginManagerCore#registerExtensionPointsAndExtensions
