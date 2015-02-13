@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -130,7 +131,39 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
-        return changed ? new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) : this;
+
+        SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
+        newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
+        newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
+        changed |= !newTypeInfo.isEmpty();
+
+        return !changed
+                    ? this
+                    : new DelegatingDataFlowInfo(
+                            this,
+                            ImmutableMap.copyOf(builder),
+                            newTypeInfo.isEmpty() ? EMPTY_TYPE_INFO : newTypeInfo
+                    );
+    }
+
+    @NotNull
+    private Set<JetType> collectTypesFromMeAndParents(@NotNull DataFlowValue value) {
+        Set<JetType> types = new LinkedHashSet<JetType>();
+
+        DataFlowInfo current = this;
+        while (current != null) {
+            if (current instanceof DelegatingDataFlowInfo) {
+                DelegatingDataFlowInfo delegatingInfo = (DelegatingDataFlowInfo) current;
+                types.addAll(delegatingInfo.typeInfo.get(value));
+                current = delegatingInfo.parent;
+            }
+            else {
+                types.addAll(current.getPossibleTypes(value));
+                break;
+            }
+        }
+
+        return types;
     }
 
     @Override

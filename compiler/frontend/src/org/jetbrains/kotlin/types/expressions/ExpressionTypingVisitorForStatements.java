@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -135,6 +137,12 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             JetType outType = propertyDescriptor.getType();
             JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType));
             dataFlowInfo = typeInfo.getDataFlowInfo();
+            JetType type = typeInfo.getType();
+            if (property.getTypeReference() == null && type != null) {
+                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValue(propertyDescriptor);
+                DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context.trace.getBindingContext());
+                dataFlowInfo = dataFlowInfo.equate(variableDataFlowValue, initializerDataFlowValue);
+            }
         }
 
         {
