@@ -54,10 +54,8 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        // We write LOCAL_CLASS to local trait-impl, because we don't want PSI classes to be constructed for such files
-        // (currently PSI for synthetic class is built only if this class is a trait-impl, see DecompiledUtils.kt)
         writeKotlinSyntheticClassAnnotation(v, DescriptorUtils.isTopLevelOrInnerClass(descriptor)
                                                ? KotlinSyntheticClass.Kind.TRAIT_IMPL
-                                               : KotlinSyntheticClass.Kind.LOCAL_CLASS);
+                                               : KotlinSyntheticClass.Kind.LOCAL_TRAIT_IMPL);
     }
 }

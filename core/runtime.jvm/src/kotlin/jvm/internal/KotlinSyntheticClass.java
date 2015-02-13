@@ -26,10 +26,10 @@ public @interface KotlinSyntheticClass {
     Kind kind();
 
     // Inner classes of local classes have kind LOCAL_CLASS
-    // Local trait-impl also has kind LOCAL_CLASS
     public static enum Kind {
         PACKAGE_PART,
         TRAIT_IMPL,
+        LOCAL_TRAIT_IMPL,
         SAM_WRAPPER,
         SAM_LAMBDA,
         CALLABLE_REFERENCE_WRAPPER,

@@ -45,92 +45,90 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public void testPackagePart() {
         doTest("fun foo() = 42",
                "$",
-               PACKAGE_PART, false);
+               PACKAGE_PART);
     }
 
     public void testTraitImpl() {
         doTest("trait A { fun foo() = 42 }",
                JvmAbi.TRAIT_IMPL_SUFFIX,
-               TRAIT_IMPL, true);
+               TRAIT_IMPL);
     }
 
     public void testSamWrapper() {
         doTest("val f = {}\nval foo = Thread(f)",
                "$sam",
-               SAM_WRAPPER, false);
+               SAM_WRAPPER);
     }
 
     public void testSamLambda() {
         doTest("val foo = Thread { }",
                "$1",
-               SAM_LAMBDA, true);
+               SAM_LAMBDA);
     }
 
     public void testCallableReferenceWrapper() {
         doTest("val f = String::get",
                "$1",
-               CALLABLE_REFERENCE_WRAPPER, true);
+               CALLABLE_REFERENCE_WRAPPER);
     }
 
     public void testLocalFunction() {
         doTest("fun foo() { fun bar() {} }",
                "$1",
-               LOCAL_FUNCTION, true);
+               LOCAL_FUNCTION);
     }
 
     public void testAnonymousFunction() {
         doTest("val f = {}",
                "$1",
-               ANONYMOUS_FUNCTION, true);
+               ANONYMOUS_FUNCTION);
     }
 
     public void testLocalClass() {
         doTest("fun foo() { class Local }",
                "Local",
-               LOCAL_CLASS, true);
+               LOCAL_CLASS);
     }
 
     public void testLocalTraitImpl() {
         doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local$$TImpl",
-               LOCAL_CLASS, true);
+               "Local$$TImpl.class",
+               LOCAL_TRAIT_IMPL);
     }
 
     public void testLocalTraitInterface() {
         doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local",
-               LOCAL_CLASS, true);
+               "Local.class",
+               LOCAL_CLASS);
     }
 
     public void testInnerClassOfLocalClass() {
         doTest("fun foo() { class Local { inner class Inner } }",
                "Inner",
-               LOCAL_CLASS, true);
+               LOCAL_CLASS);
     }
 
     public void testAnonymousObject() {
         doTest("val o = object {}",
                "$1",
-               ANONYMOUS_OBJECT, true);
+               ANONYMOUS_OBJECT);
     }
 
     private void doTest(
             @NotNull String code,
-            @NotNull final String classNamePart,
-            @NotNull KotlinSyntheticClass.Kind expectedKind,
-            final boolean endWithNotContains
+            @NotNull final String classFilePart,
+            @NotNull KotlinSyntheticClass.Kind expectedKind
     ) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = Collections2.filter(output, new Predicate<OutputFile>() {
             @Override
             public boolean apply(OutputFile file) {
-                String path = file.getRelativePath();
-                return endWithNotContains ? path.endsWith(classNamePart + ".class") : path.contains(classNamePart);
+                return file.getRelativePath().contains(classFilePart);
             }
         });
-        assertFalse("No files with \"" + classNamePart + "\" in the name are found: " + output, files.isEmpty());
-        assertTrue("Exactly one file with \"" + classNamePart + "\" in the name should be found: " + files, files.size() == 1);
+        assertFalse("No files with \"" + classFilePart + "\" in the name are found: " + output, files.isEmpty());
+        assertTrue("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, files.size() == 1);
 
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');

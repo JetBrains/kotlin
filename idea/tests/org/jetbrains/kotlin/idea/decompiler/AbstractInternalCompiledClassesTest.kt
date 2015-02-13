@@ -37,7 +37,7 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
     }
 
     protected fun doTestTraitImplClassIsVisibleAsJavaClass() {
-        val project = getProject()!!
+        val project = getProject()
         doTest("trait impl", isSyntheticClassOfKind(TRAIT_IMPL)) {
             val psiFile = PsiManager.getInstance(project).findFile(this)!!
             Assert.assertTrue("Should not be kotlin file",
@@ -50,7 +50,7 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
                               decompiledPsiFile is PsiJavaFile)
             val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
             Assert.assertTrue("Should have some decompiled text",
-                              classes.size == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
+                              classes.size() == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
         }
     }
 
@@ -58,7 +58,7 @@ public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightF
             doTestNoPsiFilesAreBuiltFor(kind.toString(), isSyntheticClassOfKind(kind))
 
     protected fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
-        val project = getProject()!!
+        val project = getProject()
         doTest(fileKind, acceptFile) {
             val psiFile = PsiManager.getInstance(project).findFile(this)
             Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.getPresentableName()}",

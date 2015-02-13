@@ -59,6 +59,7 @@ public final class JvmAnnotationNames {
         public enum Kind {
             PACKAGE_PART,
             TRAIT_IMPL,
+            LOCAL_TRAIT_IMPL,
             SAM_WRAPPER,
             SAM_LAMBDA,
             CALLABLE_REFERENCE_WRAPPER,

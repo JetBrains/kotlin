@@ -23,6 +23,9 @@ fun f() {
     class MyLocalClass {
     }
 
+    trait MyLocalTrait {
+    }
+
     val myAnonymousObject = object {
     }
 
