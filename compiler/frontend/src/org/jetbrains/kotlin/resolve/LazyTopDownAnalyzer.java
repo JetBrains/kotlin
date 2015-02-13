@@ -36,9 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.MANY_DEFAULT_OBJECTS;
-import static org.jetbrains.kotlin.diagnostics.Errors.SECONDARY_CONSTRUCTOR_IN_OBJECT;
-import static org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class LazyTopDownAnalyzer {
     private BindingTrace trace;
@@ -205,6 +203,9 @@ public class LazyTopDownAnalyzer {
                                 else if (jetDeclaration instanceof JetSecondaryConstructor) {
                                     if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
                                         trace.report(SECONDARY_CONSTRUCTOR_IN_OBJECT.on((JetSecondaryConstructor) jetDeclaration));
+                                    }
+                                    else if (classDescriptor.getKind() == ClassKind.TRAIT) {
+                                        trace.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration));
                                     }
                                 }
                             }
