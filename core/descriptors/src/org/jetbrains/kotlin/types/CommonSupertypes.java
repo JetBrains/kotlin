@@ -223,13 +223,16 @@ public class CommonSupertypes {
             nullable |= type.isMarkedNullable();
         }
 
-        JetScope newScope = JetScope.Empty.INSTANCE$;
         ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        JetScope newScope;
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);
         }
         else if (declarationDescriptor instanceof TypeParameterDescriptor) {
             newScope = ((TypeParameterDescriptor) declarationDescriptor).getUpperBoundsAsType().getMemberScope();
+        }
+        else {
+            newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
         return new JetTypeImpl(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
     }
