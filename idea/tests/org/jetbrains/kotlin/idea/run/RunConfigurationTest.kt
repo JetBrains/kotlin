@@ -47,8 +47,9 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import com.intellij.openapi.projectRoots.Sdk
 
-private val RUN_PREFIX = "// RUN: "
+private val RUN_PREFIX = "// RUN:"
 
 class RunConfigurationTest: CodeInsightTestCase() {
     fun getTestProject() = myProject!!
@@ -87,11 +88,19 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     fun testClassesAndObjects() {
+        doTest(ConfigLibraryUtil::configureKotlinRuntime)
+    }
+
+    fun testInJsModule() {
+        doTest(ConfigLibraryUtil::configureKotlinJsRuntime)
+    }
+
+    private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
         val baseDir = getTestProject().getBaseDir()!!
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir
 
-        ConfigLibraryUtil.configureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
+        configureRuntime(createModuleResult.module, PluginTestCaseBase.fullJdk())
 
         try {
             val expectedClasses = ArrayList<String>()
@@ -99,13 +108,14 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
             val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt"))
             testFile.accept(
-                    object: JetTreeVisitorVoid() {
+                    object : JetTreeVisitorVoid() {
                         override fun visitComment(comment: PsiComment) {
                             val declaration = comment.getStrictParentOfType<JetNamedDeclaration>()!!
                             val text = comment.getText() ?: return
                             if (!text.startsWith(RUN_PREFIX)) return
 
-                            expectedClasses.add(text.substring(RUN_PREFIX.length()).trim())
+                            val expectedClass = text.substring(RUN_PREFIX.length()).trim()
+                            if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
 
                             val dataContext = MapDataContext()
                             dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))

@@ -34,6 +34,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 
@@ -64,6 +65,10 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
         }
 
         JetFile jetFile = (JetFile) leaf.getContainingFile();
+
+        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
+            return null;
+        }
 
         JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
         if (function != null) {

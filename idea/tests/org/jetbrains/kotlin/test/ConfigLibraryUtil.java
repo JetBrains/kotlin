@@ -26,27 +26,34 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.utils.PathUtil;
+
+import java.io.File;
 
 /**
  * Helper for configuring kotlin runtime in tested project.
  */
 public class ConfigLibraryUtil {
     private static final String DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME";
+    private static final String DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME";
 
     private ConfigLibraryUtil() {
     }
 
-    private static NewLibraryEditor getKotlinRuntimeLibEditor(String libName) {
+    private static NewLibraryEditor getKotlinRuntimeLibEditor(String libName, File library) {
         NewLibraryEditor editor = new NewLibraryEditor();
         editor.setName(libName);
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeJarForTests()), OrderRootType.CLASSES);
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(library), OrderRootType.CLASSES);
 
         return editor;
     }
 
     public static void configureKotlinRuntime(Module module, Sdk sdk) {
-        configureLibrary(module, sdk, getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME));
+        configureLibrary(module, sdk, getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()));
+    }
+
+    public static void configureKotlinJsRuntime(Module module, Sdk sdk) {
+        configureLibrary(module, sdk, getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()));
     }
 
     public static void unConfigureKotlinRuntime(Module module, Sdk sdk) {
