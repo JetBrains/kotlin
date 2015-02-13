@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
@@ -47,7 +46,7 @@ public final class JvmAnnotationNames {
     public static class KotlinSyntheticClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
         public static final ClassId KIND_CLASS_ID =
-                new ClassId(new FqName("kotlin.jvm.internal"), new FqNameUnsafe("KotlinSyntheticClass.Kind"));
+                ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
 
         public static final Name KIND_FIELD_NAME = Name.identifier("kind");

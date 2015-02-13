@@ -111,7 +111,7 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(
                         parentStub, shortName, fqName, superTypeRefs,
-                        isTopLevel = classId.isTopLevelClass(),
+                        isTopLevel = !classId.isNestedClass(),
                         isClassObject = isClassObject,
                         isLocal = false,
                         isObjectLiteral = false
@@ -127,7 +127,7 @@ private class ClassClsStubBuilder(
                         isTrait = classKind == ProtoBuf.Class.Kind.TRAIT,
                         isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                         isLocal = false,
-                        isTopLevel = classId.isTopLevelClass()
+                        isTopLevel = !classId.isNestedClass()
                 )
             }
         }

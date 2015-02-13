@@ -57,8 +57,8 @@ public final class ClassId {
         return new ClassId(getPackageFqName(), relativeClassName.parent());
     }
 
-    public boolean isTopLevelClass() {
-        return relativeClassName.parent().isRoot();
+    public boolean isNestedClass() {
+        return !relativeClassName.parent().isRoot();
     }
 
     @NotNull
