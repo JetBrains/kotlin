@@ -607,6 +607,30 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InSecondaryConstructorBody.kt")
+        public void testInSecondaryConstructorBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InSecondaryConstructorBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InSecondaryConstructorDefaultParameter.kt")
+        public void testInSecondaryConstructorDefaultParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InSecondaryConstructorDefaultParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InSecondaryConstructorDelegationCall.kt")
+        public void testInSecondaryConstructorDelegationCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InSecondaryConstructorDelegationCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InSecondaryConstructorFirstDefaultParameter.kt")
+        public void testInSecondaryConstructorFirstDefaultParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InSecondaryConstructorFirstDefaultParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InTypeAnnotation.kt")
         public void testInTypeAnnotation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InTypeAnnotation.kt");

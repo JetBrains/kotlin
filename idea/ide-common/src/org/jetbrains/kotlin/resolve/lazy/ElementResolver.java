@@ -77,6 +77,7 @@ public abstract class ElementResolver {
                 jetElement,
                 JetNamedFunction.class,
                 JetClassInitializer.class,
+                JetSecondaryConstructor.class,
                 JetProperty.class,
                 JetParameter.class,
                 JetDelegationSpecifierList.class,
@@ -149,6 +150,9 @@ public abstract class ElementResolver {
         }
         else if (resolveElement instanceof JetClassInitializer) {
             initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file, statementFilter);
+        }
+        else if (resolveElement instanceof JetSecondaryConstructor) {
+            secondaryConstructorAdditionalResolve(resolveSession, (JetSecondaryConstructor) resolveElement, trace, file, statementFilter);
         }
         else if (resolveElement instanceof JetProperty) {
             propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file, statementFilter);
@@ -403,6 +407,21 @@ public abstract class ElementResolver {
 
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter);
         bodyResolver.resolveFunctionBody(createEmptyContext(resolveSession), trace, namedFunction, functionDescriptor, scope);
+    }
+
+    private void secondaryConstructorAdditionalResolve(
+            ResolveSession resolveSession,
+            JetSecondaryConstructor constructor,
+            BindingTrace trace,
+            JetFile file,
+            @NotNull StatementFilter statementFilter
+    ) {
+        JetScope scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(constructor);
+        ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolveSession.resolveToDescriptor(constructor);
+        ForceResolveUtil.forceResolveAllContents(constructorDescriptor);
+
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter);
+        bodyResolver.resolveSecondaryConstructorBody(createEmptyContext(resolveSession), trace, constructor, constructorDescriptor, scope);
     }
 
     private void constructorAdditionalResolve(
