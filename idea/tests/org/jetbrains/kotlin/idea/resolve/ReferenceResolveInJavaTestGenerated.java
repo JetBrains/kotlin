@@ -48,6 +48,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         doTest(fileName);
     }
 
+    @TestMetadata("ClassObjectStaticField.java")
+    public void testClassObjectStaticField() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ClassObjectStaticField.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Constructor.java");
@@ -81,6 +87,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
     @TestMetadata("PackageFacade.java")
     public void testPackageFacade() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/PackageFacade.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PlatformStaticFun.java")
+    public void testPlatformStaticFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/PlatformStaticFun.java");
         doTest(fileName);
     }
 }
