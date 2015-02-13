@@ -52,6 +52,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_PRIMARY_CONSTRUCTOR_DELEGATION_CALL;
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_A_CLASS;
 import static org.jetbrains.kotlin.diagnostics.Errors.NO_CONSTRUCTOR;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
@@ -300,6 +301,12 @@ public class CallResolver {
         ClassDescriptor delegateClassDescriptor = calleeExpression.isThis() ? currentClassDescriptor :
                                                    DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);
         Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
+
+        if (!calleeExpression.isThis() && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+            context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
+                    (JetConstructorDelegationCall) calleeExpression.getParent()
+            ));
+        }
 
         if (constructors.isEmpty()) {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
