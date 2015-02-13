@@ -156,6 +156,7 @@ public interface Errors {
     // Secondary constructors
 
     DiagnosticFactory0<JetConstructorDelegationCall> CYCLIC_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR);
 
     // Trait-specific
 

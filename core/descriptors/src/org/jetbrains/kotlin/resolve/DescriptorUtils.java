@@ -480,4 +480,11 @@ public class DescriptorUtils {
         return false;
     }
 
+    public static boolean isSingletonOrAnonymousObject(@NotNull ClassDescriptor classDescriptor) {
+        return classDescriptor.getKind().isSingleton() || isAnonymousObject(classDescriptor);
+    }
+
+    public static boolean canHaveSecondaryConstructors(@NotNull ClassDescriptor classDescriptor) {
+        return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
+    }
 }

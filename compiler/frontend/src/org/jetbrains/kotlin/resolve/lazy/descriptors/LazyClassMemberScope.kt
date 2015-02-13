@@ -297,8 +297,9 @@ public open class LazyClassMemberScope(
 
     private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
         val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
+        if (!DescriptorUtils.canHaveSecondaryConstructors(thisDescriptor)) return emptyList()
+        // Script classes have usual class descriptors but do not have conventional class body
         if (classOrObject !is JetClass) return emptyList()
-        if (thisDescriptor.getKind().isSingleton()) return emptyList()
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
             val descriptor = c.descriptorResolver.resolveSecondaryConstructorDescriptor(
