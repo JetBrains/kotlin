@@ -70,11 +70,6 @@ private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescr
         return this
     }
 
-    override fun getDefaultObjectDescriptor(): ClassDescriptor? {
-        //NOTE: only used in types and rendered fq name should be the same as of containing class
-        return MissingDependencyErrorClassDescriptor(this, fullFqName)
-    }
-
     override fun getScopeForMemberLookup(): JetScope {
         return scope
     }
