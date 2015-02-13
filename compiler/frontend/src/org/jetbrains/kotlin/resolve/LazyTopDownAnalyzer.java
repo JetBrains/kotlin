@@ -195,8 +195,6 @@ public class LazyTopDownAnalyzer {
                         private void checkManyDefaultObjects(JetClassOrObject classOrObject) {
                             boolean defaultObjectAlreadyFound = false;
                             for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
-                                jetDeclaration.accept(this);
-
                                 if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isDefault()) {
                                     if (defaultObjectAlreadyFound) {
                                         trace.report(MANY_DEFAULT_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
