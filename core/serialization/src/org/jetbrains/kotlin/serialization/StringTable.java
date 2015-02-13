@@ -60,6 +60,11 @@ public class StringTable {
 
     private final Interner<String> strings = new Interner<String>();
     private final Interner<FqNameProto> qualifiedNames = new Interner<FqNameProto>();
+    private final SerializerExtension extension;
+
+    public StringTable(@NotNull SerializerExtension extension) {
+        this.extension = extension;
+    }
 
     @NotNull
     public List<String> getStrings() {
@@ -89,22 +94,32 @@ public class StringTable {
         if (descriptor instanceof ClassDescriptor) {
             builder.setKind(QualifiedName.Kind.CLASS);
         }
-        builder.setShortName(getSimpleNameIndex(descriptor.getName()));
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        int shortName;
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            shortName = getSimpleNameIndex(descriptor.getName());
             PackageFragmentDescriptor fragment = (PackageFragmentDescriptor) containingDeclaration;
             if (!fragment.getFqName().isRoot()) {
                 builder.setParentQualifiedName(getFqNameIndex(fragment.getFqName()));
             }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
+            shortName = getSimpleNameIndex(descriptor.getName());
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
         }
         else {
-            throw new IllegalStateException("FQ names are only stored for top-level or inner classes: " + descriptor);
+            if (descriptor instanceof ClassDescriptor) {
+                builder.setKind(QualifiedName.Kind.LOCAL);
+                shortName = getStringIndex(extension.getLocalClassName((ClassDescriptor) descriptor));
+            }
+            else {
+                throw new IllegalStateException("Package container should be a package: " + descriptor);
+            }
         }
+
+        builder.setShortName(shortName);
 
         return qualifiedNames.intern(new FqNameProto(builder));
     }

@@ -35,6 +35,7 @@ message QualifiedNameTable {
     enum Kind {
       CLASS = 0;
       PACKAGE = 1;
+      LOCAL = 2;
     }
   }
 

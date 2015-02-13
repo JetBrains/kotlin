@@ -56,7 +56,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         public final String outerInternalName;
         public final String innerSimpleName;
 
-        private OuterAndInnerName(@NotNull String outerInternalName, @NotNull String innerSimpleName) {
+        private OuterAndInnerName(@Nullable String outerInternalName, @Nullable String innerSimpleName) {
             this.outerInternalName = outerInternalName;
             this.innerSimpleName = innerSimpleName;
         }
@@ -65,7 +65,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     protected static class InnerClassesInfo {
         private Map<String, OuterAndInnerName> map = null;
 
-        public void add(@NotNull String name, @NotNull String outerName, @NotNull String innerName) {
+        public void add(@NotNull String name, @Nullable String outerName, @Nullable String innerName) {
             if (map == null) {
                 map = new HashMap<String, OuterAndInnerName>();
             }
@@ -98,9 +98,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
-                if (outerName != null && innerName != null) {
-                    innerClasses.add(name, outerName, innerName);
-                }
+                innerClasses.add(name, outerName, innerName);
             }
 
             @Override
@@ -268,10 +266,15 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         }
 
         List<String> classes = new ArrayList<String>(1);
+        boolean local = false;
         
         while (true) {
             OuterAndInnerName outer = innerClasses.get(name);
             if (outer == null) break;
+            if (outer.outerInternalName == null) {
+                local = true;
+                break;
+            }
             classes.add(outer.innerSimpleName);
             name = outer.outerInternalName;
         }
@@ -283,7 +286,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
         FqName packageFqName = outermostClassFqName.parent();
         FqNameUnsafe relativeClassName = FqNameUnsafe.fromSegments(classes);
-        return new ClassId(packageFqName, relativeClassName);
+        return new ClassId(packageFqName, relativeClassName, local);
     }
 
     @Override

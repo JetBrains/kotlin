@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.serialization.deserialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
+
+import java.util.LinkedList;
 
 import static org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
@@ -61,42 +62,30 @@ public class NameResolver {
 
     @NotNull
     public ClassId getClassId(int index) {
-        QualifiedName fqNameProto = qualifiedNames.getQualifiedName(index);
-        assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + fqNameProto.getKind();
+        LinkedList<String> packageFqName = new LinkedList<String>();
+        LinkedList<String> relativeClassName = new LinkedList<String>();
+        boolean local = false;
 
-        StringBuilder relativeClassName = new StringBuilder();
-        QualifiedName packageFqNameProto = renderFqName(relativeClassName, fqNameProto, QualifiedName.Kind.CLASS);
-
-        FqName packageFqName;
-        if (packageFqNameProto != null) {
-            StringBuilder sb = new StringBuilder();
-            QualifiedName mustBeNull = renderFqName(sb, packageFqNameProto, QualifiedName.Kind.PACKAGE);
-            assert mustBeNull == null : "Prefix of an fqName must be all of kind PACKAGE";
-
-            packageFqName = new FqName(sb.toString());
-        }
-        else {
-            packageFqName = FqName.ROOT;
-        }
-
-        return new ClassId(packageFqName, new FqNameUnsafe(relativeClassName.toString()));
-    }
-
-    @Nullable
-    private QualifiedName renderFqName(StringBuilder sb, QualifiedName fqNameProto, QualifiedName.Kind kind) {
-        QualifiedName result = null;
-        if (fqNameProto.hasParentQualifiedName()) {
-            QualifiedName parentProto = qualifiedNames.getQualifiedName(fqNameProto.getParentQualifiedName());
-            if (kind == null || parentProto.getKind() == kind) {
-                result = renderFqName(sb, parentProto, kind);
-                sb.append(".");
+        while (index != -1) {
+            QualifiedName proto = qualifiedNames.getQualifiedName(index);
+            String shortName = strings.getString(proto.getShortName());
+            switch (proto.getKind()) {
+                case CLASS:
+                    relativeClassName.addFirst(shortName);
+                    break;
+                case PACKAGE:
+                    packageFqName.addFirst(shortName);
+                    break;
+                case LOCAL:
+                    relativeClassName.addFirst(shortName);
+                    local = true;
+                    break;
             }
-            else {
-                result = parentProto;
-            }
+
+            index = proto.getParentQualifiedName();
         }
-        sb.append(strings.getString(fqNameProto.getShortName()));
-        return result;
+
+        return new ClassId(FqName.fromSegments(packageFqName), FqNameUnsafe.fromSegments(relativeClassName), local);
     }
 
     @NotNull

@@ -29,7 +29,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 
 public class DescriptorSerializer {
 
@@ -45,7 +46,7 @@ public class DescriptorSerializer {
 
     @NotNull
     public static DescriptorSerializer createTopLevel(@NotNull SerializerExtension extension) {
-        return new DescriptorSerializer(new StringTable(), new Interner<TypeParameterDescriptor>(), extension);
+        return new DescriptorSerializer(new StringTable(extension), new Interner<TypeParameterDescriptor>(), extension);
     }
 
     @NotNull
@@ -210,40 +211,12 @@ public class DescriptorSerializer {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
         }
 
-        builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
+        //noinspection ConstantConditions
+        builder.setReturnType(local.type(descriptor.getReturnType()));
 
         extension.serializeCallable(descriptor, builder, stringTable);
 
         return builder;
-    }
-
-    @NotNull
-    private static JetType getSerializableReturnType(@NotNull JetType type) {
-        return isSerializableType(type) ? type : KotlinBuiltIns.getInstance().getAnyType();
-    }
-
-    /**
-     * @return true iff this type can be serialized. Types which correspond to type parameters, top-level classes, inner classes, and
-     * generic classes with serializable arguments are serializable. For other types (local classes, inner of local, etc.) it may be
-     * problematical to construct a FQ name for serialization
-     */
-    private static boolean isSerializableType(@NotNull JetType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof TypeParameterDescriptor) {
-            return true;
-        }
-        else if (descriptor instanceof ClassDescriptor) {
-            for (TypeProjection projection : type.getArguments()) {
-                if (!isSerializableType(projection.getType())) {
-                    return false;
-                }
-            }
-
-            return isTopLevelOrInnerClass((ClassDescriptor) descriptor);
-        }
-        else {
-            throw new IllegalStateException("Unknown type constructor: " + type);
-        }
     }
 
     private static int getAccessorFlags(@NotNull PropertyAccessorDescriptor accessor) {

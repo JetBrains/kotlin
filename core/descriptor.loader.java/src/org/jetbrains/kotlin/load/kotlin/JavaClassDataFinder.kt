@@ -28,6 +28,9 @@ public class JavaClassDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
+        assert(kotlinJvmBinaryClass.getClassId() == classId) {
+            "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.getClassId()}"
+        }
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
         return JvmProtoBufUtil.readClassDataFrom(data)
     }

@@ -1024,6 +1024,10 @@ public final class DebugProtoBuf {
          * <code>PACKAGE = 1;</code>
          */
         PACKAGE(1, 1),
+        /**
+         * <code>LOCAL = 2;</code>
+         */
+        LOCAL(2, 2),
         ;
 
         /**
@@ -1034,6 +1038,10 @@ public final class DebugProtoBuf {
          * <code>PACKAGE = 1;</code>
          */
         public static final int PACKAGE_VALUE = 1;
+        /**
+         * <code>LOCAL = 2;</code>
+         */
+        public static final int LOCAL_VALUE = 2;
 
 
         public final int getNumber() { return value; }
@@ -1042,6 +1050,7 @@ public final class DebugProtoBuf {
           switch (value) {
             case 0: return CLASS;
             case 1: return PACKAGE;
+            case 2: return LOCAL;
             default: return null;
           }
         }
@@ -16536,95 +16545,96 @@ public final class DebugProtoBuf {
     java.lang.String[] descriptorData = {
       "\n.core/serialization/src/descriptors.deb" +
       "ug.proto\022\"org.jetbrains.kotlin.serializa" +
-      "tion\"\035\n\013StringTable\022\016\n\006string\030\001 \003(\t\"\275\002\n\022" +
+      "tion\"\035\n\013StringTable\022\016\n\006string\030\001 \003(\t\"\310\002\n\022" +
       "QualifiedNameTable\022\\\n\016qualified_name\030\001 \003" +
       "(\0132D.org.jetbrains.kotlin.serialization." +
-      "QualifiedNameTable.QualifiedName\032\310\001\n\rQua" +
+      "QualifiedNameTable.QualifiedName\032\323\001\n\rQua" +
       "lifiedName\022!\n\025parent_qualified_name\030\001 \001(" +
       "\005:\002-1\022\022\n\nshort_name\030\002 \002(\005\022`\n\004kind\030\003 \001(\0162" +
       "I.org.jetbrains.kotlin.serialization.Qua" +
       "lifiedNameTable.QualifiedName.Kind:\007PACK",
-      "AGE\"\036\n\004Kind\022\t\n\005CLASS\020\000\022\013\n\007PACKAGE\020\001\"\335\005\n\n" +
-      "Annotation\022\n\n\002id\030\001 \002(\005\022I\n\010argument\030\002 \003(\013" +
-      "27.org.jetbrains.kotlin.serialization.An" +
-      "notation.Argument\032\367\004\n\010Argument\022\017\n\007name_i" +
-      "d\030\001 \002(\005\022L\n\005value\030\002 \002(\0132=.org.jetbrains.k" +
-      "otlin.serialization.Annotation.Argument." +
-      "Value\032\213\004\n\005Value\022P\n\004type\030\001 \001(\0162B.org.jetb" +
-      "rains.kotlin.serialization.Annotation.Ar" +
-      "gument.Value.Type\022\021\n\tint_value\030\002 \001(\022\022\023\n\013" +
-      "float_value\030\003 \001(\002\022\024\n\014double_value\030\004 \001(\001\022",
-      "\024\n\014string_value\030\005 \001(\005\022\020\n\010class_id\030\006 \001(\005\022" +
-      "\025\n\renum_value_id\030\007 \001(\005\022B\n\nannotation\030\010 \001" +
-      "(\0132..org.jetbrains.kotlin.serialization." +
-      "Annotation\022T\n\rarray_element\030\t \003(\0132=.org." +
+      "AGE\")\n\004Kind\022\t\n\005CLASS\020\000\022\013\n\007PACKAGE\020\001\022\t\n\005L" +
+      "OCAL\020\002\"\335\005\n\nAnnotation\022\n\n\002id\030\001 \002(\005\022I\n\010arg" +
+      "ument\030\002 \003(\01327.org.jetbrains.kotlin.seria" +
+      "lization.Annotation.Argument\032\367\004\n\010Argumen" +
+      "t\022\017\n\007name_id\030\001 \002(\005\022L\n\005value\030\002 \002(\0132=.org." +
       "jetbrains.kotlin.serialization.Annotatio" +
-      "n.Argument.Value\"\230\001\n\004Type\022\010\n\004BYTE\020\000\022\010\n\004C" +
-      "HAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010\n\004LONG\020\004\022\t\n\005F" +
-      "LOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLEAN\020\007\022\n\n\006STRIN" +
-      "G\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n\nANNOTATION\020\013" +
-      "\022\t\n\005ARRAY\020\014\"\377\004\n\004Type\022I\n\013constructor\030\001 \002(",
-      "\01324.org.jetbrains.kotlin.serialization.T" +
-      "ype.Constructor\022C\n\010argument\030\002 \003(\01321.org." +
-      "jetbrains.kotlin.serialization.Type.Argu" +
-      "ment\022\027\n\010nullable\030\003 \001(\010:\005false\022%\n\035flexibl" +
-      "e_type_capabilities_id\030\004 \001(\005\022F\n\024flexible" +
-      "_upper_bound\030\005 \001(\0132(.org.jetbrains.kotli" +
-      "n.serialization.Type\032\220\001\n\013Constructor\022N\n\004" +
-      "kind\030\001 \001(\01629.org.jetbrains.kotlin.serial" +
-      "ization.Type.Constructor.Kind:\005CLASS\022\n\n\002" +
-      "id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022\n\016TYPE_PARA",
-      "METER\020\001\032\313\001\n\010Argument\022U\n\nprojection\030\001 \001(\016" +
-      "2<.org.jetbrains.kotlin.serialization.Ty" +
-      "pe.Argument.Projection:\003INV\0226\n\004type\030\002 \002(" +
-      "\0132(.org.jetbrains.kotlin.serialization.T" +
-      "ype\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003IN" +
-      "V\020\002\022\010\n\004STAR\020\003\"\371\001\n\rTypeParameter\022\n\n\002id\030\001 " +
-      "\002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reified\030\003 \001(\010:\005fals" +
-      "e\022Q\n\010variance\030\004 \001(\0162:.org.jetbrains.kotl" +
-      "in.serialization.TypeParameter.Variance:" +
-      "\003INV\022=\n\013upper_bound\030\005 \003(\0132(.org.jetbrain",
-      "s.kotlin.serialization.Type\"$\n\010Variance\022" +
-      "\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\340\004\n\005Class\022\020\n\005f" +
-      "lags\030\001 \001(\005:\0010\022\017\n\007fq_name\030\003 \002(\005\022\031\n\021class_" +
-      "object_name\030\004 \001(\005\022I\n\016type_parameter\030\005 \003(" +
-      "\01321.org.jetbrains.kotlin.serialization.T" +
-      "ypeParameter\022;\n\tsupertype\030\006 \003(\0132(.org.je" +
-      "tbrains.kotlin.serialization.Type\022\031\n\021nes" +
-      "ted_class_name\030\007 \003(\005\022<\n\006member\030\013 \003(\0132,.o" +
-      "rg.jetbrains.kotlin.serialization.Callab" +
-      "le\022\022\n\nenum_entry\030\014 \003(\005\022Y\n\023primary_constr",
-      "uctor\030\r \001(\0132<.org.jetbrains.kotlin.seria" +
-      "lization.Class.PrimaryConstructor\032P\n\022Pri" +
-      "maryConstructor\022:\n\004data\030\001 \001(\0132,.org.jetb" +
-      "rains.kotlin.serialization.Callable\"p\n\004K" +
-      "ind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CLASS\020" +
-      "\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022" +
-      "\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006*\005\010d\020\310\001\"N\n\007" +
-      "Package\022<\n\006member\030\001 \003(\0132,.org.jetbrains." +
-      "kotlin.serialization.Callable*\005\010d\020\310\001\"\300\005\n" +
-      "\010Callable\022\r\n\005flags\030\001 \001(\005\022\024\n\014getter_flags",
-      "\030\t \001(\005\022\024\n\014setter_flags\030\n \001(\005\022I\n\016type_par" +
-      "ameter\030\004 \003(\01321.org.jetbrains.kotlin.seri" +
-      "alization.TypeParameter\022?\n\rreceiver_type" +
-      "\030\005 \001(\0132(.org.jetbrains.kotlin.serializat" +
-      "ion.Type\022\014\n\004name\030\006 \002(\005\022T\n\017value_paramete" +
-      "r\030\007 \003(\0132;.org.jetbrains.kotlin.serializa" +
-      "tion.Callable.ValueParameter\022=\n\013return_t" +
-      "ype\030\010 \002(\0132(.org.jetbrains.kotlin.seriali" +
-      "zation.Type\032\263\001\n\016ValueParameter\022\r\n\005flags\030" +
-      "\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004type\030\003 \002(\0132(.org.",
-      "jetbrains.kotlin.serialization.Type\022E\n\023v" +
-      "ararg_element_type\030\004 \001(\0132(.org.jetbrains" +
-      ".kotlin.serialization.Type*\005\010d\020\310\001\"Q\n\nMem" +
-      "berKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRID" +
-      "E\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014" +
-      "CallableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022" +
-      "\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022\t\n\005F" +
-      "INAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*b\n\nVisibi" +
-      "lity\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTE" +
-      "CTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022",
-      "\t\n\005LOCAL\020\005B\022B\rDebugProtoBuf\210\001\000"
+      "n.Argument.Value\032\213\004\n\005Value\022P\n\004type\030\001 \001(\016" +
+      "2B.org.jetbrains.kotlin.serialization.An" +
+      "notation.Argument.Value.Type\022\021\n\tint_valu" +
+      "e\030\002 \001(\022\022\023\n\013float_value\030\003 \001(\002\022\024\n\014double_v",
+      "alue\030\004 \001(\001\022\024\n\014string_value\030\005 \001(\005\022\020\n\010clas" +
+      "s_id\030\006 \001(\005\022\025\n\renum_value_id\030\007 \001(\005\022B\n\nann" +
+      "otation\030\010 \001(\0132..org.jetbrains.kotlin.ser" +
+      "ialization.Annotation\022T\n\rarray_element\030\t" +
+      " \003(\0132=.org.jetbrains.kotlin.serializatio" +
+      "n.Annotation.Argument.Value\"\230\001\n\004Type\022\010\n\004" +
+      "BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010\n\004" +
+      "LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLEAN" +
+      "\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n\nA" +
+      "NNOTATION\020\013\022\t\n\005ARRAY\020\014\"\377\004\n\004Type\022I\n\013const",
+      "ructor\030\001 \002(\01324.org.jetbrains.kotlin.seri" +
+      "alization.Type.Constructor\022C\n\010argument\030\002" +
+      " \003(\01321.org.jetbrains.kotlin.serializatio" +
+      "n.Type.Argument\022\027\n\010nullable\030\003 \001(\010:\005false" +
+      "\022%\n\035flexible_type_capabilities_id\030\004 \001(\005\022" +
+      "F\n\024flexible_upper_bound\030\005 \001(\0132(.org.jetb" +
+      "rains.kotlin.serialization.Type\032\220\001\n\013Cons" +
+      "tructor\022N\n\004kind\030\001 \001(\01629.org.jetbrains.ko" +
+      "tlin.serialization.Type.Constructor.Kind" +
+      ":\005CLASS\022\n\n\002id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022",
+      "\n\016TYPE_PARAMETER\020\001\032\313\001\n\010Argument\022U\n\nproje" +
+      "ction\030\001 \001(\0162<.org.jetbrains.kotlin.seria" +
+      "lization.Type.Argument.Projection:\003INV\0226" +
+      "\n\004type\030\002 \002(\0132(.org.jetbrains.kotlin.seri" +
+      "alization.Type\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003" +
+      "OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003\"\371\001\n\rTypeParamet" +
+      "er\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reified\030" +
+      "\003 \001(\010:\005false\022Q\n\010variance\030\004 \001(\0162:.org.jet" +
+      "brains.kotlin.serialization.TypeParamete" +
+      "r.Variance:\003INV\022=\n\013upper_bound\030\005 \003(\0132(.o",
+      "rg.jetbrains.kotlin.serialization.Type\"$" +
+      "\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\340\004\n" +
+      "\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_name\030\003 \002(" +
+      "\005\022\031\n\021class_object_name\030\004 \001(\005\022I\n\016type_par" +
+      "ameter\030\005 \003(\01321.org.jetbrains.kotlin.seri" +
+      "alization.TypeParameter\022;\n\tsupertype\030\006 \003" +
+      "(\0132(.org.jetbrains.kotlin.serialization." +
+      "Type\022\031\n\021nested_class_name\030\007 \003(\005\022<\n\006membe" +
+      "r\030\013 \003(\0132,.org.jetbrains.kotlin.serializa" +
+      "tion.Callable\022\022\n\nenum_entry\030\014 \003(\005\022Y\n\023pri",
+      "mary_constructor\030\r \001(\0132<.org.jetbrains.k" +
+      "otlin.serialization.Class.PrimaryConstru" +
+      "ctor\032P\n\022PrimaryConstructor\022:\n\004data\030\001 \001(\013" +
+      "2,.org.jetbrains.kotlin.serialization.Ca" +
+      "llable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022\016\n\n" +
+      "ENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATI" +
+      "ON_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006" +
+      "*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001 \003(\0132,.org" +
+      ".jetbrains.kotlin.serialization.Callable" +
+      "*\005\010d\020\310\001\"\300\005\n\010Callable\022\r\n\005flags\030\001 \001(\005\022\024\n\014g",
+      "etter_flags\030\t \001(\005\022\024\n\014setter_flags\030\n \001(\005\022" +
+      "I\n\016type_parameter\030\004 \003(\01321.org.jetbrains." +
+      "kotlin.serialization.TypeParameter\022?\n\rre" +
+      "ceiver_type\030\005 \001(\0132(.org.jetbrains.kotlin" +
+      ".serialization.Type\022\014\n\004name\030\006 \002(\005\022T\n\017val" +
+      "ue_parameter\030\007 \003(\0132;.org.jetbrains.kotli" +
+      "n.serialization.Callable.ValueParameter\022" +
+      "=\n\013return_type\030\010 \002(\0132(.org.jetbrains.kot" +
+      "lin.serialization.Type\032\263\001\n\016ValueParamete" +
+      "r\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004type\030\003",
+      " \002(\0132(.org.jetbrains.kotlin.serializatio" +
+      "n.Type\022E\n\023vararg_element_type\030\004 \001(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type*\005\010" +
+      "d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rF" +
+      "AKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHE" +
+      "SIZED\020\003\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020" +
+      "\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Mo" +
+      "dality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020" +
+      "\002*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE" +
+      "\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE",
+      "_TO_THIS\020\004\022\t\n\005LOCAL\020\005B\022B\rDebugProtoBuf\210\001" +
+      "\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

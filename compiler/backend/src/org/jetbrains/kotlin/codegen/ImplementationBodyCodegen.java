@@ -232,7 +232,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings()));
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

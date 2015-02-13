@@ -855,6 +855,10 @@ public final class ProtoBuf {
          * <code>PACKAGE = 1;</code>
          */
         PACKAGE(1, 1),
+        /**
+         * <code>LOCAL = 2;</code>
+         */
+        LOCAL(2, 2),
         ;
 
         /**
@@ -865,6 +869,10 @@ public final class ProtoBuf {
          * <code>PACKAGE = 1;</code>
          */
         public static final int PACKAGE_VALUE = 1;
+        /**
+         * <code>LOCAL = 2;</code>
+         */
+        public static final int LOCAL_VALUE = 2;
 
 
         public final int getNumber() { return value; }
@@ -873,6 +881,7 @@ public final class ProtoBuf {
           switch (value) {
             case 0: return CLASS;
             case 1: return PACKAGE;
+            case 2: return LOCAL;
             default: return null;
           }
         }

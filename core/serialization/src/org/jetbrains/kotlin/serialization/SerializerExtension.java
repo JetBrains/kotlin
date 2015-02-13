@@ -52,4 +52,9 @@ public abstract class SerializerExtension {
             @NotNull StringTable stringTable
     ) {
     }
+
+    @NotNull
+    public String getLocalClassName(@NotNull ClassDescriptor descriptor) {
+        throw new UnsupportedOperationException("Local classes are unsupported: " + descriptor);
+    }
 }
