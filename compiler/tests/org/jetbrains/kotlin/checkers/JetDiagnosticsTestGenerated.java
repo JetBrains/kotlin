@@ -3520,6 +3520,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("delegationToTraitImplAndOwnMethod.kt")
+                public void testDelegationToTraitImplAndOwnMethod() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/delegationToTraitImplAndOwnMethod.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extensionProperties.kt")
                 public void testExtensionProperties() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/extensionProperties.kt");
@@ -3547,6 +3553,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("nullableType.kt")
                 public void testNullableType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/nullableType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superTraitAndDelegationToTraitImpl.kt")
+                public void testSuperTraitAndDelegationToTraitImpl() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl.kt");
                     doTest(fileName);
                 }
 
