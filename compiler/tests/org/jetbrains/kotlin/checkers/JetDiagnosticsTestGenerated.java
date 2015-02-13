@@ -1944,6 +1944,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("commonSupertypeOfT.kt")
+            public void testCommonSupertypeOfT() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/commonSupertypeOfT.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyIf.kt")
             public void testEmptyIf() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/emptyIf.kt");
