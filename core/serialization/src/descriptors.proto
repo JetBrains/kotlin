@@ -293,4 +293,5 @@ enum Visibility {
   PROTECTED = 0x02;
   PUBLIC = 0x03;
   PRIVATE_TO_THIS = 0x04;
+  LOCAL = 0x05;
 }

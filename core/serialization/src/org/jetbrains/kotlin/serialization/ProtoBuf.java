@@ -110,6 +110,10 @@ public final class ProtoBuf {
      * <code>PRIVATE_TO_THIS = 4;</code>
      */
     PRIVATE_TO_THIS(4, 4),
+    /**
+     * <code>LOCAL = 5;</code>
+     */
+    LOCAL(5, 5),
     ;
 
     /**
@@ -136,6 +140,10 @@ public final class ProtoBuf {
      * <code>PRIVATE_TO_THIS = 4;</code>
      */
     public static final int PRIVATE_TO_THIS_VALUE = 4;
+    /**
+     * <code>LOCAL = 5;</code>
+     */
+    public static final int LOCAL_VALUE = 5;
 
 
     public final int getNumber() { return value; }
@@ -147,6 +155,7 @@ public final class ProtoBuf {
         case 2: return PROTECTED;
         case 3: return PUBLIC;
         case 4: return PRIVATE_TO_THIS;
+        case 5: return LOCAL;
         default: return null;
       }
     }
