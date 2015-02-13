@@ -430,3 +430,12 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         }
     }
 }
+
+fun foo(a: Any) {
+    if (a is String) {
+        a.length()
+        if (a == "") {
+            a.length()
+        }
+    }
+}

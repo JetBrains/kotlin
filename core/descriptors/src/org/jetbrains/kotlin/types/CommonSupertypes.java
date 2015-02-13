@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -223,11 +223,16 @@ public class CommonSupertypes {
             nullable |= type.isMarkedNullable();
         }
 
-        // TODO : attributes?
-        JetScope newScope = JetScope.Empty.INSTANCE$;
-        DeclarationDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        JetScope newScope;
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);
+        }
+        else if (declarationDescriptor instanceof TypeParameterDescriptor) {
+            newScope = ((TypeParameterDescriptor) declarationDescriptor).getUpperBoundsAsType().getMemberScope();
+        }
+        else {
+            newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
         return new JetTypeImpl(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
     }

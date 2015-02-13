@@ -1944,6 +1944,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("commonSupertypeOfT.kt")
+            public void testCommonSupertypeOfT() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/commonSupertypeOfT.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyIf.kt")
             public void testEmptyIf() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/emptyIf.kt");
@@ -2265,7 +2271,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlow")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({DataFlow.Local.class})
+        @InnerTestClasses({DataFlow.Assignment.class, DataFlow.Local.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DataFlow extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInDataFlow() throws Exception {
@@ -2294,6 +2300,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testWhenSubject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/dataFlow/assignment")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Assignment extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInAssignment() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow/assignment"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("assignToNewVal.kt")
+                public void testAssignToNewVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlow/assignment/assignToNewVal.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt6118.kt")
+                public void testKt6118() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlow/assignment/kt6118.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("when.kt")
+                public void testWhen() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlow/assignment/when.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/dataFlow/local")
