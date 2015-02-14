@@ -30,11 +30,9 @@ import org.jetbrains.org.objectweb.asm.*
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.HashSet
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import java.util.HashMap
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import com.intellij.openapi.util.io.FileUtil
 import java.security.MessageDigest
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.jps.builders.storage.StorageProvider
@@ -137,41 +135,34 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         dirtyOutputClassesMap.notDirty(className.getInternalName())
         sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, className) }
 
-        val annotationDataEncoded = header.annotationData
-        if (annotationDataEncoded != null) {
-            val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            return when {
-                header.isCompatiblePackageFacadeKind() ->
-                    getRecompilationDecision(
-                            protoChanged = protoMap.put(className, data),
-                            constantsChanged = false,
-                            inlinesChanged = false
-                    )
-                header.isCompatibleClassKind() ->
-                    getRecompilationDecision(
-                            protoChanged = protoMap.put(className, data),
-                            constantsChanged = constantsMap.process(className, fileBytes),
-                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-                    )
-                else -> {
-                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
-                }
+        return when {
+            header.isCompatiblePackageFacadeKind() ->
+                getRecompilationDecision(
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                        constantsChanged = false,
+                        inlinesChanged = false
+                )
+            header.isCompatibleClassKind() ->
+                getRecompilationDecision(
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                        constantsChanged = constantsMap.process(className, fileBytes),
+                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                )
+            header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
+                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+
+                packagePartMap.addPackagePart(className)
+
+                getRecompilationDecision(
+                        protoChanged = false,
+                        constantsChanged = constantsMap.process(className, fileBytes),
+                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                )
+            }
+            else -> {
+                DO_NOTHING
             }
         }
-
-        if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
-            assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
-
-            packagePartMap.addPackagePart(className)
-
-            return getRecompilationDecision(
-                    protoChanged = false,
-                    constantsChanged = constantsMap.process(className, fileBytes),
-                    inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-            )
-        }
-
-        return DO_NOTHING
     }
 
     public fun clearCacheForRemovedClasses(): RecompilationDecision {

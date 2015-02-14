@@ -1,0 +1,9 @@
+A.Ann(info = "class": kotlin.String) local final class `A$foo$Local`
+
+public constructor `A$foo$Local`()
+A.Ann(info = "val": kotlin.String) internal final val x: `A$foo$Local`
+A.Ann(info = "fun": kotlin.String) internal final fun foo(): `A$foo$Local`
+
+A.Ann(info = "inner": kotlin.String) local final inner class Inner {
+    public constructor Inner()
+}

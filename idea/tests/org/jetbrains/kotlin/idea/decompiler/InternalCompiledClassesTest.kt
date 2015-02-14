@@ -37,10 +37,6 @@ public class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest()
 
     fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
 
-    fun testLocalClassIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(LOCAL_CLASS)
-
-    fun testAnonymousObjectIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_OBJECT)
-
     fun testInnerClassIsInvisible() = doTestNoPsiFilesAreBuiltFor("inner or nested class") {
         ClassFileViewProvider.isInnerClass(this)
     }

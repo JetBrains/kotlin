@@ -128,6 +128,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.kotlin.completion.handlers.AbstractCompletionCharFilterTest
+import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.idea.resolve.AbstractPartialBodyResolveTest
 import org.jetbrains.kotlin.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
@@ -308,6 +309,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractLineNumberTest>()) {
             model("lineNumber", recursive = false)
             model("lineNumber/custom", testMethod = "doTestCustom")
+        }
+
+        testClass(javaClass<AbstractLocalClassProtoTest>()) {
+            model("serialization/local")
         }
     }
 

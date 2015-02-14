@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -72,7 +73,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -218,18 +218,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (isAnonymousObject(descriptor)) {
-            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.ANONYMOUS_OBJECT);
-            return;
-        }
-
-        if (!isTopLevelOrInnerClass(descriptor)) {
-            // LOCAL_CLASS is also written to inner classes of local classes
-            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.LOCAL_CLASS);
-            return;
-        }
-
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        KotlinClass.Kind kind;
+        if (isAnonymousObject(descriptor)) {
+            kind = KotlinClass.Kind.ANONYMOUS_OBJECT;
+        }
+        else if (isTopLevelOrInnerClass(descriptor)) {
+            kind = KotlinClass.Kind.CLASS;
+        }
+        else {
+            // LOCAL_CLASS is also written to inner classes of local classes
+            kind = KotlinClass.Kind.LOCAL_CLASS;
+        }
 
         DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
@@ -239,8 +240,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(createNameResolver(serializer.getStringTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        //noinspection ConstantConditions
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnum(
+                JvmAnnotationNames.KIND_FIELD_NAME,
+                Type.getObjectType(KotlinClass.KIND_INTERNAL_NAME).getDescriptor(),
+                kind.toString()
+        );
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
             array.visit(null, string);

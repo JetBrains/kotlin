@@ -260,9 +260,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             return ClassId.topLevel(new FqName(name.replace('/', '.')));
         }
 
+        // TODO: this is a hack which can be dropped once JVM back-end begins to write InnerClasses attribute for all referenced classes
         if (name.equals(JvmAnnotationNames.KotlinSyntheticClass.KIND_INTERNAL_NAME)) {
-            // TODO: this is a hack which can be dropped once JVM back-end begins to write InnerClasses attribute for all referenced classes
             return JvmAnnotationNames.KotlinSyntheticClass.KIND_CLASS_ID;
+        }
+        else if (name.equals(JvmAnnotationNames.KotlinClass.KIND_INTERNAL_NAME)) {
+            return JvmAnnotationNames.KotlinClass.KIND_CLASS_ID;
         }
 
         List<String> classes = new ArrayList<String>(1);

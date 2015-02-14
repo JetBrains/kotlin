@@ -22,14 +22,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KIND_FIELD_NAME;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
@@ -42,81 +48,122 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     public void testPackagePart() {
-        doTest("fun foo() = 42",
-               "$",
-               PACKAGE_PART);
+        doTestKotlinSyntheticClass(
+                "fun foo() = 42",
+                "$",
+                PACKAGE_PART
+        );
     }
 
     public void testTraitImpl() {
-        doTest("trait A { fun foo() = 42 }",
-               JvmAbi.TRAIT_IMPL_SUFFIX,
-               TRAIT_IMPL);
+        doTestKotlinSyntheticClass(
+                "trait A { fun foo() = 42 }",
+                JvmAbi.TRAIT_IMPL_SUFFIX,
+                TRAIT_IMPL
+        );
     }
 
     public void testSamWrapper() {
-        doTest("val f = {}\nval foo = Thread(f)",
-               "$sam",
-               SAM_WRAPPER);
+        doTestKotlinSyntheticClass(
+                "val f = {}\nval foo = Thread(f)",
+                "$sam",
+                SAM_WRAPPER
+        );
     }
 
     public void testSamLambda() {
-        doTest("val foo = Thread { }",
-               "$1",
-               SAM_LAMBDA);
+        doTestKotlinSyntheticClass(
+                "val foo = Thread { }",
+                "$1",
+                SAM_LAMBDA
+        );
     }
 
     public void testCallableReferenceWrapper() {
-        doTest("val f = String::get",
-               "$1",
-               CALLABLE_REFERENCE_WRAPPER);
+        doTestKotlinSyntheticClass(
+                "val f = String::get",
+                "$1",
+                CALLABLE_REFERENCE_WRAPPER
+        );
     }
 
     public void testLocalFunction() {
-        doTest("fun foo() { fun bar() {} }",
-               "$1",
-               LOCAL_FUNCTION);
+        doTestKotlinSyntheticClass(
+                "fun foo() { fun bar() {} }",
+                "$1",
+                LOCAL_FUNCTION
+        );
     }
 
     public void testAnonymousFunction() {
-        doTest("val f = {}",
-               "$1",
-               ANONYMOUS_FUNCTION);
+        doTestKotlinSyntheticClass(
+                "val f = {}",
+                "$1",
+                ANONYMOUS_FUNCTION
+        );
     }
 
     public void testLocalClass() {
-        doTest("fun foo() { class Local }",
-               "Local",
-               LOCAL_CLASS);
+        doTestKotlinClass(
+                "fun foo() { class Local }",
+                "Local",
+                LOCAL_CLASS
+        );
     }
 
     public void testLocalTraitImpl() {
-        doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local$$TImpl.class",
-               LOCAL_TRAIT_IMPL);
+        doTestKotlinSyntheticClass(
+                "fun foo() { trait Local { fun bar() = 42 } }",
+                "Local$$TImpl.class",
+                LOCAL_TRAIT_IMPL
+        );
     }
 
     public void testLocalTraitInterface() {
-        doTest("fun foo() { trait Local { fun bar() = 42 } }",
-               "Local.class",
-               LOCAL_CLASS);
+        doTestKotlinClass(
+                "fun foo() { trait Local { fun bar() = 42 } }",
+                "Local.class",
+                LOCAL_CLASS
+        );
     }
 
     public void testInnerClassOfLocalClass() {
-        doTest("fun foo() { class Local { inner class Inner } }",
-               "Inner",
-               LOCAL_CLASS);
+        doTestKotlinClass(
+                "fun foo() { class Local { inner class Inner } }",
+                "Inner",
+                LOCAL_CLASS
+        );
     }
 
     public void testAnonymousObject() {
-        doTest("val o = object {}",
-               "$1",
-               ANONYMOUS_OBJECT);
+        doTestKotlinClass(
+                "val o = object {}",
+                "$1",
+                ANONYMOUS_OBJECT
+        );
+    }
+
+    private void doTestKotlinSyntheticClass(
+            @NotNull String code,
+            @NotNull String classFilePart,
+            @NotNull KotlinSyntheticClass.Kind expectedKind
+    ) {
+        doTest(code, classFilePart, KotlinSyntheticClass.CLASS_NAME, expectedKind.toString());
+    }
+
+    private void doTestKotlinClass(
+            @NotNull String code,
+            @NotNull String classFilePart,
+            @NotNull KotlinClass.Kind expectedKind
+    ) {
+        doTest(code, classFilePart, KotlinClass.CLASS_NAME, expectedKind.toString());
     }
 
     private void doTest(
             @NotNull String code,
             @NotNull final String classFilePart,
-            @NotNull KotlinSyntheticClass.Kind expectedKind
+            @NotNull JvmClassName annotationName,
+            @NotNull String expectedKind
     ) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
@@ -132,22 +179,26 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
         Class<?> aClass = generateClass(fqName);
-        assertAnnotatedWithKind(aClass, expectedKind);
+        assertAnnotatedWithKind(aClass, annotationName.getFqNameForClassNameWithoutDollars().asString(), expectedKind);
     }
 
-    private void assertAnnotatedWithKind(@NotNull Class<?> aClass, @NotNull KotlinSyntheticClass.Kind expectedKind) {
-        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(
-                KotlinSyntheticClass.CLASS_NAME.getFqNameForClassNameWithoutDollars().asString());
-        assertTrue("No KotlinSyntheticClass annotation found", aClass.isAnnotationPresent(annotationClass));
+    private void assertAnnotatedWithKind(
+            @NotNull Class<?> aClass,
+            @NotNull String annotationFqName,
+            @NotNull String expectedKind
+    ) {
+        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(annotationFqName);
+        assertTrue("No annotation " + annotationFqName + " found in " + aClass, aClass.isAnnotationPresent(annotationClass));
 
         Annotation annotation = aClass.getAnnotation(annotationClass);
 
         Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, ABI_VERSION_FIELD_NAME);
         assertNotNull(version);
-        assertTrue("KotlinSyntheticClass annotation is written with an unsupported format", AbiVersionUtil.isAbiVersionCompatible(version));
+        assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
+                   AbiVersionUtil.isAbiVersionCompatible(version));
 
         Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KIND_FIELD_NAME);
         assertNotNull(actualKind);
-        assertEquals("KotlinSyntheticClass annotation has the wrong kind", expectedKind.toString(), actualKind.toString());
+        assertEquals("Annotation " + annotationFqName + " has the wrong kind", expectedKind, actualKind.toString());
     }
 }

@@ -45,6 +45,19 @@ public final class JvmAnnotationNames {
 
     public static class KotlinClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinClass");
+        public static final ClassId KIND_CLASS_ID =
+                ClassId.topLevel(CLASS_NAME.getFqNameForClassNameWithoutDollars()).createNestedClassId(Name.identifier("Kind"));
+        public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
+
+        /**
+         * This enum duplicates {@link kotlin.jvm.internal.KotlinClass.Kind}. Both places should be updated simultaneously.
+         */
+        public enum Kind {
+            CLASS,
+            LOCAL_CLASS,
+            ANONYMOUS_OBJECT,
+            ;
+        }
     }
 
     public static class KotlinSyntheticClass {
@@ -54,8 +67,7 @@ public final class JvmAnnotationNames {
         public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
 
         /**
-         * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}, because this code can't depend on "runtime.jvm".
-         * Both places should be updated simultaneously
+         * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}. Both places should be updated simultaneously.
          */
         public enum Kind {
             PACKAGE_PART,
@@ -66,8 +78,6 @@ public final class JvmAnnotationNames {
             CALLABLE_REFERENCE_WRAPPER,
             LOCAL_FUNCTION,
             ANONYMOUS_FUNCTION,
-            LOCAL_CLASS,
-            ANONYMOUS_OBJECT,
             ;
         }
     }

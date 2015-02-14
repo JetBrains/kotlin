@@ -59,6 +59,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     private String[] annotationData = null;
     private KotlinClassHeader.Kind headerKind = null;
+    private KotlinClass.Kind classKind = null;
     private KotlinSyntheticClass.Kind syntheticClassKind = null;
 
     @Nullable
@@ -68,7 +69,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new KotlinClassHeader(headerKind, version, null, syntheticClassKind);
+            return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind);
         }
 
         if ((headerKind == CLASS || headerKind == PACKAGE_FACADE) && annotationData == null) {
@@ -77,7 +78,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        return new KotlinClassHeader(headerKind, version, annotationData, syntheticClassKind);
+        return new KotlinClassHeader(headerKind, version, annotationData, classKind, syntheticClassKind);
     }
 
     @Nullable
@@ -133,11 +134,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else {
                 unexpectedArgument(name);
             }
-        }
-
-        @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            unexpectedEnumArgument(name, enumClassId, enumEntryName);
         }
 
         @Override
@@ -203,11 +199,25 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         public ClassHeaderReader() {
             super(KotlinClass.CLASS_NAME);
         }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+            if (KotlinClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
+                classKind = valueOfOrNull(KotlinClass.Kind.class, enumEntryName.asString());
+                if (classKind != null) return;
+            }
+            unexpectedEnumArgument(name, enumClassId, enumEntryName);
+        }
     }
 
     private class PackageHeaderReader extends HeaderAnnotationArgumentVisitor {
         public PackageHeaderReader() {
             super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE));
+        }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+            unexpectedEnumArgument(name, enumClassId, enumEntryName);
         }
     }
 
@@ -218,7 +228,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if (enumClassId.equals(KotlinSyntheticClass.KIND_CLASS_ID) && name.asString().equals(KIND_FIELD_NAME)) {
+            if (KotlinSyntheticClass.KIND_CLASS_ID.equals(enumClassId) && KIND_FIELD_NAME.equals(name.asString())) {
                 syntheticClassKind = valueOfOrNull(KotlinSyntheticClass.Kind.class, enumEntryName.asString());
                 if (syntheticClassKind != null) return;
             }
