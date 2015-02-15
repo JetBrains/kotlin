@@ -518,6 +518,8 @@ public native trait HTMLImageElement : HTMLElement {
     public native var hspace: Double
     public native var isMap: Boolean
     public native var longDesc: String
+    public native var naturalHeight: Int
+    public native var naturalWidth: Int
     public native var src: String
     public native var useMap: String
     public native var vspace: Double
