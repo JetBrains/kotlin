@@ -6,7 +6,7 @@ import org.w3c.dom.Element
 public native trait HTMLCanvasElement : HTMLElement {
     public var width: Double
     public var height: Double
-    public fun getContext(context: String): CanvasContext?
+    public fun getContext(contextId: String, vararg attributes: Any): CanvasContext?
     public fun toDataURL(string: String, args: Any): String
     public fun toDataURL(): String
     public fun toDataURL(string: String): String
