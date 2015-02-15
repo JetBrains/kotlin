@@ -25,11 +25,16 @@ public class File() : Blob() {
 }
 
 native
-public open class Blob() {
+public open class Blob(blobParts:Array<Any>? = null, options:BlobPropertyBag? = null) {
     public val size : Int = noImpl
     public val type : String = noImpl
     //Blob slice(optional long long start,
     //optional long long end,
     //optional DOMString contentType);
     //
+}
+
+native
+public trait BlobPropertyBag {
+    public val type:String
 }
