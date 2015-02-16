@@ -363,8 +363,18 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
-        LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
+    public static JetFile createFile(@NotNull @NonNls final String name, @NotNull String text, @NotNull Project project) {
+        String shortName = name.substring(name.lastIndexOf('/') + 1);
+        shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
+        LightVirtualFile virtualFile = new LightVirtualFile(shortName, JetLanguage.INSTANCE, text) {
+            @NotNull
+            @Override
+            public String getPath() {
+                //TODO: patch LightVirtualFile
+                return "/" + name;
+            }
+        };
+
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         //noinspection ConstantConditions
