@@ -264,7 +264,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             if (!generatedClass.outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
 
             val kotlinClass = generatedClass.outputClass
-            if (kotlinClass == null || !kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
+            if (!kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
 
             val classInternalName = JvmClassName.byClassId(kotlinClass.getClassId()).getInternalName()
             val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
@@ -288,14 +288,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         for (generatedClass in generatedClasses) {
             val outputFile = generatedClass.outputFile
             val outputClass = generatedClass.outputClass
-            val outputClassContents = if (outputClass != null) outputClass.getFileContents() else outputFile.readBytes()
 
             // For package facade classes: we need to report all source files for it, not only currently compiled
             val allSourcesIncludingOld = getOldSourceFiles(generatedClass, previousMappings) + generatedClass.sourceFiles
 
             callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
                                allSourcesIncludingOld.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputClassContents)
+                               ClassReader(outputClass.getFileContents())
             )
         }
 
@@ -321,10 +320,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         var recompilationDecision = DO_NOTHING
         for (generatedClass in generatedClasses) {
-            val outputClass = generatedClass.outputClass
-            if (outputClass == null) continue
-
-            val newDecision = incrementalCaches[generatedClass.target]!!.saveFileToCache(generatedClass.sourceFiles, outputClass)
+            val newDecision = incrementalCaches[generatedClass.target]!!.saveFileToCache(generatedClass.sourceFiles, generatedClass.outputClass)
             recompilationDecision = recompilationDecision.merge(newDecision)
         }
 
@@ -518,5 +514,6 @@ private class GeneratedJvmClass (
         sourceFiles: Collection<File>,
         outputFile: File
 ) : GeneratedFile(target, sourceFiles, outputFile) {
-    val outputClass = LocalFileKotlinClass.create(outputFile)
+    val outputClass = LocalFileKotlinClass.create(outputFile).sure(
+            "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations")
 }
