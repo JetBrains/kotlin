@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static kotlin.KotlinPackage.joinToString;
+
 public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
@@ -346,12 +348,17 @@ public class ErrorUtils {
 
     @NotNull
     public static JetType createErrorType(@NotNull String debugMessage) {
-        return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage));
+        return createErrorTypeWithArguments(debugMessage, Collections.<TypeProjection>emptyList());
     }
 
     @NotNull
     public static JetType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
         return new ErrorTypeImpl(createErrorTypeConstructorWithCustomDebugName(debugName), createErrorScope(debugName));
+    }
+
+    @NotNull
+    public static JetType createErrorTypeWithArguments(@NotNull String debugMessage, @NotNull List<TypeProjection> arguments) {
+        return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage), arguments);
     }
 
     @NotNull
@@ -398,10 +405,20 @@ public class ErrorUtils {
     private static class ErrorTypeImpl implements JetType {
         private final TypeConstructor constructor;
         private final JetScope memberScope;
+        private final List<TypeProjection> arguments;
 
-        private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull JetScope memberScope) {
+        private ErrorTypeImpl(
+                @NotNull TypeConstructor constructor,
+                @NotNull JetScope memberScope,
+                @NotNull List<TypeProjection> arguments
+        ) {
             this.constructor = constructor;
             this.memberScope = memberScope;
+            this.arguments = arguments;
+        }
+
+        private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull JetScope memberScope) {
+            this(constructor, memberScope, Collections.<TypeProjection>emptyList());
         }
 
         @NotNull
@@ -413,7 +430,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public List<TypeProjection> getArguments() {
-            return Collections.emptyList();
+            return arguments;
         }
 
         @Override
@@ -446,7 +463,7 @@ public class ErrorUtils {
 
         @Override
         public String toString() {
-            return constructor.toString();
+            return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "..."));
         }
     }
 

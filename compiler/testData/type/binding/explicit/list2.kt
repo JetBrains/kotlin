@@ -1,7 +1,7 @@
 val foo: List<String, List<Int>> = null!!
 /*
 psi: List<String, List<Int>>
-type: [ERROR : List<String, List<Int>>]
+type: [ERROR : List]<String, List<Int>>
     typeParameter: null
     typeProjection: String
     psi: String
