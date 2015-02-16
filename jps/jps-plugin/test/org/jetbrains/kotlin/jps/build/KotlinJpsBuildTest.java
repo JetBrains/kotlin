@@ -324,19 +324,19 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     }
 
     public void testKotlinJavaProject() {
-        doTest();
+        doTestWithRuntime();
     }
 
     public void testJKJProject() {
-        doTest();
+        doTestWithRuntime();
     }
 
     public void testKJKProject() {
-        doTest();
+        doTestWithRuntime();
     }
 
     public void testKJCircularProject() {
-        doTest();
+        doTestWithRuntime();
     }
 
     public void testJKJInheritanceProject() {
