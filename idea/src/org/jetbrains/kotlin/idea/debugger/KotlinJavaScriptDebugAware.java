@@ -17,24 +17,14 @@
 package org.jetbrains.kotlin.idea.debugger;
 
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.jetbrains.javascript.debugger.JavaScriptDebugAware;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class KotlinJavaScriptDebugAware extends JavaScriptDebugAware {
     @Nullable
     @Override
-    public FileType getFileType() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public XLineBreakpointType<?> getBreakpointTypeClass(@NotNull Project project) {
-        return XBreakpointType.EXTENSION_POINT_NAME.findExtension(JavaLineBreakpointType.class);
+    public Class<? extends XLineBreakpointType<?>> getBreakpointTypeClass() {
+        return JavaLineBreakpointType.class;
     }
 }
