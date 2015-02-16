@@ -30,7 +30,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/references")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ReferenceResolveTestGenerated.DelegatedPropertyAccessors.class, ReferenceResolveTestGenerated.ForLoopIn.class, ReferenceResolveTestGenerated.Invoke.class})
+@InnerTestClasses({
+        ReferenceResolveTestGenerated.DelegatedPropertyAccessors.class,
+        ReferenceResolveTestGenerated.ForLoopIn.class,
+        ReferenceResolveTestGenerated.Invoke.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInReferences() throws Exception {
@@ -321,7 +325,10 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({DelegatedPropertyAccessors.InSource.class, DelegatedPropertyAccessors.InStandardLibrary.class})
+    @InnerTestClasses({
+            DelegatedPropertyAccessors.InSource.class,
+            DelegatedPropertyAccessors.InStandardLibrary.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
@@ -403,7 +410,11 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("idea/testData/resolve/references/forLoopIn")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({ForLoopIn.InBuiltIns.class, ForLoopIn.InLibrary.class, ForLoopIn.InSource.class})
+    @InnerTestClasses({
+            ForLoopIn.InBuiltIns.class,
+            ForLoopIn.InLibrary.class,
+            ForLoopIn.InSource.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ForLoopIn extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInForLoopIn() throws Exception {

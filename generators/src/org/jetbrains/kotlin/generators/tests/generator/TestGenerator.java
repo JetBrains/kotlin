@@ -212,22 +212,21 @@ public class TestGenerator {
     private static void generateInnerClassesAnnotation(Printer p, TestClassModel testClassModel) {
         Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
         if (innerTestClasses.isEmpty()) return;
-        p.print("@InnerTestClasses({");
+        p.println("@InnerTestClasses({");
 
-        boolean isFirst = true;
+        p.pushIndent();
+        p.pushIndent();
+
         for (TestClassModel innerTestClass : innerTestClasses) {
             if (!innerTestClass.isEmpty()) {
-                if (!isFirst) {
-                    p.printWithNoIndent(", ");
-                }
-                else {
-                    isFirst = false;
-                }
-
-                p.printWithNoIndent(testClassModel.getName(), ".", innerTestClass.getName(), ".class");
+                p.println(testClassModel.getName(), ".", innerTestClass.getName(), ".class,");
             }
         }
-        p.printlnWithNoIndent("})");
+
+
+        p.popIndent();
+        p.popIndent();
+        p.println("})");
     }
 
     private static void generateSuppressAllWarnings(Printer p) {

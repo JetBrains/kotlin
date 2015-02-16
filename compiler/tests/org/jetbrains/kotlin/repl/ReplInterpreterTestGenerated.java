@@ -30,7 +30,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/repl")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ReplInterpreterTestGenerated.Classes.class, ReplInterpreterTestGenerated.Multiline.class, ReplInterpreterTestGenerated.Objects.class, ReplInterpreterTestGenerated.PrimitiveTypes.class, ReplInterpreterTestGenerated.Reflection.class, ReplInterpreterTestGenerated.Regressions.class})
+@InnerTestClasses({
+        ReplInterpreterTestGenerated.Classes.class,
+        ReplInterpreterTestGenerated.Multiline.class,
+        ReplInterpreterTestGenerated.Objects.class,
+        ReplInterpreterTestGenerated.PrimitiveTypes.class,
+        ReplInterpreterTestGenerated.Reflection.class,
+        ReplInterpreterTestGenerated.Regressions.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     public void testAllFilesPresentInRepl() throws Exception {

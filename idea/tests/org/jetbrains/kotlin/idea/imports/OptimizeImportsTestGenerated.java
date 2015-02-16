@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/editor/optimizeImports")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({OptimizeImportsTestGenerated.AllUnderImports.class})
+@InnerTestClasses({
+        OptimizeImportsTestGenerated.AllUnderImports.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     public void testAllFilesPresentInOptimizeImports() throws Exception {

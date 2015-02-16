@@ -30,7 +30,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/constraintSystem")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ConstraintSystemTestGenerated.CheckStatus.class, ConstraintSystemTestGenerated.ComputeValues.class, ConstraintSystemTestGenerated.IntegerValueTypes.class, ConstraintSystemTestGenerated.SeveralVariables.class, ConstraintSystemTestGenerated.Variance.class})
+@InnerTestClasses({
+        ConstraintSystemTestGenerated.CheckStatus.class,
+        ConstraintSystemTestGenerated.ComputeValues.class,
+        ConstraintSystemTestGenerated.IntegerValueTypes.class,
+        ConstraintSystemTestGenerated.SeveralVariables.class,
+        ConstraintSystemTestGenerated.Variance.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest {
     public void testAllFilesPresentInConstraintSystem() throws Exception {

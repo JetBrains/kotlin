@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/highlighter")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({HighlightingTestGenerated.Deprecated.class})
+@InnerTestClasses({
+        HighlightingTestGenerated.Deprecated.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighlightingTestGenerated extends AbstractHighlightingTest {
     public void testAllFilesPresentInHighlighter() throws Exception {

@@ -30,7 +30,23 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({CompileKotlinAgainstInlineKotlinTestGenerated.AnonymousObject.class, CompileKotlinAgainstInlineKotlinTestGenerated.Builders.class, CompileKotlinAgainstInlineKotlinTestGenerated.Capture.class, CompileKotlinAgainstInlineKotlinTestGenerated.Complex.class, CompileKotlinAgainstInlineKotlinTestGenerated.DefaultValues.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaClassClash.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaTransformation.class, CompileKotlinAgainstInlineKotlinTestGenerated.LocalFunInLambda.class, CompileKotlinAgainstInlineKotlinTestGenerated.NoInline.class, CompileKotlinAgainstInlineKotlinTestGenerated.NonLocalReturns.class, CompileKotlinAgainstInlineKotlinTestGenerated.Reified.class, CompileKotlinAgainstInlineKotlinTestGenerated.Simple.class, CompileKotlinAgainstInlineKotlinTestGenerated.Special.class, CompileKotlinAgainstInlineKotlinTestGenerated.Trait.class, CompileKotlinAgainstInlineKotlinTestGenerated.TryCatchFinally.class})
+@InnerTestClasses({
+        CompileKotlinAgainstInlineKotlinTestGenerated.AnonymousObject.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Builders.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Capture.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Complex.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.DefaultValues.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.LambdaClassClash.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.LambdaTransformation.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.LocalFunInLambda.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.NoInline.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.NonLocalReturns.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Reified.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Simple.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Special.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.Trait.class,
+        CompileKotlinAgainstInlineKotlinTestGenerated.TryCatchFinally.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
@@ -330,7 +346,10 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({NonLocalReturns.Deparenthesize.class, NonLocalReturns.TryFinally.class})
+    @InnerTestClasses({
+            NonLocalReturns.Deparenthesize.class,
+            NonLocalReturns.TryFinally.class,
+    })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractCompileKotlinAgainstKotlinTest {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
@@ -402,7 +421,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
 
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({TryFinally.CallSite.class, TryFinally.DeclSite.class, TryFinally.ExceptionTable.class})
+        @InnerTestClasses({
+                TryFinally.CallSite.class,
+                TryFinally.DeclSite.class,
+                TryFinally.ExceptionTable.class,
+        })
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TryFinally extends AbstractCompileKotlinAgainstKotlinTest {
             public void testAllFilesPresentInTryFinally() throws Exception {

@@ -30,7 +30,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/asJava/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({KotlinLightClassTestGenerated.Delegation.class, KotlinLightClassTestGenerated.NullabilityAnnotations.class})
+@InnerTestClasses({
+        KotlinLightClassTestGenerated.Delegation.class,
+        KotlinLightClassTestGenerated.NullabilityAnnotations.class,
+})
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
