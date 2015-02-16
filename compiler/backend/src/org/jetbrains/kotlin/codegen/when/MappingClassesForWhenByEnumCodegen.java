@@ -30,6 +30,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.kotlin.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.WHEN_ON_ENUM_MAPPINGS;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -55,6 +57,8 @@ public class MappingClassesForWhenByEnumCodegen {
 
         generateFields(cb, mappings);
         generateInitialization(cb, mappings);
+
+        writeKotlinSyntheticClassAnnotation(cb, WHEN_ON_ENUM_MAPPINGS);
 
         cb.done();
     }

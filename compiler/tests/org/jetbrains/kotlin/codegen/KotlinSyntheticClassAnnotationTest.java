@@ -143,6 +143,15 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    public void testWhenMappings() {
+        doTestKotlinSyntheticClass(
+                "enum class E { A }\n" +
+                "val x = when (E.A) { E.A -> 1; else -> 0; }",
+                "WhenMappings",
+                WHEN_ON_ENUM_MAPPINGS
+        );
+    }
+
     private void doTestKotlinSyntheticClass(
             @NotNull String code,
             @NotNull String classFilePart,

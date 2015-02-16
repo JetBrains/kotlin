@@ -78,6 +78,7 @@ public final class JvmAnnotationNames {
             CALLABLE_REFERENCE_WRAPPER,
             LOCAL_FUNCTION,
             ANONYMOUS_FUNCTION,
+            WHEN_ON_ENUM_MAPPINGS,
             ;
         }
     }
