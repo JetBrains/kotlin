@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.JetExpression
 import java.util.Collections
-import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
@@ -42,6 +41,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
+import com.intellij.psi.PsiClass
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.refactoring.*
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
@@ -60,6 +64,8 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                            else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
                        } as? JetExpression ?: return null
 
+        val project = callExpr.getProject()
+
         val calleeExpr = when (callExpr) {
                              is JetCallExpression -> callExpr.getCalleeExpression()
                              is JetSimpleNameExpression -> callExpr
@@ -73,16 +79,8 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
                 if (callParent is JetQualifiedExpression && callParent.getSelectorExpression() == callExpr) callParent else callExpr
 
         val context = calleeExpr.analyze()
-        val receiver = callExpr.getCall(context)?.getExplicitReceiver()
-
-        val receiverType = when (receiver) {
-            null, ReceiverValue.NO_RECEIVER -> TypeInfo.Empty
-            is Qualifier -> {
-                val qualifierType = context[BindingContext.EXPRESSION_TYPE, receiver.expression] ?: return null
-                TypeInfo(qualifierType, Variance.IN_VARIANCE)
-            }
-            else -> TypeInfo(receiver.getType(), Variance.IN_VARIANCE)
-        }
+        val receiver = callExpr.getCall(context)?.getExplicitReceiver() ?: ReceiverValue.NO_RECEIVER
+        val receiverType = getReceiverTypeInfo(context, project, receiver) ?: return null
 
         val possibleContainers =
                 if (receiverType is TypeInfo.Empty) {
@@ -120,5 +118,21 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactor
         }
 
         return CreateCallableFromUsageFixes(callExpr, callableInfo)
+    }
+
+    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: ReceiverValue): TypeInfo? {
+        return when {
+            !receiver.exists() -> TypeInfo.Empty
+            receiver is Qualifier -> {
+                val qualifierType = context[BindingContext.EXPRESSION_TYPE, receiver.expression]
+                if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
+
+                val classifier = receiver.classifier as? JavaClassDescriptor ?: return null
+                val javaClass = DescriptorToDeclarationUtil.getDeclaration(project, classifier) as? PsiClass
+                if (javaClass == null || !javaClass.canRefactor()) return null
+                TypeInfo.ClassObjectRequired(TypeInfo(classifier.getDefaultType(), Variance.IN_VARIANCE))
+            }
+            else -> TypeInfo(receiver.getType(), Variance.IN_VARIANCE)
+        }
     }
 }

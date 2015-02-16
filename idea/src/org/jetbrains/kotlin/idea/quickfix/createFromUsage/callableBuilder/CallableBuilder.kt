@@ -769,21 +769,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val newJavaMember: PsiMember = when (declaration) {
                 is JetNamedFunction -> {
                     val method = createJavaMethod(declaration, targetClass)
-
-                    val modifierList = method.getModifierList()
-                    modifierList.setModifierProperty(PsiModifier.STATIC, false)
-                    modifierList.setModifierProperty(PsiModifier.FINAL, false)
-
+                    method.getModifierList().setModifierProperty(PsiModifier.FINAL, false)
                     method
                 }
                 is JetProperty -> {
-                    if (targetClass.isInterface()) return false
                     createJavaField(declaration, targetClass)
                 }
                 else -> return false
             }
 
             declaration.delete()
+
+            newJavaMember.getModifierList().setModifierProperty(PsiModifier.STATIC, callableInfo.receiverTypeInfo.classObjectRequired)
 
             JavaCodeStyleManager.getInstance(project).shortenClassReferences(newJavaMember);
 

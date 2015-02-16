@@ -501,7 +501,7 @@ fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
     with(field.getModifierList()) {
         val templateModifiers = template.getModifierList()
         setModifierProperty(VisibilityUtil.getVisibilityModifier(templateModifiers), true)
-        if (!property.isVar()) {
+        if (!property.isVar() || targetClass.isInterface()) {
             setModifierProperty(PsiModifier.FINAL, true)
         }
         copyModifierListItems(templateModifiers, this, false)

@@ -355,6 +355,24 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     doTestWithExtraFile(fileName);
                 }
 
+                @TestMetadata("staticExtensionFunOnJavaClass.before.Main.kt")
+                public void testStaticExtensionFunOnJavaClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/staticExtensionFunOnJavaClass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticFunOnJavaClass.before.Main.kt")
+                public void testStaticFunOnJavaClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/staticFunOnJavaClass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticFunOnJavaInterface.before.Main.kt")
+                public void testStaticFunOnJavaInterface() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/staticFunOnJavaInterface.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
             }
 
         }
@@ -400,6 +418,30 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 @TestMetadata("extensionValOnJavaType.before.Main.kt")
                 public void testExtensionValOnJavaType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionValOnJavaType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticExtensionValOnJavaType.before.Main.kt")
+                public void testStaticExtensionValOnJavaType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/staticExtensionValOnJavaType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticValOnJavaClass.before.Main.kt")
+                public void testStaticValOnJavaClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/staticValOnJavaClass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticValOnJavaInterface.before.Main.kt")
+                public void testStaticValOnJavaInterface() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/staticValOnJavaInterface.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("staticVarOnJavaInterface.before.Main.kt")
+                public void testStaticVarOnJavaInterface() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/staticVarOnJavaInterface.before.Main.kt");
                     doTestWithExtraFile(fileName);
                 }
 
