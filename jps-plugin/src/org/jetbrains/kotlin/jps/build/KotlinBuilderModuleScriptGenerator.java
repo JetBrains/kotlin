@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -117,7 +118,12 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
-        return getAllDependencies(target).classes().getRoots();
+        return ContainerUtil.filter(getAllDependencies(target).classes().getRoots(), new Condition<File>() {
+            @Override
+            public boolean value(File file) {
+                return file.exists();
+            }
+        });
     }
 
     @NotNull
