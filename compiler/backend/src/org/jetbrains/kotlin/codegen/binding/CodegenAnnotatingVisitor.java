@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
@@ -191,19 +190,19 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-        ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
-        assert descriptor != null :
-                String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
-
         if (enumEntry.getDeclarations().isEmpty()) {
             for (JetDelegationSpecifier specifier : enumEntry.getDelegationSpecifiers()) {
                 specifier.accept(this);
             }
+            return;
         }
-        else {
-            bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
-            super.visitEnumEntry(enumEntry);
-        }
+
+        ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
+        // working around a problem with shallow analysis
+        if (descriptor == null) return;
+
+        bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
+        super.visitEnumEntry(enumEntry);
     }
 
     @Override
