@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -26,14 +25,15 @@ import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateHasNextFunctionActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateHasNextFunctionActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
         val returnType = TypeInfo(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFix(forExpr, FunctionInfo("hasNext", ownerType, returnType))
+        return CreateCallableFromUsageFixes(forExpr, FunctionInfo("hasNext", ownerType, returnType))
     }
 }

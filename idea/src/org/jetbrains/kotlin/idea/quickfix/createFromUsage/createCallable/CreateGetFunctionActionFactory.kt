@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.idea.quickfix.QuickFixUtil
@@ -24,9 +23,10 @@ import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import java.util.Collections
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateGetFunctionActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
         val arrayExpr = accessExpr.getArrayExpression() ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
@@ -36,6 +36,6 @@ object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(accessExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFix(accessExpr, FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFixes(accessExpr, FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters))
     }
 }

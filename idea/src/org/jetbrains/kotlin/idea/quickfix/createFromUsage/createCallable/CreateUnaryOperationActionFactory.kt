@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -24,9 +23,10 @@ import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetUnaryExpression
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-public object CreateUnaryOperationActionFactory: JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+public object CreateUnaryOperationActionFactory: JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val callExpr = diagnostic.getPsiElement().getParent() as? JetUnaryExpression ?: return null
         val token = callExpr.getOperationToken() as JetToken
         val operationName = OperatorConventions.getNameForOperationSymbol(token) ?: return null
@@ -36,6 +36,6 @@ public object CreateUnaryOperationActionFactory: JetSingleIntentionActionFactory
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFix(callExpr, FunctionInfo(operationName.asString(), receiverType, returnType))
+        return CreateCallableFromUsageFixes(callExpr, FunctionInfo(operationName.asString(), receiverType, returnType))
     }
 }

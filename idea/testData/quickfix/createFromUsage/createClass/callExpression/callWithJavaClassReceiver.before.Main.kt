@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "false"
-// ACTION: Create function 'Foo'
+// ACTION: Create extension function 'Foo'
 // ACTION: Convert to expression body
 // ERROR: Unresolved reference: Foo
 

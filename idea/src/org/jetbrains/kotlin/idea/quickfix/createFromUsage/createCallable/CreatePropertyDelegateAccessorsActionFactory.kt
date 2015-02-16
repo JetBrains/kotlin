@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
@@ -33,9 +32,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreatePropertyDelegateAccessorsActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreatePropertyDelegateAccessorsActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val expression = diagnostic.getPsiElement() as? JetExpression ?: return null
         val context = expression.analyze()
         [suppress("UNCHECKED_CAST")]
@@ -79,6 +79,6 @@ object CreatePropertyDelegateAccessorsActionFactory : JetSingleIntentionActionFa
             callableInfos.add(setterInfo)
         }
 
-        return CreateCallableFromUsageFix(expression, callableInfos)
+        return CreateCallableFromUsageFixes(expression, callableInfos)
     }
 }

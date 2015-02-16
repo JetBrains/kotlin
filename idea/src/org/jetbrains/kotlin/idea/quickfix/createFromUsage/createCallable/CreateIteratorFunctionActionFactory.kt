@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetFile
@@ -30,9 +29,10 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.Collections
 import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateIteratorFunctionActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val file = diagnostic.getPsiFile() as? JetFile ?: return null
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
         val iterableExpr = forExpr.getLoopRange() ?: return null
@@ -48,6 +48,6 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
         val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isMarkedNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFix(forExpr, FunctionInfo("iterator", iterableType, returnType))
+        return CreateCallableFromUsageFixes(forExpr, FunctionInfo("iterator", iterableType, returnType))
     }
 }

@@ -1,4 +1,4 @@
-// "Create function 'foo'" "true"
+// "Create extension function 'foo'" "true"
 
 class A<T>(val n: T)
 

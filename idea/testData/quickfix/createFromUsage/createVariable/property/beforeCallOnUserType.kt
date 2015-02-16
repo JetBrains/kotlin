@@ -1,4 +1,5 @@
 // "Create property 'foo'" "false"
+// ACTION: Create extension function 'bar'
 // ACTION: Create function 'bar'
 // ACTION: Replace with infix function call
 // ERROR: Unresolved reference: bar

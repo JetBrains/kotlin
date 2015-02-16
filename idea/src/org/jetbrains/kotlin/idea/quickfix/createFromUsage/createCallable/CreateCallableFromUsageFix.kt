@@ -28,16 +28,21 @@ import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.psi.JetClassBody
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.HashSet
 import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.psi.PsiClass
+import java.util.Collections
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import com.intellij.psi.PsiElement
 
 public class CreateCallableFromUsageFix(
         originalExpression: JetExpression,
-        val callableInfos: List<CallableInfo>) : CreateFromUsageFixBase(originalExpression) {
+        val callableInfos: List<CallableInfo>,
+        val isExtension: Boolean
+) : CreateFromUsageFixBase(originalExpression) {
     {
+        assert (callableInfos.isNotEmpty(), "No CallableInfos: ${JetPsiUtil.getElementTextWithContext(originalExpression)}")
         if (callableInfos.size > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
@@ -45,6 +50,13 @@ public class CreateCallableFromUsageFix(
             val possibleContainerSet = callableInfos.mapTo(HashSet<List<JetElement>>()) { it.possibleContainers }
             if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
+    }
+
+    private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
+        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor) ?: return null
+        if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
+        return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
     override fun getText(): String {
@@ -56,14 +68,31 @@ public class CreateCallableFromUsageFix(
             }
             "$kind '${it.name}'"
         }
+        return JetBundle.message(
+                "create.0.from.usage",
+                renderedCallables.joinToString(prefix = if (isExtension) "extension " else "")
+        )
+    }
 
-        return JetBundle.message("create.0.from.usage", renderedCallables.joinToString())
+    fun isAvailable(): Boolean {
+        val callableInfo = callableInfos.first()
+        val receiverInfo = callableInfo.receiverTypeInfo
+
+        if (receiverInfo is TypeInfo.Empty) return !isExtension
+
+        val file = element.getContainingFile() as JetFile
+        val project = file.getProject()
+        val callableBuilder =
+                CallableBuilderConfiguration(callableInfos, element as JetExpression, file, null, isExtension).createBuilder()
+        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
+        return receiverTypeCandidates.any { getDeclarationIfApplicable(project, it) != null }
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
         val callableInfo = callableInfos.first()
 
-        val callableBuilder = CallableBuilderConfiguration(callableInfos, element as JetExpression, file!!, editor!!).createBuilder()
+        val callableBuilder =
+                CallableBuilderConfiguration(callableInfos, element as JetExpression, file!!, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
@@ -74,11 +103,7 @@ public class CreateCallableFromUsageFix(
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates
-                    .map { candidate ->
-                        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
-                        val declaration = DescriptorToDeclarationUtil.getDeclaration(project, descriptor)
-                        if (declaration is JetClassOrObject || declaration is PsiClass) candidate to declaration else null
-                    }
+                    .map { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
                     .filterNotNull()
 
             chooseContainerElementIfNecessary(containers, editor, popupTitle, false, { it.second }) {
@@ -96,9 +121,19 @@ public class CreateCallableFromUsageFix(
     }
 }
 
-public fun CreateCallableFromUsageFix(
+public fun CreateCallableFromUsageFixes(
+        originalExpression: JetExpression,
+        callableInfos: List<CallableInfo>
+) : List<CreateCallableFromUsageFix> {
+    return listOf(
+            CreateCallableFromUsageFix(originalExpression, callableInfos, false),
+            CreateCallableFromUsageFix(originalExpression, callableInfos, true)
+    ).filter { it.isAvailable() }
+}
+
+public fun CreateCallableFromUsageFixes(
         originalExpression: JetExpression,
         callableInfo: CallableInfo
-) : CreateCallableFromUsageFix {
-    return CreateCallableFromUsageFix(originalExpression, callableInfo.singletonOrEmptyList())
+) : List<CreateCallableFromUsageFix> {
+    return CreateCallableFromUsageFixes(originalExpression, Collections.singletonList(callableInfo))
 }

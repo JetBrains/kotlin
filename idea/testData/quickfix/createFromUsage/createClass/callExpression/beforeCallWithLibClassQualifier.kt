@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "false"
-// ACTION: Create function 'Foo'
+// ACTION: Create extension function 'Foo'
 // ACTION: Replace with infix function call
 // ACTION: Split property declaration
 // ERROR: Unresolved reference: Foo

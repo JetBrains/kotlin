@@ -68,10 +68,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.idea.util.isUnit
 import com.intellij.openapi.editor.ScrollType
-import com.intellij.openapi.editor.LogicalPosition
-import com.intellij.openapi.editor.actions.EditorActionUtil
-import com.intellij.openapi.editor.actions.LineEndAction
-import com.intellij.openapi.editor.actions.EnterAction
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
@@ -122,18 +118,10 @@ class CallableBuilderConfiguration(
         val callableInfos: List<CallableInfo>,
         val originalElement: JetElement,
         val currentFile: JetFile,
-        val currentEditor: Editor,
+        val currentEditor: Editor?,
+        val isExtension: Boolean = false,
         val enableSubstitutions: Boolean = true
 )
-
-fun CallableBuilderConfiguration(
-        callableInfo: CallableInfo,
-        originalExpression: JetExpression,
-        currentFile: JetFile,
-        currentEditor: Editor
-): CallableBuilderConfiguration {
-    return CallableBuilderConfiguration(Collections.singletonList(callableInfo), originalExpression, currentFile, currentEditor)
-}
 
 trait CallablePlacement {
     class WithReceiver(val receiverTypeCandidate: TypeCandidate): CallablePlacement
@@ -207,6 +195,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     fun build() {
         try {
+            assert (config.currentEditor != null, "Can't run build() without editor")
             if (finished) throw IllegalStateException("Current builder has already finished")
             buildNext(config.callableInfos.iterator())
         }
@@ -217,7 +206,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     private inner class Context(val callableInfo: CallableInfo) {
         val skipReturnType: Boolean
-        val isExtension: Boolean
         val containingFile: JetFile
         val containingFileEditor: Editor
         val containingElement: JetElement
@@ -233,7 +221,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val placement = placement
             when {
                 placement is CallablePlacement.NoReceiver -> {
-                    isExtension = false
                     containingElement = placement.containingElement
                     receiverClassDescriptor = (containingElement as? JetClassOrObject)?.let { currentFileContext[BindingContext.CLASS, it] }
                 }
@@ -241,8 +228,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     receiverClassDescriptor =
                             placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.classDescriptorToDeclaration(it) }
-                    isExtension = !(classDeclaration is JetClassOrObject && classDeclaration.isWritable())
-                    containingElement = if (isExtension) config.currentFile else classDeclaration as JetElement
+                    containingElement = if (config.isExtension) config.currentFile else classDeclaration as JetElement
                 }
                 else -> throw IllegalArgumentException("Unexpected placement: $placement")
             }
@@ -254,10 +240,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 containingFileEditor = FileEditorManager.getInstance(config.currentFile.getProject())!!.getSelectedTextEditor()!!
             }
             else {
-                containingFileEditor = config.currentEditor
+                containingFileEditor = config.currentEditor!!
             }
 
-            val scope = if (isExtension || receiverClassDescriptor == null) {
+            val scope = if (config.isExtension || receiverClassDescriptor == null) {
                 currentFileModule.getPackage(config.currentFile.getPackageFqName())!!.getMemberScope()
             }
             else {
@@ -531,7 +517,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         private fun setupTypeReferencesForShortening(declaration: JetNamedDeclaration,
                                                      typeRefsToShorten: MutableList<JetElement>,
                                                      parameterTypeExpressions: List<TypeExpression>) {
-            if (isExtension) {
+            if (config.isExtension) {
                 val receiverTypeRef = JetPsiFactory(declaration).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
                 replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
 

@@ -1,4 +1,4 @@
-// "Create function 'foo'" "true"
+// "Create extension function 'foo'" "true"
 
 fun test() {
     val a: Int = Unit.foo(2)

@@ -112,7 +112,7 @@ public class CreateClassFromUsageFix(
 
             val constructorInfo = ConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(
-                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, kind == PLAIN_CLASS || kind == TRAIT
+                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == TRAIT
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
             CommandProcessor.getInstance().executeCommand(project, { builder.build() }, getText(), null)

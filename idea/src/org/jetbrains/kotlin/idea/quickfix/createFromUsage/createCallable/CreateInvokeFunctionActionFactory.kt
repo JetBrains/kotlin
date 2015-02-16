@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.types.Variance
@@ -25,9 +24,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import java.util.Collections
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateInvokeFunctionActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateInvokeFunctionActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val callExpr = diagnostic.getPsiElement().getParent() as? JetCallExpression ?: return null
 
         val expectedType = Errors.FUNCTION_EXPECTED.cast(diagnostic).getB()
@@ -44,6 +44,6 @@ object CreateInvokeFunctionActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFix(callExpr, FunctionInfo("invoke", receiverType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFixes(callExpr, FunctionInfo("invoke", receiverType, returnType, Collections.emptyList(), parameters))
     }
 }

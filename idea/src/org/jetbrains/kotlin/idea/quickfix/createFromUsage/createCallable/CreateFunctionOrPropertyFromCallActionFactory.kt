@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetCallExpression
@@ -42,9 +41,10 @@ import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagElement = diagnostic.getPsiElement()
         if (PsiTreeUtil.getParentOfType(diagElement, javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>()) != null) return null
 
@@ -119,6 +119,6 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
             else -> return null
         }
 
-        return CreateCallableFromUsageFix(callExpr, callableInfo)
+        return CreateCallableFromUsageFixes(callExpr, callableInfo)
     }
 }

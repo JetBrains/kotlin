@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.psi.JetBinaryExpression
@@ -27,9 +26,10 @@ import java.util.Collections
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-public object CreateBinaryOperationActionFactory: JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+public object CreateBinaryOperationActionFactory: JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val callExpr = diagnostic.getPsiElement().getParent() as? JetBinaryExpression ?: return null
         val token = callExpr.getOperationToken() as JetToken
         val operationName = when (token) {
@@ -54,6 +54,6 @@ public object CreateBinaryOperationActionFactory: JetSingleIntentionActionFactor
             else -> TypeInfo(callExpr, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
-        return CreateCallableFromUsageFix(callExpr, FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFixes(callExpr, FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters))
     }
 }

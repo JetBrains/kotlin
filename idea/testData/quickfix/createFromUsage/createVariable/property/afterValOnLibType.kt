@@ -1,4 +1,4 @@
-// "Create property 'foo'" "true"
+// "Create extension property 'foo'" "true"
 // ERROR: Property must be initialized
 
 class A<T>(val n: T)

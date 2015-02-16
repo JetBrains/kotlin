@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.resolve.dataClassUtils.*
@@ -26,9 +25,10 @@ import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateComponentFunctionActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+object CreateComponentFunctionActionFactory : JetIntentionActionsFactory() {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
         val name = diagnosticWithParameters.getA()
         if (!isComponentLike(name)) return null
@@ -50,6 +50,6 @@ object CreateComponentFunctionActionFactory : JetSingleIntentionActionFactory() 
         val entry = entries[componentNumber]
         val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return CreateCallableFromUsageFix(multiDeclaration!!, FunctionInfo(name.getIdentifier(), ownerType, returnType))
+        return CreateCallableFromUsageFixes(multiDeclaration!!, FunctionInfo(name.getIdentifier(), ownerType, returnType))
     }
 }
