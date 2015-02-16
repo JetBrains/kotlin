@@ -20,11 +20,6 @@ class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
         return null
     }
 
-    override fun visitClassObject(classObject: JetClassObject, data: StringBuilder?): Void? {
-        println("============ class $classObject data $data")
-        return super.visitClassObject(classObject, data)
-    }
-
     override fun visitClass(klass: JetClass, data: StringBuilder?): Void? {
         println("============ class $klass")
         acceptChildren(klass, data)
