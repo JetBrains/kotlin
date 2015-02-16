@@ -16,21 +16,10 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.builders.JpsBuildTestCase
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 
-public class SimpleKotlinJpsBuildTest : JpsBuildTestCase() {
-    override fun setUp() {
-        super.setUp()
-        System.setProperty("kotlin.jps.tests", "true")
-    }
-
-    override fun tearDown() {
-        System.clearProperty("kotlin.jps.tests")
-        super.tearDown()
-    }
-
+public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     public fun testThreeModulesNoReexport() {
         val aFile = createFile("a/a.kt",
                                """
@@ -69,6 +58,7 @@ public class SimpleKotlinJpsBuildTest : JpsBuildTestCase() {
         val c = addModule("c", PathUtil.getParentPath(cFile))
         c.getDependenciesList().addModuleDependency(b)
 
+        addKotlinRuntimeDependency()
         rebuildAll()
     }
 
@@ -104,6 +94,7 @@ public class SimpleKotlinJpsBuildTest : JpsBuildTestCase() {
                 b.getDependenciesList().addModuleDependency(a)
         ).setExported(false)
 
+        addKotlinRuntimeDependency()
         rebuildAll()
     }
 }
