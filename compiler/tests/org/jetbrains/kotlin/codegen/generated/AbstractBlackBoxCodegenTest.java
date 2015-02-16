@@ -83,27 +83,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         doTestMultiFile(files);
     }
 
-    private void doTestMultiFile(@NotNull List<String> files) {
+    protected void doTestMultiFile(@NotNull List<String> files) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         Collections.sort(files);
         loadFiles(ArrayUtil.toStringArray(files));
         blackBox();
-    }
-
-    public void doTestMultiFileWithInlineCheck(@NotNull String firstFileName) {
-        firstFileName = relativePath(new File(firstFileName));
-        List<String> inputFiles = new ArrayList<String>(2);
-        inputFiles.add(firstFileName);
-        inputFiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
-
-        doTestMultiFile(inputFiles);
-        try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
-        }
-        catch (Throwable e) {
-            System.out.println(generateToText());
-            throw UtilsPackage.rethrow(e);
-        }
     }
 
     private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {

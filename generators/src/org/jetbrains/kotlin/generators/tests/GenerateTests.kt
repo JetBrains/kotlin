@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxInlineCodegenTest
 import org.jetbrains.kotlin.completion.*
 import org.jetbrains.kotlin.completion.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.kotlin.completion.handlers.AbstractCompletionCharFilterTest
@@ -90,10 +91,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.js.test.semantics.*
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
-import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
@@ -165,11 +163,11 @@ fun main(args: Array<String>) {
             model("codegen/box")
         }
 
-        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxInlineCodegenTestGenerated") {
+        testClass(javaClass<AbstractBlackBoxInlineCodegenTest>(), "BlackBoxInlineCodegenTestGenerated") {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doTestMultiFileWithInlineCheck")
         }
 
-        testClass(javaClass<AbstractCompileKotlinAgainstKotlinTest>(), "CompileKotlinAgainstInlineKotlinTestGenerated") {
+        testClass(javaClass<AbstractCompileKotlinAgainstInlineKotlinTest>(), "CompileKotlinAgainstInlineKotlinTestGenerated") {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 

@@ -193,4 +193,9 @@ public class ClassFileFactory implements OutputFileCollection {
             generators.remove(classInternalName + ".class");
         }
     }
+
+    @TestOnly
+    public List<JetFile> getInputFiles() {
+        return state.getFiles();
+    }
 }
