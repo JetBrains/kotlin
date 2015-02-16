@@ -167,28 +167,26 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (IncrementalCompilation.ENABLED) {
-            val fileFilter = FileFilter { file ->
-                KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
-            }
-
             when (recompilationDecision) {
-                RECOMPILE_ALL_CHUNK_AND_DEPENDANTS -> {
+                RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS -> {
                     allCompiledFiles.clear()
                     FSOperations.markDirtyRecursively(context, chunk)
                 }
-                RECOMPILE_OTHERS_WITH_DEPENDANTS -> {
+                RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS -> {
                     // Workaround for IDEA 14.0-14.0.2: extended version of markDirtyRecursively is not available
                     try {
                         Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
 
-                        FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, fileFilter)
+                        FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, { file -> file !in allCompiledFiles })
                     } catch (e: ClassNotFoundException) {
                         allCompiledFiles.clear()
                         FSOperations.markDirtyRecursively(context, chunk)
                     }
                 }
-                RECOMPILE_OTHERS_IN_CHUNK -> {
-                    FSOperations.markDirty(context, chunk, fileFilter)
+                RECOMPILE_OTHER_KOTLIN_IN_CHUNK -> {
+                    FSOperations.markDirty(context, chunk, { file ->
+                        KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
+                    })
                 }
             }
             return ADDITIONAL_PASS_REQUIRED
