@@ -637,7 +637,7 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <file file="${kotlin-home}/lib/${compiler.manifest.class.path}"/>
+                <file file="${bootstrap.runtime}"/>
                 <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
