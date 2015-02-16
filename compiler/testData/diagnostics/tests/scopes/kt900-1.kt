@@ -1,7 +1,7 @@
 // import all members from class object
 package c
 
-import c.A.*
+import c.A.Default.B
 import c.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>M<!>.*
 
 fun foo() {

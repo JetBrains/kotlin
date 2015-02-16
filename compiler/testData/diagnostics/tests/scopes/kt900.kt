@@ -36,8 +36,8 @@ object N {
 package b
 
 import b.N.M
-import b.A.P
-import b.A.B
+import b.A.Default.P
+import b.A.Default.B
 
 fun foo() {
     val <!UNUSED_VARIABLE!>b<!> : B = B()

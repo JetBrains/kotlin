@@ -10,4 +10,4 @@ class A {
     }
 }
 
-A.Anno1 A.B.Anno2 class C
+A.Default.Anno1 A.Default.B.Anno2 class C

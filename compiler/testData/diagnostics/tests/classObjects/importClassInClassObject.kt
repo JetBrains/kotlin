@@ -1,6 +1,6 @@
 package f
 
-import f.A.B
+import f.A.Default.B
 
 class A {
     class object {

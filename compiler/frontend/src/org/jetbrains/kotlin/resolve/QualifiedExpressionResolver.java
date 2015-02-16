@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +109,8 @@ public class QualifiedExpressionResolver {
         JetSimpleNameExpression referenceExpression = JetPsiUtil.getLastReference(importedReference);
         if (importDirective.isAllUnder()) {
             if (!canAllUnderImportFrom(descriptors) && referenceExpression != null) {
-                trace.report(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, (ClassDescriptor) descriptors.iterator().next()));
+                ClassDescriptor toReportOn = KotlinPackage.filterIsInstance(descriptors, ClassDescriptor.class).iterator().next();
+                trace.report(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, toReportOn));
             }
 
             if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
@@ -298,11 +300,6 @@ public class QualifiedExpressionResolver {
         results.add(lookupSimpleNameReference(selector, scope, lookupMode, false));
 
         results.add(lookupSimpleNameReference(selector, descriptor.getStaticScope(), lookupMode, true));
-
-        ClassDescriptor classObject = descriptor.getDefaultObjectDescriptor();
-        if (classObject != null) {
-            addResultsForClass(results, selector, lookupMode, classObject);
-        }
     }
 
 

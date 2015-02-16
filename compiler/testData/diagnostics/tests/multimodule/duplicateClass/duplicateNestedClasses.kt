@@ -21,10 +21,10 @@ public class M1 {
     public val a: A = A()
     public val b: A.B = A.B()
     public val c: A.C = A.C
-    public val d: A.D = A.D()
-    public val e: A.D.E = A.D.E
+    public val d: A.Default.D = A.D()
+    public val e: A.Default.D.E = A.D.E
     public val f: A.F = A().F()
-    public val g: A.G = A.G()
+    public val g: A.Default.G = A.G()
 }
 
 // MODULE: m2
@@ -47,8 +47,8 @@ public class A {
 public fun a(p: A) {}
 public fun b(p: A.B) {}
 public fun c(p: A.C) {}
-public fun d(p: A.D) {}
-public fun e(p: A.D.E) {}
+public fun d(p: A.Default.D) {}
+public fun e(p: A.Default.D.E) {}
 public fun f(p: A.F) {}
 public fun g(p: A.G) {}
 

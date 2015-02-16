@@ -37,11 +37,6 @@ public class Importer {
         else if (descriptor is ClassDescriptor && QualifiedExpressionResolver.canAllUnderImportFromClass(descriptor)) {
             allUnderImportScopes.add(descriptor.getStaticScope())
             allUnderImportScopes.add(descriptor.getUnsubstitutedInnerClassesScope())
-
-            val classObjectDescriptor = descriptor.getDefaultObjectDescriptor()
-            if (classObjectDescriptor != null) {
-                allUnderImportScopes.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope())
-            }
         }
     }
 

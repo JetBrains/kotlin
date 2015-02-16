@@ -11,7 +11,7 @@ class A {
     }
 }
 
-fun foo(x : A.Season) : String {
+fun foo(x : A.Default.Season) : String {
     return when (x) {
         A.Season.WINTER -> "winter"
         A.Season.SPRING -> "spring"
