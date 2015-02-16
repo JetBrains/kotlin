@@ -119,9 +119,9 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
             when {
-                inlinesChanged -> RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
-                constantsChanged -> RECOMPILE_OTHERS_WITH_DEPENDANTS
-                protoChanged -> RECOMPILE_OTHERS_IN_CHUNK
+                inlinesChanged -> RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+                constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+                protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
                 else -> DO_NOTHING
             }
 
@@ -589,9 +589,9 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     enum class RecompilationDecision {
         DO_NOTHING
-        RECOMPILE_OTHERS_IN_CHUNK
-        RECOMPILE_OTHERS_WITH_DEPENDANTS
-        RECOMPILE_ALL_CHUNK_AND_DEPENDANTS
+        RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+        RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+        RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
 
         fun merge(other: RecompilationDecision): RecompilationDecision {
             return if (other.ordinal() > this.ordinal()) other else this
