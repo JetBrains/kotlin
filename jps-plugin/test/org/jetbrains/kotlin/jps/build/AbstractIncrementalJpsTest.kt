@@ -72,7 +72,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
-    protected open val customTest: Boolean
+    protected open val allowNoFilesWithSuffixInTestData: Boolean
         get() = false
 
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
@@ -159,7 +159,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            if (customTest) {
+            if (allowNoFilesWithSuffixInTestData) {
                 return listOf(listOf())
             }
             else {

@@ -32,7 +32,7 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedAndFileModified/")
     }
 
-    override val customTest: Boolean
+    override val allowNoFilesWithSuffixInTestData: Boolean
         get() = true
 
     override fun performAdditionalModifications() {
