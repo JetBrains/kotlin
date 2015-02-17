@@ -37,7 +37,7 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
         if (evaluatedExpression != null) {
             return ConstantsPackage.createCompileTimeConstant(
                     evaluatedExpression,
-                    ConstantExpressionEvaluator.OBJECT$.isPropertyCompileTimeConstant(descriptor),
+                    ConstantExpressionEvaluator.isPropertyCompileTimeConstant(descriptor),
                     false,
                     true,
                     descriptor.getType());

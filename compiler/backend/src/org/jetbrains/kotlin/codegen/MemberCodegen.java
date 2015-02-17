@@ -365,7 +365,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         CompileTimeConstant<?> initializerValue;
         if (property.isVar() && initializer != null) {
             BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
-            initializerValue = ConstantExpressionEvaluator.OBJECT$.evaluate(initializer, tempTrace, propertyDescriptor.getType());
+            initializerValue = ConstantExpressionEvaluator.evaluate(initializer, tempTrace, propertyDescriptor.getType());
         }
         else {
             initializerValue = propertyDescriptor.getCompileTimeInitializer();

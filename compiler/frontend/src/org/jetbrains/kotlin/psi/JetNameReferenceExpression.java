@@ -48,13 +48,13 @@ public class JetNameReferenceExpression extends JetExpressionImplStub<KotlinName
         if (stub != null) {
             return stub.getReferencedName();
         }
-        return JetSimpleNameExpressionImpl.OBJECT$.getReferencedNameImpl(this);
+        return JetSimpleNameExpressionImpl.Helper.getReferencedNameImpl(this);
     }
 
     @Override
     @NotNull
     public Name getReferencedNameAsName() {
-        return JetSimpleNameExpressionImpl.OBJECT$.getReferencedNameAsNameImpl(this);
+        return JetSimpleNameExpressionImpl.Helper.getReferencedNameAsNameImpl(this);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class JetNameReferenceExpression extends JetExpressionImplStub<KotlinName
     @NotNull
     @Override
     public IElementType getReferencedNameElementType() {
-        return JetSimpleNameExpressionImpl.OBJECT$.getReferencedNameElementTypeImpl(this);
+        return JetSimpleNameExpressionImpl.Helper.getReferencedNameElementTypeImpl(this);
     }
 
     @Override

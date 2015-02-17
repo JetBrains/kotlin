@@ -130,7 +130,7 @@ public class CompileTimeConstantUtils {
     ) {
         if (expression == null) return false;
         CompileTimeConstant<?> compileTimeConstant =
-                ConstantExpressionEvaluator.OBJECT$.evaluate(expression, trace, KotlinBuiltIns.getInstance().getBooleanType());
+                ConstantExpressionEvaluator.evaluate(expression, trace, KotlinBuiltIns.getInstance().getBooleanType());
         if (!(compileTimeConstant instanceof BooleanValue) || compileTimeConstant.usesVariableAsConstant()) return false;
 
         Boolean value = ((BooleanValue) compileTimeConstant).getValue();

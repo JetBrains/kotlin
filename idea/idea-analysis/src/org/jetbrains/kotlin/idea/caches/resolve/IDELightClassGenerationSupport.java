@@ -90,7 +90,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         Collections.sort(sortedFiles, jetFileComparator);
 
         JetFile file = sortedFiles.get(0);
-        ResolveSessionForBodies session = KotlinCacheService.OBJECT$.getInstance(file.getProject()).getLazyResolveSession(file);
+        ResolveSessionForBodies session = KotlinCacheService.getInstance(file.getProject()).getLazyResolveSession(file);
         forceResolvePackageDeclarations(files, session);
         return new LightClassConstructionContext(session.getBindingContext(), session.getModuleDescriptor());
     }
@@ -98,8 +98,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        ResolveSessionForBodies session =
-                KotlinCacheService.OBJECT$.getInstance(classOrObject.getProject()).getLazyResolveSession(classOrObject);
+        ResolveSessionForBodies session = KotlinCacheService.getInstance(classOrObject.getProject()).getLazyResolveSession(classOrObject);
 
         if (classOrObject.isLocal()) {
             BindingContext bindingContext = session.resolveToElement(classOrObject, BodyResolveMode.FULL);
@@ -278,7 +277,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             IdeaModuleInfo moduleInfo = info.getModuleInfo();
             if (moduleInfo instanceof ModuleSourceInfo) {
                 KotlinLightClassForPackage lightClass =
-                        KotlinLightClassForPackage.OBJECT$.create(psiManager, packageFqName, moduleInfo.contentScope(), files);
+                        KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, moduleInfo.contentScope(), files);
                 if (lightClass == null) continue;
 
                 result.add(lightClass);

@@ -27,6 +27,6 @@ public abstract class JetModuleTypeManager {
 
     public abstract boolean isAndroidGradleModule(@NotNull Module module);
     public boolean isGradleModule(@NotNull Module module) {
-        return ModuleTypeCacheManager.OBJECT$.geInstance(module.getProject()).isGradleModule(module);
+        return ModuleTypeCacheManager.getInstance(module.getProject()).isGradleModule(module);
     }
 }
