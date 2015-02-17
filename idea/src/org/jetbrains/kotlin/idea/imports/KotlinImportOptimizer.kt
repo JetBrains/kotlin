@@ -181,8 +181,9 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 override fun visitJetElement(element: JetElement) {
                     val reference = element.getReference()
                     if (reference is JetReference) {
+                        val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+
                         val targets = reference.resolveToDescriptors()
-                        //TODO: check if it's resolved through alias
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
                             if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages (TODO: is that always true?)
@@ -193,9 +194,12 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                                 if (element.getReceiverExpression() != null) continue
                             }
 
+                            val importableDescriptor = target.getImportableDescriptor()
+                            if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
+
                             if (isAccessibleAsMember(target, element)) continue
 
-                            usedDescriptors.add(target.getImportableDescriptor())
+                            usedDescriptors.add(importableDescriptor)
                         }
                     }
 
