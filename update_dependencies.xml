@@ -94,7 +94,7 @@
         <mkdir dir="dependencies/download"/>
 
         <!-- ProGuard -->
-        <get src="http://downloads.sourceforge.net/project/proguard/proguard/5.1/proguard5.1.zip"
+        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard/5.1/proguard5.1.zip"
              dest="dependencies/download/proguard5.1.zip" usetimestamp="true"/>
 
         <delete file="dependencies/proguard.jar" failonerror="false"/>
