@@ -60,10 +60,13 @@ public abstract class IntentionBasedInspection<T: JetElement>(
                     }
                 }
 
-                holder.registerProblem(targetElement, intention.getText(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix)
+                holder.registerProblem(targetElement, intention.getText(), problemHighlightType, fix)
             }
         }
     }
+
+    protected open val problemHighlightType: ProblemHighlightType
+        get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 }
 
 private fun PsiElement.getOrCreateEditor(): Editor? {
