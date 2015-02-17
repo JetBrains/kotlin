@@ -123,6 +123,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("warningsInDummy.args")
+        public void testWarningsInDummy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningsInDummy.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongAbiVersion.args");
