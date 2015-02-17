@@ -55,9 +55,6 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 if (aliasName != null) {
                     aliasImports.put(aliasName, path.fqnPart())
                 }
-                else {
-                    //TODO: detect other "special" imports
-                }
             }
             this.aliasImports = aliasImports
         }
@@ -105,7 +102,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     else {
                         val useCount = incUseCount(parentFqName)
 
-                        if (descriptor is ClassifierDescriptor) {
+                        if (descriptor is ClassDescriptor) {
                             classNames.add(fqName)
                         }
 
@@ -144,7 +141,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
             }
 
-            //TODO: drop unused aliases
+            //TODO: drop unused aliases?
             aliasImports.mapTo(importsToGenerate) { ImportPath(it.getValue(), false, it.getKey())}
 
             val sortedImportsToGenerate = importsToGenerate.sortBy(importInsertHelper.importSortComparator)
@@ -186,7 +183,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                         val targets = reference.resolveToDescriptors()
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
-                            if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages (TODO: is that always true?)
+                            if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages
 
                             if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
                                 if (element !is JetNameReferenceExpression) continue
