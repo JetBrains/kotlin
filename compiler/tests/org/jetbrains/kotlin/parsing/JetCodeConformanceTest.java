@@ -37,7 +37,7 @@ public class JetCodeConformanceTest extends TestCase {
     private static final List<File> EXCLUDED_FILES_AND_DIRS = Arrays.asList(
             new File("android.tests.dependencies"),
             new File("core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections"),
-            new File("libraries/tools/runtime/target/copied-sources"),
+            new File("libraries/tools/kotlin-reflect/target/copied-sources"),
             new File("dependencies"),
             new File("js/js.translator/qunit/qunit.js"),
             new File("libraries/tools/kotlin-js-tests/src/test/web/qunit.js"),
@@ -47,7 +47,8 @@ public class JetCodeConformanceTest extends TestCase {
             new File("ideaSDK"),
             new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
             new File("compiler/testData/psi/kdoc"),
-            new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java"));
+            new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java")
+    );
     public static final Pattern AUTHOR_JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
 
     public void testParserCode() throws Exception {
@@ -73,7 +74,7 @@ public class JetCodeConformanceTest extends TestCase {
         });
 
         if (!filesWithAuthorJavadoc.isEmpty()) {
-            fail(String.format("%d source files contain @author javadoc tag. Please remove them:\n%s",
+            fail(String.format("%d source files contain @author javadoc tag. Please remove them or exclude in this test:\n%s",
                                filesWithAuthorJavadoc.size(), StringUtil.join(filesWithAuthorJavadoc, "\n")));
         }
     }

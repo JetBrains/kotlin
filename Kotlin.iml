@@ -40,6 +40,7 @@
       <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-maven-plugin-test/target" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-maven-plugin/local-repo" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-maven-plugin/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-reflect/target" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-stdlib-gen/target" />
       <excludeFolder url="file://$MODULE_DIR$/libraries/tools/runtime/target" />
     </content>
