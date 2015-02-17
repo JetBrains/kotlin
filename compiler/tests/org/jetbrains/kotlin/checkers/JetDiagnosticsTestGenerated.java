@@ -4697,15 +4697,39 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("LocalReturnSecondUnit.kt")
+                public void testLocalReturnSecondUnit() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnSecondUnit.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("LocalReturnUnit.kt")
                 public void testLocalReturnUnit() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnit.kt");
                     doTest(fileName);
                 }
 
+                @TestMetadata("LocalReturnUnitAndDontCareType.kt")
+                public void testLocalReturnUnitAndDontCareType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnitAndDontCareType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("LocalReturnUnitWithBodyExpression.kt")
+                public void testLocalReturnUnitWithBodyExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnitWithBodyExpression.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("LocalReturnWithExpectedType.kt")
                 public void testLocalReturnWithExpectedType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("LocalReturnWithExplicitUnit.kt")
+                public void testLocalReturnWithExplicitUnit() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnWithExplicitUnit.kt");
                     doTest(fileName);
                 }
 
@@ -4736,6 +4760,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("SmartCastWithExplicitType.kt")
                 public void testSmartCastWithExplicitType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/SmartCastWithExplicitType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unresolvedReferenceInReturnBlock.kt")
+                public void testUnresolvedReferenceInReturnBlock() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/unresolvedReferenceInReturnBlock.kt");
                     doTest(fileName);
                 }
             }

@@ -47,6 +47,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.kotlin.types.TypeUtils.isDontCarePlaceholder;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createDataFlowInfoForArgumentsForIfCall;
@@ -492,7 +493,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     .replaceContextDependency(INDEPENDENT));
         }
         else {
-            if (expectedType != null && !noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType)) {
+            if (expectedType != null &&
+                !noExpectedType(expectedType) &&
+                !KotlinBuiltIns.isUnit(expectedType) &&
+                !isDontCarePlaceholder(expectedType)) // for lambda with implicit return type Unit
+            {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }

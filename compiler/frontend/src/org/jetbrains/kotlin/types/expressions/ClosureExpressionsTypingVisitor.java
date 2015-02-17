@@ -303,54 +303,65 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                        : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE);
         ExpressionTypingContext newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType);
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType);
+        JetType typeOfBodyExpression = // needed for error reporting
+                components.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
 
-        JetType typeOfBodyExpression = components.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
+        if (declaredReturnType != null) {
+            return declaredReturnType;
+        }
+        else {
+            return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression);
+        }
+    }
 
-        List<JetType> returnedExpressionTypes = Lists.newArrayList(getTypesOfLocallyReturnedExpressions(
-                functionLiteral, context.trace, collectReturns(bodyExpression)));
+    @Nullable
+    private JetType computeReturnTypeBasedOnReturnExpressions(
+            @NotNull JetFunctionLiteral functionLiteral,
+            @NotNull ExpressionTypingContext context,
+            @Nullable JetType typeOfBodyExpression
+    ) {
+        List<JetType> returnedExpressionTypes = Lists.newArrayList();
+
+        boolean hasEmptyReturn = false;
+        Collection<JetReturnExpression> returnExpressions = collectReturns(functionLiteral, context.trace);
+        for (JetReturnExpression returnExpression : returnExpressions) {
+            JetExpression returnedExpression = returnExpression.getReturnedExpression();
+            if (returnedExpression == null) {
+                hasEmptyReturn = true;
+            }
+            else {
+                // the type should have been computed by getBlockReturnedType() above, but can be null, if returnExpression contains some error
+                ContainerUtil.addIfNotNull(returnedExpressionTypes, context.trace.get(EXPRESSION_TYPE, returnedExpression));
+            }
+        }
+
+        if (hasEmptyReturn) {
+            for (JetReturnExpression returnExpression : returnExpressions) {
+                JetExpression returnedExpression = returnExpression.getReturnedExpression();
+                if (returnedExpression != null) {
+                    JetType type = context.trace.get(EXPRESSION_TYPE, returnedExpression);
+                    if (type == null || !KotlinBuiltIns.isUnit(type)) {
+                        context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.getUnitType()));
+                    }
+                }
+            }
+            return components.builtIns.getUnitType();
+        }
+
         ContainerUtil.addIfNotNull(returnedExpressionTypes, typeOfBodyExpression);
 
-        if (declaredReturnType != null) return declaredReturnType;
         if (returnedExpressionTypes.isEmpty()) return null;
         return CommonSupertypes.commonSupertype(returnedExpressionTypes);
     }
 
-    private List<JetType> getTypesOfLocallyReturnedExpressions(
-            final JetFunctionLiteral functionLiteral,
-            final BindingTrace trace,
-            Collection<JetReturnExpression> returnExpressions
+    private static Collection<JetReturnExpression> collectReturns(
+            @NotNull final JetFunctionLiteral functionLiteral,
+            @NotNull final BindingTrace trace
     ) {
-        return ContainerUtil.mapNotNull(returnExpressions, new Function<JetReturnExpression, JetType>() {
-            @Override
-            public JetType fun(JetReturnExpression returnExpression) {
-                JetSimpleNameExpression label = returnExpression.getTargetLabel();
-                if (label == null) {
-                    // No label => non-local return
-                    return null;
-                }
-
-                PsiElement labelTarget = trace.get(BindingContext.LABEL_TARGET, label);
-                if (labelTarget != functionLiteral) {
-                    // Either a local return of inner lambda/function or a non-local return
-                    return null;
-                }
-
-                JetExpression returnedExpression = returnExpression.getReturnedExpression();
-                if (returnedExpression == null) {
-                    return components.builtIns.getUnitType();
-                }
-                JetType returnedType = trace.get(EXPRESSION_TYPE, returnedExpression);
-                assert returnedType != null : "No type for returned expression: " + returnedExpression + ",\n" +
-                                              "the type should have been computed by getBlockReturnedType() above\n" +
-                                              JetPsiUtil.getElementTextWithContext(returnedExpression);
-                return returnedType;
-            }
-        });
-    }
-
-    public static Collection<JetReturnExpression> collectReturns(@NotNull JetExpression expression) {
         Collection<JetReturnExpression> result = Lists.newArrayList();
-        expression.accept(
+        JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
+        assert bodyExpression != null;
+        bodyExpression.accept(
                 new JetTreeVisitor<Collection<JetReturnExpression>>() {
                     @Override
                     public Void visitReturnExpression(
@@ -362,6 +373,22 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 },
                 result
         );
-        return result;
+        return ContainerUtil.mapNotNull(result, new Function<JetReturnExpression, JetReturnExpression>() {
+            @Override
+            public JetReturnExpression fun(@NotNull JetReturnExpression returnExpression) {
+                JetSimpleNameExpression label = returnExpression.getTargetLabel();
+                if (label == null) {
+                    // No label => non-local return
+                    return null;
+                }
+
+                PsiElement labelTarget = trace.get(BindingContext.LABEL_TARGET, label);
+                if (labelTarget != functionLiteral) {
+                    // Either a local return of inner lambda/function or a non-local return
+                    return null;
+                }
+                return returnExpression;
+            }
+        });
     }
 }
