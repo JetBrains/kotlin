@@ -89,14 +89,12 @@ public data class UsagesSearchTarget<out T : PsiElement>(
 }
 
 public trait UsagesSearchFilter {
-    class object {
-        object False: UsagesSearchFilter {
-            override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = false
-        }
+    object False: UsagesSearchFilter {
+        override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = false
+    }
 
-        object True: UsagesSearchFilter {
-            override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = true
-        }
+    object True: UsagesSearchFilter {
+        override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = true
     }
 
     fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean
