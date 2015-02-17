@@ -1,7 +1,7 @@
 fun test(a: Int) {
     val x = run @f{
-      if (a > 0) <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f<!>
-      else <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f Unit<!>
+      if (a > 0) <!RETURN_TYPE_MISMATCH!>return@f<!>
+      else return@f Unit
     }
     x: Unit
 }

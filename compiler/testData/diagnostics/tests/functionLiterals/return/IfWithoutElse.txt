@@ -1,0 +1,6 @@
+package
+
+internal val a: () -> kotlin.Any
+internal val b: () -> kotlin.Int
+internal val c: () -> kotlin.Unit
+internal val flag: kotlin.Boolean = true

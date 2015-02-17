@@ -465,7 +465,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
                 }
 
-                expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunInfo.getSecond());
+                expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunInfo.getSecond(), context);
             }
             else {
                 // Outside a function
@@ -476,16 +476,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else if (labelTargetElement != null) {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
-                expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
+                expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement, context);
                 if (!InlineDescriptorUtils.checkNonLocalReturnUsage(functionDescriptor, expression, context.trace)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
-                }
-                else if (expectedType == NO_EXPECTED_TYPE) {
-                    // expectedType is NO_EXPECTED_TYPE iff the return type of the corresponding function descriptor is not computed yet
-                    // our temporary policy is to prohibit returns in this case. It mostly applies to local returns in lambdas
-                    context.trace.report(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED.on(expression));
                 }
             }
             else {
@@ -517,14 +512,18 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
+    private static JetType getFunctionExpectedReturnType(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull JetElement function,
+            @NotNull ExpressionTypingContext context
+    ) {
         JetType expectedType;
         if (function instanceof JetFunction) {
-            if (((JetFunction) function).getTypeReference() != null || ((JetFunction) function).hasBlockBody()) {
+            JetFunction jetFunction = (JetFunction) function;
+            expectedType = context.trace.get(EXPECTED_RETURN_TYPE, jetFunction);
+
+            if ((expectedType == null) && (jetFunction.getTypeReference() != null || jetFunction.hasBlockBody())) {
                 expectedType = descriptor.getReturnType();
-            }
-            else {
-                expectedType = TypeUtils.NO_EXPECTED_TYPE;
             }
         }
         else {

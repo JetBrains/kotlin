@@ -298,10 +298,11 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // Type-check the body
-        ExpressionTypingContext newContext = context.replaceScope(functionInnerScope)
-                .replaceExpectedType(declaredReturnType != null
-                                     ? declaredReturnType
-                                     : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE));
+        JetType expectedType = declaredReturnType != null
+                       ? declaredReturnType
+                       : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE);
+        ExpressionTypingContext newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType);
+        context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType);
 
         JetType typeOfBodyExpression = components.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
 

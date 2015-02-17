@@ -1,7 +1,7 @@
 fun inlineCallExplicitError(): String {
     inlineFun @lamba {
         if (true) {
-            <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@lamba 2<!>
+            return@lamba 2
         }
         1
     }

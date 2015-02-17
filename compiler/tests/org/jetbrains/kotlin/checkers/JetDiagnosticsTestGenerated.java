@@ -4581,6 +4581,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("returnNullWithReturn.kt")
+            public void testReturnNullWithReturn() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/returnNullWithReturn.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unusedLiteral.kt")
             public void testUnusedLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/unusedLiteral.kt");
@@ -4616,6 +4622,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("ForbiddenNonLocalReturnNoType.kt")
                 public void testForbiddenNonLocalReturnNoType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("IfInReturnedExpression.kt")
+                public void testIfInReturnedExpression() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/IfInReturnedExpression.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("IfWithoutElse.kt")
+                public void testIfWithoutElse() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/IfWithoutElse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("IfWithoutElseWithExplicitType.kt")
+                public void testIfWithoutElseWithExplicitType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/IfWithoutElseWithExplicitType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("LambdaWithParameter.kt")
+                public void testLambdaWithParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LambdaWithParameter.kt");
                     doTest(fileName);
                 }
 
@@ -4661,9 +4691,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("LocalReturnNull.kt")
+                public void testLocalReturnNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnNull.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("LocalReturnUnit.kt")
                 public void testLocalReturnUnit() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnit.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("LocalReturnWithExpectedType.kt")
+                public void testLocalReturnWithExpectedType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnWithExpectedType.kt");
                     doTest(fileName);
                 }
 
@@ -4676,6 +4718,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("MixedReturnsFromLambda.kt")
                 public void testMixedReturnsFromLambda() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/MixedReturnsFromLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("NoCommonSystem.kt")
+                public void testNoCommonSystem() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/NoCommonSystem.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SmartCast.kt")
+                public void testSmartCast() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/SmartCast.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SmartCastWithExplicitType.kt")
+                public void testSmartCastWithExplicitType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/return/SmartCastWithExplicitType.kt");
                     doTest(fileName);
                 }
             }
@@ -5402,6 +5462,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("inferInFunctionLiterals.kt")
             public void testInferInFunctionLiterals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/inferInFunctionLiterals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inferInFunctionLiteralsWithReturn.kt")
+            public void testInferInFunctionLiteralsWithReturn() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/inferInFunctionLiteralsWithReturn.kt");
                 doTest(fileName);
             }
 
