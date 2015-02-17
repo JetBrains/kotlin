@@ -1764,6 +1764,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt4126.kt")
+            public void testKt4126() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt4126.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt4405.kt")
             public void testKt4405() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt4405.kt");
@@ -1794,6 +1800,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt6788.kt")
+            public void testKt6788() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt6788.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt776.kt")
             public void testKt776() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt776.kt");
@@ -1815,6 +1827,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("localClasses.kt")
             public void testLocalClasses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertiesInitWithOtherInstance.kt")
+            public void testPropertiesInitWithOtherInstance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithOtherInstance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertiesInitWithOtherInstanceInner.kt")
+            public void testPropertiesInitWithOtherInstanceInner() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithOtherInstanceInner.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertiesInitWithOtherInstanceThisLabel.kt")
+            public void testPropertiesInitWithOtherInstanceThisLabel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithOtherInstanceThisLabel.kt");
                 doTest(fileName);
             }
 
@@ -10448,6 +10478,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("headerSupertypeInitialization.kt")
             public void testHeaderSupertypeInitialization() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerSupertypeInitialization.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initializationFromOtherInstance.kt")
+            public void testInitializationFromOtherInstance() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/initializationFromOtherInstance.kt");
                 doTest(fileName);
             }
 

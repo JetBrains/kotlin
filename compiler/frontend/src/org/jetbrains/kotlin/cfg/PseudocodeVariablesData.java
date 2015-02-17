@@ -202,6 +202,11 @@ public class PseudocodeVariablesData {
         }
         Map<VariableDescriptor, VariableInitState> exitInstructionData = Maps.newHashMap(enterInstructionData);
         if (instruction instanceof WriteValueInstruction) {
+            // if writing to already initialized object
+            if (!PseudocodeUtil.isThisOrNoDispatchReceiver((WriteValueInstruction) instruction, bindingContext)) {
+                return enterInstructionData;
+            }
+
             VariableInitState enterInitState = enterInstructionData.get(variable);
             VariableInitState initializationAtThisElement =
                     VariableInitState.create(((WriteValueInstruction) instruction).getElement() instanceof JetProperty, enterInitState);
