@@ -139,6 +139,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("NestedClassReferenceOutsideClassBody.kt")
+    public void testNestedClassReferenceOutsideClassBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/NestedClassReferenceOutsideClassBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PartiallyQualified.kt")
     public void testPartiallyQualified() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/PartiallyQualified.kt");
