@@ -34,7 +34,7 @@ public class Importer {
         if (descriptor is PackageViewDescriptor) {
             allUnderImportScopes.add(NoSubpackagesInPackageScope(descriptor))
         }
-        else if (descriptor is ClassDescriptor && descriptor.getKind() != ClassKind.OBJECT) {
+        else if (descriptor is ClassDescriptor && QualifiedExpressionResolver.canAllUnderImportFromClass(descriptor)) {
             allUnderImportScopes.add(descriptor.getStaticScope())
             allUnderImportScopes.add(descriptor.getUnsubstitutedInnerClassesScope())
 

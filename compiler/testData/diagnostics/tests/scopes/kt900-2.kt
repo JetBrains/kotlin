@@ -2,18 +2,18 @@ package d
 
 //import from objects before properties resolve
 
-import d.<!CANNOT_IMPORT_FROM_ELEMENT!>A<!>.*
-import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>R<!>
-import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>R<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
-import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>
-import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Y<!>
+import d.<!CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON!>A<!>.*
+import d.M.R
+import d.M.R.<!CANNOT_BE_IMPORTED!>bar<!>
+import d.M.T
+import d.M.Y
 
-var r: T = <!UNRESOLVED_REFERENCE!>T<!>()
-val y: T = <!UNRESOLVED_REFERENCE!>Y<!>
+var r: T = T()
+val y: T = Y
 
 fun f() {
     <!UNRESOLVED_REFERENCE!>bar<!>()
-    <!UNRESOLVED_REFERENCE!>R<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    R.bar()
     <!UNRESOLVED_REFERENCE!>B<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
 }
 

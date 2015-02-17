@@ -5209,6 +5209,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/RenameOnImport.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("StarImportFromObject.kt")
+            public void testStarImportFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/StarImportFromObject.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/incompleteCode")

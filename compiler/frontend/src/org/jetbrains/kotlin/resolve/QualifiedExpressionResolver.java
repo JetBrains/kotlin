@@ -54,6 +54,25 @@ public class QualifiedExpressionResolver {
         EVERYTHING
     }
 
+    public static boolean canAllUnderImportFrom(@NotNull Collection<DeclarationDescriptor> descriptors) {
+        if (descriptors.isEmpty()) {
+            return true;
+        }
+        for (DeclarationDescriptor descriptor : descriptors) {
+            if (!(descriptor instanceof ClassDescriptor)) {
+                return true;
+            }
+            if (canAllUnderImportFromClass((ClassDescriptor) descriptor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean canAllUnderImportFromClass(@NotNull ClassDescriptor descriptor) {
+        return !descriptor.getKind().isSingleton();
+    }
+
     @NotNull
     public Collection<DeclarationDescriptor> processImportReference(
             @NotNull JetImportDirective importDirective,
@@ -88,6 +107,10 @@ public class QualifiedExpressionResolver {
 
         JetSimpleNameExpression referenceExpression = JetPsiUtil.getLastReference(importedReference);
         if (importDirective.isAllUnder()) {
+            if (!canAllUnderImportFrom(descriptors) && referenceExpression != null) {
+                trace.report(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, (ClassDescriptor) descriptors.iterator().next()));
+            }
+
             if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
                 return Collections.emptyList();
             }
@@ -150,7 +173,7 @@ public class QualifiedExpressionResolver {
         if (descriptor instanceof PackageViewDescriptor) {
             return true;
         }
-        if (descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isSingleton()) {
+        if (descriptor instanceof ClassDescriptor) {
             return true;
         }
         trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));

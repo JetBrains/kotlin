@@ -35,7 +35,7 @@ object N {
 //FILE:b.kt
 package b
 
-import b.<!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>M<!>
+import b.N.M
 import b.A.P
 import b.A.B
 
@@ -45,7 +45,7 @@ fun foo() {
 
     P.foo()
 
-    <!UNRESOLVED_REFERENCE!>M<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    M.bar()
 }
 
 class A() {
