@@ -1,0 +1,9 @@
+// ALL_UNDER_IMPORTS: true
+package ppp
+
+import java.sql.Date
+import java.util.*
+
+fun foo() {
+    val v = HashMap<Date, ArrayList<Int>>()
+}

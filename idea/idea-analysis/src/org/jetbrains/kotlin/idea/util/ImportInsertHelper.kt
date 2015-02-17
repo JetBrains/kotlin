@@ -29,6 +29,7 @@ public abstract class ImportInsertHelper {
 
     public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
 
+    /*TODO: implementation is not quite correct*/
     public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
 
     public abstract fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean

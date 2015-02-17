@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.imports;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.test.InnerTestClasses;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/editor/optimizeImports")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({OptimizeImportsTestGenerated.AllUnderImports.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     public void testAllFilesPresentInOptimizeImports() throws Exception {
@@ -171,5 +173,50 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     public void testWithAliases() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/WithAliases.kt");
         doTest(fileName);
+    }
+
+    @TestMetadata("idea/testData/editor/optimizeImports/allUnderImports")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AllUnderImports extends AbstractOptimizeImportsTest {
+        public void testAllFilesPresentInAllUnderImports() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/allUnderImports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ClassNameConflict.kt")
+        public void testClassNameConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassNameConflict2.kt")
+        public void testClassNameConflict2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflict2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassNameConflictWithCurrentPackage.kt")
+        public void testClassNameConflictWithCurrentPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflictWithCurrentPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassNameConflictWithCurrentPackage2.kt")
+        public void testClassNameConflictWithCurrentPackage2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflictWithCurrentPackage2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassNameConflictWithDefault.kt")
+        public void testClassNameConflictWithDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflictWithDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/Simple.kt");
+            doTest(fileName);
+        }
     }
 }

@@ -1,0 +1,9 @@
+// ALL_UNDER_IMPORTS: true
+package ppp
+
+import java.io.*
+import java.util.*
+
+fun foo(c: C) {
+    val v = HashMap<File, ArrayList<Int>>()
+}

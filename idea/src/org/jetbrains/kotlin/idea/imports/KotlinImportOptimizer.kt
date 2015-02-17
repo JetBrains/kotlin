@@ -24,13 +24,15 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import java.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.idea.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -68,17 +70,76 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             val descriptorsToImport = detectDescriptorsToImport()
 
-            val importsToGenerate = ArrayList<ImportPath>()
+            val importsToGenerate = HashSet<ImportPath>()
             if (codeStyleSettings.PREFER_ALL_UNDER_IMPORTS) {
-                //TODO
-                //TODO: don't forget that packages may not be imported by *
+                val packageNames = HashMap<FqName, Int>() // package name to symbols to import count
+
+                fun incUseCount(packageName: FqName): Int {
+                    val count = packageNames.getOrPut(packageName, { 0 }) + 1
+                    packageNames.put(packageName, count)
+                    return count
+                }
+
+                fun decUseCount(packageName: FqName): Int {
+                    val count = packageNames[packageName]!! - 1
+                    if (count > 0) {
+                        packageNames[packageName] = count
+                    }
+                    else {
+                        packageNames.remove(packageName)
+                    }
+                    return count
+                }
+
+                val classNames = HashSet<FqName>()
+
+                val builder = StringBuilder()
+                builder.append("package ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(currentPackageName)).append("\n")
+
+                for (descriptor in descriptorsToImport) {
+                    val fqName = descriptor.importableFqNameSafe
+                    val parentFqName = fqName.parent()
+                    if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
+                        importsToGenerate.add(ImportPath(fqName, false))
+                    }
+                    else {
+                        val useCount = incUseCount(parentFqName)
+
+                        if (descriptor is ClassifierDescriptor) {
+                            classNames.add(fqName)
+                        }
+
+                        if (parentFqName == currentPackageName) continue // in current package
+                        if (importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)) continue
+
+                        if (useCount == 1) {
+                            builder.append("import ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(parentFqName)).append(".*\n")
+                            importsToGenerate.add(ImportPath(parentFqName, true))
+                        }
+                    }
+                }
+
+                // now check that all classes are really imported
+                val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", builder.toString(), file)
+                val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
+                for (fqName in classNames) {
+                    if (scope.getClassifier(fqName.shortName())?.importableFqNameSafe != fqName) {
+                        // add explicit import if failed to import with * (or from current package)
+                        importsToGenerate.add(ImportPath(fqName, false))
+
+                        val packageName = fqName.parent()
+                        if (decUseCount(packageName) == 0) { // all under import is not really needed
+                            importsToGenerate.remove(ImportPath(packageName, true))
+                        }
+                    }
+                }
             }
             else {
                 for (descriptor in descriptorsToImport) {
                     val fqName = descriptor.importableFqNameSafe
-                    if (descriptor !is PackageViewDescriptor && fqName.parent() == currentPackageName) continue
+                    if (descriptor !is PackageViewDescriptor && fqName.parent() == currentPackageName) continue // in current package
                     val importPath = ImportPath(fqName, false)
-                    if (importInsertHelper.isImportedWithDefault(importPath, file)/*TODO: implementation is not quite correct*/) continue
+                    if (importInsertHelper.isImportedWithDefault(importPath, file)) continue
                     importsToGenerate.add(importPath)
                 }
             }
