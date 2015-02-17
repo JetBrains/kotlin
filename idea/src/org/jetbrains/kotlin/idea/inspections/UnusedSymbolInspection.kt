@@ -62,8 +62,14 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import javax.swing.JComponent
+import java.awt.GridBagConstraints
+import java.awt.Insets
+import com.intellij.codeInspection.ex.EntryPointsManager
+import com.intellij.openapi.project.ProjectUtil
+import java.awt.GridBagLayout
+import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val javaInspection = UnusedDeclarationInspection()
@@ -194,5 +200,15 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                                  " findAll(): " + query.findAll().map { it?.getElement()?.let{ JetPsiUtil.getElementTextWithContext(it) } } })
             declaration.isAncestor(it.getElement())
         })
+    }
+
+    override fun createOptionsPanel(): JComponent? {
+        val panel = JPanel(GridBagLayout())
+        val project = ProjectUtil.guessCurrentProject(panel)
+        panel.add(
+                EntryPointsManager.getInstance(project).createConfigureAnnotationsBtn(),
+                GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, Insets(0, 0, 0, 0), 0, 0)
+        )
+        return panel
     }
 }
