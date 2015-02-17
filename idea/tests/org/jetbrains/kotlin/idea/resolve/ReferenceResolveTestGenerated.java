@@ -83,6 +83,18 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ClassObjectClassLiteralReference.kt")
+    public void testClassObjectClassLiteralReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassObjectClassLiteralReferenceWithField.kt")
+    public void testClassObjectClassLiteralReferenceWithField() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReferenceWithField.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassReferenceInImport.kt");

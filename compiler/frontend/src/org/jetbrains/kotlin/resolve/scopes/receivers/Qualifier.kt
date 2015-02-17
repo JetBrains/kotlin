@@ -161,20 +161,17 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
         return classifier
     }
 
-    val containingDeclaration = when {
+    val selectorContainer = when {
         selector is ConstructorDescriptor -> selector.getContainingDeclaration().getContainingDeclaration()
         else -> selector?.getContainingDeclaration()
     }
 
-    if (packageView != null && (containingDeclaration is PackageFragmentDescriptor || containingDeclaration is PackageViewDescriptor)
-            && getFqName(packageView) == getFqName(containingDeclaration)) {
+    if (packageView != null && (selectorContainer is PackageFragmentDescriptor || selectorContainer is PackageViewDescriptor)
+            && getFqName(packageView) == getFqName(selectorContainer)) {
         return packageView
     }
 
-    if (classifier != null && containingDeclaration is ClassDescriptor && classifier == containingDeclaration) {
-        return classifier
-    }
-    if (classifier is ClassDescriptor && classifier.classObjectDescriptor != null) {
+    if (classifier is ClassDescriptor && classifier.classObjectDescriptor == selectorContainer) {
         return classifier.getClassObjectReferenceTarget()
     }
 
