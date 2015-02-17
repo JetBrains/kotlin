@@ -20,7 +20,10 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetParameter;
 
 public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
     @Override
@@ -36,5 +39,15 @@ public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
             HighlighterPackage.updateHighlightingResult((JetFile)element.getContainingFile(), false);
             throw e;
         }
+    }
+
+    @Override
+    protected boolean shouldSuppressUnusedParameter(@NotNull JetParameter parameter) {
+        PsiElement grandParent = parameter.getParent().getParent();
+        if (grandParent instanceof JetNamedFunction) {
+            JetNamedFunction function = (JetNamedFunction) grandParent;
+            return UnusedSymbolInspection.Default.isEntryPoint(function);
+        }
+        return false;
     }
 }

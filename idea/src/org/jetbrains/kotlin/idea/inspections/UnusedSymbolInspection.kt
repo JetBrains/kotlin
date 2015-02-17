@@ -72,7 +72,23 @@ import java.awt.GridBagLayout
 import javax.swing.JPanel
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
-    private val javaInspection = UnusedDeclarationInspection()
+    class object {
+        private val javaInspection = UnusedDeclarationInspection()
+
+        public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
+            // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
+            // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
+            if (declaration.getAnnotationEntries().any { it.getTypeReference().getText().endsWith("native") }) return false
+            if (ProjectStructureUtil.isJsKotlinModule(declaration.getContainingJetFile())) return false
+
+            val lightElement: PsiElement? = when (declaration) {
+                is JetClassOrObject -> declaration.toLightClass()
+                is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
+                else -> return false
+            }
+            return lightElement != null && javaInspection.isEntryPoint(lightElement)
+        }
+    }
 
     override fun runForWholeFile() = true
 
@@ -128,20 +144,6 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 )
             }
         }
-    }
-
-    private fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
-        // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
-        // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
-        if (declaration.getAnnotationEntries().any { it.getTypeReference().getText().endsWith("native") }) return false
-        if (ProjectStructureUtil.isJsKotlinModule(declaration.getContainingJetFile())) return false
-
-        val lightElement: PsiElement? = when (declaration) {
-            is JetClassOrObject -> declaration.toLightClass()
-            is JetNamedFunction -> LightClassUtil.getLightClassMethod(declaration)
-            else -> return false
-        }
-        return lightElement != null && javaInspection.isEntryPoint(lightElement)
     }
 
     private fun classOrObjectHasTextUsages(classOrObject: JetClassOrObject): Boolean {

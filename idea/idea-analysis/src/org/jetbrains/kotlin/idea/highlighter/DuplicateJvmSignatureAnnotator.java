@@ -48,6 +48,6 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
         
         if (diagnostics == null) return;
-        JetPsiChecker.annotateElement(element, holder, diagnostics);
+        new JetPsiChecker().annotateElement(element, holder, diagnostics);
     }
 }
