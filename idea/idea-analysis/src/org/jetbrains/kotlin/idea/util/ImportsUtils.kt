@@ -45,15 +45,15 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
         (this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this))) {
         return !getName().isSpecial()
     }
-    val parent = getContainingDeclaration()!!
-    if (parent !is ClassDescriptor || !parent.canBeReferencedViaImport()) {
-        return false
+
+    val parentClass = getContainingDeclaration() as? ClassDescriptor ?: return false
+    if (!parentClass.canBeReferencedViaImport()) return false
+
+    return when (this) {
+        is ConstructorDescriptor -> !parentClass.isInner() // inner class constructors can't be referenced via import
+        is ClassDescriptor -> true
+        else -> false
     }
-    // inner class constructors can't be referenced via import
-    if (this is ConstructorDescriptor && parent.isInner()) {
-        return false
-    }
-    return this is ClassDescriptor || this is ConstructorDescriptor
 }
 
 public fun JetType.canBeReferencedViaImport(): Boolean {
