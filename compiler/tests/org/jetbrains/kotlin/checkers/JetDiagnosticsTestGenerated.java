@@ -8685,6 +8685,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inferenceInConditionals.kt")
+                public void testInferenceInConditionals() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/inferenceInConditionals.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("invoke.kt")
                 public void testInvoke() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/invoke.kt");
@@ -8697,6 +8703,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("notNullAfterSafeCall.kt")
+                public void testNotNullAfterSafeCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAfterSafeCall.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("notNullAssertion.kt")
                 public void testNotNullAssertion() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAssertion.kt");
@@ -8706,6 +8718,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("notNullAssertionInCall.kt")
                 public void testNotNullAssertionInCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAssertionInCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("notNullTypeMarkedWithNullableAnnotation.kt")
+                public void testNotNullTypeMarkedWithNullableAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullTypeMarkedWithNullableAnnotation.kt");
                     doTest(fileName);
                 }
 

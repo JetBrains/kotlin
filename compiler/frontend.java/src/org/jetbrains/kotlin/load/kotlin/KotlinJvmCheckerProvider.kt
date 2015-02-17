@@ -159,7 +159,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
 
     private fun JetType.mustNotBeNull(): NullabilityInformationSource? {
         if (!isFlexible() && !TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
-        if (getAnnotations().isMarkedNotNull()) return NullabilityInformationSource.JAVA
+        if (!isMarkedNullable() && getAnnotations().isMarkedNotNull()) return NullabilityInformationSource.JAVA
         return null
     }
 
