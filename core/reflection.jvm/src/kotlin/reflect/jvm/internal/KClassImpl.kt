@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.reflect.*
 import kotlin.jvm.internal.KotlinClass
-import kotlin.jvm.internal.KotlinSyntheticClass
 
 enum class KClassOrigin {
     BUILT_IN
@@ -26,22 +25,19 @@ enum class KClassOrigin {
     FOREIGN
 }
 
-private val KOTLIN_CLASS_ANNOTATION_CLASS = javaClass<KotlinClass>()
-private val KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS = javaClass<KotlinSyntheticClass>()
+class KClassImpl<T>(val jClass: Class<T>) : KClass<T> {
+    // Don't use kotlin.properties.Delegates here because it's a Kotlin class which will invoke KClassImpl() in <clinit>,
+    // resulting in infinite recursion
 
-class KClassImpl<T>(val jClass: Class<T>, isKnownToBeKotlin: Boolean = false) : KClass<T> {
-    // TODO: write metadata to local classes
-    private val origin: KClassOrigin =
-            if (isKnownToBeKotlin ||
-                jClass.isAnnotationPresent(KOTLIN_CLASS_ANNOTATION_CLASS) ||
-                jClass.isAnnotationPresent(KOTLIN_SYNTHETIC_CLASS_ANNOTATION_CLASS)
-            ) {
-                KClassOrigin.KOTLIN
-            }
-            else {
-                KClassOrigin.FOREIGN
-                // TODO: built-in classes
-            }
+    private val origin by ReflectProperties.lazy {(): KClassOrigin ->
+        if (jClass.isAnnotationPresent(javaClass<KotlinClass>())) {
+            KClassOrigin.KOTLIN
+        }
+        else {
+            KClassOrigin.FOREIGN
+            // TODO: built-in classes
+        }
+    }
 
     fun memberProperty(name: String): KMemberProperty<T, *> =
             if (origin === KClassOrigin.KOTLIN) {

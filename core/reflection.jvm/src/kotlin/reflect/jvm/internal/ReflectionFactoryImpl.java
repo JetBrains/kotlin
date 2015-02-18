@@ -23,7 +23,7 @@ import kotlin.reflect.*;
 public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KClass createKotlinClass(Class javaClass) {
-        return new KClassImpl(javaClass, true);
+        return new KClassImpl(javaClass);
     }
 
     @Override
