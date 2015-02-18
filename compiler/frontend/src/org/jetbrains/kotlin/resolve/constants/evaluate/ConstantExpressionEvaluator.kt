@@ -149,6 +149,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
                else null
     }
 
+    override fun visitBinaryWithTypeRHSExpression(expression: JetBinaryExpressionWithTypeRHS, expectedType: JetType?): CompileTimeConstant<*>? =
+        evaluate(expression.getLeft(), expectedType)
+
     override fun visitBinaryExpression(expression: JetBinaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val leftExpression = expression.getLeft()
         if (leftExpression == null) return null
