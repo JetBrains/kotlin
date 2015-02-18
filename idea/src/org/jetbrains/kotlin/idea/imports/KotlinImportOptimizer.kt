@@ -187,7 +187,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                             val importableDescriptor = target.getImportableDescriptor()
                             if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
 
-                            if (isAccessibleAsMember(target, element)) continue
+                            if (isAccessibleAsMember(importableDescriptor, element)) continue
 
                             usedDescriptors.add(importableDescriptor)
                         }
