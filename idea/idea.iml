@@ -38,13 +38,11 @@
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="eval4j" />
-    <orderEntry type="library" name="android" level="project" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
     <orderEntry type="module" module-name="kotlin-android-plugin" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="library" scope="PROVIDED" name="coverage-plugin" level="project" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="library" name="android_tests" level="project" />
     <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
   </component>

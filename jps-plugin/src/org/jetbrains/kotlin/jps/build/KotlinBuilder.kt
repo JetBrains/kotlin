@@ -66,7 +66,6 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.android.AndroidJpsUtil
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 

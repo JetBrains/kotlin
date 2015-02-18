@@ -19,6 +19,5 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.jvm" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="android-compiler-plugin" />
   </component>
 </module>
