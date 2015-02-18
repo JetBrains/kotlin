@@ -21,10 +21,10 @@ public class M1 {
     public val a: A = A()
     public val b: A.B = A.B()
     public val c: A.C = A.C
-    public val d: A.Default.D = A.D()
-    public val e: A.Default.D.E = A.D.E
+    public val d: A.Default.D = A.Default.D()
+    public val e: A.Default.D.E = A.Default.D.E
     public val f: A.F = A().F()
-    public val g: A.Default.G = A.G()
+    public val g: A.Default.G = A.Default.G()
 }
 
 // MODULE: m2

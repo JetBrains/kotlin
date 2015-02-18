@@ -252,6 +252,6 @@ class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: Callable
     }
 }
 
-fun <D: CallableDescriptor> CallableDescriptorCollectors<D>.onlyDynamicReceivers(): CallableDescriptorCollectors<D> {
-    return CallableDescriptorCollectors(* this.map { CollectorForDynamicReceivers(it) }.copyToArray())
+fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.onlyDynamicReceivers(): CallableDescriptorCollectors<D> {
+    return CallableDescriptorCollectors(this.map { CollectorForDynamicReceivers(it) })
 }

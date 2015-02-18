@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.BindingContext.*
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectDescriptor
+import org.jetbrains.kotlin.resolve.scopes.*
 
 public trait Qualifier: ReceiverValue {
 
@@ -67,7 +66,10 @@ class QualifierReceiver (
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
     override val scope: JetScope get() {
-        val scopes = listOf(classifier?.getClassObjectType()?.getMemberScope(), getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
+        val classObjectTypeScope = classifier?.getClassObjectType()?.getMemberScope()?.let {
+            FilteringScope(it) { it !is ClassDescriptor }
+        }
+        val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
         return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes)
     }
 
@@ -81,12 +83,6 @@ class QualifierReceiver (
 
         if (classifier is ClassDescriptor) {
             scopes.add(classifier.getStaticScope())
-
-            val classObjectDescriptor = classifier.getDefaultObjectDescriptor()
-            if (classObjectDescriptor != null) {
-                // non-static members are resolved through class object receiver
-                scopes.add(DescriptorUtils.getStaticNestedClassesScope(classObjectDescriptor))
-            }
 
             if (classifier.getKind() != ClassKind.ENUM_ENTRY) {
                 scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))

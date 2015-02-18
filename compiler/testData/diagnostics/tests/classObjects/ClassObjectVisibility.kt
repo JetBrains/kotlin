@@ -2,7 +2,7 @@ package foo
 
 fun test() {
   A.d
-  A.<!INVISIBLE_MEMBER!>f<!>
+  A.Default.<!INVISIBLE_MEMBER!>f<!>
   B.<!INVISIBLE_MEMBER!>D<!>
   <!INVISIBLE_MEMBER!>CCC<!>
   CCC.<!INVISIBLE_MEMBER!>classObjectVar<!>

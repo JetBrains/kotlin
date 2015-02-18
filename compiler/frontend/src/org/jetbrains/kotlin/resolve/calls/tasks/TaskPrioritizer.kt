@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
@@ -39,6 +37,9 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.*
 
 public class TaskPrioritizer(private val storageManager: StorageManager) {
 
@@ -71,16 +72,37 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         if (explicitReceiver is QualifierReceiver) {
             val qualifierReceiver = explicitReceiver : QualifierReceiver
             doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(qualifierReceiver.getNestedClassesAndPackageMembersScope()))
-            val classObjectReceiver = qualifierReceiver.getClassObjectReceiver()
-            if (classObjectReceiver.exists()) {
-                doComputeTasks(classObjectReceiver, taskPrioritizerContext)
-            }
+            computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
         }
         else {
             doComputeTasks(explicitReceiver, taskPrioritizerContext)
         }
 
         return result.getTasks()
+    }
+
+    private fun <D : CallableDescriptor, F : D> computeTasksForClassObjectReceiver(
+            qualifierReceiver: QualifierReceiver,
+            taskPrioritizerContext: TaskPrioritizerContext<D, F>
+    ) {
+        val classObjectReceiver = qualifierReceiver.getClassObjectReceiver()
+        if (!classObjectReceiver.exists()) {
+            return
+        }
+        val classifierDescriptor = qualifierReceiver.classifier
+        doComputeTasks(classObjectReceiver, taskPrioritizerContext.filterCollectors {
+            when {
+                classifierDescriptor is ClassDescriptor && classifierDescriptor.getDefaultObjectDescriptor() != null -> {
+                    // nested classes and objects should not be accessible via short reference to default object
+                    it !is ConstructorDescriptor && it !is FakeCallableDescriptorForObject
+                }
+                classifierDescriptor != null && DescriptorUtils.isEnumEntry(classifierDescriptor) -> {
+                    // objects nested in enum should not be accessible via enum entries reference
+                    it !is FakeCallableDescriptorForObject
+                }
+                else -> true
+            }
+        })
     }
 
     private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
@@ -427,6 +449,10 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
 
         fun replaceCollectors(newCollectors: CallableDescriptorCollectors<D>): TaskPrioritizerContext<D, F> {
             return TaskPrioritizerContext(name, result, context, scope, newCollectors)
+        }
+
+        fun filterCollectors(filter: (D) -> Boolean): TaskPrioritizerContext<D, F> {
+            return TaskPrioritizerContext(name, result, context, scope, callableDescriptorCollectors.filtered(filter))
         }
     }
 }

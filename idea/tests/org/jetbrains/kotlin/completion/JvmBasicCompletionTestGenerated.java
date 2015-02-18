@@ -613,6 +613,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NestedClassesOnClassWithDefaultObject.kt")
+        public void testNestedClassesOnClassWithDefaultObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassesOnClassWithDefaultObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NestedClassesOnClassWithNamedDefaultObject.kt")
+        public void testNestedClassesOnClassWithNamedDefaultObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassesOnClassWithNamedDefaultObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NestedClassesOnDefaultObjectLiteral.kt")
+        public void testNestedClassesOnDefaultObjectLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassesOnDefaultObjectLiteral.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoAutoInsertionOfNotImported.kt")
         public void testNoAutoInsertionOfNotImported() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoInsertionOfNotImported.kt");
