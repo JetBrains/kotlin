@@ -438,7 +438,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         else ""
 
                 val declaration : JetNamedDeclaration = when (callableInfo.kind) {
-                    CallableKind.FUNCTION -> psiFactory.createFunction("${modifiers}fun<> $header {}")
+                    CallableKind.FUNCTION -> {
+                        val body = when {
+                            containingElement is JetClass && containingElement.isTrait() && !config.isExtension -> ""
+                            else -> "{}"
+                        }
+                        psiFactory.createFunction("${modifiers}fun<> $header $body")
+                    }
                     CallableKind.CONSTRUCTOR -> {
                         with((callableInfo as ConstructorInfo).classInfo) {
                             val classBody = when (kind) {
@@ -620,6 +626,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupFunctionBody(func: JetNamedFunction) {
+            val oldBody = func.getBodyExpression() ?: return
+
             val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY)
             val properties = Properties()
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (skipReturnType) "Unit" else func.getTypeReference()!!.getText())
@@ -641,8 +649,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 throw IncorrectOperationException("Failed to parse file template", e)
             }
 
-            val newBodyExpression = JetPsiFactory(func).createFunctionBody(bodyText)
-            func.getBodyExpression()!!.replace(newBodyExpression)
+            oldBody.replace(JetPsiFactory(func).createFunctionBody(bodyText))
         }
 
         private fun setupCallTypeArguments(callElement: JetCallElement, typeParameters: List<TypeParameterDescriptor>) {
