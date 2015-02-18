@@ -23,7 +23,7 @@ public class JetPsiCheckerCustomTest : AbstractJetPsiCheckerTest() {
         val testAnnotation = "MyTestAnnotation"
         EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.add(testAnnotation)
         try {
-            doTest("idea/testData/checker/custom/NoUnusedParameterWhenCustom.kt")
+            doTest("idea/testData/checker/custom/noUnusedParameterWhenCustom.kt")
         }
         finally {
             EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.remove(testAnnotation)
