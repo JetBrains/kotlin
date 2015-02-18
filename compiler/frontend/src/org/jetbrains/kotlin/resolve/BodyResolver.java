@@ -530,10 +530,7 @@ public class BodyResolver {
                 JetExpression initializer = property.getInitializer();
                 JetScope propertyScope = getScopeForProperty(c, property);
                 if (initializer != null) {
-                    ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-                    if (primaryConstructor != null) {
-                        resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
-                    }
+                    resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
                 }
 
                 JetExpression delegateExpression = property.getDelegateExpression();
