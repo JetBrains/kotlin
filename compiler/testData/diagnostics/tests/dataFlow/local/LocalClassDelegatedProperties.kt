@@ -1,5 +1,5 @@
 class Del {
-  fun get(<!UNUSED_PARAMETER!>_this<!>: Any?, <!UNUSED_PARAMETER!>p<!>: PropertyMetadata): Int = 0
+  fun get(_this: Any?, p: PropertyMetadata): Int = 0
 }
 
 fun df(del: Del): Del = del
