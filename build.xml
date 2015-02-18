@@ -93,7 +93,6 @@
         <include name="core/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
         <include name="core/serialization.jvm/src"/>
-        <include name="compiler/frontend.android/src"/>
         <include name="core/util.runtime/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
@@ -120,7 +119,6 @@
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
         <include name="serialization.jvm/**"/>
-        <include name="frontend.android/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
         <include name="cli/**"/>
