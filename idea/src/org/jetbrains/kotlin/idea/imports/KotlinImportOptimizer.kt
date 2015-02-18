@@ -60,6 +60,9 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         }
 
         public fun execute() {
+            val oldImports = file.getImportDirectives()
+            if (oldImports.isEmpty()) return
+
             //TODO: keep existing imports? at least aliases (comments)
 
             val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
@@ -139,15 +142,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             //TODO: do not touch file if everything is already correct?
 
             ApplicationManager.getApplication()!!.runWriteAction(Runnable {
-                // remove old imports after adding new ones to keep imports folding state
-                val oldImports = file.getImportDirectives()
-
                 val importList = file.getImportList()!!
                 val psiFactory = JetPsiFactory(file.getProject())
                 for (importPath in sortedImportsToGenerate) {
                     importList.addBefore(psiFactory.createImportDirective(importPath), oldImports.lastOrNull()) // insert into the middle to keep collapsed state
                 }
 
+                // remove old imports after adding new ones to keep imports folding state
                 for (import in oldImports) {
                     import.delete()
                 }
