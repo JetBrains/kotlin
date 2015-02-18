@@ -3,7 +3,7 @@ fun test(x: Any) {
 
   class LocalOuter {
     inner class Local {
-      {
+      init {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length()
       }
     }

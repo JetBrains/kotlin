@@ -4,7 +4,7 @@ fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
 class Test<in I, out O> {
     private val i: I = getT()
 
-    ;{
+    init {
         apply(i)
         apply(this.i)
     }

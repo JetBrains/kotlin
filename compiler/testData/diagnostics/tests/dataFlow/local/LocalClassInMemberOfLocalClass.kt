@@ -5,7 +5,7 @@ fun test(x: Any) {
     fun foo(y: Any) {
       if (y !is String) return
       class Local {
-        {
+        init {
           <!DEBUG_INFO_SMARTCAST!>x<!>.length()
           <!DEBUG_INFO_SMARTCAST!>y<!>.length()
         }

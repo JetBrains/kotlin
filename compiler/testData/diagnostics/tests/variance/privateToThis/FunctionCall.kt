@@ -7,7 +7,7 @@ class Test<in I> {
 
     fun apply(<!UNUSED_PARAMETER!>i<!>: I) {}
 
-    {
+    init {
         foo()
         this.foo()
     }

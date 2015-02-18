@@ -9,7 +9,7 @@ class P {
 
     val other = P();
 
-    {
+    init {
         x = 23
         other.x = 4
     }
@@ -33,7 +33,7 @@ fun foo() {
 
 class R {
     val p = P();
-    {
+    init {
         <!INVISIBLE_SETTER!>p.x<!> = 42
     }
 

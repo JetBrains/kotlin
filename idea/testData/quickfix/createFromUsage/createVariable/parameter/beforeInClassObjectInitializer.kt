@@ -6,7 +6,7 @@
 
 class A {
     default object {
-        {
+        init {
             val t: Int = <caret>foo
         }
     }

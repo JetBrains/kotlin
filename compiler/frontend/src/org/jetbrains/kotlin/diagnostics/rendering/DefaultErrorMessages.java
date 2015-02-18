@@ -418,6 +418,8 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor");
         MAP.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected");
 
+        MAP.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, "Expecting 'init' keyword before class initializer");
+
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", STRING);
 
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");

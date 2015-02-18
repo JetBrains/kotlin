@@ -50,7 +50,7 @@ class TestPCParameters(w : Int, <!UNUSED_PARAMETER!>x<!> : Int, val y : Int, var
 
   val xx = w
 
-  {
+  init {
     w + 1
   }
 

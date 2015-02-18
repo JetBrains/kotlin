@@ -159,6 +159,7 @@ public interface Errors {
     DiagnosticFactory0<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetDelegatorToSuperCall> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetConstructorDelegationCall> PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED = DiagnosticFactory0.create(WARNING);
 
     // Trait-specific
 

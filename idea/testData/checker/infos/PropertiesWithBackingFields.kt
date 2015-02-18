@@ -46,7 +46,7 @@ class TestPCParameters(w : Int, <warning>x</warning> : Int, val <info>y</info> :
 
   val <info>xx</info> = w
 
-  {
+  <info>init</info> {
     w + 1
   }
 
