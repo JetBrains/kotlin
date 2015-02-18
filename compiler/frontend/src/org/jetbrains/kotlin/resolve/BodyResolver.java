@@ -143,6 +143,7 @@ public class BodyResolver {
             @NotNull final ConstructorDescriptor descriptor,
             @NotNull JetScope bodyDeclaringScope
     ) {
+        AnnotationResolver.resolveAnnotationsArguments(constructor.getModifierList(), trace);
         assert descriptor.getContainingDeclaration() instanceof ClassDescriptorWithResolutionScopes
                 : "When resolving body it should be class descriptor with resolution scopes";
 
