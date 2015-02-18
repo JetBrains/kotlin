@@ -1,4 +1,4 @@
-// ALL_UNDER_IMPORTS: true
+// NAME_COUNT_TO_USE_STAR_IMPORT: 1
 package ppp
 
 import java.sql.Date

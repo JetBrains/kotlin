@@ -29,6 +29,6 @@ public abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
         KotlinImportOptimizer().processFile(file).run()
     }
 
-    override val preferAllUnderImportsDefault: Boolean
-        get() = false
+    override val nameCountToUseStarImportDefault: Int
+        get() = Integer.MAX_VALUE
 }

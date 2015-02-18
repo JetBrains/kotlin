@@ -152,7 +152,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             private val file: JetFile
     ) {
         private val resolutionFacade = file.getResolutionFacade()
-        private val preferAllUnderImports = JetCodeStyleSettings.getInstance(project).PREFER_ALL_UNDER_IMPORTS
+        private val nameCountToUseStarImport = JetCodeStyleSettings.getInstance(project).NAME_COUNT_TO_USE_STAR_IMPORT
 
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
             val target = descriptor.getImportableDescriptor()
@@ -188,8 +188,13 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val fqName = target.importableFqNameSafe
             val packageFqName = fqName.parent()
 
+            val importsFromPackage = imports.count {
+                val path = it.getImportPath()
+                path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == packageFqName
+            }
+
             val allUnderImportPath = ImportPath(packageFqName, true)
-            val tryAllUnderImport = preferAllUnderImports
+            val tryAllUnderImport = importsFromPackage + 1 >= nameCountToUseStarImport
                                     && !packageFqName.isRoot()
                                     && !imports.any { it.getImportPath() == allUnderImportPath }
                                     && when (target) {

@@ -29,6 +29,6 @@ public abstract class AbstractShortenRefsTest : AbstractImportsTest() {
         selectionModel.removeSelection()
     }
 
-    override val preferAllUnderImportsDefault: Boolean
-        get() = false
+    override val nameCountToUseStarImportDefault: Int
+        get() = Integer.MAX_VALUE
 }
