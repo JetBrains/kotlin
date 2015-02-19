@@ -1,0 +1,5 @@
+package
+
+internal val a: kotlin.String = "1"
+internal fun nonConst(): kotlin.String
+internal fun test(): kotlin.Unit

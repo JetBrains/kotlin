@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.highlighter;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -29,8 +30,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.PluginTestCaseBase;
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
@@ -61,14 +64,21 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         }
     }
 
+    @NotNull
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
+    }
+
+    @NotNull
+    protected AnalysisResult analyze(@NotNull JetFile file) {
+        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
     }
 
     public void doTest(String filePath) throws Exception {
@@ -82,7 +92,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         MessageType messageType = getMessageTypeDirective(directives);
 
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile);
+        AnalysisResult analysisResult = analyze(psiFile);
         BindingContext bindingContext = analysisResult.getBindingContext();
 
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
@@ -128,31 +138,48 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     }
 
     @NotNull
-    private static Set<DiagnosticFactory<?>> getDiagnosticFactories(Map<String, String> directives) {
+    private Set<DiagnosticFactory<?>> getDiagnosticFactories(Map<String, String> directives) {
         String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
         assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
         Set<DiagnosticFactory<?>> diagnosticFactories = Sets.newHashSet();
         String[] diagnostics = diagnosticsData.split(" ");
         for (String diagnosticName : diagnostics) {
-            String errorMessage = "Can't load diagnostic factory for " + diagnosticName;
-            try {
-                Field field = Errors.class.getField(diagnosticName);
-                Object value = field.get(null);
-                if (value instanceof DiagnosticFactory) {
-                    diagnosticFactories.add((DiagnosticFactory<?>)value);
-                }
-                else {
-                    throw new AssertionError(errorMessage);
-                }
-            }
-            catch (NoSuchFieldException e) {
-                throw new AssertionError(errorMessage);
-            }
-            catch (IllegalAccessException e) {
-                throw new AssertionError(errorMessage);
-            }
+            Object diagnostic = getDiagnostic(diagnosticName);
+            assert diagnostic instanceof DiagnosticFactory: "Can't load diagnostic factory for " + diagnosticName;
+            diagnosticFactories.add((DiagnosticFactory) diagnostic);
         }
         return diagnosticFactories;
+    }
+
+    @Nullable
+    private Object getDiagnostic(@NotNull String diagnosticName) {
+        Field field = getPlatformSpecificDiagnosticField(diagnosticName);
+
+        if (field == null) {
+            field = getFieldOrNull(Errors.class, diagnosticName);
+        }
+
+        if (field == null) return null;
+
+        try {
+            return field.get(null);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    protected Field getPlatformSpecificDiagnosticField(@NotNull String diagnosticName) {
+        return getFieldOrNull(ErrorsJvm.class, diagnosticName);
+    }
+
+    @Nullable
+    protected static Field getFieldOrNull(@NotNull Class<?> kind, @NotNull String field) {
+        try {
+            return kind.getField(field);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
     @Nullable
