@@ -28,6 +28,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -53,9 +54,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
@@ -110,26 +109,58 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            JetFile jetFile = location.getJetFile();
+            final JetFile jetFile = location.getJetFile();
             assert jetFile != null;
 
             GenerationState state;
             try {
                 AnalysisResult result = ResolvePackage.analyzeFullyAndGetResult(jetFile);
                 boolean disableInline = !enableInline.isSelected();
-
+                Ref<Set<JetElement>> ref = new Ref();
                 if (!disableInline) {
-                    result = processInlinedDeclarations(jetFile.getProject(), result, Collections.<JetElement>singleton(jetFile), 1);
+                    result = processInlinedDeclarations(jetFile.getProject(), result, Collections.<JetElement>singleton(jetFile), 1, ref);
                 }
 
                 if (result.isError()) {
                     return printStackTraceToString(result.getError());
                 }
 
+                Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
+                toProcess.add(jetFile);
+                if (ref.get() != null) {
+                    for (JetElement element: ref.get()) {
+                        JetFile file = element.getContainingJetFile();
+                        toProcess.add(file);
+                    }
+                }
+
+                GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
+
+                    @Override
+                    public boolean shouldGeneratePackagePart(JetFile file) {
+                        return file == jetFile;
+                    }
+
+                    @Override
+                    public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                        return classOrObject.getContainingJetFile() == jetFile;
+                    }
+
+                    @Override
+                    public boolean shouldGenerateScript(JetScript script) {
+                        return script.getContainingJetFile() == jetFile;
+                    }
+                };
+
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                             result.getModuleDescriptor(), result.getBindingContext(),
-                                            Collections.singletonList(jetFile), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
-                                            GenerationState.GenerateClassFilter.GENERATE_ALL,
+                                            new ArrayList<JetFile>(toProcess), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
+                                            generateClassFilter,
                                             disableInline, !enableOptimization.isSelected(), null, null,
                                             DiagnosticSink.DO_NOTHING, null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
@@ -154,8 +185,15 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             return answer.toString();
         }
 
-        private AnalysisResult processInlinedDeclarations(Project project, AnalysisResult result, Set<JetElement> originalElements, int deep) {
+        private AnalysisResult processInlinedDeclarations(
+                @NotNull Project project,
+                @NotNull AnalysisResult result,
+                @NotNull Set<JetElement> originalElements,
+                int deep,
+                @NotNull Ref<Set<JetElement>> resultElements
+        ) {
             if (deep >= 10 || result.isError()) {
+                resultElements.set(originalElements);
                 return result;
             }
             Set<JetElement> collectedElements = new HashSet<JetElement>();
@@ -177,8 +215,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
             if (collectedElements.size() != originalElements.size()) {
                 AnalysisResult newResult = KotlinCacheService.getInstance(project).getAnalysisResults(collectedElements);
-                return processInlinedDeclarations(project, newResult, collectedElements, deep + 1);
+                return processInlinedDeclarations(project, newResult, collectedElements, deep + 1, resultElements);
             }
+
+            resultElements.set(collectedElements);
             return result;
         }
 
