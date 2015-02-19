@@ -42,6 +42,9 @@ import com.intellij.ide.util.DirectoryChooserUtil
 import java.util.HashMap
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")
@@ -69,6 +72,17 @@ public class CreateClassFromUsageFix(
 ): CreateFromUsageFixBase(element) {
     override fun getText(): String =
             JetBundle.message("create.0.from.usage", "${classInfo.kind.description} '${classInfo.name}'")
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
+        with(classInfo) {
+            if (targetParent is PsiClass) {
+                if (kind == OBJECT || kind == ENUM_ENTRY) return false
+                if (targetParent.isInterface() && inner) return false
+            }
+        }
+        return true
+    }
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
         fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
@@ -105,10 +119,10 @@ public class CreateClassFromUsageFix(
         with (classInfo) {
             val targetParent =
                     when (targetParent) {
-                        is JetElement -> targetParent
+                        is JetElement, is PsiClass -> targetParent
                         is PsiPackage -> createFileByPackage(targetParent)
                         else -> throw AssertionError("Unexpected element: " + targetParent.getText())
-                    } as? JetElement ?: return
+                    } ?: return
 
             val constructorInfo = ConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(

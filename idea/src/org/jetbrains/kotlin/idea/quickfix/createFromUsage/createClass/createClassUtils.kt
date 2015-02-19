@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.JetBundle
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
 
@@ -104,6 +106,8 @@ private fun JetExpression.getInheritableTypeInfo(
     return TypeInfo.ByType(type, Variance.OUT_VARIANCE).noSubstitutions() to { classKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+            ClassKind.TRAIT -> containingDeclaration !is PsiClass
+                               || (descriptor as? ClassDescriptor)?.getKind() == ClassDescriptorKind.TRAIT
             else -> canHaveSubtypes
         }
     }

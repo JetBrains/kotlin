@@ -275,20 +275,83 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createClass")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateClass.CallExpression.class})
+        @InnerTestClasses({CreateClass.AnnotationEntry.class, CreateClass.CallExpression.class, CreateClass.DelegationSpecifier.class, CreateClass.ImportDirective.class, CreateClass.ReferenceExpression.class, CreateClass.TypeReference.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateClass extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateClass() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AnnotationEntry extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInAnnotationEntry() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/annotationEntry"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("nestedGroovyAnnotation.before.Main.kt")
+                public void testNestedGroovyAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry/nestedGroovyAnnotation.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("nestedJavaAnnotation.before.Main.kt")
+                public void testNestedJavaAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry/nestedJavaAnnotation.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("nestedJavaAnnotationWithNamedArgs.before.Main.kt")
+                public void testNestedJavaAnnotationWithNamedArgs() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry/nestedJavaAnnotationWithNamedArgs.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
+
             @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({})
+            @InnerTestClasses({CallExpression.TypeArguments.class})
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallExpression extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInCallExpression() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("callInAnnotationEntryWithJavaQualifier.before.Main.kt")
+                public void testCallInAnnotationEntryWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callInAnnotationEntryWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithExplicitParamNamesAndJavaQualifier.before.Main.kt")
+                public void testCallWithExplicitParamNamesAndJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithExplicitParamNamesAndJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithFinalJavaSupertype.before.Main.kt")
+                public void testCallWithFinalJavaSupertype() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithFinalJavaSupertype.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithGenericJavaReceiver.before.Main.kt")
+                public void testCallWithGenericJavaReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithGenericJavaReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithGroovyClassQualifier.before.Main.kt")
+                public void testCallWithGroovyClassQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithGroovyClassQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithJavaClassQualifier.before.Main.kt")
+                public void testCallWithJavaClassQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithJavaClassQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
                 }
 
                 @TestMetadata("callWithJavaClassReceiver.before.Main.kt")
@@ -297,8 +360,261 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     doTestWithExtraFile(fileName);
                 }
 
+                @TestMetadata("callWithJavaQualifierInMemberValDelegate.before.Main.kt")
+                public void testCallWithJavaQualifierInMemberValDelegate() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithJavaQualifierInMemberValDelegate.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithSuperclassAndJavaReceiverNoConstructorParams.before.Main.kt")
+                public void testCallWithSuperclassAndJavaReceiverNoConstructorParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithSuperclassAndJavaReceiverNoConstructorParams.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithSuperclassConstructorParamsAndJavaReceiver.before.Main.kt")
+                public void testCallWithSuperclassConstructorParamsAndJavaReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithSuperclassConstructorParamsAndJavaReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("callWithSupertraitAndJavaReceiver.before.Main.kt")
+                public void testCallWithSupertraitAndJavaReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithSupertraitAndJavaReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class TypeArguments extends AbstractQuickFixMultiFileTest {
+                    public void testAllFilesPresentInTypeArguments() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    }
+
+                    @TestMetadata("javaClassMember.before.Main.kt")
+                    public void testJavaClassMember() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/javaClassMember.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberInner.before.Main.kt")
+                    public void testJavaClassMemberInner() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/javaClassMemberInner.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberInnerPartialSubstitution.before.Main.kt")
+                    public void testJavaClassMemberInnerPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/javaClassMemberInnerPartialSubstitution.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberInnerWithReceiverArg.before.Main.kt")
+                    public void testJavaClassMemberInnerWithReceiverArg() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/javaClassMemberInnerWithReceiverArg.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberPartialSubstitution.before.Main.kt")
+                    public void testJavaClassMemberPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments/javaClassMemberPartialSubstitution.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+                }
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DelegationSpecifier extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInDelegationSpecifier() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("delegatorToNestedJavaSupercall.before.Main.kt")
+                public void testDelegatorToNestedJavaSupercall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/delegatorToNestedJavaSupercall.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("delegatorToNestedJavaSupercallWithParamNames.before.Main.kt")
+                public void testDelegatorToNestedJavaSupercallWithParamNames() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/delegatorToNestedJavaSupercallWithParamNames.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("traitDelegatorToNestedGroovySuperclass.before.Main.kt")
+                public void testTraitDelegatorToNestedGroovySuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/traitDelegatorToNestedGroovySuperclass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("traitDelegatorToNestedJavaSuperclass.before.Main.kt")
+                public void testTraitDelegatorToNestedJavaSuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/traitDelegatorToNestedJavaSuperclass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ImportDirective extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInImportDirective() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("annotationWithJavaQualifier.before.Main.kt")
+                public void testAnnotationWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/annotationWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("classWithGroovyQualifier.before.Main.kt")
+                public void testClassWithGroovyQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/classWithGroovyQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("classWithJavaQualifier.before.Main.kt")
+                public void testClassWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/classWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryInJavaEnum.before.Main.kt")
+                public void testEnumEntryInJavaEnum() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/enumEntryInJavaEnum.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumWithJavaQualifier.before.Main.kt")
+                public void testEnumWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/enumWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("objectWithJavaQualifier.before.Main.kt")
+                public void testObjectWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/objectWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("traitWithJavaQualifier.before.Main.kt")
+                public void testTraitWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/importDirective/traitWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ReferenceExpression extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInReferenceExpression() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/referenceExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("classByNestedGroovyQualifier.before.Main.kt")
+                public void testClassByNestedGroovyQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/classByNestedGroovyQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("classByNestedJavaQualifier.before.Main.kt")
+                public void testClassByNestedJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/classByNestedJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumByNestedJavaQualifier.before.Main.kt")
+                public void testEnumByNestedJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumByNestedJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryWithJavaEnumQualifier.before.Main.kt")
+                public void testEnumEntryWithJavaEnumQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithJavaEnumQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryWithJavaEnumSuperclass.before.Main.kt")
+                public void testEnumEntryWithJavaEnumSuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithJavaEnumSuperclass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryWithJavaNonEnumQualifier.before.Main.kt")
+                public void testEnumEntryWithJavaNonEnumQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithJavaNonEnumQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryWithJavaNonEnumSuperclass.before.Main.kt")
+                public void testEnumEntryWithJavaNonEnumSuperclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryWithJavaNonEnumSuperclass.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("objectWithJavaQualifier.before.Main.kt")
+                public void testObjectWithJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/objectWithJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("traitByNestedJavaQualifier.before.Main.kt")
+                public void testTraitByNestedJavaQualifier() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/traitByNestedJavaQualifier.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TypeReference extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInTypeReference() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/typeReference"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("annotationJavaTypeReceiver.before.Main.kt")
+                public void testAnnotationJavaTypeReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/annotationJavaTypeReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("classGroovyTypeReceiver.before.Main.kt")
+                public void testClassGroovyTypeReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/classGroovyTypeReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("classJavaTypeReceiver.before.Main.kt")
+                public void testClassJavaTypeReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/classJavaTypeReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumEntryJavaEnumReceiver.before.Main.kt")
+                public void testEnumEntryJavaEnumReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/enumEntryJavaEnumReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("enumJavaTypeReceiver.before.Main.kt")
+                public void testEnumJavaTypeReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/enumJavaTypeReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("traitJavaTypeReceiver.before.Main.kt")
+                public void testTraitJavaTypeReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/traitJavaTypeReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction")
@@ -312,7 +628,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call")
             @TestDataPath("$PROJECT_ROOT")
-            @InnerTestClasses({})
+            @InnerTestClasses({Call.TypeArguments.class})
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Call extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInCall() throws Exception {
@@ -373,6 +689,32 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     doTestWithExtraFile(fileName);
                 }
 
+                @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class TypeArguments extends AbstractQuickFixMultiFileTest {
+                    public void testAllFilesPresentInTypeArguments() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                    }
+
+                    @TestMetadata("javaClassMember.before.Main.kt")
+                    public void testJavaClassMember() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/javaClassMember.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberPartialSubstitution.before.Main.kt")
+                    public void testJavaClassMemberPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/javaClassMemberPartialSubstitution.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+
+                    @TestMetadata("javaClassMemberWithReceiverArg.before.Main.kt")
+                    public void testJavaClassMemberWithReceiverArg() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/javaClassMemberWithReceiverArg.before.Main.kt");
+                        doTestWithExtraFile(fileName);
+                    }
+                }
             }
 
         }
