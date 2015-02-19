@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Array
 import java.lang.reflect.Modifier
 
 private fun calculateVisibility(modifiers: Int): Visibility {
@@ -34,6 +36,9 @@ private fun calculateVisibility(modifiers: Int): Visibility {
     }
 }
 
+public val Class<*>.classLoader: ClassLoader
+    get() = getClassLoader() ?: ClassLoader.getSystemClassLoader()
+
 public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
         javaClass<Enum<*>>().isAssignableFrom(this)
 
@@ -41,4 +46,15 @@ public val Class<*>.fqName: FqName
     get() = classId.asSingleFqName().toSafe()
 
 public val Class<*>.classId: ClassId
-    get() = getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName())) ?: ClassId.topLevel(FqName(getName()))
+    get() = when {
+        isPrimitive() -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")
+        isArray() -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
+        getEnclosingMethod() != null, getEnclosingConstructor() != null, getSimpleName().isEmpty() -> {
+            val fqName = FqName(getName())
+            ClassId(fqName.parent(), FqNameUnsafe.topLevel(fqName.shortName()), /* local = */ true)
+        }
+        else -> getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName())) ?: ClassId.topLevel(FqName(getName()))
+    }
+
+public fun Class<*>.createArrayType(): Class<*> =
+        Array.newInstance(this, 0).javaClass

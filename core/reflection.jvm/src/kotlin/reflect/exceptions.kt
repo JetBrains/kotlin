@@ -16,16 +16,20 @@
 
 package kotlin.reflect
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
     {
+        [suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")]
         (this as java.lang.Throwable).initCause(cause)
     }
 }
 
-suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-public class NoSuchPropertyException(cause: Exception) : Exception() {
+public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
     {
-        (this as java.lang.Throwable).initCause(cause)
+        [suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")]
+        if (cause != null) {
+            (this as java.lang.Throwable).initCause(cause)
+        }
     }
 }
+
+public class KotlinReflectionInternalError(message: String) : Error(message)
