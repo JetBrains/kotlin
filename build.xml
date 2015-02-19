@@ -99,6 +99,7 @@
         <include name="core/descriptors/src"/>
         <include name="core/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
+        <include name="core/serialization.js/src"/>
         <include name="core/serialization.jvm/src"/>
         <include name="core/util.runtime/src"/>
         <include name="compiler/frontend/src"/>
@@ -125,6 +126,7 @@
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
+        <include name="serialization.js/**"/>
         <include name="serialization.jvm/**"/>
         <include name="backend/**"/>
         <include name="backend-common/**"/>
@@ -190,6 +192,7 @@
             <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="core/serialization/src"/>
+            <fileset dir="core/serialization.js/src"/>
             <fileset dir="core/serialization.jvm/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/frontend/src"/>
