@@ -3141,6 +3141,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("disallowImplInTypeParameter.kt")
+            public void testDisallowImplInTypeParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/disallowImplInTypeParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericGetter.kt")
             public void testGenericGetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/genericGetter.kt");

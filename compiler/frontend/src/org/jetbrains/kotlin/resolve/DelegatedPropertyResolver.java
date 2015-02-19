@@ -128,7 +128,8 @@ public class DelegatedPropertyResolver {
         return psiFactory.createExpression(builtIns.getPropertyMetadataImpl().getName().asString() +
                                            "(\"" +
                                            propertyDescriptor.getName().asString() +
-                                           "\")");
+                                           "\"): " +
+                                           builtIns.getPropertyMetadata().getName().asString());
     }
 
     public void resolveDelegatedPropertyPDMethod(
