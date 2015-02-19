@@ -361,7 +361,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateVariable.Parameter.class})
+        @InnerTestClasses({CreateVariable.Parameter.class, CreateVariable.Property.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
@@ -383,6 +383,50 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/property")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Property extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInProperty() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("extensionValOnGroovyType.before.Main.kt")
+                public void testExtensionValOnGroovyType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionValOnGroovyType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("extensionValOnJavaType.before.Main.kt")
+                public void testExtensionValOnJavaType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionValOnJavaType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("valOnGroovyType.before.Main.kt")
+                public void testValOnGroovyType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/valOnGroovyType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("valOnJavaInterface.before.Main.kt")
+                public void testValOnJavaInterface() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/valOnJavaInterface.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("valOnJavaType.before.Main.kt")
+                public void testValOnJavaType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/valOnJavaType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+                @TestMetadata("varOnJavaType.before.Main.kt")
+                public void testVarOnJavaType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/varOnJavaType.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+            }
         }
     }
 

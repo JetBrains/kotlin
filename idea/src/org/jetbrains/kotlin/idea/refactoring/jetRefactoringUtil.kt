@@ -81,6 +81,8 @@ import com.intellij.psi.PsiTypeParameterList
 import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import com.intellij.psi.PsiField
+import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -487,4 +489,23 @@ public fun createJavaMethod(function: JetNamedFunction, targetClass: PsiClass): 
     }
 
     return method
+}
+
+fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
+    val template = LightClassUtil.getLightClassPropertyMethods(property).getGetter()
+                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(property)}")
+
+    val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
+    val field = targetClass.add(factory.createField(property.getName(), template.getReturnType())) as PsiField
+
+    with(field.getModifierList()) {
+        val templateModifiers = template.getModifierList()
+        setModifierProperty(VisibilityUtil.getVisibilityModifier(templateModifiers), true)
+        if (!property.isVar()) {
+            setModifierProperty(PsiModifier.FINAL, true)
+        }
+        copyModifierListItems(templateModifiers, this, false)
+    }
+
+    return field
 }

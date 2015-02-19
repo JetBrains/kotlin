@@ -72,6 +72,8 @@ import com.intellij.psi.PsiMethod
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
@@ -764,7 +766,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val project = declaration.getProject()
 
-            val newJavaMethod: PsiMethod = when (declaration) {
+            val newJavaMember: PsiMember = when (declaration) {
                 is JetNamedFunction -> {
                     val method = createJavaMethod(declaration, targetClass)
 
@@ -774,16 +776,25 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                     method
                 }
+                is JetProperty -> {
+                    if (targetClass.isInterface()) return false
+                    createJavaField(declaration, targetClass)
+                }
                 else -> return false
             }
 
             declaration.delete()
 
-            JavaCodeStyleManager.getInstance(project).shortenClassReferences(newJavaMethod);
+            JavaCodeStyleManager.getInstance(project).shortenClassReferences(newJavaMember);
 
             val descriptor = OpenFileDescriptor(project, targetClass.getContainingFile().getVirtualFile())
-            val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)
-            CreateFromUsageUtils.setupEditor(newJavaMethod, targetEditor)
+            val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
+
+            when (newJavaMember) {
+                is PsiMethod -> CreateFromUsageUtils.setupEditor(newJavaMember, targetEditor)
+                is PsiField -> targetEditor.getCaretModel().moveToOffset(newJavaMember.getTextRange().getEndOffset() - 1)
+            }
+            targetEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)
 
             return true
         }
