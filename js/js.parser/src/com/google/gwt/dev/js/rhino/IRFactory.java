@@ -407,9 +407,7 @@ public class IRFactory {
     private void reportError(String msgResource) {
 
         String message = Context.getMessage0(msgResource);
-        Context.reportError(
-            message, ts.getSourceName(), ts.getLineno(),
-            ts.getLine(), ts.getOffset());
+        ts.reportSyntaxError(message, null);
     }
 
     // Only needed to get file/line information. Could create an interface

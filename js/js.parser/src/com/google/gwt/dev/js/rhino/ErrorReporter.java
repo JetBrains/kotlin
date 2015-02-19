@@ -38,6 +38,8 @@
 
 package com.google.gwt.dev.js.rhino;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * This is interface defines a protocol for the reporting of
  * errors during JavaScript translation or execution.
@@ -51,15 +53,11 @@ public interface ErrorReporter {
      * The implementing class may choose to ignore the warning
      * if it desires.
      *
-     * @param message a String describing the warning
-     * @param sourceName a String describing the JavaScript source
-     * where the warning occured; typically a filename or URL
-     * @param line the line number associated with the warning
-     * @param lineSource the text of the line (may be null)
-     * @param lineOffset the offset into lineSource where problem was detected
+     * @param message a String describing the error
+     * @param startPosition position before error token
+     * @param endPosition position after error token
      */
-    void warning(String message, String sourceName, int line,
-                 String lineSource, int lineOffset);
+    void warning(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition);
 
     /**
      * Report an error.
@@ -73,12 +71,8 @@ public interface ErrorReporter {
      * errors, however.
      *
      * @param message a String describing the error
-     * @param sourceName a String describing the JavaScript source
-     * where the error occured; typically a filename or URL
-     * @param line the line number associated with the error
-     * @param lineSource the text of the line (may be null)
-     * @param lineOffset the offset into lineSource where problem was detected
+     * @param startPosition position before error token
+     * @param endPosition position after error token
      */
-    void error(String message, String sourceName, int line,
-               String lineSource, int lineOffset);
+    void error(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition);
 }
