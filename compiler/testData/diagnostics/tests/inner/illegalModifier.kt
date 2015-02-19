@@ -23,7 +23,7 @@ enum class H {
 }
 
 trait K {
-    <!ILLEGAL_MODIFIER!>inner<!> class L
+    <!INNER_CLASS_IN_TRAIT!>inner<!> class L
 }
 
 object N {

@@ -614,6 +614,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
+    DiagnosticFactory0<JetClass> INNER_CLASS_IN_TRAIT = DiagnosticFactory0.create(ERROR, PositioningStrategies.INNER_MODIFIER);
+
     //Inline and inlinable parameters
     DiagnosticFactory2<JetElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory3<JetElement, JetElement, DeclarationDescriptor, DeclarationDescriptor> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
