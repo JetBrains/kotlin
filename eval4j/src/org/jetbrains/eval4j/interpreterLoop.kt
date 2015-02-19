@@ -51,13 +51,10 @@ public class AbnormalTermination(public val message: String): InterpreterResult 
 }
 
 public trait InterpretationEventHandler {
-
-    class object {
-        object NONE : InterpretationEventHandler {
-            override fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult? = null
-            override fun exceptionThrown(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
-            override fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
-        }
+    object NONE : InterpretationEventHandler {
+        override fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult? = null
+        override fun exceptionThrown(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
+        override fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
     }
 
     // If a non-null value is returned, interpreter loop is terminated and that value is used as a result
