@@ -360,6 +360,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("SmartCastOfThis1.kt")
+    public void testSmartCastOfThis1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastOfThis1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCastOfThis2.kt")
+    public void testSmartCastOfThis2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastOfThis2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SmartCastPointsResolveRequired1.kt")
     public void testSmartCastPointsResolveRequired1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired1.kt");
