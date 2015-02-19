@@ -6,8 +6,9 @@ var topLevel = "123"
 fun box(): String {
     val p = ::topLevel
 
-    // TODO: uncomment when fields are loaded from package parts
-    // assert(p.javaField != null, "Fail p field")
+    assert(p.javaField != null, "Fail p field")
+    val field = p.javaField!!
+    assert(field.getDeclaringClass().getName() contains "_DefaultPackage\$", "Fail field not in package part: ${field.getDeclaringClass()}")
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!

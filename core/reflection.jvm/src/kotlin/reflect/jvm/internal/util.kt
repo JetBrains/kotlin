@@ -16,8 +16,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
@@ -61,13 +64,26 @@ private fun KCallableContainerImpl.findMethodBySignature(signature: JvmProtoBuf.
 }
 
 // TODO: check resulting field's type
-private fun KCallableContainerImpl.findFieldBySignature(signature: JvmProtoBuf.JvmFieldSignature, nameResolver: NameResolver): Field? {
+private fun KCallableContainerImpl.findFieldBySignature(
+        proto: ProtoBuf.Callable,
+        signature: JvmProtoBuf.JvmFieldSignature,
+        nameResolver: NameResolver
+): Field? {
     val name = nameResolver.getString(signature.getName())
+
     val owner =
-            if (signature.getIsStaticInOuter())
-                jClass.getEnclosingClass()
-                ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
-            else jClass
+            when {
+                proto.hasExtension(JvmProtoBuf.implClassName) -> {
+                    val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
+                    // TODO: store fq name of impl class name in jvm_descriptors.proto
+                    val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
+                    jClass.classLoader.loadClass(classId.asSingleFqName().asString())
+                }
+                signature.getIsStaticInOuter() -> {
+                    jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
+                }
+                else -> jClass
+            }
 
     return try {
         owner.getDeclaredField(name)

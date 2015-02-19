@@ -50,16 +50,16 @@ abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescript
     val field: Field? by ReflectProperties.lazySoft {
         val proto = protoData
         if (!proto.signature.hasField()) null
-        else container.findFieldBySignature(proto.signature.getField(), proto.nameResolver)
+        else container.findFieldBySignature(proto.proto, proto.signature.getField(), proto.nameResolver)
     }
 
-    val getter: Method? by ReflectProperties.lazySoft {
+    open val getter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (!proto.signature.hasGetter()) null
         else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver)
     }
 
-    val setter: Method? by ReflectProperties.lazySoft {
+    open val setter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (!proto.signature.hasSetter()) null
         else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver)
