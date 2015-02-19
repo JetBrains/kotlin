@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.kotlin.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
@@ -45,6 +47,10 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnnotationClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 
 public class CompileTimeConstantUtils {
+
+    private final static Set<String> ARRAY_CALL_NAMES = KotlinPackage.hashSetOf(
+            "kotlin.array", "kotlin.doubleArray", "kotlin.floatArray", "kotlin.longArray", "kotlin.intArray", "kotlin.charArray",
+            "kotlin.shortArray", "kotlin.byteArray", "kotlin.booleanArray");
 
     public static void checkConstructorParametersType(@NotNull List<JetParameter> parameters, @NotNull BindingTrace trace) {
         for (JetParameter parameter : parameters) {
@@ -112,7 +118,7 @@ public class CompileTimeConstantUtils {
     }
 
     public static boolean isArrayMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
-        return "kotlin.arrays.array".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
+        return ARRAY_CALL_NAMES.contains(DescriptorUtils.getFqName(resolvedCall.getCandidateDescriptor()).asString());
     }
 
     public static boolean isJavaClassMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
