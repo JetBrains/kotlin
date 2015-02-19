@@ -4,7 +4,7 @@ class Outer {
     class Nested
 
     class C {
-        fun foo(p1: Nested, p2: ClassObjectNested, p3: Nested2) { }
+        fun foo(p1: Nested, p2: ClassObjectNested, p3: Inner) { }
 
         inner class Inner
         inner class Inner2

@@ -16,23 +16,33 @@
 
 package org.jetbrains.kotlin.idea.imports
 
+import com.google.common.collect.HashMultimap
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.idea.references.JetReference
-import java.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -72,7 +82,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             val importsToGenerate = HashSet<ImportPath>()
 
-            val descriptorsByPackages = HashMap<FqName, MutableCollection<DeclarationDescriptor>>()
+            val descriptorsByPackages = HashMultimap.create<FqName, DeclarationDescriptor>()
             for (descriptor in descriptorsToImport) {
                 val fqName = descriptor.importableFqNameSafe
                 val parentFqName = fqName.parent()
@@ -80,21 +90,21 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     importsToGenerate.add(ImportPath(fqName, false))
                 }
                 else {
-                    descriptorsByPackages.getOrPut(parentFqName, { ArrayList() }).add(descriptor)
+                    descriptorsByPackages.put(parentFqName, descriptor)
                 }
             }
 
-            val builder = StringBuilder()
-            builder.append("package ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(currentPackageName)).append("\n")
-
             val classNamesToCheck = HashSet<FqName>()
 
-            for ((packageName, descriptors) in descriptorsByPackages) {
+            fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
+
+            for (packageName in descriptorsByPackages.keys()) {
+                val descriptors = descriptorsByPackages[packageName]
                 val fqNames = descriptors.map { it.importableFqNameSafe }.toSet()
                 val explicitImports = packageName != currentPackageName && fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
                 if (explicitImports) {
                     for (fqName in fqNames) {
-                        if (!importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)) {
+                        if (!isImportedByDefault(fqName)) {
                             importsToGenerate.add(ImportPath(fqName, false))
                         }
                     }
@@ -106,17 +116,20 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                         }
                     }
 
-                    if (packageName == currentPackageName) continue
-                    if (fqNames.all { fqName -> importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file) }) continue
-
-                    builder.append("import ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(packageName)).append(".*\n")
-                    importsToGenerate.add(ImportPath(packageName, true))
+                    if (packageName != currentPackageName && !fqNames.all(::isImportedByDefault)) {
+                        importsToGenerate.add(ImportPath(packageName, true))
+                    }
                 }
             }
 
-            // now check that all classes are really imported
-            val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", builder.toString(), file)
+            // now check that there are no conflicts and all classes are really imported
+            val fileWithImportsText = StringBuilder {
+                append("package ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(currentPackageName)).append("\n")
+                importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.getPathStr() }.joinTo(this, "\n")
+            }.toString()
+            val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
             val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
+
             for (fqName in classNamesToCheck) {
                 if (scope.getClassifier(fqName.shortName())?.importableFqNameSafe != fqName) {
                     // add explicit import if failed to import with * (or from current package)
@@ -124,11 +137,11 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
                     val packageName = fqName.parent()
 
-                    val descriptors = descriptorsByPackages[packageName]
-                    descriptors.removeAll(descriptors.filter { it.importableFqNameSafe == fqName })
-                    descriptorsByPackages[packageName] = descriptors
+                    for (descriptor in descriptorsByPackages[packageName].filter { it.importableFqNameSafe == fqName }) {
+                        descriptorsByPackages.remove(packageName, descriptor)
+                    }
 
-                    if (descriptors.isEmpty()) { // star import is not really needed
+                    if (descriptorsByPackages[packageName].isEmpty()) { // star import is not really needed
                         importsToGenerate.remove(ImportPath(packageName, true))
                     }
                 }
