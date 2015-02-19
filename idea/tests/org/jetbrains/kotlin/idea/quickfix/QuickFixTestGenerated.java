@@ -1522,6 +1522,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeCallInStringTemplateRuntime.kt")
+                public void testCallInStringTemplateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeCallInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeCallWithLambdaArg.kt")
                 public void testCallWithLambdaArg() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeCallWithLambdaArg.kt");
@@ -1687,6 +1693,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforePropertyOnUserType.kt")
                 public void testPropertyOnUserType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforePropertyOnUserType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeQualifiedCallInStringTemplateRuntime.kt")
+                public void testQualifiedCallInStringTemplateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeQualifiedCallInStringTemplateRuntime.kt");
                     doTest(fileName);
                 }
 
@@ -2546,6 +2558,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforePrivateForMembers.kt")
                 public void testPrivateForMembers() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforePrivateForMembers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeQualifiedRefInStringTemplateRuntime.kt")
+                public void testQualifiedRefInStringTemplateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeQualifiedRefInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeRefInStringTemplateRuntime.kt")
+                public void testRefInStringTemplateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeRefInStringTemplateRuntime.kt");
                     doTest(fileName);
                 }
 

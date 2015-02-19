@@ -22,13 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import java.util.LinkedHashSet
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetTypeConstraint
-import org.jetbrains.kotlin.psi.JetMultiDeclarationEntry
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetVariableDeclaration
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import java.util.HashSet
@@ -41,16 +35,14 @@ import org.jetbrains.kotlin.types.JetTypeImpl
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetPropertyDelegate
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -182,6 +174,9 @@ fun JetExpression.guessTypes(
                                ?: builtIns.getNullableNothingType()
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))
             array(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
+        }
+        parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
+            array(KotlinBuiltIns.getInstance().getStringType())
         }
         else -> array() // can't infer anything
     }
