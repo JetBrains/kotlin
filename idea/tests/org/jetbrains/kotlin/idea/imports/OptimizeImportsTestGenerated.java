@@ -81,6 +81,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DoNotTouchIfNoChanges.kt")
+    public void testDoNotTouchIfNoChanges() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DoNotTouchIfNoChanges.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DuplicatedImports.kt")
     public void testDuplicatedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DuplicatedImports.kt");
