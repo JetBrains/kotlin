@@ -27,12 +27,12 @@ trait K {
 }
 
 object N {
-    inner class O
+    <!INNER_CLASS_IN_OBJECT!>inner<!> class O
 }
 
 class P {
     class object {
-        inner class Q
+        <!INNER_CLASS_IN_OBJECT!>inner<!> class Q
     }
 }
 

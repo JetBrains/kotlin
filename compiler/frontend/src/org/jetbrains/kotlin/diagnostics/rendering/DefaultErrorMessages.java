@@ -326,6 +326,7 @@ public class DefaultErrorMessages {
         MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use ''inner'' keyword to make the class inner");
 
         MAP.put(INNER_CLASS_IN_TRAIT, "Inner classes are not allowed in traits");
+        MAP.put(INNER_CLASS_IN_OBJECT, "Inner classes are not allowed in objects");
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
