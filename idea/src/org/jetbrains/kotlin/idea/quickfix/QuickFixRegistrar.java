@@ -113,6 +113,11 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
         QuickFixes.factories.put(REPEATED_MODIFIER, removeModifierFactory);
 
+        JetSingleIntentionActionFactory removeInnerModifierFactory =
+                RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD);
+        QuickFixes.factories.put(INNER_CLASS_IN_TRAIT, removeInnerModifierFactory);
+        QuickFixes.factories.put(INNER_CLASS_IN_OBJECT, removeInnerModifierFactory);
+
         JetSingleIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);

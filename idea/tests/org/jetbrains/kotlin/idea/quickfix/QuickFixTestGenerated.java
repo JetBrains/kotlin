@@ -2825,6 +2825,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeRemoveInnerForClassInTrait.kt")
+        public void testRemoveInnerForClassInTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveInnerForClassInTrait.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeRemoveRedundantModifier1.kt")
         public void testRemoveRedundantModifier1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier1.kt");
