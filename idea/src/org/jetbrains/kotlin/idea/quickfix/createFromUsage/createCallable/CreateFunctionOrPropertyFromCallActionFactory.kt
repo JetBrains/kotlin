@@ -18,27 +18,19 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetExpression
 import java.util.Collections
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -46,11 +38,15 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.psi.PsiClass
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.refactoring.*
+import org.jetbrains.kotlin.psi.*
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagElement = diagnostic.getPsiElement()
-        if (PsiTreeUtil.getParentOfType(diagElement, javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>()) != null) return null
+        if (PsiTreeUtil.getParentOfType(
+                diagElement,
+                javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>(), javaClass<JetImportDirective>()
+        ) != null) return null
 
         val callExpr = when (diagnostic.getFactory()) {
                            in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {

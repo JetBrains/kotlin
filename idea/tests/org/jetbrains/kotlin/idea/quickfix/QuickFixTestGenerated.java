@@ -1546,6 +1546,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeExtensionRefInImport.kt")
+                public void testExtensionRefInImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeExtensionRefInImport.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeFunExtraArgs.kt")
                 public void testFunExtraArgs() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunExtraArgs.kt");
@@ -1699,6 +1705,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeQualifiedCallInStringTemplateRuntime.kt")
                 public void testQualifiedCallInStringTemplateRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeQualifiedCallInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeRefInImport.kt")
+                public void testRefInImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeRefInImport.kt");
                     doTest(fileName);
                 }
 
@@ -2519,6 +2531,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeExtensionRefInImport.kt")
+                public void testExtensionRefInImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeExtensionRefInImport.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeInconsistentTypes.kt")
                 public void testInconsistentTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeInconsistentTypes.kt");
@@ -2564,6 +2582,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeQualifiedRefInStringTemplateRuntime.kt")
                 public void testQualifiedRefInStringTemplateRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeQualifiedRefInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeRefInImport.kt")
+                public void testRefInImport() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeRefInImport.kt");
                     doTest(fileName);
                 }
 
