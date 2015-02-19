@@ -22,18 +22,13 @@ import com.google.dart.compiler.common.SourceInfoImpl;
 import com.google.gwt.dev.js.AbortParsingException;
 import com.google.gwt.dev.js.JsParser;
 import com.google.gwt.dev.js.JsParserException;
+import com.google.gwt.dev.js.rhino.CodePosition;
 import com.google.gwt.dev.js.rhino.ErrorReporter;
-import com.google.gwt.dev.js.rhino.EvaluatorException;
-import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
 import org.jetbrains.kotlin.builtins.InlineUtil;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic;
-import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.psi.JetCallExpression;
@@ -50,10 +45,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.gwt.dev.js.rhino.Utils.isEndOfLine;
-import static org.jetbrains.kotlin.js.descriptors.DescriptorsPackage.getJS_PATTERN;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
+import static org.jetbrains.kotlin.resolve.diagnostics.JsCallChecker.isJsCall;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 
@@ -63,7 +57,9 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
-        if (matchesJsCode(expression, context)) {
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+
+        if (isJsCall(resolvedCall)) {
             return (new CallExpressionTranslator(expression, receiver, context)).translateJsCode();
         }
         
@@ -105,16 +101,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         return false;
     }
 
-    private static boolean matchesJsCode(
-            @NotNull JetCallExpression expression,
-            @NotNull TranslationContext context
-    ) {
-        FunctionDescriptor descriptor = getFunctionResolvedCallWithAssert(expression, context.bindingContext())
-                                            .getResultingDescriptor();
-
-        return getJS_PATTERN().apply(descriptor);
-    }
-
     private CallExpressionTranslator(
             @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
@@ -132,11 +118,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     private JsNode translateJsCode() {
         List<? extends ValueArgument> arguments = expression.getValueArguments();
         JetExpression argumentExpression = arguments.get(0).getArgumentExpression();
-
-        if (!(argumentExpression instanceof JetStringTemplateExpression)) {
-            context().getTrace().report(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_LITERAL.on(expression));
-            return program().getEmptyExpression();
-        }
+        assert argumentExpression instanceof JetStringTemplateExpression;
 
         List<JsStatement> statements = parseJsCode((JetStringTemplateExpression) argumentExpression);
         int size = statements.size();
@@ -161,7 +143,21 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert jsCode instanceof String: "jsCode must be compile time string";
 
         List<JsStatement> statements = new ArrayList<JsStatement>();
-        ErrorReporter errorReporter = new JsCodeErrorReporter(jsCodeExpression, (String) jsCode, context().getTrace());
+        ErrorReporter errorReporter = new ErrorReporter() {
+            @Override
+            public void warning(
+                    @NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition
+            ) {
+
+            }
+
+            @Override
+            public void error(
+                    @NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition
+            ) {
+                throw new IllegalStateException("JS parser error in backend (must have been checked in frontend): " + message);
+            }
+        };
 
         try {
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
@@ -178,84 +174,5 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         }
 
         return statements;
-    }
-
-    private static class JsCodeErrorReporter implements ErrorReporter {
-
-        @NotNull
-        private final JetExpression jsCodeExpression;
-
-        @NotNull
-        private final String code;
-
-        @NotNull
-        private final DiagnosticSink trace;
-
-        JsCodeErrorReporter(@NotNull JetStringTemplateExpression jsCodeExpression,
-                            @NotNull String code,
-                            @NotNull DiagnosticSink trace
-        ) {
-            this.jsCodeExpression = jsCodeExpression;
-            this.code = code;
-            this.trace = trace;
-        }
-
-        @Override
-        public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
-            ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_ERROR, message, line, lineOffset);
-            trace.report(diagnostic);
-            throw new AbortParsingException();
-        }
-
-        @Override
-        public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
-            ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_WARNING, message, line, lineOffset);
-            trace.report(diagnostic);
-        }
-
-        private ParametrizedDiagnostic<JetExpression> getDiagnostic(
-                @NotNull DiagnosticFactory2<JetExpression, String, List<TextRange>> diagnosticFactory,
-                String message,
-                int line,
-                int lineOffset
-        ) {
-            int offset = jsCodeExpression.getTextOffset() + offsetFromStart(code, line, lineOffset);
-
-            assert jsCodeExpression instanceof JetStringTemplateExpression: "js argument is expected to be compile-time string literal";
-            int quotesLength = jsCodeExpression.getFirstChild().getTextLength();
-            offset += quotesLength;
-
-            TextRange textRange = new TextRange(offset, offset + 1);
-            return diagnosticFactory.on(jsCodeExpression, message, Collections.singletonList(textRange));
-        }
-
-        /**
-         * Calculates an offset from the start of a text for a position,
-         * defined by line and offset in that line.
-         */
-        private static int offsetFromStart(String text, int line, int offset) {
-            int i = 0;
-            int lineCount = 0;
-            int offsetInLine = 0;
-
-            while (i < text.length()) {
-                char c = text.charAt(i);
-
-                if (lineCount == line && offsetInLine == offset) {
-                    return i;
-                }
-
-                if (isEndOfLine(c)) {
-                    offsetInLine = 0;
-                    lineCount++;
-                    assert lineCount <= line;
-                }
-
-                i++;
-                offsetInLine++;
-            }
-
-            return text.length();
-        }
     }
 }

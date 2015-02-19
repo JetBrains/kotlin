@@ -20,13 +20,17 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic
+import org.jetbrains.kotlin.resolve.diagnostics.JsCallData
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 
 public object JsCodePositioningStrategy : PositioningStrategy<PsiElement>() {
     override fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out PsiElement>): List<TextRange> {
         [suppress("UNCHECKED_CAST")]
-        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters2<JetExpression, String, List<TextRange>>
-        return diagnosticWithParameters.getB()
+        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetExpression, JsCallData>
+        val textRange = diagnosticWithParameters.getA().reportRange
+        return listOf(textRange)
     }
 }

@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
-import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.resolve.diagnostics.JsCallData;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.List;
@@ -39,9 +37,9 @@ public interface ErrorsJs {
     DiagnosticFactory0<JetDeclaration> NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE = DiagnosticFactory0.create(ERROR, DECLARATION_RETURN_TYPE);
     DiagnosticFactory0<JetDeclaration> NATIVE_SETTER_WRONG_RETURN_TYPE = DiagnosticFactory0.create(ERROR, DECLARATION_RETURN_TYPE);
     DiagnosticFactory2<JetElement, Integer, String> NATIVE_INDEXER_WRONG_PARAMETER_COUNT = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory2<JetExpression, String, List<TextRange>> JSCODE_ERROR = DiagnosticFactory2.create(ERROR, JsCodePositioningStrategy.INSTANCE$);
-    DiagnosticFactory2<JetExpression, String, List<TextRange>> JSCODE_WARNING = DiagnosticFactory2.create(WARNING, JsCodePositioningStrategy.INSTANCE$);
-    DiagnosticFactory0<JetExpression> JSCODE_ARGUMENT_SHOULD_BE_LITERAL = DiagnosticFactory0.create(ERROR, CALL_EXPRESSION);
+    DiagnosticFactory1<JetExpression, JsCallData> JSCODE_ERROR = DiagnosticFactory1.create(ERROR, JsCodePositioningStrategy.INSTANCE$);
+    DiagnosticFactory1<JetExpression, JsCallData> JSCODE_WARNING = DiagnosticFactory1.create(WARNING, JsCodePositioningStrategy.INSTANCE$);
+    DiagnosticFactory0<JetExpression> JSCODE_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(ERROR, DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
