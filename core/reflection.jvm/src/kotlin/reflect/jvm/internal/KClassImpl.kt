@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.KClass
@@ -39,6 +40,19 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     }
 
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
+
+    override fun getProperties(): Collection<KMemberProperty<T, *>> {
+        return scope.getAllDescriptors().stream()
+                .filterIsInstance<PropertyDescriptor>()
+                .filter { descriptor ->
+                    descriptor.getExtensionReceiverParameter() == null
+                }
+                .map { descriptor ->
+                    if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
+                    else KMemberPropertyImpl<T, Any?>(this) { descriptor }
+                }
+                .toList()
+    }
 
     fun memberProperty(name: String): KMemberProperty<T, *> {
         return KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))

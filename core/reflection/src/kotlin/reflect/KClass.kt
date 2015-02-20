@@ -16,4 +16,6 @@
 
 package kotlin.reflect
 
-public trait KClass<out T>
+public trait KClass<T> {
+    public fun getProperties(): Collection<KMemberProperty<T, *>>
+}
