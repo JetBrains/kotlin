@@ -4,4 +4,3 @@
 fun test(): Int? {
     return A().foo(1, "2")
 }
-

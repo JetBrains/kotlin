@@ -1,7 +1,7 @@
 class B<T>{
     final T t;
 
-    public <U, V, W> U foo(V v, W w) {
+    public <U, V> U foo(U u, V v) {
         return null;
     }
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.template.*
-import com.intellij.codeInsight.template.impl.TemplateImpl
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import kotlin.properties.Delegates
 import java.util.LinkedHashSet
 import java.util.Collections
@@ -48,7 +46,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import com.intellij.psi.SmartPointerManager
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -57,12 +54,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import java.util.LinkedHashMap
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.idea.util.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.idea.util.isUnit
 import com.intellij.openapi.editor.ScrollType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -75,14 +69,17 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiMethodCallExpression
-import com.intellij.psi.PsiExpressionStatement
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
+import com.intellij.psi.PsiMethodCallExpression
+import com.intellij.psi.PsiExpressionStatement
 import org.jetbrains.kotlin.idea.refactoring.*
+import org.jetbrains.kotlin.idea.util.*
+import com.intellij.openapi.ui.*
+import com.intellij.codeInsight.template.impl.*
+import org.jetbrains.kotlin.idea.util.application.*
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -201,6 +198,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         if (iterator.hasNext()) {
             val context = Context(iterator.next())
             runWriteAction { context.buildAndRunTemplate { buildNext(iterator) } }
+            ApplicationManager.getApplication().invokeLater { context.showDialogIfNeeded() }
         }
         else {
             ShortenReferences.DEFAULT.process(elementsToShorten)
@@ -220,14 +218,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     private inner class Context(val callableInfo: CallableInfo) {
         val skipReturnType: Boolean
-        val containingFile: JetFile
+        val jetFileToEdit: JetFile
         val containingFileEditor: Editor
-        val containingElement: JetElement
+        val containingElement: PsiElement
+        val dialogWithEditor: DialogWithEditor?
         val receiverClassDescriptor: ClassDescriptor?
         val typeParameterNameMap: Map<TypeParameterDescriptor, String>
         val receiverTypeCandidate: TypeCandidate?
         val mandatoryTypeParametersAsCandidates: List<TypeCandidate>
         val substitutions: List<JetTypeSubstitution>
+        var released: Boolean = false
 
         {
             // gather relevant information
@@ -235,7 +235,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val placement = placement
             when {
                 placement is CallablePlacement.NoReceiver -> {
-                    containingElement = placement.containingElement as? JetElement ?: config.currentFile
+                    containingElement = placement.containingElement
                     receiverClassDescriptor = with (placement.containingElement) {
                         when (this) {
                             is JetClassOrObject -> currentFileContext[BindingContext.CLASS, this]
@@ -248,22 +248,44 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     receiverClassDescriptor =
                             placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.classDescriptorToDeclaration(it) }
-                    containingElement = when {
-                        !config.isExtension && classDeclaration is JetElement -> classDeclaration
-                        else -> config.currentFile
-                    }
+                    containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
                 else -> throw IllegalArgumentException("Unexpected placement: $placement")
             }
             val receiverType = receiverClassDescriptor?.getDefaultType()
 
-            containingFile = containingElement.getContainingJetFile()
-            if (containingFile != config.currentFile) {
+            val project = config.currentFile.getProject()
+
+            if (containingElement.getContainingFile() != config.currentFile) {
                 NavigationUtil.activateFileWithPsiElement(containingElement)
-                containingFileEditor = FileEditorManager.getInstance(config.currentFile.getProject())!!.getSelectedTextEditor()!!
             }
-            else {
-                containingFileEditor = config.currentEditor!!
+
+            if (containingElement is JetElement) {
+                jetFileToEdit = containingElement.getContainingJetFile()
+                if (jetFileToEdit != config.currentFile) {
+                    containingFileEditor = FileEditorManager.getInstance(project).getSelectedTextEditor()
+                }
+                else {
+                    containingFileEditor = config.currentEditor!!
+                }
+                dialogWithEditor = null
+            } else {
+                val dialog = object: DialogWithEditor(project, "Create from usage", "") {
+                    override fun doOKAction() {
+                        project.executeWriteCommand("Premature end of template") {
+                            TemplateManagerImpl.getTemplateState(editor)?.gotoEnd(false)
+                        }
+                        super.doOKAction()
+                    }
+                }
+                containingFileEditor = dialog.editor
+                with(containingFileEditor.getSettings()) {
+                    setAdditionalColumnsCount(config.currentEditor!!.getSettings().getRightMargin(project))
+                    setAdditionalLinesCount(5)
+                }
+                jetFileToEdit = PsiDocumentManager.getInstance(project).getPsiFile(containingFileEditor.getDocument()) as JetFile
+                jetFileToEdit.analysisContext = config.currentFile
+                dialogWithEditor = dialog
             }
 
             val scope = getDeclarationScope()
@@ -509,6 +531,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val declarationInPlace = when (containingElement) {
                     is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
+
+                    is PsiClass -> jetFileToEdit.add(declaration) as JetNamedDeclaration
 
                     is JetClassOrObject -> {
                         var classBody = containingElement.getBody()
@@ -779,6 +803,36 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun transformToJavaMemberIfApplicable(declaration: JetNamedDeclaration): Boolean {
+            fun convertToJava(targetClass: PsiClass): PsiMember? {
+                val psiFactory = JetPsiFactory(declaration)
+
+                psiFactory.createPackageDirectiveIfNeeded(config.currentFile.getPackageFqName())?.let {
+                    declaration.getContainingFile().addBefore(it, null)
+                }
+
+                val adjustedDeclaration = when (declaration) {
+                    is JetNamedFunction, is JetProperty -> {
+                        val klass = psiFactory.createClass("class Foo {}")
+                        klass.getBody().add(declaration)
+                        (declaration.replace(klass) as JetClass).getBody().getDeclarations().first()
+                    }
+                    else -> declaration
+                }
+
+                return when (adjustedDeclaration) {
+                    is JetNamedFunction -> {
+                        createJavaMethod(adjustedDeclaration, targetClass)
+                    }
+                    is JetProperty -> {
+                        createJavaField(adjustedDeclaration, targetClass)
+                    }
+                    is JetClass -> {
+                        createJavaClass(adjustedDeclaration, targetClass)
+                    }
+                    else -> null
+                }
+            }
+
             if (config.isExtension || receiverClassDescriptor !is JavaClassDescriptor) return false
 
             val targetClass = DescriptorToSourceUtils.classDescriptorToDeclaration(receiverClassDescriptor) as? PsiClass
@@ -786,25 +840,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val project = declaration.getProject()
 
-            val newJavaMember: PsiMember = when (declaration) {
-                is JetNamedFunction -> {
-                    createJavaMethod(declaration, targetClass)
-                }
-                is JetProperty -> {
-                    createJavaField(declaration, targetClass)
-                }
-                is JetClass -> {
-                    createJavaClass(declaration, targetClass)
-                }
-                else -> return false
-            }
+            val newJavaMember = convertToJava(targetClass) ?: return false
 
             val modifierList = newJavaMember.getModifierList()
             if (newJavaMember is PsiMethod || newJavaMember is PsiClass) {
                 modifierList.setModifierProperty(PsiModifier.FINAL, false)
             }
-
-            declaration.delete()
 
             val needStatic = when (callableInfo) {
                 is ConstructorInfo -> with(callableInfo.classInfo) {
@@ -881,11 +922,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.getDocument())
 
             val caretModel = containingFileEditor.getCaretModel()
-            caretModel.moveToOffset(containingFile.getNode().getStartOffset())
+            caretModel.moveToOffset(jetFileToEdit.getNode().getStartOffset())
 
             val declaration = declarationPointer.getElement()
 
-            val builder = TemplateBuilderImpl(containingFile)
+            val builder = TemplateBuilderImpl(jetFileToEdit)
             if (declaration is JetProperty) {
                 setupValVarTemplate(builder, declaration)
             }
@@ -918,37 +959,69 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             // run the template
             TemplateManager.getInstance(project).startTemplate(containingFileEditor, templateImpl, object : TemplateEditingAdapter() {
-                override fun templateFinished(template: Template?, brokenOff: Boolean) {
-                    PsiDocumentManager.getInstance(project).commitDocument(containingFileEditor.getDocument())
+                private fun finishTemplate(brokenOff: Boolean) {
+                    try {
+                        PsiDocumentManager.getInstance(project).commitDocument(containingFileEditor.getDocument())
 
-                    // file templates
-                    val newDeclaration = if (templateImpl.getSegmentsCount() > 0) {
-                        PsiTreeUtil.findElementOfClassAtOffset(containingFile, templateImpl.getSegmentOffset(0), declaration.javaClass, false)!!
-                    }
-                    else declarationPointer.getElement()!!
+                        dialogWithEditor?.close(DialogWrapper.OK_EXIT_CODE)
+                        if (brokenOff && !ApplicationManager.getApplication().isUnitTestMode()) {
+                            NavigationUtil.activateFileWithPsiElement(config.originalElement)
+                            return
+                        }
 
-                    ApplicationManager.getApplication()!!.runWriteAction {
                         // file templates
-                        if (newDeclaration is JetNamedFunction) {
-                            setupFunctionBody(newDeclaration)
+                        val newDeclaration = if (templateImpl.getSegmentsCount() > 0) {
+                            PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit, templateImpl.getSegmentOffset(0), declaration.javaClass, false)!!
+                        }
+                        else declarationPointer.getElement()!!
+
+                        runWriteAction {
+                            // file templates
+                            if (newDeclaration is JetNamedFunction) {
+                                setupFunctionBody(newDeclaration)
+                            }
+
+                            val callElement = config.originalElement as? JetCallElement
+                            if (callElement != null) {
+                                setupCallTypeArguments(callElement, expression?.currentTypeParameters ?: Collections.emptyList())
+                            }
                         }
 
-                        val callElement = config.originalElement as? JetCallElement
-                        if (callElement != null) {
-                            setupCallTypeArguments(callElement, expression?.currentTypeParameters ?: Collections.emptyList())
+                        // change short type names to fully qualified ones (to be shortened below)
+                        val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
+                        if (!transformToJavaMemberIfApplicable(newDeclaration)) {
+                            elementsToShorten.addAll(typeRefsToShorten)
+                            setupEditor(newDeclaration)
                         }
                     }
-
-                    // change short type names to fully qualified ones (to be shortened below)
-                    val typeRefsToShorten = setupTypeReferencesForShortening(newDeclaration, parameterTypeExpressions)
-                    if (!transformToJavaMemberIfApplicable(newDeclaration)) {
-                        elementsToShorten.addAll(typeRefsToShorten)
-                        setupEditor(newDeclaration)
+                    finally {
+                        release()
+                        onFinish()
                     }
+                }
 
-                    onFinish()
+                override fun templateCancelled(template: Template?) {
+                    finishTemplate(true)
+                }
+
+                override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                    finishTemplate(brokenOff)
                 }
             })
+        }
+
+        fun showDialogIfNeeded() {
+            if (!ApplicationManager.getApplication().isUnitTestMode() && dialogWithEditor != null && !released) {
+                dialogWithEditor.show()
+            }
+        }
+
+        private fun release() {
+            if (released) return
+            dialogWithEditor?.let {
+                jetFileToEdit.delete()
+                released = true
+            }
         }
     }
 }

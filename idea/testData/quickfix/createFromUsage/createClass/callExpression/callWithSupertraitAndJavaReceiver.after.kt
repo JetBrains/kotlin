@@ -4,4 +4,3 @@
 trait T
 
 fun test(): T = J.Foo(2, "2")
-

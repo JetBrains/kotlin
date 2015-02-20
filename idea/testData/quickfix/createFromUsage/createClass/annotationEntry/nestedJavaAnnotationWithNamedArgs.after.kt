@@ -4,4 +4,3 @@
 J.foo(count = 1, name = "2") fun test() {
 
 }
-

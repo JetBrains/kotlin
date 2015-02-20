@@ -4,4 +4,3 @@
 fun test(): String? {
     return A().foo
 }
-

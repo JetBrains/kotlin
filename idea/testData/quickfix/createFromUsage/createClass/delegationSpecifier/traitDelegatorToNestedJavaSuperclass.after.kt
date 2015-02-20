@@ -3,4 +3,3 @@
 class Foo: J.A {
 
 }
-

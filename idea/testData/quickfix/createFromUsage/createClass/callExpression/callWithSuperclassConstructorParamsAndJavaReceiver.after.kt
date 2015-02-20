@@ -4,4 +4,3 @@
 open class A(val n: Int)
 
 fun test(): A = J.Foo(2, "2")
-

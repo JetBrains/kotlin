@@ -4,4 +4,3 @@
 fun test<U>(u: U) {
     val a = J(u).Foo(u)
 }
-

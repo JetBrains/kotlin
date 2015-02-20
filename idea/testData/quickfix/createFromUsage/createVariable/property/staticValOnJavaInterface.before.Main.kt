@@ -4,3 +4,4 @@
 fun test() {
     val a: Int = J.<caret>foo
 }
+

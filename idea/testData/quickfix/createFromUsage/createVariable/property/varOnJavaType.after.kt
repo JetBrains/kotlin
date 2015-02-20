@@ -4,4 +4,3 @@
 fun test() {
     A().foo = ""
 }
-

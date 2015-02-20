@@ -7,4 +7,3 @@ class B {
 class Foo: J.A(1, "2", B()) {
 
 }
-

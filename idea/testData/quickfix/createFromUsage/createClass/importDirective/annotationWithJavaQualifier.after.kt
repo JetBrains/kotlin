@@ -5,4 +5,3 @@ import J.A
 class X {
 
 }
-

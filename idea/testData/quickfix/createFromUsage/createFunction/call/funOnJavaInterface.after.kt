@@ -4,4 +4,3 @@
 fun test(a: A): Int? {
     return a.foo<String, Int>(1, "2")
 }
-

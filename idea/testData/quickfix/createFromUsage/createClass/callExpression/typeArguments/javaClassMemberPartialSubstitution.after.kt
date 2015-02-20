@@ -4,4 +4,3 @@
 class A<T>(val b: B<T>) {
     fun test() = B.Foo<String>(2, "2")
 }
-
