@@ -253,6 +253,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeSignature extends AbstractQuickFixMultiFileTest {
+        @TestMetadata("addParameterWithImport.before.Main.kt")
+        public void testAddParameterWithImport() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/addParameterWithImport.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         public void testAllFilesPresentInChangeSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
