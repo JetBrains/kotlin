@@ -25,140 +25,140 @@ public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
     }
 
     public void testInlineSimpleAssignment() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineGenericSimple() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineIntSimple() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineInc() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineCallNoInline() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineFunctionInLambda() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineLambdaNoCapture() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineLambdaWithCapture() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineChain() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineChainWithFewStatements() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testCallInlineFunctionOnTopLevelSimple() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testCallInlineFunctionOnTopLevel() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineIf() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineNoReturn() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testStatementsAfterReturn() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLambdaReassignment() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLambdaReassignmentWithCapture() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineMethod() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testThisImplicitlyCaptured() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testAstCopy() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testNoInlineLambda() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testlambdaInLambda() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testInlineDefaultArgument() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineFunction() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineFunctionDeclaredInLambda() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineExtensionFunction() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineFunctionNameClash() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineFunctionComplex() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testArrayLiteralAliasing() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testLocalInlineFunctionReference() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testThisLiteralAliasing() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testIdentityEquals() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testVararg() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testMutualRecursion() throws Exception {
         try {
-            checkFooBoxIsOkWithDirectives();
+            checkFooBoxIsOk();
         } catch (InlineRecursionException e) {
             return;
         }
@@ -167,74 +167,74 @@ public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
     }
 
     public void testInlineOrder() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testCallableReference() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testCallableReferenceOfLocalInline() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testAnonymousObjectInlineMethod() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testClassObject() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testExtension() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testExtensionWithManyArguments() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testParams() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testRootConstructor() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSeveralClosures() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSeveralUsage() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleDouble() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleInt() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleEnum() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleLambda() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleObject() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testIncrementProperty() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 
     public void testSimpleReturnFunctionWithResultUnused() throws Exception {
-        checkFooBoxIsOkWithDirectives();
+        checkFooBoxIsOk();
     }
 }

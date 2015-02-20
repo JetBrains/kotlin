@@ -16,16 +16,12 @@
 
 package org.jetbrains.kotlin.js.test;
 
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.intellij.util.Consumer;
+import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
-import org.jetbrains.kotlin.js.test.utils.MemoizeConsumer;
 
 public abstract class SingleFileTranslationWithDirectivesTest extends SingleFileTranslationTest {
-    private final MemoizeConsumer<JsNode> nodeConsumer = new MemoizeConsumer<JsNode>();
-
     public SingleFileTranslationWithDirectivesTest(@NotNull String main) {
         super(main);
     }
@@ -33,26 +29,12 @@ public abstract class SingleFileTranslationWithDirectivesTest extends SingleFile
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        nodeConsumer.consume(null);
-    }
-
-    protected void checkFooBoxIsOkWithDirectives() throws Exception {
-        checkFooBoxIsOk();
-        processDirectives();
-    }
-
-    protected void processDirectives() throws Exception {
-        String fileName = getInputFilePath(getTestName(true) + ".kt");
-        String fileText = JsTestUtils.readFile(fileName);
-
-        JsNode lastJsNode = nodeConsumer.getLastValue();
-        assert lastJsNode != null;
-
-        DirectiveTestUtils.processDirectives(lastJsNode, fileText);
     }
 
     @Override
-    protected Consumer<JsNode> getConsumer() {
-        return nodeConsumer;
+    protected void processJsProgram(@NotNull JsProgram program) throws Exception {
+        String fileName = getInputFilePath(getTestName(true) + ".kt");
+        String fileText = JsTestUtils.readFile(fileName);
+        DirectiveTestUtils.processDirectives(program, fileText);
     }
 }
