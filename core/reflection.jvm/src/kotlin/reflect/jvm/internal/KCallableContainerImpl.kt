@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import kotlin.reflect.KotlinReflectionInternalError
@@ -26,12 +27,25 @@ abstract class KCallableContainerImpl {
 
     abstract val scope: JetScope
 
-    protected fun findPropertyDescriptor(name: String): () -> PropertyDescriptor = {
-        val properties = scope.getProperties(Name.identifier(name))
+    protected fun findPropertyDescriptor(name: String, receiverParameterClass: Class<*>? = null): () -> PropertyDescriptor = {
+        val receiverDesc = receiverParameterClass?.desc
+
+        val properties = scope
+                .getProperties(Name.identifier(name))
+                .filter { descriptor ->
+                    descriptor is PropertyDescriptor &&
+                    descriptor.getName().asString() == name &&
+                    with(descriptor.getExtensionReceiverParameter()) {
+                        (this == null && receiverDesc == null) ||
+                        (this != null && RuntimeTypeMapper.mapTypeToJvmDesc(getType()) == receiverDesc)
+                    }
+                }
+
         if (properties.size() != 1) {
+            val debugText = if (receiverParameterClass == null) name else "${receiverParameterClass.getSimpleName()}.$name"
             throw KotlinReflectionInternalError(
-                    if (properties.isEmpty()) "Property $name not resolved in $this"
-                    else "${properties.size()} properties with name $name resolved in $this"
+                    if (properties.isEmpty()) "Property '$debugText' not resolved in $this"
+                    else "${properties.size()} properties '$debugText' resolved in $this"
             )
         }
 

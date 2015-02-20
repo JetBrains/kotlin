@@ -3,10 +3,13 @@ import kotlin.test.assertEquals
 
 fun check(expected: String, p: KExtensionProperty<*, *>) {
     var s = p.toString()
+
     // Strip "val" or "var"
+    assert(s.startsWith("val ") || s.startsWith("var ")) { "Fail val/var: $s" }
     s = s.substring(4)
+
     // Strip property name, leave only receiver class
-    s = s.substring(0, s.lastIndexOf('.'))
+    s = s.substringBeforeLast('.')
 
     assertEquals(expected, s)
 }
@@ -34,7 +37,14 @@ val Array<Any>.a2: Any get() = this
 val Array<Array<String>>.a3: Any get() = this
 val Array<BooleanArray>.a4: Any get() = this
 
+val Any?.n1: Any get() = Any()
+val Int?.n2: Any get() = Any()
+val Array<Any>?.n3: Any get() = Any()
+val Array<Any?>.n4: Any get() = Any()
+val Array<Any?>?.n5: Any get() = Any()
+
 val Map<String, Runnable>.m: Any get() = this
+val List<MutableSet<Array<CharSequence>>>.l: Any get() = this
 
 fun box(): String {
     check("kotlin.Boolean", Boolean::x)
@@ -55,12 +65,19 @@ fun box(): String {
     check("kotlin.LongArray", LongArray::x)
     check("kotlin.DoubleArray", DoubleArray::x)
 
-    check("kotlin.Array<java.lang.Integer>", Array<Int>::a1)
-    check("kotlin.Array<java.lang.Object>", Array<Any>::a2)
-    check("kotlin.Array<kotlin.Array<java.lang.String>>", Array<Array<String>>::a3)
+    check("kotlin.Any?", Any?::n1)
+    check("kotlin.Int?", Int?::n2)
+    check("kotlin.Array<kotlin.Any>?", Array<Any>?::n3)
+    check("kotlin.Array<kotlin.Any?>", Array<Any?>::n4)
+    check("kotlin.Array<kotlin.Any?>?", Array<Any?>?::n5)
+
+    check("kotlin.Array<kotlin.Int>", Array<Int>::a1)
+    check("kotlin.Array<kotlin.Any>", Array<Any>::a2)
+    check("kotlin.Array<kotlin.Array<kotlin.String>>", Array<Array<String>>::a3)
     check("kotlin.Array<kotlin.BooleanArray>", Array<BooleanArray>::a4)
 
-    check("java.util.Map", Map<String, Runnable>::m)
+    check("kotlin.Map<kotlin.String, java.lang.Runnable>", Map<String, Runnable>::m)
+    check("kotlin.List<kotlin.MutableSet<kotlin.Array<kotlin.CharSequence>>>", List<MutableSet<Array<CharSequence>>>::l)
 
     return "OK"
 }

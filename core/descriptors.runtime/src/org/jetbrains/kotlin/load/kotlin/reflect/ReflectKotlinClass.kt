@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.load.java.structure.reflect.isEnumClassOrSpecializedEnumEntryClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -209,10 +210,10 @@ private object SignatureSerializer {
         val sb = StringBuilder()
         sb.append("(")
         for (parameterType in method.getParameterTypes()) {
-            sb.append(typeDesc(parameterType))
+            sb.append(parameterType.desc)
         }
         sb.append(")")
-        sb.append(typeDesc(method.getReturnType()))
+        sb.append(method.getReturnType().desc)
         return sb.toString()
     }
 
@@ -220,23 +221,13 @@ private object SignatureSerializer {
         val sb = StringBuilder()
         sb.append("(")
         for (parameterType in constructor.getParameterTypes()) {
-            sb.append(typeDesc(parameterType))
+            sb.append(parameterType.desc)
         }
         sb.append(")V")
         return sb.toString()
     }
 
     fun fieldDesc(field: Field): String {
-        return typeDesc(field.getType())
-    }
-
-    suppress("UNCHECKED_CAST")
-    fun typeDesc(clazz: Class<*>): String {
-        if (clazz == Void.TYPE) return "V";
-        // This is a clever exploitation of a format returned by Class.getName(): for arrays, it's almost an internal name,
-        // but with '.' instead of '/'
-        // TODO: ensure there are tests on arrays of nested classes, multi-dimensional arrays, etc.
-        val arrayClass = java.lang.reflect.Array.newInstance(clazz as Class<Any>, 0).javaClass
-        return arrayClass.getName().substring(1).replace('.', '/')
+        return field.getType().desc
     }
 }

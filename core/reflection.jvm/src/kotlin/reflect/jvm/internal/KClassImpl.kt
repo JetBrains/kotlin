@@ -17,7 +17,6 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.jvm.internal.KotlinClass
@@ -38,7 +37,7 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     val descriptor by ReflectProperties.lazySoft {(): ClassDescriptor ->
         val moduleData = jClass.getOrCreateModule()
-        val classId = jClass.classId
+        val classId = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
         val descriptor =
                 if (classId.isLocal()) moduleData.localClassResolver.resolveLocalClass(classId)

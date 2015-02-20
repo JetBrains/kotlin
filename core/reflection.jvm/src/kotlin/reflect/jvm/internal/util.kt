@@ -28,14 +28,6 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.reflect.KotlinReflectionInternalError
 
-private fun String.capitalizeWithJavaBeanConvention(): String {
-    if (length() > 1 && Character.isUpperCase(this[1])) return this
-    return Character.toUpperCase(this[0]) + substring(1, length())
-}
-
-private fun getterName(propertyName: String): String = "get" + propertyName.capitalizeWithJavaBeanConvention()
-private fun setterName(propertyName: String): String = "set" + propertyName.capitalizeWithJavaBeanConvention()
-
 
 private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes: Class<*>): Method {
     try {
