@@ -152,13 +152,13 @@ private fun checkTypeParameterDescriptorsAreNotReified(
 
 public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     private fun JetType.mayBeNull(): NullabilityInformationSource? {
-        if (!isFlexible() && TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+        if (!isError() && !isFlexible() && TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
         if (getAnnotations().isMarkedNullable()) return NullabilityInformationSource.JAVA
         return null
     }
 
     private fun JetType.mustNotBeNull(): NullabilityInformationSource? {
-        if (!isFlexible() && !TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+        if (!isError() && !isFlexible() && !TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
         if (!isMarkedNullable() && getAnnotations().isMarkedNotNull()) return NullabilityInformationSource.JAVA
         return null
     }

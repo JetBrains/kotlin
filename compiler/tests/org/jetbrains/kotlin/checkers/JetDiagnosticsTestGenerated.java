@@ -8923,6 +8923,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt6829.kt")
+                public void testKt6829() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/kt6829.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("multiDeclaration.kt")
                 public void testMultiDeclaration() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/multiDeclaration.kt");
