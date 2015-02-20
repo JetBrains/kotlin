@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.google.dart.compiler.common.SourceInfoImpl;
-import com.google.gwt.dev.js.AbortParsingException;
 import com.google.gwt.dev.js.JsParser;
-import com.google.gwt.dev.js.JsParserException;
-import com.google.gwt.dev.js.rhino.CodePosition;
-import com.google.gwt.dev.js.rhino.ErrorReporter;
+import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.InlineStrategy;
@@ -48,7 +45,6 @@ import org.jetbrains.kotlin.types.JetType;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
@@ -153,32 +149,12 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert jsCode != null: jsCodeExpression.toString();
 
         List<JsStatement> statements = new ArrayList<JsStatement>();
-        ErrorReporter errorReporter = new ErrorReporter() {
-            @Override
-            public void warning(
-                    @NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition
-            ) {
-
-            }
-
-            @Override
-            public void error(
-                    @NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition
-            ) {
-                throw new IllegalStateException("JS parser error in backend (must have been checked in frontend): " + message);
-            }
-        };
 
         try {
             SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
             JsScope scope = context().scope();
             StringReader reader = new StringReader(jsCode);
-            statements.addAll(JsParser.parse(info, scope, reader, errorReporter, /* insideFunction= */ true));
-        } catch (AbortParsingException e) {
-            /** @see JsCodeErrorReporter#error */
-            return Collections.emptyList();
-        } catch (JsParserException e) {
-            throw new RuntimeException(e);
+            statements.addAll(JsParser.parse(info, scope, reader, ThrowExceptionOnErrorReporter.INSTANCE$, /* insideFunction= */ true));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
