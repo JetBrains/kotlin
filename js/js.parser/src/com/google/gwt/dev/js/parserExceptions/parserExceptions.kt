@@ -13,11 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.gwt.dev.js;
+package com.google.gwt.dev.js.parserExceptions
+
+import com.google.gwt.dev.js.rhino.CodePosition
 
 /**
- * Used only to exit parser on error
+ * Can be used in Error reporter to exit parser
  */
-public class AbortParsingException extends RuntimeException {
-  public AbortParsingException() {}
-}
+public class AbortParsingException : RuntimeException()
+
+public class JsParserException(
+        message: String,
+        val position: CodePosition
+) : RuntimeException("$message at $position")

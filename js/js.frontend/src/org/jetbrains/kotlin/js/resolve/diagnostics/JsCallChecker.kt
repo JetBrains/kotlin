@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
-import com.google.gwt.dev.js.AbortParsingException
+import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.*
 import com.google.gwt.dev.js.rhino.Utils.*
 import org.jetbrains.annotations.TestOnly

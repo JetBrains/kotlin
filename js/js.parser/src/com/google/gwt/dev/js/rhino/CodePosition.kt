@@ -23,4 +23,6 @@ class CodePosition(val line: Int, val offset: Int) : Comparable<CodePosition> {
                 line > other.line -> 1
                 else -> offset.compareTo(other.offset)
             }
+
+    override fun toString(): String = "($line, $offset)"
 }
