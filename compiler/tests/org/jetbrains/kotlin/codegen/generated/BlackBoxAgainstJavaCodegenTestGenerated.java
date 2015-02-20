@@ -332,6 +332,7 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({
             Reflection.Mapping.class,
+            Reflection.Properties.class,
     })
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Reflection extends AbstractBlackBoxCodegenTest {
@@ -356,6 +357,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             @TestMetadata("javaFields.kt")
             public void testJavaFields() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/reflection/mapping/javaFields.kt");
+                doTestAgainstJava(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxAgainstJava/reflection/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Properties extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInProperties() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/reflection/properties"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("equalsHashCodeToString.kt")
+            public void testEqualsHashCodeToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/reflection/properties/equalsHashCodeToString.kt");
                 doTestAgainstJava(fileName);
             }
         }

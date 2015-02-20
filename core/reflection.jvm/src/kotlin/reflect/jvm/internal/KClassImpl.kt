@@ -16,26 +16,18 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import kotlin.jvm.internal.KotlinClass
 import kotlin.reflect.KClass
 import kotlin.reflect.KMemberProperty
 import kotlin.reflect.KMutableMemberProperty
 import kotlin.reflect.KotlinReflectionInternalError
 
-enum class KClassOrigin {
-    BUILT_IN
-    KOTLIN
-    FOREIGN
-}
-
 class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
     // Don't use kotlin.properties.Delegates here because it's a Kotlin class which will invoke KClassImpl() in <clinit>,
     // resulting in infinite recursion
 
-    val descriptor by ReflectProperties.lazySoft {(): ClassDescriptor ->
+    val descriptor by ReflectProperties.lazySoft {
         val moduleData = jClass.getOrCreateModule()
         val classId = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
@@ -48,36 +40,12 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
 
-    private val origin by ReflectProperties.lazy {(): KClassOrigin ->
-        if (jClass.isAnnotationPresent(javaClass<KotlinClass>())) {
-            KClassOrigin.KOTLIN
-        }
-        else {
-            KClassOrigin.FOREIGN
-            // TODO: built-in classes
-        }
-    }
-
     fun memberProperty(name: String): KMemberProperty<T, *> {
-        val computeDescriptor = findPropertyDescriptor(name)
-
-        if (origin === KClassOrigin.KOTLIN) {
-            return KMemberPropertyImpl<T, Any>(this, computeDescriptor)
-        }
-        else {
-            return KForeignMemberProperty<T, Any>(name, this)
-        }
+        return KMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
     }
 
     fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> {
-        val computeDescriptor = findPropertyDescriptor(name)
-
-        if (origin === KClassOrigin.KOTLIN) {
-            return KMutableMemberPropertyImpl<T, Any>(this, computeDescriptor)
-        }
-        else {
-            return KMutableForeignMemberProperty<T, Any>(name, this)
-        }
+        return KMutableMemberPropertyImpl<T, Any>(this, findPropertyDescriptor(name))
     }
 
     override fun equals(other: Any?): Boolean =

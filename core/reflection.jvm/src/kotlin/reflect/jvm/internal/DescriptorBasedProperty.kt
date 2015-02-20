@@ -24,44 +24,48 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import kotlin.reflect.KotlinReflectionInternalError
 
 abstract class DescriptorBasedProperty(computeDescriptor: () -> PropertyDescriptor) {
     protected abstract val container: KCallableContainerImpl
 
-    data class PropertyProtoData(
+    protected abstract val name: String
+
+    private data class PropertyProtoData(
             val proto: ProtoBuf.Callable,
             val nameResolver: NameResolver,
             val signature: JvmProtoBuf.JvmPropertySignature
     )
 
-    protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft { computeDescriptor() }
+    protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft(computeDescriptor)
 
-    protected val protoData: PropertyProtoData by ReflectProperties.lazyWeak {
+    // null if this is a property declared in a foreign (Java) class
+    private val protoData: PropertyProtoData? by ReflectProperties.lazyWeak @p {(): PropertyProtoData? ->
         val property = DescriptorUtils.unwrapFakeOverride(descriptor) as? DeserializedPropertyDescriptor
-                       ?: throw KotlinReflectionInternalError("Member property resolved incorrectly: $descriptor")
-        val proto = property.proto
-        if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
-            throw KotlinReflectionInternalError("Member property lacks JVM signature: $descriptor")
+        if (property != null) {
+            val proto = property.proto
+            if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
+                return@p PropertyProtoData(proto, property.nameResolver, proto.getExtension(JvmProtoBuf.propertySignature))
+            }
         }
-        PropertyProtoData(proto, property.nameResolver, proto.getExtension(JvmProtoBuf.propertySignature))
+        null
     }
 
-    val field: Field? by ReflectProperties.lazySoft {
+    open val field: Field? by ReflectProperties.lazySoft {
         val proto = protoData
-        if (!proto.signature.hasField()) null
+        if (proto == null) container.jClass.getField(name)
+        else if (!proto.signature.hasField()) null
         else container.findFieldBySignature(proto.proto, proto.signature.getField(), proto.nameResolver)
     }
 
     open val getter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
-        if (!proto.signature.hasGetter()) null
+        if (proto == null || !proto.signature.hasGetter()) null
         else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver)
     }
 
     open val setter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
-        if (!proto.signature.hasSetter()) null
+        if (proto == null || !proto.signature.hasSetter()) null
         else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver)
     }
 }

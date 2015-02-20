@@ -9,8 +9,8 @@ fun box(): String {
     val s = J::s
 
     // Check that correct reflection objects are created
-    assert(i.javaClass.getSimpleName() == "KForeignMemberProperty", "Fail i class")
-    assert(s.javaClass.getSimpleName() == "KMutableForeignMemberProperty", "Fail s class")
+    assert(i.javaClass.getSimpleName() == "KMemberPropertyImpl", "Fail i class")
+    assert(s.javaClass.getSimpleName() == "KMutableMemberPropertyImpl", "Fail s class")
 
     // Check that no Method objects are created for such properties
     assert(i.javaGetter == null, "Fail i getter")
