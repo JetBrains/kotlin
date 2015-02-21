@@ -819,6 +819,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeParameterAsAnnotation.kt")
+            public void testTypeParameterAsAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/typeParameterAsAnnotation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("UnresolvedAnnotationOnObject.kt")
             public void testUnresolvedAnnotationOnObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/UnresolvedAnnotationOnObject.kt");
