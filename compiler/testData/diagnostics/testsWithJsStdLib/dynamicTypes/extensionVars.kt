@@ -7,8 +7,13 @@ fun test(d: dynamic) {
     d?.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
     d?.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
 
-    d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
-    d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
+    run {
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
+
+    }
+    run {
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
+    }
 
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVar<!> = 1
 

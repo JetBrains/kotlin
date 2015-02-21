@@ -67,6 +67,12 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
             doTest(fileName);
         }
 
+        @TestMetadata("comparisonToNull.kt")
+        public void testComparisonToNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/comparisonToNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conditions.kt")
         public void testConditions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conditions.kt");
