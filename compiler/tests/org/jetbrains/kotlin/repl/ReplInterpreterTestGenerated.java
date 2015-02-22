@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/repl")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({ReplInterpreterTestGenerated.Classes.class, ReplInterpreterTestGenerated.Multiline.class, ReplInterpreterTestGenerated.Objects.class, ReplInterpreterTestGenerated.PrimitiveTypes.class, ReplInterpreterTestGenerated.Reflection.class})
+@InnerTestClasses({ReplInterpreterTestGenerated.Classes.class, ReplInterpreterTestGenerated.Multiline.class, ReplInterpreterTestGenerated.Objects.class, ReplInterpreterTestGenerated.PrimitiveTypes.class, ReplInterpreterTestGenerated.Reflection.class, ReplInterpreterTestGenerated.Regressions.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     public void testAllFilesPresentInRepl() throws Exception {
@@ -94,6 +94,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @TestMetadata("simple.repl")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/simple.repl");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleTwoVals.repl")
+    public void testSimpleTwoVals() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/simpleTwoVals.repl");
         doTest(fileName);
     }
 
@@ -264,6 +270,21 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         @TestMetadata("propertyReference.repl")
         public void testPropertyReference() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/reflection/propertyReference.repl");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/repl/regressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Regressions extends AbstractReplInterpreterTest {
+        public void testAllFilesPresentInRegressions() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/regressions"), Pattern.compile("^(.+)\\.repl$"), true);
+        }
+
+        @TestMetadata("kt6843.repl")
+        public void testKt6843() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/regressions/kt6843.repl");
             doTest(fileName);
         }
     }

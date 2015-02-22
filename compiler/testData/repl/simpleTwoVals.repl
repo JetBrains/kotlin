@@ -1,0 +1,4 @@
+>>> val x = ""
+>>> val y = x
+>>> x == y
+true
