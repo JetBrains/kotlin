@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
         BlackBoxWithJavaCodegenTestGenerated.NotNullAssertions.class,
         BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class,
         BlackBoxWithJavaCodegenTestGenerated.Properties.class,
+        BlackBoxWithJavaCodegenTestGenerated.Reflection.class,
 })
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
@@ -157,6 +158,24 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("classObjectProperties")
         public void testClassObjectProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/classObjectProperties/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithJava/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({
+    })
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInReflection() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("kotlinPropertyInheritedInJava")
+        public void testKotlinPropertyInheritedInJava() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/kotlinPropertyInheritedInJava/");
             doTestWithJava(fileName);
         }
 

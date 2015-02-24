@@ -2763,6 +2763,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("memberExtensionToString.kt")
+            public void testMemberExtensionToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/memberExtensionToString.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("packageForJavaStaticToString.kt")
             public void testPackageForJavaStaticToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/packageForJavaStaticToString.kt");
@@ -2802,9 +2808,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("getExtensionPropertiesMutableVsReadonly.kt")
+            public void testGetExtensionPropertiesMutableVsReadonly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/getExtensionPropertiesMutableVsReadonly.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("getPropertiesMutableVsReadonly.kt")
             public void testGetPropertiesMutableVsReadonly() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/getPropertiesMutableVsReadonly.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("memberAndMemberExtensionWithSameName.kt")
+            public void testMemberAndMemberExtensionWithSameName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/memberAndMemberExtensionWithSameName.kt");
                 doTestWithStdlib(fileName);
             }
 

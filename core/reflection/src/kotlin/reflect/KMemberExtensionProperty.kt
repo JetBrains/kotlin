@@ -16,8 +16,10 @@
 
 package kotlin.reflect
 
-public trait KClass<T> {
-    public fun getProperties(): Collection<KMemberProperty<T, *>>
+public trait KMemberExtensionProperty<D : Any, E, out R> : KProperty<R> {
+    public fun get(dispatchReceiver: D, extensionReceiver: E): R
+}
 
-    public fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>>
+public trait KMutableMemberExtensionProperty<D : Any, E, R> : KMemberExtensionProperty<D, E, R>, KMutableProperty<R> {
+    public fun set(dispatchReceiver: D, extensionReceiver: E, value: R)
 }

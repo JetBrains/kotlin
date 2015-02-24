@@ -19,10 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import kotlin.reflect.KClass
-import kotlin.reflect.KMemberProperty
-import kotlin.reflect.KMutableMemberProperty
-import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.*
 
 class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
     // Don't use kotlin.properties.Delegates here because it's a Kotlin class which will invoke KClassImpl() in <clinit>,
@@ -50,6 +47,19 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                 .map { descriptor ->
                     if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this) { descriptor }
                     else KMemberPropertyImpl<T, Any?>(this) { descriptor }
+                }
+                .toList()
+    }
+
+    override fun getExtensionProperties(): Collection<KMemberExtensionProperty<T, *, *>> {
+        return scope.getAllDescriptors().stream()
+                .filterIsInstance<PropertyDescriptor>()
+                .filter { descriptor ->
+                    descriptor.getExtensionReceiverParameter() != null
+                }
+                .map { descriptor ->
+                    if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
+                    else KMemberExtensionPropertyImpl<T, Any?, Any?>(this) { descriptor }
                 }
                 .toList()
     }
