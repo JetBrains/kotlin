@@ -81,6 +81,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
         }
 
+        @TestMetadata("spelling/inspectionData/inspections.test")
+        public void testSpelling_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/spelling/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedSymbol/class/inspectionData/inspections.test")
         public void testUnusedSymbol_class_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedSymbol/class/inspectionData/inspections.test");

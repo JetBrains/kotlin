@@ -1,0 +1,50 @@
+<problems>
+  <problem>
+    <file>spelling.kt</file>
+    <line>1</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+  <problem>
+    <file>spelling.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+  <problem>
+    <file>spelling.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+  <problem>
+    <file>spelling.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+  <problem>
+    <file>spelling.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+  <problem>
+    <file>spelling.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/spelling.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Typo</problem_class>
+    <description>Typo: In word 'xyzzy'</description>
+  </problem>
+</problems>
