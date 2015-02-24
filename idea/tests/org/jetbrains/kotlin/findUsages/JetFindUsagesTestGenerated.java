@@ -556,6 +556,18 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinTraitImplThroughDelegate.0.kt")
+            public void testKotlinTraitImplThroughDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTraitImplThroughDelegate.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinTraitNoImplThroughDelegate.0.kt")
+            public void testKotlinTraitNoImplThroughDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTraitNoImplThroughDelegate.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("synthesizedFunction.0.kt")
             public void testSynthesizedFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/synthesizedFunction.0.kt");

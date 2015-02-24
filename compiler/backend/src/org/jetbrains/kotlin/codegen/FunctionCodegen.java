@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
@@ -76,7 +77,9 @@ import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.callableDescr
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Delegation;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
@@ -836,7 +839,7 @@ public class FunctionCodegen {
             final StackValue field
     ) {
         generateMethod(
-                Delegation(null, delegateFunction), delegateFunction,
+                Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction), delegateFunction,
                 new FunctionGenerationStrategy() {
                     @Override
                     public void generateBody(
