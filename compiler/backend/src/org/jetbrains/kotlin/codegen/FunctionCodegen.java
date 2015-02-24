@@ -72,16 +72,12 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Delegation;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.Synthetic;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
@@ -305,7 +301,10 @@ public class FunctionCodegen {
         else if (dispatchReceiver != null) {
             return typeMapper.mapType(dispatchReceiver.getType());
         }
-        else if (isFunctionLiteral(functionDescriptor) || isLocalNamedFun(functionDescriptor)) {
+        else if (isFunctionLiteral(functionDescriptor) ||
+                 isLocalFunction(functionDescriptor) ||
+                 isFunctionExpression(functionDescriptor)
+                ) {
             return typeMapper.mapType(context.getThisDescriptor());
         }
         else {

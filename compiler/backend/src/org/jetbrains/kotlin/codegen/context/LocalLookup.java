@@ -30,6 +30,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isLocalFunction;
 
 public interface LocalLookup {
     boolean lookupLocal(DeclarationDescriptor descriptor);
@@ -74,7 +75,7 @@ public interface LocalLookup {
         LOCAL_NAMED_FUNCTION {
             @Override
             public boolean isCase(DeclarationDescriptor d) {
-                return isLocalNamedFun(d);
+                return isLocalFunction(d);
             }
 
             @Override

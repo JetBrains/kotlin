@@ -278,13 +278,25 @@ public class DescriptorResolver {
             trace.report(FUNCTION_DECLARATION_WITH_NO_NAME.on(function));
         }
 
-        final SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
-                containingDescriptor,
-                annotations,
-                function.getNameAsSafeName(),
-                CallableMemberDescriptor.Kind.DECLARATION,
-                toSourceElement(function)
-        );
+        final SimpleFunctionDescriptorImpl functionDescriptor;
+        if (nameCanBeOmitted) { // todo remove this hack
+            functionDescriptor = new FunctionExpressionDescriptor(
+                    containingDescriptor,
+                    annotations,
+                    function.getNameAsSafeName(),
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    toSourceElement(function)
+            );
+        }
+        else {
+            functionDescriptor = SimpleFunctionDescriptorImpl.create(
+                    containingDescriptor,
+                    annotations,
+                    function.getNameAsSafeName(),
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    toSourceElement(function)
+            );
+        }
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace),
                                                          "Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);

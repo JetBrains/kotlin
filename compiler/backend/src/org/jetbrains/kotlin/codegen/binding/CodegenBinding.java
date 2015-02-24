@@ -252,23 +252,6 @@ public class CodegenBinding {
         return sortedAnswer;
     }
 
-    public static boolean isLocalNamedFun(@Nullable DeclarationDescriptor fd) {
-        return isLocalFunOrLambda(fd) && !fd.getName().isSpecial();
-    }
-
-    /*named or not*/
-    public static boolean isLocalFunOrLambda(@Nullable DeclarationDescriptor fd) {
-        if (fd instanceof FunctionDescriptor) {
-            FunctionDescriptor descriptor = (FunctionDescriptor) fd;
-            return descriptor.getVisibility() == Visibilities.LOCAL;
-        }
-        return false;
-    }
-
-    public static boolean isLambda(@Nullable DeclarationDescriptor fd) {
-        return fd instanceof AnonymousFunctionDescriptor;
-    }
-
     @NotNull
     public static Type getAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         Type type = bindingContext.get(ASM_TYPE, klass);
