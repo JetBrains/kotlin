@@ -32,6 +32,11 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 
+private val EXTERNAL_SOURCES_KINDS = array(
+        JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL,
+        JvmDeclarationOriginKind.DELEGATION,
+        JvmDeclarationOriginKind.BRIDGE)
+
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
@@ -42,15 +47,20 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES)
 
     override fun handleClashingSignatures(data: ConflictingJvmDeclarationsData) {
-        val allDelegatedToTraitImpls = data.signatureOrigins.all { it.originKind == JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL }
+        val noOwnImplementations = data.signatureOrigins.all { it.originKind in EXTERNAL_SOURCES_KINDS }
 
         val elements = LinkedHashSet<PsiElement>()
-        for (origin in data.signatureOrigins) {
-            var element = origin.element
-            if (element == null || allDelegatedToTraitImpls) {
-                element = data.classOrigin.element
+        if (noOwnImplementations) {
+            elements.addIfNotNull(data.classOrigin.element)
+        }
+        else {
+            for (origin in data.signatureOrigins) {
+                var element = origin.element
+                if (element == null || origin.originKind in EXTERNAL_SOURCES_KINDS) {
+                    element = data.classOrigin.element
+                }
+                elements.addIfNotNull(element)
             }
-            elements.addIfNotNull(element)
         }
 
         for (element in elements) {

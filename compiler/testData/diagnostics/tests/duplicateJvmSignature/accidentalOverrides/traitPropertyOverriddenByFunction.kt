@@ -3,6 +3,6 @@ trait T {
         get() = 1
 }
 
-class C : T {
+class <!CONFLICTING_JVM_DECLARATIONS!>C<!> : T {
     <!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
 }

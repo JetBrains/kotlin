@@ -14,7 +14,7 @@ ERROR: compiler/testData/cli/jvm/signatureClash.kt: (12, 1) Platform declaration
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (16, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+ERROR: compiler/testData/cli/jvm/signatureClash.kt: (19, 7) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):

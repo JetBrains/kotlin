@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 public enum class MemberKind { FIELD METHOD }
 
@@ -36,6 +37,8 @@ public enum class JvmDeclarationOriginKind {
     PACKAGE_PART
     TRAIT_IMPL
     DELEGATION_TO_TRAIT_IMPL
+    DELEGATION
+    BRIDGE
     SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 
@@ -58,11 +61,16 @@ public fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = OtherOrigin(
 
 public fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
 
+public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(BRIDGE, element, descriptor)
+
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
 public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
-public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION_TO_TRAIT_IMPL, element, descriptor)
+public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
+        JvmDeclarationOrigin(DELEGATION_TO_TRAIT_IMPL, element, descriptor)
+
+public fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
 
 public fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
-
