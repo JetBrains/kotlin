@@ -1960,9 +1960,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return stackValueForLocal(descriptor, index);
         }
 
+        if (context instanceof ConstructorContext) {
+            return lookupCapturedValueInConstructorParameters(descriptor);
+        }
+
         return context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
     }
 
+    @Nullable
+    private StackValue lookupCapturedValueInConstructorParameters(@NotNull DeclarationDescriptor descriptor) {
+        StackValue parentResult = context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
+        if (context.closure == null || parentResult == null) return parentResult;
+
+        int parameterOffsetInConstructor = context.closure.getCapturedParameterOffsetInConstructor(descriptor);
+        // when captured parameter is singleton
+        // see compiler/testData/codegen/box/objects/objectInLocalAnonymousObject.kt (fun local() captured in A)
+        if (parameterOffsetInConstructor == -1) return parentResult;
+
+        assert parentResult instanceof StackValue.Field || parentResult instanceof StackValue.FieldForSharedVar
+                : "Part of closure should be either Field or FieldForSharedVar";
+
+        if (parentResult instanceof StackValue.FieldForSharedVar) {
+            return StackValue.shared(parameterOffsetInConstructor, parentResult.type);
+        }
+
+        return StackValue.local(parameterOffsetInConstructor, parentResult.type);
+    }
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
         if (descriptor instanceof VariableDescriptor) {
@@ -2207,8 +2230,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        final Callable callable = resolveToCallable(accessibleFunctionDescriptor(fd), superCall);
-        final Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
+        FunctionDescriptor accessibleFunctionDescriptor = accessibleFunctionDescriptor(fd);
+        final Callable callable = resolveToCallable(accessibleFunctionDescriptor, superCall);
+        final Type returnType = typeMapper.mapReturnType(accessibleFunctionDescriptor);
 
         if (callable instanceof CallableMethod) {
             return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {

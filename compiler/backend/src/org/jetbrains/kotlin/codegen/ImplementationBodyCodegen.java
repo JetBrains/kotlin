@@ -334,7 +334,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            if (specifier instanceof JetDelegatorToSuperCall) {
+            if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null :
                         String.format("No type recorded for \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
@@ -374,6 +374,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             generatePrimaryConstructor(delegationFieldsInfo);
+            for (ConstructorDescriptor secondaryConstructor : descriptor.getConstructors()) {
+                if (secondaryConstructor.isPrimary()) continue;
+                generateSecondaryConstructor(secondaryConstructor);
+            }
         }
         catch (CompilationException e) {
             throw e;
@@ -382,7 +386,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             throw e;
         }
         catch (RuntimeException e) {
-            throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
+            throw new RuntimeException("Error generating constructors of class " + myClass.getName() + " with kind " + kind, e);
         }
 
         generateTraitMethods();
@@ -1097,23 +1101,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    private void generateSecondaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+
+        functionCodegen.generateMethod(OtherOrigin(myClass, constructorDescriptor), constructorDescriptor, constructorContext,
+                                       new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
+                                           @Override
+                                           public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                                               generateSecondaryConstructorImpl(callableDescriptor, codegen);
+                                           }
+                                       }
+        );
+
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
+                                                DefaultParameterValueLoader.DEFAULT, null);
+    }
+
     private void generatePrimaryConstructorImpl(
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull final ExpressionCodegen codegen,
+            @NotNull ExpressionCodegen codegen,
             @NotNull DelegationFieldsInfo fieldsInfo
     ) {
         InstructionAdapter iv = codegen.v;
 
-        MutableClosure closure = context.closure;
-        if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
-            int k = 1;
-            for (FieldInfo info : argsFromClosure) {
-                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
-            }
-        }
+        generateClosureInitialization(iv);
 
-        generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
+        generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
+                                           getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
         if (isNonDefaultObject(descriptor)) {
             StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
@@ -1151,15 +1165,56 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             });
         }
         else {
-            generateInitializers(new Function0<ExpressionCodegen>() {
-                @Override
-                public ExpressionCodegen invoke() {
-                    return codegen;
-                }
-            });
+            generateInitializers(codegen);
         }
 
         iv.visitInsn(RETURN);
+    }
+
+    private void generateSecondaryConstructorImpl(
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ExpressionCodegen codegen
+    ) {
+        InstructionAdapter iv = codegen.v;
+
+        ResolvedCall<ConstructorDescriptor> constructorDelegationCall =
+                getDelegationConstructorCall(bindingContext, constructorDescriptor);
+        ConstructorDescriptor delegateConstructor = constructorDelegationCall == null ? null :
+                                                     constructorDelegationCall.getResultingDescriptor();
+
+        generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor, constructorDelegationCall);
+        if (!isSameClassConstructor(delegateConstructor)) {
+            // Initialization happens only for constructors delegating to super
+            generateClosureInitialization(iv);
+            generateInitializers(codegen);
+        }
+
+        JetSecondaryConstructor constructor =
+                (JetSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
+        assert constructor != null;
+        codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
+
+        iv.visitInsn(RETURN);
+    }
+
+    private void generateInitializers(@NotNull final ExpressionCodegen codegen) {
+        generateInitializers(new Function0<ExpressionCodegen>() {
+            @Override
+            public ExpressionCodegen invoke() {
+                return codegen;
+            }
+        });
+    }
+
+    private void generateClosureInitialization(@NotNull InstructionAdapter iv) {
+        MutableClosure closure = context.closure;
+        if (closure != null) {
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
+            int k = 1;
+            for (FieldInfo info : argsFromClosure) {
+                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
+            }
+        }
     }
 
     private void genSimpleSuperCall(InstructionAdapter iv) {
@@ -1316,6 +1371,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetClassInitializer initializer = (JetClassInitializer) declaration;
                 initializer.accept(visitor);
             }
+            else if (declaration instanceof JetSecondaryConstructor) {
+                JetSecondaryConstructor constructor = (JetSecondaryConstructor) declaration;
+                constructor.accept(visitor);
+            }
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
@@ -1332,9 +1391,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 context.lookupInContext(superClass.getContainingDeclaration(), StackValue.LOCAL_0, state, true);
             }
 
-            if (!isAnonymousObject(descriptor)) {
-                ResolvedCall<ConstructorDescriptor> delegationCall =
-                        getDelegationConstructorCall(bindingContext, descriptor.getUnsubstitutedPrimaryConstructor());
+            ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
+            if (primaryConstructor != null && !isAnonymousObject(descriptor)) {
+                ResolvedCall<ConstructorDescriptor> delegationCall = getDelegationConstructorCall(bindingContext, primaryConstructor);
                 JetValueArgumentList argumentList = delegationCall != null ? delegationCall.getCall().getValueArgumentList() : null;
                 if (argumentList != null) {
                     argumentList.accept(visitor);
@@ -1415,22 +1474,54 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateDelegatorToConstructorCall(
             @NotNull InstructionAdapter iv,
             @NotNull ExpressionCodegen codegen,
-            @NotNull ConstructorDescriptor constructorDescriptor
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @Nullable ResolvedCall<ConstructorDescriptor> delegationConstructorCall
     ) {
-        ResolvedCall<?> resolvedCall = getDelegationConstructorCall(bindingContext, constructorDescriptor);
-        if (resolvedCall == null) {
+        if (delegationConstructorCall == null) {
             genSimpleSuperCall(iv);
             return;
         }
         iv.load(0, OBJECT_TYPE);
-        ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
+        ConstructorDescriptor delegateConstructor = delegationConstructorCall.getResultingDescriptor();
 
-        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
+        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor);
         CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);
 
-        List<JvmMethodParameterSignature> superParameters = superCallable.getValueParameters();
+        List<JvmMethodParameterSignature> delegatingParameters = delegateConstructorCallable.getValueParameters();
         List<JvmMethodParameterSignature> parameters = callable.getValueParameters();
 
+        ArgumentGenerator argumentGenerator;
+        if (isSameClassConstructor(delegateConstructor)) {
+            // if it's the same class constructor we should just pass all synthetic parameters
+            argumentGenerator =
+                    generateThisCallImplicitArguments(iv, codegen, delegateConstructor, delegateConstructorCallable, delegatingParameters,
+                                                      parameters);
+        }
+        else {
+            argumentGenerator =
+                    generateSuperCallImplicitArguments(iv, codegen, constructorDescriptor, delegateConstructor, delegateConstructorCallable,
+                                                       delegatingParameters,
+                                                       parameters);
+        }
+
+        codegen.invokeMethodWithArguments(
+                delegateConstructorCallable, delegationConstructorCall, StackValue.none(), codegen.defaultCallGenerator, argumentGenerator);
+    }
+
+    private boolean isSameClassConstructor(@Nullable ConstructorDescriptor delegatingConstructor) {
+        return delegatingConstructor != null && delegatingConstructor.getContainingDeclaration() == descriptor;
+    }
+
+    @NotNull
+    private ArgumentGenerator generateSuperCallImplicitArguments(
+            @NotNull InstructionAdapter iv,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ConstructorDescriptor superConstructor,
+            @NotNull CallableMethod superCallable,
+            @NotNull List<JvmMethodParameterSignature> superParameters,
+            @NotNull List<JvmMethodParameterSignature> parameters
+    ) {
         int offset = 1;
         int superIndex = 0;
 
@@ -1469,18 +1560,47 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             offset += type.getSize();
         }
 
-        ArgumentGenerator argumentGenerator;
         if (isAnonymousObject(descriptor)) {
             List<JvmMethodParameterSignature> superValues = superParameters.subList(superIndex, superParameters.size());
-            argumentGenerator = new ObjectSuperCallArgumentGenerator(superValues, iv, offset);
+            return new ObjectSuperCallArgumentGenerator(superValues, iv, offset);
         }
         else {
-            argumentGenerator =
-                    new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, superConstructor.getValueParameters(),
+            return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, superConstructor.getValueParameters(),
                                                    superCallable.getValueParameterTypes());
         }
+    }
 
-        codegen.invokeMethodWithArguments(superCallable, resolvedCall, StackValue.none(), codegen.defaultCallGenerator, argumentGenerator);
+    @NotNull
+    private static ArgumentGenerator generateThisCallImplicitArguments(
+            @NotNull InstructionAdapter iv,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ConstructorDescriptor delegatingConstructor,
+            @NotNull CallableMethod delegatingCallable,
+            @NotNull List<JvmMethodParameterSignature> delegatingParameters,
+            @NotNull List<JvmMethodParameterSignature> parameters
+    ) {
+        int offset = 1;
+        int index = 0;
+        for (; index < delegatingParameters.size(); index++) {
+            JvmMethodParameterKind delegatingKind = delegatingParameters.get(index).getKind();
+            if (delegatingKind == JvmMethodParameterKind.VALUE) {
+                assert index == parameters.size() || parameters.get(index).getKind() == JvmMethodParameterKind.VALUE:
+                        "Delegating constructor has not enough implicit parameters";
+                break;
+            }
+            assert index < parameters.size() && parameters.get(index).getKind() == delegatingKind :
+                    "Constructors of the same class should have the same set of implicit arguments";
+            JvmMethodParameterSignature parameter = parameters.get(index);
+
+            iv.load(offset, parameter.getAsmType());
+            offset += parameter.getAsmType().getSize();
+        }
+
+        assert index == parameters.size() || parameters.get(index).getKind() == JvmMethodParameterKind.VALUE :
+                    "Delegating constructor has not enough parameters";
+
+        return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, delegatingConstructor.getValueParameters(),
+                                              delegatingCallable.getValueParameterTypes());
     }
 
     private static class ObjectSuperCallArgumentGenerator extends ArgumentGenerator {

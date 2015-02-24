@@ -143,6 +143,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/constructor/genericConstructor.kt");
             doTestAgainstJava(fileName);
         }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/constructor/secondaryConstructor.kt");
+            doTestAgainstJava(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/delegation")

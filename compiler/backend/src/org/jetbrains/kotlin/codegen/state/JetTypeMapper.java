@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicObjects;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
+import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
@@ -168,6 +168,11 @@ public class JetTypeMapper {
     private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable BothSignatureWriter sw) {
         JetType returnType = descriptor.getReturnType();
         assert returnType != null : "Function has no return type: " + descriptor;
+
+        if (descriptor instanceof ConstructorDescriptor) {
+            return Type.VOID_TYPE;
+        }
+
         if (returnType.equals(KotlinBuiltIns.getInstance().getUnitType())
             && !TypeUtils.isNullableType(returnType)
             && !(descriptor instanceof PropertyGetterDescriptor)) {
@@ -854,7 +859,7 @@ public class JetTypeMapper {
     }
 
     private void writeAdditionalConstructorParameters(@NotNull ConstructorDescriptor descriptor, @NotNull BothSignatureWriter sw) {
-        CalculatedClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
+        MutableClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
         ClassDescriptor captureThis = getDispatchReceiverParameterForConstructorCall(descriptor, closure);
         if (captureThis != null) {
@@ -892,14 +897,16 @@ public class JetTypeMapper {
             }
 
             if (type != null) {
+                closure.setCapturedParameterOffsetInConstructor(variableDescriptor, sw.getCurrentSignatureSize() + 1);
                 writeParameter(sw, JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE, type);
             }
         }
 
-        ResolvedCall<ConstructorDescriptor> superCall = getDelegationConstructorCall(bindingContext, descriptor);
         // We may generate a slightly wrong signature for a local class / anonymous object in light classes mode but we don't care,
         // because such classes are not accessible from the outside world
-        if (superCall != null && classBuilderMode == ClassBuilderMode.FULL) {
+        if (classBuilderMode == ClassBuilderMode.FULL) {
+            ResolvedCall<ConstructorDescriptor> superCall = findFirstDelegatingSuperCall(descriptor);
+            if (superCall == null) return;
             writeSuperConstructorCallParameters(sw, descriptor, superCall, captureThis != null);
         }
     }
@@ -942,6 +949,17 @@ public class JetTypeMapper {
                     writeParameter(sw, JvmMethodParameterKind.SUPER_CALL_PARAM, parameter.getAsmType());
                 }
             }
+        }
+    }
+
+    @Nullable
+    private ResolvedCall<ConstructorDescriptor> findFirstDelegatingSuperCall(@NotNull ConstructorDescriptor descriptor) {
+        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+        while (true) {
+            ResolvedCall<ConstructorDescriptor> next = getDelegationConstructorCall(bindingContext, descriptor);
+            if (next == null) return null;
+            descriptor = next.getResultingDescriptor();
+            if (descriptor.getContainingDeclaration() != classDescriptor) return next;
         }
     }
 
