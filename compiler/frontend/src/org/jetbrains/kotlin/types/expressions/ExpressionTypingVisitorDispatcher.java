@@ -51,7 +51,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private final ExpressionTypingComponents components;
     private final BasicExpressionTypingVisitor basic;
     private final ExpressionTypingVisitorForStatements statements;
-    private final ClosureExpressionsTypingVisitor closures;
+    private final FunctionsTypingVisitor functions;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
@@ -60,9 +60,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         basic = new BasicExpressionTypingVisitor(this);
         controlStructures = new ControlStructureTypingVisitor(this);
         patterns = new PatternMatchingTypingVisitor(this);
-        closures = new ClosureExpressionsTypingVisitor(this);
+        functions = new FunctionsTypingVisitor(this);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns, closures);
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns, functions);
         }
         else {
             this.statements = null;
@@ -116,7 +116,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
         return new ExpressionTypingVisitorForStatements(this,
                                                         ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
-                                                        basic, controlStructures, patterns, closures);
+                                                        basic, controlStructures, patterns, functions);
     }
 
     @Override
@@ -175,12 +175,12 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
-        return expression.accept(closures, data);
+        return expression.accept(functions, data);
     }
 
     @Override
     public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext data) {
-        return function.accept(closures, data);
+        return function.accept(functions, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

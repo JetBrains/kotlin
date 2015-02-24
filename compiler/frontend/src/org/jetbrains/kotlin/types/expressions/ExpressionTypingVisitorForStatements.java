@@ -61,7 +61,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
-    private final ClosureExpressionsTypingVisitor closures;
+    private final FunctionsTypingVisitor functions;
 
     public ExpressionTypingVisitorForStatements(
             @NotNull ExpressionTypingInternals facade,
@@ -69,14 +69,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
             @NotNull PatternMatchingTypingVisitor patterns,
-            @NotNull ClosureExpressionsTypingVisitor closures
+            @NotNull FunctionsTypingVisitor functions
     ) {
         super(facade);
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
         this.patterns = patterns;
-        this.closures = closures;
+        this.functions = functions;
     }
 
     @Nullable
@@ -179,7 +179,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext context) {
-        return closures.visitNamedFunction(function, context, true, scope);
+        return functions.visitNamedFunction(function, context, true, scope);
     }
 
     @Override

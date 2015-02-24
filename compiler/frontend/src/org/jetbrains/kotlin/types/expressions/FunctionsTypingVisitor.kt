@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public class ClosureExpressionsTypingVisitor protected(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
+public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
     override fun visitNamedFunction(function: JetNamedFunction, data: ExpressionTypingContext): JetTypeInfo {
         return visitNamedFunction(function, data, false, null)
