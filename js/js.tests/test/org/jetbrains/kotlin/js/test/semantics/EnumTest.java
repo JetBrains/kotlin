@@ -50,4 +50,8 @@ public class EnumTest extends SingleFileTranslationTest {
     public void testEnumIsComparable() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testNativeEnum() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
