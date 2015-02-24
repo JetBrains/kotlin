@@ -131,9 +131,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getExtensionReceiverParameter())
-        val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters())
-        val resultType = components.builtIns.getFunctionType(Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType)
+        val resultType = createFunctionType(functionDescriptor)!!
         if (!noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo)
