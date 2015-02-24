@@ -16,33 +16,31 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy
-import com.intellij.psi.PsiElement
-import com.intellij.spellchecker.tokenizer.Tokenizer
-import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.codeInspection.SuppressQuickFix
-import com.intellij.spellchecker.tokenizer.PsiIdentifierOwnerTokenizer
-import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.spellchecker.inspections.PlainTextSplitter
+import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
+import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy
+import com.intellij.spellchecker.tokenizer.Tokenizer
+import com.intellij.spellchecker.tokenizer.TokenizerBase
+import org.jetbrains.kotlin.psi.JetLiteralStringTemplateEntry
 
-class KotlinSpellcheckingStrategy: SuppressibleSpellcheckingStrategy() {
-    private val nameIdentifierTokenizer = PsiIdentifierOwnerTokenizer()
-
-    [suppress("UNCHECKED_CAST")]
-    private val emptyTokenizer = SpellcheckingStrategy.EMPTY_TOKENIZER as Tokenizer<out PsiElement?>
+class KotlinSpellcheckingStrategy: SpellcheckingStrategy() {
+    private val plainTextTokenizer = TokenizerBase<JetLiteralStringTemplateEntry>(PlainTextSplitter.getInstance())
+    private val emptyTokenizer = SpellcheckingStrategy.EMPTY_TOKENIZER
 
     override fun getTokenizer(element: PsiElement?): Tokenizer<out PsiElement?> {
         [suppress("UNCHECKED_CAST")]
         return when {
             element is PsiNameIdentifierOwner || element is PsiComment ->
-                super.getTokenizer(element) as Tokenizer<out PsiElement?>
+                super.getTokenizer(element)
+
+            element is JetLiteralStringTemplateEntry -> plainTextTokenizer
 
             else ->
                 emptyTokenizer
         }
     }
-
-    public override fun isSuppressedFor(element : PsiElement, name : String) : Boolean = false
-    public override fun getSuppressActions(element : PsiElement, name : String) : Array<SuppressQuickFix> = SuppressQuickFix.EMPTY_ARRAY
 }
-
