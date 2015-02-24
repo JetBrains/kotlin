@@ -57,16 +57,16 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
     private ExpressionTypingVisitorDispatcher(@NotNull ExpressionTypingComponents components, WritableScope writableScope) {
         this.components = components;
-        this.basic = new BasicExpressionTypingVisitor(this);
+        basic = new BasicExpressionTypingVisitor(this);
         controlStructures = new ControlStructureTypingVisitor(this);
         patterns = new PatternMatchingTypingVisitor(this);
+        closures = new ClosureExpressionsTypingVisitor(this);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns, closures);
         }
         else {
             this.statements = null;
         }
-        this.closures = new ClosureExpressionsTypingVisitor(this);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
         return new ExpressionTypingVisitorForStatements(this,
                                                         ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
-                                                        basic, controlStructures, patterns);
+                                                        basic, controlStructures, patterns, closures);
     }
 
     @Override
@@ -176,6 +176,11 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
         return expression.accept(closures, data);
+    }
+
+    @Override
+    public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext data) {
+        return function.accept(closures, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

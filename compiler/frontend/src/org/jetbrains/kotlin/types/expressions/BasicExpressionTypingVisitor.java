@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -60,7 +57,6 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -1341,93 +1337,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
         context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
         return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
-
-    @Override
-    public JetTypeInfo visitNamedFunction(
-            @NotNull JetNamedFunction function, ExpressionTypingContext data
-    ) {
-        return visitNamedFunction(function, data, false, null);
-    }
-
-    public JetTypeInfo visitNamedFunction(
-            @NotNull JetNamedFunction function,
-            @NotNull ExpressionTypingContext context,
-            boolean isStatement,
-            @Nullable WritableScope statementScope // must be not null if isStatement
-    ) {
-        if (!isStatement) { // function expression
-            if (!function.getTypeParameters().isEmpty()) {
-                context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function));
-            }
-            for (JetParameter parameter : function.getValueParameters()) {
-                if (parameter.hasDefaultValue()) {
-                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter));
-                }
-                if (parameter.isVarArg()) {
-                    context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter));
-                }
-            }
-        }
-
-        ExpressionTypingServices services = components.expressionTypingServices;
-
-        SimpleFunctionDescriptor functionDescriptor;
-        if (isStatement) {
-            functionDescriptor = services.getDescriptorResolver().
-                    resolveFunctionDescriptorWithAnnotationArguments(
-                            context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
-            assert statementScope != null : "statementScope must be not null for function: " +
-                                            function.getName() +
-                                            " at location " +
-                                            DiagnosticUtils.atLocation(function);
-            statementScope.addFunctionDescriptor(functionDescriptor);
-        }
-        else {
-            functionDescriptor = services.getDescriptorResolver().resolveFunctionExpressionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
-        }
-
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        services.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
-
-        services.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope,
-                                        context.dataFlowInfo, context.trace);
-
-        ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function,
-                                                                                                                       functionDescriptor);
-        if (!function.hasBody()) {
-            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
-        }
-
-        if (isStatement) {
-            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
-        }
-        else {
-            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo);
-        }
-    }
-
-    @Nullable
-    private JetType createFunctionType(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        JetType receiverType = functionDescriptor.getExtensionReceiverParameter() != null
-                               ? functionDescriptor.getExtensionReceiverParameter().getType()
-                               : null;
-
-        JetType returnType = functionDescriptor.getReturnType();
-        if (returnType == null) {
-            return null;
-        }
-
-        List<JetType> parameters =
-                ContainerUtil.map(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetType>() {
-                    @Override
-                    public JetType fun(ValueParameterDescriptor descriptor) {
-                        return descriptor.getType();
-                    }
-                });
-
-        return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType);
     }
 
     @Override

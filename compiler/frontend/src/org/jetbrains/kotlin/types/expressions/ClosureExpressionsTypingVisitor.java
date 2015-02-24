@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
@@ -48,6 +50,93 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
+    }
+
+    @Override
+    public JetTypeInfo visitNamedFunction(
+            @NotNull JetNamedFunction function, ExpressionTypingContext data
+    ) {
+        return visitNamedFunction(function, data, false, null);
+    }
+
+    public JetTypeInfo visitNamedFunction(
+            @NotNull JetNamedFunction function,
+            @NotNull ExpressionTypingContext context,
+            boolean isStatement,
+            @Nullable WritableScope statementScope // must be not null if isStatement
+    ) {
+        if (!isStatement) { // function expression
+            if (!function.getTypeParameters().isEmpty()) {
+                context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function));
+            }
+            for (JetParameter parameter : function.getValueParameters()) {
+                if (parameter.hasDefaultValue()) {
+                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter));
+                }
+                if (parameter.isVarArg()) {
+                    context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter));
+                }
+            }
+        }
+
+        ExpressionTypingServices services = components.expressionTypingServices;
+
+        SimpleFunctionDescriptor functionDescriptor;
+        if (isStatement) {
+            functionDescriptor = services.getDescriptorResolver().
+                    resolveFunctionDescriptorWithAnnotationArguments(
+                            context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
+            assert statementScope != null : "statementScope must be not null for function: " +
+                                            function.getName() +
+                                            " at location " +
+                                            DiagnosticUtils.atLocation(function);
+            statementScope.addFunctionDescriptor(functionDescriptor);
+        }
+        else {
+            functionDescriptor = services.getDescriptorResolver().resolveFunctionExpressionDescriptor(
+                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
+        }
+
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
+        services.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
+
+        services.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope,
+                                        context.dataFlowInfo, context.trace);
+
+        ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function,
+                                                                                                                       functionDescriptor);
+        if (!function.hasBody()) {
+            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+        }
+
+        if (isStatement) {
+            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
+        }
+        else {
+            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo);
+        }
+    }
+
+    @Nullable
+    private JetType createFunctionType(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+        JetType receiverType = functionDescriptor.getExtensionReceiverParameter() != null
+                               ? functionDescriptor.getExtensionReceiverParameter().getType()
+                               : null;
+
+        JetType returnType = functionDescriptor.getReturnType();
+        if (returnType == null) {
+            return null;
+        }
+
+        List<JetType> parameters =
+                ContainerUtil.map(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetType>() {
+                    @Override
+                    public JetType fun(ValueParameterDescriptor descriptor) {
+                        return descriptor.getType();
+                    }
+                });
+
+        return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType);
     }
 
     @Override
