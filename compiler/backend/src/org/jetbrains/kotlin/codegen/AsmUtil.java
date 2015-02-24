@@ -62,7 +62,6 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIEL
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.types.PrimitiveTypesUtil.asmTypeForPrimitive;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -109,7 +108,7 @@ public class AsmUtil {
         ImmutableMap.Builder<Integer, JvmPrimitiveType> typeBySortBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<Type, Type> typeByWrapperBuilder = ImmutableMap.builder();
         for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
-            Type asmType = asmTypeForPrimitive(primitiveType);
+            Type asmType = Type.getType(primitiveType.getDesc());
             typeBySortBuilder.put(asmType.getSort(), primitiveType);
             typeByWrapperBuilder.put(asmTypeByFqNameWithoutInnerClasses(primitiveType.getWrapperFqName()), asmType);
         }

@@ -32,8 +32,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.resolve.jvm.types.PrimitiveTypesUtil.asmTypeForPrimitive;
-
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
 
@@ -56,18 +54,17 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     private void initPrimitives() {
         FqName builtInsFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            Type asmType = asmTypeForPrimitive(jvmPrimitiveType);
+        for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = type.getPrimitiveType();
             FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
 
-            register(fqName, asmType);
+            register(fqName, Type.getType(type.getDesc()));
 
-            FqName wrapperFqName = jvmPrimitiveType.getWrapperFqName();
+            FqName wrapperFqName = type.getWrapperFqName();
             registerNullable(fqName, Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(wrapperFqName).getInternalName()));
             registerFqName(fqName, wrapperFqName);
 
-            register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + asmType.getDescriptor()));
+            register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + type.getDesc()));
         }
     }
 
