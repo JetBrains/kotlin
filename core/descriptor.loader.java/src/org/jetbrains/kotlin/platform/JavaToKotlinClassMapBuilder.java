@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.platform;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -56,13 +56,15 @@ public abstract class JavaToKotlinClassMapBuilder {
         register(ListIterator.class, kotlinBuiltIns.getListIterator(), kotlinBuiltIns.getMutableListIterator());
     }
 
-    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+    private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
         register(javaClass, kotlinDescriptor, Direction.BOTH);
     }
+
     protected abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction);
 
-    /*package*/ void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor) {
-         register(javaClass, kotlinDescriptor, kotlinMutableDescriptor, Direction.BOTH);
-    }
-    protected abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor, @NotNull Direction direction);
+    protected abstract void register(
+            @NotNull Class<?> javaClass,
+            @NotNull ClassDescriptor kotlinDescriptor,
+            @NotNull ClassDescriptor kotlinMutableDescriptor
+    );
 }

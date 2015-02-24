@@ -104,13 +104,10 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor,
-            @NotNull Direction direction
+            @NotNull ClassDescriptor kotlinMutableDescriptor
     ) {
-        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            register(javaClass, kotlinDescriptor);
-            register(javaClass, kotlinMutableDescriptor);
-        }
+        register(javaClass, kotlinDescriptor, Direction.BOTH);
+        register(javaClass, kotlinMutableDescriptor, Direction.BOTH);
     }
 
     private void register(@NotNull FqName fqName, @NotNull Type type) {
