@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,7 +40,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
@@ -51,55 +48,6 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
-    }
-
-    @Override
-    public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
-        DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
-        if (delegatingBindingTrace != null) {
-            delegatingBindingTrace.addAllMyDataTo(context.trace);
-            JetType type = context.trace.get(EXPRESSION_TYPE, expression);
-            return DataFlowUtils.checkType(type, expression, context, context.dataFlowInfo);
-        }
-        final JetType[] result = new JetType[1];
-        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve object literal expression", expression);
-        ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
-
-            @Override
-            public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
-                if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.createRecursionIntolerant(components.globalContext.getStorageManager(),
-                                                                                 context.trace,
-                                                                                 new Function0<JetType>() {
-                                                                                     @Override
-                                                                                     public JetType invoke() {
-                                                                                         return descriptor.getDefaultType();
-                                                                                     }
-                                                                                 });
-                    result[0] = defaultType;
-                    if (!context.trace.get(PROCESSED, expression)) {
-                        temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);
-                        temporaryTrace.record(PROCESSED, expression);
-                    }
-                }
-            }
-        };
-        ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
-        traceAdapter.addHandler(CLASS, handler);
-        components.localClassifierAnalyzer.processClassOrObject(components.globalContext,
-                                                     null, // don't need to add classifier of object literal to any scope
-                                                     context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
-                                                     context.scope.getContainingDeclaration(),
-                                                     expression.getObjectDeclaration(),
-                                                     components.additionalCheckerProvider,
-                                                     components.dynamicTypesSettings);
-
-        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
-                new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);
-        temporaryTrace.addAllMyDataTo(cloneDelta);
-        context.trace.record(TRACE_DELTAS_CACHE, expression.getObjectDeclaration(), cloneDelta);
-        temporaryTrace.commit();
-        return DataFlowUtils.checkType(result[0], expression, context, context.dataFlowInfo);
     }
 
     @Override
