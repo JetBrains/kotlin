@@ -91,7 +91,10 @@ public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<J
                         @Override
                         protected void run(Result result) throws Throwable {
                             PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
-                            KotlinChangePropertyActions.declareValueOrVariable(myVarCheckbox.isSelected(), myProperty);
+
+                            JetPsiFactory psiFactory = new JetPsiFactory(myProject);
+                            ASTNode node = myVarCheckbox.isSelected() ? psiFactory.createVarNode() : psiFactory.createValNode();
+                            myProperty.getValOrVarNode().getPsi().replace(node.getPsi());
                         }
                     }.execute();
                 }
