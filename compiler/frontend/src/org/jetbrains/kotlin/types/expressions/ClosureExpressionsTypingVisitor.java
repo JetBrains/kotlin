@@ -14,418 +14,341 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.types.expressions;
+package org.jetbrains.kotlin.types.expressions
 
-import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import com.google.common.collect.Lists
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext.AUTO_CREATED_IT
+import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.scopes.WritableScope
+import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE
+import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
+import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+public class ClosureExpressionsTypingVisitor protected(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
-import static org.jetbrains.kotlin.types.TypeUtils.*;
-import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
-
-public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
-
-    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
-        super(facade);
+    override fun visitNamedFunction(function: JetNamedFunction, data: ExpressionTypingContext): JetTypeInfo {
+        return visitNamedFunction(function, data, false, null)
     }
 
-    @Override
-    public JetTypeInfo visitNamedFunction(
-            @NotNull JetNamedFunction function, ExpressionTypingContext data
-    ) {
-        return visitNamedFunction(function, data, false, null);
-    }
-
-    public JetTypeInfo visitNamedFunction(
-            @NotNull JetNamedFunction function,
-            @NotNull ExpressionTypingContext context,
-            boolean isStatement,
-            @Nullable WritableScope statementScope // must be not null if isStatement
-    ) {
-        if (!isStatement) { // function expression
+    public fun visitNamedFunction(
+            function: JetNamedFunction,
+            context: ExpressionTypingContext,
+            isStatement: Boolean,
+            statementScope: WritableScope? // must be not null if isStatement
+    ): JetTypeInfo {
+        if (!isStatement) {
+            // function expression
             if (!function.getTypeParameters().isEmpty()) {
-                context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function));
+                context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function))
             }
-            for (JetParameter parameter : function.getValueParameters()) {
+            for (parameter in function.getValueParameters()) {
                 if (parameter.hasDefaultValue()) {
-                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter));
+                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
                 }
                 if (parameter.isVarArg()) {
-                    context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter));
+                    context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter))
                 }
             }
         }
 
-        ExpressionTypingServices services = components.expressionTypingServices;
+        val services = components.expressionTypingServices
 
-        SimpleFunctionDescriptor functionDescriptor;
+        val functionDescriptor: SimpleFunctionDescriptor
         if (isStatement) {
-            functionDescriptor = services.getDescriptorResolver().
-                    resolveFunctionDescriptorWithAnnotationArguments(
-                            context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
-            assert statementScope != null : "statementScope must be not null for function: " +
-                                            function.getName() +
-                                            " at location " +
-                                            DiagnosticUtils.atLocation(function);
-            statementScope.addFunctionDescriptor(functionDescriptor);
+            functionDescriptor = services.getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
+                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
+            assert(statementScope != null) {
+                "statementScope must be not null for function: " + function.getName() + " at location " + DiagnosticUtils.atLocation(function)
+            }
+            statementScope!!.addFunctionDescriptor(functionDescriptor)
         }
         else {
             functionDescriptor = services.getDescriptorResolver().resolveFunctionExpressionDescriptor(
-                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo);
+                    context.scope.getContainingDeclaration(), context.scope, function, context.trace, context.dataFlowInfo)
         }
 
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        services.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
+        val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
+        services.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace)
 
         services.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope,
                                         context.dataFlowInfo, context.trace);
 
-        ModifiersChecker.create(context.trace, components.additionalCheckerProvider).checkModifiersForLocalDeclaration(function,
-                                                                                                                       functionDescriptor);
+        ModifiersChecker.create(context.trace, components.additionalCheckerProvider)
+                .checkModifiersForLocalDeclaration(function, functionDescriptor)
         if (!function.hasBody()) {
-            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
 
         if (isStatement) {
-            return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
+            return DataFlowUtils.checkStatementType(function, context as ResolutionContext<*>, context.dataFlowInfo)
         }
         else {
-            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context, context.dataFlowInfo);
+            return DataFlowUtils.checkType(createFunctionType(functionDescriptor), function, context as ResolutionContext<*>, context.dataFlowInfo)
         }
     }
 
-    @Nullable
-    private JetType createFunctionType(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        JetType receiverType = functionDescriptor.getExtensionReceiverParameter() != null
-                               ? functionDescriptor.getExtensionReceiverParameter().getType()
-                               : null;
+    private fun createFunctionType(functionDescriptor: SimpleFunctionDescriptor): JetType? {
+        val receiverType = functionDescriptor.getExtensionReceiverParameter()?.getType()
 
-        JetType returnType = functionDescriptor.getReturnType();
+        val returnType = functionDescriptor.getReturnType()
         if (returnType == null) {
-            return null;
+            return null
         }
 
-        List<JetType> parameters =
-                ContainerUtil.map(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetType>() {
-                    @Override
-                    public JetType fun(ValueParameterDescriptor descriptor) {
-                        return descriptor.getType();
-                    }
-                });
+        val parameters = functionDescriptor.getValueParameters().map {
+            it.getType()
+        }
 
-        return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType);
+        return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType)
     }
 
-    @Override
-    public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
-        if (!expression.getFunctionLiteral().hasBody()) return null;
+    override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
+        if (!expression.getFunctionLiteral().hasBody()) return null
 
-        JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(
-                expectedType);
+        val expectedType = context.expectedType
+        val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
-        AnonymousFunctionDescriptor functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
-        JetType safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected);
-        functionDescriptor.setReturnType(safeReturnType);
+        val functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected)
+        val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
+        functionDescriptor.setReturnType(safeReturnType)
 
-        JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getExtensionReceiverParameter());
-        List<JetType> valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
-        JetType resultType = components.builtIns.getFunctionType(
-                Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
+        val receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getExtensionReceiverParameter())
+        val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters())
+        val resultType = components.builtIns.getFunctionType(Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType)
         if (!noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
-            return JetTypeInfo.create(resultType, context.dataFlowInfo);
+            return JetTypeInfo.create(resultType, context.dataFlowInfo)
         }
 
-        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(resultType, expression, context as ResolutionContext<*>, context.dataFlowInfo)
     }
 
-    @NotNull
-    private AnonymousFunctionDescriptor createFunctionDescriptor(
-            @NotNull JetFunctionLiteralExpression expression,
-            @NotNull ExpressionTypingContext context,
-            boolean functionTypeExpected
-    ) {
-        JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeReference();
-        AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
-                context.scope.getContainingDeclaration(), Annotations.EMPTY, CallableMemberDescriptor.Kind.DECLARATION,
-                toSourceElement(functionLiteral)
-        );
+    private fun createFunctionDescriptor(
+            expression: JetFunctionLiteralExpression,
+            context: ExpressionTypingContext,
+            functionTypeExpected: Boolean
+    ): AnonymousFunctionDescriptor {
+        val functionLiteral = expression.getFunctionLiteral()
+        val receiverTypeRef = functionLiteral.getReceiverTypeReference()
+        val functionDescriptor = AnonymousFunctionDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY,
+                                                             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement())
 
-        List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral,
-                                                                                                   functionDescriptor, functionTypeExpected);
+        val valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected)
 
-        JetType effectiveReceiverType;
+        val effectiveReceiverType: JetType?
         if (receiverTypeRef == null) {
             if (functionTypeExpected) {
-                effectiveReceiverType = KotlinBuiltIns.getReceiverType(context.expectedType);
+                effectiveReceiverType = KotlinBuiltIns.getReceiverType(context.expectedType)
             }
             else {
-                effectiveReceiverType = null;
+                effectiveReceiverType = null
             }
         }
         else {
-            effectiveReceiverType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
+            effectiveReceiverType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef,
+                                                                                                      context.trace, true)
         }
-        functionDescriptor.initialize(effectiveReceiverType,
-                                      ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
-                                      Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                      valueParameterDescriptors,
-                                      /*unsubstitutedReturnType = */ null,
-                                      Modality.FINAL,
-                                      Visibilities.LOCAL
-        );
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor);
-        return functionDescriptor;
+        functionDescriptor.initialize(effectiveReceiverType, ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER, listOf(),
+                                      valueParameterDescriptors, /*unsubstitutedReturnType = */ null, Modality.FINAL, Visibilities.LOCAL)
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
+        return functionDescriptor
     }
 
-    @NotNull
-    private List<ValueParameterDescriptor> createValueParameterDescriptors(
-            @NotNull ExpressionTypingContext context,
-            @NotNull JetFunctionLiteral functionLiteral,
-            @NotNull FunctionDescriptorImpl functionDescriptor,
-            boolean functionTypeExpected
-    ) {
-        List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
-        List<JetParameter> declaredValueParameters = functionLiteral.getValueParameters();
+    private fun createValueParameterDescriptors(
+            context: ExpressionTypingContext,
+            functionLiteral: JetFunctionLiteral,
+            functionDescriptor: FunctionDescriptorImpl,
+            functionTypeExpected: Boolean
+    ): List<ValueParameterDescriptor> {
+        val valueParameterDescriptors = Lists.newArrayList<ValueParameterDescriptor>()
+        val declaredValueParameters = functionLiteral.getValueParameters()
 
-        List<ValueParameterDescriptor> expectedValueParameters =  (functionTypeExpected)
-                                                          ? KotlinBuiltIns.getValueParameters(functionDescriptor, context.expectedType)
-                                                          : null;
+        val expectedValueParameters = if (functionTypeExpected) KotlinBuiltIns.getValueParameters(functionDescriptor, context.expectedType)
+        else null
 
-        JetParameterList valueParameterList = functionLiteral.getValueParameterList();
-        boolean hasDeclaredValueParameters = valueParameterList != null;
-        if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
-            ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
-            ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                    valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType(),
-                    SourceElement.NO_SOURCE
-            );
-            valueParameterDescriptors.add(it);
-            context.trace.record(AUTO_CREATED_IT, it);
+        val valueParameterList = functionLiteral.getValueParameterList()
+        val hasDeclaredValueParameters = valueParameterList != null
+        if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters!!.size() == 1) {
+            val valueParameterDescriptor = expectedValueParameters!!.get(0)
+            val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                                                  valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(),
+                                                  valueParameterDescriptor.getVarargElementType(), SourceElement.NO_SOURCE)
+            valueParameterDescriptors.add(it)
+            context.trace.record<ValueParameterDescriptor>(AUTO_CREATED_IT, it)
         }
         else {
             if (expectedValueParameters != null && declaredValueParameters.size() != expectedValueParameters.size()) {
-                List<JetType> expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters);
-                context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes));
+                val expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters)
+                context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes))
             }
-            for (int i = 0; i < declaredValueParameters.size(); i++) {
-                ValueParameterDescriptor valueParameterDescriptor = createValueParameterDescriptor(
-                        context, functionDescriptor, declaredValueParameters, expectedValueParameters, i);
-                valueParameterDescriptors.add(valueParameterDescriptor);
+            for (i in declaredValueParameters.indices) {
+                val valueParameterDescriptor = createValueParameterDescriptor(context, functionDescriptor, declaredValueParameters, expectedValueParameters, i)
+                valueParameterDescriptors.add(valueParameterDescriptor)
             }
         }
-        return valueParameterDescriptors;
+        return valueParameterDescriptors
     }
 
-    @NotNull
-    private ValueParameterDescriptor createValueParameterDescriptor(
-            @NotNull ExpressionTypingContext context,
-            @NotNull FunctionDescriptorImpl functionDescriptor,
-            @NotNull List<JetParameter> declaredValueParameters,
-            @Nullable List<ValueParameterDescriptor> expectedValueParameters,
-            int index
-    ) {
-        JetParameter declaredParameter = declaredValueParameters.get(index);
-        JetTypeReference typeReference = declaredParameter.getTypeReference();
+    private fun createValueParameterDescriptor(
+            context: ExpressionTypingContext,
+            functionDescriptor: FunctionDescriptorImpl,
+            declaredValueParameters: List<JetParameter>,
+            expectedValueParameters: List<ValueParameterDescriptor>?,
+            index: Int
+    ): ValueParameterDescriptor {
+        val declaredParameter = declaredValueParameters.get(index)
+        val typeReference = declaredParameter.getTypeReference()
 
-        JetType expectedType;
+        val expectedType: JetType?
         if (expectedValueParameters != null && index < expectedValueParameters.size()) {
-            expectedType = expectedValueParameters.get(index).getType();
+            expectedType = expectedValueParameters.get(index).getType()
         }
         else {
-            expectedType = null;
+            expectedType = null
         }
-        JetType type;
+        val type: JetType
         if (typeReference != null) {
-            type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
+            type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true)
             if (expectedType != null) {
                 if (!JetTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
-                    context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType));
+                    context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType))
                 }
             }
         }
         else {
-            boolean containsUninferredParameter = TypeUtils.containsSpecialType(expectedType, new Function1<JetType, Boolean>() {
-                @Override
-                public Boolean invoke(JetType type) {
-                    return TypeUtils.isDontCarePlaceholder(type) || ErrorUtils.isUninferredParameter(type);
+            val containsUninferredParameter = TypeUtils.containsSpecialType(expectedType) {
+                    TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
                 }
-            });
             if (expectedType == null || containsUninferredParameter) {
-                context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
+                context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter))
             }
             if (expectedType != null) {
-                type = expectedType;
+                type = expectedType
             }
             else {
-                type = CANT_INFER_LAMBDA_PARAM_TYPE;
+                type = CANT_INFER_LAMBDA_PARAM_TYPE
             }
         }
-        return components.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptorWithAnnotationArguments(
-                context.scope, functionDescriptor, declaredParameter, index, type, context.trace);
+        return components.expressionTypingServices.getDescriptorResolver()
+                .resolveValueParameterDescriptorWithAnnotationArguments(context.scope, functionDescriptor, declaredParameter,
+                                                                        index, type, context.trace)
     }
 
-    @NotNull
-    private JetType computeReturnType(
-            @NotNull JetFunctionLiteralExpression expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
-            boolean functionTypeExpected
-    ) {
-        JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) : null;
-        JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
+    private fun computeReturnType(
+            expression: JetFunctionLiteralExpression,
+            context: ExpressionTypingContext,
+            functionDescriptor: SimpleFunctionDescriptorImpl,
+            functionTypeExpected: Boolean
+    ): JetType {
+        val expectedReturnType = if (functionTypeExpected) KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) else null
+        val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
-            if (KotlinBuiltIns.isUnit(expectedReturnType)) {
-                return components.builtIns.getUnitType();
+            if (KotlinBuiltIns.isUnit(expectedReturnType!!)) {
+                return components.builtIns.getUnitType()
             }
         }
-        return returnType == null ? CANT_INFER_LAMBDA_PARAM_TYPE : returnType;
+        return returnType ?: CANT_INFER_LAMBDA_PARAM_TYPE
     }
 
-    @Nullable
-    private JetType computeUnsafeReturnType(
-            @NotNull JetFunctionLiteralExpression expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
-            @Nullable JetType expectedReturnType
-    ) {
-        JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
-        assert bodyExpression != null;
 
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        JetTypeReference returnTypeRef = functionLiteral.getTypeReference();
-        JetType declaredReturnType = null;
-        if (returnTypeRef != null) {
-            declaredReturnType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
-            // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
-            functionDescriptor.setReturnType(declaredReturnType);
-            if (expectedReturnType != null) {
-                if (!JetTypeChecker.DEFAULT.isSubtypeOf(declaredReturnType, expectedReturnType)) {
-                    context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
-                }
+    private fun computeUnsafeReturnType(
+            expression: JetFunctionLiteralExpression,
+            context: ExpressionTypingContext,
+            functionDescriptor: SimpleFunctionDescriptorImpl,
+            expectedReturnType: JetType?
+    ): JetType? {
+        val functionLiteral = expression.getFunctionLiteral()
+        val declaredReturnType = functionLiteral.getTypeReference()?.let {
+            val type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, it, context.trace, true)
+            if (expectedReturnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(type, expectedReturnType)) {
+                context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(it, expectedReturnType))
             }
+            type
         }
 
-        // Type-check the body
-        JetType expectedType = declaredReturnType != null
-                       ? declaredReturnType
-                       : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE);
-        ExpressionTypingContext newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType);
-        context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType);
-        JetType typeOfBodyExpression = // needed for error reporting
-                components.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
+        val expectedType = declaredReturnType ?: (expectedReturnType ?: NO_EXPECTED_TYPE)
+        val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
+        val newContext = context.replaceScope(functionInnerScope).replaceExpectedType(expectedType)
 
-        if (declaredReturnType != null) {
-            return declaredReturnType;
-        }
-        else {
-            return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression);
-        }
+        // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
+        context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
+        val typeOfBodyExpression = // Type-check the body
+                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression(), COERCION_TO_UNIT, newContext).getType()
+
+        return declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }
 
-    @Nullable
-    private JetType computeReturnTypeBasedOnReturnExpressions(
-            @NotNull JetFunctionLiteral functionLiteral,
-            @NotNull ExpressionTypingContext context,
-            @Nullable JetType typeOfBodyExpression
-    ) {
-        List<JetType> returnedExpressionTypes = Lists.newArrayList();
+    private fun computeReturnTypeBasedOnReturnExpressions(
+            functionLiteral: JetFunctionLiteral,
+            context: ExpressionTypingContext,
+            typeOfBodyExpression: JetType?
+    ): JetType? {
+        val returnedExpressionTypes = Lists.newArrayList<JetType>()
 
-        boolean hasEmptyReturn = false;
-        Collection<JetReturnExpression> returnExpressions = collectReturns(functionLiteral, context.trace);
-        for (JetReturnExpression returnExpression : returnExpressions) {
-            JetExpression returnedExpression = returnExpression.getReturnedExpression();
+        var hasEmptyReturn = false
+        val returnExpressions = collectReturns(functionLiteral, context.trace)
+        for (returnExpression in returnExpressions) {
+            val returnedExpression = returnExpression.getReturnedExpression()
             if (returnedExpression == null) {
-                hasEmptyReturn = true;
+                hasEmptyReturn = true
             }
             else {
                 // the type should have been computed by getBlockReturnedType() above, but can be null, if returnExpression contains some error
-                ContainerUtil.addIfNotNull(returnedExpressionTypes, context.trace.get(EXPRESSION_TYPE, returnedExpression));
+                returnedExpressionTypes.addIfNotNull(context.trace.get<JetExpression, JetType>(EXPRESSION_TYPE, returnedExpression))
             }
         }
 
         if (hasEmptyReturn) {
-            for (JetReturnExpression returnExpression : returnExpressions) {
-                JetExpression returnedExpression = returnExpression.getReturnedExpression();
+            for (returnExpression in returnExpressions) {
+                val returnedExpression = returnExpression.getReturnedExpression()
                 if (returnedExpression != null) {
-                    JetType type = context.trace.get(EXPRESSION_TYPE, returnedExpression);
+                    val type = context.trace.get<JetExpression, JetType>(EXPRESSION_TYPE, returnedExpression)
                     if (type == null || !KotlinBuiltIns.isUnit(type)) {
-                        context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.getUnitType()));
+                        context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.getUnitType()))
                     }
                 }
             }
-            return components.builtIns.getUnitType();
+            return components.builtIns.getUnitType()
         }
+        returnedExpressionTypes.addIfNotNull(typeOfBodyExpression)
 
-        ContainerUtil.addIfNotNull(returnedExpressionTypes, typeOfBodyExpression);
-
-        if (returnedExpressionTypes.isEmpty()) return null;
-        return CommonSupertypes.commonSupertype(returnedExpressionTypes);
+        if (returnedExpressionTypes.isEmpty()) return null
+        return CommonSupertypes.commonSupertype(returnedExpressionTypes)
     }
 
-    private static Collection<JetReturnExpression> collectReturns(
-            @NotNull final JetFunctionLiteral functionLiteral,
-            @NotNull final BindingTrace trace
-    ) {
-        Collection<JetReturnExpression> result = Lists.newArrayList();
-        JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
-        assert bodyExpression != null;
-        bodyExpression.accept(
-                new JetTreeVisitor<Collection<JetReturnExpression>>() {
-                    @Override
-                    public Void visitReturnExpression(
-                            @NotNull JetReturnExpression expression, Collection<JetReturnExpression> data
-                    ) {
-                        data.add(expression);
-                        return null;
-                    }
-                },
-                result
-        );
-        return ContainerUtil.mapNotNull(result, new Function<JetReturnExpression, JetReturnExpression>() {
-            @Override
-            public JetReturnExpression fun(@NotNull JetReturnExpression returnExpression) {
-                JetSimpleNameExpression label = returnExpression.getTargetLabel();
-                if (label == null) {
-                    // No label => non-local return
-                    return null;
-                }
-
-                PsiElement labelTarget = trace.get(BindingContext.LABEL_TARGET, label);
-                if (labelTarget != functionLiteral) {
-                    // Either a local return of inner lambda/function or a non-local return
-                    return null;
-                }
-                return returnExpression;
+    private fun collectReturns(functionLiteral: JetFunctionLiteral, trace: BindingTrace): Collection<JetReturnExpression> {
+        val result = Lists.newArrayList<JetReturnExpression>()
+        val bodyExpression = functionLiteral.getBodyExpression()
+        bodyExpression?.accept(object : JetTreeVisitor<MutableList<JetReturnExpression>>() {
+            override fun visitReturnExpression(expression: JetReturnExpression, data: MutableList<JetReturnExpression>): Void? {
+                data.add(expression)
+                return null
             }
-        });
+        }, result)
+        return result.filter {
+            // No label => non-local return
+            // Either a local return of inner lambda/function or a non-local return
+            it.getTargetLabel()?.let { trace.get(BindingContext.LABEL_TARGET, it) } == functionLiteral
+        }
     }
 }
