@@ -16,30 +16,17 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
-import com.intellij.refactoring.actions.BasePlatformRefactoringAction
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.lang.refactoring.RefactoringSupportProvider
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringSupportProvider
+import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
-public abstract class AbstractExtractFunctionAction: BasePlatformRefactoringAction() {
-    {
-        setInjectedContext(true)
-    }
-
-    override fun isAvailableInEditorOnly(): Boolean = true
-
-    protected override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = 
-            elements.all { it is JetElement }
-}
-
-public class ExtractFunctionAction: AbstractExtractFunctionAction() {
+public class ExtractFunctionAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? JetRefactoringSupportProvider)?.getExtractFunctionHandler()
 }
 
-public class ExtractFunctionToScopeAction: AbstractExtractFunctionAction() {
+public class ExtractFunctionToScopeAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? JetRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
 }
