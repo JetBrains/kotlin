@@ -120,9 +120,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         }
 
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
-        val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
+        val userAnnotations = kotlinOptions.annotations?.split(File.pathSeparatorChar)?.toList() ?: emptyList()
         val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.makeString(File.pathSeparator)
+        if (allAnnotations.isNotEmpty()) {
+            args.annotations = allAnnotations.join(File.pathSeparator)
+        }
 
         args.noStdlib = true
         args.noJdkAnnotations = true
