@@ -95,8 +95,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             PluginCliParser.loadPlugins(arguments, configuration);
         }
         catch (CliOptionProcessingException e) {
-            // TODO Print usage?
             messageCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
+        }
+        catch (Throwable t) {
+            MessageCollectorUtil.reportException(messageCollector, t);
             return INTERNAL_ERROR;
         }
 
