@@ -215,7 +215,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                         this,
                                         makeInitialFrame(this, args),
                                         JDIEval(virtualMachine,
-                                                context.getClassLoader()!!,
+                                                context.getClassLoader(),
                                                 context.getSuspendContext().getThread()?.getThreadReference()!!,
                                                 context.getSuspendContext().getInvokePolicy())
                                 )
