@@ -301,6 +301,24 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("WrongNumberOfTypeArguments.kt")
+    public void testWrongNumberOfTypeArguments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/WrongNumberOfTypeArguments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("WrongNumberOfTypeArguments2.kt")
+    public void testWrongNumberOfTypeArguments2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/WrongNumberOfTypeArguments2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")
+    public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({DelegatedPropertyAccessors.InSource.class, DelegatedPropertyAccessors.InStandardLibrary.class})

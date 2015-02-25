@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.getJetTypeFqName;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getJetTypeFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class ManglingUtils {

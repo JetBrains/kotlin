@@ -1,0 +1,7 @@
+class X {
+
+}
+
+enum E {
+
+}

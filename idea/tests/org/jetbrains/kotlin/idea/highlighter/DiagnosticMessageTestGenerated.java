@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTest {
     public void testAllFilesPresentInDiagnosticMessage() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("assignedButNeverAccessedVariable.kt")

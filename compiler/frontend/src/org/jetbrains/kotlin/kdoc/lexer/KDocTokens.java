@@ -60,7 +60,7 @@ public interface KDocTokens {
     ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", JetLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
-            return KDocLinkParser.OBJECT$.parseMarkdownLink(this, chameleon);
+            return KDocLinkParser.parseMarkdownLink(this, chameleon);
         }
     };
 

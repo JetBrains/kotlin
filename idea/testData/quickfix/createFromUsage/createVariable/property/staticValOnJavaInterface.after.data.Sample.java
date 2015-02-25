@@ -1,0 +1,4 @@
+interface J {
+
+    int foo;
+}

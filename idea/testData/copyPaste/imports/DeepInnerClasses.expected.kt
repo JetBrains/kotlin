@@ -1,7 +1,7 @@
 package to
 
-import a.with
 import a.Outer
+import a.with
 
 fun f(p1: Outer.Nested.NN, p2: Outer.Nested.NI, p3: Outer.Inner.II) {
     Outer.Nested.NN2()

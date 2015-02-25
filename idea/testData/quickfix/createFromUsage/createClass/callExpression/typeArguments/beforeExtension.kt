@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "false"
-// ACTION: Create function 'Foo'
+// ACTION: Create extension function 'Foo'
 // ERROR: Unresolved reference: Foo
 
 class A<T>(val items: List<T>) {

@@ -446,7 +446,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
                 @NotNull MagicKind kind
         ) {
-            MagicInstruction instruction = MagicInstruction.OBJECT$.create(
+            MagicInstruction instruction = MagicInstruction.Factory.create(
                     instructionElement, valueElement, getCurrentScope(), inputValues, expectedTypes, kind, valueFactory
             );
             add(instruction);
@@ -456,7 +456,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public MergeInstruction merge(@NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues) {
-            MergeInstruction instruction = MergeInstruction.OBJECT$.create(expression, getCurrentScope(), inputValues, valueFactory);
+            MergeInstruction instruction = MergeInstruction.Factory.create(expression, getCurrentScope(), inputValues, valueFactory);
             add(instruction);
             return instruction;
         }
@@ -480,7 +480,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
             JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
-            CallInstruction instruction = CallInstruction.OBJECT$.create(
+            CallInstruction instruction = CallInstruction.Factory.create(
                     valueElement,
                     getCurrentScope(),
                     resolvedCall,
@@ -537,7 +537,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues
         ) {
             AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
-            ReadValueInstruction instruction = ReadValueInstruction.OBJECT$.create(
+            ReadValueInstruction instruction = ReadValueInstruction.Factory.create(
                     expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
             );
             add(instruction);

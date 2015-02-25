@@ -75,9 +75,28 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiTypeParameterList
+import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
+import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import com.intellij.psi.PsiField
+import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.PsiTypeParameterListOwner
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.PsiJavaCodeReferenceElement
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.PsiClass
+import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -410,12 +429,167 @@ public fun comparePossiblyOverridingDescriptors(currentDescriptor: DeclarationDe
 }
 
 public fun PsiElement.canRefactor(): Boolean {
-    return when (this) {
-        is PsiPackage ->
+    return when {
+        this is PsiPackage ->
             getDirectories().any { it.canRefactor() }
-        is JetElement, is PsiDirectory ->
+        this is JetElement,
+        this is PsiMember && getLanguage() == JavaLanguage.INSTANCE,
+        this is PsiDirectory ->
             isWritable() && ProjectRootsUtil.isInProjectSource(this)
         else ->
             false
     }
+}
+
+private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, withPsiModifiers: Boolean = true) {
+    if (withPsiModifiers) {
+        for (modifier in PsiModifier.MODIFIERS) {
+            if (from.hasExplicitModifier(modifier)) {
+                to.setModifierProperty(modifier, true)
+            }
+        }
+    }
+    for (annotation in from.getAnnotations()) {
+        to.addAnnotation(annotation.getQualifiedName())
+    }
+}
+
+private fun copyTypeParameters<T: PsiTypeParameterListOwner>(
+        from: T,
+        to: T,
+        inserter: (T, PsiTypeParameterList) -> Unit
+) where T : PsiNameIdentifierOwner {
+    val factory = PsiElementFactory.SERVICE.getInstance((from : PsiElement).getProject())
+    val templateTypeParams = from.getTypeParameterList()?.getTypeParameters() ?: PsiTypeParameter.EMPTY_ARRAY
+    if (templateTypeParams.isNotEmpty()) {
+        inserter(to, factory.createTypeParameterList())
+        val targetTypeParamList = to.getTypeParameterList()
+        val newTypeParams = templateTypeParams.map {
+            factory.createTypeParameter(it.getName(), it.getExtendsList().getReferencedTypes())
+        }
+        ChangeSignatureUtil.synchronizeList(
+                targetTypeParamList,
+                newTypeParams,
+                { it.getTypeParameters().toList() },
+                BooleanArray(newTypeParams.size())
+        )
+    }
+}
+
+public fun createJavaMethod(function: JetNamedFunction, targetClass: PsiClass): PsiMethod {
+    val template = LightClassUtil.getLightClassMethod(function)
+                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(function)}")
+    return createJavaMethod(template, targetClass)
+}
+
+public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
+    val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
+    val methodToAdd = if (template.isConstructor()) {
+        factory.createConstructor(template.getName())
+    }
+    else {
+        factory.createMethod(template.getName(), template.getReturnType())
+    }
+    val method = targetClass.add(methodToAdd) as PsiMethod
+
+    copyModifierListItems(template.getModifierList(), method.getModifierList())
+
+    copyTypeParameters(template, method) { (method, typeParameterList) ->
+        method.addAfter(typeParameterList, method.getModifierList())
+    }
+
+    val targetParamList = method.getParameterList()
+    val newParams = template.getParameterList().getParameters().map {
+        val param = factory.createParameter(it.getName(), it.getType())
+        copyModifierListItems(it.getModifierList(), param.getModifierList())
+        param
+    }
+    ChangeSignatureUtil.synchronizeList(
+            targetParamList,
+            newParams,
+            { it.getParameters().toList() },
+            BooleanArray(newParams.size())
+    )
+
+    if (template.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT) || targetClass.isInterface()) {
+        method.getBody().delete()
+    }
+    else if (!template.isConstructor()) {
+        CreateFromUsageUtils.setupMethodBody(method)
+    }
+
+    return method
+}
+
+fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
+    val template = LightClassUtil.getLightClassPropertyMethods(property).getGetter()
+                   ?: throw AssertionError("Can't generate light method: ${JetPsiUtil.getElementTextWithContext(property)}")
+
+    val factory = PsiElementFactory.SERVICE.getInstance(template.getProject())
+    val field = targetClass.add(factory.createField(property.getName(), template.getReturnType())) as PsiField
+
+    with(field.getModifierList()) {
+        val templateModifiers = template.getModifierList()
+        setModifierProperty(VisibilityUtil.getVisibilityModifier(templateModifiers), true)
+        if (!property.isVar() || targetClass.isInterface()) {
+            setModifierProperty(PsiModifier.FINAL, true)
+        }
+        copyModifierListItems(templateModifiers, this, false)
+    }
+
+    return field
+}
+
+fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
+    val kind = (klass.resolveToDescriptor() as ClassDescriptor).getKind()
+
+    val factory = PsiElementFactory.SERVICE.getInstance(klass.getProject())
+    val javaClassToAdd = when (kind) {
+        ClassKind.CLASS -> factory.createClass(klass.getName())
+        ClassKind.TRAIT -> factory.createInterface(klass.getName())
+        ClassKind.ANNOTATION_CLASS -> factory.createAnnotationType(klass.getName())
+        ClassKind.ENUM_CLASS -> factory.createEnum(klass.getName())
+        else -> throw AssertionError("Unexpected class kind: ${JetPsiUtil.getElementTextWithContext(klass)}")
+    }
+    val javaClass = targetClass.add(javaClassToAdd) as PsiClass
+
+    val template = LightClassUtil.getPsiClass(klass)
+                   ?: throw AssertionError("Can't generate light class: ${JetPsiUtil.getElementTextWithContext(klass)}")
+
+    copyModifierListItems(template.getModifierList(), javaClass.getModifierList())
+    if (template.isInterface()) {
+        javaClass.getModifierList().setModifierProperty(PsiModifier.ABSTRACT, false)
+    }
+
+    copyTypeParameters(template, javaClass) { (klass, typeParameterList) ->
+        klass.addAfter(typeParameterList, klass.getNameIdentifier())
+    }
+
+    val extendsList = factory.createReferenceListWithRole(
+            template.getExtendsList()?.getReferenceElements() ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+            PsiReferenceList.Role.EXTENDS_LIST
+    )
+    extendsList?.let { javaClass.getExtendsList()?.replace(it) }
+
+    val implementsList = factory.createReferenceListWithRole(
+            template.getImplementsList()?.getReferenceElements() ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+            PsiReferenceList.Role.IMPLEMENTS_LIST
+    )
+    implementsList?.let { javaClass.getImplementsList()?.replace(it) }
+
+    for (method in template.getMethods()) {
+        val hasParams = method.getParameterList().getParametersCount() > 0
+        val needSuperCall = !template.isEnum() &&
+                            (template.getSuperClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY).all {
+                                it.getParameterList().getParametersCount() > 0
+                            }
+        if (method.isConstructor() && !(hasParams || needSuperCall)) continue
+        with(createJavaMethod(method, javaClass)) {
+            if (isConstructor() && needSuperCall) {
+                getBody().add(factory.createStatementFromText("super();", this))
+            }
+        }
+    }
+
+    return javaClass
 }

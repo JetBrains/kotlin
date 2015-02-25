@@ -2973,6 +2973,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/vararg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withExtensionReceiver.kt")
         public void testWithExtensionReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/withExtensionReceiver.kt");

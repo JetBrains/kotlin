@@ -1419,7 +1419,7 @@ public class TokenStream {
      */
     public void reportSyntaxError(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
-        Context.reportError(message, getSourceName(), secondToLastPosition.getLine(), getLine(), secondToLastPosition.getOffset());
+        Context.reportError(message, secondToLastPosition, lastPosition);
     }
 
     /**
@@ -1429,12 +1429,12 @@ public class TokenStream {
      */
     private void reportTokenError(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
-        Context.reportError(message, getSourceName(), lastPosition.getLine(), getLine(), lastPosition.getOffset());
+        Context.reportError(message, lastPosition, new CodePosition(getLineno(), getOffset()));
     }
 
     private void reportTokenWarning(String messageProperty, Object[] args) {
         String message = Context.getMessage(messageProperty, args);
-        Context.reportWarning(message, getSourceName(), lastPosition.getLine(), getLine(), lastPosition.getOffset());
+        Context.reportWarning(message, lastPosition, new CodePosition(getLineno(), getOffset()));
     }
 
     /**

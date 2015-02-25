@@ -123,6 +123,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("warningsInDummy.args")
+        public void testWarningsInDummy() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningsInDummy.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongAbiVersion.args");
@@ -154,24 +160,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
     public static class Js extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJs() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
-        }
-
-        @TestMetadata("jsCodeError.args")
-        public void testJsCodeError() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeError.args");
-            doJsTest(fileName);
-        }
-
-        @TestMetadata("jsCodeNotLiteralError.args")
-        public void testJsCodeNotLiteralError() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeNotLiteralError.args");
-            doJsTest(fileName);
-        }
-
-        @TestMetadata("jsCodeWarning.args")
-        public void testJsCodeWarning() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/jsCodeWarning.args");
-            doJsTest(fileName);
         }
 
         @TestMetadata("jsExtraHelp.args")

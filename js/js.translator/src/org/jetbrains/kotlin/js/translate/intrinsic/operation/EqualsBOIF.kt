@@ -18,22 +18,23 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.js.patterns.NamePredicate
+import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.NamePredicate
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import java.util.Arrays
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
-import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
+
+import java.util.Arrays
+import com.google.common.collect.ImmutableSet
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
 

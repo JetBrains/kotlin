@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetDiagnosticsTestWithJsStdLibGenerated.DynamicTypes.class, JetDiagnosticsTestWithJsStdLibGenerated.Native.class})
+@InnerTestClasses({JetDiagnosticsTestWithJsStdLibGenerated.DynamicTypes.class, JetDiagnosticsTestWithJsStdLibGenerated.JsCode.class, JetDiagnosticsTestWithJsStdLibGenerated.Native.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnosticsTestWithJsStdLib {
     public void testAllFilesPresentInTestsWithJsStdLib() throws Exception {
@@ -222,6 +222,33 @@ public class JetDiagnosticsTestWithJsStdLibGenerated extends AbstractJetDiagnost
         @TestMetadata("varargs.kt")
         public void testVarargs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/varargs.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JsCode extends AbstractJetDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInJsCode() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("argumentIsLiteral.kt")
+        public void testArgumentIsLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/argumentIsLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("error.kt")
+        public void testError() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/error.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("warning.kt")
+        public void testWarning() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/warning.kt");
             doTest(fileName);
         }
     }

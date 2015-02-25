@@ -138,41 +138,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getJetTypeFqName(@NotNull JetType jetType, final boolean printTypeArguments) {
-        ClassifierDescriptor declaration = jetType.getConstructor().getDeclarationDescriptor();
-        assert declaration != null;
-
-        if (declaration instanceof TypeParameterDescriptor) {
-            return StringUtil.join(((TypeParameterDescriptor) declaration).getUpperBounds(), new Function<JetType, String>() {
-                @Override
-                public String fun(JetType type) {
-                    return getJetTypeFqName(type, printTypeArguments);
-                }
-            }, "&");
-        }
-
-        List<TypeProjection> typeArguments = jetType.getArguments();
-
-        String typeArgumentsAsString;
-
-        if (printTypeArguments && !typeArguments.isEmpty()) {
-            String joinedTypeArguments = StringUtil.join(typeArguments, new Function<TypeProjection, String>() {
-                @Override
-                public String fun(TypeProjection typeProjection) {
-                    return getJetTypeFqName(typeProjection.getType(), false);
-                }
-            }, ", ");
-
-            typeArgumentsAsString = "<" + joinedTypeArguments + ">";
-        }
-        else {
-            typeArgumentsAsString = "";
-        }
-
-        return getFqName(declaration).asString() + typeArgumentsAsString;
-    }
-
-    @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);

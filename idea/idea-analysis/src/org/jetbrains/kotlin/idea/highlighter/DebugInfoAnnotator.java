@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 public class DebugInfoAnnotator implements Annotator {
 
     public static boolean isDebugInfoEnabled() {
-        return KotlinInternalMode.OBJECT$.getEnabled();
+        return KotlinInternalMode.Instance.getEnabled();
     }
 
     @Override

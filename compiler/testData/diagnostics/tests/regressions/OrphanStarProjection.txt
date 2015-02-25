@@ -1,6 +1,6 @@
 package
 
-internal val b: [ERROR : B<*>]
+internal val b: [ERROR : B]<out [ERROR : *]>
 
 internal final class B {
     public constructor B()

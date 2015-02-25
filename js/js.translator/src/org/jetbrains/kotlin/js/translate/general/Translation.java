@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 
 import java.util.Collection;
@@ -161,13 +162,13 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsProgram generateAst(@NotNull BindingContext bindingContext,
+    public static JsProgram generateAst(@NotNull BindingTrace bindingTrace,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
+            return doGenerateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -178,11 +179,11 @@ public final class Translation {
     }
 
     @NotNull
-    private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
+    private static JsProgram doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config, moduleDescriptor);
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 

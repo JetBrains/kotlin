@@ -1,4 +1,5 @@
 // "Import" "false"
+// ACTION: Create extension function 'inc'
 // ACTION: Create function 'inc'
 // ACTION: Create local variable '++'
 // ACTION: Create parameter '++'

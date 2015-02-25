@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import java.util.ArrayList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -55,23 +53,9 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
+import java.util.*
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
-    /**
-     * Add import directive into the PSI tree for the given package.
-     *
-     * @param importFqn full name of the import
-     * @param file File where directive should be added.
-     */
-    override fun addImportDirectiveIfNeeded(importFqn: FqName, file: JetFile) {
-        val importPath = ImportPath(importFqn, false)
-
-        optimizeImportsOnTheFly(file)
-
-        if (needImport(importPath, file)) {
-            writeImportToFile(importPath, file)
-        }
-    }
 
     override fun optimizeImportsOnTheFly(file: JetFile): Boolean {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
@@ -83,7 +67,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    private fun writeImportToFile(importPath: ImportPath, file: JetFile): JetImportDirective {
+    private fun addImport(file: JetFile, importPath: ImportPath): JetImportDirective {
         val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)
@@ -94,42 +78,54 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         val importList = file.getImportList()
         if (importList != null) {
             val newDirective = psiFactory.createImportDirective(importPath)
-            importList.add(psiFactory.createNewLine())
-            return importList.add(newDirective) as JetImportDirective
+            val imports = importList.getImports()
+            if (imports.isEmpty()) { //TODO: strange hack
+                importList.add(psiFactory.createNewLine())
+                return importList.add(newDirective) as JetImportDirective
+            }
+            else {
+                val insertAfter = imports
+                        .reverse()
+                        .firstOrNull {
+                            val directivePath = it.getImportPath()
+                            directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                        }
+                return importList.addAfter(newDirective, insertAfter) as JetImportDirective
+            }
         }
         else {
             val newImportList = psiFactory.createImportDirectiveWithImportList(importPath)
             val packageDirective = file.getPackageDirective()
-            if (packageDirective == null) {
-                throw IllegalStateException("Scripts are not supported: " + file.getName())
-            }
-
+                                   ?: throw IllegalStateException("Scripts are not supported: " + file.getName())
             val addedImportList = packageDirective.getParent().addAfter(newImportList, packageDirective) as JetImportList
             return addedImportList.getImports().single()
         }
     }
 
-    /**
-     * Check that import is useless.
-     */
-    private fun isImportedByDefault(importPath: ImportPath, jetFile: JetFile): Boolean {
-        if (importPath.fqnPart().isRoot()) {
-            return true
-        }
+    override val importSortComparator: Comparator<ImportPath>
+        get() = ImportPathComparator
 
-        if (!importPath.isAllUnder() && !importPath.hasAlias()) {
-            // Single element import without .* and alias is useless
-            if (importPath.fqnPart().isOneSegmentFQN()) {
-                return true
+    private object ImportPathComparator : Comparator<ImportPath> {
+        override fun compare(import1: ImportPath, import2: ImportPath): Int {
+            // alias imports placed last
+            if (import1.hasAlias() != import2.hasAlias()) {
+                return if (import1.hasAlias()) +1 else -1
             }
 
-            // There's no need to import a declaration from the package of current file
-            if (jetFile.getPackageFqName() == importPath.fqnPart().parent()) {
-                return true
+            // standard library imports last
+            val stdlib1 = isJavaOrKotlinStdlibImport(import1)
+            val stdlib2 = isJavaOrKotlinStdlibImport(import2)
+            if (stdlib1 != stdlib2) {
+                return if (stdlib1) +1 else -1
             }
+
+            return import1.toString().compareTo(import2.toString())
         }
 
-        return isImportedWithDefault(importPath, jetFile)
+        private fun isJavaOrKotlinStdlibImport(path: ImportPath): Boolean {
+            val s = path.getPathStr()
+            return s.startsWith("java.") || s.startsWith("javax.")|| s.startsWith("kotlin.")
+        }
     }
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean {
@@ -140,30 +136,11 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         return importPath.isImported(defaultImports)
     }
 
-    override fun needImport(importPath: ImportPath, file: JetFile, importDirectives: List<JetImportDirective>): Boolean {
-        if (isImportedByDefault(importPath, file)) {
-            return false
-        }
-
-        if (!importDirectives.isEmpty()) {
-            // Check if import is already present
-            for (directive in importDirectives) {
-                val existentImportPath = directive.getImportPath()
-                if (existentImportPath != null && importPath.isImported(existentImportPath)) {
-                    return false
-                }
-            }
-        }
-
-        return true
-    }
-
     override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {
         val importable = descriptor.getImportableDescriptor()
         return when (importable) {
-            is ClassDescriptor -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes
             is PackageViewDescriptor -> JetCodeStyleSettings.getInstance(project).IMPORT_PACKAGES
-            else -> true
+            else -> importable.getContainingDeclaration() is PackageFragmentDescriptor // do not import nested classes and non-top-level declarations
         }
     }
 
@@ -175,7 +152,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             private val file: JetFile
     ) {
         private val resolutionFacade = file.getResolutionFacade()
-        private val preferAllUnderImports = JetCodeStyleSettings.getInstance(project).PREFER_ALL_UNDER_IMPORTS
+        private val nameCountToUseStarImport = JetCodeStyleSettings.getInstance(project).NAME_COUNT_TO_USE_STAR_IMPORT
 
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {
             val target = descriptor.getImportableDescriptor()
@@ -211,8 +188,13 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val fqName = target.importableFqNameSafe
             val packageFqName = fqName.parent()
 
+            val importsFromPackage = imports.count {
+                val path = it.getImportPath()
+                path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == packageFqName
+            }
+
             val allUnderImportPath = ImportPath(packageFqName, true)
-            val tryAllUnderImport = preferAllUnderImports
+            val tryAllUnderImport = importsFromPackage + 1 >= nameCountToUseStarImport
                                     && !packageFqName.isRoot()
                                     && !imports.any { it.getImportPath() == allUnderImportPath }
                                     && when (target) {
@@ -399,7 +381,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
 
         private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective {
-            return writeImportToFile(ImportPath(fqName, allUnder), file)
+            return addImport(file, ImportPath(fqName, allUnder))
         }
     }
 }

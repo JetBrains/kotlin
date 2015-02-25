@@ -1,4 +1,4 @@
-// "Create function 'set'" "true"
+// "Create extension function 'set'" "true"
 
 import java.util.ArrayList
 

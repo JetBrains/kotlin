@@ -61,4 +61,9 @@ public class K2JvmCliTest extends CliBaseTest {
     public void conflictingOverloads() throws Exception {
         executeCompilerCompareOutputJVM();
     }
+
+    @Test
+    public void warningsInDummy() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
 }

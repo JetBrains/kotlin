@@ -1,4 +1,4 @@
-// "Create function 'component2'" "true"
+// "Create extension function 'component2'" "true"
 class FooIterator<T> {
     fun hasNext(): Boolean { return false }
     fun next(): Any {

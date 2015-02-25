@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.psi.JetSuperExpression
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -111,7 +113,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
             packageName == packageNameInfo.oldPackageName,
             packageName == packageNameInfo.newPackageName,
             isImported(descriptor) -> {
-                (refExpr.getReference() as? JetSimpleNameReference)?.let { createMoveUsageInfo(it, declaration, false) }
+                (refExpr.getReference() as? JetSimpleNameReference)?.let { createMoveUsageInfoIfPossible(it, declaration, false) }
             }
 
             else -> null
@@ -141,13 +143,15 @@ class MoveRenameUsageInfoForExtension(
         val addImportToOriginalFile: Boolean
 ): MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
 
-fun createMoveUsageInfo(
+fun createMoveUsageInfoIfPossible(
         reference: PsiReference,
         referencedElement: PsiElement,
         addImportToOriginalFile: Boolean
-): UsageInfo {
-    val range = reference.getRangeInElement()!!
+): UsageInfo? {
     val element = reference.getElement()
+    if (element.getStrictParentOfType<JetSuperExpression>() != null) return null
+
+    val range = reference.getRangeInElement()!!
     val startOffset = range.getStartOffset()
     val endOffset = range.getEndOffset()
 

@@ -1,6 +1,8 @@
 package c
 
+import b.test
+
 fun bar() {
-    b.test = ""
-    println(b.test)
+    test = ""
+    println(test)
 }

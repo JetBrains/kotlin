@@ -159,6 +159,8 @@ public object PositioningStrategies {
 
     public val ABSTRACT_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.ABSTRACT_KEYWORD)
 
+    public val INNER_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.INNER_KEYWORD)
+
     public val OVERRIDE_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.OVERRIDE_KEYWORD)
 
     public val FINAL_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.FINAL_KEYWORD)
