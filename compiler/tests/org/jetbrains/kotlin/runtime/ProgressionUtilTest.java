@@ -20,8 +20,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class ProgressionUtilTest extends UsefulTestCase {
     private static final int MAX = Integer.MAX_VALUE;
@@ -33,8 +31,7 @@ public class ProgressionUtilTest extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        ClassLoader classLoader = new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()}, null);
-        Class<?> progressionUtil = classLoader.loadClass("kotlin.internal.InternalPackage");
+        Class<?> progressionUtil = ForTestCompileRuntime.runtimeJarClassLoader().loadClass("kotlin.internal.InternalPackage");
         this.intMethod = progressionUtil.getMethod("getProgressionFinalElement", int.class, int.class, int.class);
         this.longMethod = progressionUtil.getMethod("getProgressionFinalElement", long.class, long.class, long.class);
     }

@@ -21,6 +21,7 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.kotlin.cli.jvm.JVMConfigurationKeys;
@@ -45,8 +46,6 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import static org.jetbrains.kotlin.types.TypeUtils.getAllSupertypes;
 
@@ -102,11 +101,9 @@ public class TestlibTest extends UsefulTestCase {
             throw new RuntimeException("There were compilation errors");
         }
 
-        classLoader = new GeneratedClassLoader(generationState.getFactory(),
-                                               new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
-                                                                  null)) {
+        classLoader = new GeneratedClassLoader(generationState.getFactory(), ForTestCompileRuntime.runtimeJarClassLoader()) {
             @Override
-            public Class<?> loadClass(String name) throws ClassNotFoundException {
+            public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
                     //In other way we don't find any test cause will have two different TestCase classes!
                     return TestlibTest.class.getClassLoader().loadClass(name);

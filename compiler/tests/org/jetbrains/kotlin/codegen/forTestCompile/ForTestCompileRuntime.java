@@ -19,8 +19,16 @@ package org.jetbrains.kotlin.codegen.forTestCompile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import static org.jetbrains.kotlin.utils.UtilsPackage.rethrow;
 
 public class ForTestCompileRuntime {
+    private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<ClassLoader>(null);
+
     @NotNull
     public static File runtimeJarForTests() {
         File runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar");
@@ -28,5 +36,21 @@ public class ForTestCompileRuntime {
             throw new IllegalStateException("kotlin-runtime.jar in dist/kotlinc/lib does not exist. Run 'ant dist'");
         }
         return runtime;
+    }
+
+    @NotNull
+    public static synchronized ClassLoader runtimeJarClassLoader() {
+        ClassLoader loader = runtimeJarClassLoader.get();
+        if (loader == null) {
+            try {
+                loader = new URLClassLoader(new URL[] {runtimeJarForTests().toURI().toURL()}, null);
+            }
+            catch (MalformedURLException e) {
+                throw rethrow(e);
+            }
+            runtimeJarClassLoader = new SoftReference<ClassLoader>(loader);
+        }
+
+        return loader;
     }
 }

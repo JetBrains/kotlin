@@ -122,25 +122,19 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory factory) {
+    protected GeneratedClassLoader generateAndCreateClassLoader() {
         if (initializedClassLoader != null) {
             fail("Double initialization of class loader in same test");
         }
 
-        initializedClassLoader = new GeneratedClassLoader(factory, null, getClassPathURLs());
-        return initializedClassLoader;
-    }
-
-    @NotNull
-    protected GeneratedClassLoader generateAndCreateClassLoader() {
         ClassFileFactory factory = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(factory);
+        initializedClassLoader = new GeneratedClassLoader(factory, ForTestCompileRuntime.runtimeJarClassLoader(), getClassPathURLs());
 
-        if (!verifyAllFilesWithAsm(factory, loader)) {
+        if (!verifyAllFilesWithAsm(factory, initializedClassLoader)) {
             fail("Verification failed: see exceptions above");
         }
 
-        return loader;
+        return initializedClassLoader;
     }
 
     @NotNull
@@ -149,16 +143,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
                 urls.add(file.toURI().toURL());
-            } catch (MalformedURLException e) {
+            }
+            catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-        }
-        try {
-            //add runtime library
-            urls.add(ForTestCompileRuntime.runtimeJarForTests().toURI().toURL());
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         }
 
         return urls.toArray(new URL[urls.size()]);
