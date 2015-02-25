@@ -31,18 +31,14 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.idea.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandlerHelper
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionGeneratorOptions
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractableCodeDescriptor
 import org.jetbrains.kotlin.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionData
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionOptions
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import kotlin.test.assertTrue
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
@@ -106,26 +102,28 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
             val editor = fixture.getEditor()
             val handler = ExtractKotlinFunctionHandler(
-                    helper = object : ExtractKotlinFunctionHandlerHelper() {
+                    helper = object : ExtractionEngineHelper() {
                         override fun adjustExtractionData(data: ExtractionData): ExtractionData {
                             return data.copy(options = extractionOptions)
                         }
 
-                            override fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions {
-                                return options.copy(extractAsProperty = extractAsProperty)
-                            }
-
-                            override fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor {
-                                val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
-                                val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
-                                val actualTypes = allParameters.map {
-                                    it.getParameterTypeCandidates(extractionOptions.allowSpecialClassNames).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
-                                }.joinToString()
+                        override fun configure(
+                                descriptor: ExtractableCodeDescriptor,
+                                generatorOptions: ExtractionGeneratorOptions
+                        ): ExtractionGeneratorConfiguration {
+                            val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
+                            val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
+                            val actualTypes = allParameters.map {
+                                it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")
+                            }.joinToString()
 
                             assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                             assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
 
-                            return if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor
+                            return ExtractionGeneratorConfiguration(
+                                    if (descriptor.name == "") descriptor.copy(name = "__dummyTestFun__") else descriptor,
+                                    generatorOptions.copy(extractAsProperty = extractAsProperty)
+                            )
                         }
                     }
             )

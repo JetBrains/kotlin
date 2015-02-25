@@ -841,7 +841,7 @@ private fun JetNamedDeclaration.getGeneratedBlockBody() =
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val result = generateDeclaration(ExtractionGeneratorOptions(inTempFile = true))
+    val result = ExtractionGeneratorConfiguration(this, ExtractionGeneratorOptions(inTempFile = true)).generateDeclaration()
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
     val bindingContext = result.declaration.getGeneratedBlockBody().analyze()

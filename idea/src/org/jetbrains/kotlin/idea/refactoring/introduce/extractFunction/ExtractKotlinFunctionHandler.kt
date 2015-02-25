@@ -25,44 +25,29 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import kotlin.test.fail
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.MessageType
-import javax.swing.event.HyperlinkEvent
-import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
-import com.intellij.ui.awt.RelativePoint
-import com.intellij.openapi.ui.popup.Balloon.Position
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
-public open class ExtractKotlinFunctionHandlerHelper {
-    open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
-    open fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions = options
-    open fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
-
-    class object {
-        public val DEFAULT: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper()
-    }
-}
-
 public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
-        private val helper: ExtractKotlinFunctionHandlerHelper = ExtractKotlinFunctionHandlerHelper.DEFAULT) : RefactoringActionHandler {
-    private fun adjustElements(elements: List<PsiElement>): List<PsiElement> {
-        if (elements.size() != 1) return elements
+        private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
 
-        val e = elements.first()
-        if (e is JetBlockExpression && e.getParent() is JetFunctionLiteral) return e.getStatements()
-
-        return elements
+    object InteractiveExtractionHelper : ExtractionEngineHelper() {
+        override fun configureInteractively(
+                project: Project,
+                editor: Editor,
+                descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+                continuation: (ExtractionGeneratorConfiguration) -> Unit
+        ) {
+            KotlinExtractFunctionDialog(descriptorWithConflicts.descriptor.extractionData.project, descriptorWithConflicts) {
+                continuation(it.getCurrentConfiguration())
+            }.show()
+        }
     }
 
     fun doInvoke(
@@ -71,66 +56,18 @@ public class ExtractKotlinFunctionHandler(
             elements: List<PsiElement>,
             targetSibling: PsiElement
     ) {
-        val project = file.getProject()
+        fun adjustElements(elements: List<PsiElement>): List<PsiElement> {
+            if (elements.size() != 1) return elements
 
-        val analysisResult = helper.adjustExtractionData(
-                ExtractionData(file, adjustElements(elements).toRange(false), targetSibling)
-        ).performAnalysis()
+            val e = elements.first()
+            if (e is JetBlockExpression && e.getParent() is JetFunctionLiteral) return e.getStatements()
 
-        if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
-            throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
+            return elements
         }
 
-        fun doRefactor(descriptor: ExtractableCodeDescriptor, generatorOptions: ExtractionGeneratorOptions) {
-            val adjustedDescriptor = helper.adjustDescriptor(descriptor)
-            val adjustedGeneratorOptions = helper.adjustGeneratorOptions(generatorOptions)
-            val result = project.executeWriteCommand<ExtractionResult>(EXTRACT_FUNCTION) { adjustedDescriptor.generateDeclaration(adjustedGeneratorOptions) }
-            processDuplicates(result.duplicateReplacers, project, editor)
-        }
-
-        fun validateAndRefactor() {
-            val validationResult = analysisResult.descriptor!!.validate()
-            project.checkConflictsInteractively(validationResult.conflicts) {
-                if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                    doRefactor(validationResult.descriptor, ExtractionGeneratorOptions.DEFAULT)
-                }
-                else {
-                    KotlinExtractFunctionDialog(project, validationResult) {
-                        doRefactor(it.getCurrentDescriptor(), it.getGeneratorOptions())
-                    }.show()
-                }
-            }
-        }
-
-        val message = analysisResult.messages.map { it.renderMessage() }.joinToString("\n")
-        when (analysisResult.status) {
-            Status.CRITICAL_ERROR -> {
-                showErrorHint(project, editor, message, EXTRACT_FUNCTION)
-            }
-
-            Status.NON_CRITICAL_ERROR -> {
-                val anchorPoint = RelativePoint(
-                        editor.getContentComponent(),
-                        editor.visualPositionToXY(editor.getSelectionModel().getSelectionStartPosition()!!)
-                )
-                JBPopupFactory.getInstance()!!
-                        .createHtmlTextBalloonBuilder(
-                                "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
-                                MessageType.WARNING,
-                                { event ->
-                                    if (event?.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                        validateAndRefactor()
-                                    }
-                                }
-                        )
-                        .setHideOnClickOutside(true)
-                        .setHideOnFrameResize(false)
-                        .setHideOnLinkClick(true)
-                        .createBalloon()
-                        .show(anchorPoint, Position.below)
-            }
-
-            Status.SUCCESS -> validateAndRefactor()
+        val extractionData = ExtractionData(file, adjustElements(elements).toRange(false), targetSibling)
+        ExtractionEngine(EXTRACT_FUNCTION, helper).run(editor, extractionData) {
+            processDuplicates(it.duplicateReplacers, file.getProject(), editor)
         }
     }
 

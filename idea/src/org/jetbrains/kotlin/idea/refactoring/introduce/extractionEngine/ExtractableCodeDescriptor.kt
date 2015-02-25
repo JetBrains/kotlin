@@ -324,7 +324,13 @@ data class ExtractionGeneratorOptions(
     }
 }
 
+data class ExtractionGeneratorConfiguration(
+        val descriptor: ExtractableCodeDescriptor,
+        val generatorOptions: ExtractionGeneratorOptions
+)
+
 data class ExtractionResult(
+        val config: ExtractionGeneratorConfiguration,
         val declaration: JetNamedDeclaration,
         val duplicateReplacers: Map<JetPsiRange, () -> Unit>,
         val nameByOffset: Map<Int, JetElement>

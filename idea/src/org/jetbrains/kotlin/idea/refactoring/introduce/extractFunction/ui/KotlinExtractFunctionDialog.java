@@ -110,8 +110,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractionEnginePackage.getDeclarationText(currentDescriptor, getGeneratorOptions(), false,
-                                                          IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractionEnginePackage.getDeclarationText(getCurrentConfiguration(),
+                                                           false,
+                                                           IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
 
@@ -270,8 +271,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     @NotNull
-    public ExtractableCodeDescriptor getCurrentDescriptor() {
-        return currentDescriptor;
+    public ExtractionGeneratorConfiguration getCurrentConfiguration() {
+        return new ExtractionGeneratorConfiguration(currentDescriptor, getGeneratorOptions());
     }
 
     @NotNull

@@ -46,22 +46,21 @@ import java.util.Collections
 import java.util.HashMap
 import java.util.LinkedHashMap
 
-fun ExtractableCodeDescriptor.getDeclarationText(
-        options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
+fun ExtractionGeneratorConfiguration.getDeclarationText(
         withBody: Boolean = true,
-        descriptorRenderer: DescriptorRenderer = if (options.flexibleTypesAllowed)
+        descriptorRenderer: DescriptorRenderer = if (generatorOptions.flexibleTypesAllowed)
                                                     DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
                                                  else IdeDescriptorRenderers.SOURCE_CODE
 ): String {
-    if (!canGenerateProperty() && options.extractAsProperty) {
-        throw IllegalArgumentException("Can't generate property: ${extractionData.getCodeFragmentText()}")
+    if (!descriptor.canGenerateProperty() && generatorOptions.extractAsProperty) {
+        throw IllegalArgumentException("Can't generate property: ${descriptor.extractionData.getCodeFragmentText()}")
     }
 
-    val builderTarget = if (options.extractAsProperty) Target.READ_ONLY_PROPERTY else Target.FUNCTION
+    val builderTarget = if (generatorOptions.extractAsProperty) Target.READ_ONLY_PROPERTY else Target.FUNCTION
     return CallableBuilder(builderTarget).let { builder ->
-        builder.modifier(visibility)
+        builder.modifier(descriptor.visibility)
 
-        builder.typeParams(typeParameters.map { it.originalDeclaration.getText()!! })
+        builder.typeParams(descriptor.typeParameters.map { it.originalDeclaration.getText()!! })
 
         fun JetType.typeAsString(): String {
             return if (isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
@@ -79,10 +78,10 @@ fun ExtractableCodeDescriptor.getDeclarationText(
             if (isDefault() || isError()) builder.noReturnType() else builder.returnType(this.typeAsString())
         }
 
-        builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
+        builder.typeConstraints(descriptor.typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
 
         if (withBody) {
-            builder.blockBody(extractionData.getCodeFragmentText())
+            builder.blockBody(descriptor.extractionData.getCodeFragmentText())
         }
 
         builder.asString()
@@ -335,23 +334,23 @@ private fun makeCall(
     }
 }
 
-fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOptions): ExtractionResult{
-    val psiFactory = JetPsiFactory(extractionData.originalFile)
+fun ExtractionGeneratorConfiguration.generateDeclaration(): ExtractionResult{
+    val psiFactory = JetPsiFactory(descriptor.extractionData.originalFile)
     val nameByOffset = HashMap<Int, JetElement>()
 
     fun createDeclaration(): JetNamedDeclaration {
-        return with(extractionData) {
-            if (options.inTempFile) {
-                createTemporaryDeclaration("${getDeclarationText(options)}\n")
+        return with(descriptor.extractionData) {
+            if (generatorOptions.inTempFile) {
+                createTemporaryDeclaration("${getDeclarationText()}\n")
             }
             else {
-                psiFactory.createDeclaration(getDeclarationText(options))
+                psiFactory.createDeclaration(getDeclarationText())
             }
         }
     }
 
     fun getReturnArguments(resultExpression: JetExpression?): List<String> {
-        return controlFlow.outputValues
+        return descriptor.controlFlow.outputValues
                 .map {
                     when (it) {
                         is ExpressionValue -> resultExpression?.getText()
@@ -373,9 +372,9 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
                 if (originalExpression is JetReturnExpression) originalExpression.getReturnedExpression() else originalExpression
         if (currentResultExpression == null) return
 
-        val newResultExpression = controlFlow.defaultOutputValue?.let {
+        val newResultExpression = descriptor.controlFlow.defaultOutputValue?.let {
             val boxedExpression = originalExpression.replaced(replacingExpression).getReturnedExpression()!!
-            controlFlow.outputValueBoxer.extractExpressionByValue(boxedExpression, it)
+            descriptor.controlFlow.outputValueBoxer.extractExpressionByValue(boxedExpression, it)
         }
         if (newResultExpression == null) {
             throw AssertionError("Can' replace '${originalExpression.getText()}' with '${replacingExpression.getText()}'")
@@ -398,14 +397,14 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
          * Sort by descending position so that internals of value/type arguments in calls and qualified types are replaced
          * before calls/types themselves
          */
-        for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
+        for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
             val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<JetSimpleNameExpression>()
             assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
             originalOffsetByExpr[expr!!] = offsetInBody
 
-            replacementMap[offsetInBody]?.let { replacement ->
-                if (replacement !is ParameterReplacement || replacement.parameter != receiverParameter) {
+            descriptor.replacementMap[offsetInBody]?.let { replacement ->
+                if (replacement !is ParameterReplacement || replacement.parameter != descriptor.receiverParameter) {
                     exprReplacementMap[expr] = replacement
                 }
             }
@@ -414,11 +413,11 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         val replacingReturn: JetExpression?
         val expressionsToReplaceWithReturn: List<JetElement>
 
-        val jumpValue = controlFlow.jumpOutputValue
+        val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {
             replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
             expressionsToReplaceWithReturn = jumpValue.elementsToReplace.map { jumpElement ->
-                val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - extractionData.originalStartOffset!!
+                val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - descriptor.extractionData.originalStartOffset!!
                 val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(jumpElement.javaClass)
                 assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
@@ -444,7 +443,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
 
         val firstExpression = body.getStatements().firstOrNull()
         if (firstExpression != null) {
-            for (param in parameters) {
+            for (param in descriptor.parameters) {
                 param.mirrorVarName?.let { varName ->
                     body.addBefore(psiFactory.createProperty(varName, null, true, param.name), firstExpression)
                     body.addBefore(psiFactory.createNewLine(), firstExpression)
@@ -452,13 +451,13 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
             }
         }
 
-        val defaultValue = controlFlow.defaultOutputValue
+        val defaultValue = descriptor.controlFlow.defaultOutputValue
 
         val lastExpression = body.getStatements().lastOrNull() as? JetExpression
         if (lastExpression is JetReturnExpression) return
 
         val (defaultExpression, expressionToUnifyWith) =
-                if (!options.inTempFile && defaultValue != null && controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
+                if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                     val varNameValidator = JetNameValidatorImpl(body, lastExpression, JetNameValidatorImpl.Target.PROPERTIES)
                     val resultVal = JetNameSuggester.suggestNames(defaultValue.valueType, varNameValidator, null).first()
                     val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
@@ -469,7 +468,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
                     lastExpression to null
                 }
 
-        val returnExpression = controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
+        val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
         if (returnExpression == null) return
 
         when {
@@ -482,7 +481,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
     }
 
     fun insertDeclaration(declaration: JetNamedDeclaration, anchor: PsiElement): JetNamedDeclaration {
-        return with(extractionData) {
+        return with(descriptor.extractionData) {
             val targetContainer = anchor.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
@@ -500,9 +499,9 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         }
     }
 
-    val duplicates = if (options.inTempFile) Collections.emptyList() else findDuplicates()
+    val duplicates = if (generatorOptions.inTempFile) Collections.emptyList() else descriptor.findDuplicates()
 
-    val anchor = with(extractionData) {
+    val anchor = with(descriptor.extractionData) {
         val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first() }
         anchorCandidates.add(targetSibling)
 
@@ -518,7 +517,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         marginalCandidate.parents().first { it.getParent() == targetParent }
     }
 
-    val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it, anchor) }
+    val declaration = createDeclaration().let { if (generatorOptions.inTempFile) it else insertDeclaration(it, anchor) }
     adjustDeclarationBody(declaration)
 
     if (declaration is JetNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
@@ -533,11 +532,11 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         }
     }
 
-    if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)
+    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap(), nameByOffset)
 
-    makeCall(this, declaration, controlFlow, extractionData.originalRange, parameters.map { it.argumentText })
+    makeCall(descriptor, declaration, descriptor.controlFlow, descriptor.extractionData.originalRange, descriptor.parameters.map { it.argumentText })
     ShortenReferences.DEFAULT.process(declaration)
 
-    val duplicateReplacers = duplicates.map { it.range to { makeCall(this, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
-    return ExtractionResult(declaration, duplicateReplacers, nameByOffset)
+    val duplicateReplacers = duplicates.map { it.range to { makeCall(descriptor, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
+    return ExtractionResult(this, declaration, duplicateReplacers, nameByOffset)
 }
