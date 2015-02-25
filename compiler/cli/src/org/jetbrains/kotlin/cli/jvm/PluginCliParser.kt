@@ -116,6 +116,11 @@ private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : Clas
     private class SelfThenParentURLClassLoader(urls: Array<URL>, val onFail: ClassLoader) : URLClassLoader(urls, null) {
 
         public override fun findClass(name: String): Class<*> {
+            val loaded = findLoadedClass(name)
+            if (loaded != null) {
+                return loaded
+            }
+
             return try {
                 super.findClass(name)
             } catch (e: ClassNotFoundException) {
