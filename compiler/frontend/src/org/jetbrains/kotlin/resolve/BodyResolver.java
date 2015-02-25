@@ -171,6 +171,10 @@ public class BodyResolver {
         if (call == null || call.getCalleeExpression() == null) return;
         JetType superClassType = DescriptorUtils.getSuperClassType(descriptor.getContainingDeclaration());
 
+        if (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS && call.getCalleeExpression().isEmpty()) {
+            return;
+        }
+
         OverloadResolutionResults<?> results = callResolver.resolveFunctionCall(
                 trace, scope,
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),

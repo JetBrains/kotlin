@@ -28,4 +28,8 @@ public class JetConstructorDelegationReferenceExpression extends JetExpressionIm
     public boolean isThis() {
         return findChildByType(JetTokens.THIS_KEYWORD) != null;
     }
+
+    public boolean isEmpty() {
+        return getFirstChild() == null;
+    }
 }

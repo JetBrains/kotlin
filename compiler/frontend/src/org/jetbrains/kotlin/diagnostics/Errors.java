@@ -160,6 +160,7 @@ public interface Errors {
     DiagnosticFactory0<JetDelegatorToSuperCall> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetConstructorDelegationCall> PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetConstructorDelegationCall> DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
     // Trait-specific
 

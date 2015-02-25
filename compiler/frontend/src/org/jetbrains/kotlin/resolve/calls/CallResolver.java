@@ -52,9 +52,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_PRIMARY_CONSTRUCTOR_DELEGATION_CALL;
-import static org.jetbrains.kotlin.diagnostics.Errors.NOT_A_CLASS;
-import static org.jetbrains.kotlin.diagnostics.Errors.NO_CONSTRUCTOR;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -297,6 +295,10 @@ public class CallResolver {
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression
     ) {
         ClassDescriptor currentClassDescriptor = getClassDescriptorByConstructorContext(context);
+        if (currentClassDescriptor.getKind() == ClassKind.ENUM_CLASS && !calleeExpression.isThis()) {
+            context.trace.report(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR.on((JetConstructorDelegationCall) calleeExpression.getParent()));
+            return checkArgumentTypesAndFail(context);
+        }
 
         ClassDescriptor delegateClassDescriptor = calleeExpression.isThis() ? currentClassDescriptor :
                                                    DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);

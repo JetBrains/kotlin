@@ -568,8 +568,7 @@ public class DeclarationsChecker {
 
         List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-        assert constructor != null;
-        if (!constructor.getValueParameters().isEmpty() && delegationSpecifiers.isEmpty()) {
+        if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
             trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
         }
 
