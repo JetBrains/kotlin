@@ -81,8 +81,8 @@ package c {
 }
 
 package d {
-    internal val b: d.A.B
-    internal val c: d.A.B
+    internal val b: d.A.Default.B
+    internal val c: d.A.Default.B
 
     internal final class A {
         public constructor A()
@@ -103,7 +103,7 @@ package d {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            internal object C : d.A.B {
+            internal object C : d.A.Default.B {
                 private constructor C()
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

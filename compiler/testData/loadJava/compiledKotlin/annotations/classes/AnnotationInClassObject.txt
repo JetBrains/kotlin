@@ -20,6 +20,6 @@ internal final class A {
     }
 }
 
-test.A.Anno1() test.A.B.Anno2() internal final class C {
+test.A.Default.Anno1() test.A.Default.B.Anno2() internal final class C {
     /*primary*/ public constructor C()
 }

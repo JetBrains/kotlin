@@ -16,6 +16,10 @@ class B {
 <selection>fun g(t: T): Int {
     g(A)
     B.f()
+    A
+    B
+    A.Default
+    B.Default
 }</selection>
 
 

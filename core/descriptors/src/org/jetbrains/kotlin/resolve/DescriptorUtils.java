@@ -104,20 +104,14 @@ public class DescriptorUtils {
 
     @NotNull
     private static FqNameUnsafe getFqNameUnsafe(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration != null : "Not package/module descriptor doesn't have containing declaration: " + descriptor;
         return getFqName(containingDeclaration).child(descriptor.getName());
     }
 
-    @Nullable
-    private static DeclarationDescriptor getContainingDeclarationSkippingClassObjects(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        return isClassObject(containingDeclaration) ? containingDeclaration.getContainingDeclaration() : containingDeclaration;
-    }
-
     @NotNull
     public static FqName getFqNameFromTopLevelClass(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = getContainingDeclarationSkippingClassObjects(descriptor);
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         Name name = descriptor.getName();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return FqName.topLevel(name);

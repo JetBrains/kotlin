@@ -20,7 +20,7 @@ internal final class Main {
 
             internal class object Default {
                 private constructor Default()
-                public final val N: Main.States
+                public final val N: Main.Default.States
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

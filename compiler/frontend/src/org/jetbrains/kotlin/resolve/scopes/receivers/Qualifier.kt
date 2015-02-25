@@ -148,11 +148,14 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
 }
 
 private fun QualifierReceiver.resolveAndRecordReferenceTarget(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
-    resultingDescriptor = resolveReferenceTarget(selector)
+    resultingDescriptor = resolveReferenceTarget(context, selector)
     context.trace.record(REFERENCE_TARGET, referenceExpression, resultingDescriptor)
 }
 
-private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescriptor?): DeclarationDescriptor {
+private fun QualifierReceiver.resolveReferenceTarget(
+        context: ExpressionTypingContext,
+        selector: DeclarationDescriptor?
+): DeclarationDescriptor {
     if (classifier is TypeParameterDescriptor) {
         return classifier
     }
@@ -168,6 +171,9 @@ private fun QualifierReceiver.resolveReferenceTarget(selector: DeclarationDescri
     }
 
     if (classifier is ClassDescriptor && classifier.classObjectDescriptor == selectorContainer) {
+        if (classifier.getDefaultObjectDescriptor() != null) {
+            context.trace.record(SHORT_REFERENCE_TO_DEFAULT_OBJECT, referenceExpression, classifier)
+        }
         return classifier.getClassObjectReferenceTarget()
     }
 

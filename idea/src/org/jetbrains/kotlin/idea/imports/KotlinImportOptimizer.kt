@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -36,13 +35,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.resolve.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -182,12 +181,19 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 override fun visitPackageDirective(directive: JetPackageDirective) {
                 }
 
+
+                private fun JetElement.classForDefaultObjectReference(): ClassDescriptor? {
+                    return analyze()[BindingContext.SHORT_REFERENCE_TO_DEFAULT_OBJECT, this as? JetReferenceExpression]
+                }
+
                 override fun visitJetElement(element: JetElement) {
                     val reference = element.getReference()
                     if (reference is JetReference) {
                         val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
 
-                        val targets = reference.resolveToDescriptors()
+                        //class qualifiers that refer to default objects should be considered (containing) class references
+                        val targets = element.classForDefaultObjectReference()?.let { listOf(it) }
+                                      ?: reference.resolveToDescriptors()
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
                             if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages

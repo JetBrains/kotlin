@@ -12,10 +12,10 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal final enum class E : kotlin.Enum<A.E> {
-            public enum entry ENTRY2 : A.E {
+        internal final enum class E : kotlin.Enum<A.Default.E> {
+            public enum entry ENTRY2 : A.Default.E {
                 private constructor ENTRY2()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.Default.E): kotlin.Int
                 public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -24,7 +24,7 @@ internal final class A {
             }
 
             private constructor E()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.E): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.Default.E): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -32,8 +32,8 @@ internal final class A {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             // Static members
-            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A.E
-            public final /*synthesized*/ fun values(): kotlin.Array<A.E>
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A.Default.E
+            public final /*synthesized*/ fun values(): kotlin.Array<A.Default.E>
         }
     }
 

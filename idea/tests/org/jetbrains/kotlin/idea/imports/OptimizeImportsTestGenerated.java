@@ -75,6 +75,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("DefaultObjectReference.kt")
+    public void testDefaultObjectReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DefaultObjectReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DuplicatedImports.kt")
     public void testDuplicatedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/DuplicatedImports.kt");

@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -54,6 +52,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import java.util.*
+import org.jetbrains.kotlin.idea.imports.*
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
 
@@ -374,10 +373,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
 
         private fun JetReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor> {
-            val bindingContext = resolutionFacade.analyze(this, BodyResolveMode.PARTIAL)
-            return bindingContext[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
-                          ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
-                          ?: return listOf()
+            return this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
         }
 
         private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective {

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 
 public class FakeCallableDescriptorForObject(
-        private val classDescriptor: ClassDescriptor
+        public val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     {

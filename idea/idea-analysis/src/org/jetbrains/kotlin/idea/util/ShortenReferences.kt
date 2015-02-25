@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
@@ -41,6 +38,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.imports.*
+import org.jetbrains.kotlin.resolve.*
+import com.intellij.psi.*
 
 public class ShortenReferences(val options: (JetElement) -> Options = { Options.DEFAULT }) {
     public data class Options(
@@ -51,19 +50,14 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val DEFAULT = Options()
         }
     }
-    
+
     class object {
         val DEFAULT = ShortenReferences()
 
         private fun DeclarationDescriptor.asString()
                 = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
-        private fun JetReferenceExpression.targets(context: BindingContext): Collection<DeclarationDescriptor> {
-            val targets = context[BindingContext.REFERENCE_TARGET, this]?.let { listOf(it) }
-                          ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]
-                          ?: listOf()
-            return targets.map { it.getImportableDescriptor() }.toSet()
-        }
+        private fun JetReferenceExpression.targets(context: BindingContext) = getImportableTargets(context)
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
             return descriptor.canBeReferencedViaImport()
@@ -152,10 +146,11 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         while (true) {
             // Visitor order is important here so that enclosing elements are not shortened before their children are, e.g.
             // test.foo(this@A) -> foo(this)
-            val visitors = listOf(
+            val visitors: List<ShorteningVisitor<*>> = listOf(
                     ShortenTypesVisitor(file, elementFilter, failedToImportDescriptors),
                     ShortenThisExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
-                    ShortenQualifiedExpressionsVisitor(file, elementFilter, failedToImportDescriptors)
+                    ShortenQualifiedExpressionsVisitor(file, elementFilter, failedToImportDescriptors),
+                    RemoveExplicitDefaultObjectReferenceVisitor(file, elementFilter, failedToImportDescriptors)
             )
             val descriptorsToImport = visitors.flatMap { analyzeReferences(elementsToUse, it) }.toSet()
             visitors.forEach { it.shortenElements(elementsToUse) }
@@ -201,7 +196,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             protected val failedToImportDescriptors: Set<DeclarationDescriptor>
     ) : JetVisitorVoid() {
         var options: Options = Options.DEFAULT
-        
+
         private val elementsToShorten = ArrayList<T>()
         private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
 
@@ -209,7 +204,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
 
         protected fun processQualifiedElement(element: T, target: DeclarationDescriptor, canShortenNow: Boolean) {
             if (canShortenNow) {
-                elementsToShorten.add(element)
+                addElementToShorten(element)
             }
             else if (target !in failedToImportDescriptors && mayImport(target, file)) {
                 descriptorsToImport.add(target)
@@ -217,6 +212,10 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             else {
                 qualifier(element).accept(this)
             }
+        }
+
+        protected fun addElementToShorten(element: T) {
+            elementsToShorten.add(element)
         }
 
         protected abstract fun qualifier(element: T): JetElement
@@ -257,7 +256,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             if (filterResult == FilterResult.PROCESS) {
                 processType(userType)
             }
-            else{
+            else {
                 userType.getQualifier()?.accept(this)
             }
         }
@@ -286,12 +285,11 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
     }
 
-    private class ShortenQualifiedExpressionsVisitor(
+    private abstract class QualifiedExpressionShorteningVisitor(
             file: JetFile,
             elementFilter: (PsiElement) -> FilterResult,
             failedToImportDescriptors: Set<DeclarationDescriptor>
-    ) : ShorteningVisitor<JetQualifiedExpression>(file, elementFilter, failedToImportDescriptors) {
-
+    ) : ShorteningVisitor<JetDotQualifiedExpression>(file, elementFilter, failedToImportDescriptors) {
         override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
             val filterResult = elementFilter(expression)
             if (filterResult == FilterResult.SKIP) return
@@ -305,7 +303,18 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             expression.getReceiverExpression().accept(this)
         }
 
-        private fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean {
+        abstract fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean
+
+        override fun qualifier(element: JetDotQualifiedExpression) = element.getReceiverExpression()
+    }
+
+    private class ShortenQualifiedExpressionsVisitor(
+            file: JetFile,
+            elementFilter: (PsiElement) -> FilterResult,
+            failedToImportDescriptors: Set<DeclarationDescriptor>
+    ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
+
+        override fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean {
             val bindingContext = resolutionFacade.analyze(qualifiedExpression)
 
             val receiver = qualifiedExpression.getReceiverExpression()
@@ -317,7 +326,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                     if (bindingContext[BindingContext.QUALIFIER, receiver] == null) return false
                 }
             }
-            
+
             if (PsiTreeUtil.getParentOfType(
                     qualifiedExpression,
                     javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) return true
@@ -338,10 +347,10 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
                 val newCall = selectorCopy.getResolvedCall(newContext) ?: return false
                 val receiverKind = originalCall.getExplicitReceiverKind()
                 val newReceiver = when (receiverKind) {
-                    ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.getExtensionReceiver()
-                    ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.getDispatchReceiver()
-                    else -> return false
-                } as? ThisReceiver ?: return false
+                                      ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.getExtensionReceiver()
+                                      ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.getDispatchReceiver()
+                                      else -> return false
+                                  } as? ThisReceiver ?: return false
 
                 val thisTarget = receiver.getInstanceReference().targets(bindingContext).singleOrNull()
                 if (newReceiver.getDeclarationDescriptor().asString() != thisTarget?.asString()) return false
@@ -356,9 +365,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             return true
         }
 
-        override fun qualifier(element: JetQualifiedExpression) = element.getReceiverExpression()
-
-        override fun shortenElement(element: JetQualifiedExpression): JetElement {
+        override fun shortenElement(element: JetDotQualifiedExpression): JetElement {
             return element.replace(element.getSelectorExpression()!!) as JetElement
         }
     }
@@ -380,7 +387,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val newContext = simpleThis.analyzeInContext(scope)
             val targetAfter = simpleThis.getInstanceReference().targets(newContext).singleOrNull()
             if (targetBefore == targetAfter) {
-                processQualifiedElement(thisExpression, targetBefore, true)
+                addElementToShorten(thisExpression)
             }
         }
 
@@ -395,6 +402,51 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
 
         override fun shortenElement(element: JetThisExpression): JetElement {
             return element.replace(simpleThis) as JetElement
+        }
+    }
+
+    private class RemoveExplicitDefaultObjectReferenceVisitor(
+            file: JetFile,
+            elementFilter: (PsiElement) -> FilterResult,
+            failedToImportDescriptors: Set<DeclarationDescriptor>
+    ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
+
+        private fun JetExpression.singleTarget(context: BindingContext): DeclarationDescriptor? {
+            return (getCalleeExpressionIfAny() as? JetReferenceExpression)?.targets(context)?.singleOrNull()
+        }
+
+        override fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean {
+            val bindingContext = resolutionFacade.analyze(qualifiedExpression)
+
+            val receiver = qualifiedExpression.getReceiverExpression()
+
+            if (PsiTreeUtil.getParentOfType(
+                    qualifiedExpression,
+                    javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) return false
+
+            val receiverTarget = receiver.singleTarget(bindingContext) ?: return false
+            if (receiverTarget !is ClassDescriptor) return false
+
+            val selectorExpression = qualifiedExpression.getSelectorExpression() ?: return false
+            val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return false
+
+            if (receiverTarget.getDefaultObjectDescriptor() != selectorTarget) return false
+
+            val selectorsSelector = (qualifiedExpression.getParent() as? JetDotQualifiedExpression)?.getSelectorExpression()
+            if (selectorsSelector == null) {
+                addElementToShorten(qualifiedExpression)
+                return true
+            }
+
+            val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return false
+            if (selectorsSelectorTarget is ClassDescriptor) return false
+
+            addElementToShorten(qualifiedExpression)
+            return true
+        }
+
+        override fun shortenElement(element: JetDotQualifiedExpression): JetElement {
+            return element.replace(element.getReceiverExpression()) as JetElement
         }
     }
 
